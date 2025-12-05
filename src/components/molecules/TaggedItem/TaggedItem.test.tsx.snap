@@ -64,7 +64,7 @@ exports[`TaggedItem > matches snapshot 1`] = `
 </div>
 `;
 
-exports[`TaggedItem > matches snapshot with hideAvatars 1`] = `
+exports[`TaggedItem - Snapshots > matches snapshot with hideAvatars 1`] = `
 <div
   class="flex items-center gap-2"
   data-testid="container"

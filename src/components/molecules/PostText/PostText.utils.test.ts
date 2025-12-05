@@ -560,7 +560,7 @@ describe('remarkMentions', () => {
       expect(links[1].url).toBe(`/profile/${encodeURIComponent(RAW_PK_2)}`);
     });
 
-    it('requires exactly 52 characters after pk:', () => {
+    it('does not match if too short after pk:', () => {
       // Too short (51 chars after pk:)
       const paragraph = createParagraph('pk:6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproaho');
       const tree = createRoot([paragraph]);

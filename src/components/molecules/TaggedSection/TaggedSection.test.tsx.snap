@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`TaggedSection > matches snapshot 1`] = `
+exports[`TaggedSection - Snapshots > matches snapshot 1`] = `
 <div
   class="mx-auto w-full flex-col flex gap-2 rounded-md bg-card p-6"
   data-testid="container"

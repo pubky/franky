@@ -8,6 +8,9 @@ const mockProfileApplication = {
 
 const mockUserNormalizer = {
   to: vi.fn(),
+  linksFromUi: vi.fn((links) =>
+    (links ?? []).map((link: { label: string; url: string }) => ({ title: link.label, url: link.url })),
+  ),
 };
 
 vi.mock('@/core', async () => {
