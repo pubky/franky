@@ -287,27 +287,38 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         router.push(App.PROFILE_ROUTES.PROFILE);
       }
     } catch (error) {
-      if (
-        error instanceof Libs.AppError &&
-        Object.values(Libs.HomeserverErrorType).includes(error.type as Libs.HomeserverErrorType)
-      ) {
-        Libs.Logger.error('Failed to save profile in Homeserver', error);
-        setSubmitText('Try again!');
-        toast({
-          title: 'Failed to save profile',
-          description: 'Please try again.',
-        });
-        return;
-      } else {
-        setSubmitText('Try again!');
-        toast({
-          title: 'Please try again.',
-          description:
-            mode === 'create'
-              ? 'Failed to fetch the new user data. Indexing might be in progress...'
-              : 'Failed to update profile.',
-        });
+      if (error instanceof Libs.AppError) {
+        // Handle session expiration - user needs to re-authenticate
+        if (error.type === Libs.HomeserverErrorType.SESSION_EXPIRED) {
+          Libs.Logger.error('Session expired while saving profile', error);
+          setSubmitText('Try again!');
+          toast({
+            title: 'Session expired',
+            description: 'Please sign out and sign in again to continue.',
+          });
+          return;
+        }
+
+        // Handle other homeserver errors
+        if (Object.values(Libs.HomeserverErrorType).includes(error.type as Libs.HomeserverErrorType)) {
+          Libs.Logger.error('Failed to save profile in Homeserver', error);
+          setSubmitText('Try again!');
+          toast({
+            title: 'Failed to save profile',
+            description: 'Please try again.',
+          });
+          return;
+        }
       }
+
+      setSubmitText('Try again!');
+      toast({
+        title: 'Please try again.',
+        description:
+          mode === 'create'
+            ? 'Failed to fetch the new user data. Indexing might be in progress...'
+            : 'Failed to update profile.',
+      });
     } finally {
       setIsSaving(false);
     }
