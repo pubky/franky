@@ -7,6 +7,15 @@ vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(),
 }));
 
+// Mock useBookmark hook
+vi.mock('@/hooks', () => ({
+  useBookmark: vi.fn(() => ({
+    isBookmarked: false,
+    isLoading: false,
+    toggle: vi.fn(),
+  })),
+}));
+
 // Use real libs, only stub cn for deterministic class joining
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
@@ -86,7 +95,6 @@ describe('PostActionsBar', () => {
     const onTagClick = vi.fn();
     const onReplyClick = vi.fn();
     const onRepostClick = vi.fn();
-    const onBookmarkClick = vi.fn();
     const onMoreClick = vi.fn();
 
     render(
@@ -95,7 +103,6 @@ describe('PostActionsBar', () => {
         onTagClick={onTagClick}
         onReplyClick={onReplyClick}
         onRepostClick={onRepostClick}
-        onBookmarkClick={onBookmarkClick}
         onMoreClick={onMoreClick}
       />,
     );
@@ -103,14 +110,30 @@ describe('PostActionsBar', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Tag post (1)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reply to post (1)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Repost (1)' }));
-    fireEvent.click(screen.getByRole('button', { name: /bookmark/i }));
     fireEvent.click(screen.getByRole('button', { name: 'More options' }));
 
     expect(onTagClick).toHaveBeenCalledTimes(1);
     expect(onReplyClick).toHaveBeenCalledTimes(1);
     expect(onRepostClick).toHaveBeenCalledTimes(1);
-    expect(onBookmarkClick).toHaveBeenCalledTimes(1);
     expect(onMoreClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls toggle when bookmark button is clicked', async () => {
+    mockUseLiveQuery.mockReturnValue({ tags: 1, replies: 1, reposts: 1 });
+    const mockToggle = vi.fn();
+
+    // Re-mock with custom toggle function
+    const hooks = await import('@/hooks');
+    vi.mocked(hooks.useBookmark).mockReturnValue({
+      isBookmarked: false,
+      isLoading: false,
+      toggle: mockToggle,
+    });
+
+    render(<PostActionsBar postId="post-bookmark" />);
+
+    fireEvent.click(screen.getByRole('button', { name: /bookmark/i }));
+    expect(mockToggle).toHaveBeenCalledTimes(1);
   });
 });
 

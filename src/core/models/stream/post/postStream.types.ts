@@ -46,7 +46,7 @@ export enum PostStreamTypes {
   TIMELINE_FRIENDS_FILE = 'timeline:friends:file',
 
   // ============================================
-  // TIMELINE (Recent) - BOOKMARKS Source
+  // TIMELINE (Recent) - BOOKMARKS ALL Source
   // ============================================
   TIMELINE_BOOKMARKS_ALL = 'timeline:bookmarks:all',
   TIMELINE_BOOKMARKS_SHORT = 'timeline:bookmarks:short',
@@ -55,6 +55,17 @@ export enum PostStreamTypes {
   TIMELINE_BOOKMARKS_VIDEO = 'timeline:bookmarks:video',
   TIMELINE_BOOKMARKS_LINK = 'timeline:bookmarks:link',
   TIMELINE_BOOKMARKS_FILE = 'timeline:bookmarks:file',
+
+  // ============================================
+  // POPULARITY (Total Engagement) - BOOKMARKS Source
+  // ============================================
+  POPULARITY_BOOKMARKS_ALL = 'total_engagement:bookmarks:all',
+  POPULARITY_BOOKMARKS_SHORT = 'total_engagement:bookmarks:short',
+  POPULARITY_BOOKMARKS_LONG = 'total_engagement:bookmarks:long',
+  POPULARITY_BOOKMARKS_IMAGE = 'total_engagement:bookmarks:image',
+  POPULARITY_BOOKMARKS_VIDEO = 'total_engagement:bookmarks:video',
+  POPULARITY_BOOKMARKS_LINK = 'total_engagement:bookmarks:link',
+  POPULARITY_BOOKMARKS_FILE = 'total_engagement:bookmarks:file',
 
   // ============================================
   // POPULARITY (Total Engagement) - ALL Sources

@@ -163,6 +163,7 @@ export class LocalStreamPostsService {
     const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
+    const postBookmarks: Core.BookmarkModelSchema[] = [];
 
     const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
     const postAttachments: string[] = [];
@@ -177,6 +178,14 @@ export class LocalStreamPostsService {
       if (post.details.attachments) {
         post.details.attachments.forEach((attachment) => {
           postAttachments.push(attachment);
+        });
+      }
+
+      // Collect bookmarks from Nexus response (viewer's bookmark status)
+      if (post.bookmark) {
+        postBookmarks.push({
+          id: postId,
+          created_at: post.bookmark.created_at,
         });
       }
 
@@ -203,6 +212,8 @@ export class LocalStreamPostsService {
       Core.PostCountsModel.bulkSave(postCounts),
       Core.PostTagsModel.bulkSave(postTags),
       Core.PostRelationshipsModel.bulkSave(postRelationships),
+      // Persist bookmarks from Nexus (viewer's bookmark status for each post)
+      postBookmarks.length > 0 ? Core.BookmarkModel.bulkSave(postBookmarks) : Promise.resolve(),
     ]);
 
     if (Object.keys(postReplies).length > 0) {
