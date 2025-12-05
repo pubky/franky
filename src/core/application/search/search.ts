@@ -1,4 +1,4 @@
-import { NexusSearchService, type TPrefixSearchParams } from '@/core/services/nexus';
+import { NexusSearchService, type TPrefixSearchParams, type TSearchResult } from '@/core/services/nexus';
 
 /**
  * Search Application Layer
@@ -12,7 +12,7 @@ export class SearchApplication {
    * Search users by ID prefix (pubky)
    * @returns Array of user IDs (pubkeys) matching the search prefix
    */
-  static async usersById(params: TPrefixSearchParams): Promise<string[]> {
+  static async usersById(params: TPrefixSearchParams): Promise<TSearchResult> {
     return await NexusSearchService.usersById(params);
   }
 
@@ -20,14 +20,14 @@ export class SearchApplication {
    * Search users by name prefix
    * @returns Array of user IDs (pubkeys) matching the search prefix
    */
-  static async usersByName(params: TPrefixSearchParams): Promise<string[]> {
+  static async usersByName(params: TPrefixSearchParams): Promise<TSearchResult> {
     return await NexusSearchService.usersByName(params);
   }
 
   /**
    * Search tags by prefix
    */
-  static async tagsByPrefix(params: TPrefixSearchParams): Promise<string[]> {
+  static async tagsByPrefix(params: TPrefixSearchParams): Promise<TSearchResult> {
     return await NexusSearchService.tags(params);
   }
 }

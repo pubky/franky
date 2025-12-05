@@ -15,9 +15,9 @@ export class NexusSearchService {
    * @param params - Parameters containing prefix and pagination options
    * @returns Array of user IDs matching the ID prefix
    */
-  static async usersById(params: Core.TPrefixSearchParams): Promise<string[]> {
+  static async usersById(params: Core.TPrefixSearchParams): Promise<Core.TSearchResult> {
     const url = Core.searchApi.byUser(params);
-    const response = await Core.queryNexus<string[]>(url);
+    const response = await Core.queryNexus<Core.TSearchResult>(url);
     Libs.Logger.debug('Users by ID fetched successfully', { count: response?.length ?? 0 });
     return response || [];
   }
@@ -28,9 +28,9 @@ export class NexusSearchService {
    * @param params - Parameters containing prefix and pagination options
    * @returns Array of user IDs matching the name prefix
    */
-  static async usersByName(params: Core.TPrefixSearchParams): Promise<string[]> {
+  static async usersByName(params: Core.TPrefixSearchParams): Promise<Core.TSearchResult> {
     const url = Core.searchApi.byUsername(params);
-    const response = await Core.queryNexus<string[]>(url);
+    const response = await Core.queryNexus<Core.TSearchResult>(url);
     Libs.Logger.debug('Users by name fetched successfully', { count: response?.length ?? 0 });
     return response || [];
   }
@@ -41,9 +41,9 @@ export class NexusSearchService {
    * @param params - Parameters containing prefix and pagination options
    * @returns Array of tag labels matching the prefix
    */
-  static async tags(params: Core.TPrefixSearchParams): Promise<string[]> {
+  static async tags(params: Core.TPrefixSearchParams): Promise<Core.TSearchResult> {
     const url = Core.searchApi.byPrefix(params);
-    const response = await Core.queryNexus<string[]>(url);
+    const response = await Core.queryNexus<Core.TSearchResult>(url);
     Libs.Logger.debug('Tags fetched successfully', { count: response?.length ?? 0 });
     return response || [];
   }
