@@ -66,7 +66,6 @@ describe('usePost', () => {
       expect(result.current.content).toBe('');
       expect(result.current.tags).toEqual([]);
       expect(result.current.isSubmitting).toBe(false);
-      expect(result.current.error).toBe(null);
       expect(typeof result.current.setContent).toBe('function');
       expect(typeof result.current.setTags).toBe('function');
       expect(typeof result.current.reply).toBe('function');
@@ -205,7 +204,7 @@ describe('usePost', () => {
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
     });
 
-    it('should handle reply error and set error state', async () => {
+    it('should handle reply error and show toast', async () => {
       const { result } = renderHook(() => usePost());
       const mockError = new Error('Failed to create reply');
       mockPostControllerCreate.mockRejectedValueOnce(mockError);
@@ -221,21 +220,16 @@ describe('usePost', () => {
         });
       });
 
-      // Error is set and then cleared by useEffect that shows toast
-      // Check that toast was called with the error message
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
-          description: 'Failed to post reply. Please try again.',
-          className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-        });
+      // Toast should be called directly in catch block
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Failed to post reply. Please try again.',
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
       expect(mockConsoleError).toHaveBeenCalledWith('Failed to submit reply:', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Reply content'); // Content should not be cleared on error
-      // Error is cleared after toast is shown
-      expect(result.current.error).toBe(null);
     });
 
     it('should set isSubmitting to true during reply submission', async () => {
@@ -388,7 +382,7 @@ describe('usePost', () => {
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
     });
 
-    it('should handle post error and set error state', async () => {
+    it('should handle post error and show toast', async () => {
       const { result } = renderHook(() => usePost());
       const mockError = new Error('Failed to create post');
       mockPostControllerCreate.mockRejectedValueOnce(mockError);
@@ -403,21 +397,16 @@ describe('usePost', () => {
         });
       });
 
-      // Error is set and then cleared by useEffect that shows toast
-      // Check that toast was called with the error message
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
-          description: 'Failed to create post. Please try again.',
-          className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-        });
+      // Toast should be called directly in catch block
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Failed to create post. Please try again.',
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
       expect(mockConsoleError).toHaveBeenCalledWith('Failed to create post:', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Post content'); // Content should not be cleared on error
-      // Error is cleared after toast is shown
-      expect(result.current.error).toBe(null);
     });
 
     it('should set isSubmitting to true during post submission', async () => {
@@ -490,25 +479,6 @@ describe('usePost', () => {
           description: 'Failed to create post. Please try again.',
           className: 'destructive border-destructive bg-destructive text-destructive-foreground',
         });
-      });
-    });
-
-    it('should clear error after displaying toast', async () => {
-      const { result } = renderHook(() => usePost());
-      mockPostControllerCreate.mockRejectedValueOnce(new Error('Test error'));
-
-      act(() => {
-        result.current.setContent('Test content');
-      });
-
-      await act(async () => {
-        await result.current.post({
-          onSuccess: vi.fn(),
-        });
-      });
-
-      await waitFor(() => {
-        expect(result.current.error).toBe(null);
       });
     });
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 
@@ -33,29 +33,25 @@ export function usePost() {
   const [content, setContent] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
   const { toast } = Molecules.useToast();
 
-  // Handle error display and clear after showing toast
-  useEffect(() => {
-    if (error) {
+  const showErrorToast = useCallback(
+    (description: string) => {
       toast({
         title: 'Error',
-        description: error,
+        description,
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
-      // Clear error after showing toast to prevent duplicate toasts
-      setError(null);
-    }
-  }, [error, toast]);
+    },
+    [toast],
+  );
 
   const reply = useCallback(
     async ({ postId, onSuccess }: UsePostReplyOptions) => {
       if (!content.trim() || !postId || !currentUserId) return;
 
       setIsSubmitting(true);
-      setError(null);
 
       try {
         const createdPostId = await Core.PostController.create({
@@ -69,12 +65,12 @@ export function usePost() {
         onSuccess?.(createdPostId);
       } catch (err) {
         console.error('Failed to submit reply:', err);
-        setError('Failed to post reply. Please try again.');
+        showErrorToast('Failed to post reply. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId],
+    [content, tags, currentUserId, showErrorToast],
   );
 
   const post = useCallback(
@@ -82,7 +78,6 @@ export function usePost() {
       if (!content.trim() || !currentUserId) return;
 
       setIsSubmitting(true);
-      setError(null);
 
       try {
         const createdPostId = await Core.PostController.create({
@@ -95,12 +90,12 @@ export function usePost() {
         onSuccess?.(createdPostId);
       } catch (err) {
         console.error('Failed to create post:', err);
-        setError('Failed to create post. Please try again.');
+        showErrorToast('Failed to create post. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId],
+    [content, tags, currentUserId, showErrorToast],
   );
 
   return {
@@ -111,6 +106,5 @@ export function usePost() {
     reply,
     post,
     isSubmitting,
-    error,
   };
 }
