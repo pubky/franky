@@ -4,6 +4,7 @@ exports[`HomeFeedDrawer > matches snapshot 1`] = `
 <div>
   <div
     class="flex flex-col gap-6"
+    data-testid="container"
   >
     <div
       data-testid="filter-reach"
@@ -16,14 +17,14 @@ exports[`HomeFeedDrawer > matches snapshot 1`] = `
       FilterSort
     </div>
     <div
-      data-testid="filter-content"
-    >
-      FilterContent
-    </div>
-    <div
       data-testid="filter-layout"
     >
       FilterLayout
+    </div>
+    <div
+      data-testid="filter-content"
+    >
+      FilterContent
     </div>
   </div>
 </div>
@@ -33,6 +34,7 @@ exports[`HomeFeedDrawerMobile > matches snapshot 1`] = `
 <div>
   <div
     class="flex flex-col gap-6"
+    data-testid="container"
   >
     <div
       data-testid="filter-reach"
@@ -56,27 +58,33 @@ exports[`HomeFeedDrawerMobile > matches snapshot 1`] = `
 exports[`HomeFeedSidebar > matches snapshot 1`] = `
 <div>
   <div
-    data-testid="filter-reach"
-  >
-    FilterReach
-  </div>
-  <div
-    data-testid="filter-sort"
-  >
-    FilterSort
-  </div>
-  <div
-    class="sticky top-[100px] flex w-full flex-col gap-6 self-start"
+    class="flex flex-col gap-6"
+    data-testid="container"
   >
     <div
-      data-testid="filter-content"
+      data-testid="filter-reach"
     >
-      FilterContent
+      FilterReach
     </div>
     <div
-      data-testid="filter-layout"
+      data-testid="filter-sort"
     >
-      FilterLayout
+      FilterSort
+    </div>
+    <div
+      class="sticky top-[100px] flex w-full flex-col gap-6 self-start"
+      data-testid="container"
+    >
+      <div
+        data-testid="filter-layout"
+      >
+        FilterLayout
+      </div>
+      <div
+        data-testid="filter-content"
+      >
+        FilterContent
+      </div>
     </div>
   </div>
 </div>

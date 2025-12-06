@@ -16,6 +16,15 @@ vi.mock('@/core', () => ({
   })),
 }));
 
+// Mock Atoms
+vi.mock('@/atoms', () => ({
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
+}));
+
 // Mock Molecules
 vi.mock('@/molecules', () => ({
   FilterReach: () => <div data-testid="filter-reach">FilterReach</div>,
