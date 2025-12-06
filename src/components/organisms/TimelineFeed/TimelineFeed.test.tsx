@@ -17,6 +17,15 @@ vi.mock('@/hooks', async (importOriginal) => {
   };
 });
 
+// Mock the new hooks used in TimelineFeed
+vi.mock('@/hooks/useUnreadPosts', () => ({
+  useUnreadPosts: vi.fn(() => ({ unreadPostIds: [], unreadCount: 0 })),
+}));
+
+vi.mock('@/hooks/useIsScrolledFromTop', () => ({
+  useIsScrolledFromTop: vi.fn(() => false),
+}));
+
 vi.mock('@/providers', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/providers')>();
   return {
@@ -28,6 +37,15 @@ vi.mock('@/providers', async (importOriginal) => {
 // Mock components
 vi.mock('@/molecules', () => ({
   TimelineLoading: () => <div data-testid="timeline-loading">Loading...</div>,
+  NewPostsButton: ({
+    count,
+    visible,
+  }: {
+    count: number;
+    onClick: () => void;
+    visible: boolean;
+    isScrolled?: boolean;
+  }) => (visible && count > 0 ? <div data-testid="new-posts-button">{count} new posts</div> : null),
 }));
 
 vi.mock('@/organisms', () => ({

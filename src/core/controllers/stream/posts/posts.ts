@@ -99,4 +99,13 @@ export class StreamPostsController {
   static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams) {
     return await Core.PostStreamApplication.mergeUnreadStreamWithPostStream(params);
   }
+
+  /**
+   * Clear the unread stream and return the post IDs that were in it
+   * @param params - The stream ID to clear the unread stream for
+   * @returns Array of post IDs that were in the unread stream
+   */
+  static async clearUnreadStream(params: Core.TStreamIdParams): Promise<string[]> {
+    return await Core.PostStreamApplication.clearUnreadStream(params);
+  }
 }
