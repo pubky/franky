@@ -54,7 +54,7 @@ export function ProfileFollowers() {
   }
 
   return (
-    <Atoms.Container className="mt-6 gap-4 lg:mt-0">
+    <Atoms.Container data-cy="profile-followers-list" className="mt-6 gap-4 lg:mt-0">
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Followers {count > 0 && `(${count})`}
       </Atoms.Heading>

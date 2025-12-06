@@ -138,7 +138,11 @@ export function ProfilePageFilterBar({
               onClick={() => onPageChangeAction(item.pageType)}
               className="w-full items-start justify-between px-0 py-1"
             >
-              <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
+              <Atoms.Container
+                data-cy={`profile-filter-item-${item.label.toLowerCase()}`}
+                overrideDefaults={true}
+                className="flex items-center gap-2"
+              >
                 <Atoms.FilterItemIcon icon={Icon} />
                 <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
               </Atoms.Container>
@@ -146,6 +150,7 @@ export function ProfilePageFilterBar({
                 <Atoms.Spinner size="sm" className="size-4" />
               ) : (
                 <Atoms.Typography
+                  data-cy={`profile-filter-item-${item.label.toLowerCase()}-count`}
                   as="span"
                   className={`text-base font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}
                 >
