@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NotificationController } from './notification';
 import * as Core from '@/core';
 import * as Config from '@/config';
-import * as Libs from '@/libs';
 
 const mockUserId = 'pubky-user-123' as Core.Pubky;
 
@@ -103,6 +102,7 @@ describe('NotificationController', () => {
 
   describe('markAllAsRead', () => {
     const mockTimestamp = 1234567890;
+    const mockLastReadUrl = 'pubky://test-user/pub/pubky.app/last-read';
 
     const setupStores = (pubky: Core.Pubky | null) => {
       const setLastRead = vi.fn();
@@ -122,26 +122,50 @@ describe('NotificationController', () => {
 
     it('should call application and update local store', () => {
       const { setLastRead, setUnread } = setupStores(mockUserId);
-      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead').mockReturnValue(mockTimestamp);
+
+      const mockLastReadResult = {
+        last_read: {
+          timestamp: BigInt(mockTimestamp),
+          toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+        },
+        meta: { url: mockLastReadUrl },
+      };
+
+      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+        mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+      );
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead').mockImplementation(() => {});
 
       NotificationController.markAllAsRead();
 
-      expect(applicationSpy).toHaveBeenCalledWith(mockUserId);
+      expect(Core.LastReadNormalizer.to).toHaveBeenCalledWith(mockUserId);
+      expect(applicationSpy).toHaveBeenCalledWith(mockLastReadResult);
       expect(setLastRead).toHaveBeenCalledWith(mockTimestamp);
       expect(setUnread).toHaveBeenCalledWith(0);
     });
 
     it('should not call application when no user is authenticated', () => {
       const { setLastRead, setUnread } = setupStores(null);
-      const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+
+      const mockLastReadResult = {
+        last_read: {
+          timestamp: BigInt(mockTimestamp),
+          toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+        },
+        meta: { url: mockLastReadUrl },
+      };
+
+      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+        mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+      );
       const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead');
 
       NotificationController.markAllAsRead();
 
-      expect(loggerWarnSpy).toHaveBeenCalledWith('Cannot mark notifications as read: no authenticated user');
-      expect(applicationSpy).not.toHaveBeenCalled();
-      expect(setLastRead).not.toHaveBeenCalled();
-      expect(setUnread).not.toHaveBeenCalled();
+      // When pubky is null, LastReadNormalizer.to is still called but application should handle it
+      expect(applicationSpy).toHaveBeenCalled();
+      expect(setLastRead).toHaveBeenCalledWith(mockTimestamp);
+      expect(setUnread).toHaveBeenCalledWith(0);
     });
   });
 

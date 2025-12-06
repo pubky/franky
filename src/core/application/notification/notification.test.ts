@@ -126,7 +126,7 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
 
       await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit: 10 });
 
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, limit: 8 });
+      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, limit: 8, start: 900 });
     });
 
     it('should deduplicate by timestamp', async () => {
@@ -175,7 +175,7 @@ describe('NotificationApplication.markAllAsRead', () => {
 
   beforeEach(() => vi.clearAllMocks());
 
-  it('should create lastRead and send to homeserver', () => {
+  it('should send lastRead to homeserver', () => {
     const mockLastReadResult = {
       last_read: {
         timestamp: BigInt(mockTimestamp),
@@ -184,23 +184,18 @@ describe('NotificationApplication.markAllAsRead', () => {
       meta: { url: mockLastReadUrl },
     };
 
-    vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
-      mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
-    );
     const homeserverSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
 
-    const result = NotificationApplication.markAllAsRead(userId);
+    NotificationApplication.markAllAsRead(mockLastReadResult as ReturnType<typeof Core.LastReadNormalizer.to>);
 
-    expect(Core.LastReadNormalizer.to).toHaveBeenCalledWith(userId);
     expect(homeserverSpy).toHaveBeenCalledWith(
       Core.HomeserverAction.PUT,
       mockLastReadUrl,
       mockLastReadResult.last_read.toJson(),
     );
-    expect(result).toBe(mockTimestamp);
   });
 
-  it('should return timestamp even if homeserver fails (fire and forget)', async () => {
+  it('should log warning if homeserver fails (fire and forget)', async () => {
     const mockLastReadResult = {
       last_read: {
         timestamp: BigInt(mockTimestamp),
@@ -209,15 +204,10 @@ describe('NotificationApplication.markAllAsRead', () => {
       meta: { url: mockLastReadUrl },
     };
 
-    vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
-      mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
-    );
     vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
     const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
 
-    const result = NotificationApplication.markAllAsRead(userId);
-
-    expect(result).toBe(mockTimestamp);
+    NotificationApplication.markAllAsRead(mockLastReadResult as ReturnType<typeof Core.LastReadNormalizer.to>);
 
     // Wait for the catch to execute
     await new Promise((resolve) => setTimeout(resolve, 10));

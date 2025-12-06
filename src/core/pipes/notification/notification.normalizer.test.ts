@@ -155,10 +155,9 @@ describe('NotificationNormalizer', () => {
     };
 
     describe('transformation', () => {
-      it('should transform NexusNotification to FlatNotification with id', () => {
+      it('should transform NexusNotification to FlatNotification', () => {
         const result = Core.NotificationNormalizer.toFlatNotification(sampleNotifications.follow);
 
-        expect(result).toHaveProperty('id');
         expect(result).toHaveProperty('timestamp', sampleNotifications.follow.timestamp);
         expect(result).toHaveProperty('type', Core.NotificationType.Follow);
       });
@@ -184,80 +183,7 @@ describe('NotificationNormalizer', () => {
         const result = Core.NotificationNormalizer.toFlatNotification(notification);
 
         expect(result.type).toBe(expectedType);
-        expect(result.id).toBeDefined();
-        expect(typeof result.id).toBe('string');
-        expect(result.id.length).toBeGreaterThan(0);
-      });
-    });
-
-    describe('id generation', () => {
-      it('should generate unique ids for different notification types', () => {
-        const ids = Object.values(sampleNotifications).map((n) => Core.NotificationNormalizer.toFlatNotification(n).id);
-
-        expect(new Set(ids).size).toBe(ids.length);
-      });
-
-      it('should generate same id for identical notifications', () => {
-        const id1 = Core.NotificationNormalizer.toFlatNotification(sampleNotifications.follow).id;
-        const id2 = Core.NotificationNormalizer.toFlatNotification(sampleNotifications.follow).id;
-
-        expect(id1).toBe(id2);
-      });
-
-      it('should generate different ids for same type with different content', () => {
-        const notification1 = createNexusNotification(Core.NotificationType.Follow, {
-          followed_by: TEST_PUBKY.USER_1,
-        });
-        const notification2 = createNexusNotification(Core.NotificationType.Follow, {
-          followed_by: TEST_PUBKY.USER_2,
-        });
-
-        const id1 = Core.NotificationNormalizer.toFlatNotification(notification1).id;
-        const id2 = Core.NotificationNormalizer.toFlatNotification(notification2).id;
-
-        expect(id1).not.toBe(id2);
-      });
-
-      it('should generate different ids for same content with different timestamps', () => {
-        const notification1 = createNexusNotification(
-          Core.NotificationType.Follow,
-          { followed_by: TEST_PUBKY.USER_2 },
-          1700000000000,
-        );
-        const notification2 = createNexusNotification(
-          Core.NotificationType.Follow,
-          { followed_by: TEST_PUBKY.USER_2 },
-          1700000001000,
-        );
-
-        const id1 = Core.NotificationNormalizer.toFlatNotification(notification1).id;
-        const id2 = Core.NotificationNormalizer.toFlatNotification(notification2).id;
-
-        expect(id1).not.toBe(id2);
-      });
-
-      it('should generate different ids for reply notifications from same user to different posts', () => {
-        const notification1 = createNexusNotification(
-          Core.NotificationType.Reply,
-          {
-            replied_by: TEST_PUBKY.USER_2,
-            reply_uri: 'pubky://author/pub/pubky.app/posts/post123',
-          },
-          1700000000000,
-        );
-        const notification2 = createNexusNotification(
-          Core.NotificationType.Reply,
-          {
-            replied_by: TEST_PUBKY.USER_2,
-            reply_uri: 'pubky://author/pub/pubky.app/posts/post456',
-          },
-          1700000000000,
-        );
-
-        const id1 = Core.NotificationNormalizer.toFlatNotification(notification1).id;
-        const id2 = Core.NotificationNormalizer.toFlatNotification(notification2).id;
-
-        expect(id1).not.toBe(id2);
+        expect(result.timestamp).toBeDefined();
       });
     });
 
@@ -270,8 +196,8 @@ describe('NotificationNormalizer', () => {
 
         const result = Core.NotificationNormalizer.toFlatNotification(minimalNotification);
 
-        expect(result.id).toBeDefined();
         expect(result.timestamp).toBe(1700000000000);
+        expect(result.type).toBe(Core.NotificationType.Follow);
       });
 
       it('should preserve all body properties in flat notification', () => {

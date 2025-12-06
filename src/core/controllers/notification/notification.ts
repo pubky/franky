@@ -1,6 +1,5 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
-import * as Libs from '@/libs';
 
 export class NotificationController {
   private constructor() {} // Prevent instantiation
@@ -25,17 +24,14 @@ export class NotificationController {
   static markAllAsRead() {
     const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
 
-    if (!pubky) {
-      Libs.Logger.warn('Cannot mark notifications as read: no authenticated user');
-      return;
-    }
+    // Create new lastRead with current timestamp using normalizer
+    const lastRead = Core.LastReadNormalizer.to(pubky);
 
-    // Delegate to application layer (handles homeserver sync)
-    const timestamp = Core.NotificationApplication.markAllAsRead(pubky);
+    Core.NotificationApplication.markAllAsRead(lastRead);
 
     // Update local store
     const notificationStore = Core.useNotificationStore.getState();
-    notificationStore.setLastRead(timestamp);
+    notificationStore.setLastRead(Number(lastRead.last_read.timestamp));
     notificationStore.setUnread(0);
   }
 
@@ -71,5 +67,10 @@ export class NotificationController {
    */
   static async getAllFromCache(): Promise<Core.FlatNotification[]> {
     return await Core.NotificationApplication.getAllFromCache();
+  }
+
+  static getNotificationsCountsNow(): number {
+    const notificationStore = Core.useNotificationStore.getState();
+    return notificationStore.selectUnread();
   }
 }
