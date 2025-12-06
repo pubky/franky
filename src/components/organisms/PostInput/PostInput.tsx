@@ -8,6 +8,7 @@ import * as Hooks from '@/hooks';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { PostInputTags } from '../PostInputTags';
 import { PostInputActionBar } from '../PostInputActionBar';
+import { useTimelineFeedContext } from '../TimelineFeed/TimelineFeed';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 
@@ -25,6 +26,7 @@ export function PostInput({
   const containerRef = useRef<HTMLDivElement>(null);
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { content, setContent, tags, setTags, reply, post, isSubmitting } = Hooks.usePost();
+  const timelineFeed = useTimelineFeedContext();
 
   // Handle expand on interaction
   const handleExpand = useCallback(() => {
@@ -57,12 +59,20 @@ export function PostInput({
   const handleSubmit = useCallback(async () => {
     if (!content.trim() || isSubmitting) return;
 
+    // Wrapper that prepends to timeline and calls original onSuccess
+    const handleSuccess = (createdPostId: string) => {
+      // Prepend to timeline if inside TimelineFeed context
+      timelineFeed?.prependPosts(createdPostId);
+      // Call original onSuccess callback if provided
+      onSuccess?.(createdPostId);
+    };
+
     if (variant === POST_INPUT_VARIANT.REPLY) {
-      await reply({ postId: postId!, onSuccess });
+      await reply({ postId: postId!, onSuccess: handleSuccess });
     } else {
-      await post({ onSuccess });
+      await post({ onSuccess: handleSuccess });
     }
-  }, [content, variant, postId, reply, post, isSubmitting, onSuccess]);
+  }, [content, variant, postId, reply, post, isSubmitting, onSuccess, timelineFeed]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

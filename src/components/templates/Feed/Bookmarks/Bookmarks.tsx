@@ -1,7 +1,5 @@
-'use client';
-
-import * as Hooks from '@/hooks';
 import * as Organisms from '@/organisms';
+import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.types';
 
 /**
  * Bookmarks Page Template
@@ -13,11 +11,6 @@ import * as Organisms from '@/organisms';
  * Reach filter is hidden as it's not supported by the Nexus API for bookmarks.
  */
 export function Bookmarks() {
-  const streamId = Hooks.useBookmarksStreamId();
-  const { postIds, loading, loadingMore, error, hasMore, loadMore } = Hooks.useStreamPagination({
-    streamId,
-  });
-
   return (
     <Organisms.ContentLayout
       leftSidebarContent={<Organisms.HomeFeedSidebar hideReachFilter />}
@@ -27,14 +20,7 @@ export function Bookmarks() {
       leftDrawerContentMobile={<Organisms.HomeFeedDrawerMobile hideReachFilter />}
       rightDrawerContentMobile={<Organisms.HomeFeedRightDrawerMobile />}
     >
-      <Organisms.TimelinePosts
-        postIds={postIds}
-        loading={loading}
-        loadingMore={loadingMore}
-        error={error}
-        hasMore={hasMore}
-        loadMore={loadMore}
-      />
+      <Organisms.TimelineFeed variant={TIMELINE_FEED_VARIANT.BOOKMARKS} />
     </Organisms.ContentLayout>
   );
 }
