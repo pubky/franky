@@ -67,6 +67,8 @@ export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
       return NexusErrorType.RESOURCE_NOT_FOUND;
     case 429:
       return NexusErrorType.RATE_LIMIT_EXCEEDED;
+    case 500:
+      return NexusErrorType.INTERNAL_SERVER_ERROR;
     case 503:
       return NexusErrorType.SERVICE_UNAVAILABLE;
     default:
