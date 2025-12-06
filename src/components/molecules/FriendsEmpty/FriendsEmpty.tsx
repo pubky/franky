@@ -6,7 +6,7 @@ import * as Atoms from '@/atoms';
 
 export function FriendsEmpty() {
   return (
-    <Atoms.Container className="relative items-center gap-6 px-0 py-6">
+    <Atoms.Container data-cy="profile-friends-empty" className="relative items-center gap-6 px-0 py-6">
       {/* Background image */}
       <Image
         src="/images/connections-empty-state.png"
