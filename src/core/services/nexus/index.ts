@@ -5,6 +5,7 @@ export * from './tag';
 export * from './user';
 export * from './nexus.utils';
 export * from './nexus.types';
+export * from './nexus.query-client';
 export * from './stream';
 export * from './hot';
 export * from './search';
