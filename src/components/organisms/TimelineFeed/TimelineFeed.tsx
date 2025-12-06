@@ -83,9 +83,20 @@ function TimelineFeedContent({
   variant: TimelineFeedProps['variant'];
   children?: TimelineFeedProps['children'];
 }) {
-  const { postIds, loading, loadingMore, error, hasMore, loadMore, prependPosts } = Hooks.useStreamPagination({
+  const {
+    postIds: rawPostIds,
+    loading,
+    loadingMore,
+    error,
+    hasMore,
+    loadMore,
+    prependPosts,
+  } = Hooks.useStreamPagination({
     streamId,
   });
+
+  // Deduplicate postIds to prevent React key errors from race conditions
+  const postIds = useMemo(() => [...new Set(rawPostIds)], [rawPostIds]);
 
   // Watch for unread posts from StreamCoordinator polling
   const { unreadPostIds } = useUnreadPosts({ streamId });

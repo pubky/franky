@@ -137,7 +137,12 @@ export class LocalStreamPostsService {
     if (!unreadPostStream) return;
     const postStream = await Core.PostStreamModel.findById(streamId);
     if (!postStream) return;
-    const combinedStream = [...unreadPostStream.stream, ...postStream.stream];
+
+    // Deduplicate: unread posts first, then existing posts (excluding duplicates)
+    const existingIds = new Set(unreadPostStream.stream);
+    const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
+    const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
+
     await Core.PostStreamModel.upsert(streamId, combinedStream);
   }
 
