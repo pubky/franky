@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import * as Core from '@/core';
 import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 import type { FlatNotification } from '@/core';
@@ -74,7 +74,7 @@ export function useNotifications(): UseNotificationsResult {
       });
 
       setNotifications((prev) => {
-        // Deduplicate using businessKey
+        // Deduplicate using businessKey. Keep it as defensive code. It's not critical for the app.
         const existingKeys = new Set(prev.map(getBusinessKey));
         const newNotifications = result.notifications.filter((n) => !existingKeys.has(getBusinessKey(n)));
         return [...prev, ...newNotifications];
@@ -131,8 +131,11 @@ export function useNotifications(): UseNotificationsResult {
 
   /**
    * List of unread notifications
+   * Memoized to avoid creating a new array on every render
    */
-  const unreadNotifications = notifications.filter((n) => n.timestamp > lastReadRef.current);
+  const unreadNotifications = useMemo(() => {
+    return notifications.filter((n) => n.timestamp > lastReadRef.current);
+  }, [notifications, lastRead]);
 
   /**
    * Initial load - fetch first page when component mounts

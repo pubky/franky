@@ -30,3 +30,8 @@ export type TGetOrFetchNotificationsResponse = {
   notifications: Core.FlatNotification[];
   olderThan: number | undefined;
 };
+
+export type TLoopAndParseNotificationsResult = {
+  relatedPostIds: string[];
+  relatedUserIds: Core.Pubky[];
+};

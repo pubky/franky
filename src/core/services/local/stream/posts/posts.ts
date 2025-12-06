@@ -107,6 +107,11 @@ export class LocalStreamPostsService {
     await this.upsert({ streamId, stream: updatedStream });
   }
 
+  static async getNotPersistedPostsInCache(postIds: string[]): Promise<string[]> {
+    const existingPostIds = await Core.PostDetailsModel.findByIdsPreserveOrder(postIds);
+    return postIds.filter((_postId, index) => existingPostIds[index] === undefined);
+  }
+
   /**
    * Adds a reply post to the post replies map if the post is a reply
    *
