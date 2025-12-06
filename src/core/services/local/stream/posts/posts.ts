@@ -142,6 +142,19 @@ export class LocalStreamPostsService {
   }
 
   /**
+   * Clear the unread stream and return the post IDs that were in it
+   * @param streamId - The stream ID to clear the unread stream for
+   * @returns Array of post IDs that were in the unread stream
+   */
+  static async clearUnreadStream({ streamId }: Core.TStreamIdParams): Promise<string[]> {
+    const unreadStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadStream) return [];
+    const postIds = unreadStream.stream;
+    await Core.UnreadPostStreamModel.deleteById(streamId);
+    return postIds;
+  }
+
+  /**
    * Persist posts from Nexus API to local IndexedDB
    *
    * Processes an array of Nexus posts and saves them to the local database.

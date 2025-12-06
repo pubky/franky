@@ -44,6 +44,10 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream(params);
   }
 
+  static async clearUnreadStream(params: Core.TStreamIdParams): Promise<string[]> {
+    return await Core.LocalStreamPostsService.clearUnreadStream(params);
+  }
+
   static async getOrFetchStreamSlice({
     streamId,
     streamHead,
