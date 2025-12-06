@@ -165,7 +165,7 @@ export class NotificationApplication {
    * @param notifications - Array of flat notifications to extract post and user references from
    */
   private static async fetchMissingEntities(notifications: Core.FlatNotification[], viewerId: Core.Pubky) {
-    const { relatedPostIds, relatedUserIds } = this.loopAndParseNotifications(notifications)
+    const { relatedPostIds, relatedUserIds } = this.loopAndParseNotifications(notifications);
 
     const notPersistedPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(relatedPostIds);
     const notPersistedUserIds = await Core.LocalStreamUsersService.getNotPersistedUsersInCache(relatedUserIds);
@@ -179,11 +179,13 @@ export class NotificationApplication {
     }
   }
 
-  private static loopAndParseNotifications(notifications: Core.FlatNotification[]): Core.TLoopAndParseNotificationsResult{
+  private static loopAndParseNotifications(
+    notifications: Core.FlatNotification[],
+  ): Core.TLoopAndParseNotificationsResult {
     // Handle duplicates
     const relatedPostIds = new Set<string>();
     const relatedUserIds = new Set<Core.Pubky>();
-    
+
     const addPostUri = (uri: string | undefined) => {
       if (!uri) return;
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });

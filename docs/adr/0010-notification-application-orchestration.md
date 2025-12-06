@@ -20,10 +20,12 @@ ADR-0009 restricts orchestration privilege to `PostApplication` and `UserApplica
 **Extend the orchestration privilege (ADR-0009) to include `NotificationApplication`.**
 
 `NotificationApplication` MAY call:
+
 - `PostStreamApplication.fetchMissingPostsFromNexus()`
 - `UserStreamApplication.fetchMissingUsersFromNexus()`
 
 Constraints:
+
 1. **Read-only hydration**: Only fetch/read operations permitted—no writes to post or user domains
 2. **Pre-persistence only**: Cross-Application calls must occur before persisting notifications
 3. **No reverse dependencies**: `PostStreamApplication` and `UserStreamApplication` MUST NOT call `NotificationApplication`
