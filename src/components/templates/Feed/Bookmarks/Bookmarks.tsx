@@ -14,6 +14,9 @@ import * as Organisms from '@/organisms';
  */
 export function Bookmarks() {
   const streamId = Hooks.useBookmarksStreamId();
+  const { postIds, loading, loadingMore, error, hasMore, loadMore } = Hooks.useStreamPagination({
+    streamId,
+  });
 
   return (
     <Organisms.ContentLayout
@@ -24,7 +27,14 @@ export function Bookmarks() {
       leftDrawerContentMobile={<Organisms.HomeFeedDrawerMobile hideReachFilter />}
       rightDrawerContentMobile={<Organisms.HomeFeedRightDrawerMobile />}
     >
-      <Organisms.TimelinePosts streamId={streamId} />
+      <Organisms.TimelinePosts
+        postIds={postIds}
+        loading={loading}
+        loadingMore={loadingMore}
+        error={error}
+        hasMore={hasMore}
+        loadMore={loadMore}
+      />
     </Organisms.ContentLayout>
   );
 }
