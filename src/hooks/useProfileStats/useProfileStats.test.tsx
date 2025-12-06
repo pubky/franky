@@ -97,6 +97,14 @@ vi.mock('@/core', async (importOriginal) => {
     UserController: {
       getCounts: vi.fn().mockImplementation(() => Promise.resolve(mockUserCounts.current)),
     },
+    NotificationController: {
+      getNotificationsCountsNow: vi.fn(() => mockNotificationsCount.current),
+    },
+    useNotificationStore: {
+      getState: vi.fn(() => ({
+        selectUnread: () => mockNotificationsCount.current,
+      })),
+    },
   };
 });
 

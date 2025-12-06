@@ -138,15 +138,15 @@ export class NotificationApplication {
         Core.NotificationNormalizer.toFlatNotification(notification),
       );
 
-      await this.fetchMissingEntities(flatNotifications, userId)
+      await this.fetchMissingEntities(flatNotifications, userId);
 
-      // IMPORTANT: Await the save so useLiveQuery can detect the database change
-      // before this function returns. Without await, pagination won't work correctly.
-      try {
-        await Core.LocalNotificationService.bulkSave(flatNotifications);
-      } catch (error) {
+      // IMPORTANT: Save notifications AFTER fetching related entities. If we save notifications first,
+      // useLiveQuery will trigger re-renders in components, but referenced posts/users won't be
+      // available yet, causing incomplete UI states. By fetching entities first, everything is
+      // ready when the re-render happens.
+      Core.LocalNotificationService.bulkSave(flatNotifications).catch((error) => {
         Libs.Logger.warn('Failed to persist notifications to cache', { error });
-      }
+      });
 
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;
@@ -166,8 +166,6 @@ export class NotificationApplication {
    */
   private static async fetchMissingEntities(notifications: Core.FlatNotification[], viewerId: Core.Pubky) {
     const { relatedPostIds, relatedUserIds } = this.loopAndParseNotifications(notifications)
-    console.log('relatedPostIds', relatedPostIds)
-    console.log('relatedUserIds', relatedUserIds)
 
     const notPersistedPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(relatedPostIds);
     const notPersistedUserIds = await Core.LocalStreamUsersService.getNotPersistedUsersInCache(relatedUserIds);
@@ -202,6 +200,7 @@ export class NotificationApplication {
           break;
         case Core.NotificationType.TagPost:
           addPostUri(notification.post_uri);
+          relatedUserIds.add(notification.tagged_by);
           break;
         case Core.NotificationType.TagProfile:
           relatedUserIds.add(notification.tagged_by);

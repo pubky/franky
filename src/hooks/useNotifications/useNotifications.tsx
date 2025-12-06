@@ -131,11 +131,10 @@ export function useNotifications(): UseNotificationsResult {
 
   /**
    * List of unread notifications
-   * Memoized to avoid creating a new array on every render
    */
   const unreadNotifications = useMemo(() => {
     return notifications.filter((n) => n.timestamp > lastReadRef.current);
-  }, [notifications, lastRead]);
+  }, [notifications]);
 
   /**
    * Initial load - fetch first page when component mounts
