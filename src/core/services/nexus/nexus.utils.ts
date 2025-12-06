@@ -1,5 +1,6 @@
 import * as Config from '@/config';
 import * as Libs from '@/libs';
+import { nexusQueryClient } from './nexus.query-client';
 
 /**
  * Shared API utilities for all endpoints
@@ -107,19 +108,40 @@ export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
 }
 
 /**
- * Queries Nexus API and returns parsed response data
+ * Raw fetch function without retry logic.
+ * Used internally by queryNexus and for cases where retry is not desired.
+ *
  * @param url - Full API endpoint URL
  * @param method - HTTP method (default: 'GET')
  * @param body - Request body (optional)
  * @returns Parsed response data
  * @throws {NexusError} When response is not ok or JSON parsing fails
  */
-export async function queryNexus<T>(
-  url: string,
-  method: HttpMethod = 'GET',
-  body: BodyInit | null = null,
-): Promise<T> {
+export async function fetchNexus<T>(url: string, method: HttpMethod = 'GET', body: BodyInit | null = null): Promise<T> {
   const response = await fetch(url, createFetchOptions(method, body));
   ensureHttpResponseOk(response);
   return parseResponseOrThrow<T>(response);
+}
+
+/**
+ * Queries Nexus API with automatic retry logic via TanStack Query.
+ *
+ * Uses queryClient.fetchQuery which applies the Nexus retry configuration:
+ * - 404 errors: 5 retries (content indexing delay)
+ * - 5xx errors: 3 retries (server errors)
+ * - Exponential backoff between retries
+ *
+ * @param url - Full API endpoint URL
+ * @param method - HTTP method (default: 'GET')
+ * @param body - Request body (optional)
+ * @returns Parsed response data
+ * @throws {NexusError} When response is not ok after all retries
+ */
+export async function queryNexus<T>(url: string, method: HttpMethod = 'GET', body: BodyInit | null = null): Promise<T> {
+  return nexusQueryClient.fetchQuery({
+    queryKey: ['nexus', url, method, body],
+    queryFn: () => fetchNexus<T>(url, method, body),
+    // Disable stale time for imperative fetches - always fetch fresh
+    staleTime: 0,
+  });
 }
