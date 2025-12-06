@@ -13,4 +13,11 @@ export interface PostInputProps {
   placeholder?: string;
   /** Show the thread connector (for replies, default: false) */
   showThreadConnector?: boolean;
+  /**
+   * Controls whether the component starts in expanded mode.
+   * When false (default), shows a compact version that expands on click/focus.
+   * When true, shows the full version with tags and action bar visible.
+   * @default false
+   */
+  expanded?: boolean;
 }

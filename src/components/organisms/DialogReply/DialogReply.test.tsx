@@ -197,6 +197,7 @@ describe('DialogReply', () => {
         postId: 'test-post-123',
         onSuccess: expect.any(Function),
         showThreadConnector: true,
+        expanded: true,
       },
       undefined,
     );
