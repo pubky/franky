@@ -98,6 +98,11 @@ export type NexusTag = {
   relationship: boolean;
 };
 
+export type NexusTaggers = {
+  relationship: boolean;
+  users: Pubky[];
+}
+
 export type NexusHotTag = {
   label: string;
   taggers_id: Pubky[];
