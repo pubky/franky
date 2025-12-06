@@ -44,4 +44,9 @@ export interface UseStreamPaginationResult {
    * Function to manually trigger a refresh
    */
   refresh: () => Promise<void>;
+  /**
+   * Function to optimistically add post(s) to the top of the timeline
+   * @param postIds - A single post ID or array of post IDs to add
+   */
+  prependPosts: (postIds: string | string[]) => void;
 }

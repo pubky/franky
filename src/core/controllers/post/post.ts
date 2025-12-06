@@ -70,6 +70,7 @@ export class PostController {
    * @param params.attachments - Attachments to add to the post (optional)
    * @param params.parentPostId - ID of the post being replied to (optional for root posts)
    * @param params.originalPostId - ID of the post being reposted (optional for reposts)
+   * @returns The composite post ID of the created post
    */
   static async create({
     authorId,
@@ -79,7 +80,7 @@ export class PostController {
     attachments,
     parentPostId,
     originalPostId,
-  }: Core.TCreatePostParams) {
+  }: Core.TCreatePostParams): Promise<string> {
     let parentUri: string | undefined = undefined;
     let repostedUri: string | undefined = undefined;
     let tagList: Core.TCreateTagInput[] = [];
@@ -129,6 +130,8 @@ export class PostController {
       fileAttachments,
       tags: tagList,
     });
+
+    return compositePostId;
   }
 
   /**

@@ -148,6 +148,27 @@ export function useStreamPagination({
     await fetchStreamSlice(false);
   }, [loadingMore, hasMore, fetchStreamSlice]);
 
+  /**
+   * Optimistically add post(s) to the top of the timeline
+   * This avoids a full refresh when creating new posts
+   * @param postIds - A single post ID or array of post IDs to add
+   */
+  const prependPosts = useCallback((postIds: string | string[]) => {
+    const idsToAdd = Array.isArray(postIds) ? postIds : [postIds];
+
+    // Filter out posts that already exist to avoid duplicates
+    const existingIds = new Set(postIdsRef.current);
+    const newIds = idsToAdd.filter((id) => !existingIds.has(id));
+
+    if (newIds.length === 0) {
+      return;
+    }
+
+    const updatedPostIds = [...newIds, ...postIdsRef.current];
+    postIdsRef.current = updatedPostIds;
+    setPostIds(updatedPostIds);
+  }, []);
+
   // Initial load and reset when streamId changes
   useEffect(() => {
     if (resetOnStreamChange) {
@@ -165,5 +186,6 @@ export function useStreamPagination({
     hasMore,
     loadMore,
     refresh,
+    prependPosts,
   };
 }

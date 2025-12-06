@@ -1,4 +1,5 @@
 import * as Organisms from '@/organisms';
+import { TIMELINE_FEED_VARIANT } from '@/organisms';
 
 /**
  * ProfilePagePosts Template
@@ -7,5 +8,5 @@ import * as Organisms from '@/organisms';
  * Delegates all logic to the ProfilePosts organism.
  */
 export function ProfilePagePosts() {
-  return <Organisms.ProfilePosts />;
+  return <Organisms.TimelineFeed variant={TIMELINE_FEED_VARIANT.PROFILE} />;
 }

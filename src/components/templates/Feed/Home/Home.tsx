@@ -1,4 +1,6 @@
 import * as Organisms from '@/organisms';
+import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
+import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.types';
 
 export function Home() {
   return (
@@ -13,7 +15,9 @@ export function Home() {
         rightDrawerContentMobile={<Organisms.HomeFeedRightDrawerMobile />}
       >
         <Organisms.AlertBackup />
-        <Organisms.TimelinePosts />
+        <Organisms.TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME}>
+          <Organisms.PostInput variant={POST_INPUT_VARIANT.POST} />
+        </Organisms.TimelineFeed>
       </Organisms.ContentLayout>
     </>
   );
