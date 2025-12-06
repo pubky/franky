@@ -1,1 +1,1 @@
-export * from './hot.api';
+export * from './hot';

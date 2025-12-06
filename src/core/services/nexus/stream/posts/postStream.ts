@@ -16,7 +16,8 @@ export class NexusPostStreamService {
     params,
     invokeEndpoint,
     extraParams,
-  }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream | undefined> {
+  }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream> {
+    // TODO: Handle the error in application layer
     let nexusEndpoint: string;
     switch (invokeEndpoint) {
       case Core.StreamSource.ALL:
