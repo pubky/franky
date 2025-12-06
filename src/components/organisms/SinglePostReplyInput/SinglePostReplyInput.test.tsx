@@ -60,7 +60,7 @@ describe('SinglePostReplyInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockPostControllerCreate.mockResolvedValue(undefined);
-    mockReply.mockReturnValue(vi.fn().mockResolvedValue(undefined));
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: '',
       setContent: mockSetContent,
@@ -88,8 +88,7 @@ describe('SinglePostReplyInput', () => {
   });
 
   it('handles Enter key submission', async () => {
-    const handleReplySubmit = vi.fn().mockResolvedValue(undefined);
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -105,13 +104,13 @@ describe('SinglePostReplyInput', () => {
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
     await waitFor(() => {
-      expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith({ postId: 'test-post-123', onSuccess: undefined });
     });
   });
 
   it('does not submit on Shift+Enter', () => {
-    const handleReplySubmit = vi.fn();
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -126,12 +125,11 @@ describe('SinglePostReplyInput', () => {
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true });
 
-    expect(handleReplySubmit).not.toHaveBeenCalled();
+    expect(mockReply).not.toHaveBeenCalled();
   });
 
   it('does not submit empty content', async () => {
-    const handleReplySubmit = vi.fn();
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: '   ',
       setContent: mockSetContent,
@@ -146,14 +144,15 @@ describe('SinglePostReplyInput', () => {
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
-    // The hook handles validation, so handleReplySubmit might still be called
+    // The hook handles validation internally, so reply is still called
     // but it will return early if content is empty
-    expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockReply).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('trims whitespace from content before submission', async () => {
-    const handleReplySubmit = vi.fn();
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: '  Test reply content  ',
       setContent: mockSetContent,
@@ -168,12 +167,13 @@ describe('SinglePostReplyInput', () => {
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
-    expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockReply).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('clears textarea after successful submission', async () => {
-    const handleReplySubmit = vi.fn().mockResolvedValue(undefined);
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -189,13 +189,12 @@ describe('SinglePostReplyInput', () => {
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
     await waitFor(() => {
-      expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledTimes(1);
     });
   });
 
   it('handles submission errors', async () => {
-    const handleReplySubmit = vi.fn().mockRejectedValue(new Error('Submission failed'));
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockRejectedValue(new Error('Submission failed'));
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -211,13 +210,12 @@ describe('SinglePostReplyInput', () => {
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
     await waitFor(() => {
-      expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledTimes(1);
     });
   });
 
   it('uses current user ID from auth store', async () => {
-    const handleReplySubmit = vi.fn().mockResolvedValue(undefined);
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -233,13 +231,12 @@ describe('SinglePostReplyInput', () => {
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
     await waitFor(() => {
-      expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledTimes(1);
     });
   });
 
   it('does not submit when postId is empty', async () => {
-    const handleReplySubmit = vi.fn();
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -254,12 +251,14 @@ describe('SinglePostReplyInput', () => {
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
-    expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockReply).toHaveBeenCalledTimes(1);
+      expect(mockReply).toHaveBeenCalledWith({ postId: '', onSuccess: undefined });
+    });
   });
 
   it('does not submit when currentUserId is null', async () => {
-    const handleReplySubmit = vi.fn();
-    mockReply.mockReturnValue(handleReplySubmit);
+    mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
@@ -274,14 +273,16 @@ describe('SinglePostReplyInput', () => {
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
 
-    expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockReply).toHaveBeenCalledTimes(1);
+    });
   });
 });
 
 describe('SinglePostReplyInput - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    const mockReply = vi.fn(() => vi.fn().mockResolvedValue(undefined));
+    const mockReply = vi.fn().mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
       content: '',
       setContent: vi.fn(),

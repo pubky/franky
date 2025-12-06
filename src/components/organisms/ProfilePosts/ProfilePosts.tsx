@@ -1,6 +1,7 @@
 'use client';
 
 import * as Core from '@/core';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Providers from '@/providers';
 import * as Hooks from '@/hooks';
@@ -19,12 +20,25 @@ export function ProfilePosts() {
   // Build stream ID for user's posts: author:{userId}
   const streamId = pubky ? (`${Core.StreamSource.AUTHOR}:${pubky}` as Core.AuthorStreamCompositeId) : undefined;
 
-  // Use stream pagination hook (only if streamId is available)
+  // Show loading state while waiting for profile data
+  if (!streamId) {
+    return <Molecules.TimelineLoading />;
+  }
+
+  return <ProfilePostsContent streamId={streamId} />;
+}
+
+/**
+ * ProfilePostsContent
+ *
+ * Internal component that handles the actual posts fetching and display.
+ * Only rendered when streamId is available.
+ */
+function ProfilePostsContent({ streamId }: { streamId: Core.AuthorStreamCompositeId }) {
   const { postIds, loading, loadingMore, error, hasMore, loadMore } = Hooks.useStreamPagination({
-    streamId: streamId ?? (Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId),
+    streamId,
   });
 
-  // Delegate to TimelinePosts with the stream data
   return (
     <Organisms.TimelinePosts
       postIds={postIds}

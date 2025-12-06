@@ -51,62 +51,54 @@ export function usePost() {
   }, [error, toast]);
 
   const reply = useCallback(
-    ({ postId, onSuccess }: UsePostReplyOptions) => {
-      const handleReplySubmit = async () => {
-        if (!content.trim() || !postId || !currentUserId) return;
+    async ({ postId, onSuccess }: UsePostReplyOptions) => {
+      if (!content.trim() || !postId || !currentUserId) return;
 
-        setIsSubmitting(true);
-        setError(null);
+      setIsSubmitting(true);
+      setError(null);
 
-        try {
-          const createdPostId = await Core.PostController.create({
-            parentPostId: postId,
-            content: content.trim(),
-            authorId: currentUserId,
-            tags: tags.length > 0 ? tags : undefined,
-          });
-          setContent('');
-          setTags([]);
-          onSuccess?.(createdPostId);
-        } catch (err) {
-          console.error('Failed to submit reply:', err);
-          setError('Failed to post reply. Please try again.');
-        } finally {
-          setIsSubmitting(false);
-        }
-      };
-
-      return handleReplySubmit;
+      try {
+        const createdPostId = await Core.PostController.create({
+          parentPostId: postId,
+          content: content.trim(),
+          authorId: currentUserId,
+          tags: tags.length > 0 ? tags : undefined,
+        });
+        setContent('');
+        setTags([]);
+        onSuccess?.(createdPostId);
+      } catch (err) {
+        console.error('Failed to submit reply:', err);
+        setError('Failed to post reply. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     [content, tags, currentUserId],
   );
 
   const post = useCallback(
-    ({ onSuccess }: UsePostPostOptions) => {
-      const handlePostSubmit = async () => {
-        if (!content.trim() || !currentUserId) return;
+    async ({ onSuccess }: UsePostPostOptions) => {
+      if (!content.trim() || !currentUserId) return;
 
-        setIsSubmitting(true);
-        setError(null);
+      setIsSubmitting(true);
+      setError(null);
 
-        try {
-          const createdPostId = await Core.PostController.create({
-            content: content.trim(),
-            authorId: currentUserId,
-            tags: tags.length > 0 ? tags : undefined,
-          });
-          setContent('');
-          setTags([]);
-          onSuccess?.(createdPostId);
-        } catch (err) {
-          console.error('Failed to create post:', err);
-          setError('Failed to create post. Please try again.');
-        } finally {
-          setIsSubmitting(false);
-        }
-      };
-
-      return handlePostSubmit;
+      try {
+        const createdPostId = await Core.PostController.create({
+          content: content.trim(),
+          authorId: currentUserId,
+          tags: tags.length > 0 ? tags : undefined,
+        });
+        setContent('');
+        setTags([]);
+        onSuccess?.(createdPostId);
+      } catch (err) {
+        console.error('Failed to create post:', err);
+        setError('Failed to create post. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     [content, tags, currentUserId],
   );

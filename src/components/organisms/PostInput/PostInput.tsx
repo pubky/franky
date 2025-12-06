@@ -57,20 +57,11 @@ export function PostInput({
   const handleSubmit = useCallback(async () => {
     if (!content.trim() || isSubmitting) return;
 
-    const submitHandlers = {
-      [POST_INPUT_VARIANT.REPLY]: () =>
-        reply({
-          postId: postId!,
-          onSuccess,
-        }),
-      [POST_INPUT_VARIANT.POST]: () =>
-        post({
-          onSuccess,
-        }),
-    };
-
-    const submitHandler = submitHandlers[variant]();
-    await submitHandler();
+    if (variant === POST_INPUT_VARIANT.REPLY) {
+      await reply({ postId: postId!, onSuccess });
+    } else {
+      await post({ onSuccess });
+    }
   }, [content, variant, postId, reply, post, isSubmitting, onSuccess]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

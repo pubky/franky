@@ -101,19 +101,10 @@ describe('usePost', () => {
   });
 
   describe('reply method', () => {
-    it('should return a function when reply is called', () => {
+    it('should be an async function', () => {
       const { result } = renderHook(() => usePost());
 
-      act(() => {
-        result.current.setContent('Reply content');
-      });
-
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
-      expect(typeof handleReply).toBe('function');
+      expect(typeof result.current.reply).toBe('function');
     });
 
     it('should create a reply successfully', async () => {
@@ -125,13 +116,11 @@ describe('usePost', () => {
         result.current.setTags(['tag1', 'tag2']);
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: mockOnSuccess,
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: mockOnSuccess,
+        });
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalledWith({
@@ -153,13 +142,11 @@ describe('usePost', () => {
         result.current.setContent('Reply without tags');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalledWith({
@@ -173,13 +160,11 @@ describe('usePost', () => {
     it('should not submit reply when content is empty', async () => {
       const { result } = renderHook(() => usePost());
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
@@ -192,13 +177,11 @@ describe('usePost', () => {
         result.current.setContent('   ');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
@@ -212,13 +195,11 @@ describe('usePost', () => {
         result.current.setContent('Reply content');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
@@ -233,13 +214,11 @@ describe('usePost', () => {
         result.current.setContent('Reply content');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       // Error is set and then cleared by useEffect that shows toast
@@ -271,13 +250,11 @@ describe('usePost', () => {
         result.current.setContent('Reply content');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       act(() => {
-        handleReply();
+        result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       await waitFor(() => {
@@ -297,13 +274,11 @@ describe('usePost', () => {
         result.current.setContent('  Trimmed content  ');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalledWith({
@@ -316,18 +291,10 @@ describe('usePost', () => {
   });
 
   describe('post method', () => {
-    it('should return a function when post is called', () => {
+    it('should be an async function', () => {
       const { result } = renderHook(() => usePost());
 
-      act(() => {
-        result.current.setContent('Post content');
-      });
-
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
-      expect(typeof handlePost).toBe('function');
+      expect(typeof result.current.post).toBe('function');
     });
 
     it('should create a post successfully', async () => {
@@ -339,12 +306,10 @@ describe('usePost', () => {
         result.current.setTags(['tag1']);
       });
 
-      const handlePost = result.current.post({
-        onSuccess: mockOnSuccess,
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: mockOnSuccess,
+        });
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalledWith({
@@ -365,12 +330,10 @@ describe('usePost', () => {
         result.current.setContent('Post without tags');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalledWith({
@@ -383,12 +346,10 @@ describe('usePost', () => {
     it('should not submit post when content is empty', async () => {
       const { result } = renderHook(() => usePost());
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
@@ -401,12 +362,10 @@ describe('usePost', () => {
         result.current.setContent('   ');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
@@ -420,12 +379,10 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
@@ -440,12 +397,10 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       // Error is set and then cleared by useEffect that shows toast
@@ -477,12 +432,10 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       act(() => {
-        handlePost();
+        result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       await waitFor(() => {
@@ -502,12 +455,10 @@ describe('usePost', () => {
         result.current.setContent('  Trimmed content  ');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalledWith({
@@ -527,12 +478,10 @@ describe('usePost', () => {
         result.current.setContent('Test content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       await waitFor(() => {
@@ -552,12 +501,10 @@ describe('usePost', () => {
         result.current.setContent('Test content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
       });
 
       await waitFor(() => {
@@ -573,13 +520,11 @@ describe('usePost', () => {
         result.current.setContent('Reply content');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: vi.fn(),
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
       });
 
       await waitFor(() => {
@@ -601,13 +546,11 @@ describe('usePost', () => {
         result.current.setContent('Reply content');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: mockOnSuccess,
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: mockOnSuccess,
+        });
       });
 
       expect(mockOnSuccess).toHaveBeenCalledTimes(1);
@@ -621,12 +564,10 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: mockOnSuccess,
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: mockOnSuccess,
+        });
       });
 
       expect(mockOnSuccess).toHaveBeenCalledTimes(1);
@@ -641,13 +582,11 @@ describe('usePost', () => {
         result.current.setContent('Reply content');
       });
 
-      const handleReply = result.current.reply({
-        postId: 'test-post-123',
-        onSuccess: mockOnSuccess,
-      });
-
       await act(async () => {
-        await handleReply();
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: mockOnSuccess,
+        });
       });
 
       expect(mockOnSuccess).not.toHaveBeenCalled();
@@ -662,12 +601,10 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({
-        onSuccess: mockOnSuccess,
-      });
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({
+          onSuccess: mockOnSuccess,
+        });
       });
 
       expect(mockOnSuccess).not.toHaveBeenCalled();
@@ -680,10 +617,8 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({});
-
       await act(async () => {
-        await handlePost();
+        await result.current.post({});
       });
 
       expect(mockPostControllerCreate).toHaveBeenCalled();

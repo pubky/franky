@@ -6,8 +6,9 @@ import type { SinglePostReplyInputProps } from './SinglePostReplyInput.types';
 
 export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps) {
   const { content, setContent, reply, isSubmitting } = Hooks.usePost();
-  const handleReplySubmit = reply({ postId, onSuccess });
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
+
+  const handleReplySubmit = () => reply({ postId, onSuccess });
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isSubmitting) {
