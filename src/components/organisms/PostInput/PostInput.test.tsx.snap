@@ -1,0 +1,135 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="What's on your mind?"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-4"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Post reply"
+                data-testid="post-button"
+                disabled=""
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-4"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Post reply"
+                data-testid="post-button"
+                disabled=""
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
