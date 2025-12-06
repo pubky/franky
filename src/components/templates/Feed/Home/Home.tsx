@@ -6,13 +6,13 @@ import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 
 export function Home() {
   const streamId = Hooks.useStreamIdFromFilters();
-  const { postIds, loading, loadingMore, error, hasMore, loadMore, refresh } = Hooks.useStreamPagination({
+  const { postIds, loading, loadingMore, error, hasMore, loadMore, prependPosts } = Hooks.useStreamPagination({
     streamId,
   });
 
-  const handlePostSuccess = async () => {
-    // Refresh timeline after successful post creation
-    await refresh();
+  const handlePostSuccess = (createdPostId: string) => {
+    // Optimistically add the new post to the top of the timeline
+    prependPosts(createdPostId);
   };
 
   return (

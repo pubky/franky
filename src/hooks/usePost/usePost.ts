@@ -6,11 +6,11 @@ import * as Molecules from '@/molecules';
 
 interface UsePostReplyOptions {
   postId: string;
-  onSuccess?: () => void;
+  onSuccess?: (createdPostId: string) => void;
 }
 
 interface UsePostPostOptions {
-  onSuccess?: () => void;
+  onSuccess?: (createdPostId: string) => void;
 }
 
 /**
@@ -59,7 +59,7 @@ export function usePost() {
         setError(null);
 
         try {
-          await Core.PostController.create({
+          const createdPostId = await Core.PostController.create({
             parentPostId: postId,
             content: content.trim(),
             authorId: currentUserId,
@@ -67,7 +67,7 @@ export function usePost() {
           });
           setContent('');
           setTags([]);
-          onSuccess?.();
+          onSuccess?.(createdPostId);
         } catch (err) {
           console.error('Failed to submit reply:', err);
           setError('Failed to post reply. Please try again.');
@@ -90,14 +90,14 @@ export function usePost() {
         setError(null);
 
         try {
-          await Core.PostController.create({
+          const createdPostId = await Core.PostController.create({
             content: content.trim(),
             authorId: currentUserId,
             tags: tags.length > 0 ? tags : undefined,
           });
           setContent('');
           setTags([]);
-          onSuccess?.();
+          onSuccess?.(createdPostId);
         } catch (err) {
           console.error('Failed to create post:', err);
           setError('Failed to create post. Please try again.');
