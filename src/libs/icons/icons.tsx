@@ -96,6 +96,21 @@ export const LineHorizontal = ({ size = 12, ...props }: Omit<LucideProps, 'class
   </svg>
 );
 
+export const RoundedCorner = ({ size = 12, ...props }: Omit<LucideProps, 'className'>) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="block size-full fill-secondary"
+    preserveAspectRatio="none"
+    {...props}
+  >
+    <path d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z" />
+  </svg>
+);
+
 export const Synonym = ({ className, size = 24, ...props }: LucideProps) => (
   <svg
     width={size}

@@ -25,7 +25,7 @@ vi.mock('@/atoms', () => ({
   )),
   AvatarImage: vi.fn(() => <img data-testid="avatar-image" alt="" />),
   AvatarFallback: vi.fn(({ children }) => <div data-testid="avatar-fallback">{children}</div>),
-  DialogPostReplyThreadConnector: vi.fn(() => <div data-testid="dialog-post-reply-thread-connector" />),
+  PostThreadConnector: vi.fn(({ variant }) => <div data-testid="post-thread-connector" data-variant={variant} />),
   Textarea: vi.fn(({ value, onChange, onKeyDown, placeholder, className }) => (
     <textarea
       data-testid="textarea"

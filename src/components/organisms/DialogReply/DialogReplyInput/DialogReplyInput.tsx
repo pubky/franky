@@ -61,7 +61,7 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
 
   return (
     <Atoms.Container className="relative rounded-md border border-dashed border-input p-6">
-      <Atoms.DialogPostReplyThreadConnector />
+      <Atoms.PostThreadConnector height={0} variant={Atoms.POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />
       <Atoms.Container className="gap-4">
         {currentUserPubky && (
           <Organisms.PostHeader
