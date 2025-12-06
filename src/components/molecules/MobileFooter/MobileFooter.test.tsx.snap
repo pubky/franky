@@ -33,8 +33,8 @@ exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
 <a
   aria-label="Profile"
   class="relative flex-shrink-0"
+  data-cy="footer-nav-profile-btn"
   href="/profile"
-  id="footer-nav-profile-btn"
 >
   <div
     class="h-12 w-12"
@@ -192,8 +192,8 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
     <a
       aria-label="Profile"
       class="relative flex-shrink-0"
+      data-cy="footer-nav-profile-btn"
       href="/profile"
-      id="footer-nav-profile-btn"
     >
       <div
         class="h-12 w-12"
@@ -353,8 +353,8 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
     <a
       aria-label="Profile"
       class="relative flex-shrink-0"
+      data-cy="footer-nav-profile-btn"
       href="/profile"
-      id="footer-nav-profile-btn"
     >
       <div
         class="h-12 w-12"
@@ -514,8 +514,8 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
     <a
       aria-label="Profile"
       class="relative flex-shrink-0"
+      data-cy="footer-nav-profile-btn"
       href="/profile"
-      id="footer-nav-profile-btn"
     >
       <div
         class="h-12 w-12"

@@ -46,11 +46,16 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
           overrideDefaults={true}
           className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}
         >
-          <Atoms.Typography as="h1" size="lg" className="text-white lg:text-6xl">
+          <Atoms.Typography data-cy="profile-username-header" as="h1" size="lg" className="text-white lg:text-6xl">
             {name}
           </Atoms.Typography>
           {bio && (
-            <Atoms.Typography as="p" size="sm" className="font-medium text-secondary-foreground lg:text-base">
+            <Atoms.Typography
+              data-cy="profile-bio-header"
+              as="p"
+              size="sm"
+              className="font-medium text-secondary-foreground lg:text-base"
+            >
               {bio}
             </Atoms.Typography>
           )}

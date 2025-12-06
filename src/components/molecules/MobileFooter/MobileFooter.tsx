@@ -50,7 +50,7 @@ export function MobileFooter({ className }: MobileFooterProps) {
           );
         })}
         <Link
-          id="footer-nav-profile-btn"
+          data-cy="footer-nav-profile-btn"
           href={App.APP_ROUTES.PROFILE}
           aria-label="Profile"
           className="relative flex-shrink-0"
