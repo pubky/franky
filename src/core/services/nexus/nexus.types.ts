@@ -98,6 +98,11 @@ export type NexusTag = {
   relationship: boolean;
 };
 
+export type NexusTaggers = {
+  relationship: boolean;
+  users: Pubky[];
+}
+
 export type NexusHotTag = {
   label: string;
   taggers_id: Pubky[];
@@ -113,9 +118,7 @@ export type NexusUser = {
 };
 
 // User ID stream response containing only user identifiers
-export type NexusUserIdStream = {
-  user_ids: Pubky[];
-};
+export type NexusUserIdStream = Pubky[];
 
 // Post types
 export type NexusPostDetails = {
