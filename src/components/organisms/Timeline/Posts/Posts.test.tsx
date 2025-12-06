@@ -44,13 +44,6 @@ vi.mock('@/molecules', () => ({
   TimelineLoadingMore: () => <div data-testid="timeline-loading-more">Loading more...</div>,
   TimelineError: ({ message }: { message: string }) => <div data-testid="timeline-error">Error: {message}</div>,
   TimelineEndMessage: () => <div data-testid="timeline-end-message">End of timeline</div>,
-}));
-
-vi.mock('@/organisms', () => ({
-  PostMain: ({ postId, onClick, ...props }: { postId: string; onClick: () => void; [key: string]: unknown }) => (
-    <div data-testid={`post-${postId}`} onClick={onClick} {...props} />
-  ),
-  TimelinePostReplies: ({ postId }: { postId: string }) => <div data-testid={`replies-${postId}`} />,
   TimelineStateWrapper: ({
     loading,
     error,
@@ -67,6 +60,13 @@ vi.mock('@/organisms', () => ({
     if (!hasItems) return <div data-testid="timeline-empty">No posts</div>;
     return <>{children}</>;
   },
+}));
+
+vi.mock('@/organisms', () => ({
+  PostMain: ({ postId, onClick, ...props }: { postId: string; onClick: () => void; [key: string]: unknown }) => (
+    <div data-testid={`post-${postId}`} onClick={onClick} {...props} />
+  ),
+  TimelinePostReplies: ({ postId }: { postId: string }) => <div data-testid={`replies-${postId}`} />,
 }));
 
 const mockPush = vi.fn();

@@ -79,6 +79,7 @@ export * from './TimelineError';
 export * from './TimelineInitialError';
 export * from './TimelineLoading';
 export * from './TimelineLoadingMore';
+export * from './TimelineStateWrapper';
 export * from './Toaster';
 export * from './WordSlot';
 export * from './User';
