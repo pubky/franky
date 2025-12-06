@@ -2,8 +2,6 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-// Import directly to avoid circular dependency with @/hooks barrel
-import { useNotifications } from '@/hooks/useNotifications';
 
 export interface ProfileStats {
   notifications: number;
@@ -35,8 +33,8 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   }, [userId]);
 
   // Get unread notifications count from useNotifications hook (UI only - using mock data)
-  // TODO: Replace with real notification store when backend is integrated
-  const { unreadCount: unreadNotificationsCount } = useNotifications();
+  // TODO: When we refresh real time, has to be changed. From now static
+  const unreadNotificationsCount = Core.NotificationController.getNotificationsCountsNow();
 
   // Build stats object from user counts
   // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts

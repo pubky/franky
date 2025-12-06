@@ -68,4 +68,9 @@ export class NotificationController {
   static async getAllFromCache(): Promise<Core.FlatNotification[]> {
     return await Core.NotificationApplication.getAllFromCache();
   }
+
+  static getNotificationsCountsNow(): number {
+    const notificationStore = Core.useNotificationStore.getState();
+    return notificationStore.selectUnread();
+  }
 }
