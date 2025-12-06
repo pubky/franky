@@ -6,33 +6,32 @@ import * as Molecules from '@/molecules';
 
 interface UsePostReplyOptions {
   postId: string;
-  tags?: string[];
   onSuccess?: () => void;
 }
 
 interface UsePostPostOptions {
-  tags?: string[];
   onSuccess?: () => void;
 }
 
 /**
  * Custom hook to handle post creation (both replies and root posts)
  *
- * @returns Object containing content state, setContent function, reply method, post method, isSubmitting state, and error state
+ * @returns Object containing content state, setContent function, tags state, setTags function, reply method, post method, isSubmitting state, and error state
  *
  * @example
  * ```tsx
- * const { content, setContent, reply, post, isSubmitting, error } = usePost();
+ * const { content, setContent, tags, setTags, reply, post, isSubmitting, error } = usePost();
  *
  * // For replies:
- * const handleSubmit = reply({ postId: 'post-123', tags: ['tag1'], onSuccess: () => {} });
+ * const handleSubmit = reply({ postId: 'post-123', onSuccess: () => {} });
  *
  * // For root posts:
- * const handleSubmit = post({ tags: ['tag1'], onSuccess: () => {} });
+ * const handleSubmit = post({ onSuccess: () => {} });
  * ```
  */
 export function usePost() {
   const [content, setContent] = useState('');
+  const [tags, setTags] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
@@ -52,7 +51,7 @@ export function usePost() {
   }, [error, toast]);
 
   const reply = useCallback(
-    ({ postId, tags = [], onSuccess }: UsePostReplyOptions) => {
+    ({ postId, onSuccess }: UsePostReplyOptions) => {
       const handleReplySubmit = async () => {
         if (!content.trim() || !postId || !currentUserId) return;
 
@@ -67,6 +66,7 @@ export function usePost() {
             tags: tags.length > 0 ? tags : undefined,
           });
           setContent('');
+          setTags([]);
           onSuccess?.();
         } catch (err) {
           console.error('Failed to submit reply:', err);
@@ -78,11 +78,11 @@ export function usePost() {
 
       return handleReplySubmit;
     },
-    [content, currentUserId],
+    [content, tags, currentUserId],
   );
 
   const post = useCallback(
-    ({ tags = [], onSuccess }: UsePostPostOptions) => {
+    ({ onSuccess }: UsePostPostOptions) => {
       const handlePostSubmit = async () => {
         if (!content.trim() || !currentUserId) return;
 
@@ -96,6 +96,7 @@ export function usePost() {
             tags: tags.length > 0 ? tags : undefined,
           });
           setContent('');
+          setTags([]);
           onSuccess?.();
         } catch (err) {
           console.error('Failed to create post:', err);
@@ -107,12 +108,14 @@ export function usePost() {
 
       return handlePostSubmit;
     },
-    [content, currentUserId],
+    [content, tags, currentUserId],
   );
 
   return {
     content,
     setContent,
+    tags,
+    setTags,
     reply,
     post,
     isSubmitting,

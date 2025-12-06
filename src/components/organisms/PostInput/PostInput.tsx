@@ -12,38 +12,30 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 
 export function PostInput({ variant, postId, onSuccess, placeholder, showThreadConnector = false }: PostInputProps) {
-  const [tags, setTags] = useState<string[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
-  const { content, setContent, reply, post, isSubmitting } = Hooks.usePost();
+  const { content, setContent, tags, setTags, reply, post, isSubmitting } = Hooks.usePost();
 
   // Handle submit using reply or post method from hook
   const handleSubmit = useCallback(async () => {
     if (!content.trim() || isSubmitting) return;
 
-    const onSuccessHandler = () => {
-      setTags([]);
-      onSuccess?.();
-    };
-
     const submitHandlers = {
       [POST_INPUT_VARIANT.REPLY]: () =>
         reply({
           postId: postId!,
-          tags,
-          onSuccess: onSuccessHandler,
+          onSuccess,
         }),
       [POST_INPUT_VARIANT.POST]: () =>
         post({
-          tags,
-          onSuccess: onSuccessHandler,
+          onSuccess,
         }),
     };
 
     const submitHandler = submitHandlers[variant]();
     await submitHandler();
-  }, [content, tags, variant, postId, reply, post, isSubmitting, onSuccess]);
+  }, [content, variant, postId, reply, post, isSubmitting, onSuccess]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

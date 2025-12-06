@@ -64,9 +64,11 @@ describe('usePost', () => {
       const { result } = renderHook(() => usePost());
 
       expect(result.current.content).toBe('');
+      expect(result.current.tags).toEqual([]);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.error).toBe(null);
       expect(typeof result.current.setContent).toBe('function');
+      expect(typeof result.current.setTags).toBe('function');
       expect(typeof result.current.reply).toBe('function');
       expect(typeof result.current.post).toBe('function');
     });
@@ -108,7 +110,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -121,11 +122,11 @@ describe('usePost', () => {
 
       act(() => {
         result.current.setContent('Reply content');
+        result.current.setTags(['tag1', 'tag2']);
       });
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: ['tag1', 'tag2'],
         onSuccess: mockOnSuccess,
       });
 
@@ -140,6 +141,7 @@ describe('usePost', () => {
         tags: ['tag1', 'tag2'],
       });
       expect(result.current.content).toBe('');
+      expect(result.current.tags).toEqual([]);
       expect(mockOnSuccess).toHaveBeenCalled();
       expect(result.current.isSubmitting).toBe(false);
     });
@@ -153,7 +155,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -174,7 +175,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -194,7 +194,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -215,7 +214,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -237,7 +235,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -276,7 +273,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -303,7 +299,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -329,7 +324,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -342,10 +336,10 @@ describe('usePost', () => {
 
       act(() => {
         result.current.setContent('Post content');
+        result.current.setTags(['tag1']);
       });
 
       const handlePost = result.current.post({
-        tags: ['tag1'],
         onSuccess: mockOnSuccess,
       });
 
@@ -359,6 +353,7 @@ describe('usePost', () => {
         tags: ['tag1'],
       });
       expect(result.current.content).toBe('');
+      expect(result.current.tags).toEqual([]);
       expect(mockOnSuccess).toHaveBeenCalled();
       expect(result.current.isSubmitting).toBe(false);
     });
@@ -371,7 +366,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -390,7 +384,6 @@ describe('usePost', () => {
       const { result } = renderHook(() => usePost());
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -409,7 +402,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -429,7 +421,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -450,7 +441,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -488,7 +478,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -514,7 +503,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -540,7 +528,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -566,7 +553,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -589,7 +575,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: vi.fn(),
       });
 
@@ -618,7 +603,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: mockOnSuccess,
       });
 
@@ -638,7 +622,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: mockOnSuccess,
       });
 
@@ -660,7 +643,6 @@ describe('usePost', () => {
 
       const handleReply = result.current.reply({
         postId: 'test-post-123',
-        tags: [],
         onSuccess: mockOnSuccess,
       });
 
@@ -681,7 +663,6 @@ describe('usePost', () => {
       });
 
       const handlePost = result.current.post({
-        tags: [],
         onSuccess: mockOnSuccess,
       });
 
@@ -699,9 +680,7 @@ describe('usePost', () => {
         result.current.setContent('Post content');
       });
 
-      const handlePost = result.current.post({
-        tags: [],
-      });
+      const handlePost = result.current.post({});
 
       await act(async () => {
         await handlePost();

@@ -152,6 +152,7 @@ const mockPostControllerCreate = vi.mocked(Core.PostController.create);
 describe('PostInput', () => {
   const mockOnSuccess = vi.fn();
   const mockSetContent = vi.fn();
+  const mockSetTags = vi.fn();
   const mockReply = vi.fn();
   const mockPost = vi.fn();
 
@@ -164,6 +165,8 @@ describe('PostInput', () => {
     mockUsePost.mockReturnValue({
       content: '',
       setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
@@ -225,6 +228,8 @@ describe('PostInput', () => {
     mockUsePost.mockReturnValue({
       content: 'Test post content',
       setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
@@ -249,6 +254,8 @@ describe('PostInput', () => {
     mockUsePost.mockReturnValue({
       content: 'Test reply content',
       setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
@@ -265,7 +272,6 @@ describe('PostInput', () => {
       expect(mockReply).toHaveBeenCalledWith(
         expect.objectContaining({
           postId: 'test-post-123',
-          tags: expect.any(Array),
         }),
       );
     });
@@ -275,6 +281,8 @@ describe('PostInput', () => {
     mockUsePost.mockReturnValue({
       content: '',
       setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
@@ -292,6 +300,8 @@ describe('PostInput', () => {
     mockUsePost.mockReturnValue({
       content: 'Test content',
       setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
       isSubmitting: true,
@@ -318,6 +328,8 @@ describe('PostInput - Snapshots', () => {
     mockUsePost.mockReturnValue({
       content: '',
       setContent: vi.fn(),
+      tags: [],
+      setTags: vi.fn(),
       reply: vi.fn(),
       post: vi.fn(),
       isSubmitting: false,
