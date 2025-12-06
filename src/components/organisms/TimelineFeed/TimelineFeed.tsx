@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useCallback } from 'react';
+import { createContext, useContext, useCallback, useMemo } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -88,30 +88,41 @@ function TimelineFeedContent({
   });
 
   // Watch for unread posts from StreamCoordinator polling
-  const { unreadCount } = useUnreadPosts({ streamId });
+  const { unreadPostIds } = useUnreadPosts({ streamId });
 
   // Track scroll position to show/hide new posts button
   const isScrolled = useIsScrolledFromTop();
 
+  // Filter out posts that are already displayed in the timeline
+  // This prevents showing "See new posts" for posts the user just created
+  const actualNewPostIds = useMemo(() => {
+    const displayedPostIds = new Set(postIds);
+    return unreadPostIds.filter((id) => !displayedPostIds.has(id));
+  }, [unreadPostIds, postIds]);
+
+  const actualNewCount = actualNewPostIds.length;
+
   /**
    * Handle clicking the "New Posts" button
    * 1. Merge unread posts into the main post stream
-   * 2. Clear unread stream and prepend posts to UI
+   * 2. Clear unread stream and prepend only the actual new posts to UI
    * 3. Scroll to top
    */
   const handleNewPostsClick = useCallback(async () => {
     // Merge unread into post_streams in the database
     await Core.StreamPostsController.mergeUnreadStreamWithPostStream({ streamId });
 
-    // Get and clear unread posts, prepend to UI
-    const clearedPostIds = await Core.StreamPostsController.clearUnreadStream({ streamId });
-    if (clearedPostIds.length > 0) {
-      prependPosts(clearedPostIds);
+    // Clear unread stream
+    await Core.StreamPostsController.clearUnreadStream({ streamId });
+
+    // Only prepend posts that aren't already displayed
+    if (actualNewPostIds.length > 0) {
+      prependPosts(actualNewPostIds);
     }
 
     // Scroll to top smoothly
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [streamId, prependPosts]);
+  }, [streamId, prependPosts, actualNewPostIds]);
 
   const contextValue: TimelineFeedContextValue = {
     prependPosts,
@@ -121,9 +132,9 @@ function TimelineFeedContent({
     <TimelineFeedContext.Provider value={contextValue}>
       {children}
       <Molecules.NewPostsButton
-        count={unreadCount}
+        count={actualNewCount}
         onClick={handleNewPostsClick}
-        visible={unreadCount > 0}
+        visible={actualNewCount > 0}
         isScrolled={isScrolled}
       />
       <Organisms.TimelinePosts
