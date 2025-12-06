@@ -38,7 +38,7 @@ exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
           class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          test-user-
+          test-...ser-1
         </p>
       </div>
     </a>
@@ -218,7 +218,7 @@ exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
           class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          test-user-
+          test-...ser-1
         </p>
       </div>
     </a>
@@ -398,7 +398,7 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
           class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          test-user-
+          test-...ser-1
         </p>
       </div>
     </a>

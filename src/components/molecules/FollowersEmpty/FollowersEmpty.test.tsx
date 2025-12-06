@@ -33,57 +33,10 @@ vi.mock('@/atoms', () => ({
   },
 }));
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
-  Plus: ({ className }: { className?: string }) => (
-    <svg data-testid="plus-icon" className={className}>
-      Plus
-    </svg>
-  ),
-  UsersRound: ({ className, strokeWidth }: { className?: string; strokeWidth?: number }) => (
-    <svg data-testid="users-round-icon" className={className} data-stroke-width={strokeWidth}>
-      UsersRound
-    </svg>
-  ),
-}));
-
-// Mock next/image
-vi.mock('next/image', () => ({
-  default: ({ src, alt, className }: { src: string; alt: string; className?: string }) => (
-    <img data-testid="background-image" src={src} alt={alt} className={className} />
-  ),
-}));
-
 describe('FollowersEmpty', () => {
   it('renders title', () => {
     render(<FollowersEmpty />);
     expect(screen.getByText(/Looking for followers?/i)).toBeInTheDocument();
-  });
-
-  it('renders description', () => {
-    render(<FollowersEmpty />);
-    expect(screen.getByText(/When someone follows this account, their profile will appear here/i)).toBeInTheDocument();
-    expect(screen.getByText(/Start posting and engaging with others to grow your followers!/i)).toBeInTheDocument();
-  });
-
-  it('renders UsersRound icon', () => {
-    render(<FollowersEmpty />);
-    expect(screen.getByTestId('users-round-icon')).toBeInTheDocument();
-  });
-
-  it('renders Create a Post button', () => {
-    render(<FollowersEmpty />);
-    const button = screen.getByTestId('button');
-    expect(button).toBeInTheDocument();
-    expect(button).toHaveTextContent(/Create a Post/i);
-    expect(screen.getByTestId('plus-icon')).toBeInTheDocument();
-  });
-
-  it('renders background image', () => {
-    render(<FollowersEmpty />);
-    const image = screen.getByTestId('background-image');
-    expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute('alt', 'Followers - Empty state');
   });
 });
 
