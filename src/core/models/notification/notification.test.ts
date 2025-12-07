@@ -1,23 +1,29 @@
 import { describe, it, expect } from 'vitest';
 import { NotificationModel } from './notification';
 import { NotificationType, FlatNotification } from './notification.types';
-import { getNotificationKey } from '@/core/pipes/notification/notification.utils';
 
-// Factory for creating test notifications with unique id
+// Factory for creating test notifications with business key as id
 const createNotification = (timestamp: number, type = NotificationType.Follow): FlatNotification => {
-  const base = { type, timestamp, followed_by: `user-${timestamp}` } as Omit<FlatNotification, 'id'>;
-  return { ...base, id: getNotificationKey(base as FlatNotification) } as FlatNotification;
+  const followed_by = `user-${timestamp}`;
+  return {
+    id: `${type}:${timestamp}:${followed_by}`, // Business key format
+    type,
+    timestamp,
+    followed_by,
+  } as FlatNotification;
 };
 
 const createReply = (timestamp: number): FlatNotification => {
-  const base = {
+  const replied_by = `user-${timestamp}`;
+  const reply_uri = `reply-${timestamp}`;
+  return {
+    id: `${NotificationType.Reply}:${timestamp}:${replied_by}:${reply_uri}`, // Business key format
     type: NotificationType.Reply,
     timestamp,
-    replied_by: `user-${timestamp}`,
+    replied_by,
     parent_post_uri: 'post123',
-    reply_uri: 'reply456',
-  } as Omit<FlatNotification, 'id'>;
-  return { ...base, id: getNotificationKey(base as FlatNotification) } as FlatNotification;
+    reply_uri,
+  } as FlatNotification;
 };
 
 describe('NotificationModel', () => {

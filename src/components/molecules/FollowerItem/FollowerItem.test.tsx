@@ -67,16 +67,6 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    formatPublicKey: vi.fn(({ key }: { key: string }) => key.substring(0, 10)),
-    cn: vi.fn((...classes: (string | undefined)[]) => classes.filter(Boolean).join(' ')),
-  };
-});
-
 // Mock core
 vi.mock('@/core', () => ({
   generateTestUserId: vi.fn((index: number) => `test-user-${index}`),
@@ -91,23 +81,24 @@ vi.mock('lucide-react', () => ({
   ),
 }));
 
-describe('FollowerItem', () => {
-  const mockFollower: UserConnectionData = {
-    id: 'test-user-1' as Core.Pubky,
-    name: 'John Doe',
-    bio: 'Test bio',
-    image: null,
-    status: 'active',
-    links: null,
-    indexed_at: 1704067200000,
-    avatarUrl: 'https://example.com/avatar.png',
-    tags: ['bitcoin', 'candid'],
-    stats: {
-      tags: 100,
-      posts: 50,
-    },
-  };
+// Shared mock follower for all tests
+const mockFollower: UserConnectionData = {
+  id: 'test-user-1' as Core.Pubky,
+  name: 'John Doe',
+  bio: 'Test bio',
+  image: null,
+  status: 'active',
+  links: null,
+  indexed_at: 1704067200000,
+  avatarUrl: 'https://example.com/avatar.png',
+  tags: ['bitcoin', 'candid'],
+  stats: {
+    tags: 100,
+    posts: 50,
+  },
+};
 
+describe('FollowerItem', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -119,8 +110,8 @@ describe('FollowerItem', () => {
 
   it('renders formatted public key', () => {
     render(<FollowerItem follower={mockFollower} />);
-    // formatPublicKey truncates to 10 chars, so "test-user-1" becomes "test-user-"
-    expect(screen.getByText(/test-user/i)).toBeInTheDocument();
+    // formatPublicKey with length 10 formats "test-user-1" (11 chars) as "test-...ser-1"
+    expect(screen.getByText(/test-\.\.\.ser-1/i)).toBeInTheDocument();
   });
 
   it('renders avatar with fallback', () => {
@@ -215,22 +206,6 @@ describe('FollowerItem', () => {
 });
 
 describe('FollowerItem - Snapshots', () => {
-  const mockFollower: UserConnectionData = {
-    id: 'test-user-1' as Core.Pubky,
-    name: 'John Doe',
-    bio: 'Test bio',
-    image: null,
-    status: 'active',
-    links: null,
-    indexed_at: 1704067200000,
-    avatarUrl: 'https://example.com/avatar.png',
-    tags: ['bitcoin', 'candid'],
-    stats: {
-      tags: 100,
-      posts: 50,
-    },
-  };
-
   it('matches snapshot when following', () => {
     const { container } = render(<FollowerItem follower={mockFollower} isFollowing={true} />);
     expect(container.firstChild).toMatchSnapshot();
