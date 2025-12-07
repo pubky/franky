@@ -37,3 +37,5 @@ export * from './useTagInput';
 export * from './useProfileForm';
 export * from './useBookmarksStreamId';
 export * from './useBookmark';
+export * from './useUnreadPosts';
+export * from './useIsScrolledFromTop';

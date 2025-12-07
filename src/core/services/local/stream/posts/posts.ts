@@ -142,8 +142,26 @@ export class LocalStreamPostsService {
     if (!unreadPostStream) return;
     const postStream = await Core.PostStreamModel.findById(streamId);
     if (!postStream) return;
-    const combinedStream = [...unreadPostStream.stream, ...postStream.stream];
+
+    // Deduplicate: unread posts first, then existing posts (excluding duplicates)
+    const existingIds = new Set(unreadPostStream.stream);
+    const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
+    const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
+
     await Core.PostStreamModel.upsert(streamId, combinedStream);
+  }
+
+  /**
+   * Clear the unread stream and return the post IDs that were in it
+   * @param streamId - The stream ID to clear the unread stream for
+   * @returns Array of post IDs that were in the unread stream
+   */
+  static async clearUnreadStream({ streamId }: Core.TStreamIdParams): Promise<string[]> {
+    const unreadStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadStream) return [];
+    const postIds = unreadStream.stream;
+    await Core.UnreadPostStreamModel.deleteById(streamId);
+    return postIds;
   }
 
   /**
