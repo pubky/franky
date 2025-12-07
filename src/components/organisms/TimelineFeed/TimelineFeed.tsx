@@ -7,8 +7,6 @@ import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import type { TimelineFeedProps, TimelineFeedContextValue } from './TimelineFeed.types';
 import { useTimelineFeedStreamId } from './useTimelineFeedStreamId';
-import { useUnreadPosts } from '@/hooks/useUnreadPosts';
-import { useIsScrolledFromTop } from '@/hooks/useIsScrolledFromTop';
 
 /**
  * Context for timeline feed operations
@@ -99,10 +97,10 @@ function TimelineFeedContent({
   const postIds = useMemo(() => [...new Set(rawPostIds)], [rawPostIds]);
 
   // Watch for unread posts from StreamCoordinator polling
-  const { unreadPostIds } = useUnreadPosts({ streamId });
+  const { unreadPostIds } = Hooks.useUnreadPosts({ streamId });
 
   // Track scroll position to show/hide new posts button
-  const isScrolled = useIsScrolledFromTop();
+  const isScrolled = Hooks.useIsScrolledFromTop();
 
   // Filter out posts that are already displayed in the timeline
   // This prevents showing "See new posts" for posts the user just created
