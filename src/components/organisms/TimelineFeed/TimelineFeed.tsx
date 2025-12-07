@@ -118,19 +118,27 @@ function TimelineFeedContent({
    * 3. Scroll to top
    */
   const handleNewPostsClick = useCallback(async () => {
-    // Merge unread into post_streams in the database
-    await Core.StreamPostsController.mergeUnreadStreamWithPostStream({ streamId });
+    try {
+      // Merge unread into post_streams in the database
+      await Core.StreamPostsController.mergeUnreadStreamWithPostStream({ streamId });
 
-    // Clear unread stream
-    await Core.StreamPostsController.clearUnreadStream({ streamId });
+      // Clear unread stream
+      await Core.StreamPostsController.clearUnreadStream({ streamId });
 
-    // Only prepend posts that aren't already displayed
-    if (actualNewPostIds.length > 0) {
-      prependPosts(actualNewPostIds);
+      // Only prepend posts that aren't already displayed
+      if (actualNewPostIds.length > 0) {
+        prependPosts(actualNewPostIds);
+      }
+
+      // Scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.error('Failed to load new posts:', error);
+      Molecules.toast({
+        title: 'Failed to load new posts',
+        description: 'Unable to display new posts. Please try again.',
+      });
     }
-
-    // Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [streamId, prependPosts, actualNewPostIds]);
 
   const contextValue: TimelineFeedContextValue = {
