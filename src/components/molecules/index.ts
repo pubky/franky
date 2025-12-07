@@ -17,6 +17,7 @@ export * from './InputField';
 export * from './Install';
 export * from './Logo';
 export * from './Metadata';
+export * from './NewPostsButton';
 export * from './Logout';
 export * from './MobileFooter';
 export * from './NotificationIcon';

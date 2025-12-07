@@ -127,6 +127,22 @@ body {
   --header-height-mobile: 80px;
 
   /**
+   * Main content header offset
+   * - Vertical offset for floating elements that should appear below the main header
+   * - Used by: NewPostsButton when in fixed/floating mode
+   * 
+   * Value rationale (120px):
+   * - Header container has py-6 (24px) outer padding + py-4/py-6 inner padding
+   * - Total header visual height is approximately 100-120px on desktop
+   * - 120px ensures floating button appears clearly below header content
+   * - Provides visual separation without overlapping header elements
+   * 
+   * Note: This differs from --header-height (146px) which is used for profile page
+   * sticky sidebars that need to account for ProfilePageHeader's full height.
+   */
+  --header-offset-main: 120px;
+
+  /**
    * Sidebar and filter bar width
    * - Standard width for left/right sidebars and filter components
    * - Ensures consistent layout across different sidebar types

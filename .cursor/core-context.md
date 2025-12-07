@@ -148,3 +148,4 @@ Stored in `docs/adr/` for traceability and collaboration.
 - _0007-dexie-version-normalization (TBD)_ — Consistent Dexie versioning
 - _0008-coordinators-layer_ — Coordinators for system-initiated workflows
 - _0009-application-cross-domain-orchestration_ — Application-to-Application calls for workflow orchestration
+- _0010-notification-application-orchestration_ — NotificationApplication cross-domain entity aggregation privilege
