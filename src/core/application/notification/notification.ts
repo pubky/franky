@@ -144,9 +144,12 @@ export class NotificationApplication {
       // useLiveQuery will trigger re-renders in components, but referenced posts/users won't be
       // available yet, causing incomplete UI states. By fetching entities first, everything is
       // ready when the re-render happens.
-      Core.LocalNotificationService.bulkSave(flatNotifications).catch((error) => {
+      try {
+        await Core.LocalNotificationService.bulkSave(flatNotifications);
+      } catch (error) {
         Libs.Logger.warn('Failed to persist notifications to cache', { error });
-      });
+        // Continue - we still return the fetched notifications for display
+      }
 
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;

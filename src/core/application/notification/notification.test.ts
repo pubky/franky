@@ -156,7 +156,7 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
       expect(loggerSpy).toHaveBeenCalledWith('Failed to fetch notifications from Nexus', expect.any(Object));
     });
 
-    it('should not throw on bulkSave failure (fire and forget)', async () => {
+    it('should gracefully handle bulkSave failure and still return notifications', async () => {
       vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue([]);
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([createNexus(1000)]);
       mockNormalizer();
