@@ -4,7 +4,7 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import { FlatNotification, NotificationType } from './notification.types';
 
-// Primary key: auto-incrementing integer (++id) managed by Dexie
+// Primary key: business key (id) as string - provides natural deduplication
 export class NotificationModel {
   static table: Table<FlatNotification> = Core.db.table('notifications');
 
@@ -35,9 +35,35 @@ export class NotificationModel {
     Object.assign(this, notification);
   }
 
+  /**
+   * Bulk save notifications to the database.
+   * Uses business key (id) as primary key - duplicates are automatically handled via upsert.
+   */
   static async bulkSave(notifications: FlatNotification[]) {
     try {
-      return await this.table.bulkPut(notifications);
+      if (notifications.length === 0) {
+        return [];
+      }
+
+      // Filter out malformed notifications missing required fields
+      const validNotifications = notifications.filter((n) => {
+        const isValid = n.id && n.timestamp !== undefined && n.type !== undefined;
+        if (!isValid) {
+          Libs.Logger.warn('Skipping malformed notification', {
+            hasId: !!n.id,
+            hasTimestamp: n.timestamp !== undefined,
+            hasType: n.type !== undefined,
+          });
+        }
+        return isValid;
+      });
+
+      if (validNotifications.length === 0) {
+        return [];
+      }
+
+      // bulkPut with business key as id handles duplicates automatically (upsert)
+      return await this.table.bulkPut(validNotifications);
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
@@ -45,7 +71,8 @@ export class NotificationModel {
         500,
         {
           error,
-          tuplesCount: notifications.length,
+          count: notifications.length,
+          sampleId: notifications[0]?.id,
         },
       );
     }

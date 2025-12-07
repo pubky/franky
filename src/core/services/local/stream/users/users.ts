@@ -56,6 +56,18 @@ export class LocalStreamUsersService {
   }
 
   /**
+   * Find which users are not yet persisted in cache
+   * Used to identify missing user data that needs to be fetched
+   *
+   * @param userIds - Array of user IDs to check
+   * @returns Array of user IDs that are not persisted in cache
+   */
+  static async getNotPersistedUsersInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
+    const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
+    return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+  }
+
+  /**
    * Persist user data to normalized tables
    * Separates user details, counts, tags, and relationships
    *
