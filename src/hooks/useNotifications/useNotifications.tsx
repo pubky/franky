@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import * as Core from '@/core';
-import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 import type { FlatNotification } from '@/core';
 import type { UseNotificationsResult } from './useNotifications.types';
 
@@ -74,9 +73,9 @@ export function useNotifications(): UseNotificationsResult {
       });
 
       setNotifications((prev) => {
-        // Deduplicate using businessKey. Keep it as defensive code. It's not critical for the app.
-        const existingKeys = new Set(prev.map(getBusinessKey));
-        const newNotifications = result.notifications.filter((n) => !existingKeys.has(getBusinessKey(n)));
+        // Deduplicate using id (business key). Defensive code for edge cases.
+        const existingIds = new Set(prev.map((n) => n.id));
+        const newNotifications = result.notifications.filter((n) => !existingIds.has(n.id));
         return [...prev, ...newNotifications];
       });
       olderThanRef.current = result.olderThan;

@@ -5,8 +5,16 @@ import { NotificationApplication } from './notification';
 
 const userId = 'pubky_user' as Core.Pubky;
 
-const createFlat = (timestamp: number): Core.FlatNotification =>
-  ({ type: Core.NotificationType.Follow, timestamp, followed_by: `user-${timestamp}` }) as Core.FlatNotification;
+const createFlat = (timestamp: number): Core.FlatNotification => {
+  const type = Core.NotificationType.Follow;
+  const followed_by = `user-${timestamp}`;
+  return {
+    id: `${type}:${timestamp}:${followed_by}`, // Business key
+    type,
+    timestamp,
+    followed_by,
+  } as Core.FlatNotification;
+};
 
 const createNexus = (timestamp: number): Core.NexusNotification => ({
   timestamp,
