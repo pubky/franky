@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /**
  * useIsScrolledFromTop
@@ -22,17 +22,29 @@ import { useState, useEffect } from 'react';
  */
 export function useIsScrolledFromTop(threshold = 100): boolean {
   const [isScrolled, setIsScrolled] = useState(false);
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > threshold);
+      // Use RAF throttling to reduce unnecessary state updates during scroll
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > threshold);
+        rafRef.current = null;
+      });
     };
 
     // Check initial scroll position
-    handleScroll();
+    setIsScrolled(window.scrollY > threshold);
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      // Clean up any pending RAF on unmount
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
   }, [threshold]);
 
   return isScrolled;
