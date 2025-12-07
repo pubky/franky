@@ -2,21 +2,7 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-
-export interface ProfileStats {
-  notifications: number;
-  posts: number;
-  replies: number;
-  followers: number;
-  following: number;
-  friends: number;
-  uniqueTags: number;
-}
-
-export interface UseProfileStatsResult {
-  stats: ProfileStats;
-  isLoading: boolean;
-}
+import { ProfileStats, UseProfileStatsResult } from './useProfileStats.types';
 
 /**
  * Hook for fetching and transforming user profile statistics.
@@ -32,9 +18,8 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     return await Core.UserController.getCounts({ userId });
   }, [userId]);
 
-  // Get unread notifications count from useNotifications hook (UI only - using mock data)
-  // TODO: When we refresh real time, has to be changed. From now static
-  const unreadNotificationsCount = Core.NotificationController.getNotificationsCountsNow();
+  // Get unread notifications count reactively from Zustand store
+  const unreadNotificationsCount = Core.useNotificationStore((state) => state.selectUnread());
 
   // Build stats object from user counts
   // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts

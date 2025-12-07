@@ -3,9 +3,8 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 import { FlatNotification, NotificationType } from './notification.types';
-import { getBusinessKey } from './notification.helpers';
 
-// Primary key: auto-incrementing integer (++id) managed by Dexie
+// Primary key: business key (id) as string - provides natural deduplication
 export class NotificationModel {
   static table: Table<FlatNotification> = Core.db.table('notifications');
 
@@ -36,39 +35,35 @@ export class NotificationModel {
     Object.assign(this, notification);
   }
 
+  /**
+   * Bulk save notifications to the database.
+   * Uses business key (id) as primary key - duplicates are automatically handled via upsert.
+   */
   static async bulkSave(notifications: FlatNotification[]) {
     try {
       if (notifications.length === 0) {
         return [];
       }
 
-      // Query existing notifications with matching timestamps to check for duplicates
-      const existingNotifications = await this.table
-        .where('timestamp')
-        .anyOf(notifications.map((n) => n.timestamp))
-        .toArray();
+      // Filter out malformed notifications missing required fields
+      const validNotifications = notifications.filter((n) => {
+        const isValid = n.id && n.timestamp !== undefined && n.type !== undefined;
+        if (!isValid) {
+          Libs.Logger.warn('Skipping malformed notification', {
+            hasId: !!n.id,
+            hasTimestamp: n.timestamp !== undefined,
+            hasType: n.type !== undefined,
+          });
+        }
+        return isValid;
+      });
 
-      const existingKeys = new Set(existingNotifications.map((n) => getBusinessKey(n)));
-
-      // Filter out duplicates
-      const newNotifications = notifications.filter((n) => !existingKeys.has(getBusinessKey(n)));
-
-      if (newNotifications.length === 0) {
-        Libs.Logger.debug('All notifications are duplicates, skipping save', {
-          count: notifications.length,
-        });
+      if (validNotifications.length === 0) {
         return [];
       }
 
-      const duplicateCount = notifications.length - newNotifications.length;
-      if (duplicateCount > 0) {
-        Libs.Logger.debug('Filtered out duplicates', {
-          duplicateCount,
-          newCount: newNotifications.length,
-        });
-      }
-
-      return await this.table.bulkPut(newNotifications);
+      // bulkPut with business key as id handles duplicates automatically (upsert)
+      return await this.table.bulkPut(validNotifications);
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
@@ -76,7 +71,8 @@ export class NotificationModel {
         500,
         {
           error,
-          tuplesCount: notifications.length,
+          count: notifications.length,
+          sampleId: notifications[0]?.id,
         },
       );
     }

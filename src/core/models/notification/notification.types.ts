@@ -35,6 +35,7 @@ export type NotificationVariantMap = {
 };
 
 export type CommonFields = {
+  id: string; // Business key: type:timestamp:actor - unique identifier for deduplication
   timestamp: number;
   type: NotificationType;
 };
