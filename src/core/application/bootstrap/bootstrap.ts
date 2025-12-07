@@ -18,9 +18,12 @@ export class BootstrapApplication {
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
     ]);
+    // TODO: With the new Nexus API, data is never undefined
     if (!data) {
-      // TODO: Maybe in the UI, we should redirect or show some special message to the user.
       throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
+    }
+    if (!data.indexed) {
+      Libs.Logger.error('User is not indexed in Nexus. Adding user to TTL', { pubky: params.pubky });
     }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
@@ -99,24 +102,9 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state after successful bootstrap
    */
   static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    let success = false;
-    let retries = 0;
-    let notificationState: Core.TBootstrapResponse = { notification: Core.notificationInitialState };
-    while (!success && retries < 3) {
-      try {
-        // Wait 5 seconds before each attempt to let Nexus index the user
-        Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt ${retries + 1}...`);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        notificationState = await this.initialize(params);
-        success = true;
-      } catch (error) {
-        Libs.Logger.error('Failed to bootstrap', error, retries);
-        retries++;
-      }
-    }
-    if (!success) {
-      throw new Error('User still not indexed');
-    }
-    return notificationState;
+    // Wait 5 seconds before each attempt to let Nexus index the user
+    Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt...`);
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    return await this.initialize(params);
   }
 }

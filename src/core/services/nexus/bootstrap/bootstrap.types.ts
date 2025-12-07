@@ -4,6 +4,7 @@ export type NexusBootstrapResponse = {
   users: Core.NexusUser[];
   posts: Core.NexusPost[];
   list: Core.NexusBootstrapList;
+  indexed: boolean;
 };
 
 export type NexusBootstrapList = {
