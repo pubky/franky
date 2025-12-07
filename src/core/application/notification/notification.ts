@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { LastReadResult } from 'pubky-app-specs';
 
 export class NotificationApplication {
   private constructor() {} // Prevent instantiation
@@ -22,17 +23,10 @@ export class NotificationApplication {
    * @param pubky - The user's public key
    * @returns The new lastRead timestamp
    */
-  static markAllAsRead(pubky: Core.Pubky): number {
-    // Create new lastRead with current timestamp using normalizer
-    const lastRead = Core.LastReadNormalizer.to(pubky);
-    const timestamp = Number(lastRead.last_read.timestamp);
-
-    // Update homeserver (fire-and-forget)
-    Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson()).catch(
-      (error) => Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
+  static markAllAsRead({ meta, last_read }: LastReadResult) {
+    Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, last_read.toJson()).catch((error) =>
+      Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
     );
-
-    return timestamp;
   }
 
   /**
@@ -106,9 +100,9 @@ export class NotificationApplication {
       limit: remainingLimit,
     });
 
-    // Combine cached and fetched, ensuring no duplicates by unique key
-    const seenKeys = new Set(cachedNotifications.map((n) => Core.getNotificationKey(n)));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenKeys.has(Core.getNotificationKey(n)));
+    // Combine cached and fetched, ensuring no duplicates by id (business key)
+    const seenIds = new Set(cachedNotifications.map((n) => n.id));
+    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenIds.has(n.id));
     const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
 
     return { notifications: combinedNotifications, olderThan: nextOlderThan };
@@ -131,6 +125,7 @@ export class NotificationApplication {
       const nexusNotifications = await Core.NexusUserService.notifications({
         user_id: userId,
         limit,
+        start: olderThan === Infinity ? undefined : olderThan,
       });
 
       if (!nexusNotifications || nexusNotifications.length === 0) {
@@ -142,21 +137,105 @@ export class NotificationApplication {
         Core.NotificationNormalizer.toFlatNotification(notification),
       );
 
-      // IMPORTANT: Await the save so useLiveQuery can detect the database change
-      // before this function returns. Without await, pagination won't work correctly.
+      await this.fetchMissingEntities(flatNotifications, userId);
+
+      // IMPORTANT: Save notifications AFTER fetching related entities. If we save notifications first,
+      // useLiveQuery will trigger re-renders in components, but referenced posts/users won't be
+      // available yet, causing incomplete UI states. By fetching entities first, everything is
+      // ready when the re-render happens.
       try {
         await Core.LocalNotificationService.bulkSave(flatNotifications);
       } catch (error) {
         Libs.Logger.warn('Failed to persist notifications to cache', { error });
+        // Continue - we still return the fetched notifications for display
       }
 
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;
 
-      return { notifications: flatNotifications, olderThan: nextOlderThan };
+      // Decrement the timestamp. If not we will get duplicated notification. Infinity is used for initial load.
+      return { notifications: flatNotifications, olderThan: nextOlderThan - 1 };
     } catch (error) {
       Libs.Logger.warn('Failed to fetch notifications from Nexus', { userId, olderThan, limit, error });
       return { notifications: [], olderThan: undefined };
     }
+  }
+
+  /**
+   * Fetches posts and users referenced in notifications that are not yet persisted in cache.
+   *
+   * @param notifications - Array of flat notifications to extract post and user references from
+   */
+  private static async fetchMissingEntities(notifications: Core.FlatNotification[], viewerId: Core.Pubky) {
+    const { relatedPostIds, relatedUserIds } = this.loopAndParseNotifications(notifications);
+
+    const notPersistedPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(relatedPostIds);
+    const notPersistedUserIds = await Core.LocalStreamUsersService.getNotPersistedUsersInCache(relatedUserIds);
+
+    if (notPersistedPostIds.length > 0) {
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds: notPersistedPostIds, viewerId });
+    }
+
+    if (notPersistedUserIds.length > 0) {
+      await Core.UserStreamApplication.fetchMissingUsersFromNexus({ cacheMissUserIds: notPersistedUserIds });
+    }
+  }
+
+  private static loopAndParseNotifications(
+    notifications: Core.FlatNotification[],
+  ): Core.TLoopAndParseNotificationsResult {
+    // Handle duplicates
+    const relatedPostIds = new Set<string>();
+    const relatedUserIds = new Set<Core.Pubky>();
+
+    const addPostUri = (uri: string | undefined) => {
+      if (!uri) return;
+      const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });
+      if (compositeId) {
+        relatedPostIds.add(compositeId);
+      }
+    };
+
+    for (const notification of notifications) {
+      switch (notification.type) {
+        case Core.NotificationType.Follow:
+        case Core.NotificationType.NewFriend:
+          relatedUserIds.add(notification.followed_by);
+          break;
+        case Core.NotificationType.TagPost:
+          addPostUri(notification.post_uri);
+          relatedUserIds.add(notification.tagged_by);
+          break;
+        case Core.NotificationType.TagProfile:
+          relatedUserIds.add(notification.tagged_by);
+          break;
+        case Core.NotificationType.Reply:
+          addPostUri(notification.reply_uri);
+          relatedUserIds.add(notification.replied_by);
+          break;
+        case Core.NotificationType.Repost:
+          addPostUri(notification.repost_uri);
+          relatedUserIds.add(notification.reposted_by);
+          break;
+        case Core.NotificationType.Mention:
+          addPostUri(notification.post_uri);
+          relatedUserIds.add(notification.mentioned_by);
+          break;
+        case Core.NotificationType.PostDeleted:
+          addPostUri(notification.deleted_uri);
+          relatedUserIds.add(notification.deleted_by);
+          break;
+        case Core.NotificationType.PostEdited:
+          addPostUri(notification.edited_uri);
+          relatedUserIds.add(notification.edited_by);
+          break;
+        default:
+          break;
+      }
+    }
+    return {
+      relatedPostIds: Array.from(relatedPostIds),
+      relatedUserIds: Array.from(relatedUserIds),
+    };
   }
 }
