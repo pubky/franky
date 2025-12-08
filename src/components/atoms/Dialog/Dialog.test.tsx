@@ -103,6 +103,24 @@ describe('Dialog - Snapshots', () => {
     expect(normalizedContainer).toMatchSnapshot();
   });
 
+  it('matches snapshot for DialogContent with overrideDefaults', () => {
+    const { container } = render(
+      <DialogContent overrideDefaults={true}>
+        <div>Dialog Content</div>
+      </DialogContent>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogContent without overrideDefaults', () => {
+    const { container } = render(
+      <DialogContent overrideDefaults={false}>
+        <div>Dialog Content</div>
+      </DialogContent>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
   it('matches snapshot for DialogHeader', () => {
     render(
       <Dialog open={true}>
