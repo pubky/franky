@@ -22,13 +22,13 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with dialog-reply va
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant 1`] = `
 <div
-  class="flex h-3 w-3 flex-col items-start"
+  class="flex w-3 flex-col items-start"
   data-override-defaults="true"
   data-variant="gap-fix"
   style="height: 100px;"
 >
   <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start "
     data-override-defaults="true"
   >
     <div
@@ -41,13 +41,13 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`] = `
 <div
-  class="flex h-24 w-3 flex-col items-start border-l border-border"
+  class="flex w-3 flex-col items-start border-l border-border"
   data-override-defaults="true"
   data-variant="regular"
   style="height: 300px;"
 >
   <div
-    class="relative flex min-h-px w-3 min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start min-w-3"
     data-override-defaults="true"
   >
     <div
@@ -72,13 +72,13 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`] = `
 <div
-  class="flex h-24 w-3 flex-col items-start"
+  class="flex w-3 flex-col items-start"
   data-override-defaults="true"
   data-variant="last"
   style="height: 100px;"
 >
   <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start "
     data-override-defaults="true"
   >
     <div
@@ -103,13 +103,13 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant 1`] = `
 <div
-  class="flex h-24 w-3 flex-col items-start border-l border-border"
+  class="flex w-3 flex-col items-start border-l border-border"
   data-override-defaults="true"
   data-variant="regular"
   style="height: 100px;"
 >
   <div
-    class="relative flex min-h-px w-3 min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start min-w-3"
     data-override-defaults="true"
   >
     <div
@@ -134,13 +134,13 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with small height 1`] = `
 <div
-  class="flex h-24 w-3 flex-col items-start border-l border-border"
+  class="flex w-3 flex-col items-start border-l border-border"
   data-override-defaults="true"
   data-variant="regular"
   style="height: 50px;"
 >
   <div
-    class="relative flex min-h-px w-3 min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start min-w-3"
     data-override-defaults="true"
   >
     <div

@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
@@ -29,7 +30,15 @@ vi.mock('@/atoms', () => ({
       disabled={disabled}
     />
   )),
-  DialogPostReplyThreadConnector: vi.fn(() => <div data-testid="thread-connector" />),
+  PostThreadConnector: vi.fn(({ height, variant }) => (
+    <div data-testid="thread-connector" data-height={height} data-variant={variant} />
+  )),
+  POST_THREAD_CONNECTOR_VARIANTS: {
+    REGULAR: 'regular',
+    LAST: 'last',
+    GAP_FIX: 'gap-fix',
+    DIALOG_REPLY: 'dialog-reply',
+  },
   Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
     <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
       {children}
@@ -55,6 +64,10 @@ vi.mock('@/organisms', () => ({
       data-max={maxLength}
     />
   )),
+}));
+
+vi.mock('../TimelineFeed/TimelineFeed', () => ({
+  useTimelineFeedContext: vi.fn(() => null),
 }));
 
 vi.mock('../PostInputTags', () => ({
@@ -187,7 +200,9 @@ describe('PostInput', () => {
   it('shows thread connector when showThreadConnector is true', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" showThreadConnector={true} />);
 
-    expect(screen.getByTestId('thread-connector')).toBeInTheDocument();
+    const connector = screen.getByTestId('thread-connector');
+    expect(connector).toBeInTheDocument();
+    expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY);
   });
 
   it('does not show thread connector when showThreadConnector is false', () => {

@@ -1,2 +1,3 @@
 export { PostThreadConnector } from './PostThreadConnector';
-export { POST_THREAD_CONNECTOR_VARIANTS, type PostThreadConnectorVariant } from './PostThreadConnector.constants';
+export { POST_THREAD_CONNECTOR_VARIANTS } from './PostThreadConnector.constants';
+export type { PostThreadConnectorVariant } from './PostThreadConnector.types';
