@@ -1,11 +1,32 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { TQueueEntry } from './post.types';
 
 export class PostStreamApplication {
   private constructor() {}
 
   // Maximum number of fetch iterations to prevent infinite loops in heavily-muted feeds
   private static readonly MAX_FETCH_ITERATIONS = 5;
+
+  /**
+   * In-memory queue for storing overflow posts between pagination requests.
+   * Concurrent requests to the same stream may cause duplicate fetches but will not corrupt data.
+   */
+  private static queues = new Map<Core.PostStreamId, TQueueEntry>();
+
+  /**
+   * Clears all queues. Used for testing purposes.
+   */
+  static clearQueues(): void {
+    this.queues.clear();
+  }
+
+  /**
+   * Gets queue info for a stream. Used for testing purposes.
+   */
+  static getQueueInfo(streamId: Core.PostStreamId): TQueueEntry | undefined {
+    return this.queues.get(streamId);
+  }
 
   // ============================================================================
   // Public API
@@ -97,10 +118,10 @@ export class PostStreamApplication {
     const mutedUserIds = await this.getMutedUserIds(viewerId);
 
     // Load any queued posts from previous request that weren't returned in previous batch.
-    const savedQueue = await Core.PostStreamQueueModel.findById(streamId);
-    const queue = savedQueue ? this.filterMutedPosts(savedQueue.queue, mutedUserIds) : [];
+    const savedQueue = this.queues.get(streamId);
+    const queue = savedQueue ? this.filterMutedPosts(savedQueue.posts, mutedUserIds) : [];
     const queuedIds = new Set(queue);
-    let cursor = savedQueue?.streamTail ?? streamTail;
+    let cursor = savedQueue?.cursor ?? streamTail;
 
     // If queue already has enough posts, just return from queue
     if (queue.length >= limit) {
@@ -157,20 +178,20 @@ export class PostStreamApplication {
   /**
    * Returns a page of posts from queue, saves remaining posts for next request.
    */
-  private static async returnPostsAndSaveRemainingToQueue(
+  private static returnPostsAndSaveRemainingToQueue(
     streamId: Core.PostStreamId,
     queue: string[],
     limit: number,
     cursor: number,
     cacheMissIds: string[],
     timestamp?: number,
-  ): Promise<Core.TPostStreamChunkResponse> {
+  ): Core.TPostStreamChunkResponse {
     // Get the posts we need to return to UI.
     const postsToReturn = queue.slice(0, limit);
 
     // Save the remaining posts we fetched into the queue, so we can use later.
     const remainingPosts = queue.slice(limit);
-    await Core.PostStreamQueueModel.upsert({ id: streamId, queue: remainingPosts, streamTail: cursor });
+    this.queues.set(streamId, { posts: remainingPosts, cursor });
 
     return {
       nextPageIds: postsToReturn,

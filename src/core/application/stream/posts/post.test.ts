@@ -151,7 +151,7 @@ describe('PostStreamApplication', () => {
 
     await Core.PostStreamModel.table.clear();
     await Core.UnreadPostStreamModel.table.clear();
-    await Core.PostStreamQueueModel.table.clear();
+    Core.PostStreamApplication.clearQueues();
     await Core.PostDetailsModel.table.clear();
     await Core.UserDetailsModel.table.clear();
     await Core.UserCountsModel.table.clear();
@@ -1424,8 +1424,8 @@ describe('PostStreamApplication', () => {
       expect(result1.nextPageIds).toHaveLength(10);
 
       // Check that queue has 5 remaining posts
-      const queue = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queue?.queue).toHaveLength(5);
+      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queue?.posts).toHaveLength(5);
 
       // Second request: should get posts from queue without fetching from Nexus
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockClear();
@@ -1500,15 +1500,15 @@ describe('PostStreamApplication', () => {
       });
 
       // Queue should have 5 posts (11-15)
-      let queue = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queue?.queue).toHaveLength(5);
+      let queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queue?.posts).toHaveLength(5);
 
       // Now mute author-1 - the queue should be re-filtered when next fetch occurs
       await setupMutedUsers(['author-1'] as Core.Pubky[]);
 
-      // Queue record still exists in DB (not yet re-filtered)
-      queue = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queue?.queue).toHaveLength(5);
+      // Queue record still exists in memory (not yet re-filtered)
+      queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queue?.posts).toHaveLength(5);
 
       // Mock the next fetch to return more posts from author-2
       const nextBatch: Core.NexusPostsKeyStream = {
@@ -1695,20 +1695,31 @@ describe('PostStreamApplication', () => {
       });
 
       // Verify each stream has its own queue
-      const queue1 = await Core.PostStreamQueueModel.findById(stream1);
-      const queue2 = await Core.PostStreamQueueModel.findById(stream2);
+      const queue1 = Core.PostStreamApplication.getQueueInfo(stream1);
+      const queue2 = Core.PostStreamApplication.getQueueInfo(stream2);
 
-      expect(queue1?.queue).toHaveLength(5);
-      expect(queue2?.queue).toHaveLength(5);
+      expect(queue1?.posts).toHaveLength(5);
+      expect(queue2?.posts).toHaveLength(5);
 
-      // Queues should be independent - clearing one doesn't affect the other
-      await Core.PostStreamQueueModel.deleteById(stream1);
+      // Queues should be independent - consuming one doesn't affect the other
+      // Request remaining posts from stream1 queue
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockClear();
 
-      const queue1After = await Core.PostStreamQueueModel.findById(stream1);
-      const queue2After = await Core.PostStreamQueueModel.findById(stream2);
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: stream1,
+        limit: 5,
+        streamHead: 0,
+        streamTail: BASE_TIMESTAMP + 9,
+        viewerId,
+      });
 
-      expect(queue1After).toBeNull();
-      expect(queue2After?.queue).toHaveLength(5);
+      const queue1After = Core.PostStreamApplication.getQueueInfo(stream1);
+      const queue2After = Core.PostStreamApplication.getQueueInfo(stream2);
+
+      // stream1 queue should now be empty (consumed all 5)
+      expect(queue1After?.posts).toHaveLength(0);
+      // stream2 queue should be unaffected
+      expect(queue2After?.posts).toHaveLength(5);
     });
 
     it('should handle Nexus error mid-loop and propagate error', async () => {
@@ -1758,9 +1769,9 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      const queue = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queue?.streamTail).toBe(BASE_TIMESTAMP + 14);
-      expect(queue?.queue).toHaveLength(5);
+      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queue?.cursor).toBe(BASE_TIMESTAMP + 14);
+      expect(queue?.posts).toHaveLength(5);
 
       // Second call: should use the stored streamTail for any subsequent Nexus fetches
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockClear();
@@ -1779,10 +1790,10 @@ describe('PostStreamApplication', () => {
       expect(Core.NexusPostStreamService.fetch).not.toHaveBeenCalled();
 
       // Queue should now be empty
-      const queueAfter = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queueAfter?.queue).toHaveLength(0);
-      // streamTail should still be preserved
-      expect(queueAfter?.streamTail).toBe(BASE_TIMESTAMP + 14);
+      const queueAfter = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queueAfter?.posts).toHaveLength(0);
+      // cursor should still be preserved
+      expect(queueAfter?.cursor).toBe(BASE_TIMESTAMP + 14);
     });
 
     it('should handle concurrent calls to the same stream', async () => {
@@ -1818,10 +1829,10 @@ describe('PostStreamApplication', () => {
       expect(result2.nextPageIds).toHaveLength(10);
 
       // Queue state should be consistent (one of the calls will have won the race)
-      const queue = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queue).not.toBeNull();
+      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queue).not.toBeUndefined();
       // Queue should have overflow posts from at least one call
-      expect(queue?.queue.length).toBeGreaterThanOrEqual(0);
+      expect(queue?.posts.length).toBeGreaterThanOrEqual(0);
     });
 
     it('should update queue streamTail when fetching more posts', async () => {
@@ -1853,9 +1864,9 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      // Queue's streamTail should be updated to the latest fetch's timestamp
-      const queue = await Core.PostStreamQueueModel.findById(streamId);
-      expect(queue?.streamTail).toBe(BASE_TIMESTAMP + 200);
+      // Queue's cursor should be updated to the latest fetch's timestamp
+      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      expect(queue?.cursor).toBe(BASE_TIMESTAMP + 200);
     });
   });
 });
