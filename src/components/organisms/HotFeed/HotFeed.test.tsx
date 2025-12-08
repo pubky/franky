@@ -4,9 +4,11 @@ import { HotFeed } from './HotFeed';
 
 // Mock Core
 vi.mock('@/core', () => ({
-  useHomeStore: vi.fn(() => ({
-    reach: 'following',
+  useHotStore: vi.fn(() => ({
+    reach: 'all',
     setReach: vi.fn(),
+    timeframe: 'today',
+    setTimeframe: vi.fn(),
   })),
 }));
 
@@ -22,16 +24,23 @@ vi.mock('@/organisms', () => ({
   HotFeedRightSidebar: () => <div data-testid="hot-feed-right-sidebar">HotFeedRightSidebar</div>,
   HotFeedDrawer: () => <div data-testid="hot-feed-drawer">HotFeedDrawer</div>,
   HotFeedRightDrawer: () => <div data-testid="hot-feed-right-drawer">HotFeedRightDrawer</div>,
+  HotTagsCardsSection: () => <div data-testid="hot-tags-cards-section">HotTagsCardsSection</div>,
+  HotTagsOverview: () => <div data-testid="hot-tags-overview">HotTagsOverview</div>,
+  HotActiveUsers: () => <div data-testid="hot-active-users">HotActiveUsers</div>,
+  TimelineFeed: () => <div data-testid="timeline-feed">TimelineFeed</div>,
 }));
 
 // Mock Atoms
 vi.mock('@/atoms', () => ({
+  Container: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
+    <div data-testid="container" {...props}>
+      {children}
+    </div>
+  ),
   Heading: ({ children, level }: { children: React.ReactNode; level: number }) => {
     const Tag = `h${level}` as keyof JSX.IntrinsicElements;
     return <Tag data-testid={`heading-${level}`}>{children}</Tag>;
   },
-  Typography: ({ children }: { children: React.ReactNode }) => <p data-testid="typography">{children}</p>,
-  Card: ({ children }: { children: React.ReactNode }) => <div data-testid="card">{children}</div>,
 }));
 
 describe('HotFeed', () => {
@@ -40,23 +49,29 @@ describe('HotFeed', () => {
     expect(screen.getByTestId('content-layout')).toBeInTheDocument();
   });
 
-  it('displays Hot heading', () => {
+  it('renders HotTagsCardsSection', () => {
     render(<HotFeed />);
-    expect(screen.getByText('Hot')).toBeInTheDocument();
+    expect(screen.getByTestId('hot-tags-cards-section')).toBeInTheDocument();
   });
 
-  it('displays description text', () => {
+  it('renders HotTagsOverview', () => {
     render(<HotFeed />);
-    expect(
-      screen.getByText('Discover trending posts and popular content from across the network.'),
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('hot-tags-overview')).toBeInTheDocument();
   });
 
-  it('renders content cards', () => {
+  it('renders HotActiveUsers', () => {
     render(<HotFeed />);
-    expect(screen.getByText("What's Hot")).toBeInTheDocument();
-    expect(screen.getByText('Trending Topics')).toBeInTheDocument();
-    expect(screen.getByText('Popular Posts')).toBeInTheDocument();
+    expect(screen.getByTestId('hot-active-users')).toBeInTheDocument();
+  });
+
+  it('renders TimelineFeed for trending posts', () => {
+    render(<HotFeed />);
+    expect(screen.getByTestId('timeline-feed')).toBeInTheDocument();
+  });
+
+  it('displays Trending posts heading', () => {
+    render(<HotFeed />);
+    expect(screen.getByText('Trending posts')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {

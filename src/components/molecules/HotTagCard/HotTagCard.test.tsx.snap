@@ -1,0 +1,321 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HotTagCard - Snapshots > matches snapshot with custom timeframe 1`] = `
+<div
+  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  data-testid="hot-tag-card-1"
+  style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(0, 188, 255);"
+>
+  <div
+    class="flex flex-col gap-2.5 px-6"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex size-6 shrink-0 items-center justify-center rounded-full border border-accent-foreground"
+        data-testid="container"
+      >
+        <p
+          class="text-sm text-foreground font-bold"
+          data-testid="typography"
+        >
+          1
+        </p>
+      </div>
+      <p
+        class="text-foreground truncate text-2xl font-bold"
+        data-testid="typography"
+      >
+        nft
+      </p>
+    </div>
+    <p
+      class="text-xl font-semibold text-secondary-foreground"
+      data-testid="typography"
+    >
+      50
+       posts 
+      today
+      .
+    </p>
+  </div>
+  <div
+    class="px-6"
+    data-testid="container"
+  />
+</div>
+`;
+
+exports[`HotTagCard - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  data-testid="hot-tag-card-1"
+  style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(255, 153, 0);"
+>
+  <div
+    class="flex flex-col gap-2.5 px-6"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex size-6 shrink-0 items-center justify-center rounded-full border border-accent-foreground"
+        data-testid="container"
+      >
+        <p
+          class="text-sm text-foreground font-bold"
+          data-testid="typography"
+        >
+          1
+        </p>
+      </div>
+      <p
+        class="text-foreground truncate text-2xl font-bold"
+        data-testid="typography"
+      >
+        bitcoin
+      </p>
+    </div>
+    <p
+      class="text-xl font-semibold text-secondary-foreground"
+      data-testid="typography"
+    >
+      371
+       posts 
+      this month
+      .
+    </p>
+  </div>
+  <div
+    class="px-6"
+    data-testid="container"
+  />
+</div>
+`;
+
+exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
+<div
+  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  data-testid="hot-tag-card-3"
+  style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(255, 0, 4);"
+>
+  <div
+    class="flex flex-col gap-2.5 px-6"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex size-6 shrink-0 items-center justify-center rounded-full border border-accent-foreground"
+        data-testid="container"
+      >
+        <p
+          class="text-sm text-foreground font-bold"
+          data-testid="typography"
+        >
+          3
+        </p>
+      </div>
+      <p
+        class="text-foreground truncate text-2xl font-bold"
+        data-testid="typography"
+      >
+        defi
+      </p>
+    </div>
+    <p
+      class="text-xl font-semibold text-secondary-foreground"
+      data-testid="typography"
+    >
+      100
+       posts 
+      this month
+      .
+    </p>
+  </div>
+  <div
+    class="px-6"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center"
+      data-testid="container"
+    >
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: 0px; z-index: 6;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            U0
+          </span>
+        </span>
+      </div>
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: -8px; z-index: 5;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            U1
+          </span>
+        </span>
+      </div>
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: -8px; z-index: 4;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            U2
+          </span>
+        </span>
+      </div>
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: -8px; z-index: 3;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            U3
+          </span>
+        </span>
+      </div>
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: -8px; z-index: 2;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            U4
+          </span>
+        </span>
+      </div>
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: -8px; z-index: 1;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            U5
+          </span>
+        </span>
+      </div>
+      <div
+        class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+        style="margin-left: -8px; z-index: 0;"
+      >
+        +94
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
+<div
+  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  data-testid="hot-tag-card-2"
+  style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(255, 9, 0);"
+>
+  <div
+    class="flex flex-col gap-2.5 px-6"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex size-6 shrink-0 items-center justify-center rounded-full border border-accent-foreground"
+        data-testid="container"
+      >
+        <p
+          class="text-sm text-foreground font-bold"
+          data-testid="typography"
+        >
+          2
+        </p>
+      </div>
+      <p
+        class="text-foreground truncate text-2xl font-bold"
+        data-testid="typography"
+      >
+        ethereum
+      </p>
+    </div>
+    <p
+      class="text-xl font-semibold text-secondary-foreground"
+      data-testid="typography"
+    >
+      250
+       posts 
+      this month
+      .
+    </p>
+  </div>
+  <div
+    class="px-6"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center"
+      data-testid="container"
+    >
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: 0px; z-index: 2;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        />
+      </div>
+      <div
+        class="relative rounded-full shadow-sm"
+        style="margin-left: -8px; z-index: 1;"
+      >
+        <span
+          class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+        />
+      </div>
+      <div
+        class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+        style="margin-left: -8px; z-index: 0;"
+      >
+        +99
+      </div>
+    </div>
+  </div>
+</div>
+`;

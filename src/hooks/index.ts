@@ -32,6 +32,7 @@ export * from './useFollowUser';
 export * from './useIsFollowing';
 export * from './useAvatarUrl';
 export * from './useHotTags';
+export * from './useHotStreamId';
 export * from './useUserStream';
 export * from './useTagInput';
 export * from './useProfileForm';
