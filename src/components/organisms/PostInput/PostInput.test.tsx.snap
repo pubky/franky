@@ -133,3 +133,90 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
   </div>
 </div>
 `;
+
+exports[`PostInput - Snapshots > matches snapshot for repost variant 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Optional comment"
+    />
+    <div
+      class="rounded-md bg-muted py-0"
+      data-testid="card"
+    >
+      <div
+        class="flex flex-col gap-4 p-6"
+        data-testid="card-content"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="post-header"
+        />
+        <div
+          data-post-id="test-post-123"
+          data-testid="post-content"
+        >
+          PostContent 
+          test-post-123
+        </div>
+      </div>
+    </div>
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-4"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Post reply"
+                data-testid="post-button"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

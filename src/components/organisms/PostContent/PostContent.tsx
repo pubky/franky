@@ -1,10 +1,11 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
+import { useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 export interface PostContentOrganismProps {
   postId: string;
@@ -13,20 +14,62 @@ export interface PostContentOrganismProps {
 
 export function PostContent({ postId, className }: PostContentOrganismProps) {
   // Fetch post details for content
-  const postDetails = useLiveQuery(async () => {
-    return await Core.PostDetailsModel.findById(postId);
-  }, [postId]);
+  const { postDetails } = Hooks.usePostDetails(postId);
+
+  // Get repost information
+  const { isRepost, originalPostId } = Hooks.useRepostInfo(postId);
+
+  // Fetch original post details if this is a repost
+  const { postDetails: originalPost } = Hooks.usePostDetails(originalPostId ?? null);
+
+  // Fetch original post if missing (user-initiated action)
+  const { fetchPost } = Hooks.useFetchPost();
+  const fetchingOriginalPostsRef = useRef(new Set<string>());
+  useEffect(() => {
+    let cancelled = false;
+    const fetchingSet = fetchingOriginalPostsRef.current;
+
+    if (originalPostId && !originalPost && !fetchingSet.has(originalPostId)) {
+      fetchingSet.add(originalPostId);
+      // Original post ID exists but post details are missing
+      // Fetch via hook (fire-and-forget, useLiveQuery will react to DB updates)
+      fetchPost(originalPostId).finally(() => {
+        // Only clean up if this effect hasn't been cancelled
+        if (!cancelled) {
+          fetchingSet.delete(originalPostId);
+        }
+      });
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [originalPostId, originalPost, fetchPost]);
 
   if (!postDetails) {
     // TODO: Add skeleton loading component for PostContent
     return <div className="text-muted-foreground">Loading content...</div>;
   }
 
+  const hasRepostComment = postDetails.content.trim().length > 0;
+
   return (
     <Atoms.Container className={Libs.cn('gap-3', className)}>
-      <Molecules.PostText content={postDetails.content} />
+      {/* Repost comment (if any) */}
+      {hasRepostComment && <Molecules.PostText content={postDetails.content} />}
 
-      <Molecules.PostLinkEmbeds content={postDetails.content} />
+      {/* Link previews from repost comment */}
+      {hasRepostComment && <Molecules.PostLinkEmbeds content={postDetails.content} />}
+
+      {/* Original post being reposted */}
+      {isRepost && originalPostId && (
+        <Atoms.Card className="rounded-md bg-muted py-0">
+          <Atoms.CardContent className="flex flex-col gap-4 p-6">
+            <Organisms.PostHeader postId={originalPostId} />
+            <Organisms.PostContent postId={originalPostId} />
+          </Atoms.CardContent>
+        </Atoms.Card>
+      )}
     </Atoms.Container>
   );
 }

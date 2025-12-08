@@ -48,6 +48,16 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   }),
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="card" className={className}>
+      {children}
+    </div>
+  ),
+  CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="card-content" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock('@/organisms', () => ({
@@ -59,6 +69,11 @@ vi.mock('@/organisms', () => ({
       data-count={characterCount}
       data-max={maxLength}
     />
+  )),
+  PostContent: vi.fn(({ postId }: { postId: string }) => (
+    <div data-testid="post-content" data-post-id={postId}>
+      PostContent {postId}
+    </div>
   )),
 }));
 
@@ -155,12 +170,14 @@ describe('PostInput', () => {
   const mockSetTags = vi.fn();
   const mockReply = vi.fn();
   const mockPost = vi.fn();
+  const mockRepost = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockPostControllerCreate.mockResolvedValue(undefined);
     mockReply.mockReturnValue(async () => {});
     mockPost.mockReturnValue(async () => {});
+    mockRepost.mockReturnValue(async () => {});
 
     mockUsePost.mockReturnValue({
       content: '',
@@ -169,6 +186,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
+      repost: mockRepost,
       isSubmitting: false,
       error: null,
     });
@@ -232,6 +250,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
+      repost: mockRepost,
       isSubmitting: false,
       error: null,
     });
@@ -258,6 +277,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
+      repost: mockRepost,
       isSubmitting: false,
       error: null,
     });
@@ -285,6 +305,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
+      repost: mockRepost,
       isSubmitting: false,
       error: null,
     });
@@ -304,6 +325,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
+      repost: mockRepost,
       isSubmitting: true,
       error: null,
     });
@@ -320,6 +342,100 @@ describe('PostInput', () => {
 
     expect(screen.getByPlaceholderText('Custom placeholder')).toBeInTheDocument();
   });
+
+  it('renders with repost variant', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
+
+    // Should have user header and repost preview header
+    const headers = screen.getAllByTestId('post-header');
+    expect(headers.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId('textarea')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Optional comment')).toBeInTheDocument();
+    // Should have repost preview card
+    expect(screen.getByTestId('card')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('handles repost submission with content', async () => {
+    const mockSubmitHandler = vi.fn().mockResolvedValue(undefined);
+    const mockRepost = vi.fn().mockReturnValue(mockSubmitHandler);
+
+    mockUsePost.mockReturnValue({
+      content: 'Quote repost comment',
+      setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
+      reply: mockReply,
+      post: mockPost,
+      repost: mockRepost,
+      isSubmitting: false,
+      error: null,
+    });
+
+    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" onSuccess={mockOnSuccess} />);
+
+    const postButton = screen.getByLabelText('Post reply');
+    fireEvent.click(postButton);
+
+    await waitFor(() => {
+      expect(mockRepost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          originalPostId: 'test-post-123',
+        }),
+      );
+    });
+  });
+
+  it('handles repost submission without content', async () => {
+    const mockSubmitHandler = vi.fn().mockResolvedValue(undefined);
+    const mockRepost = vi.fn().mockReturnValue(mockSubmitHandler);
+
+    mockUsePost.mockReturnValue({
+      content: '',
+      setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
+      reply: mockReply,
+      post: mockPost,
+      repost: mockRepost,
+      isSubmitting: false,
+      error: null,
+    });
+
+    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" onSuccess={mockOnSuccess} />);
+
+    const postButton = screen.getByLabelText('Post reply');
+    fireEvent.click(postButton);
+
+    await waitFor(() => {
+      expect(mockRepost).toHaveBeenCalledWith(
+        expect.objectContaining({
+          originalPostId: 'test-post-123',
+        }),
+      );
+    });
+  });
+
+  it('enables post button for repost even with empty content', () => {
+    const mockRepost = vi.fn();
+    mockUsePost.mockReturnValue({
+      content: '',
+      setContent: mockSetContent,
+      tags: [],
+      setTags: mockSetTags,
+      reply: mockReply,
+      post: mockPost,
+      repost: mockRepost,
+      isSubmitting: false,
+      error: null,
+    });
+
+    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
+
+    // Check that post button is enabled for repost even with empty content
+    const postButton = screen.getByLabelText('Post reply');
+    expect(postButton).not.toBeDisabled();
+  });
 });
 
 describe('PostInput - Snapshots', () => {
@@ -332,6 +448,7 @@ describe('PostInput - Snapshots', () => {
       setTags: vi.fn(),
       reply: vi.fn(),
       post: vi.fn(),
+      repost: vi.fn(),
       isSubmitting: false,
       error: null,
     });
@@ -344,6 +461,11 @@ describe('PostInput - Snapshots', () => {
 
   it('matches snapshot for reply variant', () => {
     const { container } = render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for repost variant', () => {
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

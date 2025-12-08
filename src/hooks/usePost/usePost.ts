@@ -13,17 +13,25 @@ interface UsePostPostOptions {
   onSuccess?: (createdPostId: string) => void;
 }
 
+interface UsePostRepostOptions {
+  originalPostId: string;
+  onSuccess?: (createdPostId: string) => void;
+}
+
 /**
- * Custom hook to handle post creation (both replies and root posts)
+ * Custom hook to handle post creation (replies, reposts, and root posts)
  *
- * @returns Object containing content state, setContent function, tags state, setTags function, reply method, post method, isSubmitting state, and error state
+ * @returns Object containing content state, setContent function, tags state, setTags function, reply method, post method, repost method, isSubmitting state, and error state
  *
  * @example
  * ```tsx
- * const { content, setContent, tags, setTags, reply, post, isSubmitting, error } = usePost();
+ * const { content, setContent, tags, setTags, reply, post, repost, isSubmitting, error } = usePost();
  *
  * // For replies:
  * const handleSubmit = reply({ postId: 'post-123', onSuccess: () => {} });
+ *
+ * // For reposts:
+ * const handleSubmit = repost({ originalPostId: 'post-123', onSuccess: () => {} });
  *
  * // For root posts:
  * const handleSubmit = post({ onSuccess: () => {} });
@@ -98,6 +106,32 @@ export function usePost() {
     [content, tags, currentUserId, showErrorToast],
   );
 
+  const repost = useCallback(
+    async ({ originalPostId, onSuccess }: UsePostRepostOptions) => {
+      if (!originalPostId || !currentUserId) return;
+
+      setIsSubmitting(true);
+
+      try {
+        const createdPostId = await Core.PostController.create({
+          originalPostId,
+          content: content.trim(),
+          authorId: currentUserId,
+          tags: tags.length > 0 ? tags : undefined,
+        });
+        setContent('');
+        setTags([]);
+        onSuccess?.(createdPostId);
+      } catch (err) {
+        console.error('Failed to repost:', err);
+        showErrorToast('Failed to repost. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [content, tags, currentUserId, showErrorToast],
+  );
+
   return {
     content,
     setContent,
@@ -105,6 +139,7 @@ export function usePost() {
     setTags,
     reply,
     post,
+    repost,
     isSubmitting,
   };
 }

@@ -45,6 +45,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
           <button>
             Reply
           </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>
@@ -110,6 +113,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
           <button>
             Reply
           </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>
@@ -162,6 +168,9 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
           <button>
             Reply
           </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>
@@ -213,6 +222,9 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
           post-789
           <button>
             Reply
+          </button>
+          <button>
+            Repost
           </button>
         </div>
       </div>

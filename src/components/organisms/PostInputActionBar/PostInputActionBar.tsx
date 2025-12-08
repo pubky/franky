@@ -13,6 +13,9 @@ export function PostInputActionBar({
   onPostClick,
   isPostDisabled = false,
   isSubmitting = false,
+  postButtonLabel = 'Post',
+  postButtonAriaLabel = 'Post reply',
+  postButtonIcon,
 }: PostInputActionBarProps) {
   const commonButtonProps = React.useMemo(
     () => ({
@@ -50,16 +53,27 @@ export function PostInputActionBar({
         disabled: !onArticleClick || isSubmitting,
       },
       {
-        icon: isSubmitting ? Libs.Loader2 : Libs.Send,
+        icon: isSubmitting ? Libs.Loader2 : postButtonIcon || Libs.Send,
         onClick: onPostClick,
         disabled: isPostDisabled || !onPostClick,
-        ariaLabel: isSubmitting ? 'Posting...' : 'Post reply',
+        ariaLabel: isSubmitting ? 'Posting...' : postButtonAriaLabel,
         showLabel: true,
-        labelText: isSubmitting ? 'Posting...' : 'Post',
+        labelText: isSubmitting ? 'Posting...' : postButtonLabel,
         iconClassName: isSubmitting ? 'animate-spin' : undefined,
       },
     ],
-    [onEmojiClick, onImageClick, onFileClick, onArticleClick, onPostClick, isPostDisabled, isSubmitting],
+    [
+      onEmojiClick,
+      onImageClick,
+      onFileClick,
+      onArticleClick,
+      onPostClick,
+      isPostDisabled,
+      isSubmitting,
+      postButtonLabel,
+      postButtonAriaLabel,
+      postButtonIcon,
+    ],
   );
 
   return (

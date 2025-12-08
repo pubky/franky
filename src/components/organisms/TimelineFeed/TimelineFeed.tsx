@@ -89,6 +89,7 @@ function TimelineFeedContent({
     hasMore,
     loadMore,
     prependPosts,
+    removePosts,
   } = Hooks.useStreamPagination({
     streamId,
   });
@@ -143,6 +144,7 @@ function TimelineFeedContent({
 
   const contextValue: TimelineFeedContextValue = {
     prependPosts,
+    removePosts,
   };
 
   return (

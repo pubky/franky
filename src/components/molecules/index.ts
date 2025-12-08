@@ -43,6 +43,7 @@ export * from './PostTagAddButton';
 export * from './PostTagInput';
 export * from './PostTagsList';
 export * from './PostText';
+export * from './ReposterAvatar';
 export * from './ProgressSteps';
 export * from './PublicKey';
 export * from './Filters';

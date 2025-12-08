@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { useLiveQuery } from 'dexie-react-hooks';
+import * as Hooks from '@/hooks';
 import { PostMain } from './PostMain';
 
 // Use real libs, only stub cn for deterministic class joining
@@ -50,6 +52,14 @@ vi.mock('@/atoms', () => ({
       ThreadConnector
     </div>
   ),
+  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
+    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
+    return (
+      <Tag data-testid="typography" data-as={as} className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 // Stub organisms composed inside PostMain
@@ -60,14 +70,17 @@ vi.mock('@/organisms', () => ({
     postId,
     className,
     onReplyClick,
+    onRepostClick,
   }: {
     postId: string;
     className?: string;
     onReplyClick?: () => void;
+    onRepostClick?: () => void;
   }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
       {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+      {onRepostClick && <button onClick={onRepostClick}>Repost</button>}
     </div>
   ),
   DialogReply: ({
@@ -83,24 +96,97 @@ vi.mock('@/organisms', () => ({
       DialogReply
     </div>
   ),
+  DialogRepost: ({
+    postId,
+    open,
+    onOpenChangeAction,
+  }: {
+    postId: string;
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog-repost" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
+      DialogRepost
+    </div>
+  ),
 }));
 
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
+  ReposterAvatar: ({ reposterId, index }: { reposterId: string; index: number }) => (
+    <div data-testid="reposter-avatar" data-reposter-id={reposterId} data-index={index}>
+      ReposterAvatar {reposterId}
+    </div>
+  ),
 }));
 
-// Mock useElementHeight hook
+// Mock useLiveQuery from dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(),
+}));
+
+// Mock useElementHeight hook and other hooks
 vi.mock('@/hooks', () => ({
   useElementHeight: vi.fn(() => ({
     ref: vi.fn(),
     height: 150,
   })),
+  useCurrentUserProfile: vi.fn(() => ({
+    currentUserPubky: 'test-user-id',
+    userDetails: { name: 'Test User' },
+  })),
+  useUserDetails: vi.fn(() => ({
+    userDetails: { name: 'Test User' },
+    isLoading: false,
+  })),
+  useRepostInfo: vi.fn(() => ({
+    isRepost: false,
+    repostAuthorId: null,
+    isCurrentUserRepost: false,
+    originalPostId: null,
+    isLoading: false,
+  })),
+  useReposters: vi.fn(() => ({
+    reposterIds: [],
+    totalCount: 0,
+    isLoading: false,
+  })),
+  usePostDetails: vi.fn(() => ({
+    postDetails: null,
+    isLoading: false,
+  })),
+  useAvatarUrl: vi.fn(() => undefined),
+  useDeletePost: vi.fn(() => ({
+    deletePost: vi.fn(),
+    isDeleting: false,
+  })),
+  useRepostText: vi.fn(() => ({
+    repostText: 'You reposted',
+    isLoading: false,
+  })),
 }));
+
+const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
+const mockUseLiveQuery = vi.mocked(useLiveQuery);
+const mockUseRepostText = vi.mocked(Hooks.useRepostText);
 
 describe('PostMain', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default mock: not a repost
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      repostAuthorId: null,
+      isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
+    });
+    mockUseLiveQuery.mockReturnValue({ reposted: null });
+    mockUseRepostText.mockReturnValue({
+      repostText: 'You reposted',
+      isLoading: false,
+    });
   });
 
   it('renders header, content, tags and actions', () => {
