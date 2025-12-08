@@ -170,20 +170,13 @@ export class PostStreamApplication {
 
     // Save the remaining posts we fetched into the queue, so we can use later.
     const remainingPosts = queue.slice(limit);
-    await this.saveRemaining(streamId, remainingPosts, cursor);
+    await Core.PostStreamQueueModel.upsert({ id: streamId, queue: remainingPosts, streamTail: cursor });
 
     return {
       nextPageIds: postsToReturn,
       cacheMissPostIds: [...new Set(cacheMissIds)],
       timestamp,
     };
-  }
-
-  /**
-   * Saves remaining posts for the next pagination request.
-   */
-  private static async saveRemaining(streamId: Core.PostStreamId, posts: string[], cursor: number): Promise<void> {
-    await Core.PostStreamQueueModel.upsert({ id: streamId, queue: posts, streamTail: cursor });
   }
 
   // ============================================================================
