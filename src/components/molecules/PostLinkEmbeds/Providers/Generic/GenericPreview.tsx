@@ -31,23 +31,20 @@ export function GenericPreview({ url }: GenericPreviewProps) {
 
   return (
     <Atoms.Link data-testid="generic-website-preview" href={url}>
-      <Atoms.Container
-        overrideDefaults
-        className="flex w-full max-w-full min-w-auto flex-wrap items-start gap-6 rounded-md bg-muted p-6 lg:max-w-[520px] xl:max-w-full"
-      >
-        <Atoms.Container overrideDefaults className="flex min-w-0 flex-1 flex-col gap-2">
+      <Atoms.Container className="justify-between gap-6 rounded-md bg-muted p-6 lg:flex-row">
+        <Atoms.Container className="gap-y-2">
           {title && (
             <Atoms.Typography size="lg" className="wrap-break-word">
               {title}
             </Atoms.Typography>
           )}
 
-          <Atoms.Container overrideDefaults className="flex flex-row items-center gap-1">
+          <Atoms.Container className="flex-row items-center gap-x-1">
             <Icons.Globe size={13} className="shrink-0 text-muted-foreground" />
 
             <Atoms.Typography
               size="sm"
-              className="min-w-0 flex-1 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground"
+              className="max-w-50 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground sm:max-w-none sm:whitespace-normal"
             >
               {displayUrl}
             </Atoms.Typography>

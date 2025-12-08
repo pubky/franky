@@ -295,6 +295,16 @@ body {
     display: none;
   }
 
+  /**
+   * Fullscreen image display
+   * - Ensures images maintain aspect ratio when viewed in fullscreen mode
+   * - Prevents stretching/distortion of images in native fullscreen API
+   * - Applied to: Any img element when user triggers fullscreen view
+   */
+  img:fullscreen {
+    object-fit: contain;
+  }
+
   .onboarding-nav {
     position: sticky;
     bottom: 0;
