@@ -19,7 +19,6 @@ export * from './Home';
 export * from './HomeHeader';
 export * from './InputField';
 export * from './Install';
-export * from './HumanHeader';
 export * from './HumanPhoneInputField';
 export * from './HumanPhoneCodeInput';
 export * from './HumanSmsCard';

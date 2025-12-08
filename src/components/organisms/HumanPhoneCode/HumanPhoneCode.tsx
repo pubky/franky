@@ -48,11 +48,12 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
 
   return (
     <React.Fragment>
-      <Molecules.HumanHeader
-        preTitle="Enter"
-        highlightedTitle="Code."
-        subtitle={`We sent a 6-digit verification code to ${phoneNumber}.`}
-      />
+      <Atoms.PageHeader>
+        <Molecules.PageTitle size="large">
+          Enter <span className="text-brand">Code.</span>
+        </Molecules.PageTitle>
+        <Atoms.PageSubtitle>We sent a 6-digit verification code to {phoneNumber}.</Atoms.PageSubtitle>
+      </Atoms.PageHeader>
 
       {/* Verification code card */}
       <Atoms.Card data-testid="human-phone-code-card" className="gap-0 p-6 lg:p-12">

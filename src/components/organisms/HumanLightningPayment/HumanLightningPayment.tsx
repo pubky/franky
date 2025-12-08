@@ -56,11 +56,12 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
 
   return (
     <React.Fragment>
-      <Molecules.HumanHeader
-        preTitle="Scan to"
-        highlightedTitle="Pay."
-        subtitle="Scan the QR code with your favorite wallet."
-      />
+      <Atoms.PageHeader>
+        <Molecules.PageTitle size="large">
+          Scan to <span className="text-brand">Pay.</span>
+        </Molecules.PageTitle>
+        <Atoms.PageSubtitle>Scan the QR code with your favorite wallet.</Atoms.PageSubtitle>
+      </Atoms.PageHeader>
 
       <Atoms.Card
         data-testid="human-lightning-payment-card"

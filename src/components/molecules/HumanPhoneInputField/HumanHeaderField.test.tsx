@@ -1,18 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-import { HumanPhoneHeader } from './HumanPhoneInputField';
+import { HumanPhoneInputField } from './HumanPhoneInputField';
 
-describe('HumanHeader', () => {
+describe('HumanPhoneInputField', () => {
   it('renders the highlighted title text', () => {
-    render(<HumanPhoneHeader />);
+    render(<HumanPhoneInputField value="" onChange={() => {}} />);
 
     expect(screen.getByText(/Proof of Human\./i)).toBeInTheDocument();
     expect(screen.getByText('Human.')).toHaveClass('text-brand');
   });
 
   it('renders the supporting subtitle copy', () => {
-    render(<HumanPhoneHeader />);
+    render(<HumanPhoneInputField value="" onChange={() => {}} />);
 
     expect(
       screen.getByText('Prove your humanity. This keeps the arena real and fair for everyone.'),
@@ -20,7 +20,7 @@ describe('HumanHeader', () => {
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HumanPhoneHeader />);
+    const { container } = render(<HumanPhoneInputField value="" onChange={() => {}} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

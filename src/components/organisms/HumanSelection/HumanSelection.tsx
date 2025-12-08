@@ -15,11 +15,13 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
   const isDevMode = process.env.NODE_ENV === 'development'; // Show dev mode options if in development mode
   return (
     <React.Fragment>
-      <Molecules.HumanHeader
-        preTitle="Proof of"
-        highlightedTitle="Human."
-        subtitle="Prove your humanity. This keeps the arena real and fair for everyone."
-      />
+      <Atoms.PageHeader>
+        <Molecules.PageTitle size="large">
+          Proof of <span className="text-brand">Human.</span>
+        </Molecules.PageTitle>
+        <Atoms.PageSubtitle>Prove your humanity. This keeps the arena real and fair for everyone.</Atoms.PageSubtitle>
+      </Atoms.PageHeader>
+
       <Atoms.Container data-testid="human-verification-cards" className="gap-6 lg:flex-row lg:items-stretch lg:gap-8">
         <Molecules.HumanSmsCard onClick={() => onClick('sms')} />
         <Molecules.HumanBitcoinCard onClick={() => onClick('payment')} />

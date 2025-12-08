@@ -41,11 +41,12 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
 
   return (
     <React.Fragment>
-      <Molecules.HumanHeader
-        preTitle="Enter an"
-        highlightedTitle="Invite Code."
-        subtitle="Enter the invite code you received to continue."
-      />
+      <Atoms.PageHeader>
+        <Molecules.PageTitle size="large">
+          Enter an <span className="text-brand">Invite Code.</span>
+        </Molecules.PageTitle>
+        <Atoms.PageSubtitle>Enter the invite code you received to continue.</Atoms.PageSubtitle>
+      </Atoms.PageHeader>
 
       <Atoms.Card data-testid="human-invite-code-card" className="gap-0 p-6 lg:p-12">
         <Atoms.Container className="flex-col gap-8 lg:flex-row lg:items-center">

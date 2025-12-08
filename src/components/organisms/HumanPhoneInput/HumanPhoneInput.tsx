@@ -73,11 +73,12 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
 
   return (
     <React.Fragment>
-      <Molecules.HumanHeader
-        preTitle="Proof of"
-        highlightedTitle="Phone."
-        subtitle="We will send you a verification code via SMS to your phone number."
-      />
+      <Atoms.PageHeader>
+        <Molecules.PageTitle size="large">
+          Proof of <span className="text-brand">Phone.</span>
+        </Molecules.PageTitle>
+        <Atoms.PageSubtitle>We will send you a verification code via SMS to your phone number.</Atoms.PageSubtitle>
+      </Atoms.PageHeader>
       <Molecules.HumanPhoneInputField
         value={phoneNumberInput}
         onChange={handlePhoneNumberChange}
