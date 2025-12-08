@@ -2,57 +2,61 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
-import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
-vi.mock('@/atoms', () => ({
-  Container: ({
-    children,
-    className,
-    overrideDefaults,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    overrideDefaults?: boolean;
-  }) => (
-    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
-      {children}
-    </div>
-  ),
-  Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
-    <textarea
-      ref={ref}
-      data-testid="textarea"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      disabled={disabled}
-    />
-  )),
-  PostThreadConnector: vi.fn(({ height, variant }) => (
-    <div data-testid="thread-connector" data-height={height} data-variant={variant} />
-  )),
-  POST_THREAD_CONNECTOR_VARIANTS: {
-    REGULAR: 'regular',
-    LAST: 'last',
-    GAP_FIX: 'gap-fix',
-    DIALOG_REPLY: 'dialog-reply',
-  },
-  Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
-    <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
-      {children}
-    </button>
-  )),
-  Typography: vi.fn(({ children, as, size, className }) => {
-    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
-        {children}
-      </Tag>
-    );
-  }),
+vi.mock('@/config', () => ({
+  POST_MAX_CHARACTER_LENGTH: 2000,
+  POST_MAX_TAGS: 5,
 }));
+
+vi.mock('@/atoms', async () => {
+  const { POST_THREAD_CONNECTOR_VARIANTS } =
+    await import('@/components/atoms/PostThreadConnector/PostThreadConnector.constants');
+  return {
+    Container: ({
+      children,
+      className,
+      overrideDefaults,
+    }: {
+      children: React.ReactNode;
+      className?: string;
+      overrideDefaults?: boolean;
+    }) => (
+      <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+        {children}
+      </div>
+    ),
+    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
+      <textarea
+        ref={ref}
+        data-testid="textarea"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        disabled={disabled}
+      />
+    )),
+    PostThreadConnector: vi.fn(({ height, variant }) => (
+      <div data-testid="thread-connector" data-height={height} data-variant={variant} />
+    )),
+    POST_THREAD_CONNECTOR_VARIANTS,
+    Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
+      <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
+        {children}
+      </button>
+    )),
+    Typography: vi.fn(({ children, as, size, className }) => {
+      const Tag = (as || 'p') as React.ElementType;
+      return (
+        <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+          {children}
+        </Tag>
+      );
+    }),
+  };
+});
 
 vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(({ postId, isReplyInput, characterCount, maxLength }) => (
@@ -166,7 +170,7 @@ describe('PostInput', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPostControllerCreate.mockResolvedValue(undefined);
+    mockPostControllerCreate.mockResolvedValue('test-post-id');
     mockReply.mockReturnValue(async () => {});
     mockPost.mockReturnValue(async () => {});
 
@@ -339,7 +343,6 @@ describe('PostInput - Snapshots', () => {
       reply: vi.fn(),
       post: vi.fn(),
       isSubmitting: false,
-      error: null,
     });
   });
 

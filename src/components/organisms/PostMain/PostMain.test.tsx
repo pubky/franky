@@ -1,6 +1,8 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostMain } from './PostMain';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 
 // Use vi.hoisted to define mock functions before vi.mock calls (which are hoisted)
 const { mockIsPostDeleted } = vi.hoisted(() => ({
@@ -18,45 +20,49 @@ vi.mock('@/libs', async (importOriginal) => {
 });
 
 // Minimal atoms used by PostMain
-vi.mock('@/atoms', () => ({
-  Container: ({
-    children,
-    className,
-    onClick,
-    overrideDefaults,
-    ...props
-  }: React.PropsWithChildren<{
-    className?: string;
-    onClick?: () => void;
-    overrideDefaults?: boolean;
-    [key: string]: unknown;
-  }>) => (
-    <div
-      data-testid="container"
-      data-class-name={className}
-      data-override-defaults={overrideDefaults}
-      onClick={onClick}
-      {...props}
-    >
-      {children}
-    </div>
-  ),
-  Card: vi.fn(({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" data-class-name={className}>
-      {children}
-    </div>
-  )),
-  CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card-content" data-class-name={className}>
-      {children}
-    </div>
-  ),
-  PostThreadConnector: ({ height, variant }: { height: number; variant?: string }) => (
-    <div data-testid="thread-connector" data-height={height} data-variant={variant}>
-      ThreadConnector
-    </div>
-  ),
-}));
+vi.mock('@/atoms', async () => {
+  const { POST_THREAD_CONNECTOR_VARIANTS } =
+    await import('@/components/atoms/PostThreadConnector/PostThreadConnector.constants');
+  return {
+    Container: (
+      props: React.PropsWithChildren<{
+        className?: string;
+        onClick?: () => void;
+        overrideDefaults?: boolean;
+        [key: string]: unknown;
+      }>,
+    ) => {
+      const { children, className, onClick, overrideDefaults, ...rest } = props;
+      return (
+        <div
+          data-testid="container"
+          data-class-name={className}
+          data-override-defaults={overrideDefaults}
+          onClick={onClick}
+          {...rest}
+        >
+          {children}
+        </div>
+      );
+    },
+    Card: vi.fn(({ children, className }: { children: React.ReactNode; className?: string }) => (
+      <div data-testid="card" data-class-name={className}>
+        {children}
+      </div>
+    )),
+    CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+      <div data-testid="card-content" data-class-name={className}>
+        {children}
+      </div>
+    ),
+    PostThreadConnector: ({ height, variant }: { height: number; variant?: string }) => (
+      <div data-testid="thread-connector" data-height={height} data-variant={variant}>
+        ThreadConnector
+      </div>
+    ),
+    POST_THREAD_CONNECTOR_VARIANTS,
+  };
+});
 
 // Stub organisms composed inside PostMain
 vi.mock('@/organisms', () => ({
@@ -148,7 +154,7 @@ describe('PostMain', () => {
     const connector = screen.getByTestId('thread-connector');
     expect(connector).toBeInTheDocument();
     expect(connector).toHaveAttribute('data-height', '150');
-    expect(connector).toHaveAttribute('data-variant', 'regular');
+    expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.REGULAR);
   });
 
   it('renders PostDeleted when post is deleted', () => {
