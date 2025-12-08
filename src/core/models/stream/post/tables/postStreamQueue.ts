@@ -4,6 +4,16 @@ import { db } from '@/core/database';
 import { PostStreamId } from '../postStream.types';
 import { PostStreamQueueModelSchema } from './postStreamQueue.schema';
 
+/**
+ * Stores overflow posts from mute-filtered pagination to ensure consistent page sizes.
+ *
+ * NOTE: This model intentionally does NOT extend BaseStreamModel because:
+ * 1. Different schema: stores `queue` (overflow posts) + `streamTail` (cursor) instead of just `stream`
+ * 2. Different semantics: this is a temporary buffer, not a canonical stream representation
+ * 3. Different lifecycle: queues are consumed/modified on each pagination request
+ *
+ * @see PostStreamModel for the canonical stream model that extends BaseStreamModel
+ */
 export class PostStreamQueueModel implements PostStreamQueueModelSchema {
   static table: Table<PostStreamQueueModelSchema> = db.table('post_stream_queues');
 

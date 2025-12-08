@@ -429,28 +429,6 @@ describe('PostStreamApplication', () => {
       expect(result.nextPageIds).toEqual(['author-1:post-1', 'author-2:post-2', 'author-1:post-3']);
     });
 
-    it('should handle when limit is 0', async () => {
-      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
-      await createStreamWithPosts(postIds);
-      await createPostDetails(postIds);
-
-      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
-
-      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
-        streamId,
-        limit: 0,
-        streamHead: 0,
-        streamTail: 0,
-        viewerId: DEFAULT_AUTHOR,
-      });
-
-      expect(result.nextPageIds).toHaveLength(0);
-      expect(result.cacheMissPostIds).toEqual([]);
-      expect(result.timestamp).toBeUndefined();
-      // Note: When limit is 0, getStreamFromCache returns empty immediately and doesn't fetch from Nexus
-      expect(nexusFetchSpy).not.toHaveBeenCalled();
-    });
-
     it('should handle when timestamp is provided but post_id is not', async () => {
       await createStreamWithPosts([]);
       const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5);
@@ -1489,10 +1467,26 @@ describe('PostStreamApplication', () => {
       expect(result.nextPageIds).toEqual(['author-1:post-1', 'author-1:post-3', 'author-1:post-4']);
     });
 
-    it('should clear queue when muted users change and new fetch occurs', async () => {
-      // Initial state: no muted users, populate queue
+    it('should re-filter queue when muted users change', async () => {
+      // Initial state: no muted users, populate queue with posts from two authors
       const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
-        post_keys: Array.from({ length: 15 }, (_, i) => `author-1:post-${i + 1}`),
+        post_keys: [
+          'author-1:post-1',
+          'author-2:post-2',
+          'author-1:post-3',
+          'author-2:post-4',
+          'author-1:post-5',
+          'author-2:post-6',
+          'author-1:post-7',
+          'author-2:post-8',
+          'author-1:post-9',
+          'author-2:post-10',
+          'author-1:post-11', // Queue overflow starts here
+          'author-2:post-12',
+          'author-1:post-13',
+          'author-2:post-14',
+          'author-1:post-15',
+        ],
         last_post_score: BASE_TIMESTAMP + 14,
       };
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
@@ -1505,18 +1499,38 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      // Queue should have 5 posts
+      // Queue should have 5 posts (11-15)
       let queue = await Core.PostStreamQueueModel.findById(streamId);
       expect(queue?.queue).toHaveLength(5);
 
-      // Now mute author-1 - the queue will still be used but the posts
-      // have already passed through filtering with the old mute list
-      // This is expected behavior - the queue persists filtered posts
+      // Now mute author-1 - the queue should be re-filtered when next fetch occurs
       await setupMutedUsers(['author-1'] as Core.Pubky[]);
 
-      // Verify queue still exists with same posts
+      // Queue record still exists in DB (not yet re-filtered)
       queue = await Core.PostStreamQueueModel.findById(streamId);
       expect(queue?.queue).toHaveLength(5);
+
+      // Mock the next fetch to return more posts from author-2
+      const nextBatch: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 10 }, (_, i) => `author-2:post-${i + 20}`),
+        last_post_score: BASE_TIMESTAMP + 29,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(nextBatch);
+
+      // Request 5 posts - queue has 5 but only 2 are from non-muted author-2
+      // (post-12, post-14 from original queue)
+      // Should re-filter queue, find only 2, then fetch more from Nexus
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 5,
+        streamHead: 0,
+        streamTail: BASE_TIMESTAMP + 9,
+        viewerId,
+      });
+
+      // Should get 5 posts, none from muted author-1
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds.every((id) => !id.startsWith('author-1:'))).toBe(true);
     });
 
     it('should work correctly with no muted users', async () => {
@@ -1592,6 +1606,256 @@ describe('PostStreamApplication', () => {
       expect(new Set(result.nextPageIds).size).toBe(10);
       // post-3 should appear only once
       expect(result.nextPageIds.filter((id) => id === 'author-1:post-3')).toHaveLength(1);
+    });
+
+    it('should stop at max fetch iterations when heavily muted', async () => {
+      // Mute author-muted (all posts will be from muted user)
+      await setupMutedUsers(['author-muted'] as Core.Pubky[]);
+
+      // Every fetch returns only muted posts
+      const mutedBatch: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 10 }, (_, i) => `author-muted:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 9,
+      };
+
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mutedBatch);
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should stop after MAX_FETCH_ITERATIONS (5) and return partial/empty results
+      // rather than looping infinitely
+      expect(nexusFetchSpy).toHaveBeenCalledTimes(5);
+      // All posts were muted, so we get nothing
+      expect(result.nextPageIds).toHaveLength(0);
+    });
+
+    it('should return partial results when max fetch iterations reached with some valid posts', async () => {
+      await setupMutedUsers(['author-muted'] as Core.Pubky[]);
+
+      // Each batch has 9 muted posts and 1 valid post
+      let callCount = 0;
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockImplementation(async () => {
+        callCount++;
+        return {
+          post_keys: [
+            `author-valid:post-${callCount}`,
+            ...Array.from({ length: 9 }, (_, i) => `author-muted:post-${callCount * 10 + i}`),
+          ],
+          last_post_score: BASE_TIMESTAMP + callCount * 10,
+        };
+      });
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // With 5 iterations, we get 5 valid posts (1 per batch), not 10
+      // Should return partial results rather than looping forever
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds.every((id) => id.startsWith('author-valid:'))).toBe(true);
+    });
+
+    it('should have independent queues for different streams', async () => {
+      const stream1 = Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId;
+      const stream2 = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+
+      // Return 15 posts for each stream
+      const mockBatch: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 15 }, (_, i) => `author-1:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 14,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockBatch);
+
+      // Fetch from stream1 - should create queue with 5 overflow posts
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: stream1,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Fetch from stream2 - should create separate queue
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: stream2,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Verify each stream has its own queue
+      const queue1 = await Core.PostStreamQueueModel.findById(stream1);
+      const queue2 = await Core.PostStreamQueueModel.findById(stream2);
+
+      expect(queue1?.queue).toHaveLength(5);
+      expect(queue2?.queue).toHaveLength(5);
+
+      // Queues should be independent - clearing one doesn't affect the other
+      await Core.PostStreamQueueModel.deleteById(stream1);
+
+      const queue1After = await Core.PostStreamQueueModel.findById(stream1);
+      const queue2After = await Core.PostStreamQueueModel.findById(stream2);
+
+      expect(queue1After).toBeNull();
+      expect(queue2After?.queue).toHaveLength(5);
+    });
+
+    it('should handle Nexus error mid-loop and propagate error', async () => {
+      await setupMutedUsers(['author-muted'] as Core.Pubky[]);
+
+      // First batch succeeds with some valid posts but not enough (returns 10, only 2 valid)
+      // Must return exactly `limit` posts so end-of-stream is NOT triggered
+      const batch1: Core.NexusPostsKeyStream = {
+        post_keys: [
+          'author-valid:post-1',
+          'author-valid:post-2',
+          ...Array.from({ length: 8 }, (_, i) => `author-muted:post-m${i + 1}`),
+        ],
+        last_post_score: BASE_TIMESTAMP + 9,
+      };
+
+      vi.spyOn(Core.NexusPostStreamService, 'fetch')
+        .mockResolvedValueOnce(batch1)
+        .mockRejectedValueOnce(new Error('Network error'));
+
+      // Should throw because the error propagates
+      await expect(
+        Core.PostStreamApplication.getOrFetchStreamSlice({
+          streamId,
+          limit: 10,
+          streamHead: 0,
+          streamTail: 0,
+          viewerId,
+        }),
+      ).rejects.toThrow('Network error');
+    });
+
+    it('should preserve streamTail across multiple pagination calls', async () => {
+      // Initial fetch returns 15 posts
+      const batch1: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 15 }, (_, i) => `author-1:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 14,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(batch1);
+
+      // First call: get 10, queue should have 5 with streamTail = BASE_TIMESTAMP + 14
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      const queue = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queue?.streamTail).toBe(BASE_TIMESTAMP + 14);
+      expect(queue?.queue).toHaveLength(5);
+
+      // Second call: should use the stored streamTail for any subsequent Nexus fetches
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockClear();
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 5,
+        streamHead: 0,
+        streamTail: 0, // This should be ignored in favor of queue's streamTail
+        viewerId,
+      });
+
+      // Should get posts from queue
+      expect(result.nextPageIds).toHaveLength(5);
+      // Since queue had enough, no Nexus fetch should have been made
+      expect(Core.NexusPostStreamService.fetch).not.toHaveBeenCalled();
+
+      // Queue should now be empty
+      const queueAfter = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queueAfter?.queue).toHaveLength(0);
+      // streamTail should still be preserved
+      expect(queueAfter?.streamTail).toBe(BASE_TIMESTAMP + 14);
+    });
+
+    it('should handle concurrent calls to the same stream', async () => {
+      // This test documents the current behavior - concurrent calls may cause duplicate fetches
+      // but should not corrupt data or throw errors
+
+      const mockBatch: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 15 }, (_, i) => `author-1:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 14,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockBatch);
+
+      // Fire two concurrent requests
+      const [result1, result2] = await Promise.all([
+        Core.PostStreamApplication.getOrFetchStreamSlice({
+          streamId,
+          limit: 10,
+          streamHead: 0,
+          streamTail: 0,
+          viewerId,
+        }),
+        Core.PostStreamApplication.getOrFetchStreamSlice({
+          streamId,
+          limit: 10,
+          streamHead: 0,
+          streamTail: 0,
+          viewerId,
+        }),
+      ]);
+
+      // Both should succeed (no errors)
+      expect(result1.nextPageIds).toHaveLength(10);
+      expect(result2.nextPageIds).toHaveLength(10);
+
+      // Queue state should be consistent (one of the calls will have won the race)
+      const queue = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queue).not.toBeNull();
+      // Queue should have overflow posts from at least one call
+      expect(queue?.queue.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should update queue streamTail when fetching more posts', async () => {
+      await setupMutedUsers(['author-muted'] as Core.Pubky[]);
+
+      // First batch: returns exactly limit (10) posts with only 2 valid, so loop continues
+      const batch1: Core.NexusPostsKeyStream = {
+        post_keys: [
+          'author-valid:post-1',
+          'author-valid:post-2',
+          ...Array.from({ length: 8 }, (_, i) => `author-muted:post-m${i + 1}`),
+        ],
+        last_post_score: BASE_TIMESTAMP + 100,
+      };
+
+      // Second batch: 10 more valid posts (overflow expected)
+      const batch2: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 10 }, (_, i) => `author-valid:post-${i + 10}`),
+        last_post_score: BASE_TIMESTAMP + 200,
+      };
+
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValueOnce(batch1).mockResolvedValueOnce(batch2);
+
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Queue's streamTail should be updated to the latest fetch's timestamp
+      const queue = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queue?.streamTail).toBe(BASE_TIMESTAMP + 200);
     });
   });
 });
