@@ -31,7 +31,7 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
   });
 
   return (
-    <Organisms.TimelineStateWrapper loading={loading} error={error} hasItems={postIds.length > 0}>
+    <Molecules.TimelineStateWrapper loading={loading} error={error} hasItems={postIds.length > 0}>
       <Atoms.Container>
         <Atoms.Container overrideDefaults className="space-y-4">
           {postIds.map((postId: string) => (
@@ -51,7 +51,7 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
           <Atoms.Container overrideDefaults className="h-[20px]" ref={sentinelRef} />
         </Atoms.Container>
       </Atoms.Container>
-    </Organisms.TimelineStateWrapper>
+    </Molecules.TimelineStateWrapper>
   );
 }
 

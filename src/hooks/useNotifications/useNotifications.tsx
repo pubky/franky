@@ -1,23 +1,22 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Config from '@/config';
 import type { FlatNotification } from '@/core';
 import type { UseNotificationsResult } from './useNotifications.types';
 
 /**
  * Hook for notifications with infinite scroll pagination.
- * Uses local cache (via useLiveQuery) for real-time updates from polling,
- * and fetches from Nexus for pagination.
+ * Fetches directly from NotificationController using timestamp-based pagination.
  */
 export function useNotifications(): UseNotificationsResult {
+  const [notifications, setNotifications] = useState<FlatNotification[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const skipRef = useRef<number>(0);
+  const olderThanRef = useRef<number | undefined>(undefined);
   const loadingRef = useRef(false);
 
   const { currentUserPubky } = Core.useAuthStore();
@@ -30,56 +29,59 @@ export function useNotifications(): UseNotificationsResult {
     }
   }, [lastRead]);
 
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  /**
+   * Perform initial load - fetches first page of notifications
+   */
+  const performInitialLoad = useCallback(async () => {
+    if (!currentUserPubky || loadingRef.current) return;
 
-  // Get all notifications from local cache (reactive to polling updates)
-  const cachedNotifications = useLiveQuery(async () => {
-    if (!currentUserPubky) return undefined;
-    const notifications = await Core.NotificationModel.getAll();
-    setInitialLoadDone(true);
-    return notifications;
+    loadingRef.current = true;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await Core.NotificationController.getOrFetchNotifications({});
+
+      setNotifications(result.notifications);
+      olderThanRef.current = result.olderThan;
+      setHasMore(result.olderThan !== undefined);
+    } catch {
+      setError('Failed to load notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoading(false);
+    }
   }, [currentUserPubky]);
 
-  // Sort notifications by timestamp (newest first)
-  const notifications = useMemo(() => {
-    return [...(cachedNotifications || [])].sort((a, b) => b.timestamp - a.timestamp);
-  }, [cachedNotifications]);
-
-  // Loading until initial query completes
-  const isLoading = !initialLoadDone;
-
   /**
-   * Load more notifications from Nexus
+   * Load more notifications using timestamp-based pagination
    */
   const loadMore = useCallback(async () => {
     if (loadingRef.current || !hasMore || !currentUserPubky) return;
+    if (olderThanRef.current === undefined) {
+      setHasMore(false);
+      return;
+    }
 
     loadingRef.current = true;
     setIsLoadingMore(true);
+    setError(null);
 
     try {
-      const newNotifications = await Core.NexusUserService.notifications({
-        user_id: currentUserPubky,
-        skip: skipRef.current,
-        limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
+      const result = await Core.NotificationController.getOrFetchNotifications({
+        olderThan: olderThanRef.current,
       });
 
-      if (newNotifications.length === 0) {
-        setHasMore(false);
-        return;
-      }
-
-      // Transform and save to cache
-      const flatNotifications = newNotifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
-      await Core.NotificationModel.bulkSave(flatNotifications);
-
-      skipRef.current += newNotifications.length;
-
-      if (newNotifications.length < Config.NEXUS_NOTIFICATIONS_LIMIT) {
-        setHasMore(false);
-      }
+      setNotifications((prev) => {
+        // Deduplicate using id (business key). Defensive code for edge cases.
+        const existingIds = new Set(prev.map((n) => n.id));
+        const newNotifications = result.notifications.filter((n) => !existingIds.has(n.id));
+        return [...prev, ...newNotifications];
+      });
+      olderThanRef.current = result.olderThan;
+      setHasMore(result.olderThan !== undefined);
     } catch {
-      setError('Failed to load notifications');
+      setError('Failed to load more notifications');
     } finally {
       loadingRef.current = false;
       setIsLoadingMore(false);
@@ -87,28 +89,28 @@ export function useNotifications(): UseNotificationsResult {
   }, [hasMore, currentUserPubky]);
 
   /**
-   * Refresh notifications
+   * Refresh notifications - resets pagination and fetches from start
    */
   const refresh = useCallback(async () => {
-    if (!currentUserPubky) return;
+    if (!currentUserPubky || loadingRef.current) return;
 
-    skipRef.current = 0;
+    loadingRef.current = true;
+    setIsLoading(true);
+    setError(null);
+    olderThanRef.current = undefined;
     setHasMore(true);
 
     try {
-      const newNotifications = await Core.NexusUserService.notifications({
-        user_id: currentUserPubky,
-        skip: 0,
-        limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
-      });
+      const result = await Core.NotificationController.getOrFetchNotifications({});
 
-      const flatNotifications = newNotifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
-      await Core.NotificationModel.bulkSave(flatNotifications);
-
-      skipRef.current = newNotifications.length;
-      setHasMore(newNotifications.length >= Config.NEXUS_NOTIFICATIONS_LIMIT);
+      setNotifications(result.notifications);
+      olderThanRef.current = result.olderThan;
+      setHasMore(result.olderThan !== undefined);
     } catch {
-      setError('Failed to load notifications');
+      setError('Failed to refresh notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoading(false);
     }
   }, [currentUserPubky]);
 
@@ -134,19 +136,12 @@ export function useNotifications(): UseNotificationsResult {
   }, [notifications]);
 
   /**
-   * Initial load - fetch first page if cache is empty
+   * Initial load - fetch first page when component mounts
    */
   useEffect(() => {
-    if (!currentUserPubky || isLoading) return;
-
-    // If cache is empty, fetch first page
-    if (notifications.length === 0 && hasMore) {
-      loadMore();
-    } else {
-      // Update skip based on cached notifications
-      skipRef.current = notifications.length;
-    }
-  }, [currentUserPubky, isLoading, notifications.length, hasMore, loadMore]);
+    if (!currentUserPubky) return;
+    performInitialLoad();
+  }, [currentUserPubky, performInitialLoad]);
 
   return {
     notifications,

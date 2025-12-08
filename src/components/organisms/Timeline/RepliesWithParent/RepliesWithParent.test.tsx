@@ -36,12 +36,6 @@ vi.mock('@/molecules', () => ({
   TimelineLoadingMore: () => <div data-testid="timeline-loading-more">Loading more...</div>,
   TimelineError: ({ message }: { message: string }) => <div data-testid="timeline-error">Error: {message}</div>,
   TimelineEndMessage: () => <div data-testid="timeline-end-message">End of replies</div>,
-}));
-
-vi.mock('@/organisms', () => ({
-  PostMain: ({ postId, onClick, isReply }: { postId: string; onClick: () => void; isReply: boolean }) => (
-    <div data-testid={`post-${postId}`} onClick={onClick} data-is-reply={isReply} />
-  ),
   TimelineStateWrapper: ({
     loading,
     error,
@@ -58,6 +52,12 @@ vi.mock('@/organisms', () => ({
     if (!hasItems) return <div data-testid="timeline-empty">No replies</div>;
     return <>{children}</>;
   },
+}));
+
+vi.mock('@/organisms', () => ({
+  PostMain: ({ postId, onClick, isReply }: { postId: string; onClick: () => void; isReply: boolean }) => (
+    <div data-testid={`post-${postId}`} onClick={onClick} data-is-reply={isReply} />
+  ),
 }));
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);

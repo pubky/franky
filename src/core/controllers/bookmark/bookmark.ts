@@ -5,6 +5,15 @@ export class BookmarkController {
   private constructor() {}
 
   /**
+   * Check if a post is bookmarked
+   * @param postId - Composite post ID (authorId:postId)
+   * @returns boolean indicating if the post is bookmarked
+   */
+  static async exists(postId: string): Promise<boolean> {
+    return Core.BookmarkApplication.exists(postId);
+  }
+
+  /**
    * Create a bookmark
    * @param params - Parameters object
    * @param params.userId - ID of the user creating the bookmark (current user)

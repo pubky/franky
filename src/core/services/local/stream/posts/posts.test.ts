@@ -927,6 +927,21 @@ describe('LocalStreamPostsService', () => {
         'Database query failed',
       );
     });
+
+    it('should deduplicate posts that exist in both streams', async () => {
+      const sharedPostId = postId('shared-post');
+      const unreadStream = [postId('unread-1'), sharedPostId];
+      const postStream = [sharedPostId, postId('post-1')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, unreadStream);
+      await createStream(postStream);
+
+      await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+
+      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      // Shared post should only appear once, from the unread stream
+      expect(result?.stream).toEqual([postId('unread-1'), sharedPostId, postId('post-1')]);
+    });
   });
 
   describe('persistUnreadNewStreamChunk', () => {

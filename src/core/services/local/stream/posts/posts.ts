@@ -107,6 +107,11 @@ export class LocalStreamPostsService {
     await this.upsert({ streamId, stream: updatedStream });
   }
 
+  static async getNotPersistedPostsInCache(postIds: string[]): Promise<string[]> {
+    const existingPostIds = await Core.PostDetailsModel.findByIdsPreserveOrder(postIds);
+    return postIds.filter((_postId, index) => existingPostIds[index] === undefined);
+  }
+
   /**
    * Adds a reply post to the post replies map if the post is a reply
    *
@@ -137,8 +142,26 @@ export class LocalStreamPostsService {
     if (!unreadPostStream) return;
     const postStream = await Core.PostStreamModel.findById(streamId);
     if (!postStream) return;
-    const combinedStream = [...unreadPostStream.stream, ...postStream.stream];
+
+    // Deduplicate: unread posts first, then existing posts (excluding duplicates)
+    const existingIds = new Set(unreadPostStream.stream);
+    const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
+    const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
+
     await Core.PostStreamModel.upsert(streamId, combinedStream);
+  }
+
+  /**
+   * Clear the unread stream and return the post IDs that were in it
+   * @param streamId - The stream ID to clear the unread stream for
+   * @returns Array of post IDs that were in the unread stream
+   */
+  static async clearUnreadStream({ streamId }: Core.TStreamIdParams): Promise<string[]> {
+    const unreadStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadStream) return [];
+    const postIds = unreadStream.stream;
+    await Core.UnreadPostStreamModel.deleteById(streamId);
+    return postIds;
   }
 
   /**
@@ -163,6 +186,7 @@ export class LocalStreamPostsService {
     const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
+    const postBookmarks: Core.BookmarkModelSchema[] = [];
 
     const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
     const postAttachments: string[] = [];
@@ -177,6 +201,14 @@ export class LocalStreamPostsService {
       if (post.details.attachments) {
         post.details.attachments.forEach((attachment) => {
           postAttachments.push(attachment);
+        });
+      }
+
+      // Collect bookmarks from Nexus response (viewer's bookmark status)
+      if (post.bookmark) {
+        postBookmarks.push({
+          id: postId,
+          created_at: post.bookmark.created_at,
         });
       }
 
@@ -203,6 +235,8 @@ export class LocalStreamPostsService {
       Core.PostCountsModel.bulkSave(postCounts),
       Core.PostTagsModel.bulkSave(postTags),
       Core.PostRelationshipsModel.bulkSave(postRelationships),
+      // Persist bookmarks from Nexus (viewer's bookmark status for each post)
+      postBookmarks.length > 0 ? Core.BookmarkModel.bulkSave(postBookmarks) : Promise.resolve(),
     ]);
 
     if (Object.keys(postReplies).length > 0) {

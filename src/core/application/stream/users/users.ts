@@ -145,7 +145,6 @@ export class UserStreamApplication {
    * @private
    */
   private static async getNotPersistedUsersInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
-    const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
-    return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+    return await Core.LocalStreamUsersService.getNotPersistedUsersInCache(userIds);
   }
 }

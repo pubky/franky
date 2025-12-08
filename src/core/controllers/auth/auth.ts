@@ -11,6 +11,8 @@ export class AuthController {
    * @returns Configured homeserver service instance
    */
   private static async signIn({ keypair }: Core.TKeypairParams) {
+    // Clear database before sign in to ensure clean state
+    await Core.clearDatabase();
     const { secretKey } = Core.useOnboardingStore.getState();
     return await Core.AuthApplication.signIn({ keypair, secretKey });
   }
@@ -55,6 +57,8 @@ export class AuthController {
    * @param params.signupToken - Invitation code for user registration
    */
   static async signUp({ keypair, signupToken }: Core.TSignUpParams) {
+    // Clear database before sign up to ensure clean state
+    await Core.clearDatabase();
     const { secretKey } = Core.useOnboardingStore.getState();
     const { session, pubky } = await Core.AuthApplication.signUp({ keypair, signupToken, secretKey });
     const authStore = Core.useAuthStore.getState();
@@ -114,6 +118,8 @@ export class AuthController {
    * @param params.publicKey - The public key for authentication
    */
   static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams) {
+    // Clear database before auth URL login to ensure clean state
+    await Core.clearDatabase();
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
     onboardingStore.reset();

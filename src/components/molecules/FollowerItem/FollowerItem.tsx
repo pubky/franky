@@ -30,10 +30,13 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
           <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" />
 
           <Atoms.Container overrideDefaults={true}>
-            <Atoms.Typography size="sm" className="truncate font-bold">
+            <Atoms.Typography data-cy="profile-follower-item-name" size="sm" className="truncate font-bold">
               {displayName}
             </Atoms.Typography>
-            <Atoms.Typography className="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
+            <Atoms.Typography
+              data-cy="profile-follower-item-pubky"
+              className="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+            >
               {formattedPublicKey}
             </Atoms.Typography>
           </Atoms.Container>
@@ -54,7 +57,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
             <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
               Tags
             </Atoms.Typography>
-            <Atoms.Typography size="sm" className="font-bold">
+            <Atoms.Typography data-cy="profile-follower-item-tags-count" size="sm" className="font-bold">
               {stats.tags}
             </Atoms.Typography>
           </Atoms.Container>
@@ -62,7 +65,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
             <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
               Posts
             </Atoms.Typography>
-            <Atoms.Typography size="sm" className="font-bold">
+            <Atoms.Typography data-cy="profile-follower-item-posts-count" size="sm" className="font-bold">
               {stats.posts}
             </Atoms.Typography>
           </Atoms.Container>
@@ -71,6 +74,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
         {/* Desktop: Follow Button */}
         {isCurrentUser ? (
           <Atoms.Button
+            data-cy="profile-follower-item-me-btn"
             variant="secondary"
             size="sm"
             className="hidden w-[110px] justify-center lg:flex"
@@ -81,6 +85,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
           </Atoms.Button>
         ) : (
           <Atoms.Button
+            data-cy="profile-follower-item-follow-toggle-btn"
             variant="secondary"
             size="sm"
             className="group hidden w-[110px] justify-center lg:flex"
