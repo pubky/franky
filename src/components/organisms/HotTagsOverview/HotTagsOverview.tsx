@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
@@ -19,29 +19,13 @@ const DEFAULT_TAGS_LIMIT = 50;
 export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTagsOverviewProps) {
   const router = useRouter();
   const { reach, timeframe } = Core.useHotStore();
-  const [tags, setTags] = useState<Core.NexusHotTag[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const fetchTags = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const hotTags = await Core.HotController.getOrFetch({
-        reach: reach === 'all' ? undefined : (reach as Core.UserStreamReach),
-        timeframe,
-        limit,
-      });
-      setTags(hotTags);
-    } catch (error) {
-      Libs.Logger.error('[HotTagsOverview] Failed to fetch hot tags:', error);
-      setTags([]);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [reach, timeframe, limit]);
-
-  useEffect(() => {
-    void fetchTags();
-  }, [fetchTags]);
+  // Fetch hot tags using the hook
+  const { rawTags: tags, isLoading } = Hooks.useHotTags({
+    reach: reach === 'all' ? undefined : (reach as Core.UserStreamReach),
+    timeframe,
+    limit,
+  });
 
   const handleTagClick = (tagName: string) => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
