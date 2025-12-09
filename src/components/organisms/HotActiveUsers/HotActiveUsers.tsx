@@ -42,8 +42,6 @@ function useActiveUsersStreamId(currentUserPubky: Core.Pubky | null): Core.UserS
     return Core.UserStreamTypes.MOST_FOLLOWED;
   }, [reach, currentUserPubky]);
 
-  Libs.Logger.debug('[HotActiveUsers] streamId changed', { reach, streamId, currentUserPubky });
-
   return streamId;
 }
 
