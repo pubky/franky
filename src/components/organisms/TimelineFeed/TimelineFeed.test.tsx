@@ -6,6 +6,13 @@ import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import * as Core from '@/core';
 
+// Mock next/navigation for useSearchParams used by useSearchStreamId
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => ({
+    get: () => null,
+  }),
+}));
+
 // Mock dependencies
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
@@ -16,6 +23,12 @@ vi.mock('@/hooks', async (importOriginal) => {
     useStreamPagination: vi.fn(),
   };
 });
+
+// Mock useSearchStreamId hook
+vi.mock('@/hooks/useSearchStreamId', () => ({
+  useSearchStreamId: vi.fn(() => undefined),
+  useSearchTags: vi.fn(() => []),
+}));
 
 // Mock the new hooks used in TimelineFeed
 vi.mock('@/hooks/useUnreadPosts', () => ({
