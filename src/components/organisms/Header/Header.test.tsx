@@ -60,7 +60,6 @@ vi.mock('@/app', () => ({
     SCAN: '/onboarding/scan',
     PUBKY: '/onboarding/pubky',
     BACKUP: '/onboarding/backup',
-    HOMESERVER: '/onboarding/homeserver',
     PROFILE: '/onboarding/profile',
   },
 }));

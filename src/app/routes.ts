@@ -2,7 +2,6 @@ export const ROOT_ROUTES = '/';
 
 export enum ONBOARDING_ROUTES {
   BACKUP = '/onboarding/backup',
-  HOMESERVER = '/onboarding/homeserver',
   INSTALL = '/onboarding/install',
   PROFILE = '/onboarding/profile',
   PUBKY = '/onboarding/pubky',

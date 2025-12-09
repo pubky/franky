@@ -4,7 +4,6 @@ export * from './Human';
 export * from './Home';
 export * from './Hot';
 export * from './Install';
-export * from './Homeserver';
 export * from './Landing';
 export * from './Logout';
 export * from './Profile';

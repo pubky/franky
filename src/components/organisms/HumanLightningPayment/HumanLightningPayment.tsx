@@ -19,7 +19,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = Molecules.useToast();
 
-  async function requestLightningInvoice() {
+  const requestLightningInvoice = React.useCallback(async () => {
     try {
       setIsLoading(true);
       const invoice = await Homegate.requestLightningInvoice();
@@ -33,7 +33,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [toast]);
 
   async function onPaid() {
     toast({
@@ -43,9 +43,9 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
   }
 
   React.useEffect(() => {
-    if (window === undefined) return; // No SSR
+    if (typeof window === 'undefined') return; // No SSR
     requestLightningInvoice();
-  }, []);
+  }, [requestLightningInvoice]);
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);

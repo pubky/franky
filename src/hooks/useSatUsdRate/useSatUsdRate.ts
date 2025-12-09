@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { BtcRate, getSatoshiUsdRate } from '@/libs/exchangerate/exchangerate';
+import { BtcRate, getSatoshiUsdRate } from '@/core/services/exchangerate/exchangerate';
 
 /**
  * Module-level cache for the SAT/USD rate.

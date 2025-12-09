@@ -745,7 +745,6 @@ describe('NotificationCoordinator', () => {
 
       const onboardingRoutes = [
         '/onboarding/backup',
-        '/onboarding/homeserver',
         '/onboarding/install',
         '/onboarding/profile',
         '/onboarding/pubky',

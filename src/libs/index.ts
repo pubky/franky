@@ -1,7 +1,6 @@
 export * from './deeplink';
 export * from './env';
 export * from './error';
-export * from './exchangerate';
 export * from './html';
 export * from './icons';
 export * from './identity';

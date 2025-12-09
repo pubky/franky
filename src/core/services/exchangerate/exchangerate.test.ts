@@ -78,7 +78,7 @@ describe('getBtcUsdRate', () => {
 
     const rate = await getSatoshiUsdRate();
 
-    expect(rate).toEqual(0.00087076);
+    expect(rate.satUsd).toEqual(0.00087076);
     expect(mockFetch).toHaveBeenCalledWith(Env.NEXT_PUBLIC_EXCHANGE_RATE_API);
   });
 });

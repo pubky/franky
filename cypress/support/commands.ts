@@ -80,7 +80,7 @@ Cypress.Commands.add(
     }
 
     cy.get('#backup-navigation-continue-btn').click();
-    cy.location('pathname').should('eq', '/onboarding/homeserver');
+    cy.location('pathname').should('eq', '/onboarding/profile');
 
     // request invite code from homeserver and input it
     cy.request({

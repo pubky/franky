@@ -24,3 +24,9 @@ exports[`HumanHeader > matches snapshot 1`] = `
 </div>
 `;
 
+exports[`HumanPhoneCodeInput > matches snapshot 1`] = `
+<div
+  class="mx-auto w-full flex flex-row flex-wrap gap-3"
+  data-testid="code-input-container"
+/>
+`;

@@ -1,19 +1,99 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`HumanVerificationCards > matches snapshot 1`] = `
-<div
-  class="mx-auto w-full flex-col flex gap-6 lg:flex-row lg:items-stretch lg:gap-8"
-  data-testid="human-verification-cards"
->
+exports[`HumanPhoneCode > matches snapshot 1`] = `
+<div>
+  <header>
+    <h1>
+      Enter 
+      <span
+        class="text-brand"
+      >
+        Code.
+      </span>
+    </h1>
+    <p>
+      We sent a 6-digit verification code to 1112223333.
+    </p>
+  </header>
   <div
-    data-testid="mock-sms-card"
+    class="gap-0 p-6 lg:p-12"
+    data-testid="human-phone-code-card"
   >
-    SMS Verification Card
+    <div
+      class="flex-col gap-12 lg:flex-row lg:items-start"
+    >
+      <div
+        class="flex hidden h-full w-full items-center lg:block lg:w-auto"
+      >
+        <img
+          alt="Pubky phone representing phone verification"
+          class="h-auto w-[192px] max-w-full"
+          priority="true"
+          src="/images/sms-verification-phone.png"
+        />
+      </div>
+      <div
+        class="w-full flex-1 flex-col gap-6"
+      >
+        <div
+          class="flex-col gap-3"
+        >
+          <h3
+            class="text-2xl leading-[32px] font-semibold text-foreground"
+          >
+            Verification code
+          </h3>
+          <p
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
+          >
+            Enter the code you received on 1112223333.
+          </p>
+        </div>
+        <div>
+          <input
+            data-testid="code-input"
+            value=""
+          />
+          <button
+            data-testid="code-enter"
+            type="button"
+          >
+            Enter
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <div
-    data-testid="mock-bitcoin-card"
+    class="mt-6 flex-row justify-between gap-3 lg:gap-6"
   >
-    Bitcoin Payment Card
+    <button
+      class="w-full flex-1 rounded-full md:flex-0"
+      id="human-phone-back-btn"
+      size="lg"
+      type="button"
+      variant="secondary"
+    >
+      <svg
+        class="mr-2 h-4 w-4"
+        data-testid="refresh-icon"
+      />
+      Resend Code
+    </button>
+    <button
+      class="w-full flex-1 rounded-full md:flex-0"
+      disabled=""
+      id="human-phone-send-code-btn"
+      size="lg"
+      type="button"
+      variant="default"
+    >
+      <svg
+        class="mr-2 h-4 w-4"
+        data-testid="arrow-icon"
+      />
+      Verify Code
+    </button>
   </div>
 </div>
 `;
