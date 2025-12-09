@@ -4,12 +4,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
 import type { HotTagsCardsSectionProps } from './HotTagsCardsSection.types';
-
-const TOP_TAGS_LIMIT = 3;
+import {
+  TOP_TAGS_LIMIT,
+  MAX_AVATARS_MOBILE,
+  MAX_AVATARS_DEFAULT,
+  MAX_AVATARS_XL,
+} from './HotTagsCardsSection.constants';
 
 /**
  * HotTagsCardsSection
@@ -22,6 +27,12 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
   const { reach, timeframe } = Core.useHotStore();
   const [tags, setTags] = useState<Core.NexusHotTag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Responsive avatar count based on screen size
+  const isMobile = Hooks.useIsMobile({ breakpoint: 'sm' }); // < 640px
+  const isBelowXL = Hooks.useIsMobile({ breakpoint: 'xl' }); // < 1280px
+
+  const maxAvatars = isMobile ? MAX_AVATARS_MOBILE : isBelowXL ? MAX_AVATARS_DEFAULT : MAX_AVATARS_XL;
 
   const fetchTags = useCallback(async () => {
     setIsLoading(true);
@@ -75,7 +86,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
         Trending
       </Atoms.Heading>
-      <Atoms.Container overrideDefaults className="flex gap-3">
+      <Atoms.Container overrideDefaults className="flex flex-col gap-3 sm:flex-row">
         {tags.map((tag, index) => (
           <Molecules.HotTagCard
             key={tag.label}
@@ -83,6 +94,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
             tagName={tag.label}
             postCount={tag.tagged_count}
             taggers={tag.taggers_id.map((id) => ({ id, name: undefined, avatarUrl: undefined }))}
+            maxAvatars={maxAvatars}
             onClick={handleTagClick}
           />
         ))}
