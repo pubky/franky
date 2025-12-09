@@ -1,15 +1,12 @@
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
-import * as Core from '@/core';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
-import { POST_ROUTES } from '@/app/routes';
 import { PostInputTags } from '../PostInputTags';
 import { PostInputActionBar } from '../PostInputActionBar';
 import { useTimelineFeedContext } from '../TimelineFeed/TimelineFeed';
@@ -35,7 +32,6 @@ export function PostInput({
   const [isExpanded, setIsExpanded] = useState(expanded);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { content, setContent, tags, setTags, reply, post, repost, isSubmitting } = Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
@@ -78,30 +74,6 @@ export function PostInput({
     const handleSuccess = (createdPostId: string) => {
       // Prepend to timeline if inside TimelineFeed context
       timelineFeed?.prependPosts(createdPostId);
-
-      // Show toast notification for repost success
-      if (variant === POST_INPUT_VARIANT.REPOST) {
-        const { pubky: userId, id: pId } = Core.parseCompositeId(createdPostId);
-        const postUrl = `${POST_ROUTES.POST}/${userId}/${pId}`;
-
-        const toastInstance = Molecules.toast({
-          title: 'Repost successful!',
-          description: 'Your repost has been created.',
-          action: (
-            <Atoms.Button
-              variant="outline"
-              className="h-10 rounded-full border-brand bg-transparent px-4 text-white hover:bg-brand/16"
-              onClick={() => {
-                toastInstance.dismiss();
-                router.push(postUrl);
-              }}
-            >
-              View
-            </Atoms.Button>
-          ),
-        });
-      }
-
       // Call original onSuccess callback if provided
       onSuccess?.(createdPostId);
     };
@@ -118,7 +90,7 @@ export function PostInput({
         await post({ onSuccess: handleSuccess });
         break;
     }
-  }, [content, variant, postId, originalPostId, reply, post, repost, isSubmitting, onSuccess, timelineFeed, router]);
+  }, [content, variant, postId, originalPostId, reply, post, repost, isSubmitting, onSuccess, timelineFeed]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

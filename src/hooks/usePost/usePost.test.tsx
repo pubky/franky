@@ -45,6 +45,15 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
+// Mock Next.js router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));
+
 // Mock console.error to avoid noise in test output
 const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 

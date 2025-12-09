@@ -55,6 +55,16 @@ export function usePost() {
     [toast],
   );
 
+  const showSuccessToast = useCallback(
+    (title: string, description: string) => {
+      toast({
+        title,
+        description,
+      });
+    },
+    [toast],
+  );
+
   const reply = useCallback(
     async ({ postId, onSuccess }: UsePostReplyOptions) => {
       if (!content.trim() || !postId || !currentUserId) return;
@@ -70,6 +80,7 @@ export function usePost() {
         });
         setContent('');
         setTags([]);
+        showSuccessToast('Reply posted!', 'Your reply has been created.');
         onSuccess?.(createdPostId);
       } catch (err) {
         console.error('Failed to submit reply:', err);
@@ -78,7 +89,7 @@ export function usePost() {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast],
+    [content, tags, currentUserId, showErrorToast, showSuccessToast],
   );
 
   const post = useCallback(
@@ -95,6 +106,7 @@ export function usePost() {
         });
         setContent('');
         setTags([]);
+        showSuccessToast('Post created!', 'Your post has been created.');
         onSuccess?.(createdPostId);
       } catch (err) {
         console.error('Failed to create post:', err);
@@ -103,7 +115,7 @@ export function usePost() {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast],
+    [content, tags, currentUserId, showErrorToast, showSuccessToast],
   );
 
   const repost = useCallback(
@@ -121,6 +133,7 @@ export function usePost() {
         });
         setContent('');
         setTags([]);
+        showSuccessToast('Repost successful!', 'Your repost has been created.');
         onSuccess?.(createdPostId);
       } catch (err) {
         console.error('Failed to repost:', err);
@@ -129,7 +142,7 @@ export function usePost() {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast],
+    [content, tags, currentUserId, showErrorToast, showSuccessToast],
   );
 
   return {

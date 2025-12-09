@@ -11,7 +11,6 @@ vi.mock('@/hooks', async (importOriginal) => {
     ...actual,
     usePostDetails: vi.fn(),
     useRepostInfo: vi.fn(),
-    useFetchPost: vi.fn(),
     useDeletePost: vi.fn(),
   };
 });
@@ -84,7 +83,6 @@ vi.mock('@/molecules', () => ({
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
 const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
-const mockUseFetchPost = vi.mocked(Hooks.useFetchPost);
 const mockUseDeletePost = vi.mocked(Hooks.useDeletePost);
 const mockPostText = vi.mocked(Molecules.PostText);
 const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
@@ -101,9 +99,6 @@ describe('PostContent', () => {
       isRepost: false,
       originalPostId: null,
       isCurrentUserRepost: false,
-    });
-    mockUseFetchPost.mockReturnValue({
-      fetchPost: vi.fn(),
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -230,9 +225,6 @@ describe('PostContent - Snapshots', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
       originalPostId: null,
-    });
-    mockUseFetchPost.mockReturnValue({
-      fetchPost: vi.fn(),
     });
   }, 30000); // Increase timeout to 30 seconds
 

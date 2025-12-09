@@ -42,5 +42,4 @@ export * from './useUnreadPosts';
 export * from './useIsScrolledFromTop';
 export * from './useRepostInfo';
 export * from './useDeletePost';
-export * from './useFetchPost';
 export * from './useBulkUserAvatars';

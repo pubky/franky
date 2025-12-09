@@ -4,11 +4,15 @@ import { usePostDetails } from './usePostDetails';
 
 // Mock @/core
 const mockGetPostDetails = vi.fn();
-vi.mock('@/core', () => ({
-  PostController: {
-    getPostDetails: (params: { compositeId: string }) => mockGetPostDetails(params),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    PostController: {
+      getPostDetails: (params: { compositeId: string }) => mockGetPostDetails(params),
+    },
+  };
+});
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
