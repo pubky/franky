@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -10,7 +10,7 @@ import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
 import type { HotTagsCardsSectionProps } from './HotTagsCardsSection.types';
 import {
-  TOP_TAGS_LIMIT,
+  TOP_TAGS_DISPLAY,
   MAX_AVATARS_MOBILE,
   MAX_AVATARS_DEFAULT,
   MAX_AVATARS_XL,
@@ -25,8 +25,15 @@ import {
 export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
   const router = useRouter();
   const { reach, timeframe } = Core.useHotStore();
-  const [tags, setTags] = useState<Core.NexusHotTag[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch hot tags using the hook (no limit - get all from endpoint)
+  const { rawTags, isLoading } = Hooks.useHotTags({
+    reach: reach === 'all' ? undefined : (reach as Core.UserStreamReach),
+    timeframe,
+  });
+
+  // Display only the top tags as featured cards
+  const featuredTags = useMemo(() => rawTags.slice(0, TOP_TAGS_DISPLAY), [rawTags]);
 
   // Responsive avatar count based on screen size
   const isMobile = Hooks.useIsMobile({ breakpoint: 'sm' }); // < 640px
@@ -34,26 +41,19 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
 
   const maxAvatars = isMobile ? MAX_AVATARS_MOBILE : isBelowXL ? MAX_AVATARS_DEFAULT : MAX_AVATARS_XL;
 
-  const fetchTags = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const hotTags = await Core.HotController.getOrFetch({
-        reach: reach === 'all' ? undefined : (reach as Core.UserStreamReach),
-        timeframe,
-        limit: TOP_TAGS_LIMIT,
-      });
-      setTags(hotTags);
-    } catch (error) {
-      Libs.Logger.error('[HotTagsCardsSection] Failed to fetch hot tags:', error);
-      setTags([]);
-    } finally {
-      setIsLoading(false);
+  // Collect all unique tagger IDs from featured tags only
+  const allTaggerIds = useMemo(() => {
+    const ids = new Set<Core.Pubky>();
+    for (const tag of featuredTags) {
+      for (const taggerId of tag.taggers_id) {
+        ids.add(taggerId);
+      }
     }
-  }, [reach, timeframe]);
+    return Array.from(ids);
+  }, [featuredTags]);
 
-  useEffect(() => {
-    void fetchTags();
-  }, [fetchTags]);
+  // Get user avatars for all taggers
+  const { getUsersWithAvatars } = Hooks.useBulkUserAvatars(allTaggerIds);
 
   const handleTagClick = (tagName: string) => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
@@ -73,7 +73,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
     );
   }
 
-  if (tags.length === 0) {
+  if (featuredTags.length === 0) {
     return null;
   }
 
@@ -87,13 +87,13 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
         Trending
       </Atoms.Heading>
       <Atoms.Container overrideDefaults className="flex flex-col gap-3 sm:flex-row">
-        {tags.map((tag, index) => (
+        {featuredTags.map((tag, index) => (
           <Molecules.HotTagCard
             key={tag.label}
             rank={index + 1}
             tagName={tag.label}
             postCount={tag.tagged_count}
-            taggers={tag.taggers_id.map((id) => ({ id, name: undefined, avatarUrl: undefined }))}
+            taggers={getUsersWithAvatars(tag.taggers_id)}
             maxAvatars={maxAvatars}
             onClick={handleTagClick}
           />

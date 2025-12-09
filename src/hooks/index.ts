@@ -40,3 +40,4 @@ export * from './useBookmarksStreamId';
 export * from './useBookmark';
 export * from './useUnreadPosts';
 export * from './useIsScrolledFromTop';
+export * from './useBulkUserAvatars';
