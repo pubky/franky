@@ -18,28 +18,31 @@ export class BootstrapApplication {
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
     ]);
+    // TODO: With the new Nexus API, data is never undefined
     if (!data) {
-      // TODO: Maybe in the UI, we should redirect or show some special message to the user.
       throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
+    }
+    if (!data.indexed) {
+      Libs.Logger.error('User is not indexed in Nexus. Adding user to TTL', { pubky: params.pubky });
     }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts({ posts: data.posts }),
       Core.LocalStreamPostsService.upsert({
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
-        stream: data.list.stream,
+        stream: data.ids.stream,
       }),
       Core.LocalStreamUsersService.upsert({
         streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-        stream: data.list.influencers,
+        stream: data.ids.influencers,
       }),
       Core.LocalStreamUsersService.upsert({
         streamId: Core.UserStreamTypes.RECOMMENDED,
-        stream: data.list.recommended,
+        stream: data.ids.recommended,
       }),
       // Both features: hot tags and tag streams
-      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
-      Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
+      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
+      Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
       Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead),
     ]);
 
@@ -87,36 +90,5 @@ export class BootstrapApplication {
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
     return { notificationList, lastRead: userLastRead };
-  }
-
-  /**
-   * Performs application bootstrap with retry logic.
-   * Retries bootstrap up to 3 times with 5-second delays to allow Nexus time to index new users.
-   *
-   * @param params - Bootstrap parameters
-   * @param params.pubky - The user's public key identifier
-   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
-   * @returns Promise resolving to notification state after successful bootstrap
-   */
-  static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    let success = false;
-    let retries = 0;
-    let notificationState: Core.TBootstrapResponse = { notification: Core.notificationInitialState };
-    while (!success && retries < 3) {
-      try {
-        // Wait 5 seconds before each attempt to let Nexus index the user
-        Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt ${retries + 1}...`);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        notificationState = await this.initialize(params);
-        success = true;
-      } catch (error) {
-        Libs.Logger.error('Failed to bootstrap', error, retries);
-        retries++;
-      }
-    }
-    if (!success) {
-      throw new Error('User still not indexed');
-    }
-    return notificationState;
   }
 }
