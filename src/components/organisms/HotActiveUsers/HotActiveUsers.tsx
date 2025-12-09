@@ -59,7 +59,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
   const streamId = useActiveUsersStreamId(currentUserPubky);
 
-  const { users, isLoading } = Hooks.useUserStream({
+  const { users, isLoading, error } = Hooks.useUserStream({
     streamId,
     limit,
     includeCounts: true,
@@ -86,7 +86,9 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
         Active users
       </Atoms.Heading>
-      {isLoading ? (
+      {error ? (
+        <Atoms.Typography className="text-destructive">Failed to load users</Atoms.Typography>
+      ) : isLoading ? (
         // TODO: Replace with Skeleton component
         <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
       ) : users.length === 0 ? (
