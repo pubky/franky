@@ -13,7 +13,7 @@ export class AuthController {
   private static async signIn({ keypair }: Core.TKeypairParams) {
     // Clear database before sign in to ensure clean state
     await Core.clearDatabase();
-    const { secretKey } = Core.useOnboardingStore.getState();
+    const secretKey = Core.useOnboardingStore.getState().selectSecretKey();
     return await Core.AuthApplication.signIn({ keypair, secretKey });
   }
 
@@ -64,7 +64,7 @@ export class AuthController {
   static async signUp({ keypair, signupToken }: Core.TSignUpParams) {
     // Clear database before sign up to ensure clean state
     await Core.clearDatabase();
-    const { secretKey } = Core.useOnboardingStore.getState();
+    const secretKey = Core.useOnboardingStore.getState().selectSecretKey();
     const { session, pubky } = await Core.AuthApplication.signUp({ keypair, signupToken, secretKey });
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
@@ -79,7 +79,7 @@ export class AuthController {
    * @returns Promise resolving to true if authentication succeeded, false otherwise
    */
   static async loginWithMnemonic({ mnemonic }: Core.TLoginWithMnemonicParams): Promise<boolean> {
-    const keypair = Libs.Identity.pubkyKeypairFromMnemonic(mnemonic);
+    const keypair = Libs.Identity.keypairFromMnemonic(mnemonic);
     const data = await this.signIn({ keypair });
     if (data) {
       await this.saveAuthenticatedDataAndBootstrap(data);
@@ -99,7 +99,7 @@ export class AuthController {
     encryptedFile,
     password,
   }: Core.TLoginWithEncryptedFileParams): Promise<boolean> {
-    const keypair = await Libs.Identity.decryptRecoveryFile(encryptedFile, password);
+    const keypair = await Libs.Identity.decryptRecoveryFile({ encryptedFile, passphrase: password });
     const data = await this.signIn({ keypair });
     if (data) {
       await this.saveAuthenticatedDataAndBootstrap(data);
@@ -113,8 +113,8 @@ export class AuthController {
    * @returns Promise resolving to the generated authentication URL
    */
   static async getAuthUrl() {
-    const { secretKey } = Core.useOnboardingStore.getState();
-    return await Core.AuthApplication.generateAuthUrl({ secretKey });
+    const keypair = Core.useOnboardingStore.getState().keypair;
+    return await Core.AuthApplication.generateAuthUrl({ keypair });
   }
 
   /**
@@ -122,13 +122,12 @@ export class AuthController {
    * @param params - Object containing the public key for authentication
    * @param params.publicKey - The public key for authentication
    */
-  static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams) {
+  static async loginWithAuthUrl({ pubky }: Core.TPubkyParams) {
     // Clear database before auth URL login to ensure clean state
     await Core.clearDatabase();
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
     onboardingStore.reset();
-    const pubky = publicKey.z32();
     authStore.setCurrentUserPubky(pubky);
     const {
       meta: { url },
@@ -144,7 +143,7 @@ export class AuthController {
   static async logout() {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
-    const { secretKey } = onboardingStore;
+    const secretKey = onboardingStore.selectSecretKey();
     const pubky = authStore.selectCurrentUserPubky();
     await Core.AuthApplication.logout({ pubky, secretKey });
     // Always clear local state, even if homeserver logout fails

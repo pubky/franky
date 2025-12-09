@@ -2,22 +2,23 @@ import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { type OnboardingStore, onboardingInitialState } from './onboarding.types';
 import { createOnboardingActions } from './onboarding.actions';
+import { createOnboardingSelectors } from './onboarding.selectors';
 
 // Store creation
 export const useOnboardingStore = create<OnboardingStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         ...onboardingInitialState,
         ...createOnboardingActions(set),
+        ...createOnboardingSelectors(get),
       }),
       {
         name: 'onboarding-storage',
 
         // Persist keys data
         partialize: (state) => ({
-          pubky: state.pubky,
-          secretKey: state.secretKey,
+          keypair: state.keypair,
           mnemonic: state.mnemonic,
           showWelcomeDialog: state.showWelcomeDialog,
           hasHydrated: false, // Will be set by rehydration handler

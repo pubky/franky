@@ -33,7 +33,7 @@ export class AuthApplication {
     keypair,
     secretKey,
   }: Core.THomeserverAuthenticateParams): Promise<Core.TAuthenticateKeypairResult | undefined> {
-    const homeserverService = Core.HomeserverService.getInstance(secretKey);
+    const homeserverService = Core.HomeserverService.getInstance(keypair);
     return await homeserverService.authenticateKeypair(keypair);
   }
 
@@ -44,8 +44,9 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Authentication URL and promise to the generated authentication URL
    */
-  static async generateAuthUrl({ secretKey }: Core.TSecretKey) {
-    const homeserverService = Core.HomeserverService.getInstance(secretKey);
+  static async generateAuthUrl({ keypair }: Core.TKeypairParams) {
+    console.log('keypair', keypair);
+    const homeserverService = Core.HomeserverService.getInstance(keypair);
     return await homeserverService.generateAuthUrl();
   }
 

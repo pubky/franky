@@ -345,11 +345,11 @@ describe('Identity', () => {
     });
   });
 
-  describe('keypairFromSecretKey', () => {
+  describe('keypairDataFromSecretKey', () => {
     it('should create keypair from valid secret key', () => {
       const secretKey = new Uint8Array(32).fill(1); // valid 32-byte array
 
-      const result = Identity.keypairFromSecretKey(Buffer.from(secretKey).toString('hex'));
+      const result = Identity.keypairDataFromSecretKey(Buffer.from(secretKey).toString('hex'));
 
       expect(result).toBeDefined();
       expect(result.pubky).toBeDefined();
@@ -359,14 +359,14 @@ describe('Identity', () => {
     it('should throw error for invalid secret key length', () => {
       const invalidSecretKey = new Uint8Array(16); // Invalid length
 
-      expect(() => Identity.keypairFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'))).toThrow();
+      expect(() => Identity.keypairDataFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'))).toThrow();
     });
 
     it('should throw CommonError with proper error type for invalid secret key', () => {
       const invalidSecretKey = new Uint8Array(16); // Invalid length
 
       try {
-        Identity.keypairFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'));
+        Identity.keypairDataFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'));
       } catch (error) {
         expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
         expect(error).toHaveProperty('statusCode', 400);

@@ -31,18 +31,15 @@ export const SignInContent = () => {
     let willRetry = false;
 
     try {
-      const data = await Core.AuthController.getAuthUrl();
-      if (!data) return;
-
-      const { url: generatedUrl, promise } = data;
+      const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
+      if (!authorizationUrl) return;
 
       // Always attach handlers to avoid unhandled rejections even if unmounted
-      promise
-        ?.then(async (publicKey) => {
+      awaitApproval.then(async (session) => {
           // Ignore if unmounted or superseded
           if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
           try {
-            await Core.AuthController.loginWithAuthUrl({ publicKey });
+            await Core.AuthController.loginWithAuthUrl({ pubky: session.info.publicKey.z32() });
           } catch (error) {
             Libs.Logger.error('Failed to login with auth URL:', error);
             if (!isMountedRef.current) return;
@@ -71,7 +68,7 @@ export const SignInContent = () => {
       // Guard against late responses from previous calls
       if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
 
-      if (generatedUrl) setUrl(generatedUrl);
+      if (authorizationUrl) setUrl(authorizationUrl);
       retryCountRef.current = 0;
     } catch (error) {
       retryCountRef.current += 1;

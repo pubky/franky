@@ -188,7 +188,7 @@ describe('AuthController', () => {
     });
 
     it('should successfully sign up a user and call setSession', async () => {
-      const keypair = Libs.Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
+      const keypair = Libs.Identity.keypairDataFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
       const signupToken = 'test-token';
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
@@ -214,7 +214,7 @@ describe('AuthController', () => {
     });
 
     it('should throw error if signup fails', async () => {
-      const keypair = Libs.Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
+      const keypair = Libs.Identity.keypairDataFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
       const signupToken = 'invalid-token';
 
       const signUpSpy = vi.spyOn(Core.AuthApplication, 'signUp').mockRejectedValue(new Error('Signup failed'));

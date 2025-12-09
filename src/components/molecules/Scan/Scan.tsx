@@ -11,6 +11,7 @@ import * as Molecules from '@/molecules';
 import * as Config from '@/config';
 import * as Core from '@/core';
 import * as App from '@/app';
+import { Pubky } from '@synonymdev/pubky';
 
 export const ScanContent = () => {
   const [url, setUrl] = useState('');
@@ -36,18 +37,67 @@ export const ScanContent = () => {
     let willRetry = false;
 
     try {
-      const data = await Core.AuthController.getAuthUrl();
-      if (!data) return;
+      const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
+      if (!authorizationUrl) return;
 
-      const { url: generatedUrl, promise } = data;
+      // const { url: generatedUrl, promise } = data;
+      // console.log('promise', promise);
+
+      // const flow = new Pubky().startAuthFlow('/pub/pubky.app/:rw', Config.DEFAULT_HTTP_RELAY);
+      // const authorizationUrl = flow.authorizationUrl;
+      // console.log('authorizationUrl', authorizationUrl);
+
 
       // Always attach handlers to avoid unhandled rejections even if unmounted
-      promise
-        ?.then(async (publicKey) => {
+      // promise
+      //   ?.then(async (publicKey) => {
+      //     // Ignore if unmounted or superseded
+      //     if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
+      //     try {
+      //       await Core.AuthController.loginWithAuthUrl({ publicKey });
+      //     } catch (error) {
+      //       Libs.Logger.error('Failed to login with auth URL:', error);
+      //       if (!isMountedRef.current) return;
+      //       Molecules.toast({
+      //         title: 'Authorization failed',
+      //         description: 'Unable to complete authorization with Pubky Ring. Please try again.',
+      //       });
+      //       if (activeRequestRef.current === requestId) {
+      //         void fetchUrl();
+      //       }
+      //     }
+      //   })
+      //   .catch((error: unknown) => {
+      //     // Rejected authorization or transport failure
+      //     Libs.Logger.error('Authorization promise rejected:', error);
+      //     if (!isMountedRef.current) return;
+      //     Molecules.toast({
+      //       title: 'Authorization was not completed',
+      //       description: 'The signer did not complete authorization. Please try again.',
+      //     });
+      //     if (activeRequestRef.current === requestId) {
+      //       void fetchUrl();
+      //     }
+      //   });
+
+      // const response = await promise();
+      // console.log('response', response);
+
+      // Guard against late responses from previous calls
+      if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
+
+      if (authorizationUrl) setUrl(authorizationUrl);
+      retryCountRef.current = 0;
+
+      // Always attach handlers to avoid unhandled rejections even if unmounted
+      awaitApproval
+        .then(async (session) => {
           // Ignore if unmounted or superseded
           if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
           try {
-            await Core.AuthController.loginWithAuthUrl({ publicKey });
+            console.log('session', session.info);
+            // TODO: Handle session - login with auth URL
+            await Core.AuthController.loginWithAuthUrl({ pubky: session.info.publicKey.z32() });
           } catch (error) {
             Libs.Logger.error('Failed to login with auth URL:', error);
             if (!isMountedRef.current) return;
@@ -72,29 +122,24 @@ export const ScanContent = () => {
             void fetchUrl();
           }
         });
-
-      // Guard against late responses from previous calls
-      if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
-
-      if (generatedUrl) setUrl(generatedUrl);
-      retryCountRef.current = 0;
     } catch (error) {
+      console.log('error', error);
       retryCountRef.current += 1;
       const attempts = retryCountRef.current;
       Libs.Logger.error(`Failed to generate auth URL (attempt ${attempts} of ${MAX_RETRY_ATTEMPTS}):`, error);
 
-      if (attempts < MAX_RETRY_ATTEMPTS) {
-        willRetry = true;
-        // bounded backoff: 250ms, 500ms
-        const delayMs = Math.min(1000, 250 * attempts);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
-        await fetchUrl({ viaRetry: true });
-      } else if (isMountedRef.current) {
-        Molecules.toast({
-          title: 'QR code generation failed',
-          description: 'Unable to generate auth QR code. Please refresh and try again.',
-        });
-      }
+      // if (attempts < MAX_RETRY_ATTEMPTS) {
+      //   willRetry = true;
+      //   // bounded backoff: 250ms, 500ms
+      //   const delayMs = Math.min(1000, 250 * attempts);
+      //   await new Promise((resolve) => setTimeout(resolve, delayMs));
+      //   await fetchUrl({ viaRetry: true });
+      // } else if (isMountedRef.current) {
+      //   Molecules.toast({
+      //     title: 'QR code generation failed',
+      //     description: 'Unable to generate auth QR code. Please refresh and try again.',
+      //   });
+      // }
     } finally {
       // Only clear loading if we are not immediately retrying and this is the latest request
       if (!willRetry && activeRequestRef.current === requestId) {

@@ -1,48 +1,20 @@
-import { Keypair, Keypair as PubkyKeypair, createRecoveryFile, decryptRecoveryFile } from '@synonymdev/pubky';
+import { Keypair } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 
 import * as Libs from '@/libs';
-import * as Core from '@/core';
+import type { TKeypairWithMnemonic, TMnemonicWords, TCreateRecoveryFileParams, TDecryptRecoveryFileParams } from './identity.types';
 
 export class Identity {
-  static async createRecoveryFile(keypair: Core.TKeyPair | PubkyKeypair, password: string): Promise<void> {
-    // Handle both string and Uint8Array secret keys for backward compatibility
-    let secretKeyHex: string;
-
-    if (keypair.secretKey instanceof Uint8Array) {
-      // Convert Uint8Array to hex string
-      if (keypair.secretKey.length !== 32) {
-        throw Libs.createCommonError(
-          Libs.CommonErrorType.INVALID_INPUT,
-          `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
-          400,
-          { secretKeyLength: keypair.secretKey.length },
-        );
-      }
-      secretKeyHex = this.secretKeyToHex(keypair.secretKey);
-    } else if (typeof keypair.secretKey === 'string') {
-      // Validate hex string format
-      if (keypair.secretKey.length !== 64) {
-        throw Libs.createCommonError(
-          Libs.CommonErrorType.INVALID_INPUT,
-          `Invalid secret key length. Expected 64 hex characters, got ${keypair.secretKey.length}. Please regenerate your keys.`,
-          400,
-          { secretKeyLength: keypair.secretKey.length },
-        );
-      }
-      secretKeyHex = keypair.secretKey;
-    } else {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Invalid secret key format. Please regenerate your keys.',
-        400,
-        { secretKeyType: typeof keypair.secretKey },
-      );
-    }
+  /**
+   * Creates and downloads a recovery file for the keypair
+   * @param keypair - The keypair to create the recovery file for
+   * @param passphrase - The passphrase to use to create the recovery file
+   * @returns void
+   */
+  static async createRecoveryFile({ keypair, passphrase }: TCreateRecoveryFileParams): Promise<void> {
 
     try {
-      const pubkyKeypair = this.pubkyKeypairFromSecretKey(secretKeyHex);
-      const recoveryFile = createRecoveryFile(pubkyKeypair, password);
+      const recoveryFile = keypair.createRecoveryFile(passphrase);
       this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
     } catch (error) {
       // Re-throw validation errors
@@ -59,7 +31,13 @@ export class Identity {
     }
   }
 
-  static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
+  /**
+   * Handles the download of the recovery file to the user's computer
+   * @param recoveryFile - The recovery file to download
+   * @param filename - The filename to use for the download
+   * @returns void
+   */
+  private static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
     try {
       const arrayBuffer = new ArrayBuffer(recoveryFile.byteLength);
       new Uint8Array(arrayBuffer).set(recoveryFile);
@@ -80,7 +58,38 @@ export class Identity {
     }
   }
 
-  static generateSeedWords(): string[] {
+  /**
+   * Decrypts a recovery file and returns the keypair
+   * @param encryptedFile - The encrypted recovery file
+   * @param passphrase - The passphrase to decrypt the recovery file
+   * @returns The keypair
+   */
+  static async decryptRecoveryFile({ encryptedFile, passphrase }: TDecryptRecoveryFileParams) {
+    const arrayBuffer = await encryptedFile.arrayBuffer();
+    const recoveryFile = new Uint8Array(arrayBuffer);
+    try {
+      return Keypair.fromRecoveryFile(recoveryFile, passphrase);
+    } catch (error) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery file or passphrase', 400, {
+        error,
+      });
+    }
+  }
+
+  /**
+   * Converts a keypair to a pubky string
+   * @param keypair - The keypair to convert
+   * @returns The z-base32 encoding of this public key
+   */
+  static pubkyFromKeypair(keypair: Keypair): string {
+    return keypair.publicKey.z32();
+  }
+
+  /**
+   * Generates a 12-word mnemonic recovery phrase
+   * @returns The mnemonic recovery phrase
+   */
+  private static generateMnemonic(): TMnemonicWords {
     try {
       // Generate 12-word mnemonic using BIP39 standard (128 bits entropy)
       const mnemonic = bip39.generateMnemonic(128);
@@ -97,7 +106,8 @@ export class Identity {
         throw new Error(`Expected 12 words, got ${words.length}`);
       }
 
-      return words;
+      return words.join(' ');
+      
     } catch (error) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.UNEXPECTED_ERROR,
@@ -108,7 +118,12 @@ export class Identity {
     }
   }
 
-  static generateKeypairFromMnemonic(mnemonic: string) {
+  /**
+   * Generates a keypair from a mnemonic
+   * @param mnemonic - The mnemonic to generate the keypair from
+   * @returns The keypair
+   */
+  private static generateKeypairFromMnemonic(mnemonic: string): Keypair {
     if (!bip39.validateMnemonic(mnemonic)) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid mnemonic', 400);
     }
@@ -116,17 +131,12 @@ export class Identity {
     try {
       // Convert mnemonic to seed using BIP39 standard
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
-
       // Use first 32 bytes as secret key
+      // TODO: This is not secure, we need to create a copy of the secret key
+      // const secretKey = new Uint8Array(seedMnemonic.subarray(0, 32));
       const secretKey = seedMnemonic.slice(0, 32);
-
       // Create keypair from secret key
-      const keypair = Keypair.fromSecretKey(secretKey);
-
-      return {
-        secretKey: this.secretKeyToHex(keypair.secretKey()),
-        pubky: keypair.publicKey().z32(),
-      };
+      return Keypair.fromSecretKey(secretKey);
     } catch (error) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
@@ -137,43 +147,45 @@ export class Identity {
     }
   }
 
-  static keypairFromSecretKey(secretKey: string) {
+  // TODO: Might be deleted
+  static keypairDataFromSecretKey(secretKey: string) {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      const keypair = PubkyKeypair.fromSecretKey(secretKeyUint8Array);
+      const keypair = Keypair.fromSecretKey(secretKeyUint8Array);
 
       return {
         secretKey: this.secretKeyToHex(keypair.secretKey()),
-        pubky: keypair.publicKey().z32(),
+        pubky: keypair.publicKey.toString(),
       };
     } catch (error) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
   }
 
-  static pubkyKeypairFromSecretKey(secretKey: string): PubkyKeypair {
+  // TODO: Use in homeserver.ts
+  static keypairFromSecretKey(secretKey: string): Keypair {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      return PubkyKeypair.fromSecretKey(secretKeyUint8Array);
+      return Keypair.fromSecretKey(secretKeyUint8Array);
     } catch (error) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
   }
 
-  static generateKeypair() {
+  static generateKeypair(): TKeypairWithMnemonic {
     // Generate mnemonic first, then create keypair from it
-    const words = this.generateSeedWords();
-    const mnemonic = words.join(' ');
-    const { secretKey, pubky } = this.generateKeypairFromMnemonic(mnemonic);
+    const mnemonic = this.generateMnemonic();
+    const keypair = this.generateKeypairFromMnemonic(mnemonic);
 
-    return {
-      secretKey,
-      pubky,
-      mnemonic,
-    };
+    return { keypair, mnemonic };
   }
 
-  static secretKeyFromHex(secretKey: string) {
+  /**
+   * Converts a hex string to a Uint8Array
+   * @param secretKey - The hex string
+   * @returns The secret key as a Uint8Array
+   */
+  private static secretKeyFromHex(secretKey: string) {
     try {
       return new Uint8Array(Buffer.from(secretKey, 'hex'));
     } catch (error) {
@@ -181,6 +193,11 @@ export class Identity {
     }
   }
 
+  /**
+   * Converts a Uint8Array to a hex string
+   * @param secretKey - The secret key as a Uint8Array
+   * @returns The secret key as a hex string
+   */
   static secretKeyToHex(secretKey: Uint8Array) {
     try {
       return Buffer.from(secretKey).toString('hex');
@@ -189,7 +206,12 @@ export class Identity {
     }
   }
 
-  static pubkyKeypairFromMnemonic(mnemonic: string) {
+  /**
+   * Converts a mnemonic to a keypair
+   * @param mnemonic - The mnemonic to convert
+   * @returns The keypair
+   */
+  static keypairFromMnemonic(mnemonic: string) {
     if (!bip39.validateMnemonic(mnemonic)) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery phrase', 400);
     }
@@ -199,6 +221,7 @@ export class Identity {
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
 
       // Use first 32 bytes as secret key (same as signup process)
+      // TODO: const secretKey = new Uint8Array(seedMnemonic.subarray(0, 32));
       const secretKey = seedMnemonic.slice(0, 32);
 
       return Keypair.fromSecretKey(secretKey);
@@ -209,18 +232,6 @@ export class Identity {
         400,
         { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
-    }
-  }
-
-  static async decryptRecoveryFile(encryptedFile: File, password: string) {
-    const arrayBuffer = await encryptedFile.arrayBuffer();
-    const recoveryFile = new Uint8Array(arrayBuffer);
-    try {
-      return decryptRecoveryFile(recoveryFile, password);
-    } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery file or password', 400, {
-        error,
-      });
     }
   }
 

@@ -1,41 +1,34 @@
-import * as Pubky from '@synonymdev/pubky';
+import { Pubky, PublicKey, Keypair, Capabilities } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
 export class HomeserverService {
-  private defaultKeypair = {
-    pubky: '' as Core.Pubky,
-    secretKey: '',
-  };
   private static instance: HomeserverService;
-  private client: Pubky.Client;
-  private currentKeypair: Core.TKeyPair = this.defaultKeypair;
+  private client: Pubky;
+  private temporaryKeypair: Keypair | undefined;
   private testnet = Config.TESTNET.toString() === 'true';
   private pkarrRelays = Config.PKARR_RELAYS.split(',');
 
-  private constructor(secretKey: string = '') {
+  private constructor(keypair: Keypair) {
     this.client = this.testnet
-      ? Pubky.Client.testnet()
-      : new Pubky.Client({
-          pkarr: { relays: this.pkarrRelays, requestTimeout: null },
-          userMaxRecordAge: null,
-        });
+      ? Pubky.testnet()
+      : new Pubky()
 
     // Initialize session from store
-    try {
-      this.currentKeypair = Libs.Identity.keypairFromSecretKey(secretKey);
-    } catch {
-      // If secretKey is invalid, use default empty keypair
-      this.currentKeypair = this.defaultKeypair;
-    }
+    // try {
+    //   this.temporaryKeypair = Libs.Identity.keypairFromSecretKey(secretKey);
+    // } catch {
+    //   // If secretKey is invalid, use default empty keypair
+    //   this.temporaryKeypair = undefined;
+    // }
   }
 
-  public static getInstance(secretKey: string = ''): HomeserverService {
+  public static getInstance(keypair: Keypair): HomeserverService {
     try {
       if (!HomeserverService.instance) {
-        HomeserverService.instance = new HomeserverService(secretKey);
+        HomeserverService.instance = new HomeserverService(keypair);
       }
       return HomeserverService.instance;
     } catch (error) {
@@ -105,8 +98,8 @@ export class HomeserverService {
 
   private async checkHomeserver(pubky: Core.Pubky) {
     try {
-      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
-      const homeserver = await this.client.getHomeserver(pubkyPublicKey);
+      const pubkyPublicKey = PublicKey.from(pubky);
+      const homeserver = await this.client.getHomeserverOf(pubkyPublicKey);
 
       if (!homeserver) {
         throw Libs.createHomeserverError(
@@ -127,7 +120,7 @@ export class HomeserverService {
 
   private async checkSession(pubky: Core.Pubky) {
     try {
-      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
+      const pubkyPublicKey = PublicKey.from(pubky);
       const session = await this.client.session(pubkyPublicKey);
       if (!session) {
         throw Libs.createHomeserverError(
@@ -145,26 +138,27 @@ export class HomeserverService {
     }
   }
 
-  private async signin(keypair: Pubky.Keypair) {
+  private async signin(keypair: Keypair) {
     try {
-      await this.client.signin(keypair);
+      const signer = this.client.signer(keypair);
+      await signer.signin();
       Libs.Logger.debug('Signin successful', { keypair });
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.SIGNIN_FAILED, 'Failed to sign in. Try again.', 401, { error });
     }
   }
 
-  async signup(keypair: Core.TKeyPair, signupToken: string): Promise<Core.TAuthenticateKeypairResult> {
+  async signup(keypair: Keypair, signupToken: string): Promise<Core.TAuthenticateKeypairResult> {
     try {
-      const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
+      const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
       Libs.Logger.debug('Signing up', {
         keypair,
         signupToken,
         homeserverPublicKey: homeserverPublicKey,
       });
-      const pubkyKeypair = Libs.Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
-      const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
-      this.currentKeypair = keypair;
+      const signer = this.client.signer(keypair);
+      const session = await signer.signup(homeserverPublicKey, signupToken);
+      this.temporaryKeypair = keypair;
 
       Libs.Logger.debug('Signup successful', { session });
 
@@ -320,17 +314,20 @@ export class HomeserverService {
     }
   }
 
-  async generateAuthUrl(caps?: string) {
-    const capabilities = caps || '/pub/pubky.app/:rw';
+  async generateAuthUrl(caps?: Capabilities) {
+    console.log('generateAuthUrl', caps);
+    const capabilities: Capabilities = caps || '/pub/pubky.app/:rw';
 
     try {
-      const authRequest = this.client.authRequest(Config.DEFAULT_HTTP_RELAY, capabilities);
+      const flow = this.client.startAuthFlow(capabilities, Config.DEFAULT_HTTP_RELAY);
+      console.log('authorizationUrl', flow.authorizationUrl);
 
       return {
-        url: String(authRequest.url()),
-        promise: authRequest.response(),
+        authorizationUrl: flow.authorizationUrl,
+        awaitApproval: flow.awaitApproval(),
       };
     } catch (error) {
+      console.log('error', error);
       this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
         capabilities,
         relay: Config.DEFAULT_HTTP_RELAY,

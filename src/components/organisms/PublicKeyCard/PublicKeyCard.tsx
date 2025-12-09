@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -9,21 +9,23 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
-  const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
+  const { setKeypair, setMnemonic, selectPublicKey } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const [pubky, setPubky] = useState<string>('');
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
-    if (pubky === '') {
-      const generatePubky = () => {
-        const keypair = Libs.Identity.generateKeypair();
-        setKeypair(keypair.pubky, keypair.secretKey);
-        setMnemonic(keypair.mnemonic);
-      };
-
-      generatePubky();
+    try {
+      const publicKey = selectPublicKey();
+      setPubky(publicKey);
+    } catch (error) {
+      Libs.Logger.info('Generating new keypair persisted in the global store', { error });
+      const { keypair, mnemonic } = Libs.Identity.generateKeypair();
+      setKeypair(keypair);
+      setMnemonic(mnemonic);
+      setPubky(Libs.Identity.pubkyFromKeypair(keypair));
     }
-  }, [pubky, setKeypair, setMnemonic]);
+  }, [selectPublicKey, setKeypair, setMnemonic]);
 
   const handleCopyToClipboard = () => {
     if (pubky) {
@@ -115,10 +117,10 @@ export function PublicKeyCard() {
           variant="dashed"
           readOnly
           onClick={handleCopyToClipboard}
-          loading={pubky === ''}
+          loading={!pubky}
           loadingText="Generating pubky..."
           icon={<Libs.Key className="h-4 w-4 text-brand" />}
-          status={pubky === '' ? 'default' : 'success'}
+          status={pubky ? 'success' : 'default'}
           className="w-full max-w-[576px]"
         />
       </Molecules.ActionSection>
