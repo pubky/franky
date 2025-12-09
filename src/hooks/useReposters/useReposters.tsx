@@ -32,7 +32,7 @@ export function useReposters(originalPostId: string): UseRepostersResult {
     return await Core.PostRelationshipsModel.getReposts(originalPost.uri);
   }, [originalPost?.uri]);
 
-  // Extract unique author IDs and repost info
+  // Extract repost info (unique author list, count all reposts)
   const reposters: Array<{ repostId: string; authorId: string }> = [];
   const authorIdSet = new Set<string>();
 
@@ -50,10 +50,13 @@ export function useReposters(originalPostId: string): UseRepostersResult {
     });
   }
 
+  const reposterIds = Array.from(authorIdSet);
+  const totalCount = reposts?.length ?? 0; // count all reposts (including multiple per user)
+
   return {
-    reposterIds: Array.from(authorIdSet),
+    reposterIds,
     reposters,
-    totalCount: reposters.length,
+    totalCount,
     isLoading: originalPost === undefined || reposts === undefined,
   };
 }

@@ -14,6 +14,7 @@ import * as Types from './Posts.types';
  */
 export function TimelinePosts({ postIds, loading, loadingMore, error, hasMore, loadMore }: Types.TimelinePostsProps) {
   const { navigateToPost } = Hooks.usePostNavigation();
+  const { entries } = Hooks.useGroupedPosts(postIds);
 
   // Infinite scroll hook
   const { sentinelRef } = Hooks.useInfiniteScroll({
@@ -28,12 +29,26 @@ export function TimelinePosts({ postIds, loading, loadingMore, error, hasMore, l
     <Molecules.TimelineStateWrapper loading={loading} error={error} hasItems={postIds.length > 0}>
       <Atoms.Container>
         <Atoms.Container overrideDefaults className="space-y-4">
-          {postIds.map((postId) => (
-            <Atoms.Container key={`main_${postId}`}>
-              <Organisms.PostMain postId={postId} onClick={() => navigateToPost(postId)} isReply={false} />
-              <Organisms.TimelinePostReplies postId={postId} onPostClick={navigateToPost} />
-            </Atoms.Container>
-          ))}
+          {entries.map((entry) => {
+            if (entry.type === 'group') {
+              return (
+                <Atoms.Container key={entry.groupId}>
+                  <Organisms.GroupedRepost entry={entry} />
+                </Atoms.Container>
+              );
+            }
+
+            return (
+              <Atoms.Container key={`main_${entry.postId}`}>
+                <Organisms.PostMain
+                  postId={entry.postId}
+                  onClick={() => navigateToPost(entry.postId)}
+                  isReply={false}
+                />
+                <Organisms.TimelinePostReplies postId={entry.postId} onPostClick={navigateToPost} />
+              </Atoms.Container>
+            );
+          })}
 
           {/* Loading More Indicator */}
           {loadingMore && <Molecules.TimelineLoadingMore />}

@@ -11,6 +11,7 @@ export interface PostInputActionBarProps {
   postButtonLabel?: string;
   postButtonAriaLabel?: string;
   postButtonIcon?: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  hideArticle?: boolean;
 }
 
 export interface ActionButtonConfig {

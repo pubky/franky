@@ -45,4 +45,5 @@ export * from './useReposters';
 export * from './useDeletePost';
 export * from './useFetchPost';
 export * from './useRepostText';
+export * from './useGroupedPosts';
 export * from './useBulkUserAvatars';

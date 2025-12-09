@@ -23,6 +23,7 @@ export function DialogRepost({ postId, open, onOpenChangeAction }: DialogRepostP
             }}
             showThreadConnector={false}
             expanded={true}
+            hideArticle={true}
           />
         </Atoms.Container>
       </Atoms.DialogContent>

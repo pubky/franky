@@ -5,6 +5,12 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
 vi.mock('@/config', () => ({
   POST_MAX_CHARACTER_LENGTH: 2000,
   POST_MAX_TAGS: 5,
@@ -151,6 +157,11 @@ vi.mock('@/molecules', () => ({
       ) : null,
   ),
   useToast: vi.fn(() => ({ toast: vi.fn() })),
+  toast: vi.fn(() => ({
+    id: 'mock-toast-id',
+    dismiss: vi.fn(),
+    update: vi.fn(),
+  })),
 }));
 
 vi.mock('@/hooks', () => ({

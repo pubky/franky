@@ -198,6 +198,7 @@ describe('DialogReply', () => {
         onSuccess: expect.any(Function),
         showThreadConnector: true,
         expanded: true,
+        hideArticle: true,
       },
       undefined,
     );

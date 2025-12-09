@@ -194,6 +194,7 @@ describe('DialogRepost', () => {
         onSuccess: expect.any(Function),
         showThreadConnector: false,
         expanded: true,
+        hideArticle: true,
       },
       undefined,
     );
@@ -210,6 +211,7 @@ describe('DialogRepost', () => {
         onSuccess: expect.any(Function),
         showThreadConnector: false,
         expanded: true,
+        hideArticle: true,
       },
       undefined,
     );

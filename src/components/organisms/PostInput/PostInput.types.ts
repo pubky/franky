@@ -22,4 +22,6 @@ export interface PostInputProps {
    * @default false
    */
   expanded?: boolean;
+  /** Hide article button in action bar (default: false) */
+  hideArticle?: boolean;
 }

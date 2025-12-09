@@ -30,6 +30,7 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
               }}
               showThreadConnector={true}
               expanded={true}
+              hideArticle={true}
             />
           </Atoms.Container>
         </Atoms.Container>
