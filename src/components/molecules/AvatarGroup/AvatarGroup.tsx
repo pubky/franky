@@ -5,6 +5,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import type { AvatarGroupProps } from './AvatarGroup.types';
+import { MAX_OVERFLOW_DISPLAY } from './AvatarGroup.constants';
 
 /**
  * AvatarGroup
@@ -35,7 +36,7 @@ export function AvatarGroup({
   const overflowCount = Math.max(0, totalCount - visibleItems.length);
 
   // Cap display at +99 for UI consistency
-  const displayOverflow = overflowCount > 99 ? '+99' : `+${overflowCount}`;
+  const displayOverflow = overflowCount > MAX_OVERFLOW_DISPLAY ? `+${MAX_OVERFLOW_DISPLAY}` : `+${overflowCount}`;
 
   if (items.length === 0) return null;
 
