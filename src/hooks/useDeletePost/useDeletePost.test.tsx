@@ -6,9 +6,11 @@ import * as Organisms from '@/organisms';
 
 // Mock Core
 const mockDelete = vi.fn();
+const mockGetPostDetails = vi.fn();
 vi.mock('@/core', () => ({
   PostController: {
     delete: vi.fn(),
+    getPostDetails: vi.fn(),
   },
 }));
 
@@ -38,7 +40,10 @@ describe('useDeletePost', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(Core.PostController.delete).mockImplementation(mockDelete);
+    vi.mocked(Core.PostController.getPostDetails).mockImplementation(mockGetPostDetails);
     vi.mocked(Organisms.useTimelineFeedContext).mockReturnValue(mockTimelineFeed);
+    // Default: post exists (for tests that expect restoration)
+    mockGetPostDetails.mockResolvedValue({ id: mockPostId, content: 'Test post' });
   });
 
   it('returns isDeleting false initially', () => {
@@ -120,9 +125,11 @@ describe('useDeletePost', () => {
     });
   });
 
-  it('restores post to timeline feed on deletion failure', async () => {
+  it('restores post to timeline feed on deletion failure when post still exists', async () => {
     const error = new Error('Deletion failed');
     mockDelete.mockRejectedValue(error);
+    // Post still exists in DB
+    mockGetPostDetails.mockResolvedValue({ id: mockPostId, content: 'Test post' });
 
     const { result } = renderHook(() => useDeletePost(mockPostId));
 
@@ -130,8 +137,24 @@ describe('useDeletePost', () => {
       await result.current.deletePost();
     });
 
+    expect(mockGetPostDetails).toHaveBeenCalledWith({ compositeId: mockPostId });
     expect(mockPrependPosts).toHaveBeenCalledWith(mockPostId);
-    expect(mockPrependPosts).toHaveBeenCalledAfter(mockDelete as unknown as () => Promise<void>);
+  });
+
+  it('does not restore post to timeline feed when post already deleted from DB', async () => {
+    const error = new Error('Deletion failed');
+    mockDelete.mockRejectedValue(error);
+    // Post already deleted from DB (local-first write succeeded)
+    mockGetPostDetails.mockResolvedValue(null);
+
+    const { result } = renderHook(() => useDeletePost(mockPostId));
+
+    await act(async () => {
+      await result.current.deletePost();
+    });
+
+    expect(mockGetPostDetails).toHaveBeenCalledWith({ compositeId: mockPostId });
+    expect(mockPrependPosts).not.toHaveBeenCalled();
   });
 
   it('shows error toast on deletion failure', async () => {

@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Libs from '@/libs';
 import type { UseDeletePostResult } from './useDeletePost.types';
 
 /**
@@ -48,8 +49,18 @@ export function useDeletePost(postId: string): UseDeletePostResult {
       } catch (error) {
         console.error('Failed to delete post:', error);
 
-        // If deletion fails, restore the post to the timeline feed
-        timelineFeed?.prependPosts(idToDelete);
+        // Check if post still exists before restoring (prevents ghost posts)
+        // If local DB deletion succeeded but homeserver sync failed, post won't exist
+        const postStillExists = await Core.PostController.getPostDetails({ compositeId: idToDelete });
+
+        if (postStillExists) {
+          // Post still exists in DB, safe to restore to timeline
+          timelineFeed?.prependPosts(idToDelete);
+        } else {
+          // Post was already deleted from DB (local-first write succeeded)
+          // Don't restore to avoid ghost posts - homeserver will sync eventually
+          Libs.Logger.warn('Post already deleted from DB, not restoring to timeline', { idToDelete });
+        }
 
         toast({
           title: 'Error',

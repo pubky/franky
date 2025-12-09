@@ -31,15 +31,6 @@ export class PostRelationshipsModel
   }
 
   /**
-   * Get all reposts of a post by its URI
-   * @param originalPostUri - The URI of the original post being reposted
-   * @returns Array of post relationships that reposted the original post
-   */
-  static async getReposts(originalPostUri: string) {
-    return this.table.where('reposted').equals(originalPostUri).toArray();
-  }
-
-  /**
    * Get the parent post ID for a given post ID
    * @param postId - The ID of the post to get the parent post ID for
    * @returns The parent post ID

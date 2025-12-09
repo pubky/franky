@@ -7,8 +7,9 @@ import type { RepostHeaderProps } from './RepostHeader.types';
 /**
  * RepostHeader
  *
- * Simple header bar for repost previews.
- * Shows "You reposted" with repeat icon and optional undo button.
+ * Header bar displayed on top of reposts made by the current user.
+ * Shows "You reposted" with repeat icon and an undo button to delete the repost.
+ * Only shown on actual reposts (not in repost previews).
  */
 export function RepostHeader({ isCurrentUserRepost, onUndo, isUndoing = false }: RepostHeaderProps) {
   return (
