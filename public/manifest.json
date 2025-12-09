@@ -1,9 +1,11 @@
 {
+  "id": "/",
   "name": "Pubky App",
   "short_name": "Pubky",
   "description": "A social-media experience built on Pubky Core",
   "scope": "/",
   "lang": "en",
+  "orientation": "portrait-primary",
   "categories": ["social"],
   "icons": [
     {
@@ -81,6 +83,7 @@
   "theme_color": "#000000",
   "background_color": "#000000",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "start_url": "/",
   "screenshots": [
     {
