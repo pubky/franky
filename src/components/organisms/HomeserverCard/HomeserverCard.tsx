@@ -19,8 +19,9 @@ export function HomeserverCard() {
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
-  const { pubky, secretKey } = Core.useOnboardingStore();
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
+  
+  const keypair = Core.useOnboardingStore.getState().keypair;
 
   // generate an invite code and put it in console log if you are in development mode
   useEffect(() => {
@@ -59,12 +60,15 @@ export function HomeserverCard() {
       setStatus('default');
       setIsLoading(true);
       setButtonContinueText('Validating');
-      const keypair = { pubky, secretKey };
       const signupToken = inviteCode;
+      if (!keypair) {
+        throw new Error('Keypair not found');
+      }
       await Core.AuthController.signUp({ keypair, signupToken });
       setButtonContinueText('Signing up');
       router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch {
+      // TODO: handle better that case, in case we do not have a keypair.
       showErrorToast();
       setContinueButtonDisabled(false);
       setStatus('error');

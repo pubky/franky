@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 export class AuthApplication {
   private constructor() {} // Prevent instantiation
@@ -14,11 +15,9 @@ export class AuthApplication {
    */
   static async signUp({
     keypair,
-    signupToken,
-    secretKey,
-  }: Core.TAuthenticateKeypairParams): Promise<Core.TAuthenticateKeypairResult> {
-    const homeserverService = Core.HomeserverService.getInstance(secretKey);
-    return await homeserverService.signup(keypair, signupToken);
+    signupToken
+  }: Core.THomeserverSignUpParams): Promise<Core.THomeserverSessionResult> {
+    return await Core.HomeserverService.signUp({ keypair, signupToken });
   }
 
   /**
@@ -30,11 +29,12 @@ export class AuthApplication {
    * @returns Session and pubky of the authenticated user
    */
   static async signIn({
-    keypair,
-    secretKey,
-  }: Core.THomeserverAuthenticateParams): Promise<Core.TAuthenticateKeypairResult | undefined> {
-    const homeserverService = Core.HomeserverService.getInstance(keypair);
-    return await homeserverService.authenticateKeypair(keypair);
+    keypair
+  }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
+    if (!keypair) {
+      throw new Libs.AppError(Libs.CommonErrorType.INVALID_INPUT, 'Keypair not found in onboarding store. Please regenerate your keys and try again.', 400);
+    }
+    return await Core.HomeserverService.signIn({ keypair });
   }
 
   /**
@@ -44,10 +44,8 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Authentication URL and promise to the generated authentication URL
    */
-  static async generateAuthUrl({ keypair }: Core.TKeypairParams) {
-    console.log('keypair', keypair);
-    const homeserverService = Core.HomeserverService.getInstance(keypair);
-    return await homeserverService.generateAuthUrl();
+  static async generateAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
+    return await Core.HomeserverService.generateAuthUrl();
   }
 
   /**
@@ -58,10 +56,8 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Void
    */
-  static async logout({ pubky, secretKey }: Core.TLogoutParams) {
-    const homeserverService = Core.HomeserverService.getInstance(secretKey);
-    await homeserverService.logout(pubky);
-
+  static async logout(session: Core.THomeserverSessionResult) {
+    await Core.HomeserverService.logout(session);
     // Reset the PubkySpecsSingleton to ensure clean state for subsequent sign-ins
     Core.PubkySpecsSingleton.reset();
   }

@@ -6,8 +6,8 @@ export interface TPubkyParams {
   pubky: Core.Pubky;
 }
 
-export interface TAuthenticatedData extends TPubkyParams {
-  session: Core.SignupResult['session'];
+export interface TPublicKeyParams {
+  publicKey: PublicKey;
 }
 
 export interface TKeypairParams {
@@ -15,7 +15,7 @@ export interface TKeypairParams {
 }
 
 export interface TSignUpParams {
-  keypair: Core.TKeyPair;
+  keypair: Keypair;
   signupToken: string;
 }
 
@@ -26,10 +26,6 @@ export interface TLoginWithMnemonicParams {
 export interface TLoginWithEncryptedFileParams {
   encryptedFile: File;
   password: string;
-}
-
-export interface TLoginWithAuthUrlParams {
-  publicKey: PublicKey;
 }
 
 export interface TBootstrapResponse {

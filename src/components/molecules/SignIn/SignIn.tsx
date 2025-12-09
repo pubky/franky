@@ -9,6 +9,7 @@ import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 import * as Config from '@/config';
+import { Session } from '@synonymdev/pubky';
 
 export const SignInContent = () => {
   const [url, setUrl] = useState('');
@@ -32,24 +33,25 @@ export const SignInContent = () => {
 
     try {
       const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
-      if (!authorizationUrl) return;
+      if (!authorizationUrl) {
+        isGeneratingRef.current = false;
+        if (isMountedRef.current) setIsLoading(false);
+        return;
+      }
 
       // Always attach handlers to avoid unhandled rejections even if unmounted
-      awaitApproval.then(async (session) => {
+      awaitApproval.then(async (session: Session) => {
           // Ignore if unmounted or superseded
           if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
           try {
-            await Core.AuthController.loginWithAuthUrl({ pubky: session.info.publicKey.z32() });
+            await Core.AuthController.persistSessionAndBootstrap({ session });
           } catch (error) {
-            Libs.Logger.error('Failed to login with auth URL:', error);
+            Libs.Logger.error('Failed to persist session and bootstrap:', error);
             if (!isMountedRef.current) return;
             Molecules.toast({
               title: 'Sign in failed',
               description: 'Unable to complete authorization with Pubky Ring. Please try again.',
             });
-            if (activeRequestRef.current === requestId) {
-              void fetchUrl();
-            }
           }
         })
         .catch((error: unknown) => {
@@ -60,16 +62,14 @@ export const SignInContent = () => {
             title: 'Authorization was not completed',
             description: 'The signer did not complete authorization. Please try again.',
           });
-          if (activeRequestRef.current === requestId) {
-            void fetchUrl();
-          }
         });
 
       // Guard against late responses from previous calls
       if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
 
-      if (authorizationUrl) setUrl(authorizationUrl);
+      // Reset retry count and set the authorization URL
       retryCountRef.current = 0;
+      setUrl(authorizationUrl);
     } catch (error) {
       retryCountRef.current += 1;
       const attempts = retryCountRef.current;
@@ -77,7 +77,7 @@ export const SignInContent = () => {
 
       if (attempts < MAX_RETRY_ATTEMPTS) {
         willRetry = true;
-        // bounded backoff: 250ms, 500ms
+        // bounded backoff: 250ms, 500ms, capped at 1000ms
         const delayMs = Math.min(1000, 250 * attempts);
         await new Promise((resolve) => setTimeout(resolve, delayMs));
         await fetchUrl({ viaRetry: true });

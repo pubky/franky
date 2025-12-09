@@ -1,5 +1,6 @@
 import { Keypair } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
+import * as Core from '@/core';
 
 import * as Libs from '@/libs';
 import type { TKeypairWithMnemonic, TMnemonicWords, TCreateRecoveryFileParams, TDecryptRecoveryFileParams } from './identity.types';
@@ -233,6 +234,15 @@ export class Identity {
         { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
+  }
+
+  /**
+   * Gets the pubky from a session
+   * @param session - The session to get the pubky from
+   * @returns The pubky
+   */
+  static pubkyFromSession({ session }: Core.THomeserverSessionResult): Core.Pubky {
+    return session.info.publicKey.z32();
   }
 
   /**
