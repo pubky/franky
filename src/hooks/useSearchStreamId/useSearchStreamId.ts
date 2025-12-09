@@ -6,6 +6,25 @@ import * as Core from '@/core';
 import { Env } from '@/libs/env/env';
 
 /**
+ * Parses tags from a comma-separated string parameter.
+ * Trims whitespace, filters empty values, and limits to MAX_STREAM_TAGS.
+ *
+ * @param tagsParam - The raw tags parameter from URL (e.g., "pubky, bitcoin, nostr")
+ * @returns Array of parsed tag strings
+ */
+function parseTags(tagsParam: string | null): string[] {
+  if (!tagsParam || tagsParam.trim() === '') {
+    return [];
+  }
+
+  return tagsParam
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0)
+    .slice(0, Env.NEXT_MAX_STREAM_TAGS);
+}
+
+/**
  * Custom hook that returns the search streamId based on URL tags and Sort/Content filters
  *
  * This hook:
@@ -42,22 +61,9 @@ export function useSearchStreamId(): Core.PostStreamId | undefined {
   const content = Core.useHomeStore((state) => state.content);
 
   const streamId = useMemo(() => {
-    // Get tags from URL query parameter
-    const tagsParam = searchParams.get('tags');
+    const tags = parseTags(searchParams.get('tags'));
 
-    if (!tagsParam || tagsParam.trim() === '') {
-      return undefined;
-    }
-
-    // Parse and limit tags
-    const tags = tagsParam
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0)
-      .slice(0, Env.NEXT_MAX_STREAM_TAGS)
-      .join(',');
-
-    if (!tags) {
+    if (tags.length === 0) {
       return undefined;
     }
 
@@ -65,7 +71,7 @@ export function useSearchStreamId(): Core.PostStreamId | undefined {
     const baseStreamId = Core.getStreamIdFromFilters(sort, Core.REACH.ALL, content);
 
     // Append tags to the stream ID
-    return `${baseStreamId}:${tags}` as Core.PostStreamId;
+    return `${baseStreamId}:${tags.join(',')}` as Core.PostStreamId;
   }, [searchParams, sort, content]);
 
   return streamId;
@@ -94,17 +100,5 @@ export function useSearchStreamId(): Core.PostStreamId | undefined {
 export function useSearchTags(): string[] {
   const searchParams = useSearchParams();
 
-  return useMemo(() => {
-    const tagsParam = searchParams.get('tags');
-
-    if (!tagsParam || tagsParam.trim() === '') {
-      return [];
-    }
-
-    return tagsParam
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0)
-      .slice(0, Env.NEXT_MAX_STREAM_TAGS);
-  }, [searchParams]);
+  return useMemo(() => parseTags(searchParams.get('tags')), [searchParams]);
 }
