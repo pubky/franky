@@ -31,30 +31,27 @@ export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTa
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
   };
 
-  // TODO: Replace with Skeleton component
-  if (isLoading) {
-    return (
-      <Atoms.Container overrideDefaults className={Libs.cn('flex flex-wrap gap-2', className)}>
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          Loading...
-        </Atoms.Typography>
-      </Atoms.Container>
-    );
-  }
-
-  if (tags.length === 0) {
-    return null;
-  }
-
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn('flex flex-wrap content-start gap-2', className)}
+      className={Libs.cn('flex flex-col gap-2', className)}
       data-testid="hot-tags-overview"
     >
-      {tags.map((tag) => (
-        <Atoms.Tag key={tag.label} name={tag.label} count={tag.tagged_count} onClick={handleTagClick} />
-      ))}
+      <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
+        Hot tags
+      </Atoms.Heading>
+      {isLoading ? (
+        // TODO: Replace with Skeleton component
+        <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
+      ) : tags.length === 0 ? (
+        <Atoms.Typography className="font-light text-muted-foreground">No tags to show</Atoms.Typography>
+      ) : (
+        <Atoms.Container overrideDefaults className="flex flex-wrap content-start gap-2">
+          {tags.map((tag) => (
+            <Atoms.Tag key={tag.label} name={tag.label} count={tag.tagged_count} onClick={handleTagClick} />
+          ))}
+        </Atoms.Container>
+      )}
     </Atoms.Container>
   );
 }

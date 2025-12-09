@@ -79,26 +79,6 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
     await toggleFollow(userId, isCurrentlyFollowing);
   };
 
-  // TODO: Replace with Skeleton component
-  if (isLoading) {
-    return (
-      <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-2', className)}>
-        <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-          Active users
-        </Atoms.Heading>
-        <Atoms.Container className="gap-3.5 rounded-md bg-card p-6">
-          <Atoms.Typography size="md" className="text-muted-foreground">
-            Loading...
-          </Atoms.Typography>
-        </Atoms.Container>
-      </Atoms.Container>
-    );
-  }
-
-  if (users.length === 0) {
-    return null;
-  }
-
   return (
     <Atoms.Container
       overrideDefaults
@@ -108,33 +88,40 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
         Active users
       </Atoms.Heading>
-      <Atoms.Container className="gap-3.5 rounded-md py-2 lg:gap-3">
-        {users.map((user) => (
-          <Molecules.UserListItem
-            key={user.id}
-            user={{
-              id: user.id,
-              name: user.name,
-              avatarUrl: user.avatarUrl ?? undefined,
-              image: user.image,
-              tags: user.tags ?? [],
-              stats: user.counts
-                ? {
-                    tags: user.counts.tags,
-                    posts: user.counts.posts,
-                  }
-                : { tags: 0, posts: 0 },
-              isFollowing: user.isFollowing,
-            }}
-            variant="full"
-            isLoading={isUserLoading(user.id)}
-            isStatusLoading={isLoading}
-            isCurrentUser={currentUserPubky === user.id}
-            onUserClick={handleUserClick}
-            onFollowClick={handleFollowClick}
-          />
-        ))}
-      </Atoms.Container>
+      {isLoading ? (
+        // TODO: Replace with Skeleton component
+        <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
+      ) : users.length === 0 ? (
+        <Atoms.Typography className="font-light text-muted-foreground">No users to show</Atoms.Typography>
+      ) : (
+        <Atoms.Container className="gap-3.5 rounded-md py-2 lg:gap-3">
+          {users.map((user) => (
+            <Molecules.UserListItem
+              key={user.id}
+              user={{
+                id: user.id,
+                name: user.name,
+                avatarUrl: user.avatarUrl ?? undefined,
+                image: user.image,
+                tags: user.tags ?? [],
+                stats: user.counts
+                  ? {
+                      tags: user.counts.tags,
+                      posts: user.counts.posts,
+                    }
+                  : { tags: 0, posts: 0 },
+                isFollowing: user.isFollowing,
+              }}
+              variant="full"
+              isLoading={isUserLoading(user.id)}
+              isStatusLoading={isLoading}
+              isCurrentUser={currentUserPubky === user.id}
+              onUserClick={handleUserClick}
+              onFollowClick={handleFollowClick}
+            />
+          ))}
+        </Atoms.Container>
+      )}
     </Atoms.Container>
   );
 }
