@@ -66,6 +66,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
     limit,
     includeCounts: true,
     includeRelationships: true,
+    includeTags: true,
   });
 
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
@@ -116,7 +117,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
               name: user.name,
               avatarUrl: user.avatarUrl ?? undefined,
               image: user.image,
-              tags: [],
+              tags: user.tags ?? [],
               stats: user.counts
                 ? {
                     tags: user.counts.tags,
