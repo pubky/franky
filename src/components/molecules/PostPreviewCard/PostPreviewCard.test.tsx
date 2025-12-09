@@ -168,4 +168,19 @@ describe('PostPreviewCard - Snapshots', () => {
     expect(screen.getByTestId('repost-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content')).toHaveAttribute('data-is-repost-preview', 'false');
   });
+
+  it('does not render repost header when reposted by someone else', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: true,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
+
+    render(<PostPreviewCard postId="repost-2" />);
+
+    expect(screen.queryByTestId('repost-header')).not.toBeInTheDocument();
+  });
 });

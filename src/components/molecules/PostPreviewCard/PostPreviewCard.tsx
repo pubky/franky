@@ -10,7 +10,7 @@ export function PostPreviewCard({ postId, children, isRepostPreview = false }: P
   const { isRepost, isCurrentUserRepost } = Hooks.useRepostInfo(postId);
   const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
 
-  const showRepostHeader = isRepost && !isRepostPreview;
+  const showRepostHeader = isRepost && isCurrentUserRepost && !isRepostPreview;
 
   return (
     <>
