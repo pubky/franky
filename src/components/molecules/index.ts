@@ -92,3 +92,5 @@ export * from './WordSlot';
 export * from './User';
 export * from './UserListItem';
 export * from './UsersList';
+export * from './SearchHeader';
+export * from './SearchEmptyState';

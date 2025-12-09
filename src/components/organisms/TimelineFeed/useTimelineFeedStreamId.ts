@@ -4,6 +4,7 @@ import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import type { TimelineFeedVariant } from './TimelineFeed.types';
 import { TIMELINE_FEED_VARIANT } from './TimelineFeed.types';
+import { useSearchStreamId } from '@/hooks/useSearchStreamId';
 
 /**
  * Internal hook that calculates the stream ID based on the variant
@@ -17,6 +18,7 @@ export function useTimelineFeedStreamId(variant: TimelineFeedVariant): Core.Post
   const homeStreamId = Hooks.useStreamIdFromFilters();
   const bookmarksStreamId = Hooks.useBookmarksStreamId();
   const hotStreamId = Hooks.useHotStreamId();
+  const searchStreamId = useSearchStreamId();
 
   // For profile variant, get pubky from ProfileContext
   // Using useContext directly instead of useProfileContext to avoid throwing when not inside provider
@@ -34,6 +36,8 @@ export function useTimelineFeedStreamId(variant: TimelineFeedVariant): Core.Post
       return profileStreamId;
     case TIMELINE_FEED_VARIANT.HOT:
       return hotStreamId;
+    case TIMELINE_FEED_VARIANT.SEARCH:
+      return searchStreamId;
     default:
       return undefined;
   }
