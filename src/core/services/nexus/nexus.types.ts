@@ -113,9 +113,7 @@ export type NexusUser = {
 };
 
 // User ID stream response containing only user identifiers
-export type NexusUserIdStream = {
-  user_ids: Pubky[];
-};
+export type NexusUserIdsStream = Pubky[];
 
 // Post types
 export type NexusPostDetails = {

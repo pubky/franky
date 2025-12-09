@@ -38,8 +38,8 @@ export class NexusUserStreamService {
         throw new Error(`Invalid reach type: ${reach}`);
     }
 
-    const response = await Core.queryNexus<Core.NexusUserIdStream>(url);
-    return response?.user_ids || [];
+    const response = await Core.queryNexus<Core.NexusUserIdsStream>(url);
+    return response ?? [];
   }
 
   /**

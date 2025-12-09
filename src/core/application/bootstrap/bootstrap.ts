@@ -91,20 +91,4 @@ export class BootstrapApplication {
     });
     return { notificationList, lastRead: userLastRead };
   }
-
-  /**
-   * Performs application bootstrap with retry logic.
-   * Retries bootstrap up to 3 times with 5-second delays to allow Nexus time to index new users.
-   *
-   * @param params - Bootstrap parameters
-   * @param params.pubky - The user's public key identifier
-   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
-   * @returns Promise resolving to notification state after successful bootstrap
-   */
-  static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    // Wait 5 seconds before each attempt to let Nexus index the user
-    Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt...`);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    return await this.initialize(params);
-  }
 }

@@ -45,13 +45,18 @@ export class AuthController {
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
-    const { notification } = await Core.BootstrapApplication.initializeWithRetry({ pubky, lastReadUrl: url });
+
+    // Wait 5 seconds before bootstrap to let Nexus index the user
+    Libs.Logger.info(`Waiting 5 seconds before bootstrap...`);
+    await Libs.sleep(5000);
+
+    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notification);
     authStore.setAuthenticated(true);
   }
 
   /**
-   * Signs up a new user with the homeserver using the provided keypair and signup token.
+   * Signs up a new us`er with the homeserver using the provided keypair and signup token.
    * @param params - Object containing keypair and signup token for registration
    * @param params.keypair - The cryptographic keypair for the user
    * @param params.signupToken - Invitation code for user registration
