@@ -14,14 +14,19 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    const [data, { notificationList, lastRead }] = await Promise.all([
+    const [data, { notificationList, lastRead }, mutedUserIds] = await Promise.all([
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
+      this.fetchMutedUsers(params.pubky),
     ]);
     if (!data) {
       // TODO: Maybe in the UI, we should redirect or show some special message to the user.
       throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
     }
+    const mutedStreamId = Core.buildUserCompositeId({
+      userId: params.pubky,
+      reach: Core.UserStreamSource.MUTED,
+    });
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts({ posts: data.posts }),
@@ -36,6 +41,10 @@ export class BootstrapApplication {
       Core.LocalStreamUsersService.upsert({
         streamId: Core.UserStreamTypes.RECOMMENDED,
         stream: data.list.recommended,
+      }),
+      Core.LocalStreamUsersService.upsert({
+        streamId: mutedStreamId,
+        stream: mutedUserIds,
       }),
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
@@ -87,6 +96,22 @@ export class BootstrapApplication {
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
     return { notificationList, lastRead: userLastRead };
+  }
+
+  /**
+   * Fetches user's muted users list from Nexus.
+   *
+   * @private
+   * @param pubky - The user's public key identifier
+   * @returns Promise resolving to array of muted user IDs
+   */
+  private static async fetchMutedUsers(pubky: Core.Pubky): Promise<Core.Pubky[]> {
+    const streamId = Core.buildUserCompositeId({
+      userId: pubky,
+      reach: Core.UserStreamSource.MUTED,
+    });
+    // Omit limit to fetch all muted users
+    return Core.NexusUserStreamService.fetch({ streamId, params: {} });
   }
 
   /**
