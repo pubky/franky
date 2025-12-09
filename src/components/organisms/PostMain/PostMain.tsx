@@ -148,9 +148,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
               )}
             </Atoms.Container>
           )}
-          <Atoms.CardContent className="flex flex-col gap-4 p-6">
-            <Organisms.PostHeader postId={postId} />
-            <Organisms.PostContent postId={postId} />
+          <Molecules.PostPreviewCard postId={postId}>
             <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
               <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
               <Organisms.PostActionsBar
@@ -160,7 +158,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
                 className="w-full flex-1 justify-start md:justify-end"
               />
             </Atoms.Container>
-          </Atoms.CardContent>
+          </Molecules.PostPreviewCard>
         </Atoms.Card>
       </Atoms.Container>
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />

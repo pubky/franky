@@ -11,17 +11,17 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
-      data-testid="card-content"
+      data-post-id="post-no-reply-456"
+      data-testid="post-preview-card"
     >
       <div
-        data-testid="post-header"
+        data-testid="post-preview-card-header"
       >
         PostHeader 
         post-no-reply-456
       </div>
       <div
-        data-testid="post-content"
+        data-testid="post-preview-card-content"
       >
         PostContent 
         post-no-reply-456
@@ -79,17 +79,17 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
-      data-testid="card-content"
+      data-post-id="post-reply-123"
+      data-testid="post-preview-card"
     >
       <div
-        data-testid="post-header"
+        data-testid="post-preview-card-header"
       >
         PostHeader 
         post-reply-123
       </div>
       <div
-        data-testid="post-content"
+        data-testid="post-preview-card-content"
       >
         PostContent 
         post-reply-123
@@ -134,17 +134,17 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
-      data-testid="card-content"
+      data-post-id="post-123"
+      data-testid="post-preview-card"
     >
       <div
-        data-testid="post-header"
+        data-testid="post-preview-card-header"
       >
         PostHeader 
         post-123
       </div>
       <div
-        data-testid="post-content"
+        data-testid="post-preview-card-content"
       >
         PostContent 
         post-123
@@ -189,17 +189,17 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
-      data-testid="card-content"
+      data-post-id="post-789"
+      data-testid="post-preview-card"
     >
       <div
-        data-testid="post-header"
+        data-testid="post-preview-card-header"
       >
         PostHeader 
         post-789
       </div>
       <div
-        data-testid="post-content"
+        data-testid="post-preview-card-content"
       >
         PostContent 
         post-789

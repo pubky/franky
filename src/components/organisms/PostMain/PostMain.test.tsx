@@ -119,6 +119,13 @@ vi.mock('@/molecules', () => ({
       ReposterAvatar {reposterId}
     </div>
   ),
+  PostPreviewCard: vi.fn(({ postId, children }) => (
+    <div data-testid="post-preview-card" data-post-id={postId}>
+      <div data-testid="post-preview-card-header">PostHeader {postId}</div>
+      <div data-testid="post-preview-card-content">PostContent {postId}</div>
+      {children}
+    </div>
+  )),
 }));
 
 // Mock useLiveQuery from dexie-react-hooks
@@ -192,8 +199,8 @@ describe('PostMain', () => {
   it('renders header, content, tags and actions', () => {
     render(<PostMain postId="post-123" />);
 
-    expect(screen.getByTestId('post-header')).toHaveTextContent('PostHeader post-123');
-    expect(screen.getByTestId('post-content')).toHaveTextContent('PostContent post-123');
+    expect(screen.getByTestId('post-preview-card-header')).toHaveTextContent('PostHeader post-123');
+    expect(screen.getByTestId('post-preview-card-content')).toHaveTextContent('PostContent post-123');
     expect(screen.getByTestId('post-tags-list')).toHaveTextContent('PostTagsList post-123');
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });

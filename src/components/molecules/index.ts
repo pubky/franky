@@ -40,6 +40,7 @@ export * from './ProfileNavigation';
 export * from './PostCodeBlock';
 export * from './PostHashtags';
 export * from './PostLinkEmbeds';
+export * from './PostPreviewCard';
 export * from './PostTag';
 export * from './PostTagAddButton';
 export * from './PostTagInput';

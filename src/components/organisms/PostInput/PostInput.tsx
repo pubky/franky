@@ -156,11 +156,8 @@ export function PostInput({
 
         {/* Repost preview - shown inside the dashed border for repost variant */}
         {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
-          <Atoms.Card className="rounded-md bg-muted py-0">
-            <Atoms.CardContent className="flex flex-col gap-4 p-6">
-              <Organisms.PostHeader postId={originalPostId} />
-              <Organisms.PostContent postId={originalPostId} />
-            </Atoms.CardContent>
+          <Atoms.Card className="rounded-md py-0">
+            <Molecules.PostPreviewCard postId={originalPostId} />
           </Atoms.Card>
         )}
 

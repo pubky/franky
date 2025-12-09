@@ -115,6 +115,13 @@ vi.mock('@/molecules', () => ({
   )),
   TagInput: vi.fn(() => <div data-testid="tag-input" />),
   PostTag: vi.fn(({ label }) => <div data-testid={`post-tag-${label}`}>{label}</div>),
+  PostPreviewCard: vi.fn(({ postId, children }) => (
+    <div data-testid="post-preview-card" data-post-id={postId}>
+      <div data-testid="post-preview-card-header">PostHeader {postId}</div>
+      <div data-testid="post-preview-card-content">PostContent {postId}</div>
+      {children}
+    </div>
+  )),
   PostLinkEmbeds: vi.fn(({ content }: { content: string }) => {
     // Only render if content contains a URL-like pattern
     if (content.includes('http') || content.includes('youtube') || content.includes('youtu.be')) {
@@ -353,7 +360,7 @@ describe('PostInput', () => {
     expect(screen.getByPlaceholderText('Optional comment')).toBeInTheDocument();
     // Should have repost preview card
     expect(screen.getByTestId('card')).toBeInTheDocument();
-    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+    expect(screen.getByTestId('post-preview-card-content')).toBeInTheDocument();
   });
 
   it('handles repost submission with content', async () => {

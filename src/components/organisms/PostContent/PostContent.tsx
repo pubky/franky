@@ -3,7 +3,6 @@
 import { useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
@@ -64,10 +63,7 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
       {/* Original post being reposted */}
       {isRepost && originalPostId && (
         <Atoms.Card className="rounded-md bg-muted py-0">
-          <Atoms.CardContent className="flex flex-col gap-4 p-6">
-            <Organisms.PostHeader postId={originalPostId} />
-            <Organisms.PostContent postId={originalPostId} />
-          </Atoms.CardContent>
+          <Molecules.PostPreviewCard postId={originalPostId} />
         </Atoms.Card>
       )}
     </Atoms.Container>
