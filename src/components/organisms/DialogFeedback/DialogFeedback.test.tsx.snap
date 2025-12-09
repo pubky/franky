@@ -139,3 +139,289 @@ exports[`DialogFeedback - Snapshots > matches snapshot for default DialogFeedbac
   </div>
 </div>
 `;
+
+exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
+<div
+  data-open="true"
+  data-testid="dialog"
+>
+  <div
+    aria-label="Provide Feedback"
+    class="w-2xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Provide Feedback
+      </h2>
+      <p
+        class="sr-only"
+        data-testid="dialog-description"
+      >
+        Feedback dialog
+      </p>
+    </div>
+    <div
+      class="gap-3"
+      data-testid="container"
+    >
+      <div
+        class="rounded-md border border-dashed border-input p-6"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-4"
+          data-override-defaults="true"
+          data-testid="container"
+        >
+          <div
+            data-max-length="2000"
+            data-post-id="test-user-123"
+            data-testid="post-header"
+          >
+            PostHeader
+          </div>
+          <textarea
+            class="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            data-testid="textarea"
+            maxlength="2000"
+            placeholder="What do you think about Pubky? Any suggestions?"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogFeedback - Snapshots > matches snapshot for success state 1`] = `
+<div
+  data-open="true"
+  data-testid="dialog"
+>
+  <div
+    aria-label="Provide Feedback"
+    class="w-2xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Feedback Received
+      </h2>
+      <p
+        data-testid="dialog-description"
+      >
+        Thank you for helping us improve Pubky.
+      </p>
+    </div>
+    <div
+      class="flex-row justify-end"
+      data-testid="dialog-footer"
+    >
+      <div
+        data-as-child="true"
+        data-testid="dialog-close"
+      >
+        <button
+          class="rounded-full"
+          data-size="lg"
+          data-testid="button"
+          data-variant="dark-outline"
+        >
+          <span
+            data-testid="check-icon"
+          >
+            ✓
+          </span>
+          You're welcome!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogFeedback - Snapshots > matches snapshot when submitting 1`] = `
+<div
+  data-open="true"
+  data-testid="dialog"
+>
+  <div
+    aria-label="Provide Feedback"
+    class="w-2xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Provide Feedback
+      </h2>
+      <p
+        class="sr-only"
+        data-testid="dialog-description"
+      >
+        Feedback dialog
+      </p>
+    </div>
+    <div
+      class="gap-3"
+      data-testid="container"
+    >
+      <div
+        class="rounded-md border border-dashed border-input p-6"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-4"
+          data-override-defaults="true"
+          data-testid="container"
+        >
+          <div
+            data-character-count="21"
+            data-max-length="2000"
+            data-post-id="test-user-123"
+            data-testid="post-header"
+          >
+            PostHeader
+          </div>
+          <textarea
+            class="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            data-testid="textarea"
+            disabled=""
+            maxlength="2000"
+            placeholder="What do you think about Pubky? Any suggestions?"
+          >
+            This is test feedback
+          </textarea>
+          <div
+            class="flex items-center justify-end"
+            data-override-defaults="true"
+            data-testid="container"
+          >
+            <button
+              class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
+              data-size="sm"
+              data-testid="button"
+              data-variant="secondary"
+              disabled=""
+            >
+              <span
+                data-testid="loader-icon"
+              >
+                ⟳
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogFeedback - Snapshots > matches snapshot with feedback content 1`] = `
+<div
+  data-open="true"
+  data-testid="dialog"
+>
+  <div
+    aria-label="Provide Feedback"
+    class="w-2xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Provide Feedback
+      </h2>
+      <p
+        class="sr-only"
+        data-testid="dialog-description"
+      >
+        Feedback dialog
+      </p>
+    </div>
+    <div
+      class="gap-3"
+      data-testid="container"
+    >
+      <div
+        class="rounded-md border border-dashed border-input p-6"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-4"
+          data-override-defaults="true"
+          data-testid="container"
+        >
+          <div
+            data-character-count="21"
+            data-max-length="2000"
+            data-post-id="test-user-123"
+            data-testid="post-header"
+          >
+            PostHeader
+          </div>
+          <textarea
+            class="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            data-testid="textarea"
+            maxlength="2000"
+            placeholder="What do you think about Pubky? Any suggestions?"
+          >
+            This is test feedback
+          </textarea>
+          <div
+            class="flex items-center justify-end"
+            data-override-defaults="true"
+            data-testid="container"
+          >
+            <button
+              class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
+              data-size="sm"
+              data-testid="button"
+              data-variant="secondary"
+            >
+              <div
+                class="flex items-center gap-2"
+                data-override-defaults="true"
+                data-testid="container"
+              >
+                <span
+                  data-testid="send-icon"
+                >
+                  →
+                </span>
+                <p
+                  class="text-xs leading-4 font-bold text-secondary-foreground"
+                  data-as="span"
+                  data-size="sm"
+                  data-testid="typography"
+                >
+                  Send
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

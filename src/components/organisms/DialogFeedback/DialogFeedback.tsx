@@ -1,54 +1,109 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 
 import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
+import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import type { DialogFeedbackProps } from './DialogFeedback.types';
 
-interface DialogFeedbackProps {
-  name: string;
-  avatar: string;
-}
+export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
+  const { currentUserPubky } = Hooks.useCurrentUserProfile();
+  const { feedback, handleChange, submit, isSubmitting, isSuccess, hasContent, reset } = Hooks.useFeedback();
 
-export function DialogFeedback({ name, avatar }: DialogFeedbackProps) {
-  const [sent, setSent] = useState(false);
+  // Reset state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open, reset]);
+
+  if (!currentUserPubky) {
+    return null;
+  }
 
   return (
-    <Atoms.Dialog>
-      <Atoms.DialogTrigger asChild>
-        <Atoms.Container className="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed p-6">
-          <Atoms.Avatar className="size-12">
-            <Atoms.AvatarImage src={avatar} alt={name} />
-            <Atoms.AvatarFallback>{Libs.extractInitials({ name, maxLength: 2 })}</Atoms.AvatarFallback>
-          </Atoms.Avatar>
-          <Atoms.Typography size="sm" className="text-base font-medium break-all text-muted-foreground">
-            What do you think about Pubky?
-          </Atoms.Typography>
-        </Atoms.Container>
-      </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-0 sm:max-w-xl" hiddenTitle="Provide Feedback">
-        <Atoms.DialogHeader className="pr-6">
-          <Atoms.DialogTitle>Provide Feedback</Atoms.DialogTitle>
-        </Atoms.DialogHeader>
-        <Atoms.Container className="h-full overflow-y-auto pr-4">
-          <Atoms.Container className="gap-6">
-            {sent ? (
-              <>
-                <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
-                  Thank you for helping us improve Pubky.
-                </Atoms.Typography>
-                <Atoms.Button size="lg" variant="outline" onClick={() => setSent(false)}>
+    <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
+      <Atoms.DialogContent className="w-2xl" hiddenTitle="Provide Feedback">
+        {isSuccess ? (
+          <>
+            <Atoms.DialogHeader>
+              <Atoms.DialogTitle>Feedback Received</Atoms.DialogTitle>
+              <Atoms.DialogDescription>Thank you for helping us improve Pubky.</Atoms.DialogDescription>
+            </Atoms.DialogHeader>
+            <Atoms.DialogFooter className="flex-row justify-end">
+              <Atoms.DialogClose asChild>
+                <Atoms.Button
+                  variant="dark-outline"
+                  size="lg"
+                  onClick={() => onOpenChange(false)}
+                  className="rounded-full"
+                >
                   <Libs.Check className="mr-2 h-4 w-4" />
                   You&apos;re welcome!
                 </Atoms.Button>
-              </>
-            ) : (
-              <Atoms.Typography onClick={() => setSent(true)} size="sm" className="font-normal text-muted-foreground">
-                Input Feedback
-              </Atoms.Typography>
-            )}
-          </Atoms.Container>
-        </Atoms.Container>
+              </Atoms.DialogClose>
+            </Atoms.DialogFooter>
+          </>
+        ) : (
+          <>
+            <Atoms.DialogHeader>
+              <Atoms.DialogTitle>Provide Feedback</Atoms.DialogTitle>
+              <Atoms.DialogDescription className="sr-only">Feedback dialog</Atoms.DialogDescription>
+            </Atoms.DialogHeader>
+            <Atoms.Container className="gap-3">
+              <Atoms.Container overrideDefaults className="rounded-md border border-dashed border-input p-6">
+                <Atoms.Container className="gap-4" overrideDefaults>
+                  <Organisms.PostHeader
+                    postId={currentUserPubky}
+                    isReplyInput={true}
+                    characterCount={feedback.length > 0 ? feedback.length : undefined}
+                    maxLength={POST_MAX_CHARACTER_LENGTH}
+                  />
+
+                  <Atoms.Textarea
+                    placeholder="What do you think about Pubky? Any suggestions?"
+                    className="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                    value={feedback}
+                    onChange={handleChange}
+                    maxLength={POST_MAX_CHARACTER_LENGTH}
+                    rows={1}
+                    disabled={isSubmitting}
+                  />
+
+                  {hasContent && (
+                    <Atoms.Container className="flex items-center justify-end" overrideDefaults>
+                      <Atoms.Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={submit}
+                        disabled={!hasContent || isSubmitting}
+                        className="h-8 rounded-full border-none px-3 py-2 shadow-xs-dark"
+                      >
+                        {isSubmitting ? (
+                          <Libs.Loader2 className="size-4 animate-spin text-secondary-foreground" strokeWidth={2} />
+                        ) : (
+                          <Atoms.Container className="flex items-center gap-2" overrideDefaults>
+                            <Libs.Send className="size-4 text-secondary-foreground" strokeWidth={2} />
+                            <Atoms.Typography
+                              as="span"
+                              size="sm"
+                              className="text-xs leading-4 font-bold text-secondary-foreground"
+                            >
+                              Send
+                            </Atoms.Typography>
+                          </Atoms.Container>
+                        )}
+                      </Atoms.Button>
+                    </Atoms.Container>
+                  )}
+                </Atoms.Container>
+              </Atoms.Container>
+            </Atoms.Container>
+          </>
+        )}
       </Atoms.DialogContent>
     </Atoms.Dialog>
   );
