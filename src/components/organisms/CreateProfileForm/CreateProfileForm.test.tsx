@@ -4,22 +4,26 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CreateProfileForm } from './CreateProfileForm';
 import * as App from '@/app';
 
-vi.mock('@/core', () => ({
-  useOnboardingStore: vi.fn(),
-  ProfileController: {
-    upload: vi.fn(),
-    create: vi.fn(),
-  },
-  FileController: {
-    upload: vi.fn(),
-  },
-  UserValidator: {
-    check: vi.fn(),
-  },
-  AuthController: {
-    authorizeAndBootstrap: vi.fn(),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useOnboardingStore: vi.fn(),
+    ProfileController: {
+      upload: vi.fn(),
+      create: vi.fn(),
+    },
+    FileController: {
+      upload: vi.fn(),
+    },
+    UserValidator: {
+      check: vi.fn(),
+    },
+    AuthController: {
+      authorizeAndBootstrap: vi.fn(),
+    },
+  };
+});
 
 // Mock Next.js router
 const mockPush = vi.fn();

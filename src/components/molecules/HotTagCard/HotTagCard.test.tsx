@@ -14,19 +14,13 @@ describe('HotTagCard', () => {
 
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('bitcoin')).toBeInTheDocument();
-    expect(screen.getByText('371 posts this month.')).toBeInTheDocument();
-  });
-
-  it('renders with custom timeframe label', () => {
-    render(<HotTagCard {...defaultProps} timeframeLabel="today" />);
-
-    expect(screen.getByText('371 posts today.')).toBeInTheDocument();
+    expect(screen.getByText('371 posts')).toBeInTheDocument();
   });
 
   it('formats large post counts with commas', () => {
     render(<HotTagCard {...defaultProps} postCount={1234567} />);
 
-    expect(screen.getByText('1,234,567 posts this month.')).toBeInTheDocument();
+    expect(screen.getByText('1,234,567 posts')).toBeInTheDocument();
   });
 
   it('calls onClick when clicked', () => {
@@ -172,8 +166,8 @@ describe('HotTagCard - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with custom timeframe', () => {
-    const { container } = render(<HotTagCard rank={1} tagName="nft" postCount={50} timeframeLabel="today" />);
+  it('matches snapshot with small postCount', () => {
+    const { container } = render(<HotTagCard rank={1} tagName="nft" postCount={50} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
