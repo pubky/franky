@@ -1,5 +1,6 @@
 export * from './ActionButtons';
 export * from './ActionSection';
+export * from './AvatarGroup';
 export * from './AvatarWithFallback';
 export * from './AvatarZoomModal';
 export * from './Backup';
@@ -13,6 +14,7 @@ export * from './Content';
 export * from './FAQAccordion';
 export * from './Header';
 export * from './Home';
+export * from './HotTagCard';
 export * from './InputField';
 export * from './Install';
 export * from './Logo';

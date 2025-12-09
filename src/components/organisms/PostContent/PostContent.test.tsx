@@ -11,11 +11,15 @@ vi.mock('dexie-react-hooks', () => ({
 }));
 
 // Mock core model used by PostContent
-vi.mock('@/core', () => ({
-  PostDetailsModel: {
-    findById: vi.fn().mockResolvedValue({ content: 'Mock content' }),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    PostDetailsModel: {
+      findById: vi.fn().mockResolvedValue({ content: 'Mock content' }),
+    },
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
