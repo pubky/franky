@@ -229,6 +229,19 @@ export function timeAgo(date: Date): string {
 }
 
 /**
+ * Pauses execution for the specified duration.
+ * Useful for adding delays in async operations.
+ *
+ * @param ms - Duration to sleep in milliseconds
+ * @returns Promise that resolves after the specified duration
+ *
+ * @example
+ * await sleep(1000); // Wait 1 second
+ * await sleep(5000); // Wait 5 seconds
+ */
+export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
  * Helper functions to create timestamps relative to now
  */
 export const minutesAgo = (mins: number): number => Date.now() - mins * 60 * 1000;
