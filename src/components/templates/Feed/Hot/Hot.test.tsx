@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { HotFeed } from './HotFeed';
+import { Hot } from './Hot';
 
 // Mock Core
 vi.mock('@/core', () => ({
@@ -37,45 +37,46 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Heading: ({ children, level }: { children: React.ReactNode; level: number }) => {
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-    return <Tag data-testid={`heading-${level}`}>{children}</Tag>;
-  },
+  Heading: ({ children, level }: { children: React.ReactNode; level: number }) => (
+    <div data-testid={`heading-${level}`}>{children}</div>
+  ),
 }));
 
-describe('HotFeed', () => {
+describe('Hot', () => {
   it('renders without errors', () => {
-    render(<HotFeed />);
+    render(<Hot />);
     expect(screen.getByTestId('content-layout')).toBeInTheDocument();
   });
 
   it('renders HotTagsCardsSection', () => {
-    render(<HotFeed />);
+    render(<Hot />);
     expect(screen.getByTestId('hot-tags-cards-section')).toBeInTheDocument();
   });
 
   it('renders HotTagsOverview', () => {
-    render(<HotFeed />);
+    render(<Hot />);
     expect(screen.getByTestId('hot-tags-overview')).toBeInTheDocument();
   });
 
   it('renders HotActiveUsers', () => {
-    render(<HotFeed />);
+    render(<Hot />);
     expect(screen.getByTestId('hot-active-users')).toBeInTheDocument();
   });
 
   it('renders TimelineFeed for trending posts', () => {
-    render(<HotFeed />);
+    render(<Hot />);
     expect(screen.getByTestId('timeline-feed')).toBeInTheDocument();
   });
 
   it('displays Trending posts heading', () => {
-    render(<HotFeed />);
+    render(<Hot />);
     expect(screen.getByText('Trending posts')).toBeInTheDocument();
   });
+});
 
+describe('Hot - Snapshots', () => {
   it('matches snapshot', () => {
-    const { container } = render(<HotFeed />);
+    const { container } = render(<Hot />);
     expect(container).toMatchSnapshot();
   });
 });

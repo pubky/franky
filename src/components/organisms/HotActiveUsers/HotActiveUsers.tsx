@@ -107,7 +107,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
         Active users
       </Atoms.Heading>
-      <Atoms.Container className="gap-3.5 rounded-md bg-card p-6 lg:gap-3">
+      <Atoms.Container className="gap-3.5 rounded-md py-2 lg:gap-3">
         {users.map((user) => (
           <Molecules.UserListItem
             key={user.id}

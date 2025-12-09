@@ -27,7 +27,6 @@ export * from './FeedbackCard';
 export * from './FeedRightSidebar';
 export * from './Header';
 export * from './HomeFeedSidebar';
-export * from './HotFeed';
 export * from './HotFeedFilters';
 export * from './HotTags';
 export * from './HotTagsCardsSection';

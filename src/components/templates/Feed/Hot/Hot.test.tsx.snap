@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`HotFeed > matches snapshot 1`] = `
+exports[`Hot - Snapshots > matches snapshot 1`] = `
 <div>
   <div
     data-testid="content-layout"
@@ -24,11 +24,11 @@ exports[`HotFeed > matches snapshot 1`] = `
       class="flex flex-col gap-2"
       data-testid="container"
     >
-      <h5
+      <div
         data-testid="heading-5"
       >
         Trending posts
-      </h5>
+      </div>
       <div
         data-testid="timeline-feed"
       >
