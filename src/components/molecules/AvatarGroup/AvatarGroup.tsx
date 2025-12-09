@@ -1,0 +1,65 @@
+'use client';
+
+import * as React from 'react';
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
+import * as Libs from '@/libs';
+import type { AvatarGroupProps } from './AvatarGroup.types';
+
+/**
+ * AvatarGroup
+ *
+ * Displays a stack of overlapping avatars with a count indicator for overflow.
+ * The overflow number is based on totalCount (e.g., post count, user count),
+ * not the number of items in the array.
+ *
+ * @example
+ * ```tsx
+ * <AvatarGroup
+ *   items={[{ id: '1', name: 'Alice', avatarUrl: '...' }]}
+ *   totalCount={100}
+ *   maxAvatars={6}
+ * />
+ * ```
+ */
+export function AvatarGroup({
+  items,
+  totalCount,
+  maxAvatars = 6,
+  className,
+  'data-testid': dataTestId,
+}: AvatarGroupProps) {
+  const visibleItems = items.slice(0, maxAvatars);
+
+  // Overflow is based on totalCount minus visible avatars
+  const overflowCount = Math.max(0, totalCount - visibleItems.length);
+
+  // Cap display at +99 for UI consistency
+  const displayOverflow = overflowCount > 99 ? '+99' : `+${overflowCount}`;
+
+  if (items.length === 0) return null;
+
+  return (
+    <Atoms.Container overrideDefaults className={Libs.cn('flex items-center', className)} data-testid={dataTestId}>
+      {visibleItems.map((item, index) => (
+        <Atoms.Container
+          key={item.id}
+          overrideDefaults
+          className="relative rounded-full shadow-sm"
+          style={{ marginLeft: index === 0 ? 0 : '-8px', zIndex: visibleItems.length - index }}
+        >
+          <Molecules.AvatarWithFallback avatarUrl={item.avatarUrl} name={item.name || 'User'} size="md" />
+        </Atoms.Container>
+      ))}
+      {overflowCount > 0 && (
+        <Atoms.Container
+          overrideDefaults
+          className="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+          style={{ marginLeft: '-8px', zIndex: 0 }}
+        >
+          {displayOverflow}
+        </Atoms.Container>
+      )}
+    </Atoms.Container>
+  );
+}

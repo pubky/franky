@@ -4,47 +4,7 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import type { HotTagCardProps, AvatarGroupProps } from './HotTagCard.types';
-
-/**
- * AvatarGroup
- *
- * Displays a stack of overlapping avatars with a count indicator for overflow.
- * The overflow number is based on totalCount (e.g., post count), not the number of taggers.
- */
-function AvatarGroup({ taggers, totalCount, maxAvatars = 6, className }: AvatarGroupProps) {
-  const visibleTaggers = taggers.slice(0, maxAvatars);
-
-  // Overflow is based on totalCount (posts) minus visible avatars
-  const overflowCount = Math.max(0, totalCount - visibleTaggers.length);
-
-  // Cap display at +99 for UI consistency
-  const displayOverflow = overflowCount > 99 ? '+99' : `+${overflowCount}`;
-
-  if (taggers.length === 0) return null;
-
-  return (
-    <Atoms.Container overrideDefaults className={Libs.cn('flex items-center', className)}>
-      {visibleTaggers.map((tagger, index) => (
-        <div
-          key={tagger.id}
-          className="relative rounded-full shadow-sm"
-          style={{ marginLeft: index === 0 ? 0 : '-8px', zIndex: visibleTaggers.length - index }}
-        >
-          <Molecules.AvatarWithFallback avatarUrl={tagger.avatarUrl} name={tagger.name || 'User'} size="md" />
-        </div>
-      ))}
-      {overflowCount > 0 && (
-        <div
-          className="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
-          style={{ marginLeft: '-8px', zIndex: 0 }}
-        >
-          {displayOverflow}
-        </div>
-      )}
-    </Atoms.Container>
-  );
-}
+import type { HotTagCardProps } from './HotTagCard.types';
 
 /**
  * HotTagCard
@@ -116,7 +76,7 @@ export function HotTagCard({
 
       {/* Card Footer - Avatar Group */}
       <Atoms.Container overrideDefaults className="px-6">
-        <AvatarGroup taggers={taggers} totalCount={postCount} maxAvatars={maxAvatars} />
+        <Molecules.AvatarGroup items={taggers} totalCount={postCount} maxAvatars={maxAvatars} />
       </Atoms.Container>
     </Atoms.Container>
   );
