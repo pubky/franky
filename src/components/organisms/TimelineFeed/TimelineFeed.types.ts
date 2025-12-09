@@ -5,6 +5,7 @@ export const TIMELINE_FEED_VARIANT = {
   BOOKMARKS: 'bookmarks',
   PROFILE: 'profile',
   HOT: 'hot',
+  SEARCH: 'search',
 } as const;
 
 export type TimelineFeedVariant = (typeof TIMELINE_FEED_VARIANT)[keyof typeof TIMELINE_FEED_VARIANT];
@@ -16,6 +17,7 @@ export interface TimelineFeedProps {
    * - 'bookmarks': Uses bookmarks stream with sort/content filters
    * - 'profile': Uses author stream from ProfileContext
    * - 'hot': Uses engagement sorting with reach from hot store
+   * - 'search': Uses tags from URL query params with sort/content filters
    */
   variant: TimelineFeedVariant;
   /**
