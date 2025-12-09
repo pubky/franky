@@ -12,6 +12,7 @@ vi.mock('@/hooks', async (importOriginal) => {
     usePostDetails: vi.fn(),
     useRepostInfo: vi.fn(),
     useFetchPost: vi.fn(),
+    useDeletePost: vi.fn(),
   };
 });
 
@@ -43,6 +44,26 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
+  Typography: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <span data-testid="typography" className={className}>
+      {children}
+    </span>
+  ),
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    className,
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    className?: string;
+  }) => (
+    <button data-testid="button" onClick={onClick} disabled={disabled} className={className}>
+      {children}
+    </button>
+  ),
 }));
 
 // Mock organisms
@@ -55,11 +76,16 @@ vi.mock('@/molecules', () => ({
   // Return null for easier call assertions
   PostText: vi.fn(() => null),
   PostLinkEmbeds: vi.fn(() => null),
+  PostPreviewCard: vi.fn(() => <div data-testid="post-preview-card" />),
+  RepostHeader: vi.fn(({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="repost-header">{children}</div>
+  )),
 }));
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
 const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
 const mockUseFetchPost = vi.mocked(Hooks.useFetchPost);
+const mockUseDeletePost = vi.mocked(Hooks.useDeletePost);
 const mockPostText = vi.mocked(Molecules.PostText);
 const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
 
@@ -74,9 +100,14 @@ describe('PostContent', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
       originalPostId: null,
+      isCurrentUserRepost: false,
     });
     mockUseFetchPost.mockReturnValue({
       fetchPost: vi.fn(),
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
     });
   });
 
@@ -138,6 +169,26 @@ describe('PostContent', () => {
     render(<PostContent postId="post-123" />);
 
     expect(mockPostLinkEmbeds).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
+  });
+
+  it('renders repost preview when reposted by current user', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: { content: '' },
+      isLoading: false,
+    });
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: true,
+      originalPostId: 'orig-post',
+      isCurrentUserRepost: true,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
+
+    render(<PostContent postId="repost-1" />);
+
+    expect(screen.getByTestId('post-preview-card')).toBeInTheDocument();
   });
 
   it('updates query when postId changes', () => {

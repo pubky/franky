@@ -121,8 +121,8 @@ vi.mock('@/molecules', () => ({
   )),
   TagInput: vi.fn(() => <div data-testid="tag-input" />),
   PostTag: vi.fn(({ label }) => <div data-testid={`post-tag-${label}`}>{label}</div>),
-  PostPreviewCard: vi.fn(({ postId, children }) => (
-    <div data-testid="post-preview-card" data-post-id={postId}>
+  PostPreviewCard: vi.fn(({ postId, children, isRepostPreview }) => (
+    <div data-testid="post-preview-card" data-post-id={postId} data-is-repost-preview={isRepostPreview}>
       <div data-testid="post-preview-card-header">PostHeader {postId}</div>
       <div data-testid="post-preview-card-content">PostContent {postId}</div>
       {children}

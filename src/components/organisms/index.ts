@@ -70,4 +70,3 @@ export * from './NotificationItem';
 export * from './NotificationsContainer';
 export * from './NotificationsList';
 export * from './WhoToFollow';
-export * from './GroupedRepost';

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PostPreviewCard } from './PostPreviewCard';
+import * as Hooks from '@/hooks';
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
@@ -9,12 +10,24 @@ vi.mock('@/organisms', () => ({
       PostHeader {postId}
     </div>
   )),
-  PostContent: vi.fn(({ postId }: { postId: string }) => (
-    <div data-testid="post-content" data-post-id={postId}>
-      PostContent {postId}
+  PostContent: vi.fn(({ postId, isRepostPreview }: { postId: string; isRepostPreview?: boolean }) => (
+    <div data-testid="post-content" data-post-id={postId} data-is-repost-preview={isRepostPreview}>
+      PostContent {postId} {isRepostPreview ? 'preview' : ''}
     </div>
   )),
 }));
+
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    RepostHeader: vi.fn(({ isCurrentUserRepost, isUndoing }: { isCurrentUserRepost: boolean; isUndoing?: boolean }) => (
+      <div data-testid="repost-header" data-is-current-user={isCurrentUserRepost} data-is-undoing={isUndoing}>
+        RepostHeader
+      </div>
+    )),
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -34,8 +47,24 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
+vi.mock('@/hooks', () => ({
+  useRepostInfo: vi.fn(),
+  useDeletePost: vi.fn(),
+}));
+
+const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
+const mockUseDeletePost = vi.mocked(Hooks.useDeletePost);
+
 describe('PostPreviewCard', () => {
   it('renders with required props', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
     render(<PostPreviewCard postId="test-post-123" />);
 
     expect(screen.getByTestId('card-content')).toBeInTheDocument();
@@ -44,6 +73,14 @@ describe('PostPreviewCard', () => {
   });
 
   it('applies CardContent classes', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
     render(<PostPreviewCard postId="test-post-123" />);
     const cardContent = screen.getByTestId('card-content');
 
@@ -51,6 +88,14 @@ describe('PostPreviewCard', () => {
   });
 
   it('renders children when provided', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
     render(
       <PostPreviewCard postId="test-post-123">
         <div data-testid="footer">Footer content</div>
@@ -62,6 +107,14 @@ describe('PostPreviewCard', () => {
   });
 
   it('does not render children when not provided', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
     render(<PostPreviewCard postId="test-post-123" />);
 
     expect(screen.queryByTestId('footer')).not.toBeInTheDocument();
@@ -70,16 +123,49 @@ describe('PostPreviewCard', () => {
 
 describe('PostPreviewCard - Snapshots', () => {
   it('matches snapshot with default props', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
     const { container } = render(<PostPreviewCard postId="snapshot-post-id" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with children', () => {
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: false,
+      isCurrentUserRepost: false,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost: vi.fn(),
+      isDeleting: false,
+    });
     const { container } = render(
       <PostPreviewCard postId="snapshot-post-id">
         <div>Footer content</div>
       </PostPreviewCard>,
     );
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('renders repost header when post is a repost', () => {
+    const deletePost = vi.fn();
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: true,
+      isCurrentUserRepost: true,
+    });
+    mockUseDeletePost.mockReturnValue({
+      deletePost,
+      isDeleting: false,
+    });
+
+    render(<PostPreviewCard postId="repost-1" />);
+
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toHaveAttribute('data-is-repost-preview', 'false');
   });
 });
