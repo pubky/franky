@@ -33,10 +33,12 @@ export function useUserStream({
   limit = DEFAULT_USER_STREAM_LIMIT,
   includeCounts = false,
   includeRelationships = false,
+  includeTags = false,
 }: UseUserStreamParams): UseUserStreamResult {
   const [userIds, setUserIds] = useState<Core.Pubky[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userTagsMap, setUserTagsMap] = useState<Map<Core.Pubky, Core.NexusTag[]>>(new Map());
 
   // Reactive user details from local database
   const userDetailsMap = useLiveQuery(
@@ -69,7 +71,27 @@ export function useUserStream({
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
   );
 
-  // Combine userIds with details, counts, and relationships
+  // Fetch user tags (local-first with API fallback for missing)
+  useEffect(() => {
+    if (!includeTags || userIds.length === 0) {
+      setUserTagsMap(new Map());
+      return;
+    }
+
+    const fetchTags = async () => {
+      try {
+        const tagsMap = await Core.UserController.bulkGetTags(userIds);
+        setUserTagsMap(tagsMap);
+      } catch (err) {
+        Libs.Logger.error('[useUserStream] Failed to fetch user tags:', err);
+        setUserTagsMap(new Map());
+      }
+    };
+
+    void fetchTags();
+  }, [userIds, includeTags]);
+
+  // Combine userIds with details, counts, relationships, and tags
   const users = useMemo((): UserStreamUser[] => {
     const result: UserStreamUser[] = [];
 
@@ -79,6 +101,7 @@ export function useUserStream({
 
       const counts = userCountsMap.get(id);
       const relationship = userRelationshipsMap.get(id);
+      const userTags = userTagsMap.get(id);
       // Only compute CDN avatar URL if user has an image set
       const avatarUrl = details.image ? Core.FileController.getAvatarUrl(id) : null;
 
@@ -98,11 +121,12 @@ export function useUserStream({
             }
           : undefined,
         isFollowing: relationship?.following ?? false,
+        tags: userTags?.map((tag) => tag.label),
       });
     }
 
     return result;
-  }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap]);
+  }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap, userTagsMap]);
 
   // Fetch user IDs from the stream
   const fetchUserIds = useCallback(async () => {

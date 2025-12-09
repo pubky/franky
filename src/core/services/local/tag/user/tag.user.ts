@@ -87,4 +87,17 @@ export class LocalUserTagService {
       tags: userTagsModel.tags as Core.NexusTag[],
     });
   }
+
+  /**
+   * Find which users don't have tags persisted in cache.
+   * Used to identify missing tag data that needs to be fetched.
+   * @param userIds - Array of user IDs to check
+   * @returns Array of user IDs that don't have tags in cache
+   */
+  static async getNotPersistedUserTagsInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
+    if (userIds.length === 0) return [];
+
+    const existingTags = await Core.UserTagsModel.findByIdsPreserveOrder(userIds);
+    return userIds.filter((_userId, index) => existingTags[index] === undefined);
+  }
 }

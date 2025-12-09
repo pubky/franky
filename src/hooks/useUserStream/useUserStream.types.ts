@@ -18,6 +18,8 @@ export interface UserStreamUser {
   counts?: UserStreamUserCounts;
   /** Whether the current user is following this user */
   isFollowing?: boolean;
+  /** User tags (labels only) */
+  tags?: string[];
 }
 
 export interface UseUserStreamParams {
@@ -29,6 +31,8 @@ export interface UseUserStreamParams {
   includeCounts?: boolean;
   /** Whether to include relationship data (isFollowing). Default: false */
   includeRelationships?: boolean;
+  /** Whether to include user tags. Default: false */
+  includeTags?: boolean;
 }
 
 export interface UseUserStreamResult {

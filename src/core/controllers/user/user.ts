@@ -46,6 +46,14 @@ export class UserController {
     return await Core.UserApplication.bulkRelationships(userIds);
   }
 
+  /**
+   * Get multiple user tags with local-first strategy (bulk operation)
+   * Reads from cache first, fetches from API only for missing users
+   */
+  static async bulkGetTags(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+    return await Core.UserApplication.bulkTagsWithFetch(userIds);
+  }
+
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
 

@@ -111,4 +111,44 @@ export class UserApplication {
   static async bulkRelationships(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
     return await Core.LocalProfileService.bulkRelationships(userIds);
   }
+
+  /**
+   * Bulk read multiple user tags with local-first strategy.
+   * First reads from local cache, then fetches missing from Nexus API.
+   * @param userIds - Array of user IDs to fetch tags for
+   * @returns Promise resolving to a Map of user ID to tags array
+   */
+  static async bulkTagsWithFetch(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+    if (userIds.length === 0) return new Map();
+
+    // 1. Find users without cached tags
+    const cacheMissUserIds = await Core.LocalUserTagService.getNotPersistedUserTagsInCache(userIds);
+
+    // 2. Fetch missing from API (parallel requests)
+    if (cacheMissUserIds.length > 0) {
+      await this.fetchMissingUserTagsFromNexus(cacheMissUserIds);
+    }
+
+    // 3. Return all tags from cache (now populated with fetched data)
+    return await Core.LocalProfileService.bulkTags(userIds);
+  }
+
+  /**
+   * Fetch missing user tags from Nexus API and persist to cache.
+   * @param cacheMissUserIds - Array of user IDs that need tags fetched
+   */
+  private static async fetchMissingUserTagsFromNexus(cacheMissUserIds: Core.Pubky[]): Promise<void> {
+    if (cacheMissUserIds.length === 0) return;
+
+    const fetchPromises = cacheMissUserIds.map(async (userId) => {
+      try {
+        const tags = await Core.NexusUserService.tags({ user_id: userId, skip_tags: 0, limit_tags: 10 });
+        await Core.LocalProfileService.upsertTags(userId, tags);
+      } catch {
+        // Silently fail for individual user - they'll just have no tags
+      }
+    });
+
+    await Promise.all(fetchPromises);
+  }
 }

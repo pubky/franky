@@ -83,6 +83,26 @@ export class LocalProfileService {
   }
 
   /**
+   * Bulk retrieves multiple user tags from local database.
+   * @param userIds - Array of user IDs to fetch tags for
+   * @returns Promise resolving to Map of user ID to user tags
+   */
+  static async bulkTags(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+    if (userIds.length === 0) return new Map();
+
+    const results = await Core.UserTagsModel.findByIdsPreserveOrder(userIds);
+    const map = new Map<Core.Pubky, Core.NexusTag[]>();
+
+    for (const tagsData of results) {
+      if (tagsData) {
+        map.set(tagsData.id, tagsData.tags);
+      }
+    }
+
+    return map;
+  }
+
+  /**
    * Upserts user details into local database.
    * @param userDetails - The user details to upsert
    * @returns Promise resolving to void
@@ -104,6 +124,17 @@ export class LocalProfileService {
       id: params.userId,
       ...userCounts,
     });
+  }
+
+  /**
+   * Upserts user tags into local database.
+   * Creates a new record if it doesn't exist, or replaces it if it does.
+   * @param userId - The user ID
+   * @param tags - The user tags to upsert
+   * @returns Promise resolving to void
+   */
+  static async upsertTags(userId: Core.Pubky, tags: Core.NexusTag[]): Promise<void> {
+    await Core.UserTagsModel.upsert({ id: userId, tags });
   }
 
   /**

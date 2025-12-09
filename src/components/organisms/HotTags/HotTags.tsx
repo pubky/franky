@@ -42,17 +42,21 @@ export function HotTags({ className }: HotTagsProps) {
       className={className}
       data-testid="hot-tags"
     >
-      <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
-        {displayTags.map((tag, index) => (
-          <Atoms.Tag
-            key={tag.name}
-            name={tag.name}
-            count={tag.count}
-            onClick={handleTagClick}
-            data-testid={`tag-${index}`}
-          />
-        ))}
-      </Atoms.Container>
+      {displayTags.length === 0 ? (
+        <Atoms.Typography className="font-light text-muted-foreground">No tags to show</Atoms.Typography>
+      ) : (
+        <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
+          {displayTags.map((tag, index) => (
+            <Atoms.Tag
+              key={tag.name}
+              name={tag.name}
+              count={tag.count}
+              onClick={handleTagClick}
+              data-testid={`tag-${index}`}
+            />
+          ))}
+        </Atoms.Container>
+      )}
     </Molecules.SidebarSection>
   );
 }

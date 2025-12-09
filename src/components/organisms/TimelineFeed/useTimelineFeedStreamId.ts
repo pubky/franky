@@ -16,6 +16,7 @@ export function useTimelineFeedStreamId(variant: TimelineFeedVariant): Core.Post
   // All hooks are called unconditionally to respect React's rules
   const homeStreamId = Hooks.useStreamIdFromFilters();
   const bookmarksStreamId = Hooks.useBookmarksStreamId();
+  const hotStreamId = Hooks.useHotStreamId();
 
   // For profile variant, get pubky from ProfileContext
   // Using useContext directly instead of useProfileContext to avoid throwing when not inside provider
@@ -31,6 +32,8 @@ export function useTimelineFeedStreamId(variant: TimelineFeedVariant): Core.Post
       return bookmarksStreamId;
     case TIMELINE_FEED_VARIANT.PROFILE:
       return profileStreamId;
+    case TIMELINE_FEED_VARIANT.HOT:
+      return hotStreamId;
     default:
       return undefined;
   }

@@ -11,12 +11,16 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock the onboarding store
-vi.mock('@/core', () => ({
-  useOnboardingStore: vi.fn(),
-  AuthController: {
-    signUp: vi.fn(),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useOnboardingStore: vi.fn(),
+    AuthController: {
+      signUp: vi.fn(),
+    },
+  };
+});
 
 // Mock molecules using importActual
 vi.mock('@/molecules', async () => {

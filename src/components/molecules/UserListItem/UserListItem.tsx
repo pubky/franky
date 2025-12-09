@@ -10,6 +10,7 @@ import type {
   UserStatsProps,
   VariantProps,
 } from './UserListItem.types';
+import { TAG_MAX_LENGTH, TAGS_MAX_TOTAL_CHARS, TAGS_MAX_COUNT } from './UserListItem.constants';
 
 // =============================================================================
 // Internal Components
@@ -152,16 +153,46 @@ function UserStats({ tags, posts }: UserStatsProps) {
 }
 
 /**
+ * Get tags that fit within the character budget
+ * Shows fewer tags if they would exceed the total character limit
+ */
+function getDisplayTags(tags: string[]): string[] {
+  if (tags.length === 0) return [];
+
+  const result: string[] = [];
+  let totalChars = 0;
+
+  for (const tag of tags) {
+    if (result.length >= TAGS_MAX_COUNT) break;
+
+    // Calculate effective length (truncated if needed)
+    const effectiveLength = Math.min(tag.length, TAG_MAX_LENGTH);
+
+    // Check if adding this tag would exceed the budget
+    if (totalChars + effectiveLength > TAGS_MAX_TOTAL_CHARS && result.length > 0) {
+      break;
+    }
+
+    result.push(tag);
+    totalChars += effectiveLength;
+  }
+
+  return result;
+}
+
+/**
  * TagsList
- * Renders up to 3 tags
+ * Renders tags with smart limiting based on character count
  */
 function TagsList({ tags, className }: { tags: string[]; className?: string }) {
   if (tags.length === 0) return null;
 
+  const displayTags = getDisplayTags(tags);
+
   return (
     <Atoms.Container overrideDefaults className={Libs.cn('flex flex-wrap items-center gap-2', className)}>
-      {tags.slice(0, 3).map((tag, index) => (
-        <Atoms.Tag key={index} name={tag} />
+      {displayTags.map((tag, index) => (
+        <Atoms.Tag key={index} name={tag} maxLength={TAG_MAX_LENGTH} />
       ))}
     </Atoms.Container>
   );
@@ -274,8 +305,8 @@ function FullVariant({
           </Atoms.Container>
         </Atoms.Link>
 
-        {/* Desktop: Tags */}
-        <TagsList tags={tags} className="hidden lg:flex" />
+        {/* Desktop: Tags - hidden between lg (1024px) and xl (1280px) */}
+        <TagsList tags={tags} className="hidden xl:flex" />
 
         {/* Stats */}
         <UserStats tags={stats.tags} posts={stats.posts} />

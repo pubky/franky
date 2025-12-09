@@ -9,19 +9,23 @@ vi.mock('@synonymdev/pubky', () => ({
 }));
 
 // Mock @/core
-vi.mock('@/core', () => ({
-  AuthController: {
-    loginWithEncryptedFile: vi.fn(),
-  },
-  BootstrapController: {
-    run: vi.fn().mockResolvedValue({}),
-  },
-  useAuthStore: {
-    getState: vi.fn().mockReturnValue({
-      currentUserPubky: 'mock-user-pubkey-123',
-    }),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    AuthController: {
+      loginWithEncryptedFile: vi.fn(),
+    },
+    BootstrapController: {
+      run: vi.fn().mockResolvedValue({}),
+    },
+    useAuthStore: {
+      getState: vi.fn().mockReturnValue({
+        currentUserPubky: 'mock-user-pubkey-123',
+      }),
+    },
+  };
+});
 
 // Mock @radix-ui/react-dialog
 vi.mock('@radix-ui/react-dialog', () => ({

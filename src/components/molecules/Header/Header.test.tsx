@@ -18,21 +18,25 @@ vi.mock('dexie-react-hooks', () => ({
 }));
 
 // Mock the core
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(),
-  useNotificationStore: vi.fn(),
-  ProfileController: {
-    read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
-  },
-  FileController: {
-    getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
-  },
-  db: {
-    user_details: {
-      get: vi.fn(),
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(),
+    useNotificationStore: vi.fn(),
+    ProfileController: {
+      read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
     },
-  },
-}));
+    FileController: {
+      getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
+    },
+    db: {
+      user_details: {
+        get: vi.fn(),
+      },
+    },
+  };
+});
 
 // Mock the components
 vi.mock('@/components', () => ({

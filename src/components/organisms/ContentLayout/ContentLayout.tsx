@@ -80,8 +80,8 @@ export function ContentLayout({
             <StickySidebar>{leftSidebarContent}</StickySidebar>
           )}
 
-          {/* Main content area - grows to fill space */}
-          <Atoms.Container className="w-full flex-1 gap-6">{children}</Atoms.Container>
+          {/* Main content area - grows to fill space, min-w-0 prevents flex overflow */}
+          <Atoms.Container className="w-full min-w-0 flex-1 gap-6 overflow-hidden">{children}</Atoms.Container>
 
           {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (
