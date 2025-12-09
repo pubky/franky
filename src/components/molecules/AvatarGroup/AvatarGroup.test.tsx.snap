@@ -1,0 +1,335 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AvatarGroup - Snapshots > matches snapshot with basic items 1`] = `
+<div
+  class="flex items-center"
+  data-testid="container"
+>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: 0px; z-index: 2;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    />
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 1;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    />
+  </div>
+</div>
+`;
+
+exports[`AvatarGroup - Snapshots > matches snapshot with custom maxAvatars 1`] = `
+<div
+  class="flex items-center"
+  data-testid="container"
+>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: 0px; z-index: 3;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U0
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 2;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U1
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 1;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U2
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 0;"
+  >
+    +47
+  </div>
+</div>
+`;
+
+exports[`AvatarGroup - Snapshots > matches snapshot with items without avatarUrl 1`] = `
+<div
+  class="flex items-center"
+  data-testid="container"
+>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: 0px; z-index: 2;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        A
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 1;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        B
+      </span>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] = `
+<div
+  class="flex items-center"
+  data-testid="container"
+>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: 0px; z-index: 6;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U0
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 5;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U1
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 4;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U2
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 3;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U3
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 2;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U4
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 1;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U5
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 0;"
+  >
+    +99
+  </div>
+</div>
+`;
+
+exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
+<div
+  class="flex items-center"
+  data-testid="container"
+>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: 0px; z-index: 6;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U0
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 5;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U1
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 4;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U2
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 3;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U3
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 2;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U4
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative rounded-full shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 1;"
+  >
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
+    >
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+      >
+        U5
+      </span>
+    </span>
+  </div>
+  <div
+    class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+    data-testid="container"
+    style="margin-left: -8px; z-index: 0;"
+  >
+    +94
+  </div>
+</div>
+`;
