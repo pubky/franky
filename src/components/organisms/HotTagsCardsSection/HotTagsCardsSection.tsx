@@ -66,9 +66,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
         <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
           Trending
         </Atoms.Heading>
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          Loading...
-        </Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
       </Atoms.Container>
     );
   }

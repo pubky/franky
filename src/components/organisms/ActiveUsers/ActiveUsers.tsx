@@ -50,9 +50,7 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
       data-testid="active-users"
     >
       {users.length === 0 ? (
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          No users to show
-        </Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">No users to show</Atoms.Typography>
       ) : (
         users.map((user) => (
           <Molecules.UserListItem

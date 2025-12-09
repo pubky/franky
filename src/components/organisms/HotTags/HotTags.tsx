@@ -43,7 +43,7 @@ export function HotTags({ className }: HotTagsProps) {
       data-testid="hot-tags"
     >
       {displayTags.length === 0 ? (
-        <Atoms.Typography className="font-extralight text-muted-foreground">No tags to show</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">No tags to show</Atoms.Typography>
       ) : (
         <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
           {displayTags.map((tag, index) => (
