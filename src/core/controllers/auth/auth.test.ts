@@ -132,12 +132,11 @@ describe('AuthController', () => {
       setupNotificationMocks();
     });
 
-    it('should initialize with retry and setState notification store', async () => {
+    it('should wait 5 seconds, initialize bootstrap, and setState notification store', async () => {
       const notification: Core.NotificationState = { unread: 2, lastRead: 123 };
       const bootstrapResponse = { notification };
-      const initializeWithRetrySpy = vi
-        .spyOn(Core.BootstrapApplication, 'initializeWithRetry')
-        .mockResolvedValue(bootstrapResponse);
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(bootstrapResponse);
+      const sleepSpy = vi.spyOn(Libs, 'sleep').mockResolvedValue(undefined);
 
       const authStoreState: Core.AuthStore = {
         currentUserPubky: TEST_PUBKY,
@@ -153,7 +152,8 @@ describe('AuthController', () => {
 
       await AuthController.authorizeAndBootstrap();
 
-      expect(initializeWithRetrySpy).toHaveBeenCalledWith({
+      expect(sleepSpy).toHaveBeenCalledWith(5000);
+      expect(initializeSpy).toHaveBeenCalledWith({
         pubky: TEST_PUBKY,
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
