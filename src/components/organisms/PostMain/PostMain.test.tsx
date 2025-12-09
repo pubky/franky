@@ -114,11 +114,6 @@ vi.mock('@/organisms', () => ({
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
-  ReposterAvatar: ({ reposterId, index }: { reposterId: string; index: number }) => (
-    <div data-testid="reposter-avatar" data-reposter-id={reposterId} data-index={index}>
-      ReposterAvatar {reposterId}
-    </div>
-  ),
   PostPreviewCard: vi.fn(({ postId, children }) => (
     <div data-testid="post-preview-card" data-post-id={postId}>
       <div data-testid="post-preview-card-header">PostHeader {postId}</div>
@@ -163,15 +158,10 @@ vi.mock('@/hooks', () => ({
     deletePost: vi.fn(),
     isDeleting: false,
   })),
-  useRepostText: vi.fn(() => ({
-    repostText: 'You reposted',
-    isLoading: false,
-  })),
 }));
 
 const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
-const mockUseRepostText = vi.mocked(Hooks.useRepostText);
 
 describe('PostMain', () => {
   beforeEach(() => {
@@ -185,10 +175,6 @@ describe('PostMain', () => {
       isLoading: false,
     });
     mockUseLiveQuery.mockReturnValue({ reposted: null });
-    mockUseRepostText.mockReturnValue({
-      repostText: 'You reposted',
-      isLoading: false,
-    });
   });
 
   it('renders header, content, tags and actions', () => {
