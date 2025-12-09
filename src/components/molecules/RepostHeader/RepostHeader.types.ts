@@ -3,7 +3,3 @@ export interface RepostHeaderProps {
   onUndo?: () => void;
   isUndoing?: boolean;
 }
-export interface RepostHeaderProps {
-  /** Post ID of the repost */
-  repostPostId: string;
-}

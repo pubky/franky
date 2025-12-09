@@ -16,7 +16,7 @@ export function PostPreviewCard({ postId, children, isRepostPreview = false }: P
     <>
       {showRepostHeader && (
         <Molecules.RepostHeader
-          isCurrentUserRepost={!!isCurrentUserRepost}
+          isCurrentUserRepost={isCurrentUserRepost}
           onUndo={() => deletePost()}
           isUndoing={isDeleting}
         />

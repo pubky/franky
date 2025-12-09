@@ -159,6 +159,7 @@ exports[`PostInput - Snapshots > matches snapshot for repost variant 1`] = `
       data-testid="card"
     >
       <div
+        data-is-repost-preview="true"
         data-post-id="test-post-123"
         data-testid="post-preview-card"
       >

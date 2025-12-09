@@ -59,8 +59,8 @@ vi.mock('@/organisms', () => ({
       PostHeader {postId}
     </div>
   )),
-  PostContent: vi.fn(({ postId }: { postId: string }) => (
-    <div data-testid="post-content" data-post-id={postId}>
+  PostContent: vi.fn(({ postId, isRepostPreview }: { postId: string; isRepostPreview?: boolean }) => (
+    <div data-testid="post-content" data-post-id={postId} data-is-repost-preview={isRepostPreview}>
       PostContent {postId}
     </div>
   )),
@@ -83,6 +83,7 @@ vi.mock('@/organisms', () => ({
       </div>
     ),
   ),
+  useTimelineFeedContext: vi.fn(() => null),
 }));
 
 // Mock atoms
@@ -184,7 +185,7 @@ describe('DialogReply', () => {
     render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     expect(Organisms.PostHeader).toHaveBeenCalledWith({ postId: 'test-post-123' }, undefined);
-    expect(Organisms.PostContent).toHaveBeenCalledWith({ postId: 'test-post-123' }, undefined);
+    expect(Organisms.PostContent).toHaveBeenCalledWith({ postId: 'test-post-123', isRepostPreview: false }, undefined);
   });
 
   it('renders PostInput with correct props', () => {

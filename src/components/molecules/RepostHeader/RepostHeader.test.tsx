@@ -7,17 +7,27 @@ vi.mock('@/atoms', () => ({
     children,
     className,
     overrideDefaults,
+    ['data-testid']: dataTestId,
   }: {
     children: React.ReactNode;
     className?: string;
     overrideDefaults?: boolean;
+    'data-testid'?: string;
   }) => (
-    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+    <div data-testid={dataTestId ?? 'container'} className={className} data-override-defaults={overrideDefaults}>
       {children}
     </div>
   ),
-  Typography: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <span data-testid="typography" className={className}>
+  Typography: ({
+    children,
+    className,
+    ['data-testid']: dataTestId,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+  }) => (
+    <span data-testid={dataTestId ?? 'typography'} className={className}>
       {children}
     </span>
   ),
@@ -27,14 +37,22 @@ vi.mock('@/atoms', () => ({
     disabled,
     className,
     'aria-label': ariaLabel,
+    ['data-testid']: dataTestId,
   }: {
     children: React.ReactNode;
     onClick?: () => void;
     disabled?: boolean;
     className?: string;
     'aria-label'?: string;
+    'data-testid'?: string;
   }) => (
-    <button data-testid="button" onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
+    <button
+      data-testid={dataTestId ?? 'button'}
+      onClick={onClick}
+      disabled={disabled}
+      className={className}
+      aria-label={ariaLabel}
+    >
       {children}
     </button>
   ),

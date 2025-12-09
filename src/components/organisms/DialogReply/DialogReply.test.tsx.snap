@@ -44,6 +44,7 @@ exports[`DialogReply - Snapshots > matches snapshot with default props 1`] = `
             snapshot-post-id
           </div>
           <div
+            data-is-repost-preview="false"
             data-post-id="snapshot-post-id"
             data-testid="post-content"
           >
@@ -119,6 +120,7 @@ exports[`DialogReply - Snapshots > matches snapshot with open prop 1`] = `
             snapshot-post-id
           </div>
           <div
+            data-is-repost-preview="false"
             data-post-id="snapshot-post-id"
             data-testid="post-content"
           >

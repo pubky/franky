@@ -154,11 +154,6 @@ vi.mock('@/hooks', () => ({
     originalPostId: null,
     isLoading: false,
   })),
-  useReposters: vi.fn(() => ({
-    reposterIds: [],
-    totalCount: 0,
-    isLoading: false,
-  })),
   usePostDetails: vi.fn(() => ({
     postDetails: null,
     isLoading: false,

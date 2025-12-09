@@ -7,21 +7,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0 gap-0"
+    data-class-name="flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
-    <div
-      data-post-id="post-no-reply-456"
-      data-testid="repost-bar"
-    >
-      RepostBar 
-      post-no-reply-456
-      <button
-        data-testid="undo-repost-button"
-      >
-        Undo repost
-      </button>
-    </div>
     <div
       data-post-id="post-no-reply-456"
       data-testid="post-preview-card"
@@ -87,21 +75,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    data-class-name="flex-1 rounded-md py-0 gap-0"
+    data-class-name="flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
-    <div
-      data-post-id="post-reply-123"
-      data-testid="repost-bar"
-    >
-      RepostBar 
-      post-reply-123
-      <button
-        data-testid="undo-repost-button"
-      >
-        Undo repost
-      </button>
-    </div>
     <div
       data-post-id="post-reply-123"
       data-testid="post-preview-card"
@@ -154,21 +130,9 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0 gap-0"
+    data-class-name="flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
-    <div
-      data-post-id="post-123"
-      data-testid="repost-bar"
-    >
-      RepostBar 
-      post-123
-      <button
-        data-testid="undo-repost-button"
-      >
-        Undo repost
-      </button>
-    </div>
     <div
       data-post-id="post-123"
       data-testid="post-preview-card"
@@ -221,21 +185,9 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0 gap-0"
+    data-class-name="flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
-    <div
-      data-post-id="post-789"
-      data-testid="repost-bar"
-    >
-      RepostBar 
-      post-789
-      <button
-        data-testid="undo-repost-button"
-      >
-        Undo repost
-      </button>
-    </div>
     <div
       data-post-id="post-789"
       data-testid="post-preview-card"

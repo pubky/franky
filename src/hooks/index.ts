@@ -41,7 +41,6 @@ export * from './useBookmark';
 export * from './useUnreadPosts';
 export * from './useIsScrolledFromTop';
 export * from './useRepostInfo';
-export * from './useReposters';
 export * from './useDeletePost';
 export * from './useFetchPost';
 export * from './useRepostText';
