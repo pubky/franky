@@ -1,6 +1,22 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { FilterTimeframe, HotFeedSidebar, HotFeedDrawer, type TimeframeTab } from './HotFeedFilters';
+import { FilterTimeframe, HotFeedSidebar, HotFeedDrawer } from './HotFeedFilters';
+import * as Core from '@/core';
+
+// Mock Core
+vi.mock('@/core', () => ({
+  TIMEFRAME: {
+    TODAY: 'today',
+    THIS_MONTH: 'this_month',
+    ALL_TIME: 'all_time',
+  },
+  useHotStore: vi.fn(() => ({
+    reach: 'all',
+    setReach: vi.fn(),
+    timeframe: 'today',
+    setTimeframe: vi.fn(),
+  })),
+}));
 
 // Mock Atoms
 vi.mock('@/atoms', () => ({
@@ -51,56 +67,42 @@ describe('FilterTimeframe', () => {
 
   it('calls onTabChange when clicking an option', () => {
     const onTabChange = vi.fn();
-    render(<FilterTimeframe selectedTab="today" onTabChange={onTabChange} />);
+    render(<FilterTimeframe selectedTab={Core.TIMEFRAME.TODAY} onTabChange={onTabChange} />);
 
     fireEvent.click(screen.getByText('This Month'));
-    expect(onTabChange).toHaveBeenCalledWith('thisMonth');
+    expect(onTabChange).toHaveBeenCalledWith(Core.TIMEFRAME.THIS_MONTH);
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<FilterTimeframe selectedTab="today" />);
+    const { container } = render(<FilterTimeframe selectedTab={Core.TIMEFRAME.TODAY} />);
     expect(container).toMatchSnapshot();
   });
 });
 
 describe('HotFeedSidebar', () => {
-  const defaultProps = {
-    reach: 'following' as const,
-    setReach: vi.fn(),
-    timeframe: 'today' as TimeframeTab,
-    setTimeframe: vi.fn(),
-  };
-
   it('renders FilterReach and FilterTimeframe', () => {
-    render(<HotFeedSidebar {...defaultProps} />);
+    render(<HotFeedSidebar />);
 
     expect(screen.getByTestId('filter-reach')).toBeInTheDocument();
     expect(screen.getByText('Today')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HotFeedSidebar {...defaultProps} />);
+    const { container } = render(<HotFeedSidebar />);
     expect(container).toMatchSnapshot();
   });
 });
 
 describe('HotFeedDrawer', () => {
-  const defaultProps = {
-    reach: 'following' as const,
-    setReach: vi.fn(),
-    timeframe: 'today' as TimeframeTab,
-    setTimeframe: vi.fn(),
-  };
-
   it('renders FilterReach and FilterTimeframe', () => {
-    render(<HotFeedDrawer {...defaultProps} />);
+    render(<HotFeedDrawer />);
 
     expect(screen.getByTestId('filter-reach')).toBeInTheDocument();
     expect(screen.getByText('Today')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HotFeedDrawer {...defaultProps} />);
+    const { container } = render(<HotFeedDrawer />);
     expect(container).toMatchSnapshot();
   });
 });
