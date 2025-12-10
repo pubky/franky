@@ -91,20 +91,25 @@ export class HotApplication {
    * @param params - Parameters for fetching hot tags
    */
   private static refreshCacheInBackground(id: string, params: Core.TTagHotParams): void {
+    // Fetch and persist users first, then persist hot tags
+    // This prevents race conditions where liveQuery triggers before users are cached
+    // Not using await to prevent blocking the UI, cached tags are returned immediately
+    let fetchedTags: Core.NexusHotTag[] = [];
+
     Core.NexusHotService.fetch(params)
-      .then(async (tags) => {
+      .then((tags) => {
+        fetchedTags = tags;
         if (tags.length > 0) {
-          // Fetch and persist users first
-          await this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
-            Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
-          });
-          // Then persist hot tags
-          await Core.LocalHotService.upsert(id, tags);
+          return this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id);
         }
       })
-      .catch((error) => {
-        Libs.Logger.debug('Background cache refresh failed (non-critical)', { id, error });
-      });
+      .catch((error) => Libs.Logger.warn('Background tagger fetch failed', { error }))
+      .then(() => {
+        if (fetchedTags.length > 0) {
+          return Core.LocalHotService.upsert(id, fetchedTags);
+        }
+      })
+      .catch((error) => Libs.Logger.error('Failed to cache hot tags', { id, error }));
   }
 
   /**
