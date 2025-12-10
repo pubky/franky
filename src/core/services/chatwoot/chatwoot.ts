@@ -1,5 +1,6 @@
 import * as Libs from '@/libs';
 import * as Types from './chatwoot.types';
+import { ChatwootApi, type TChatwootApiConfig } from './chatwoot.api';
 
 const FEEDBACK_INBOX_ID = 26;
 const FEEDBACK_MESSAGE_PREFIX = 'Feedback';
@@ -27,7 +28,7 @@ export class ChatwootService {
    * @returns Configuration object with baseUrl, accountId, and headers
    * @throws AppError if required environment variables are missing
    */
-  private static getConfig() {
+  private static getConfig(): TChatwootApiConfig {
     const baseUrl = process.env.BASE_URL_SUPPORT;
     const apiAccessToken = process.env.SUPPORT_API_ACCESS_TOKEN;
     const accountId = process.env.SUPPORT_ACCOUNT_ID;
@@ -49,7 +50,6 @@ export class ChatwootService {
 
     return {
       baseUrl,
-      apiAccessToken,
       accountId,
       headers: {
         api_access_token: apiAccessToken,
@@ -71,74 +71,23 @@ export class ChatwootService {
    */
   private static async createContactIfNotExists(email: string, name: string): Promise<Types.TChatwootContact> {
     const config = this.getConfig();
-    const searchUrl = `${config.baseUrl}/api/v1/accounts/${config.accountId}/contacts/search`;
 
-    try {
-      // Search for existing contact
-      const searchParams = new URLSearchParams({ q: email });
-      const searchResponse = await fetch(`${searchUrl}?${searchParams.toString()}`, {
-        method: 'GET',
-        headers: config.headers,
-      });
+    // Search for existing contact
+    const searchData = await ChatwootApi.searchContact(config, email);
+    const existingContact = searchData.payload?.find(
+      (c) => c.email?.toLowerCase().trim() === email.toLowerCase().trim(),
+    );
 
-      if (!searchResponse.ok) {
-        throw Libs.createCommonError(
-          Libs.CommonErrorType.NETWORK_ERROR,
-          'Failed to search for contact in Chatwoot',
-          searchResponse.status,
-          {
-            endpoint: searchUrl,
-            status: searchResponse.status,
-            statusText: searchResponse.statusText,
-          },
-        );
-      }
-
-      const searchData = (await searchResponse.json()) as Types.TChatwootContactSearchResponse;
-      const existingContact = searchData.payload?.find(
-        (c) => c.email?.toLowerCase().trim() === email.toLowerCase().trim(),
-      );
-
-      if (existingContact) {
-        return existingContact;
-      }
-
-      // Create new contact if not found
-      const createUrl = `${config.baseUrl}/api/v1/accounts/${config.accountId}/contacts`;
-      const createResponse = await fetch(createUrl, {
-        method: 'POST',
-        headers: config.headers,
-        body: JSON.stringify({
-          inbox_id: FEEDBACK_INBOX_ID,
-          name,
-          email,
-        }),
-      });
-
-      if (!createResponse.ok) {
-        throw Libs.createCommonError(
-          Libs.CommonErrorType.NETWORK_ERROR,
-          'Failed to create contact in Chatwoot',
-          createResponse.status,
-          {
-            endpoint: createUrl,
-            status: createResponse.status,
-            statusText: createResponse.statusText,
-          },
-        );
-      }
-
-      const createData = (await createResponse.json()) as Types.TChatwootCreateContactResponse;
-      return createData.payload.contact;
-    } catch (error) {
-      // Re-throw AppError as-is
-      if (error instanceof Libs.AppError) {
-        throw error;
-      }
-
-      // Wrap unexpected errors
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Error in contact handling', 500, { error });
+    if (existingContact) {
+      return existingContact;
     }
+
+    // Create new contact if not found
+    return ChatwootApi.createContact(config, {
+      inboxId: FEEDBACK_INBOX_ID,
+      name,
+      email,
+    });
   }
 
   /**
@@ -154,44 +103,14 @@ export class ChatwootService {
    */
   private static async createConversation(sourceId: string, contactId: number, message: string): Promise<void> {
     const config = this.getConfig();
-    const conversationUrl = `${config.baseUrl}/api/v1/accounts/${config.accountId}/conversations`;
     const content = `${FEEDBACK_MESSAGE_PREFIX}\n\n${message}`;
 
-    try {
-      const response = await fetch(conversationUrl, {
-        method: 'POST',
-        headers: config.headers,
-        body: JSON.stringify({
-          source_id: sourceId,
-          inbox_id: FEEDBACK_INBOX_ID,
-          contact_id: contactId,
-          message: { content, message_type: 'incoming' },
-        }),
-      });
-
-      if (!response.ok) {
-        throw Libs.createCommonError(
-          Libs.CommonErrorType.NETWORK_ERROR,
-          'Failed to create conversation in Chatwoot',
-          response.status,
-          {
-            endpoint: conversationUrl,
-            status: response.status,
-            statusText: response.statusText,
-          },
-        );
-      }
-    } catch (error) {
-      // Re-throw AppError as-is
-      if (error instanceof Libs.AppError) {
-        throw error;
-      }
-
-      // Wrap unexpected errors
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Error creating conversation', 500, {
-        error,
-      });
-    }
+    await ChatwootApi.createConversation(config, {
+      sourceId,
+      inboxId: FEEDBACK_INBOX_ID,
+      contactId,
+      content,
+    });
   }
 
   /**
