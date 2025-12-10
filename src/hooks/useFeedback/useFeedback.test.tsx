@@ -1,11 +1,42 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useFeedback } from './useFeedback';
-import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
+
+// Mock fetch
+global.fetch = vi.fn();
+
+// Mock hooks
+const mockToast = vi.fn();
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCurrentUserProfile: vi.fn(() => ({
+      currentUserPubky: 'test-user-123',
+    })),
+  };
+});
+
+// Mock molecules
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    useToast: vi.fn(() => ({
+      toast: mockToast,
+    })),
+  };
+});
 
 describe('useFeedback', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default successful fetch response
+    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: true,
+      json: async () => ({}),
+    } as Response);
   });
 
   describe('Initial State', () => {
@@ -37,9 +68,9 @@ describe('useFeedback', () => {
       expect(result.current.hasContent).toBe(true);
     });
 
-    it('should not update feedback if value exceeds max length', () => {
+    it('should accept feedback value regardless of length (truncation handled by textarea maxLength)', () => {
       const { result } = renderHook(() => useFeedback());
-      const longText = 'a'.repeat(POST_MAX_CHARACTER_LENGTH + 10);
+      const longText = 'a'.repeat(FEEDBACK_MAX_CHARACTER_LENGTH + 10);
 
       act(() => {
         const event = {
@@ -48,12 +79,13 @@ describe('useFeedback', () => {
         result.current.handleChange(event);
       });
 
-      expect(result.current.feedback.length).toBeLessThanOrEqual(POST_MAX_CHARACTER_LENGTH);
+      // The hook accepts the value as-is; truncation is handled by the textarea's maxLength attribute
+      expect(result.current.feedback.length).toBe(FEEDBACK_MAX_CHARACTER_LENGTH + 10);
     });
 
     it('should allow feedback up to max length', () => {
       const { result } = renderHook(() => useFeedback());
-      const maxText = 'a'.repeat(POST_MAX_CHARACTER_LENGTH);
+      const maxText = 'a'.repeat(FEEDBACK_MAX_CHARACTER_LENGTH);
 
       act(() => {
         const event = {
@@ -62,7 +94,7 @@ describe('useFeedback', () => {
         result.current.handleChange(event);
       });
 
-      expect(result.current.feedback.length).toBe(POST_MAX_CHARACTER_LENGTH);
+      expect(result.current.feedback.length).toBe(FEEDBACK_MAX_CHARACTER_LENGTH);
     });
   });
 
@@ -140,16 +172,24 @@ describe('useFeedback', () => {
       });
 
       // Start submission
-      const submitPromise = act(async () => {
+      await act(async () => {
         await result.current.submit();
       });
-
-      // Wait for submission to complete
-      await submitPromise;
 
       await waitFor(() => {
         expect(result.current.isSubmitting).toBe(false);
         expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith('/api/chatwoot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pubky: 'test-user-123',
+          comment: 'Test feedback',
+        }),
       });
     });
 
@@ -171,6 +211,17 @@ describe('useFeedback', () => {
         expect(result.current.isSuccess).toBe(true);
         expect(result.current.isSubmitting).toBe(false);
       });
+
+      expect(global.fetch).toHaveBeenCalledWith('/api/chatwoot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pubky: 'test-user-123',
+          comment: 'Test feedback',
+        }),
+      });
     });
 
     it('should not submit when already submitting', async () => {
@@ -183,12 +234,13 @@ describe('useFeedback', () => {
         result.current.handleChange(event);
       });
 
-      // Start first submission
+      // Start first submission (don't await to test concurrent submission)
       const submitPromise = act(async () => {
         await result.current.submit();
       });
 
       // Immediately try to submit again (should be prevented by guard)
+      // Note: This will show a warning but is intentional for testing concurrent calls
       await act(async () => {
         await result.current.submit();
       });

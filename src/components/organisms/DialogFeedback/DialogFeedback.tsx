@@ -6,7 +6,7 @@ import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
-import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
 import type { DialogFeedbackProps } from './DialogFeedback.types';
 
 export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
@@ -60,7 +60,7 @@ export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
                     postId={currentUserPubky}
                     isReplyInput={true}
                     characterCount={feedback.length > 0 ? feedback.length : undefined}
-                    maxLength={POST_MAX_CHARACTER_LENGTH}
+                    maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}
                   />
 
                   <Atoms.Textarea
@@ -68,7 +68,7 @@ export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
                     className="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                     value={feedback}
                     onChange={handleChange}
-                    maxLength={POST_MAX_CHARACTER_LENGTH}
+                    maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}
                     rows={1}
                     disabled={isSubmitting}
                   />

@@ -40,7 +40,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
           data-testid="container"
         >
           <div
-            data-max-length="2000"
+            data-max-length="1000"
             data-post-id="test-user-123"
             data-testid="post-header"
           >
@@ -49,11 +49,11 @@ exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
           <textarea
             class="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             data-testid="textarea"
-            maxlength="2000"
+            maxlength="1000"
             placeholder="What do you think about Pubky? Any suggestions?"
           />
           <div
-            class="flex items-center justify-end transition-all duration-300 ease-in-out opacity-0 -translate-y-2 pointer-events-none"
+            class="flex items-center justify-end transition-all duration-300 ease-in-out pointer-events-none -translate-y-2 opacity-0"
             data-override-defaults="true"
             data-testid="container"
           >
@@ -184,7 +184,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot when submitting 1`] = `
         >
           <div
             data-character-count="21"
-            data-max-length="2000"
+            data-max-length="1000"
             data-post-id="test-user-123"
             data-testid="post-header"
           >
@@ -194,13 +194,13 @@ exports[`DialogFeedback - Snapshots > matches snapshot when submitting 1`] = `
             class="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             data-testid="textarea"
             disabled=""
-            maxlength="2000"
+            maxlength="1000"
             placeholder="What do you think about Pubky? Any suggestions?"
           >
             This is test feedback
           </textarea>
           <div
-            class="flex items-center justify-end transition-all duration-300 ease-in-out opacity-100 translate-y-0"
+            class="flex items-center justify-end transition-all duration-300 ease-in-out translate-y-0 opacity-100"
             data-override-defaults="true"
             data-testid="container"
           >
@@ -266,7 +266,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot with feedback content 1`]
         >
           <div
             data-character-count="21"
-            data-max-length="2000"
+            data-max-length="1000"
             data-post-id="test-user-123"
             data-testid="post-header"
           >
@@ -275,13 +275,13 @@ exports[`DialogFeedback - Snapshots > matches snapshot with feedback content 1`]
           <textarea
             class="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             data-testid="textarea"
-            maxlength="2000"
+            maxlength="1000"
             placeholder="What do you think about Pubky? Any suggestions?"
           >
             This is test feedback
           </textarea>
           <div
-            class="flex items-center justify-end transition-all duration-300 ease-in-out opacity-100 translate-y-0"
+            class="flex items-center justify-end transition-all duration-300 ease-in-out translate-y-0 opacity-100"
             data-override-defaults="true"
             data-testid="container"
           >

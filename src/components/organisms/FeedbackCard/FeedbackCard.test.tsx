@@ -36,34 +36,42 @@ vi.mock('@/hooks', async (importOriginal) => {
 });
 
 // Mock Molecules
-vi.mock('@/molecules', () => ({
-  AvatarWithFallback: ({
-    avatarUrl,
-    name,
-    className,
-    fallbackClassName,
-  }: {
-    avatarUrl?: string;
-    name: string;
-    className?: string;
-    fallbackClassName?: string;
-  }) => (
-    <div
-      data-testid="avatar-with-fallback"
-      data-avatar-url={avatarUrl || 'no-url'}
-      data-name={name}
-      className={className}
-    >
-      {avatarUrl ? (
-        <img data-testid="avatar-image" src={avatarUrl} alt={name} />
-      ) : (
-        <div data-testid="avatar-fallback" className={fallbackClassName}>
-          {name.charAt(0)}
-        </div>
-      )}
-    </div>
-  ),
-}));
+const mockToast = vi.fn();
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    AvatarWithFallback: ({
+      avatarUrl,
+      name,
+      className,
+      fallbackClassName,
+    }: {
+      avatarUrl?: string;
+      name: string;
+      className?: string;
+      fallbackClassName?: string;
+    }) => (
+      <div
+        data-testid="avatar-with-fallback"
+        data-avatar-url={avatarUrl || 'no-url'}
+        data-name={name}
+        className={className}
+      >
+        {avatarUrl ? (
+          <img data-testid="avatar-image" src={avatarUrl} alt={name} />
+        ) : (
+          <div data-testid="avatar-fallback" className={fallbackClassName}>
+            {name.charAt(0)}
+          </div>
+        )}
+      </div>
+    ),
+    useToast: vi.fn(() => ({
+      toast: mockToast,
+    })),
+  };
+});
 
 // Mock Atoms
 vi.mock('@/atoms', async (importOriginal) => {
