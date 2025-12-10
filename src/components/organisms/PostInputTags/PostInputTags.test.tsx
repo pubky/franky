@@ -242,7 +242,7 @@ describe('PostInputTags', () => {
     expect(addButton).toBeDisabled();
   });
 
-  // todo: enable once tag input has max length implemented
+  // todo: enable once tag input has max length implemented, see https://github.com/pubky/franky/issues/519
   it.skip('enforces 20 character max length for tag input field', () => {
     render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
@@ -251,7 +251,7 @@ describe('PostInputTags', () => {
     expect(input).toHaveAttribute('maxLength', String(TAG_MAX_LENGTH));
   });
 
-  // todo: enable once tag input has max length implemented
+  // todo: enable once tag input has max length implemented, see https://github.com/pubky/franky/issues/519
   it.skip('prevents entering tags longer than 20 characters', () => {
     const longTag = 'a'.repeat(21);
     render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
