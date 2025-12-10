@@ -1,145 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DialogFeedback - Snapshots > matches snapshot after sending feedback 1`] = `
-<div
-  data-testid="dialog"
->
-  <div
-    data-as-child="true"
-    data-testid="dialog-trigger"
-  >
-    <div
-      class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed p-6"
-      data-testid="container"
-    >
-      <div
-        class="size-12"
-        data-testid="avatar"
-      >
-        <img
-          alt="John Doe"
-          data-testid="avatar-image"
-        />
-        <div
-          data-testid="avatar-fallback"
-        >
-          JD
-        </div>
-      </div>
-      <p
-        class="text-base font-medium break-all text-muted-foreground"
-        data-size="sm"
-        data-testid="typography"
-      >
-        What do you think about Pubky?
-      </p>
-    </div>
-  </div>
-  <div
-    class="gap-0 sm:max-w-xl"
-    data-testid="dialog-content"
-  >
-    <div
-      class="pr-6"
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        Provide Feedback
-      </h2>
-    </div>
-    <div
-      class="h-full overflow-y-auto pr-4"
-      data-testid="container"
-    >
-      <div
-        class="gap-6"
-        data-testid="container"
-      >
-        <p
-          class="font-normal text-muted-foreground"
-          data-size="sm"
-          data-testid="typography"
-        >
-          Input Feedback
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`DialogFeedback - Snapshots > matches snapshot for default DialogFeedback 1`] = `
-<div
-  data-testid="dialog"
->
-  <div
-    data-as-child="true"
-    data-testid="dialog-trigger"
-  >
-    <div
-      class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed p-6"
-      data-testid="container"
-    >
-      <div
-        class="size-12"
-        data-testid="avatar"
-      >
-        <img
-          alt="John Doe"
-          data-testid="avatar-image"
-        />
-        <div
-          data-testid="avatar-fallback"
-        >
-          JD
-        </div>
-      </div>
-      <p
-        class="text-base font-medium break-all text-muted-foreground"
-        data-size="sm"
-        data-testid="typography"
-      >
-        What do you think about Pubky?
-      </p>
-    </div>
-  </div>
-  <div
-    class="gap-0 sm:max-w-xl"
-    data-testid="dialog-content"
-  >
-    <div
-      class="pr-6"
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        Provide Feedback
-      </h2>
-    </div>
-    <div
-      class="h-full overflow-y-auto pr-4"
-      data-testid="container"
-    >
-      <div
-        class="gap-6"
-        data-testid="container"
-      >
-        <p
-          class="font-normal text-muted-foreground"
-          data-size="sm"
-          data-testid="typography"
-        >
-          Input Feedback
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
 <div
   data-open="true"
@@ -312,7 +172,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot when submitting 1`] = `
             data-testid="container"
           >
             <button
-              class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
+              class="h-8 rounded-full border-none px-3 py-2 shadow-xs-dark"
               data-size="sm"
               data-testid="button"
               data-variant="secondary"
@@ -393,7 +253,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot with feedback content 1`]
             data-testid="container"
           >
             <button
-              class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
+              class="h-8 rounded-full border-none px-3 py-2 shadow-xs-dark"
               data-size="sm"
               data-testid="button"
               data-variant="secondary"
