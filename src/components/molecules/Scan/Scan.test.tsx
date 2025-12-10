@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterAll, beforeAll } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
@@ -32,11 +32,14 @@ vi.mock('qrcode.react', () => ({
 vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: vi.fn().mockResolvedValue({
-      url: 'mock-auth-url',
+      url: 'pubkyauth://',
       promise: Promise.resolve({ mockKeypair: true }),
     }),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
+  useOnboardingStore: vi.fn(() => ({
+    inviteCode: 'mock-invite-code',
+  })),
 }));
 
 // Mock molecules
@@ -211,8 +214,10 @@ describe('ScanContent', () => {
       fireEvent.click(authorizeButton);
     });
 
-    expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
-    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
+    expect(clipboardMock.writeText).toHaveBeenCalledWith(
+      'pubkyauth://signup?hs=test-homeserver-key&st=mock-invite-code',
+    );
+    expect(window.open).toHaveBeenCalledWith('pubkyauth://signup?hs=test-homeserver-key&st=mock-invite-code', '_blank');
   });
 });
 

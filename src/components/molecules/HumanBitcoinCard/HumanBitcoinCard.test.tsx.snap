@@ -2,7 +2,7 @@
 
 exports[`BitcoinPaymentCard > matches snapshot 1`] = `
 <div
-  class="flex flex-col gap-0 rounded-3xl border border-border/60 bg-card/95 p-6 text-card-foreground shadow-sm md:p-12"
+  class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm gap-0 p-6 md:p-12"
   data-slot="card"
   data-testid="bitcoin-payment-card"
 >
@@ -11,25 +11,25 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
     data-testid="container"
   >
     <div
-      class="mx-auto flex w-full flex-col items-center gap-3 lg:w-auto"
+      class="mx-auto hidden w-full flex-1 flex-col items-center gap-3 lg:block lg:w-auto"
       data-testid="container"
     >
       <img
         alt="Lime Pubky coins representing Bitcoin payments"
         class="h-auto w-[192px] max-w-full"
-        height="192"
+        height="600"
         src="/images/bitcoin-payment.png"
-        width="192"
+        width="800"
       />
       <p
-        class="text-center text-xs font-semibold uppercase tracking-[0.12em] text-brand sm:text-left"
+        class="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase sm:text-left"
         data-testid="typography"
       >
         (More private)
       </p>
     </div>
     <div
-      class="mx-auto flex-col flex w-full gap-6"
+      class="mx-auto flex-col flex w-full flex-1 gap-6"
       data-testid="container"
     >
       <div
@@ -37,35 +37,35 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
         data-testid="container"
       >
         <h3
-          class="text-2xl font-semibold leading-[32px] text-foreground sm:text-[28px]"
+          class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
           data-testid="typography"
         >
           Bitcoin Payment
         </h3>
         <p
-          class="text-6xl font-semibold leading-none text-brand"
+          class="text-5xl leading-none font-semibold whitespace-nowrap text-brand lg:text-6xl"
           data-testid="typography"
         >
           ₿ 1,000
         </p>
         <p
-          class="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground"
+          class="text-xs font-medium tracking-[0.1em] text-muted-foreground"
           data-testid="typography"
         >
-          ₿1,000 = $1.00
+          <br />
         </p>
         <div
-          class="mx-auto w-full flex-col flex gap-1 text-secondary-foreground/80"
+          class="mx-auto w-full flex-col flex gap-1"
           data-testid="container"
         >
           <p
-            class="text-foreground text-base font-medium leading-6"
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
             data-testid="typography"
           >
             1GB storage
           </p>
           <p
-            class="text-foreground text-base font-medium leading-6"
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
             data-testid="typography"
           >
             1MB/s speed limit

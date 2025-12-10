@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -18,21 +18,20 @@ vi.mock('next/image', () => ({
 }));
 
 describe('SmsVerificationCard', () => {
-  it('renders SMS verification copy and action', () => {
-    render(<HumanSmsCard />);
+  it('Fires event on button click', () => {
+    let isOnboardingClicked = false;
+    const { container } = render(
+      <HumanSmsCard
+        onClick={() => {
+          isOnboardingClicked = true;
+        }}
+      />,
+    );
 
-    expect(screen.getByText(/SMS Verification/i)).toBeInTheDocument();
-    expect(screen.getByText(/Free/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Receive SMS/i })).toBeInTheDocument();
-  });
+    const button = container.querySelector('[data-testid="human-sms-card-receive-sms-btn"]');
+    fireEvent.click(button!);
 
-  it('navigates to human phone onboarding on button click', () => {
-    render(<HumanSmsCard />);
-
-    const button = screen.getByRole('button', { name: /Receive SMS/i });
-    fireEvent.click(button);
-
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/human/phone');
+    expect(isOnboardingClicked).toBe(true);
   });
 
   it('matches snapshot', () => {

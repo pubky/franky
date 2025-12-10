@@ -27,7 +27,6 @@ export function Human() {
   }, [reset]);
 
   function onSuccess(inviteCode: string) {
-    console.log('Set inviteCode', inviteCode);
     setInviteCode(inviteCode);
     router.push(ONBOARDING_ROUTES.INSTALL);
   }

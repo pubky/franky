@@ -51,6 +51,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
           </Atoms.Container>
 
           <Atoms.Button
+            data-testid="human-sms-card-receive-sms-btn"
             variant={Atoms.ButtonVariant.SECONDARY}
             className="h-12 w-full rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark sm:w-auto"
             onClick={onClick}

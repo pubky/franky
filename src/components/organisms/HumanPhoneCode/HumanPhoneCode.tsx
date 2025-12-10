@@ -92,6 +92,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
       {/* Buttons */}
       <Atoms.Container className={Libs.cn('mt-6 flex-row justify-between gap-3 lg:gap-6')}>
         <Atoms.Button
+          data-testid="human-phone-resend-code-btn"
           id="human-phone-back-btn"
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
@@ -102,6 +103,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           Resend Code
         </Atoms.Button>
         <Atoms.Button
+          data-testid="human-phone-send-code-btn"
           id="human-phone-send-code-btn"
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"

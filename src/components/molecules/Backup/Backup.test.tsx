@@ -3,6 +3,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { BackupNavigation, BackupPageHeader } from './Backup';
 
+// Hoisted mocks so they can be used inside vi.mock factories
+const { mockToast } = vi.hoisted(() => ({
+  mockToast: vi.fn(),
+}));
+
 // Mock Next.js router
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
@@ -73,6 +78,9 @@ vi.mock('@/molecules', () => ({
       {children}
     </h1>
   ),
+  useToast: () => ({
+    toast: mockToast,
+  }),
 }));
 
 // Mock app

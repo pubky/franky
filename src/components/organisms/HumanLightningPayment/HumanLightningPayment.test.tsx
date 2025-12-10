@@ -1,28 +1,43 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 
+import { Homegate } from '@/core/application/homegate';
 import { HumanLightningPayment } from './HumanLightningPayment';
 
-vi.mock('@/molecules', async () => {
-  const actual = await vi.importActual<Record<string, unknown>>('@/molecules');
+vi.mock('@/core/application/homegate', () => ({
+  Homegate: {
+    requestLightningInvoice: vi.fn().mockResolvedValue('mock-invoice'),
+  },
+}));
 
-  return {
-    ...actual,
-    SmsVerificationCard: () => <div data-testid="mock-sms-card">SMS Verification Card</div>,
-    BitcoinPaymentCard: () => <div data-testid="mock-bitcoin-card">Bitcoin Payment Card</div>,
-  };
-});
+describe('HumanLightningPayment', () => {
+  it('requests a lightning invoice on mount', async () => {
+    render(<HumanLightningPayment onBack={() => {}} onSuccess={() => {}} />);
 
-describe('HumanVerificationCards', () => {
-  it('renders both verification cards', () => {
-    render(<HumanLightningPayment onBack={() => {}} onCodeSent={() => {}} />);
+    await waitFor(() => {
+      expect(Homegate.requestLightningInvoice).toHaveBeenCalledTimes(1);
+    });
+  });
 
-    expect(screen.getByTestId('mock-sms-card')).toBeInTheDocument();
-    expect(screen.getByTestId('mock-bitcoin-card')).toBeInTheDocument();
+  it('on back', async () => {
+    let isBackClicked = false;
+    const { container } = render(
+      <HumanLightningPayment
+        onBack={() => {
+          isBackClicked = true;
+        }}
+        onSuccess={() => {}}
+      />,
+    );
+    fireEvent.click(container.querySelector('#human-phone-back-btn')!);
+
+    await waitFor(() => {
+      expect(isBackClicked).toBe(true);
+    });
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HumanLightningPayment onBack={() => {}} onCodeSent={() => {}} />);
+    const { container } = render(<HumanLightningPayment onBack={() => {}} onSuccess={() => {}} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -1,28 +1,30 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-import { HumanSelection } from './HumanVerificationCards';
+import { HumanSelection } from './HumanSelection';
 
 vi.mock('@/molecules', async () => {
   const actual = await vi.importActual<Record<string, unknown>>('@/molecules');
 
   return {
     ...actual,
-    SmsVerificationCard: () => <div data-testid="mock-sms-card">SMS Verification Card</div>,
-    BitcoinPaymentCard: () => <div data-testid="mock-bitcoin-card">Bitcoin Payment Card</div>,
+    HumanSmsCard: () => <div data-testid="mock-sms-card">SMS Verification Card</div>,
+    HumanBitcoinCard: () => <div data-testid="mock-bitcoin-card">Bitcoin Payment Card</div>,
+    HumanFooter: () => <div data-testid="mock-human-footer">Human Footer</div>,
   };
 });
 
-describe('HumanVerificationCards', () => {
+describe('HumanSelection', () => {
   it('renders both verification cards', () => {
-    render(<HumanSelection />);
+    render(<HumanSelection onClick={() => {}} onDevMode={() => {}} />);
 
     expect(screen.getByTestId('mock-sms-card')).toBeInTheDocument();
     expect(screen.getByTestId('mock-bitcoin-card')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-human-footer')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HumanSelection />);
-    expect(container.firstChild).toMatchSnapshot();
+    const { container } = render(<HumanSelection onClick={() => {}} onDevMode={() => {}} />);
+    expect(container).toMatchSnapshot();
   });
 });

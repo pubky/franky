@@ -121,6 +121,7 @@ export const HumanPhoneCodeInput = ({ value, onChange, onEnter = () => {} }: Hum
             ref={(el) => {
               inputRefs.current[index] = el;
             }}
+            data-testid={`human-phone-code-input-${index}-input`}
             id={`human-phone-code-input-${index}-input`}
             type="text"
             inputMode="numeric"
@@ -133,7 +134,6 @@ export const HumanPhoneCodeInput = ({ value, onChange, onEnter = () => {} }: Hum
               '!h-auto !border-none !bg-transparent !p-0',
               'focus:ring-0 focus:outline-none',
             )}
-            data-testid={`code-input-${index}`}
           />
         </Atoms.Container>
       ))}

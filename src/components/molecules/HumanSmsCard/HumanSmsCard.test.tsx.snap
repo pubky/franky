@@ -2,7 +2,7 @@
 
 exports[`SmsVerificationCard > matches snapshot 1`] = `
 <div
-  class="flex flex-col gap-0 rounded-3xl border border-border/60 bg-card/95 p-6 text-card-foreground shadow-sm md:p-12"
+  class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm gap-0 p-6 md:p-12"
   data-slot="card"
   data-testid="sms-verification-card"
 >
@@ -11,18 +11,19 @@ exports[`SmsVerificationCard > matches snapshot 1`] = `
     data-testid="container"
   >
     <div
-      class="flex w-full justify-center lg:w-auto"
+      class="mx-auto flex-col hidden h-full w-full flex-1 items-center lg:block lg:w-auto"
+      data-testid="container"
     >
       <img
         alt="Lime Pubky phone representing SMS verification"
         class="h-auto w-[192px] max-w-full"
-        height="192"
+        height="600"
         src="/images/sms-verification-phone.png"
-        width="192"
+        width="800"
       />
     </div>
     <div
-      class="mx-auto flex-col flex w-full gap-6"
+      class="mx-auto flex-col flex w-full flex-1 gap-6"
       data-testid="container"
     >
       <div
@@ -30,35 +31,35 @@ exports[`SmsVerificationCard > matches snapshot 1`] = `
         data-testid="container"
       >
         <h3
-          class="text-2xl font-semibold leading-[32px] text-foreground sm:text-[28px]"
+          class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
           data-testid="typography"
         >
           SMS Verification
         </h3>
         <p
-          class="text-6xl font-semibold leading-none text-brand"
+          class="text-5xl leading-none font-semibold text-brand lg:text-6xl"
           data-testid="typography"
         >
           Free
         </p>
         <p
-          class="text-xs font-medium uppercase tracking-[0.1em] text-muted-foreground"
+          class="text-xs font-medium tracking-[0.1em] whitespace-nowrap text-muted-foreground uppercase"
           data-testid="typography"
         >
-          We securely hash your number
+          LESS PRIVATE, BUT EASY
         </p>
         <div
-          class="mx-auto w-full flex-col flex gap-1 text-secondary-foreground/80"
+          class="mx-auto w-full flex-col flex gap-1"
           data-testid="container"
         >
           <p
-            class="text-foreground text-base font-medium leading-6"
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
             data-testid="typography"
           >
             1GB storage
           </p>
           <p
-            class="text-foreground text-base font-medium leading-6"
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
             data-testid="typography"
           >
             1MB/s speed limit
@@ -68,6 +69,7 @@ exports[`SmsVerificationCard > matches snapshot 1`] = `
       <button
         class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-secondary hover:bg-secondary/80 gap-1 has-[>svg]:px-4 h-12 w-full rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark sm:w-auto"
         data-slot="button"
+        data-testid="human-sms-card-receive-sms-btn"
         data-variant="secondary"
       >
         <svg
