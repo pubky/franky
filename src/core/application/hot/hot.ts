@@ -64,16 +64,14 @@ export class HotApplication {
       Libs.Logger.debug('Hot tags cache miss, fetching from Nexus', { id });
       const tags = await Core.NexusHotService.fetch(params);
 
-      // Store in cache (fire and forget)
       if (tags.length > 0) {
-        Core.LocalHotService.upsert(id, tags).catch((error) => {
-          Libs.Logger.error('Failed to cache hot tags', { id, error });
-        });
-
-        // Fetch missing tagger users in background (fire and forget)
-        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
-          Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
-        });
+        // Fetch and persist users first, then persist hot tags (fire and forget)
+        // This prevents race conditions where liveQuery triggers before users are cached
+        // Not using await to prevent blocking the UI, tags are returned immediately
+        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id)
+          .catch((error) => Libs.Logger.warn('Background tagger fetch failed', { error }))
+          .then(() => Core.LocalHotService.upsert(id, tags))
+          .catch((error) => Libs.Logger.error('Failed to cache hot tags', { id, error }));
       }
 
       return tags;
@@ -86,6 +84,7 @@ export class HotApplication {
   /**
    * Refreshes cache in background without blocking the response
    * This ensures users get cached data quickly while keeping cache fresh
+   * Persists users first, then hot tags to prevent race conditions
    *
    * @private
    * @param id - Composite ID (timeframe:reach)
@@ -93,9 +92,14 @@ export class HotApplication {
    */
   private static refreshCacheInBackground(id: string, params: Core.TTagHotParams): void {
     Core.NexusHotService.fetch(params)
-      .then((tags) => {
+      .then(async (tags) => {
         if (tags.length > 0) {
-          return Core.LocalHotService.upsert(id, tags);
+          // Fetch and persist users first
+          await this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
+            Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
+          });
+          // Then persist hot tags
+          await Core.LocalHotService.upsert(id, tags);
         }
       })
       .catch((error) => {
