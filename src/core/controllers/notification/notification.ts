@@ -73,4 +73,14 @@ export class NotificationController {
     const notificationStore = Core.useNotificationStore.getState();
     return notificationStore.selectUnread();
   }
+
+  /**
+   * Fetches missing posts and users for notifications already in cache.
+   * Called by the coordinator after polling to ensure related entities are available.
+   *
+   * @param userId - The current user's public key
+   */
+  static async fetchMissingEntitiesFromCache({ userId }: Core.TFetchMissingEntitiesParams): Promise<void> {
+    await Core.NotificationApplication.fetchMissingEntitiesFromCache(userId);
+  }
 }
