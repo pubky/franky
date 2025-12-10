@@ -38,18 +38,9 @@ const createMockContact = (overrides: Partial<TChatwootContact> = {}): TChatwoot
 
 describe('ChatwootService', () => {
   let ChatwootService: typeof import('./chatwoot').ChatwootService;
-  let originalEnv: NodeJS.ProcessEnv;
 
   beforeEach(async () => {
     vi.clearAllMocks();
-
-    // Save original env
-    originalEnv = { ...process.env };
-
-    // Set required environment variables
-    process.env.BASE_URL_SUPPORT = testData.baseUrl;
-    process.env.SUPPORT_API_ACCESS_TOKEN = testData.apiAccessToken;
-    process.env.SUPPORT_ACCOUNT_ID = testData.accountId;
 
     // Mock global fetch
     global.fetch = vi.fn();
@@ -60,8 +51,6 @@ describe('ChatwootService', () => {
   });
 
   afterEach(() => {
-    // Restore original env
-    process.env = originalEnv;
     vi.restoreAllMocks();
   });
 
@@ -254,10 +243,30 @@ describe('ChatwootService', () => {
     });
 
     it('should throw AppError when environment variables are missing', async () => {
-      delete process.env.BASE_URL_SUPPORT;
+      // Since env vars are now required at module load time (validated in env.ts),
+      // we test the service's validation by mocking Env to have undefined values
+      const mockEnv = await import('@/libs/env');
+      const originalValues = {
+        BASE_URL_SUPPORT: mockEnv.Env.BASE_URL_SUPPORT,
+        SUPPORT_API_ACCESS_TOKEN: mockEnv.Env.SUPPORT_API_ACCESS_TOKEN,
+        SUPPORT_ACCOUNT_ID: mockEnv.Env.SUPPORT_ACCOUNT_ID,
+      };
+
+      // Override the Env values to undefined to test service validation
+      (mockEnv.Env as unknown as { BASE_URL_SUPPORT?: string }).BASE_URL_SUPPORT = undefined;
+      (mockEnv.Env as unknown as { SUPPORT_API_ACCESS_TOKEN?: string }).SUPPORT_API_ACCESS_TOKEN = undefined;
+      (mockEnv.Env as unknown as { SUPPORT_ACCOUNT_ID?: string }).SUPPORT_ACCOUNT_ID = undefined;
+
       const input = createChatwootInput();
 
       await expect(ChatwootService.submit(input)).rejects.toThrow('Missing required Chatwoot environment variables');
+
+      // Restore original values
+      (mockEnv.Env as unknown as { BASE_URL_SUPPORT: string }).BASE_URL_SUPPORT = originalValues.BASE_URL_SUPPORT!;
+      (mockEnv.Env as unknown as { SUPPORT_API_ACCESS_TOKEN: string }).SUPPORT_API_ACCESS_TOKEN =
+        originalValues.SUPPORT_API_ACCESS_TOKEN!;
+      (mockEnv.Env as unknown as { SUPPORT_ACCOUNT_ID: string }).SUPPORT_ACCOUNT_ID =
+        originalValues.SUPPORT_ACCOUNT_ID!;
     });
 
     it('should handle case-insensitive email matching in contact search', async () => {

@@ -24,14 +24,15 @@ export class ChatwootService {
    * Get Chatwoot configuration from environment variables
    *
    * Validates that all required environment variables are present.
+   * Uses the validated Env object from the env module for type safety.
    *
    * @returns Configuration object with baseUrl, accountId, and headers
    * @throws AppError if required environment variables are missing
    */
   private static getConfig(): TChatwootApiConfig {
-    const baseUrl = process.env.BASE_URL_SUPPORT;
-    const apiAccessToken = process.env.SUPPORT_API_ACCESS_TOKEN;
-    const accountId = process.env.SUPPORT_ACCOUNT_ID;
+    const baseUrl = Libs.Env.BASE_URL_SUPPORT;
+    const apiAccessToken = Libs.Env.SUPPORT_API_ACCESS_TOKEN;
+    const accountId = Libs.Env.SUPPORT_ACCOUNT_ID;
 
     if (!baseUrl || !apiAccessToken || !accountId) {
       throw Libs.createCommonError(

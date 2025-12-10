@@ -101,6 +101,13 @@ const envSchema = z.object({
   // Test environment variable (optional)
   VITEST: z.string().optional(),
 
+  // Server-side Chatwoot configuration (optional in schema, validated at runtime when service is used)
+  // These are server-side only and not available in browser, so we make them optional here
+  // but ChatwootService.getConfig() will validate they exist when actually needed
+  BASE_URL_SUPPORT: z.string().url().optional(),
+  SUPPORT_API_ACCESS_TOKEN: z.string().min(1).optional(),
+  SUPPORT_ACCOUNT_ID: z.string().min(1).optional(),
+
   NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.png'),
   NEXT_PUBLIC_SITE_NAME: z.string().optional().default('Pubky App'),
   NEXT_PUBLIC_LOCALE: z.string().optional().default('en_US'),
@@ -153,6 +160,9 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
       NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
       VITEST: process.env.VITEST,
+      BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
+      SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,
+      SUPPORT_ACCOUNT_ID: process.env.SUPPORT_ACCOUNT_ID,
       NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
       NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
       NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,
