@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as Core from '@/core';
+import { postStreamQueue } from './post-stream-queue';
+import { muteFilter } from './mute-filter';
 
 describe('PostStreamApplication', () => {
   const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId;
@@ -151,7 +153,7 @@ describe('PostStreamApplication', () => {
 
     await Core.PostStreamModel.table.clear();
     await Core.UnreadPostStreamModel.table.clear();
-    Core.PostStreamApplication.clearQueues();
+    postStreamQueue.clear();
     await Core.PostDetailsModel.table.clear();
     await Core.UserDetailsModel.table.clear();
     await Core.UserCountsModel.table.clear();
@@ -1215,7 +1217,7 @@ describe('PostStreamApplication', () => {
     const viewerId = 'viewer-user' as Core.Pubky;
 
     it('should return empty set when no muted users exist', async () => {
-      const result = await Core.PostStreamApplication.getMutedUserIds(viewerId);
+      const result = await muteFilter.getMutedUserIds(viewerId);
       expect(result).toBeInstanceOf(Set);
       expect(result.size).toBe(0);
     });
@@ -1228,7 +1230,7 @@ describe('PostStreamApplication', () => {
       });
       await Core.UserStreamModel.upsert(mutedStreamId, mutedUsers);
 
-      const result = await Core.PostStreamApplication.getMutedUserIds(viewerId);
+      const result = await muteFilter.getMutedUserIds(viewerId);
 
       expect(result.size).toBe(3);
       expect(result.has('muted-user-1' as Core.Pubky)).toBe(true);
@@ -1249,8 +1251,8 @@ describe('PostStreamApplication', () => {
         ['muted-by-2-a', 'muted-by-2-b'],
       );
 
-      const result1 = await Core.PostStreamApplication.getMutedUserIds(viewer1);
-      const result2 = await Core.PostStreamApplication.getMutedUserIds(viewer2);
+      const result1 = await muteFilter.getMutedUserIds(viewer1);
+      const result2 = await muteFilter.getMutedUserIds(viewer2);
 
       expect(result1.size).toBe(1);
       expect(result1.has('muted-by-1' as Core.Pubky)).toBe(true);
@@ -1266,7 +1268,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
       const mutedUserIds = new Set<Core.Pubky>();
 
-      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+      const result = muteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual(postIds);
     });
@@ -1275,7 +1277,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
       const mutedUserIds = new Set(['author-2'] as Core.Pubky[]);
 
-      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+      const result = muteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual(['author-1:post-1', 'author-3:post-3']);
     });
@@ -1284,7 +1286,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-1:post-2', 'author-1:post-3'];
       const mutedUserIds = new Set(['author-1'] as Core.Pubky[]);
 
-      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+      const result = muteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual([]);
     });
@@ -1293,7 +1295,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3', 'author-4:post-4', 'author-2:post-5'];
       const mutedUserIds = new Set(['author-2', 'author-4'] as Core.Pubky[]);
 
-      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+      const result = muteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual(['author-1:post-1', 'author-3:post-3']);
     });
@@ -1302,7 +1304,7 @@ describe('PostStreamApplication', () => {
       const postIds: string[] = [];
       const mutedUserIds = new Set(['author-1'] as Core.Pubky[]);
 
-      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+      const result = muteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual([]);
     });
@@ -1424,7 +1426,7 @@ describe('PostStreamApplication', () => {
       expect(result1.nextPageIds).toHaveLength(10);
 
       // Check that queue has 5 remaining posts
-      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      const queue = postStreamQueue.get(streamId);
       expect(queue?.posts).toHaveLength(5);
 
       // Second request: should get posts from queue without fetching from Nexus
@@ -1500,14 +1502,14 @@ describe('PostStreamApplication', () => {
       });
 
       // Queue should have 5 posts (11-15)
-      let queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      let queue = postStreamQueue.get(streamId);
       expect(queue?.posts).toHaveLength(5);
 
       // Now mute author-1 - the queue should be re-filtered when next fetch occurs
       await setupMutedUsers(['author-1'] as Core.Pubky[]);
 
       // Queue record still exists in memory (not yet re-filtered)
-      queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      queue = postStreamQueue.get(streamId);
       expect(queue?.posts).toHaveLength(5);
 
       // Mock the next fetch to return more posts from author-2
@@ -1695,8 +1697,8 @@ describe('PostStreamApplication', () => {
       });
 
       // Verify each stream has its own queue
-      const queue1 = Core.PostStreamApplication.getQueueInfo(stream1);
-      const queue2 = Core.PostStreamApplication.getQueueInfo(stream2);
+      const queue1 = postStreamQueue.get(stream1);
+      const queue2 = postStreamQueue.get(stream2);
 
       expect(queue1?.posts).toHaveLength(5);
       expect(queue2?.posts).toHaveLength(5);
@@ -1713,8 +1715,8 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      const queue1After = Core.PostStreamApplication.getQueueInfo(stream1);
-      const queue2After = Core.PostStreamApplication.getQueueInfo(stream2);
+      const queue1After = postStreamQueue.get(stream1);
+      const queue2After = postStreamQueue.get(stream2);
 
       // stream1 queue should now be empty (consumed all 5)
       expect(queue1After?.posts).toHaveLength(0);
@@ -1769,7 +1771,7 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      const queue = postStreamQueue.get(streamId);
       expect(queue?.cursor).toBe(BASE_TIMESTAMP + 14);
       expect(queue?.posts).toHaveLength(5);
 
@@ -1790,7 +1792,7 @@ describe('PostStreamApplication', () => {
       expect(Core.NexusPostStreamService.fetch).not.toHaveBeenCalled();
 
       // Queue should now be empty
-      const queueAfter = Core.PostStreamApplication.getQueueInfo(streamId);
+      const queueAfter = postStreamQueue.get(streamId);
       expect(queueAfter?.posts).toHaveLength(0);
       // cursor should still be preserved
       expect(queueAfter?.cursor).toBe(BASE_TIMESTAMP + 14);
@@ -1829,7 +1831,7 @@ describe('PostStreamApplication', () => {
       expect(result2.nextPageIds).toHaveLength(10);
 
       // Queue state should be consistent (one of the calls will have won the race)
-      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      const queue = postStreamQueue.get(streamId);
       expect(queue).not.toBeUndefined();
       // Queue should have overflow posts from at least one call
       expect(queue?.posts.length).toBeGreaterThanOrEqual(0);
@@ -1865,7 +1867,7 @@ describe('PostStreamApplication', () => {
       });
 
       // Queue's cursor should be updated to the latest fetch's timestamp
-      const queue = Core.PostStreamApplication.getQueueInfo(streamId);
+      const queue = postStreamQueue.get(streamId);
       expect(queue?.cursor).toBe(BASE_TIMESTAMP + 200);
     });
   });

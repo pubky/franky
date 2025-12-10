@@ -1,63 +1,10 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import { TQueueEntry } from './post.types';
+import { postStreamQueue } from './post-stream-queue';
+import { muteFilter } from './mute-filter';
 
 export class PostStreamApplication {
   private constructor() {}
-
-  // Maximum number of fetch iterations to prevent infinite loops in heavily-muted feeds
-  private static readonly MAX_FETCH_ITERATIONS = 5;
-
-  /**
-   * In-memory queue for storing overflow posts between pagination requests.
-   * Concurrent requests to the same stream may cause duplicate fetches but will not corrupt data.
-   */
-  private static queues = new Map<Core.PostStreamId, TQueueEntry>();
-
-  /**
-   * Clears all queues. Used for testing purposes.
-   */
-  static clearQueues(): void {
-    this.queues.clear();
-  }
-
-  /**
-   * Gets queue info for a stream. Used for testing purposes.
-   */
-  static getQueueInfo(streamId: Core.PostStreamId): TQueueEntry | undefined {
-    return this.queues.get(streamId);
-  }
-
-  // ============================================================================
-  // Public API
-  // ============================================================================
-
-  /**
-   * Retrieves muted user IDs for a given viewer from the local muted stream.
-   * Returns an empty Set if no muted users exist.
-   */
-  static async getMutedUserIds(viewerId: Core.Pubky): Promise<Set<Core.Pubky>> {
-    const mutedStreamId = Core.buildUserCompositeId({
-      userId: viewerId,
-      reach: Core.UserStreamSource.MUTED,
-    });
-    const mutedStream = await Core.LocalStreamUsersService.findById(mutedStreamId);
-    return new Set(mutedStream?.stream ?? []);
-  }
-
-  /**
-   * Filters out posts from muted users.
-   * Post IDs are in composite format: "authorPubky:postId"
-   */
-  static filterMutedPosts(postIds: string[], mutedUserIds: Set<Core.Pubky>): string[] {
-    if (mutedUserIds.size === 0) {
-      return postIds;
-    }
-    return postIds.filter((postId) => {
-      const { pubky: authorId } = Core.parseCompositeId(postId);
-      return !mutedUserIds.has(authorId);
-    });
-  }
 
   static async getCachedLastPostTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
     try {
@@ -101,11 +48,6 @@ export class PostStreamApplication {
 
   /**
    * Fetches a page of posts for a stream, filtering out muted users.
-   *
-   * Uses a queue to handle the mismatch between what Nexus returns and what we need:
-   * - Nexus doesn't know about mutes, so it returns posts from everyone
-   * - We filter out muted users' posts, which may leave us with fewer than `limit`
-   * - Extra posts are saved in a queue for the next page request
    */
   static async getOrFetchStreamSlice({
     streamId,
@@ -115,88 +57,40 @@ export class PostStreamApplication {
     limit,
     viewerId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
-    const mutedUserIds = await this.getMutedUserIds(viewerId);
+    const mutedUserIds = await muteFilter.getMutedUserIds(viewerId);
 
-    // Load any queued posts from previous request that weren't returned in previous batch.
-    const savedQueue = this.queues.get(streamId);
-    const queue = savedQueue ? this.filterMutedPosts(savedQueue.posts, mutedUserIds) : [];
-    const queuedIds = new Set(queue);
-    let cursor = savedQueue?.cursor ?? streamTail;
-
-    // If queue already has enough posts, just return from queue
-    if (queue.length >= limit) {
-      return this.returnPostsAndSaveRemainingToQueue(streamId, queue, limit, cursor, []);
-    }
-
-    // Otherwise we need to fetch more posts, keep fetching until we have enough
-    const allCacheMissIds: string[] = [];
-    let latestTimestamp: number | undefined;
-    let fetchCount = 0;
     let isFirstFetch = true;
-
-    while (queue.length < limit && fetchCount < this.MAX_FETCH_ITERATIONS) {
-      fetchCount++;
-
-      // First fetch checks cache, subsequent fetches go directly to Nexus
-      const result = isFirstFetch
-        ? await this.fetchStreamSliceInternal({ streamId, streamHead, streamTail: cursor, lastPostId, limit, viewerId })
-        : await this.fetchStreamFromNexus({
-            streamId,
-            limit,
-            streamTail: cursor,
-            streamHead: Core.SKIP_FETCH_NEW_POSTS,
-            viewerId,
-          });
-
-      isFirstFetch = false;
-
-      // Filter out muted users and duplicates, add to queue
-      const filtered = this.filterMutedPosts(result.nextPageIds, mutedUserIds);
-      for (const id of filtered) {
-        if (!queuedIds.has(id)) {
-          queuedIds.add(id);
-          queue.push(id);
-        }
-      }
-
-      allCacheMissIds.push(...result.cacheMissPostIds);
-
-      if (result.timestamp !== undefined) {
-        cursor = result.timestamp;
-        latestTimestamp = result.timestamp;
-      }
-
-      // Stop if Nexus returned fewer posts than requested (we reached end of stream)
-      if (result.nextPageIds.length < limit) {
-        break;
-      }
-    }
-
-    return this.returnPostsAndSaveRemainingToQueue(streamId, queue, limit, cursor, allCacheMissIds, latestTimestamp);
-  }
-
-  /**
-   * Returns a page of posts from queue, saves remaining posts for next request.
-   */
-  private static returnPostsAndSaveRemainingToQueue(
-    streamId: Core.PostStreamId,
-    queue: string[],
-    limit: number,
-    cursor: number,
-    cacheMissIds: string[],
-    timestamp?: number,
-  ): Core.TPostStreamChunkResponse {
-    // Get the posts we need to return to UI.
-    const postsToReturn = queue.slice(0, limit);
-
-    // Save the remaining posts we fetched into the queue, so we can use later.
-    const remainingPosts = queue.slice(limit);
-    this.queues.set(streamId, { posts: remainingPosts, cursor });
+    const result = await postStreamQueue.collect(streamId, {
+      limit,
+      cursor: streamTail,
+      filter: (posts) => muteFilter.filterPosts(posts, mutedUserIds),
+      fetch: async (cursor) => {
+        // First fetch checks cache because we might be able to reuse leftover posts from previous fetch, subsequent fetches go directly to Nexus
+        const result = isFirstFetch
+          ? await this.fetchStreamSliceInternal({
+              streamId,
+              streamHead,
+              streamTail: cursor,
+              lastPostId,
+              limit,
+              viewerId,
+            })
+          : await this.fetchStreamFromNexus({
+              streamId,
+              limit,
+              streamTail: cursor,
+              streamHead: Core.SKIP_FETCH_NEW_POSTS,
+              viewerId,
+            });
+        isFirstFetch = false;
+        return result;
+      },
+    });
 
     return {
-      nextPageIds: postsToReturn,
-      cacheMissPostIds: [...new Set(cacheMissIds)],
-      timestamp,
+      nextPageIds: result.posts,
+      cacheMissPostIds: result.cacheMissIds,
+      timestamp: result.timestamp,
     };
   }
 
