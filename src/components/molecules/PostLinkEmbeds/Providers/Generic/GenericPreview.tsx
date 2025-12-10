@@ -27,7 +27,18 @@ export function GenericPreview({ url }: GenericPreviewProps) {
     return null;
   }
 
-  const { url: displayUrl, title, image } = metadata;
+  const { url: displayUrl, title, image, type } = metadata;
+
+  if (type === 'image')
+    return (
+      <Atoms.Link overrideDefaults href={url}>
+        <Atoms.Image src={url} alt="Image preview" className="w-full rounded-md object-contain" />
+      </Atoms.Link>
+    );
+
+  if (type === 'video') return <Atoms.Video src={url} className="w-full cursor-auto object-contain" />;
+
+  if (type === 'audio') return <Atoms.Audio src={url} className="cursor-auto" />;
 
   return (
     <Atoms.Link data-testid="generic-website-preview" href={url}>

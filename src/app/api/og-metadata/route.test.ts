@@ -472,6 +472,7 @@ describe('API Route: /api/og-metadata', () => {
       expect(data).toHaveProperty('url');
       expect(data).toHaveProperty('title');
       expect(data).toHaveProperty('image');
+      expect(data).toHaveProperty('type', 'website');
     });
   });
 
@@ -526,6 +527,72 @@ describe('API Route: /api/og-metadata', () => {
       expect(response.status).toBe(400);
       expect(data.error).toBe('Not HTML content');
     });
+
+    it('should return type "image" for image content', async () => {
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'image/png' }),
+        body: {
+          getReader: () => ({
+            read: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com/image.png');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.url).toBe('http://example.com/image.png');
+      expect(data.type).toBe('image');
+    });
+
+    it('should return type "video" for video content', async () => {
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'video/mp4' }),
+        body: {
+          getReader: () => ({
+            read: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com/video.mp4');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.url).toBe('http://example.com/video.mp4');
+      expect(data.type).toBe('video');
+    });
+
+    it('should return type "audio" for audio content', async () => {
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'audio/mpeg' }),
+        body: {
+          getReader: () => ({
+            read: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com/audio.mp3');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.url).toBe('http://example.com/audio.mp3');
+      expect(data.type).toBe('audio');
+    });
   });
 
   describe('Image URL Validation', () => {
@@ -574,6 +641,7 @@ describe('API Route: /api/og-metadata', () => {
       expect(response.status).toBe(200);
       expect(data.title).toBe('Test');
       expect(data.image).toBeNull(); // Image should be blocked
+      expect(data.type).toBe('website');
     });
 
     it('should normalize relative image URLs', async () => {
@@ -616,6 +684,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.image).toBe('http://example.com/images/og-image.jpg');
+      expect(data.type).toBe('website');
     });
 
     it('should block file:// protocol in image URLs', async () => {
@@ -658,6 +727,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.image).toBeNull(); // file:// protocol should be blocked
+      expect(data.type).toBe('website');
     });
   });
 
@@ -705,6 +775,7 @@ describe('API Route: /api/og-metadata', () => {
       expect(data.title?.length).toBe(53);
       expect(data.title?.endsWith('...')).toBe(true);
       expect(data.title?.startsWith('This is a very long title')).toBe(true);
+      expect(data.type).toBe('website');
     });
 
     it('should truncate long URLs with "..." in the middle', async () => {
@@ -749,6 +820,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.url).toBe('https://example.com...o/long/for/display');
+      expect(data.type).toBe('website');
     });
 
     it('should not truncate short titles', async () => {
@@ -791,6 +863,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.title).toBe(shortTitle); // No truncation
+      expect(data.type).toBe('website');
     });
 
     it('should not truncate short URLs', async () => {
@@ -834,6 +907,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.url).toBe(shortUrl); // No truncation
+      expect(data.type).toBe('website');
     });
   });
 
@@ -880,6 +954,7 @@ describe('API Route: /api/og-metadata', () => {
       expect(data.title).toContain("l'usage");
       expect(data.title).not.toContain('&#039;');
       expect(data.title?.length).toBeLessThanOrEqual(53); // Max 50 + "..."
+      expect(data.type).toBe('website');
     });
 
     it('should decode multiple HTML entities in title', async () => {
@@ -921,6 +996,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.title).toBe('Test "quotes" & <tags> \'apostrophe\'');
+      expect(data.type).toBe('website');
     });
 
     it('should decode hexadecimal HTML entities', async () => {
@@ -962,6 +1038,7 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.title).toBe("Title with 'hex' entities");
+      expect(data.type).toBe('website');
     });
   });
 });
