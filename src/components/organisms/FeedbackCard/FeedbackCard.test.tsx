@@ -11,20 +11,29 @@ vi.mock('dexie-react-hooks', () => ({
 }));
 
 // Mock Core module
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(),
-  ProfileController: {
-    read: vi.fn(),
-  },
-  FileController: {
-    getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(),
+    ProfileController: {
+      read: vi.fn(),
+    },
+    FileController: {
+      getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
+    },
+  };
+});
 
 // Mock Hooks module - passthrough to the real implementation but using mocked dependencies
-vi.mock('@/hooks', () => ({
-  useCurrentUserProfile: vi.fn(),
-}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCurrentUserProfile: vi.fn(),
+    // useAvatarUrl will use the real implementation which calls our mocked FileController
+  };
+});
 
 // Mock Molecules
 vi.mock('@/molecules', () => ({
@@ -57,51 +66,55 @@ vi.mock('@/molecules', () => ({
 }));
 
 // Mock Atoms
-vi.mock('@/atoms', () => ({
-  Container: ({
-    children,
-    className,
-    'data-testid': dataTestId,
-    ...props
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    'data-testid'?: string;
-    [key: string]: unknown;
-  }) => (
-    <div data-testid={dataTestId || 'container'} className={className} {...props}>
-      {children}
-    </div>
-  ),
-  Button: ({
-    children,
-    className,
-    ...props
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    [key: string]: unknown;
-  }) => (
-    <button data-testid="button" className={className} {...props}>
-      {children}
-    </button>
-  ),
-  Heading: ({
-    children,
-    level,
-    size,
-    className,
-  }: {
-    children: React.ReactNode;
-    level?: number;
-    size?: string;
-    className?: string;
-  }) => (
-    <div data-testid="heading" data-level={level} data-size={size} className={className}>
-      {children}
-    </div>
-  ),
-}));
+vi.mock('@/atoms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/atoms')>();
+  return {
+    ...actual,
+    Container: ({
+      children,
+      className,
+      'data-testid': dataTestId,
+      ...props
+    }: {
+      children: React.ReactNode;
+      className?: string;
+      'data-testid'?: string;
+      [key: string]: unknown;
+    }) => (
+      <div data-testid={dataTestId || 'container'} className={className} {...props}>
+        {children}
+      </div>
+    ),
+    Button: ({
+      children,
+      className,
+      ...props
+    }: {
+      children: React.ReactNode;
+      className?: string;
+      [key: string]: unknown;
+    }) => (
+      <button data-testid="button" className={className} {...props}>
+        {children}
+      </button>
+    ),
+    Heading: ({
+      children,
+      level,
+      size,
+      className,
+    }: {
+      children: React.ReactNode;
+      level?: number;
+      size?: string;
+      className?: string;
+    }) => (
+      <div data-testid="heading" data-level={level} data-size={size} className={className}>
+        {children}
+      </div>
+    ),
+  };
+});
 
 // Mock Libs - use actual truncateString implementation
 vi.mock('@/libs', async (importOriginal) => {
@@ -136,6 +149,7 @@ describe('FeedbackCard', () => {
     it('renders with authenticated user with avatar image', async () => {
       mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
       mockUseLiveQuery.mockReturnValue({
+        id: mockPubky,
         name: 'Miguel Medeiros',
         image: 'avatar.jpg',
       } as never);
@@ -300,6 +314,7 @@ describe('FeedbackCard', () => {
       const mockGetAvatarUrl = vi.mocked(Core.FileController.getAvatarUrl);
       mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
       mockUseLiveQuery.mockReturnValue({
+        id: mockPubky,
         name: 'Miguel',
         image: 'avatar.jpg',
       } as never);
@@ -314,10 +329,7 @@ describe('FeedbackCard', () => {
     it('does not call getAvatarUrl when currentUserPubky is null', async () => {
       const mockGetAvatarUrl = vi.mocked(Core.FileController.getAvatarUrl);
       mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
-      mockUseLiveQuery.mockReturnValue({
-        name: 'Miguel',
-        image: 'avatar.jpg', // Even with image, should not call if no pubky
-      } as never);
+      mockUseLiveQuery.mockReturnValue(null as never); // When no pubky, userDetails should be null
 
       render(<FeedbackCard />);
 
@@ -425,6 +437,7 @@ describe('FeedbackCard - Snapshots', () => {
   it('matches snapshot with authenticated user with avatar', async () => {
     mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
     mockUseLiveQuery.mockReturnValue({
+      id: mockPubky,
       name: 'Miguel Medeiros',
       image: 'avatar.jpg',
     } as never);

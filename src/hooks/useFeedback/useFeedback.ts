@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
-import * as Molecules from '@/molecules';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 
 /**
@@ -21,7 +20,6 @@ export function useFeedback() {
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const { toast } = Molecules.useToast();
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -39,13 +37,7 @@ export function useFeedback() {
     await new Promise((resolve) => setTimeout(resolve, 500));
     setIsSubmitting(false);
     setIsSuccess(true);
-
-    // Show success toast
-    toast({
-      title: 'Feedback submitted',
-      description: 'Thank you for helping us improve Pubky.',
-    });
-  }, [feedback, isSubmitting, toast]);
+  }, [feedback, isSubmitting]);
 
   const reset = useCallback(() => {
     setFeedback('');

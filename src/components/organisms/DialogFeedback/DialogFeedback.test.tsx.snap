@@ -52,6 +52,39 @@ exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
             maxlength="2000"
             placeholder="What do you think about Pubky? Any suggestions?"
           />
+          <div
+            class="flex items-center justify-end transition-all duration-300 ease-in-out opacity-0 -translate-y-2 pointer-events-none"
+            data-override-defaults="true"
+            data-testid="container"
+          >
+            <button
+              class="h-8 rounded-full border-none px-3 py-2 shadow-xs-dark"
+              data-size="sm"
+              data-testid="button"
+              data-variant="secondary"
+              disabled=""
+            >
+              <div
+                class="flex items-center gap-2"
+                data-override-defaults="true"
+                data-testid="container"
+              >
+                <span
+                  data-testid="send-icon"
+                >
+                  →
+                </span>
+                <p
+                  class="text-xs leading-4 font-bold text-secondary-foreground"
+                  data-as="span"
+                  data-size="sm"
+                  data-testid="typography"
+                >
+                  Send
+                </p>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -167,7 +200,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot when submitting 1`] = `
             This is test feedback
           </textarea>
           <div
-            class="flex items-center justify-end"
+            class="flex items-center justify-end transition-all duration-300 ease-in-out opacity-100 translate-y-0"
             data-override-defaults="true"
             data-testid="container"
           >
@@ -248,7 +281,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot with feedback content 1`]
             This is test feedback
           </textarea>
           <div
-            class="flex items-center justify-end"
+            class="flex items-center justify-end transition-all duration-300 ease-in-out opacity-100 translate-y-0"
             data-override-defaults="true"
             data-testid="container"
           >

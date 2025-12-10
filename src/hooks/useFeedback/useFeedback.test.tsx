@@ -3,14 +3,6 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useFeedback } from './useFeedback';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 
-// Mock Molecules
-const mockToast = vi.fn();
-vi.mock('@/molecules', () => ({
-  useToast: vi.fn(() => ({
-    toast: mockToast,
-  })),
-}));
-
 describe('useFeedback', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -178,28 +170,6 @@ describe('useFeedback', () => {
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
         expect(result.current.isSubmitting).toBe(false);
-      });
-    });
-
-    it('should show success toast after successful submission', async () => {
-      const { result } = renderHook(() => useFeedback());
-
-      act(() => {
-        const event = {
-          target: { value: 'Test feedback' },
-        } as React.ChangeEvent<HTMLTextAreaElement>;
-        result.current.handleChange(event);
-      });
-
-      await act(async () => {
-        await result.current.submit();
-      });
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Feedback submitted',
-          description: 'Thank you for helping us improve Pubky.',
-        });
       });
     });
 

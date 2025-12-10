@@ -303,7 +303,10 @@ describe('DialogFeedback', () => {
 
     const buttons = screen.queryAllByTestId('button');
     const sendButton = buttons.find((btn) => btn.textContent?.includes('Send'));
-    expect(sendButton).toBeUndefined();
+    // Button is always rendered but hidden with opacity-0 when hasContent is false
+    expect(sendButton).toBeDefined();
+    const container = sendButton?.closest('[data-testid="container"]');
+    expect(container).toHaveClass('opacity-0');
   });
 
   it('calls handleChange when textarea value changes', () => {

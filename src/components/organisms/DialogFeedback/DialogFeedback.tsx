@@ -73,32 +73,35 @@ export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
                     disabled={isSubmitting}
                   />
 
-                  {hasContent && (
-                    <Atoms.Container className="flex items-center justify-end" overrideDefaults>
-                      <Atoms.Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={submit}
-                        disabled={!hasContent || isSubmitting}
-                        className="h-8 rounded-full border-none px-3 py-2 shadow-xs-dark"
-                      >
-                        {isSubmitting ? (
-                          <Libs.Loader2 className="size-4 animate-spin text-secondary-foreground" strokeWidth={2} />
-                        ) : (
-                          <Atoms.Container className="flex items-center gap-2" overrideDefaults>
-                            <Libs.Send className="size-4 text-secondary-foreground" strokeWidth={2} />
-                            <Atoms.Typography
-                              as="span"
-                              size="sm"
-                              className="text-xs leading-4 font-bold text-secondary-foreground"
-                            >
-                              Send
-                            </Atoms.Typography>
-                          </Atoms.Container>
-                        )}
-                      </Atoms.Button>
-                    </Atoms.Container>
-                  )}
+                  <Atoms.Container
+                    className={`flex items-center justify-end transition-all duration-300 ease-in-out ${
+                      hasContent ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-2 opacity-0'
+                    }`}
+                    overrideDefaults
+                  >
+                    <Atoms.Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={submit}
+                      disabled={!hasContent || isSubmitting}
+                      className="h-8 rounded-full border-none px-3 py-2 shadow-xs-dark"
+                    >
+                      {isSubmitting ? (
+                        <Libs.Loader2 className="size-4 animate-spin text-secondary-foreground" strokeWidth={2} />
+                      ) : (
+                        <Atoms.Container className="flex items-center gap-2" overrideDefaults>
+                          <Libs.Send className="size-4 text-secondary-foreground" strokeWidth={2} />
+                          <Atoms.Typography
+                            as="span"
+                            size="sm"
+                            className="text-xs leading-4 font-bold text-secondary-foreground"
+                          >
+                            Send
+                          </Atoms.Typography>
+                        </Atoms.Container>
+                      )}
+                    </Atoms.Button>
+                  </Atoms.Container>
                 </Atoms.Container>
               </Atoms.Container>
             </Atoms.Container>
