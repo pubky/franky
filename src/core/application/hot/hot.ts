@@ -1,6 +1,8 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
+const TOP_TAGS_TO_FETCH_USERS = 3;
+
 export class HotApplication {
   private constructor() {}
 
@@ -12,6 +14,7 @@ export class HotApplication {
    * 3. Return cached data immediately if found
    * 4. Fetch from Nexus API on cache miss
    * 5. Store fetched data in IndexedDB for future requests
+   * 6. Fetch missing tagger user details in background
    *
    * @param params - Parameters for fetching hot tags (includes reach, timeframe, skip, limit)
    * @returns Array of hot tags
@@ -27,7 +30,14 @@ export class HotApplication {
       // Skip cache for pagination
       if (params.skip && params.skip > 0) {
         Libs.Logger.debug('Fetching hot tags from Nexus (pagination)', { id, skip: params.skip });
-        return await Core.NexusHotService.fetch(params);
+        const tags = await Core.NexusHotService.fetch(params);
+
+        // Fetch missing tagger users in background (fire and forget)
+        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
+          Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
+        });
+
+        return tags;
       }
 
       // Check cache first
@@ -42,6 +52,11 @@ export class HotApplication {
         // Optionally refresh cache in background (fire and forget)
         this.refreshCacheInBackground(id, params);
 
+        // Fetch missing tagger users in background (fire and forget)
+        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
+          Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
+        });
+
         return tags;
       }
 
@@ -53,6 +68,11 @@ export class HotApplication {
       if (tags.length > 0) {
         Core.LocalHotService.upsert(id, tags).catch((error) => {
           Libs.Logger.error('Failed to cache hot tags', { id, error });
+        });
+
+        // Fetch missing tagger users in background (fire and forget)
+        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
+          Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
         });
       }
 
@@ -81,5 +101,35 @@ export class HotApplication {
       .catch((error) => {
         Libs.Logger.debug('Background cache refresh failed (non-critical)', { id, error });
       });
+  }
+
+  /**
+   * Fetches missing tagger user details in background
+   * Only fetches taggers for the top 3 most scored tags (used for featured cards display).
+   * Tags are already sorted by score from Nexus API.
+   *
+   * @private
+   * @param tags - Array of hot tags containing tagger IDs (sorted by score)
+   * @param userId - Optional user ID for relationship data
+   */
+  private static async fetchUsersForTags(tags: Core.NexusHotTag[], userId?: string): Promise<void> {
+    // Only fetch taggers for top 3 tags (featured cards display)
+    // Extract all unique tagger IDs from top tags
+    const allTaggerIds = [...new Set(tags.flatMap((tag) => tag.taggers_id))];
+    if (allTaggerIds.length === 0) {
+      return;
+    }
+
+    // Check which users are not already in cache
+    const cacheMissUserIds = await Core.LocalStreamUsersService.getNotPersistedUsersInCache(allTaggerIds);
+    if (cacheMissUserIds.length === 0) {
+      return;
+    }
+
+    // Fetch only missing users
+    await Core.UserStreamApplication.fetchMissingUsersFromNexus({
+      cacheMissUserIds,
+      viewerId: userId,
+    });
   }
 }
