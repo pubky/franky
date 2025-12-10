@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInputTags } from './PostInputTags';
-import { POST_MAX_TAGS } from '@/config';
+import { POST_MAX_TAGS, TAG_MAX_LENGTH } from '@/config';
 
 // Mock state for TagInput simulation
 let mockTagInputValue = '';
@@ -227,10 +227,42 @@ describe('PostInputTags', () => {
     expect(screen.getByText(`3/3`)).toBeInTheDocument();
   });
 
+  it('handles large number of tags (2100)', () => {
+    const largeTagCount = 2100;
+    const largeTags = Array.from({ length: largeTagCount }, (_, i) => `tag${i + 1}`);
+    render(<PostInputTags tags={largeTags} onTagsChange={mockOnTagsChange} maxTags={largeTagCount} />);
+    const addButton = screen.getByTestId('add-tag-button');
+    expect(addButton).toBeDisabled();
+    expect(screen.getByText(`${largeTagCount}/${largeTagCount}`)).toBeInTheDocument();
+  });
+
   it('disables input when disabled prop is true', () => {
     render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} disabled={true} />);
     const addButton = screen.getByTestId('add-tag-button');
     expect(addButton).toBeDisabled();
+  });
+
+  // todo: enable once tag input has max length implemented
+  it.skip('enforces 20 character max length for tag input field', () => {
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    const addButton = screen.getByTestId('add-tag-button');
+    fireEvent.click(addButton);
+    const input = screen.getByTestId('tag-input');
+    expect(input).toHaveAttribute('maxLength', String(TAG_MAX_LENGTH));
+  });
+
+  // todo: enable once tag input has max length implemented
+  it.skip('prevents entering tags longer than 20 characters', () => {
+    const longTag = 'a'.repeat(21);
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    const addButton = screen.getByTestId('add-tag-button');
+    fireEvent.click(addButton);
+    const input = screen.getByTestId('tag-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: longTag } });
+    // Input should be limited to 20 characters by maxLength attribute
+    expect(input.value.length).toBeLessThanOrEqual(TAG_MAX_LENGTH);
+    // Verify the actual value is truncated
+    expect(mockTagInputValue.length).toBeLessThanOrEqual(TAG_MAX_LENGTH);
   });
 });
 
