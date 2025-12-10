@@ -98,8 +98,11 @@ export class AuthController {
   static async logout() {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
+
+    const pubky = authStore.selectCurrentUserPubky();
+
     if (authStore.session) {
-      await Core.AuthApplication.logout({ session: authStore.session });
+      await Core.AuthApplication.logout({ pubky });
     }
     // Always clear local state, even if homeserver logout fails
     onboardingStore.reset();

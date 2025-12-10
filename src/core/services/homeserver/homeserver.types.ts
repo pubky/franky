@@ -1,7 +1,7 @@
 import type { Keypair, Session } from '@synonymdev/pubky';
 
 export type FetchOptions = {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: HomeserverAction;
   body?: string | Uint8Array;
 };
 

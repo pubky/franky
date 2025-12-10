@@ -210,21 +210,25 @@ export class HomeserverService {
 
   /**
    * Logs out a user from the homeserver
-   * @param session - The session to logout
+   * @param pubky - The pubky to logout
    * @returns Void
    */
-  static async logout({ session }: Core.THomeserverSessionResult) {
+  static async logout({ pubky }: Core.TPubkyParams) {
+    // TODO: Until we get 'reconstruct' function to recreate the Session object from the JSON.
     try {
-      await session.signout();
-      Libs.Logger.debug('Logout successful');
+      const url = `pubky://${pubky}/session`;
+      const response = await this.fetch(url, { method: Core.HomeserverAction.DELETE });
+
+      Libs.Logger.debug('Response from homeserver', { response });
+      return response;
     } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500);
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url:"signout" });
     }
   }
 
   private static async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
-      const { client } = this.getClient() as { client: { fetch: typeof fetch } };
+      const { client } = this.getClient();
       // Resolve pubky:// URLs to HTTPS URLs before fetching
       const resolvedUrl = url.startsWith('pubky://') ? resolvePubky(url) : url;
       const response = await client.fetch(resolvedUrl, { 
