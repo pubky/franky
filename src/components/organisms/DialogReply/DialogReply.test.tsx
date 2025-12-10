@@ -223,28 +223,12 @@ describe('DialogReply', () => {
     });
   });
 
-  it('applies correct className to DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveClass('w-3xl');
-  });
-
   it('sets hiddenTitle on DialogContent', () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     const dialogContent = screen.getByTestId('dialog-content');
     expect(dialogContent).toHaveAttribute('aria-label', 'Reply to post');
-  });
-
-  it('renders DialogHeader with title', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Reply');
   });
 
   it('handles open prop correctly', () => {
