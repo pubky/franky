@@ -113,8 +113,7 @@ export class HotApplication {
    * @param userId - Optional user ID for relationship data
    */
   private static async fetchUsersForTags(tags: Core.NexusHotTag[], userId?: string): Promise<void> {
-    // Only fetch taggers for top 3 tags (featured cards display)
-    // Extract all unique tagger IDs from top tags
+    // Extract all unique tagger IDs from tags
     const allTaggerIds = [...new Set(tags.flatMap((tag) => tag.taggers_id))];
     if (allTaggerIds.length === 0) {
       return;
