@@ -19,6 +19,7 @@ export * from './InputField';
 export * from './Install';
 export * from './Logo';
 export * from './Metadata';
+export * from './NewPostCTA';
 export * from './NewPostsButton';
 export * from './Logout';
 export * from './MobileFooter';

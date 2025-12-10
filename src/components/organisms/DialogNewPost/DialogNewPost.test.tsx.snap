@@ -1,0 +1,89 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogNewPost - Snapshots > matches snapshot with default props 1`] = `
+<div
+  data-open="false"
+  data-testid="dialog"
+>
+  <div
+    aria-label="New post"
+    class="w-3xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        New Post
+      </h2>
+      <p
+        data-testid="dialog-description"
+      >
+        New post dialog
+      </p>
+    </div>
+    <div
+      class="gap-3"
+      data-testid="container"
+    >
+      <div
+        data-expanded="true"
+        data-testid="post-input"
+        data-variant="post"
+      >
+        <button
+          data-testid="mock-success-btn"
+        >
+          Success
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogNewPost - Snapshots > matches snapshot with open prop 1`] = `
+<div
+  data-open="true"
+  data-testid="dialog"
+>
+  <div
+    aria-label="New post"
+    class="w-3xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        New Post
+      </h2>
+      <p
+        data-testid="dialog-description"
+      >
+        New post dialog
+      </p>
+    </div>
+    <div
+      class="gap-3"
+      data-testid="container"
+    >
+      <div
+        data-expanded="true"
+        data-testid="post-input"
+        data-variant="post"
+      >
+        <button
+          data-testid="mock-success-btn"
+        >
+          Success
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
