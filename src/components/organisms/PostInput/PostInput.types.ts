@@ -20,4 +20,6 @@ export interface PostInputProps {
    * @default false
    */
   expanded?: boolean;
+  /** Callback when content or tags change, receives content and tags */
+  onContentChange?: (content: string, tags: string[]) => void;
 }

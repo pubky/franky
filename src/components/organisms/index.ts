@@ -10,6 +10,7 @@ export * from './DialogBackup';
 export * from './DialogBackupPhrase';
 export * from './DialogBackupExport';
 export * from './DialogConfirmBackup';
+export * from './DialogConfirmDiscard';
 export * from './DialogBackupEncrypted';
 export * from './DialogCropImage';
 export * from './DialogDeleteAccount';

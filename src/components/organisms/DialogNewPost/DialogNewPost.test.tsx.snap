@@ -3,87 +3,35 @@
 exports[`DialogNewPost - Snapshots > matches snapshot with default props 1`] = `
 <div
   data-open="false"
-  data-testid="dialog"
+  data-testid="dialog-confirm-discard"
 >
-  <div
-    aria-label="New post"
-    class="w-3xl"
-    data-testid="dialog-content"
+  <button
+    data-testid="mock-confirm-btn"
   >
-    <div
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        New Post
-      </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        New post dialog
-      </p>
-    </div>
-    <div
-      class="gap-3"
-      data-testid="container"
-    >
-      <div
-        data-expanded="true"
-        data-testid="post-input"
-        data-variant="post"
-      >
-        <button
-          data-testid="mock-success-btn"
-        >
-          Success
-        </button>
-      </div>
-    </div>
-  </div>
+    Confirm
+  </button>
+  <button
+    data-testid="mock-cancel-btn"
+  >
+    Cancel
+  </button>
 </div>
 `;
 
 exports[`DialogNewPost - Snapshots > matches snapshot with open prop 1`] = `
 <div
-  data-open="true"
-  data-testid="dialog"
+  data-open="false"
+  data-testid="dialog-confirm-discard"
 >
-  <div
-    aria-label="New post"
-    class="w-3xl"
-    data-testid="dialog-content"
+  <button
+    data-testid="mock-confirm-btn"
   >
-    <div
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        New Post
-      </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        New post dialog
-      </p>
-    </div>
-    <div
-      class="gap-3"
-      data-testid="container"
-    >
-      <div
-        data-expanded="true"
-        data-testid="post-input"
-        data-variant="post"
-      >
-        <button
-          data-testid="mock-success-btn"
-        >
-          Success
-        </button>
-      </div>
-    </div>
-  </div>
+    Confirm
+  </button>
+  <button
+    data-testid="mock-cancel-btn"
+  >
+    Cancel
+  </button>
 </div>
 `;

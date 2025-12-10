@@ -19,6 +19,7 @@ export function PostInput({
   placeholder,
   showThreadConnector = false,
   expanded = false,
+  onContentChange,
 }: PostInputProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isExpanded, setIsExpanded] = useState(expanded);
@@ -26,6 +27,11 @@ export function PostInput({
   const containerRef = useRef<HTMLDivElement>(null);
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { content, setContent, tags, setTags, reply, post, isSubmitting } = Hooks.usePost();
+
+  // Notify parent of content changes
+  useEffect(() => {
+    onContentChange?.(content, tags);
+  }, [content, tags, onContentChange]);
   const timelineFeed = useTimelineFeedContext();
 
   // Handle expand on interaction
@@ -78,6 +84,7 @@ export function PostInput({
     const value = e.target.value;
     if (value.length <= POST_MAX_CHARACTER_LENGTH) {
       setContent(value);
+      onContentChange?.(value, tags);
     }
   };
 
@@ -86,9 +93,10 @@ export function PostInput({
     (newValue: string) => {
       if (newValue.length <= POST_MAX_CHARACTER_LENGTH) {
         setContent(newValue);
+        onContentChange?.(newValue, tags);
       }
     },
-    [setContent],
+    [setContent, tags, onContentChange],
   );
 
   const handleEmojiSelect = Hooks.useEmojiInsert({
@@ -152,14 +160,27 @@ export function PostInput({
                       key={`${tag}-${index}`}
                       label={tag}
                       showClose={!isSubmitting}
-                      onClose={() => setTags((prevTags) => prevTags.filter((_, i) => i !== index))}
+                      onClose={() => {
+                        setTags((prevTags) => {
+                          const newTags = prevTags.filter((_, i) => i !== index);
+                          onContentChange?.(content, newTags);
+                          return newTags;
+                        });
+                      }}
                     />
                   ))}
                 </Atoms.Container>
               )}
 
               <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-                <PostInputTags tags={tags} onTagsChange={setTags} disabled={isSubmitting} />
+                <PostInputTags
+                  tags={tags}
+                  onTagsChange={(newTags) => {
+                    setTags(newTags);
+                    onContentChange?.(content, newTags);
+                  }}
+                  disabled={isSubmitting}
+                />
                 <PostInputActionBar
                   onPostClick={handleSubmit}
                   onEmojiClick={() => setShowEmojiPicker(true)}

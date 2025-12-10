@@ -55,13 +55,44 @@ vi.mock('@radix-ui/react-dialog', () => ({
 // Mock organisms
 vi.mock('@/organisms', () => ({
   PostInput: vi.fn(
-    ({ variant, onSuccess, expanded }: { variant: string; onSuccess?: () => void; expanded?: boolean }) => (
+    ({
+      variant,
+      onSuccess,
+      expanded,
+      onContentChange,
+    }: {
+      variant: string;
+      onSuccess?: () => void;
+      expanded?: boolean;
+      onContentChange?: (content: string, tags: string[]) => void;
+    }) => (
       <div data-testid="post-input" data-variant={variant} data-expanded={expanded}>
         <button data-testid="mock-success-btn" onClick={onSuccess}>
           Success
         </button>
+        <button data-testid="mock-content-change-btn" onClick={() => onContentChange?.('test content', ['tag1'])}>
+          Change Content
+        </button>
       </div>
     ),
+  ),
+  DialogConfirmDiscard: ({
+    open,
+    onOpenChange,
+    onConfirm,
+  }: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onConfirm: () => void;
+  }) => (
+    <div data-testid="dialog-confirm-discard" data-open={open}>
+      <button data-testid="mock-confirm-btn" onClick={onConfirm}>
+        Confirm
+      </button>
+      <button data-testid="mock-cancel-btn" onClick={() => onOpenChange(false)}>
+        Cancel
+      </button>
+    </div>
   ),
 }));
 
@@ -156,6 +187,7 @@ describe('DialogNewPost', () => {
         variant: POST_INPUT_VARIANT.POST,
         onSuccess: expect.any(Function),
         expanded: true,
+        onContentChange: expect.any(Function),
       },
       undefined,
     );
