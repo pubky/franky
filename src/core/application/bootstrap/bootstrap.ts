@@ -14,10 +14,9 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    const [data, { notificationList, lastRead }, mutedUserIds] = await Promise.all([
+    const [data, { notificationList, lastRead }] = await Promise.all([
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
-      this.fetchMutedUsers(params.pubky),
     ]);
     // TODO: With the new Nexus API, data is never undefined
     if (!data) {
@@ -47,7 +46,7 @@ export class BootstrapApplication {
       }),
       Core.LocalStreamUsersService.upsert({
         streamId: mutedStreamId,
-        stream: mutedUserIds,
+        stream: data.ids.muted,
       }),
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
@@ -99,21 +98,5 @@ export class BootstrapApplication {
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
     return { notificationList, lastRead: userLastRead };
-  }
-
-  /**
-   * Fetches user's muted users list from Nexus.
-   *
-   * @private
-   * @param pubky - The user's public key identifier
-   * @returns Promise resolving to array of muted user IDs
-   */
-  private static async fetchMutedUsers(pubky: Core.Pubky): Promise<Core.Pubky[]> {
-    const streamId = Core.buildUserCompositeId({
-      userId: pubky,
-      reach: Core.UserStreamSource.MUTED,
-    });
-    // Omit limit to fetch all muted users
-    return Core.NexusUserStreamService.fetch({ streamId, params: {} });
   }
 }

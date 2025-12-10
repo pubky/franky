@@ -16,7 +16,7 @@ const MOCK_LAST_READ = 1234567890;
 const emptyBootstrap = (): Core.NexusBootstrapResponse => ({
   users: [],
   posts: [],
-  ids: { stream: [], influencers: [], recommended: [], hot_tags: [] },
+  ids: { stream: [], influencers: [], recommended: [], hot_tags: [], muted: [] },
   indexed: true,
 });
 
@@ -69,6 +69,7 @@ const createMockBootstrapData = (): Core.NexusBootstrapResponse => ({
     influencers: ['user-1'],
     recommended: ['user-2'],
     hot_tags: [{ label: 'technology', taggers_id: ['user-1'], tagged_count: 1, taggers_count: 1 }],
+    muted: [],
   },
   indexed: true,
 });
@@ -99,15 +100,12 @@ type MockConfig = {
   upsertTagsError?: Error;
   persistFilesError?: Error;
   persistNotificationsError?: Error;
-  mutedUsers?: Core.Pubky[];
-  mutedUsersError?: Error;
 };
 
 type ServiceMocks = {
   nexusFetch: unknown;
   homeserverRequest: unknown;
   nexusNotifications: unknown;
-  fetchMutedUsers: unknown;
   persistUsers: unknown;
   persistPosts: unknown;
   persistFiles: unknown;
@@ -133,8 +131,6 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     upsertTagsError,
     persistFilesError,
     persistNotificationsError,
-    mutedUsers = [],
-    mutedUsersError,
   } = config;
 
   vi.clearAllMocks();
@@ -157,9 +153,6 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       .mockImplementation(
         notificationsError ? () => Promise.reject(notificationsError) : () => Promise.resolve(notifications),
       ),
-    fetchMutedUsers: vi
-      .spyOn(Core.NexusUserStreamService, 'fetch')
-      .mockImplementation(mutedUsersError ? () => Promise.reject(mutedUsersError) : () => Promise.resolve(mutedUsers)),
     persistUsers: vi
       .spyOn(Core.LocalStreamUsersService, 'persistUsers')
       .mockImplementation(persistUsersError ? () => Promise.reject(persistUsersError) : () => Promise.resolve([])),
@@ -199,20 +192,10 @@ const assertCommonCalls = (
   mocks: ServiceMocks,
   bootstrapData: Core.NexusBootstrapResponse,
   notifications: Core.NexusNotification[],
-  mutedUsers: Core.Pubky[] = [],
 ) => {
   expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
   expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
   expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
-  // Check muted users are fetched
-  const expectedMutedStreamId = Core.buildUserCompositeId({
-    userId: TEST_PUBKY,
-    reach: Core.UserStreamSource.MUTED,
-  });
-  expect(mocks.fetchMutedUsers).toHaveBeenCalledWith({
-    streamId: expectedMutedStreamId,
-    params: {},
-  });
   expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
   expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
   expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
@@ -228,10 +211,14 @@ const assertCommonCalls = (
     streamId: Core.UserStreamTypes.RECOMMENDED,
     stream: bootstrapData.ids.recommended,
   });
-  // Check muted users stream is stored
+  // Check muted users stream is stored from bootstrap response
+  const expectedMutedStreamId = Core.buildUserCompositeId({
+    userId: TEST_PUBKY,
+    reach: Core.UserStreamSource.MUTED,
+  });
   expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
     streamId: expectedMutedStreamId,
-    stream: mutedUsers,
+    stream: bootstrapData.ids.muted,
   });
   // Check both hot tags features are called
   expect(mocks.upsertHotTags).toHaveBeenCalledWith(
@@ -557,22 +544,23 @@ describe('BootstrapApplication', () => {
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
     });
 
-    it('should fetch and persist muted users during bootstrap', async () => {
+    it('should persist muted users from bootstrap response', async () => {
       const bootstrapData = createMockBootstrapData();
+      // Add muted users to bootstrap data
+      bootstrapData.ids.muted = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
       const notifications = [createMockNotification()];
-      const mutedUsers: Core.Pubky[] = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
-      const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1, mutedUsers });
+      const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
 
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
-      // Verify muted users were fetched and persisted
-      assertCommonCalls(mocks, bootstrapData, notifications, mutedUsers);
+      // Verify muted users from bootstrap response were persisted
+      assertCommonCalls(mocks, bootstrapData, notifications);
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
     });
 
-    it('should handle empty muted users list', async () => {
+    it('should handle empty muted users list in bootstrap response', async () => {
       const bootstrapData = emptyBootstrap();
-      const mocks = setupMocks({ bootstrapData, mutedUsers: [] });
+      const mocks = setupMocks({ bootstrapData });
 
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
@@ -586,19 +574,6 @@ describe('BootstrapApplication', () => {
         stream: [],
       });
       expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
-    });
-
-    it('should throw error when fetching muted users fails', async () => {
-      const bootstrapData = emptyBootstrap();
-      const mocks = setupMocks({ bootstrapData, mutedUsersError: new Error('Failed to fetch muted users') });
-
-      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow(
-        'Failed to fetch muted users',
-      );
-
-      expect(mocks.fetchMutedUsers).toHaveBeenCalled();
-      // Persist should not be called since fetch failed
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
     });
   });
 });
