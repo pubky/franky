@@ -7,11 +7,6 @@ vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    Smile: ({ className, strokeWidth }: { className?: string; strokeWidth?: number }) => (
-      <div data-testid="smile-icon" className={className} data-stroke-width={strokeWidth}>
-        Smile
-      </div>
-    ),
   };
 });
 
