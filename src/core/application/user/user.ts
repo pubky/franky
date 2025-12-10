@@ -51,6 +51,24 @@ export class UserApplication {
   }
 
   /**
+   * Retrieves tags for a user from local IndexedDB.
+   * @param userId - User ID to get tags for
+   * @returns Promise resolving to an array of tags or empty array if not found
+   */
+  static async getUserTags(userId: string): Promise<Core.NexusTag[]> {
+    return await Core.LocalProfileService.getUserTags(userId);
+  }
+
+  /**
+   * Saves tags for a user to local IndexedDB.
+   * @param userId - User ID to save tags for
+   * @param tags - Array of tags to save
+   */
+  static async saveUserTags(userId: string, tags: Core.NexusTag[]): Promise<void> {
+    await Core.LocalProfileService.upsertTags(userId as Core.Pubky, tags);
+  }
+
+  /**
    * Retrieves taggers for a specific tag label on a user from the nexus service.
    * @param params - Parameters containing user ID, label, and pagination options
    * @returns Promise resolving to an array of users who tagged the user with the specified label

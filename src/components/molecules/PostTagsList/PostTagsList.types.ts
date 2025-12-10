@@ -19,6 +19,8 @@ export interface PostTagsListProps {
   showEmojiPicker?: boolean;
   /** Show close button on tags */
   showTagClose?: boolean;
+  /** Maximum number of tags to display (default: 5) */
+  maxTags?: number;
   /** Callback when a tag is clicked */
   onTagClick?: (tag: PostTagsListTag, index: number, event: React.MouseEvent) => void;
   /** Callback when a tag close button is clicked */

@@ -444,3 +444,57 @@ export const convertHmsToSeconds = (
 };
 
 export const isPostDeleted = (content: string | undefined) => content === '[DELETED]';
+
+/**
+ * Options for getDisplayTags function
+ */
+export interface GetDisplayTagsOptions {
+  /** Maximum characters per tag before truncation (default: 10) */
+  maxTagLength?: number;
+  /** Maximum total characters across all displayed tags (default: 24) */
+  maxTotalChars?: number;
+  /** Maximum number of tags to display (default: 3) */
+  maxCount?: number;
+}
+
+/**
+ * Get tags that fit within the character budget.
+ * Shows fewer tags if they would exceed the total character limit.
+ *
+ * @param tags - Array of tag labels to filter
+ * @param options - Configuration options for limiting tags
+ * @returns Array of tags that fit within the constraints
+ *
+ * @example
+ * ```ts
+ * const tags = ['javascript', 'typescript', 'react', 'nodejs'];
+ * getDisplayTags(tags); // ['javascript', 'typescript'] - limited by total chars
+ * getDisplayTags(tags, { maxCount: 2 }); // ['javascript', 'typescript']
+ * getDisplayTags(tags, { maxTotalChars: 50 }); // More tags fit
+ * ```
+ */
+export function getDisplayTags(tags: string[], options: GetDisplayTagsOptions = {}): string[] {
+  const { maxTagLength = 10, maxTotalChars = 24, maxCount = 3 } = options;
+
+  if (tags.length === 0) return [];
+
+  const result: string[] = [];
+  let totalChars = 0;
+
+  for (const tag of tags) {
+    if (result.length >= maxCount) break;
+
+    // Calculate effective length (truncated if needed)
+    const effectiveLength = Math.min(tag.length, maxTagLength);
+
+    // Check if adding this tag would exceed the budget
+    if (totalChars + effectiveLength > maxTotalChars && result.length > 0) {
+      break;
+    }
+
+    result.push(tag);
+    totalChars += effectiveLength;
+  }
+
+  return result;
+}

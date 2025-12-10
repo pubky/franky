@@ -2,7 +2,9 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 import type {
   UserListItemProps,
   FollowButtonProps,
@@ -153,48 +155,20 @@ function UserStats({ tags, posts }: UserStatsProps) {
 }
 
 /**
- * Get tags that fit within the character budget
- * Shows fewer tags if they would exceed the total character limit
- */
-function getDisplayTags(tags: string[]): string[] {
-  if (tags.length === 0) return [];
-
-  const result: string[] = [];
-  let totalChars = 0;
-
-  for (const tag of tags) {
-    if (result.length >= TAGS_MAX_COUNT) break;
-
-    // Calculate effective length (truncated if needed)
-    const effectiveLength = Math.min(tag.length, TAG_MAX_LENGTH);
-
-    // Check if adding this tag would exceed the budget
-    if (totalChars + effectiveLength > TAGS_MAX_TOTAL_CHARS && result.length > 0) {
-      break;
-    }
-
-    result.push(tag);
-    totalChars += effectiveLength;
-  }
-
-  return result;
-}
-
-/**
  * TagsList
- * Renders tags with smart limiting based on character count
+ * Renders clickable tags with relationship indicator and toggle functionality
  */
-function TagsList({ tags, className }: { tags: string[]; className?: string }) {
-  if (tags.length === 0) return null;
-
-  const displayTags = getDisplayTags(tags);
-
+function TagsList({ userId, className }: { userId: string; className?: string }) {
   return (
-    <Atoms.Container overrideDefaults className={Libs.cn('flex flex-wrap items-center gap-2', className)}>
-      {displayTags.map((tag, index) => (
-        <Atoms.Tag key={index} name={tag} maxLength={TAG_MAX_LENGTH} />
-      ))}
-    </Atoms.Container>
+    <Organisms.ClickableTagsList
+      taggedId={userId}
+      taggedKind={Core.TagKind.USER}
+      maxTags={TAGS_MAX_COUNT}
+      maxTagLength={TAG_MAX_LENGTH}
+      maxTotalChars={TAGS_MAX_TOTAL_CHARS}
+      showCount={false}
+      className={className}
+    />
   );
 }
 
@@ -275,7 +249,6 @@ function FullVariant({
   avatarUrl,
   displayName,
   formattedPublicKey,
-  tags,
   stats,
   isFollowing,
   isLoading,
@@ -306,7 +279,7 @@ function FullVariant({
         </Atoms.Link>
 
         {/* Desktop: Tags - hidden between lg (1024px) and xl (1280px) */}
-        <TagsList tags={tags} className="hidden xl:flex" />
+        <TagsList userId={user.id} className="hidden xl:flex" />
 
         {/* Stats */}
         <UserStats tags={stats.tags} posts={stats.posts} />
@@ -330,7 +303,7 @@ function FullVariant({
 
       {/* Mobile: Bottom row */}
       <Atoms.Container overrideDefaults className="flex flex-wrap items-center justify-between gap-3 lg:hidden">
-        <TagsList tags={tags} className="flex-1" />
+        <TagsList userId={user.id} className="flex-1" />
         {isCurrentUser ? (
           <MeButton />
         ) : (

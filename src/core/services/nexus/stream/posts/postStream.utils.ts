@@ -14,6 +14,7 @@ export function createPostStreamParams({
   limit,
   streamHead,
   viewerId,
+  order,
 }: Core.TFetchStreamParams): Core.TPostStreamFetchParams {
   const [sorting, invokeEndpoint, content, tags] = breakDownStreamId(streamId);
 
@@ -25,6 +26,10 @@ export function createPostStreamParams({
     params.kind = parseContent(content);
   }
   params.limit = limit;
+  // Set order if provided (ascending = oldest first, descending = newest first)
+  if (order) {
+    params.order = order;
+  }
   let extraParams = handleNotCommonStreamParams({ authorId: sorting, postId: content });
   setStreamPagination({ params, streamTail, streamHead });
   return { params, invokeEndpoint, extraParams };
@@ -52,27 +57,32 @@ function handleNotCommonStreamParams({
 /**
  * Sets pagination parameters based on the sorting type and stream tail value.
  * @param params - The base stream parameters object to modify
- * @param streamTail - The pagination tail value
+ * @param streamTail - The pagination tail value (timestamp of last post in current page)
  */
 function setStreamPagination({ params, streamTail, streamHead }: Core.TSetStreamPaginationParams) {
   if (params.sorting === Core.StreamSorting.ENGAGEMENT) {
     params.skip = streamTail; // post amount of the stream, page number * limit
   } else {
-    // Only set start if streamTail is not 0 (0 means initial load - fetch most recent)
-    if (streamTail > 0) {
-      // If we do not decrease the streamTail by 1, we will get the same last post again.
-      params.start = streamTail - 1; // timestamp of the last post
+    // For ASCENDING order, streamTail is the timestamp of the newest post we have
+    // We want posts NEWER than that, so we use it as 'end' (minimum timestamp)
+    if (params.order === Core.StreamOrder.ASCENDING) {
+      if (streamTail > 0) {
+        // Use end to set minimum timestamp - get posts with timestamp > streamTail
+        params.end = streamTail + 1;
+      }
+    } else {
+      // DESCENDING (default): Only set start if streamTail is not 0 (0 means initial load)
+      if (streamTail > 0) {
+        // If we do not decrease the streamTail by 1, we will get the same last post again.
+        params.start = streamTail - 1; // timestamp of the last post
+      }
+      if (streamHead) {
+        params.end = streamHead + 1;
+      }
     }
-    if (streamHead) {
-      params.end = streamHead + 1;
-    }
-    // If streamTail is 0, don't set start - this will fetch the most recent posts
+    // If streamTail is 0, don't set start/end - this will fetch from the beginning
   }
 }
-
-// TODO: Still edge cases to cover
-// - Replies stream do not handle now the sorting and kind
-// - Author replies and author streams do not handle now the kind
 
 /**
  * Validates and converts a string to StreamSource enum.
