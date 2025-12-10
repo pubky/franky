@@ -26,10 +26,8 @@ const eslintConfig = [
       'cypress.config.ts',
       'next-env.d.ts',
       'vitest.shims.d.ts',
-      // PWA generated files
+      // PWA generated files (serwist)
       'public/sw.js',
-      'public/workbox-*.js',
-      'public/fallback-*.js',
     ],
   },
   {
