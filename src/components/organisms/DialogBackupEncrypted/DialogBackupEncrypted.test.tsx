@@ -31,12 +31,16 @@ vi.mock('@radix-ui/react-dialog', () => ({
 }));
 
 // Mock stores
-vi.mock('@/core', () => ({
-  useOnboardingStore: () => ({
-    secretKey: 'mock-secret-key',
-    pubky: 'mock-public-key',
-  }),
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useOnboardingStore: () => ({
+      secretKey: 'mock-secret-key',
+      pubky: 'mock-public-key',
+    }),
+  };
+});
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {

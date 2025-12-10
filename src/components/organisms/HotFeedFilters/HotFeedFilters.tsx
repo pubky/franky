@@ -6,31 +6,18 @@ import * as Libs from '@/libs';
 import * as Core from '@/core';
 
 // ============================================================================
-// Types
-// ============================================================================
-
-export type TimeframeTab = 'today' | 'thisMonth' | 'allTime';
-
-export interface HotFeedFiltersProps {
-  reach: Core.ReachType;
-  setReach: (reach: Core.ReachType) => void;
-  timeframe: TimeframeTab;
-  setTimeframe: (timeframe: TimeframeTab) => void;
-}
-
-// ============================================================================
 // FilterTimeframe Component
 // ============================================================================
 
 interface FilterTimeframeProps {
-  selectedTab?: TimeframeTab;
-  onTabChange?: (tab: TimeframeTab) => void;
+  selectedTab?: Core.TimeframeType;
+  onTabChange?: (tab: Core.TimeframeType) => void;
 }
 
-const timeframeTabs: { key: TimeframeTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'today', label: 'Today', icon: Libs.Star },
-  { key: 'thisMonth', label: 'This Month', icon: Libs.Calendar },
-  { key: 'allTime', label: 'All Time', icon: Libs.Clock },
+const timeframeTabs: { key: Core.TimeframeType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: Core.TIMEFRAME.TODAY, label: 'Today', icon: Libs.Star },
+  { key: Core.TIMEFRAME.THIS_MONTH, label: 'This Month', icon: Libs.Calendar },
+  { key: Core.TIMEFRAME.ALL_TIME, label: 'All Time', icon: Libs.Clock },
 ];
 
 /**
@@ -38,8 +25,8 @@ const timeframeTabs: { key: TimeframeTab; label: string; icon: React.ComponentTy
  *
  * Filter component for selecting timeframe (Today, This Month, All Time).
  */
-export function FilterTimeframe({ selectedTab = 'today', onTabChange }: FilterTimeframeProps) {
-  const handleTabClick = (tab: TimeframeTab) => {
+export function FilterTimeframe({ selectedTab = Core.TIMEFRAME.TODAY, onTabChange }: FilterTimeframeProps) {
+  const handleTabClick = (tab: Core.TimeframeType) => {
     onTabChange?.(tab);
   };
 
@@ -69,9 +56,12 @@ export function FilterTimeframe({ selectedTab = 'today', onTabChange }: FilterTi
  * HotFeedSidebar
  *
  * Left sidebar for Hot feed - displays reach and timeframe filters.
+ * Uses the hot store for state management.
  * Desktop version with sticky positioning.
  */
-export function HotFeedSidebar({ reach, setReach, timeframe, setTimeframe }: HotFeedFiltersProps) {
+export function HotFeedSidebar() {
+  const { reach, setReach, timeframe, setTimeframe } = Core.useHotStore();
+
   return (
     <>
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
@@ -86,8 +76,11 @@ export function HotFeedSidebar({ reach, setReach, timeframe, setTimeframe }: Hot
  * HotFeedDrawer
  *
  * Left drawer for Hot feed (tablet/mobile) - displays reach and timeframe filters.
+ * Uses the hot store for state management.
  */
-export function HotFeedDrawer({ reach, setReach, timeframe, setTimeframe }: HotFeedFiltersProps) {
+export function HotFeedDrawer() {
+  const { reach, setReach, timeframe, setTimeframe } = Core.useHotStore();
+
   return (
     <div className="flex flex-col gap-6">
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />

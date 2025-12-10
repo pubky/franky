@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
@@ -48,18 +49,22 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
       className={className}
       data-testid="active-users"
     >
-      {users.map((user) => (
-        <Molecules.UserListItem
-          key={user.id}
-          user={user}
-          variant="compact"
-          showStats
-          isLoading={isUserLoading(user.id)}
-          isStatusLoading={isStreamLoading}
-          onUserClick={handleUserClick}
-          onFollowClick={handleFollowClick}
-        />
-      ))}
+      {users.length === 0 ? (
+        <Atoms.Typography className="font-light text-muted-foreground">No users to show</Atoms.Typography>
+      ) : (
+        users.map((user) => (
+          <Molecules.UserListItem
+            key={user.id}
+            user={user}
+            variant="compact"
+            showStats
+            isLoading={isUserLoading(user.id)}
+            isStatusLoading={isStreamLoading}
+            onUserClick={handleUserClick}
+            onFollowClick={handleFollowClick}
+          />
+        ))
+      )}
     </Molecules.SidebarSection>
   );
 }

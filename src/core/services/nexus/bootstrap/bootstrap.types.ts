@@ -3,7 +3,8 @@ import * as Core from '@/core';
 export type NexusBootstrapResponse = {
   users: Core.NexusUser[];
   posts: Core.NexusPost[];
-  list: Core.NexusBootstrapList;
+  ids: Core.NexusBootstrapList;
+  indexed: boolean;
 };
 
 export type NexusBootstrapList = {

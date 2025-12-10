@@ -81,14 +81,40 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
   );
 
-  // Combine user IDs with their details and computed avatar URLs
+  // State for user tags (fetched with local-first strategy + API fallback)
+  const [userTagsMap, setUserTagsMap] = useState<Map<Core.Pubky, Core.NexusTag[]>>(new Map());
+
+  // Fetch user tags (local-first with API fallback for missing)
+  useEffect(() => {
+    if (userIds.length === 0) {
+      setUserTagsMap(new Map());
+      return;
+    }
+
+    const fetchTags = async () => {
+      try {
+        const tagsMap = await Core.UserController.bulkGetTags(userIds);
+        setUserTagsMap(tagsMap);
+      } catch (err) {
+        Libs.Logger.error('[useProfileConnections] Failed to fetch user tags:', err);
+        setUserTagsMap(new Map());
+      }
+    };
+
+    void fetchTags();
+  }, [userIds]);
+
+  // Combine user IDs with their details, tags, and computed avatar URLs
   const connections = useMemo((): UserConnectionData[] => {
     return userIds.map((id) => {
       const details = userDetailsMap.get(id);
       const counts = userCountsMap.get(id);
       const relationship = userRelationshipsMap.get(id);
+      const userTags = userTagsMap.get(id);
       // Only compute CDN avatar URL if user has an image set
       const avatarUrl = details?.image ? Core.FileController.getAvatarUrl(id) : null;
+      // Extract tag labels from NexusTag objects
+      const tags = userTags?.map((tag) => tag.label) ?? [];
 
       if (!details) {
         // Return minimal data if details not yet loaded
@@ -101,7 +127,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
           links: null,
           indexed_at: 0,
           avatarUrl: null,
-          tags: [],
+          tags,
           stats: { tags: 0, posts: 0 },
           isFollowing: relationship?.following ?? false,
         } as UserConnectionData;
@@ -110,7 +136,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       return {
         ...details,
         avatarUrl,
-        tags: [], // TODO: Fetch tags when available
+        tags,
         stats: {
           tags: counts?.unique_tags ?? 0,
           posts: counts?.posts ?? 0,
@@ -120,7 +146,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
     });
     // Note: We no longer filter out users with empty names - they will appear
     // with placeholder data while their details are being fetched in background
-  }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap]);
+  }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap, userTagsMap]);
 
   /**
    * Fetches a slice from the user stream
