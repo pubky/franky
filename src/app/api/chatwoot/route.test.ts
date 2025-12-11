@@ -7,6 +7,7 @@ import * as Config from '@/config';
 
 const testData = {
   userPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
+  userName: 'Test User',
   comment: 'This is a test feedback comment',
 };
 
@@ -31,6 +32,7 @@ describe('API Route: /api/chatwoot', () => {
       const request = createPostRequest({
         pubky: testData.userPubky,
         comment: testData.comment,
+        name: testData.userName,
       });
 
       const response = await POST(request);
@@ -41,6 +43,7 @@ describe('API Route: /api/chatwoot', () => {
       expect(Core.FeedbackController.submit).toHaveBeenCalledWith({
         pubky: testData.userPubky,
         comment: testData.comment,
+        name: testData.userName,
       });
     });
 
@@ -51,6 +54,7 @@ describe('API Route: /api/chatwoot', () => {
       const request = createPostRequest({
         pubky: testData.userPubky,
         comment: testData.comment,
+        name: testData.userName,
       });
 
       const response = await POST(request);
@@ -67,6 +71,7 @@ describe('API Route: /api/chatwoot', () => {
       const request = createPostRequest({
         pubky: testData.userPubky,
         comment: testData.comment,
+        name: testData.userName,
       });
 
       const response = await POST(request);
@@ -83,6 +88,7 @@ describe('API Route: /api/chatwoot', () => {
       const request = createPostRequest({
         pubky: testData.userPubky,
         comment: testData.comment,
+        name: testData.userName,
       });
 
       const response = await POST(request);
@@ -125,45 +131,52 @@ describe('API Route: /api/chatwoot', () => {
     it('should handle missing pubky in body', async () => {
       const request = createPostRequest({
         comment: testData.comment,
+        name: testData.userName,
       });
 
-      // The controller will validate and throw regular Error (not AppError)
-      // So it will be handled as unexpected error and return 500
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(
-        new Error('Pubky is required and must be a non-empty string'),
-      );
+      // The controller will validate and throw AppError
+      const appError = new Libs.AppError('INVALID_INPUT', 'Pubky is required and must be a non-empty string', 400);
+      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Internal Server Error');
-      expect(consoleErrorSpy).toHaveBeenCalled();
-
-      consoleErrorSpy.mockRestore();
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Pubky is required and must be a non-empty string');
     });
 
     it('should handle missing comment in body', async () => {
       const request = createPostRequest({
         pubky: testData.userPubky,
+        name: testData.userName,
       });
 
-      // The controller will validate and throw regular Error (not AppError)
-      // So it will be handled as unexpected error and return 500
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(
-        new Error('Comment is required and must be a non-empty string'),
-      );
+      // The controller will validate and throw AppError
+      const appError = new Libs.AppError('INVALID_INPUT', 'Comment is required and must be a non-empty string', 400);
+      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Internal Server Error');
-      expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Comment is required and must be a non-empty string');
+    });
 
-      consoleErrorSpy.mockRestore();
+    it('should handle missing name in body', async () => {
+      const request = createPostRequest({
+        pubky: testData.userPubky,
+        comment: testData.comment,
+      });
+
+      // The controller will validate and throw AppError
+      const appError = new Libs.AppError('INVALID_INPUT', 'Name is required and must be a non-empty string', 400);
+      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBe('Name is required and must be a non-empty string');
     });
 
     it('should handle comment exceeding max length', async () => {
@@ -171,23 +184,22 @@ describe('API Route: /api/chatwoot', () => {
       const request = createPostRequest({
         pubky: testData.userPubky,
         comment: longComment,
+        name: testData.userName,
       });
 
-      // The controller will validate and throw regular Error (not AppError)
-      // So it will be handled as unexpected error and return 500
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(
-        new Error(`Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`),
+      // The controller will validate and throw AppError
+      const appError = new Libs.AppError(
+        'INVALID_INPUT',
+        `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+        400,
       );
+      vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Internal Server Error');
-      expect(consoleErrorSpy).toHaveBeenCalled();
-
-      consoleErrorSpy.mockRestore();
+      expect(response.status).toBe(400);
+      expect(data.error).toBe(`Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`);
     });
   });
 
