@@ -47,7 +47,7 @@ export class AuthController {
     const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
     if (isSignedUp) {
       // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
-      // it will redirect to home page and after it would hit the bootstrap endpoint
+      // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
       await this.hydrateMeImAlive({ pubky });
     }
     const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
@@ -65,8 +65,8 @@ export class AuthController {
     await Core.clearDatabase();
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    authStore.setSession(session);
-    authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session }));
+    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };
+    authStore.init(initialState);
   }
 
   /**
@@ -124,27 +124,21 @@ export class AuthController {
   }
 
   /**
-   * Authorizes the current user and initializes the application bootstrap with retry logic.
-   * Uses the current user's pubky from the auth store to set up notifications and mark as authenticated.
+   * Initializes the application bootstrap after profile creation.
+   * Waits for Nexus to index the user's profile.json, then bootstraps notifications and data.
    */
-  static async authorizeAndBootstrap() {
+  static async bootstrapWithDelay() {
     const authStore = Core.useAuthStore.getState();
     const pubky = authStore.selectCurrentUserPubky();
-    const {
-      meta: { url },
-    } = Core.NotificationNormalizer.to(pubky);
-
     // Wait 5 seconds before bootstrap to let Nexus index the user
-    Libs.Logger.info(`Waiting 5 seconds before bootstrap...`);
+    Libs.Logger.info(`Waiting 5 seconds to index ${pubky} profile.json in Nexus before bootstrap...`);
     await Libs.sleep(5000);
-
-    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
-    Core.useNotificationStore.getState().setState(notification);
+    await this.hydrateMeImAlive({ pubky });
     authStore.setHasProfile(true);
   }
 
   /**
-   * Generates a signup token for user registration.
+   * Generates a signup token for user registration. This is just for testing environments
    * @returns Promise resolving to the generated signup token
    */
   static async generateSignupToken() {
