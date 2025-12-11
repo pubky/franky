@@ -25,16 +25,10 @@ export class FeedbackApplication {
    * @param params.name - User's display name
    * @throws AppError if submission fails
    */
-  static async submit(params: Types.TFeedbackSubmitInput): Promise<void> {
+  static async submit({ pubky, comment, name }: Types.TFeedbackSubmitInput): Promise<void> {
     try {
-      const { pubky, comment, name } = params;
-
       // Delegate to Chatwoot service
-      await Core.ChatwootService.submit({
-        pubky,
-        comment,
-        name,
-      });
+      await Core.ChatwootService.submit({ pubky, comment, name });
     } catch (error) {
       // Log error for observability
       if (error instanceof Libs.AppError) {
