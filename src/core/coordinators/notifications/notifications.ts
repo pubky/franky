@@ -96,9 +96,6 @@ export class NotificationCoordinator extends Coordinator<NotificationCoordinator
 
       // Coordinator calls controller to fetch notifications
       await Core.NotificationController.notifications({ userId });
-
-      // Fetch related posts and users for cached notifications
-      await Core.NotificationController.fetchMissingEntitiesFromCache({ userId });
     } catch (error) {
       Logger.error('Error polling notifications', { error });
       // Don't stop polling on error - just log and continue

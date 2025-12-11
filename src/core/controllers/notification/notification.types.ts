@@ -1,5 +1,3 @@
-import type { Pubky } from '@/core';
-
 /**
  * Parameters for timestamp-based notification pagination in controller.
  *
@@ -12,11 +10,4 @@ import type { Pubky } from '@/core';
 export type TGetNotificationsParams = {
   olderThan?: number;
   limit?: number;
-};
-
-/**
- * Parameters for fetching missing entities (posts/users) for cached notifications.
- */
-export type TFetchMissingEntitiesParams = {
-  userId: Pubky;
 };

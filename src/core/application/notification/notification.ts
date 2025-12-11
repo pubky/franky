@@ -13,6 +13,13 @@ export class NotificationApplication {
    */
   static async notifications({ userId, lastRead }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
     const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
+
+    // Transform to flat notifications for entity fetching
+    const flatNotifications = notificationList.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+
+    // Fetch missing users/posts referenced in notifications
+    await this.fetchMissingEntities(flatNotifications, userId);
+
     return await Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead);
   }
 
@@ -35,26 +42,6 @@ export class NotificationApplication {
    */
   static async getAllFromCache(): Promise<Core.FlatNotification[]> {
     return await Core.LocalNotificationService.getAll();
-  }
-
-  /**
-   * Fetches missing posts and users for notifications already in cache.
-   * Called by the coordinator after polling to ensure related entities are available.
-   *
-   * @param viewerId - The current user's public key for relationship context
-   */
-  static async fetchMissingEntitiesFromCache(viewerId: Core.Pubky): Promise<void> {
-    const cachedNotifications = await Core.LocalNotificationService.getAll();
-
-    if (cachedNotifications.length === 0) {
-      return;
-    }
-
-    try {
-      await this.fetchMissingEntities(cachedNotifications, viewerId);
-    } catch (error) {
-      Libs.Logger.warn('Failed to fetch missing entities for cached notifications', { error });
-    }
   }
 
   /**
