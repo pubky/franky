@@ -53,7 +53,8 @@ When working on this codebase, prioritize reading these files in order:
     │   ├── 0009-application-cross-domain-orchestration.md
 │   ├── 0010-notification-application-orchestration.md
 │   ├── 0011-component-composition-children-pattern.md
-│   └── 0012-component-layer-eslint-enforcement.md
+│   ├── 0012-component-layer-eslint-enforcement.md
+│   └── 0013-code-style-enforcement.md
     └── snapshot-testing.md         # Snapshot testing philosophy
 ```
 
@@ -158,6 +159,7 @@ ADRs document key architectural choices. They capture the **why** behind decisio
 - [0010: Notification Application Orchestration](docs/adr/0010-notification-application-orchestration.md) - NotificationApplication cross-domain entity aggregation privilege
 - [0011: Component Composition via Children Props](docs/adr/0011-component-composition-children-pattern.md) - Molecules receive organisms via children props
 - [0012: Component Layer ESLint Enforcement](docs/adr/0012-component-layer-eslint-enforcement.md) - Automated enforcement of component composition rules
+- [0013: Code Style Enforcement](docs/adr/0013-code-style-enforcement.md) - Types in `.types.ts`, constants in `.constants.ts`, typed destructured parameters
 
 **Creating new ADRs**: Use `docs/adr/TEMPLATE.md` as the starting point.
 
@@ -215,6 +217,9 @@ For non-Cursor IDEs:
 ❌ **Don't duplicate logic across layers** - Single responsibility per layer  
 ❌ **Don't return un-normalized data** - Pipes must normalize external shapes
 ❌ **Don't let molecules import organisms** - Pass organisms via children props (ADR-0011, enforced by ADR-0012)
+❌ **Don't define types inline** - Types/interfaces go in `*.types.ts` files (ADR-0013)
+❌ **Don't scatter constants** - Constants go in `*.constants.ts` files (ADR-0013)
+❌ **Don't use positional function parameters** - Use destructured params with interfaces (ADR-0013)
 
 ## Common Development Workflows
 
@@ -270,19 +275,39 @@ For non-Cursor IDEs:
 ### Code Organization
 
 ```typescript
+// Component folder structure (ADR-0013):
+ComponentName/
+├── ComponentName.tsx           # Component implementation (imports only)
+├── ComponentName.types.ts      # Types and interfaces
+├── ComponentName.constants.ts  # Constants (if any)
+├── ComponentName.test.tsx      # Tests
+├── ComponentName.stories.tsx   # Storybook
+└── index.ts                    # Barrel export
+
 // Component file structure:
-1. Imports (React, external, internal)
-2. Types/Interfaces
-3. Component definition
-4. Export
+1. Imports (React, external, internal, types)
+2. Component definition
+3. Export
 
 // Core file structure:
 1. Imports
-2. Types
-3. Constants
-4. Helper functions
-5. Main logic
-6. Export
+2. Helper functions (typed with destructured params)
+3. Main logic
+4. Export
+```
+
+### Function Signature Pattern (ADR-0013)
+
+```typescript
+// ❌ WRONG: Positional parameters
+function add(num1: number, num2: number): number { ... }
+
+// ✅ CORRECT: Destructured with interface
+interface AddParams {
+  num1: number;
+  num2: number;
+}
+function add({ num1, num2 }: AddParams): number { ... }
 ```
 
 ## Quality Standards
