@@ -4,7 +4,7 @@ import { POST_THREAD_CONNECTOR_VARIANTS } from './PostThreadConnector.constants'
 import type { PostThreadConnectorVariant } from './PostThreadConnector.types';
 
 interface PostThreadConnectorProps {
-  height: number;
+  height?: number;
   variant?: PostThreadConnectorVariant;
   'data-testid'?: string;
 }
@@ -36,7 +36,7 @@ const getBaseContainerProps = (effectiveHeight: number, variant: PostThreadConne
 // Common inner container structure
 const InnerContainer = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
   <Atoms.Container
-    className={`relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start ${className}`}
+    className={Libs.cn('relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start', className)}
     overrideDefaults
   >
     {children}
@@ -87,16 +87,6 @@ export const PostThreadConnector = ({
             </Atoms.Container>
           </InnerContainer>
           <Spacer />
-        </Atoms.Container>
-      );
-
-    case POST_THREAD_CONNECTOR_VARIANTS.GAP_FIX:
-      // Gap-fix variant - minimal connector
-      return (
-        <Atoms.Container {...baseProps}>
-          <InnerContainer>
-            <ThreadLine />
-          </InnerContainer>
         </Atoms.Container>
       );
 

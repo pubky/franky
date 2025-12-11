@@ -20,25 +20,6 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with dialog-reply va
 </div>
 `;
 
-exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant 1`] = `
-<div
-  class="flex w-3 flex-col items-start"
-  data-override-defaults="true"
-  data-variant="gap-fix"
-  style="height: 100px;"
->
-  <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start "
-    data-override-defaults="true"
-  >
-    <div
-      class="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border"
-      data-override-defaults="true"
-    />
-  </div>
-</div>
-`;
-
 exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`] = `
 <div
   class="flex w-3 flex-col items-start border-l border-border"
@@ -78,7 +59,7 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`
   style="height: 100px;"
 >
   <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start "
+    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
     data-override-defaults="true"
   >
     <div

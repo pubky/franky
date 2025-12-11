@@ -39,16 +39,8 @@ export const Last: Story = {
   },
 };
 
-export const GapFix: Story = {
-  args: {
-    height: 12,
-    variant: POST_THREAD_CONNECTOR_VARIANTS.GAP_FIX,
-  },
-};
-
 export const DialogReply: Story = {
   args: {
-    height: 0, // dialog-reply variant doesn't use height
     variant: POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY,
   },
 };
@@ -79,11 +71,7 @@ export const AllVariants: Story = {
         <span className="text-xs text-muted-foreground">Last</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <PostThreadConnector height={12} variant={POST_THREAD_CONNECTOR_VARIANTS.GAP_FIX} />
-        <span className="text-xs text-muted-foreground">Gap Fix</span>
-      </div>
-      <div className="flex flex-col items-center gap-2">
-        <PostThreadConnector height={0} variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />
+        <PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />
         <span className="text-xs text-muted-foreground">Dialog Reply</span>
       </div>
     </div>

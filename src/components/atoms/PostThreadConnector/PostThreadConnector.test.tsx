@@ -53,21 +53,9 @@ describe('PostThreadConnector', () => {
       expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.LAST);
     });
 
-    it('renders with gap-fix variant', () => {
-      const { container } = render(
-        <PostThreadConnector height={100} variant={POST_THREAD_CONNECTOR_VARIANTS.GAP_FIX} data-testid="connector" />,
-      );
-      const connector = container.querySelector('[data-testid="connector"]');
-      expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.GAP_FIX);
-    });
-
     it('renders with dialog-reply variant', () => {
       const { container } = render(
-        <PostThreadConnector
-          height={100}
-          variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY}
-          data-testid="connector"
-        />,
+        <PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} data-testid="connector" />,
       );
       const connector = container.querySelector('[data-testid="connector"]');
       expect(connector).toBeInTheDocument();
@@ -107,17 +95,8 @@ describe('PostThreadConnector', () => {
       expect(container.firstChild).toMatchSnapshot();
     });
 
-    it('matches snapshot with gap-fix variant', () => {
-      const { container } = render(
-        <PostThreadConnector height={100} variant={POST_THREAD_CONNECTOR_VARIANTS.GAP_FIX} />,
-      );
-      expect(container.firstChild).toMatchSnapshot();
-    });
-
     it('matches snapshot with dialog-reply variant', () => {
-      const { container } = render(
-        <PostThreadConnector height={100} variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />,
-      );
+      const { container } = render(<PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />);
       expect(container.firstChild).toMatchSnapshot();
     });
 

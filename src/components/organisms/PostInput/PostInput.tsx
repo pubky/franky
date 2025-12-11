@@ -110,9 +110,7 @@ export function PostInput({
       className="relative cursor-pointer rounded-md border border-dashed border-input p-6"
       onClick={handleExpand}
     >
-      {showThreadConnector && (
-        <Atoms.PostThreadConnector height={0} variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />
-      )}
+      {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
       <Atoms.Container className="gap-4">
         {currentUserPubky && (
           <Organisms.PostHeader
