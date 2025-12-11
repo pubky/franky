@@ -107,6 +107,11 @@ const envSchema = z.object({
   BASE_URL_SUPPORT: z.string().url().optional(),
   SUPPORT_API_ACCESS_TOKEN: z.string().min(1).optional(),
   SUPPORT_ACCOUNT_ID: z.string().min(1).optional(),
+  SUPPORT_FEEDBACK_INBOX_ID: z
+    .string()
+    .min(1)
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : undefined)),
 
   NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.png'),
   NEXT_PUBLIC_SITE_NAME: z.string().optional().default('Pubky App'),
@@ -163,6 +168,7 @@ function parseEnv(): z.infer<typeof envSchema> {
       BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
       SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,
       SUPPORT_ACCOUNT_ID: process.env.SUPPORT_ACCOUNT_ID,
+      SUPPORT_FEEDBACK_INBOX_ID: process.env.SUPPORT_FEEDBACK_INBOX_ID,
       NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
       NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
       NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,

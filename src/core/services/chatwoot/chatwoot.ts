@@ -2,7 +2,6 @@ import * as Libs from '@/libs';
 import * as Types from './chatwoot.types';
 import { ChatwootApi, type TChatwootApiConfig } from './chatwoot.api';
 
-const FEEDBACK_INBOX_ID = 26;
 const FEEDBACK_MESSAGE_PREFIX = 'Feedback';
 
 /**
@@ -16,6 +15,7 @@ const FEEDBACK_MESSAGE_PREFIX = 'Feedback';
  * - BASE_URL_SUPPORT
  * - SUPPORT_API_ACCESS_TOKEN
  * - SUPPORT_ACCOUNT_ID
+ * - SUPPORT_FEEDBACK_INBOX_ID
  */
 export class ChatwootService {
   private constructor() {}
@@ -29,12 +29,13 @@ export class ChatwootService {
    * @returns Configuration object with baseUrl, accountId, and headers
    * @throws AppError if required environment variables are missing
    */
-  private static getConfig(): TChatwootApiConfig {
+  private static getConfig(): TChatwootApiConfig & { inboxId: number } {
     const baseUrl = Libs.Env.BASE_URL_SUPPORT;
     const apiAccessToken = Libs.Env.SUPPORT_API_ACCESS_TOKEN;
     const accountId = Libs.Env.SUPPORT_ACCOUNT_ID;
+    const inboxId = Libs.Env.SUPPORT_FEEDBACK_INBOX_ID;
 
-    if (!baseUrl || !apiAccessToken || !accountId) {
+    if (!baseUrl || !apiAccessToken || !accountId || !inboxId) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.ENV_MISSING_REQUIRED,
         'Missing required Chatwoot environment variables',
@@ -44,6 +45,7 @@ export class ChatwootService {
             baseUrl: !baseUrl,
             apiAccessToken: !apiAccessToken,
             accountId: !accountId,
+            inboxId: !inboxId,
           },
         },
       );
@@ -52,6 +54,7 @@ export class ChatwootService {
     return {
       baseUrl,
       accountId,
+      inboxId,
       headers: {
         api_access_token: apiAccessToken,
         'Content-Type': 'application/json; charset=utf-8',
@@ -85,7 +88,7 @@ export class ChatwootService {
 
     // Create new contact if not found
     return ChatwootApi.createContact(config, {
-      inboxId: FEEDBACK_INBOX_ID,
+      inboxId: config.inboxId,
       name,
       email,
     });
@@ -108,7 +111,7 @@ export class ChatwootService {
 
     await ChatwootApi.createConversation(config, {
       sourceId,
-      inboxId: FEEDBACK_INBOX_ID,
+      inboxId: config.inboxId,
       contactId,
       content,
     });
