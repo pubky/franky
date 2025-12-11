@@ -3,11 +3,13 @@ import { ReactNode } from 'react';
 import { visit } from 'unist-util-visit';
 
 // We assign full code blocks without a language specified as plaintext (ex. ```...```)
-export const remarkPlaintextCodeblock = () => (tree: Root) => {
-  visit(tree, 'code', (node) => {
-    node.lang = node.lang ?? 'plaintext';
-  });
-};
+export const remarkPlaintextCodeblock =
+  (): ((tree: Root) => void) =>
+  (tree: Root): void => {
+    visit(tree, 'code', (node) => {
+      node.lang = node.lang ?? 'plaintext';
+    });
+  };
 
 // Configuration for pattern-matching remark plugins
 interface PatternPluginConfig {
@@ -119,7 +121,7 @@ export const remarkMentions = createPatternPlugin({
 });
 
 // Extract text safely - children from remark is typically a text node
-export const extractTextFromChildren = (children: ReactNode) =>
+export const extractTextFromChildren = (children: ReactNode): string =>
   typeof children === 'string'
     ? children
     : Array.isArray(children) && typeof children[0] === 'string'

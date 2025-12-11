@@ -41,7 +41,7 @@ export function Link({
   overrideDefaults = false,
   className,
   ...props
-}: LinkProps) {
+}: LinkProps): React.ReactElement {
   const linkVariants = cva('cursor-pointer text-brand hover:text-brand/80 transition-colors', {
     variants: {
       variant: {

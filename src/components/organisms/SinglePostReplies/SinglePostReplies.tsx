@@ -12,7 +12,7 @@ interface PostRepliesProps {
   postId: string;
 }
 
-export function SinglePostReplies({ postId }: PostRepliesProps) {
+export function SinglePostReplies({ postId }: PostRepliesProps): React.ReactElement {
   const postDetails = useLiveQuery(() => Core.db.post_details.get(postId), [postId]);
 
   const router = useRouter();

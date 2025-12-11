@@ -31,7 +31,7 @@ export function User({
   actionVariant = Atoms.ButtonVariant.SECONDARY,
   className,
   'data-testid': dataTestId,
-}: UserProps) {
+}: UserProps): React.ReactElement {
   return (
     <Atoms.Container
       className={Libs.cn('flex flex-row items-center gap-2', className)}

@@ -18,7 +18,7 @@ import { useSearchTags } from '@/hooks/useSearchStreamId';
  * - Reuses HomeFeedSidebar for sort/content filters
  * - Uses TimelineFeed with SEARCH variant for infinite scroll
  */
-export function Search() {
+export function Search(): React.ReactElement {
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
 

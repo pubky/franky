@@ -4,7 +4,7 @@ export interface AvatarEmojiBadgeProps {
   emoji: string;
 }
 
-export function AvatarEmojiBadge({ emoji }: AvatarEmojiBadgeProps) {
+export function AvatarEmojiBadge({ emoji }: AvatarEmojiBadgeProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults={true}

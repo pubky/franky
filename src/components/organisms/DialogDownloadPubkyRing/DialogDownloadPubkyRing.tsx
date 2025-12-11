@@ -8,7 +8,7 @@ interface DialogDownloadPubkyRingProps {
   store?: 'apple' | 'android';
 }
 
-export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubkyRingProps) {
+export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubkyRingProps): React.ReactElement {
   const imageBadge =
     store === 'apple'
       ? {

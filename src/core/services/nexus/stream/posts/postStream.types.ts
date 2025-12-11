@@ -105,3 +105,14 @@ export type TStreamIdBreakdown = [
   kind: string | undefined,
   tags: string | undefined,
 ];
+
+export type PostStreamApiEndpoint =
+  | 'all'
+  | 'following'
+  | 'followers'
+  | 'friends'
+  | 'bookmarks'
+  | 'post_replies'
+  | 'author'
+  | 'author_replies'
+  | 'postsByIds';

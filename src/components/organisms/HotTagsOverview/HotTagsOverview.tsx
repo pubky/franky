@@ -7,8 +7,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
 import type { HotTagsOverviewProps } from './HotTagsOverview.types';
-
-const DEFAULT_TAGS_LIMIT = 50;
+import { DEFAULT_TAGS_LIMIT } from './HotTagsOverview.constants';
 
 /**
  * HotTagsOverview
@@ -16,7 +15,7 @@ const DEFAULT_TAGS_LIMIT = 50;
  * Organism that displays a grid of trending tags.
  * Fetches hot tags based on reach and timeframe filters from the hot store.
  */
-export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTagsOverviewProps) {
+export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTagsOverviewProps): React.ReactElement {
   const router = useRouter();
   const { reach, timeframe } = Core.useHotStore();
 
@@ -27,7 +26,7 @@ export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTa
     limit,
   });
 
-  const handleTagClick = (tagName: string) => {
+  const handleTagClick = (tagName: string): void => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
   };
 

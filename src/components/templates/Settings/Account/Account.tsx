@@ -11,14 +11,14 @@ export interface AccountProps {
   className?: string;
 }
 
-export function Account({ className }: AccountProps) {
+export function Account({ className }: AccountProps): React.ReactElement {
   const router = useRouter();
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleDownloadData = async () => {
+  const handleDownloadData = async (): Promise<void> => {
     setLoadingDownload(true);
     setProgressDownload(0);
     // TODO: Implement download data logic
@@ -28,11 +28,11 @@ export function Account({ className }: AccountProps) {
     }, 2000);
   };
 
-  const handleOpenDeleteDialog = () => {
+  const handleOpenDeleteDialog = (): void => {
     setShowDeleteDialog(true);
   };
 
-  const handleEditProfile = () => {
+  const handleEditProfile = (): void => {
     router.push(App.SETTINGS_ROUTES.EDIT);
   };
 

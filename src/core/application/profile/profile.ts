@@ -7,7 +7,7 @@ import * as Libs from '@/libs';
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
-  static async read({ userId }: Core.TReadProfileParams) {
+  static async read({ userId }: Core.TReadProfileParams): Promise<Core.NormalizedUserProfile | null> {
     // Try to get from local database first
     const localUserDetails = await Core.UserDetailsModel.findById(userId);
 
@@ -44,7 +44,7 @@ export class ProfileApplication {
     return await Core.LocalProfileService.bulkDetails(userIds);
   }
 
-  static async create({ profile, url, pubky }: Core.TCreateProfileInput) {
+  static async create({ profile, url, pubky }: Core.TCreateProfileInput): Promise<void> {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
       const authStore = Core.useAuthStore.getState();
@@ -58,7 +58,7 @@ export class ProfileApplication {
     }
   }
 
-  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountParams) {
+  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountParams): Promise<void> {
     // Clear local IndexedDB data first
     await Core.LocalProfileService.deleteAccount();
 
@@ -114,7 +114,7 @@ export class ProfileApplication {
     bio: string;
     image: string | null;
     links: { title: string; url: string }[];
-  }) {
+  }): Promise<void> {
     try {
       // Get current user details from local DB
       const currentUser = await Core.UserDetailsModel.findById(pubky);
@@ -163,7 +163,7 @@ export class ProfileApplication {
    * @see https://github.com/pubky/pubky-app-specs#pubkyappuser
    * @param params - Parameters containing user's public key and status
    */
-  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }): Promise<void> {
     try {
       // Get current user details from local DB
       const currentUser = await Core.UserDetailsModel.findById(pubky);

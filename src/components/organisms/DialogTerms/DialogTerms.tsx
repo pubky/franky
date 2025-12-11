@@ -1,14 +1,11 @@
 import * as Atoms from '@/atoms';
-
-const EMAIL_URL = 'mailto:info@synonym.to';
-const EMAIL_REPORT_URL = 'mailto:report@synonym.to';
-const COPYRIGHT_URL = '/copyright';
+import { EMAIL_URL, EMAIL_REPORT_URL, COPYRIGHT_URL } from './DialogTerms.constants';
 
 interface DialogTermsProps {
   trigger?: React.ReactNode;
 }
 
-export function DialogTerms({ trigger }: DialogTermsProps) {
+export function DialogTerms({ trigger }: DialogTermsProps): React.ReactElement {
   const baseCSS = 'text-muted-foreground text-base font-normal';
   const baseCSSItalic = 'text-muted-foreground text-base font-normal italic';
 

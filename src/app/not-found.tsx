@@ -6,7 +6,7 @@ export const metadata = Molecules.Metadata({
   robots: false,
 });
 
-export default function NotFound() {
+export default function NotFound(): React.ReactElement {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <h2 className="text-2xl font-bold">Not Found</h2>

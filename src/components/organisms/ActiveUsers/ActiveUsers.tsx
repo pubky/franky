@@ -17,7 +17,7 @@ import type { ActiveUsersProps } from './ActiveUsers.types';
  *
  * Note: This is an Organism because it interacts with Core via hooks (useUserStream, useFollowUser).
  */
-export function ActiveUsers({ className }: ActiveUsersProps) {
+export function ActiveUsers({ className }: ActiveUsersProps): React.ReactElement {
   const router = useRouter();
   const { users, isLoading: isStreamLoading } = Hooks.useUserStream({
     streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
@@ -27,15 +27,15 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
   });
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
-  const handleUserClick = (pubky: Core.Pubky) => {
+  const handleUserClick = (pubky: Core.Pubky): void => {
     router.push(`${APP_ROUTES.PROFILE}/${pubky}`);
   };
 
-  const handleFollowClick = async (userId: Core.Pubky, isFollowing: boolean) => {
+  const handleFollowClick = async (userId: Core.Pubky, isFollowing: boolean): Promise<void> => {
     await toggleFollow(userId, isFollowing);
   };
 
-  const handleSeeAll = () => {
+  const handleSeeAll = (): void => {
     // TODO: Navigate to all active users page
     Libs.Logger.debug('[ActiveUsers] See all clicked');
   };

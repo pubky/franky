@@ -57,7 +57,7 @@ export class FileController {
    * @param params.fileUris - Array of file URIs (pubky) to fetch
    * @returns Promise resolving to file metadata
    */
-  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
+  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams): Promise<Core.AttachmentConstructed[]> {
     return await Core.FileApplication.getMetadata({ fileAttachments });
   }
 }

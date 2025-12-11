@@ -6,14 +6,14 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as App from '@/app';
 
-export const BackupNavigation = () => {
+export const BackupNavigation = (): React.ReactElement => {
   const router = useRouter();
 
-  const onHandleContinueButton = () => {
+  const onHandleContinueButton = (): void => {
     router.push(App.ONBOARDING_ROUTES.HOMESERVER);
   };
 
-  const onHandleBackButton = () => {
+  const onHandleBackButton = (): void => {
     router.push(App.ONBOARDING_ROUTES.PUBKY);
   };
 
@@ -29,7 +29,7 @@ export const BackupNavigation = () => {
   );
 };
 
-export const BackupPageHeader = () => {
+export const BackupPageHeader = (): React.ReactElement => {
   return (
     <Atoms.PageHeader data-testid="backup-page-header">
       <Molecules.PageTitle size="large">

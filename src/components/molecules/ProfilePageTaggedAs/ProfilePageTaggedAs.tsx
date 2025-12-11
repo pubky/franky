@@ -14,10 +14,10 @@ export function ProfilePageTaggedAs({
   onTagClick,
   pubky,
   userName,
-}: ProfilePageTaggedAsProps) {
+}: ProfilePageTaggedAsProps): React.ReactElement {
   const router = useRouter();
 
-  const getButtonLabel = () => {
+  const getButtonLabel = (): string => {
     if (!pubky) return 'Tag Yourself';
     if (userName) return `Tag ${Libs.truncateString(userName, MAX_NAME_LENGTH)}`;
     return 'Tag User';

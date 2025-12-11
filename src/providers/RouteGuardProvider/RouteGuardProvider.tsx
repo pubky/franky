@@ -7,10 +7,9 @@ import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import * as App from '@/app';
 import * as Atoms from '@/atoms';
+import type { RouteGuardProviderProps } from './RouteGuardProvider.types';
 
-interface RouteGuardProviderProps {
-  children: React.ReactNode;
-}
+export type { RouteGuardProviderProps } from './RouteGuardProvider.types';
 
 /**
  * RouteGuardProvider protects routes based on user authentication status.

@@ -19,7 +19,14 @@ interface PopoverProps extends React.ComponentProps<typeof PopoverPrimitive.Root
   hoverDelay?: number;
 }
 
-function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, ...props }: PopoverProps) {
+function Popover({
+  open,
+  onOpenChange,
+  hover = false,
+  hoverDelay = 0,
+  children,
+  ...props
+}: PopoverProps): React.ReactElement {
   const [internalOpen, setInternalOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isTouchDevice = Hooks.useIsTouchDevice();
@@ -30,14 +37,14 @@ function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, 
   // Disable hover on touch devices
   const effectiveHover = hover && !isTouchDevice;
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (): void => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
     if (effectiveHover) {
       if (hoverDelay > 0) {
-        timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = setTimeout((): void => {
           handleOpenChange?.(true);
         }, hoverDelay);
       } else {
@@ -46,7 +53,7 @@ function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, 
     }
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (): void => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
@@ -54,7 +61,7 @@ function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, 
     if (effectiveHover) {
       handleOpenChange?.(false);
       // Remove focus from trigger when closing via hover
-      setTimeout(() => {
+      setTimeout((): void => {
         const activeElement = document.activeElement as HTMLElement;
         if (activeElement && activeElement.blur) {
           activeElement.blur();
@@ -63,8 +70,8 @@ function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, 
     }
   };
 
-  useEffect(() => {
-    return () => {
+  useEffect((): (() => void) => {
+    return (): void => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
@@ -97,20 +104,20 @@ function PopoverTrigger({
   onMouseEnter: propOnMouseEnter,
   onMouseLeave: propOnMouseLeave,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Trigger>): React.ReactElement {
   const { onMouseEnter: contextOnMouseEnter, onMouseLeave: contextOnMouseLeave, hover } = useContext(PopoverContext);
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>): void => {
     contextOnMouseEnter?.();
     propOnMouseEnter?.(e);
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>): void => {
     contextOnMouseLeave?.();
     propOnMouseLeave?.(e);
   };
 
-  const handleFocus = (e: React.FocusEvent<HTMLButtonElement>) => {
+  const handleFocus = (e: React.FocusEvent<HTMLButtonElement>): void => {
     // Prevent focus outline when using hover mode
     if (hover) {
       e.currentTarget.blur();
@@ -139,15 +146,15 @@ function PopoverContent({
   onMouseEnter: propOnMouseEnter,
   onMouseLeave: propOnMouseLeave,
   ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Content>): React.ReactElement {
   const { onMouseEnter: contextOnMouseEnter, onMouseLeave: contextOnMouseLeave } = useContext(PopoverContext);
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>): void => {
     contextOnMouseEnter?.();
     propOnMouseEnter?.(e);
   };
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>): void => {
     contextOnMouseLeave?.();
     propOnMouseLeave?.(e);
   };
@@ -171,7 +178,7 @@ function PopoverContent({
   );
 }
 
-function PopoverAnchor({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
+function PopoverAnchor({ ...props }: React.ComponentProps<typeof PopoverPrimitive.Anchor>): React.ReactElement {
   return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />;
 }
 

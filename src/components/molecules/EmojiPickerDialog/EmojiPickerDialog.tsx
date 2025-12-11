@@ -17,8 +17,8 @@ export function EmojiPickerDialog({
   onEmojiSelect,
   maxLength,
   currentInput,
-}: EmojiPickerDialogProps) {
-  const handleEmojiSelect = (emoji: { native: string }) => {
+}: EmojiPickerDialogProps): React.ReactElement {
+  const handleEmojiSelect = (emoji: { native: string }): void => {
     onEmojiSelect(emoji);
     onOpenChange(false);
   };

@@ -9,7 +9,7 @@ import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import { MAX_SIDEBAR_TAGS } from './ProfilePageSidebar.constants';
 
-export function ProfilePageSidebar() {
+export function ProfilePageSidebar(): React.ReactElement {
   const pathname = usePathname();
 
   // Get the profile pubky from context

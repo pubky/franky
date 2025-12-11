@@ -73,3 +73,16 @@ export type TUserStreamQueryParams =
   | TUserStreamWithDepthParams
   | TUserStreamBase
   | TUserStreamUsernameParams;
+
+export type UserStreamApiEndpoint =
+  | 'followers'
+  | 'following'
+  | 'friends'
+  | 'muted'
+  | 'recommended'
+  | 'influencers'
+  | 'postReplies'
+  | 'friendsWithDepth'
+  | 'mostFollowed'
+  | 'username'
+  | 'usersByIds';

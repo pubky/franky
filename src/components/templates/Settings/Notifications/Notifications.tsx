@@ -39,10 +39,10 @@ export interface NotificationsProps {
   className?: string;
 }
 
-export function Notifications({ className }: NotificationsProps) {
+export function Notifications({ className }: NotificationsProps): React.ReactElement {
   const [preferences, setPreferences] = useState(defaultPreferences);
 
-  const handleToggle = (type: NotificationType) => {
+  const handleToggle = (type: NotificationType): void => {
     setPreferences((prev) => ({
       ...prev,
       [type]: !prev[type],

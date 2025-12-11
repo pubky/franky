@@ -16,7 +16,7 @@ import type { WhoToFollowProps } from './WhoToFollow.types';
  *
  * Note: This is an Organism because it interacts with Core via hooks (useUserStream, useFollowUser).
  */
-export function WhoToFollow({ className }: WhoToFollowProps) {
+export function WhoToFollow({ className }: WhoToFollowProps): React.ReactElement {
   const router = useRouter();
   const { users, isLoading: isStreamLoading } = Hooks.useUserStream({
     streamId: Core.UserStreamTypes.RECOMMENDED,
@@ -25,15 +25,15 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
   });
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
-  const handleUserClick = (pubky: Core.Pubky) => {
+  const handleUserClick = (pubky: Core.Pubky): void => {
     router.push(`${APP_ROUTES.PROFILE}/${pubky}`);
   };
 
-  const handleFollowClick = async (userId: Core.Pubky, isFollowing: boolean) => {
+  const handleFollowClick = async (userId: Core.Pubky, isFollowing: boolean): Promise<void> => {
     await toggleFollow(userId, isFollowing);
   };
 
-  const handleSeeAll = () => {
+  const handleSeeAll = (): void => {
     // TODO: Navigate to all recommended users page
     Libs.Logger.debug('[WhoToFollow] See all clicked');
   };

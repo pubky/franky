@@ -19,7 +19,7 @@ export class BookmarkController {
    * @param params.userId - ID of the user creating the bookmark (current user)
    * @param params.postId - Composite post ID (authorId:postId)
    */
-  static async create({ postId, userId }: Core.TBookmarkEventParams) {
+  static async create({ postId, userId }: Core.TBookmarkEventParams): Promise<void> {
     const { pubky: authorId, id: rawPostId } = Core.parseCompositeId(postId);
     const postUri = postUriBuilder(authorId, rawPostId);
     const { bookmark, meta } = Core.BookmarkNormalizer.to(postUri, userId);
@@ -37,7 +37,7 @@ export class BookmarkController {
    * @param params.userId - ID of the user removing the bookmark (current user)
    * @param params.postId - Composite post ID (authorId:postId)
    */
-  static async delete({ postId, userId }: Core.TBookmarkEventParams) {
+  static async delete({ postId, userId }: Core.TBookmarkEventParams): Promise<void> {
     const { pubky: authorId, id: rawPostId } = Core.parseCompositeId(postId);
     const postUri = postUriBuilder(authorId, rawPostId);
     const { meta } = Core.BookmarkNormalizer.to(postUri, userId);

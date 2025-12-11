@@ -11,7 +11,7 @@ import * as Providers from '@/providers';
  * Uses the author_replies stream (author_replies:{userId}) to fetch replies.
  * Uses ProfileContext to get the target user's pubky.
  */
-export function ProfileReplies() {
+export function ProfileReplies(): React.ReactElement | null {
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
 

@@ -100,11 +100,6 @@ const extractVideoIdFromEmbedUrl = (embedUrl: string): string => {
 };
 
 /**
- * Vimeo supported domains (lowercase)
- */
-const VIMEO_DOMAINS = ['vimeo.com', 'www.vimeo.com', 'player.vimeo.com'] as const;
-
-/**
  * Vimeo embed provider
  * Implements the standard EmbedProvider interface
  */
@@ -112,7 +107,7 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
   /**
    * List of supported Vimeo domains
    */
-  domains: VIMEO_DOMAINS,
+  domains: ProviderConstants.VIMEO_DOMAINS,
 
   /**
    * Parse Vimeo URL and return embed information

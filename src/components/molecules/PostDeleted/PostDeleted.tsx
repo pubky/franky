@@ -1,6 +1,6 @@
 import * as Atoms from '@/atoms';
 
-export const PostDeleted = () => {
+export const PostDeleted = (): React.ReactElement => {
   return (
     <Atoms.CardContent className="py-2">
       <Atoms.Typography size="sm" className="text-center font-normal text-muted-foreground">

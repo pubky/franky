@@ -25,7 +25,7 @@ export function useIsScrolledFromTop(threshold = 100): boolean {
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleScroll = (): void => {
       // Use RAF throttling to reduce unnecessary state updates during scroll
       if (rafRef.current) return;
       rafRef.current = requestAnimationFrame(() => {

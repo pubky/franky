@@ -13,13 +13,13 @@ interface DialogBackupPhraseProps {
   children?: ReactNode;
 }
 
-export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
+export function DialogBackupPhrase({ children }: DialogBackupPhraseProps): React.ReactElement {
   const [isHidden, setIsHidden] = useState(true);
   const [recoveryWords, setRecoveryWords] = useState<string[]>([]);
   const [step, setStep] = useState(1);
   const { mnemonic } = Stores.useOnboardingStore();
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setIsHidden(true);
     setStep(1);
   };
@@ -72,7 +72,7 @@ function RecoveryStep1({
   isHidden: boolean;
   setIsHidden: (isHidden: boolean) => void;
   setStep: (step: number) => void;
-}) {
+}): React.ReactElement {
   return (
     <>
       <Atoms.DialogHeader>
@@ -169,11 +169,17 @@ function RecoveryStep1({
   );
 }
 
-function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; setStep: (step: number) => void }) {
+function RecoveryStep2({
+  recoveryWords,
+  setStep,
+}: {
+  recoveryWords: string[];
+  setStep: (step: number) => void;
+}): React.ReactElement {
   const { userWords, errors, remainingWords, handleWordClick, validateWords, clearWord, isComplete } =
     Hooks.useRecoveryPhraseValidation({ recoveryWords });
 
-  const handleValidate = () => {
+  const handleValidate = (): void => {
     if (validateWords()) {
       setStep(3);
     }
@@ -246,7 +252,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   );
 }
 
-function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
+function RecoveryStep3({ handleClose }: { handleClose: () => void }): React.ReactElement {
   return (
     <>
       <Atoms.DialogHeader>

@@ -14,7 +14,7 @@ export const Tag = ({
   maxLength,
   'data-testid': dataTestId,
   ...props
-}: TagProps) => {
+}: TagProps): React.ReactElement => {
   const [isHovered, setIsHovered] = React.useState(false);
 
   const { backgroundColor, borderColor } = React.useMemo(() => {
@@ -28,15 +28,15 @@ export const Tag = ({
   // Truncate name if maxLength is provided
   const displayName = maxLength && name.length > maxLength ? `${name.slice(0, maxLength)}…` : name;
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     onClick?.(name);
   };
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (): void => {
     setIsHovered(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (): void => {
     setIsHovered(false);
   };
 

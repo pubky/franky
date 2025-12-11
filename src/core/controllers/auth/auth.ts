@@ -10,7 +10,7 @@ export class AuthController {
    * @param params.keypair - The cryptographic keypair for the user
    * @returns Configured homeserver service instance
    */
-  private static async signIn({ keypair }: Core.TKeypairParams) {
+  private static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.TAuthenticatedData | null> {
     // Clear database before sign in to ensure clean state
     await Core.clearDatabase();
     const { secretKey } = Core.useOnboardingStore.getState();
@@ -23,7 +23,7 @@ export class AuthController {
    * @param params.session - The user session data
    * @param params.pubky - The user's public key identifier
    */
-  private static async saveAuthenticatedDataAndBootstrap({ session, pubky }: Core.TAuthenticatedData) {
+  private static async saveAuthenticatedDataAndBootstrap({ session, pubky }: Core.TAuthenticatedData): Promise<void> {
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(pubky);
@@ -39,7 +39,7 @@ export class AuthController {
    * Authorizes the current user and initializes the application bootstrap with retry logic.
    * Uses the current user's pubky from the auth store to set up notifications and mark as authenticated.
    */
-  static async authorizeAndBootstrap() {
+  static async authorizeAndBootstrap(): Promise<void> {
     const authStore = Core.useAuthStore.getState();
     const pubky = authStore.selectCurrentUserPubky();
     const {
@@ -61,7 +61,7 @@ export class AuthController {
    * @param params.keypair - The cryptographic keypair for the user
    * @param params.signupToken - Invitation code for user registration
    */
-  static async signUp({ keypair, signupToken }: Core.TSignUpParams) {
+  static async signUp({ keypair, signupToken }: Core.TSignUpParams): Promise<void> {
     // Clear database before sign up to ensure clean state
     await Core.clearDatabase();
     const { secretKey } = Core.useOnboardingStore.getState();
@@ -112,7 +112,7 @@ export class AuthController {
    * Generates an authentication URL for external authentication flows.
    * @returns Promise resolving to the generated authentication URL
    */
-  static async getAuthUrl() {
+  static async getAuthUrl(): Promise<{ url: string; auth: Promise<Core.PublicKeyType> }> {
     const { secretKey } = Core.useOnboardingStore.getState();
     return await Core.AuthApplication.generateAuthUrl({ secretKey });
   }
@@ -122,7 +122,7 @@ export class AuthController {
    * @param params - Object containing the public key for authentication
    * @param params.publicKey - The public key for authentication
    */
-  static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams) {
+  static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams): Promise<void> {
     // Clear database before auth URL login to ensure clean state
     await Core.clearDatabase();
     const authStore = Core.useAuthStore.getState();
@@ -141,7 +141,7 @@ export class AuthController {
   /**
    * Logs out the current user from both the homeserver and local application state.
    */
-  static async logout() {
+  static async logout(): Promise<void> {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
     const { secretKey } = onboardingStore;
@@ -158,7 +158,7 @@ export class AuthController {
    * Generates a signup token for user registration.
    * @returns Promise resolving to the generated signup token
    */
-  static async generateSignupToken() {
+  static async generateSignupToken(): Promise<string> {
     return await Core.AuthApplication.generateSignupToken();
   }
 }

@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding scan page on pubky app.',
 });
 
-export default function ScanPage() {
+export default function ScanPage(): React.ReactElement {
   return <Templates.Scan />;
 }

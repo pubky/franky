@@ -23,7 +23,7 @@ export function ButtonsNavigation({
   backButtonDisabled = false,
   continueButtonDisabled = false,
   hiddenContinueButton = false,
-}: ButtonsNavigationProps) {
+}: ButtonsNavigationProps): React.ReactElement {
   return (
     <Atoms.Container className={Libs.cn('flex-row justify-between gap-3 lg:gap-6', className)}>
       <Atoms.Button

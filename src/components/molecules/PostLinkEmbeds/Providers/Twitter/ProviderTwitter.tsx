@@ -1,5 +1,6 @@
 import * as Atoms from '@/atoms';
 import * as ProviderTypes from '../Provider.types';
+import * as ProviderConstants from '../Provider.constants';
 import { Tweet } from 'react-tweet';
 
 /**
@@ -30,18 +31,6 @@ const extractTwitterId = (url: string): string | null => {
 };
 
 /**
- * Twitter/X supported domains (lowercase)
- */
-const TWITTER_DOMAINS = [
-  'twitter.com',
-  'www.twitter.com',
-  'x.com',
-  'www.x.com',
-  'mobile.twitter.com',
-  'mobile.x.com',
-] as const;
-
-/**
  * Twitter/X embed provider
  * Implements the standard EmbedProvider interface
  */
@@ -49,7 +38,7 @@ export const Twitter: ProviderTypes.EmbedProvider = {
   /**
    * List of supported Twitter/X domains
    */
-  domains: TWITTER_DOMAINS,
+  domains: ProviderConstants.TWITTER_DOMAINS,
 
   /**
    * Parse Twitter/X URL and return embed information

@@ -47,3 +47,33 @@ export const VIDEO_EMBED_PROPS = {
  * - Maintains aspect ratio on all screen sizes
  */
 export const VIDEO_ASPECT_RATIO_16_9 = '56.25%' as const;
+
+/**
+ * Twitter/X supported domains (lowercase)
+ */
+export const TWITTER_DOMAINS = [
+  'twitter.com',
+  'www.twitter.com',
+  'x.com',
+  'www.x.com',
+  'mobile.twitter.com',
+  'mobile.x.com',
+] as const;
+
+/**
+ * Vimeo supported domains (lowercase)
+ */
+export const VIMEO_DOMAINS = ['vimeo.com', 'www.vimeo.com', 'player.vimeo.com'] as const;
+
+/**
+ * YouTube supported domains (lowercase)
+ */
+export const YOUTUBE_DOMAINS = [
+  'youtube.com',
+  'www.youtube.com',
+  'youtu.be',
+  'm.youtube.com',
+  'music.youtube.com',
+  'www.youtube-nocookie.com',
+  'youtube-nocookie.com',
+] as const;

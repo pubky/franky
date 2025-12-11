@@ -3,7 +3,7 @@
 import { Toast, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@/atoms';
 import { useToast } from './use-toast';
 
-export function Toaster() {
+export function Toaster(): React.ReactElement {
   const { toasts } = useToast();
 
   return (

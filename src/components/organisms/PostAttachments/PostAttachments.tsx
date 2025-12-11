@@ -9,7 +9,7 @@ import { PostAttachmentsImagesAndVideos } from './PostAttachmentsImagesAndVideos
 import { PostAttachmentsAudios } from './PostAttachmentsAudios';
 import { PostAttachmentsGenericFiles } from './PostAttachmentsGenericFiles';
 
-export const PostAttachments = ({ attachments }: PostAttachmentsProps) => {
+export const PostAttachments = ({ attachments }: PostAttachmentsProps): React.ReactElement | null => {
   const [imagesAndVideos, setImagesAndVideos] = useState<AttachmentConstructed[]>([]);
   const [audios, setAudios] = useState<AttachmentConstructed[]>([]);
   const [genericFiles, setGenericFiles] = useState<AttachmentConstructed[]>([]);
@@ -17,7 +17,7 @@ export const PostAttachments = ({ attachments }: PostAttachmentsProps) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const constructAttachments = async () => {
+    const constructAttachments = async (): Promise<void> => {
       if (!attachments?.length) return;
 
       try {

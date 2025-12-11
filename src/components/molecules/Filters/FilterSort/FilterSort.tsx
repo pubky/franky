@@ -9,7 +9,7 @@ export function FilterSort({
   selectedTab,
   defaultSelectedTab = Core.SORT.TIMELINE,
   onTabChange,
-}: Molecules.BaseFilterProps<Core.SortType>) {
+}: Molecules.BaseFilterProps<Core.SortType>): React.ReactElement {
   const items = React.useMemo(
     () => [
       { key: Core.SORT.TIMELINE, label: 'Recent', icon: Libs.SquareAsterisk },

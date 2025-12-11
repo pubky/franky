@@ -1,4 +1,7 @@
 import * as Core from '@/core';
+import type { ReachType, NexusParamsResult } from './userStream.utils.types';
+
+export type { UserStreamApiParamsMap, ReachType, NexusParamsResult } from './userStream.utils.types';
 
 const DELIMITER = ':';
 
@@ -61,20 +64,3 @@ export function createUserStreamParams(
 
   throw new Error(`Invalid stream ID: "${streamId}". Expected 2 or 3 parts separated by "${DELIMITER}"`);
 }
-
-type UserStreamApiParamsMap = {
-  followers: Core.TUserStreamWithUserIdParams;
-  following: Core.TUserStreamWithUserIdParams;
-  friends: Core.TUserStreamWithUserIdParams;
-  muted: Core.TUserStreamWithUserIdParams;
-  recommended: Core.TUserStreamWithUserIdParams;
-  influencers: Core.TUserStreamInfluencersParams;
-  most_followed: Core.TUserStreamBase;
-};
-
-type ReachType = keyof UserStreamApiParamsMap;
-
-type NexusParamsResult<T extends ReachType> = {
-  reach: T;
-  apiParams: UserStreamApiParamsMap[T];
-};

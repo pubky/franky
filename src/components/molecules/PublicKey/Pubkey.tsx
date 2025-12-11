@@ -6,7 +6,7 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as App from '@/app';
 
-export const PublicKeyHeader = () => {
+export const PublicKeyHeader = (): React.ReactElement => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
@@ -17,14 +17,14 @@ export const PublicKeyHeader = () => {
   );
 };
 
-export const PublicKeyNavigation = () => {
+export const PublicKeyNavigation = (): React.ReactElement => {
   const router = useRouter();
 
-  const onHandleBackButton = () => {
+  const onHandleBackButton = (): void => {
     router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
-  const onHandleContinueButton = () => {
+  const onHandleContinueButton = (): void => {
     router.push(App.ONBOARDING_ROUTES.BACKUP);
   };
 

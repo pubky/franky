@@ -1,13 +1,11 @@
 import * as Atoms from '@/atoms';
-
-const EMAIL_URL = 'mailto:info@synonym.to';
-const EMAIL_PRIVACY_URL = 'mailto:privacy@synonym.to';
+import { EMAIL_URL, EMAIL_PRIVACY_URL } from './DialogPrivacy.constants';
 
 interface DialogPrivacyProps {
   trigger?: React.ReactNode;
 }
 
-export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
+export function DialogPrivacy({ trigger }: DialogPrivacyProps): React.ReactElement {
   const baseCSS = 'text-muted-foreground text-base font-normal';
 
   const defaultTrigger = (

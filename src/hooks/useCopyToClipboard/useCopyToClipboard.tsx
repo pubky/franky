@@ -3,16 +3,13 @@ import React, { useCallback } from 'react';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
+import type { UseCopyToClipboardOptions } from './useCopyToClipboard.types';
 
-interface UseCopyToClipboardOptions {
-  onSuccess?: (text: string) => void;
-  onError?: (error: Error) => void;
-  successTitle?: string;
-  errorTitle?: string;
-  errorDescription?: string;
-}
+export type { UseCopyToClipboardOptions } from './useCopyToClipboard.types';
 
-export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
+export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}): {
+  copyToClipboard: (text: string) => Promise<boolean>;
+} {
   const {
     onSuccess,
     onError,

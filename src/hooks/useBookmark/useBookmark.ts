@@ -4,13 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import type { UseBookmarkResult } from './useBookmark.types';
 
-export interface UseBookmarkResult {
-  isBookmarked: boolean;
-  isLoading: boolean;
-  isToggling: boolean;
-  toggle: () => Promise<void>;
-}
+export type { UseBookmarkResult } from './useBookmark.types';
 
 /**
  * Custom hook to manage bookmark state for a post

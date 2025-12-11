@@ -12,7 +12,14 @@ import * as Types from './Posts.types';
  * Presentational component that displays posts in a timeline with infinite scroll.
  * Receives all data and handlers from parent component.
  */
-export function TimelinePosts({ postIds, loading, loadingMore, error, hasMore, loadMore }: Types.TimelinePostsProps) {
+export function TimelinePosts({
+  postIds,
+  loading,
+  loadingMore,
+  error,
+  hasMore,
+  loadMore,
+}: Types.TimelinePostsProps): React.ReactElement {
   const { navigateToPost } = Hooks.usePostNavigation();
 
   // Infinite scroll hook

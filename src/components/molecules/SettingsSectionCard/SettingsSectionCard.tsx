@@ -11,7 +11,13 @@ export interface SettingsSectionCardProps {
   className?: string;
 }
 
-export function SettingsSectionCard({ icon: Icon, title, description, children, className }: SettingsSectionCardProps) {
+export function SettingsSectionCard({
+  icon: Icon,
+  title,
+  description,
+  children,
+  className,
+}: SettingsSectionCardProps): React.ReactElement {
   return (
     <div
       className={Libs.cn(

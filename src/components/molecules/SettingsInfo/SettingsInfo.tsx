@@ -4,23 +4,13 @@ import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
-import * as App from '@/app';
+import { FAQ_QUESTIONS, APP_VERSION } from './SettingsInfo.constants';
 
 export interface SettingsInfoProps {
   className?: string;
 }
 
-const FAQ_QUESTIONS = [
-  { question: 'How can I update my profile information?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How can I delete my post?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How do I mute someone?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How can I restore my account?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How is Pubky different from other social platforms?', href: App.SETTINGS_ROUTES.HELP },
-];
-
-const APP_VERSION = 'Pubky v0.12 © Synonym Software Ltd';
-
-export function SettingsInfo({ className }: SettingsInfoProps) {
+export function SettingsInfo({ className }: SettingsInfoProps): React.ReactElement {
   return (
     <div className={Libs.cn('flex flex-col gap-6', className)}>
       {/* Terms of Service & Privacy Section */}

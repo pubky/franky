@@ -5,11 +5,15 @@ import { z } from 'zod';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
-  static async read({ userId }: Core.TReadProfileParams) {
+  static async read({ userId }: Core.TReadProfileParams): Promise<Core.NormalizedUserProfile | null> {
     return await Core.ProfileApplication.read({ userId });
   }
 
-  static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
+  static async create(
+    profile: z.infer<typeof Core.UiUserSchema>,
+    image: string | null,
+    pubky: Core.Pubky,
+  ): Promise<void> {
     const { user, meta } = Core.UserNormalizer.to(
       {
         name: profile.name,
@@ -24,19 +28,23 @@ export class ProfileController {
     await Core.ProfileApplication.create({ profile: user, url: meta.url, pubky });
   }
 
-  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
+  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput): Promise<void> {
     await Core.ProfileApplication.deleteAccount({ pubky, setProgress });
   }
 
-  static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
+  static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput): Promise<void> {
     await Core.ProfileApplication.downloadData({ pubky, setProgress });
   }
 
-  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }): Promise<void> {
     return await Core.ProfileApplication.updateStatus({ pubky, status });
   }
 
-  static async updateProfile(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
+  static async updateProfile(
+    profile: z.infer<typeof Core.UiUserSchema>,
+    image: string | null,
+    pubky: Core.Pubky,
+  ): Promise<void> {
     await Core.ProfileApplication.updateProfile({
       pubky,
       name: profile.name,

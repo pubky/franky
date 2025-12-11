@@ -63,7 +63,10 @@ export class BootstrapApplication {
    * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification list and last read timestamp
    */
-  private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
+  private static async fetchNotifications({
+    pubky,
+    lastReadUrl,
+  }: Core.TBootstrapParams): Promise<{ list: Core.FlatNotification[]; lastRead: number }> {
     let userLastRead: number;
     try {
       const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(

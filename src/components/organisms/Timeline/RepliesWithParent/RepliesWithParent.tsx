@@ -17,7 +17,7 @@ import * as Types from './RepliesWithParent.types';
  * - Shows the parent post first (without reply line)
  * - Shows the reply post with isReply={true} (with reply line)
  */
-export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWithParentProps) {
+export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWithParentProps): React.ReactElement {
   const { postIds, loading, loadingMore, error, hasMore, loadMore } = Hooks.useStreamPagination({ streamId });
   const { navigateToPost } = Hooks.usePostNavigation();
 
@@ -61,7 +61,7 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
  * Component that fetches and displays a reply post along with its parent.
  * Always shows the parent post if it exists.
  */
-function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProps) {
+function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProps): React.ReactElement {
   // Component-level cache to track in-flight parent post fetches
   // Using useRef to avoid SSR memory leaks and state pollution
   const fetchingParentPostsRef = useRef(new Set<string>());

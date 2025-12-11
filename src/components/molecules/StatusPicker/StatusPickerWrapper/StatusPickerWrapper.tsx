@@ -13,7 +13,7 @@ export function StatusPickerWrapper({
   status,
   onStatusChange,
   sideOffset = Types.DEFAULT_POPOVER_SIDE_OFFSET,
-}: Types.StatusPickerWrapperProps) {
+}: Types.StatusPickerWrapperProps): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [localStatus, setLocalStatus] = useState<string | null>(null);
   const isMobile = Hooks.useIsMobile();
@@ -22,7 +22,7 @@ export function StatusPickerWrapper({
   const currentStatus = localStatus ?? status;
   const parsed = Libs.parseStatus(currentStatus, emoji);
 
-  const handleStatusSelect = (selectedStatus: string) => {
+  const handleStatusSelect = (selectedStatus: string): void => {
     setLocalStatus(selectedStatus);
     onStatusChange?.(selectedStatus);
     setOpen(false);

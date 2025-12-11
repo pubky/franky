@@ -14,7 +14,7 @@ export const ReplyLine = ({
   strokeColor = 'rgb(96,96,96)',
   strokeWidth = 2,
   'data-testid': dataTestId,
-}: ReplyLineProps) => {
+}: ReplyLineProps): React.ReactElement => {
   const { path, tailPath, width, height: svgHeight } = Libs.createReplyConnectorPath(height, isLast);
 
   return (

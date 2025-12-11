@@ -56,4 +56,4 @@ export const userApi = {
   },
 };
 
-export type UserApiEndpoint = keyof typeof userApi;
+export type { UserApiEndpoint } from './user.types';

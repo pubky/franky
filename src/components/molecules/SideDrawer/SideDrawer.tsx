@@ -10,7 +10,12 @@ export interface SideDrawerProps {
   position?: 'left' | 'right';
 }
 
-export function SideDrawer({ open, onOpenChangeAction, children, position = 'left' }: SideDrawerProps) {
+export function SideDrawer({
+  open,
+  onOpenChangeAction,
+  children,
+  position = 'left',
+}: SideDrawerProps): React.ReactElement | null {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 

@@ -24,7 +24,7 @@ export interface AvatarZoomModalProps {
  * @param avatarUrl - Optional URL to avatar image
  * @param name - User's name for fallback initials and alt text
  */
-export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomModalProps) {
+export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomModalProps): React.ReactElement | null {
   const modalRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
 
@@ -46,7 +46,7 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
   useEffect(() => {
     if (!open) return; // Early return when closed - no cleanup needed
 
-    const handleEscape = (e: KeyboardEvent) => {
+    const handleEscape = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
         onCloseRef.current();
       }

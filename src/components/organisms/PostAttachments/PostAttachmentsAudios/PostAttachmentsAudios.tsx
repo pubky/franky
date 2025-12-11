@@ -5,7 +5,7 @@ type PostAttachmentsAudiosProps = {
   audios: AttachmentConstructed[];
 };
 
-export const PostAttachmentsAudios = ({ audios }: PostAttachmentsAudiosProps) => {
+export const PostAttachmentsAudios = ({ audios }: PostAttachmentsAudiosProps): React.ReactElement => {
   return (
     <Atoms.Container className="gap-3">
       {audios.map((a, i) => (

@@ -1,6 +1,6 @@
 import * as Atoms from '@/atoms';
 
-export function DialogAge() {
+export function DialogAge(): React.ReactElement {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>

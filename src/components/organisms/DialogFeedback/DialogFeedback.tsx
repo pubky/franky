@@ -9,7 +9,7 @@ import * as Organisms from '@/organisms';
 import type { DialogFeedbackProps } from './DialogFeedback.types';
 import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
 
-export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
+export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps): React.ReactElement | null {
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { feedback, handleChange, submit, isSubmitting, isSuccess, hasContent, reset } = Hooks.useFeedback();
 

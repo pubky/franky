@@ -7,7 +7,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as App from '@/app';
 
-export const LogoutContent = () => {
+export const LogoutContent = (): React.ReactElement => {
   return (
     <Atoms.Container size="container" className="mb-6">
       <LogoutHeader />
@@ -20,7 +20,7 @@ export const LogoutContent = () => {
   );
 };
 
-export const LogoutHeader = () => {
+export const LogoutHeader = (): React.ReactElement => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
@@ -31,14 +31,14 @@ export const LogoutHeader = () => {
   );
 };
 
-export const LogoutNavigation = () => {
+export const LogoutNavigation = (): React.ReactElement => {
   const router = useRouter();
 
-  const onHandleBackButton = () => {
+  const onHandleBackButton = (): void => {
     router.push(App.ROOT_ROUTES);
   };
 
-  const onHandleContinueButton = () => {
+  const onHandleContinueButton = (): void => {
     router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 

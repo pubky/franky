@@ -7,6 +7,10 @@
  * @see https://tailwindcss.com/docs/breakpoints
  */
 
+import type { Breakpoint } from './theme.types';
+
+export type { Breakpoint } from './theme.types';
+
 /**
  * Tailwind CSS v4 default breakpoints in pixels
  * Used for responsive design and media query hooks
@@ -22,12 +26,7 @@ export const BREAKPOINTS = {
   xl: 1280,
   /** Extra large desktop: 1536px and up */
   '2xl': 1536,
-} as const;
-
-/**
- * Breakpoint names available in the theme
- */
-export type Breakpoint = keyof typeof BREAKPOINTS;
+} as const satisfies Record<Breakpoint, number>;
 
 /**
  * Helper function to get breakpoint value

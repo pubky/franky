@@ -15,7 +15,7 @@ export interface FAQAccordionProps {
   className?: string;
 }
 
-export function FAQAccordion({ items, className }: FAQAccordionProps) {
+export function FAQAccordion({ items, className }: FAQAccordionProps): React.ReactElement {
   return (
     <AccordionPrimitive.Root type="single" collapsible className={Libs.cn('flex w-full flex-col gap-4', className)}>
       {items.map((item) => (

@@ -1,17 +1,7 @@
 import * as Libs from '@/libs';
 import * as Types from './chatwoot.types';
 
-/**
- * Chatwoot API configuration
- */
-export interface TChatwootApiConfig {
-  baseUrl: string;
-  accountId: string;
-  headers: {
-    api_access_token: string;
-    'Content-Type': string;
-  };
-}
+export type { TChatwootApiConfig } from './chatwoot.types';
 
 /**
  * Chatwoot API client for making HTTP requests to Chatwoot endpoints.

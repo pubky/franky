@@ -1,7 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export function PopoverBackup({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function PopoverBackup({ ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return (
     <Atoms.Popover hover>
       <Atoms.PopoverTrigger asChild>

@@ -54,7 +54,7 @@ export class UserController {
     return await Core.UserApplication.bulkTagsWithFetch(userIds);
   }
 
-  static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
+  static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams): Promise<void> {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
 
     // Get active stream ID from store (controller layer responsibility)
@@ -70,7 +70,7 @@ export class UserController {
     });
   }
 
-  static async mute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams) {
+  static async mute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams): Promise<void> {
     const { meta, mute } = Core.MuteNormalizer.to({ muter, mutee });
     await Core.UserApplication.mute({
       eventType,

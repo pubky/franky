@@ -8,7 +8,7 @@ export interface LeftSidebarProps {
   className?: string;
 }
 
-export function LeftSidebar({ className }: LeftSidebarProps) {
+export function LeftSidebar({ className }: LeftSidebarProps): React.ReactElement {
   const { reach, setReach, sort, setSort, content, setContent, layout, setLayout } = Core.useHomeStore();
 
   return (

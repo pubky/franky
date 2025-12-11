@@ -9,7 +9,7 @@ export function FilterLayout({
   selectedTab,
   defaultSelectedTab = Core.LAYOUT.COLUMNS,
   onTabChange,
-}: Molecules.BaseFilterProps<Core.LayoutType>) {
+}: Molecules.BaseFilterProps<Core.LayoutType>): React.ReactElement {
   const items = React.useMemo(
     () => [
       { key: Core.LAYOUT.COLUMNS, label: 'Columns', icon: Libs.Columns3 },

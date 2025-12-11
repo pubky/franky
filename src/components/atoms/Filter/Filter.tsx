@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) {
+function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTMLElement>): React.ReactElement {
   return (
     <Atoms.Container
       data-slot="filter-root"
@@ -26,7 +26,7 @@ function FilterHeader({
   title: string;
   subtitle?: string;
   className?: string;
-} & React.HTMLAttributes<HTMLElement>) {
+} & React.HTMLAttributes<HTMLElement>): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults
@@ -47,7 +47,7 @@ function FilterHeader({
   );
 }
 
-function FilterList({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) {
+function FilterList({ className, children, ...props }: React.HTMLAttributes<HTMLElement>): React.ReactElement {
   return (
     <Atoms.Container
       data-slot="filter-list"
@@ -71,7 +71,7 @@ function FilterItem({
   onClick?: () => void;
   className?: string;
   children: React.ReactNode;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>): React.ReactElement {
   return (
     <Atoms.Button
       type="button"
@@ -103,7 +103,7 @@ function FilterItemIcon({
 }: {
   icon: React.ComponentType<{ className?: string }>;
   className?: string;
-} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onCopy' | 'onCut' | 'onPaste'>) {
+} & Omit<React.HTMLAttributes<HTMLDivElement>, 'onCopy' | 'onCut' | 'onPaste'>): React.ReactElement {
   return <Icon className={Libs.cn('h-5 w-5', className)} {...props} />;
 }
 
@@ -114,7 +114,7 @@ function FilterItemLabel({
 }: {
   children: React.ReactNode;
   className?: string;
-} & React.HTMLAttributes<HTMLSpanElement>) {
+} & React.HTMLAttributes<HTMLSpanElement>): React.ReactElement {
   return (
     <span className={Libs.cn('', className)} {...props}>
       {children}

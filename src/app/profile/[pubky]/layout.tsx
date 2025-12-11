@@ -15,7 +15,7 @@ import * as Core from '@/core';
  * @see {@link ProfilePageContainer} for business logic
  * @see {@link ProfilePageLayout} for presentation
  */
-export default function DynamicProfileLayout({ children }: { children: React.ReactNode }) {
+export default function DynamicProfileLayout({ children }: { children: React.ReactNode }): React.ReactElement {
   const params = useParams();
   const pubky = params.pubky as Core.Pubky;
 

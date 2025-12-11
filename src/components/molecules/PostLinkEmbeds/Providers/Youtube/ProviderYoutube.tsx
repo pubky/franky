@@ -97,19 +97,6 @@ const extractVideoIdFromEmbedUrl = (embedUrl: string): string => {
 };
 
 /**
- * YouTube supported domains (lowercase)
- */
-const YOUTUBE_DOMAINS = [
-  'youtube.com',
-  'www.youtube.com',
-  'youtu.be',
-  'm.youtube.com',
-  'music.youtube.com',
-  'www.youtube-nocookie.com',
-  'youtube-nocookie.com',
-] as const;
-
-/**
  * YouTube embed provider
  * Implements the standard EmbedProvider interface
  */
@@ -117,7 +104,7 @@ export const Youtube: ProviderTypes.EmbedProvider = {
   /**
    * List of supported YouTube domains
    */
-  domains: YOUTUBE_DOMAINS,
+  domains: ProviderConstants.YOUTUBE_DOMAINS,
 
   /**
    * Parse YouTube URL and return embed information

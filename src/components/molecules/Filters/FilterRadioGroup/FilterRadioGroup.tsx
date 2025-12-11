@@ -23,7 +23,7 @@ export function FilterRadioGroup<T extends string = string>({
   onChange,
   onClose,
   testId,
-}: FilterRadioGroupProps<T>) {
+}: FilterRadioGroupProps<T>): React.ReactElement {
   const headerId = React.useId();
 
   const { value: selectedValue, setValue: setSelectedValue } = Hooks.useControlledState({

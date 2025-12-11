@@ -8,7 +8,7 @@ interface PostContentProps {
   postId: string;
 }
 
-export function SinglePostContent({ postId }: PostContentProps) {
+export function SinglePostContent({ postId }: PostContentProps): React.ReactElement | null {
   const postDetails = useLiveQuery(() => Core.db.post_details.get(postId).then((details) => details), [postId]);
 
   if (!postDetails) return null;

@@ -12,7 +12,7 @@ export function TaggedSection({
   hasMore,
   isLoadingMore,
   loadMore,
-}: TaggedSectionProps) {
+}: TaggedSectionProps): React.ReactElement {
   return (
     <Atoms.Container className="gap-2 rounded-md bg-card p-6">
       <Atoms.Typography as="p" className="text-base font-medium text-secondary-foreground">

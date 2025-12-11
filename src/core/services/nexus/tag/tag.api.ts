@@ -21,4 +21,4 @@ export const tagApi = {
   },
 };
 
-export type TagApiEndpoint = keyof typeof tagApi;
+export type { TagApiEndpoint } from './tag.types';

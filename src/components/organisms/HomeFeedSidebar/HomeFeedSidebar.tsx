@@ -18,7 +18,7 @@ function HomeFeedFilters({
   hideReachFilter = false,
   hideLayoutFilter = false,
   variant = 'drawer',
-}: HomeFeedSidebarProps) {
+}: HomeFeedSidebarProps): React.ReactElement {
   const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useHomeStore();
 
   return (
@@ -46,7 +46,7 @@ function HomeFeedFilters({
  * Left sidebar for Home feed (desktop) - manages filter state via Core.useHomeStore.
  * Desktop version with sticky positioning.
  */
-export function HomeFeedSidebar({ hideReachFilter = false }: HomeFeedSidebarProps) {
+export function HomeFeedSidebar({ hideReachFilter = false }: HomeFeedSidebarProps): React.ReactElement {
   return <HomeFeedFilters hideReachFilter={hideReachFilter} variant="sidebar" />;
 }
 
@@ -55,7 +55,7 @@ export function HomeFeedSidebar({ hideReachFilter = false }: HomeFeedSidebarProp
  *
  * Left drawer for Home feed (tablet) - manages filter state via Core.useHomeStore.
  */
-export function HomeFeedDrawer({ hideReachFilter = false }: HomeFeedSidebarProps) {
+export function HomeFeedDrawer({ hideReachFilter = false }: HomeFeedSidebarProps): React.ReactElement {
   return <HomeFeedFilters hideReachFilter={hideReachFilter} variant="drawer" />;
 }
 
@@ -65,6 +65,6 @@ export function HomeFeedDrawer({ hideReachFilter = false }: HomeFeedSidebarProps
  * Left drawer for Home feed (mobile) - manages filter state via Core.useHomeStore.
  * Note: Mobile version doesn't show layout filter.
  */
-export function HomeFeedDrawerMobile({ hideReachFilter = false }: HomeFeedSidebarProps) {
+export function HomeFeedDrawerMobile({ hideReachFilter = false }: HomeFeedSidebarProps): React.ReactElement {
   return <HomeFeedFilters hideReachFilter={hideReachFilter} hideLayoutFilter variant="drawer" />;
 }

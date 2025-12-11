@@ -13,3 +13,5 @@ export type NexusBootstrapList = {
   recommended: Core.Pubky[];
   hot_tags: Core.NexusHotTag[];
 };
+
+export type BootstrapApiEndpoint = 'get';

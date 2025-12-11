@@ -12,7 +12,7 @@ export function DialogFeedbackContent({
   isSubmitting,
   hasContent,
   children,
-}: DialogFeedbackContentProps) {
+}: DialogFeedbackContentProps): React.ReactElement {
   return (
     <>
       <Atoms.DialogHeader>

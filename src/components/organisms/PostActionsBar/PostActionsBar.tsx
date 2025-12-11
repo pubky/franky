@@ -14,7 +14,7 @@ export function PostActionsBar({
   onRepostClick,
   onMoreClick,
   className,
-}: PostActionsBarProps) {
+}: PostActionsBarProps): React.ReactElement {
   // Fetch post counts
   const postCounts = useLiveQuery(async () => {
     return await Core.PostController.getPostCounts({ compositeId: postId });

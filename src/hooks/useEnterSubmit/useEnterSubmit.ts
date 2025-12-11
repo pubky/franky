@@ -1,14 +1,9 @@
 'use client';
 
 import { useRef } from 'react';
+import type { UseEnterSubmitOptions } from './useEnterSubmit.types';
 
-interface UseEnterSubmitOptions {
-  /**
-   * If true, ignores Shift+Enter to allow newlines in multiline inputs.
-   * @default true
-   */
-  ignoreShiftEnter?: boolean;
-}
+export type { UseEnterSubmitOptions } from './useEnterSubmit.types';
 
 /**
  * Custom hook to handle Enter key submission with IME composition and double-submit guards
@@ -38,7 +33,7 @@ export function useEnterSubmit(
   isValid: () => boolean,
   onSubmit: () => void | Promise<void>,
   options: UseEnterSubmitOptions = { ignoreShiftEnter: true },
-) {
+): (e: React.KeyboardEvent) => void {
   const isSubmittingRef = useRef(false);
 
   const onKeyDown = (e: React.KeyboardEvent) => {

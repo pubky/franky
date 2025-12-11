@@ -12,14 +12,14 @@ interface DialogRestoreRecoveryPhraseProps {
   onRestore?: () => void;
 }
 
-export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecoveryPhraseProps) {
+export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecoveryPhraseProps): React.ReactElement {
   const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
   const [isRestoring, setIsRestoring] = useState(false);
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [touched, setTouched] = useState<boolean[]>(Array(12).fill(false));
   const { toast } = Molecules.useToast();
 
-  const handleRestore = async () => {
+  const handleRestore = async (): Promise<void> => {
     // Guard against double-submit race condition
     if (isRestoring) return;
 
@@ -98,7 +98,7 @@ function RestoreForm({
   onErrorsChange: (errors: boolean[]) => void;
   onTouchedChange: (touched: boolean[]) => void;
   onRestore: () => void;
-}) {
+}): React.ReactElement {
   const handleWordChange = useCallback(
     (index: number, value: string) => {
       // Check if the value contains multiple words (e.g. pasted from clipboard or inserted from Android keyboard suggestions)
@@ -169,7 +169,7 @@ function RestoreForm({
     [errors, touched, onErrorsChange, onTouchedChange],
   );
 
-  const isFormValid = () => {
+  const isFormValid = (): boolean => {
     const allWordsFilled = userWords.every((word) => word !== '');
     const noErrors = !errors.some((error) => error);
     const allTouched = touched.every((t) => t);

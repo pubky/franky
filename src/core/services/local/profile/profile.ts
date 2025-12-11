@@ -141,7 +141,7 @@ export class LocalProfileService {
    * Deletes the user account from the local database.
    * @returns Promise resolving to void
    */
-  static async deleteAccount() {
+  static async deleteAccount(): Promise<void> {
     try {
       await Core.db.transaction(
         'rw',

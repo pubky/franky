@@ -18,7 +18,7 @@ const tagIcons: TagIcons = {
   '#bitcoin': <Icons.BTCIcon size={24} />,
 };
 
-export const PostHashtags = (props: RemarkAnchorProps) => {
+export const PostHashtags = (props: RemarkAnchorProps): React.ReactElement => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
 
   const hashtagText = extractTextFromChildren(children);

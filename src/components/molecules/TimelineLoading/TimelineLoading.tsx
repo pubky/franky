@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
  *
  * Loading indicator for initial timeline load.
  */
-export function TimelineLoading() {
+export function TimelineLoading(): React.ReactElement {
   return (
     <Atoms.Container className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">

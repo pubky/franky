@@ -16,7 +16,7 @@ export function MobileHeader({
   onRightIconClick,
   showLeftButton = true,
   showRightButton = true,
-}: MobileHeaderProps) {
+}: MobileHeaderProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults={true}

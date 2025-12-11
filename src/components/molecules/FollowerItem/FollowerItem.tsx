@@ -6,7 +6,12 @@ import * as Libs from '@/libs';
 import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
 import type { FollowerItemProps } from './FollowerItem.types';
 
-export function FollowerItem({ follower, isFollowing = false, onFollow, isCurrentUser = false }: FollowerItemProps) {
+export function FollowerItem({
+  follower,
+  isFollowing = false,
+  onFollow,
+  isCurrentUser = false,
+}: FollowerItemProps): React.ReactElement {
   const avatarUrl = follower.avatarUrl || follower.image || undefined;
   const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: 10 });
   const tags = follower.tags || [];
@@ -14,7 +19,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
   // Use formatted public key as fallback when name is loading
   const displayName = follower.name || formattedPublicKey;
 
-  const handleFollowClick = (e: React.MouseEvent) => {
+  const handleFollowClick = (e: React.MouseEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     onFollow?.(follower.id, isFollowing);

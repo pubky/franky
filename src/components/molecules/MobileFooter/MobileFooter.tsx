@@ -12,11 +12,11 @@ export interface MobileFooterProps {
   className?: string;
 }
 
-export function MobileFooter({ className }: MobileFooterProps) {
+export function MobileFooter({ className }: MobileFooterProps): React.ReactElement {
   const pathname = usePathname();
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string): boolean => pathname === path;
 
   // Get avatar URL and fallback initial - same logic as desktop header
   const avatarUrl = currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined;

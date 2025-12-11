@@ -14,7 +14,7 @@ export interface MutedUsersProps {
   className?: string;
 }
 
-export function MutedUsers({ className }: MutedUsersProps) {
+export function MutedUsers({ className }: MutedUsersProps): React.ReactElement {
   const [mutedUsers] = React.useState<MutedUser[]>([]);
   const [isLoading] = React.useState(false);
 

@@ -21,31 +21,31 @@ export const SearchInput = ({
   onSearch,
   className,
   children,
-}: SearchInputProps) => {
+}: SearchInputProps): React.ReactElement => {
   const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const newValue = e.target.value;
     setInputValue(newValue);
     onChange?.(newValue);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
       onSearch?.(inputValue);
     }
   };
 
-  const handleSearchClick = () => {
+  const handleSearchClick = (): void => {
     onSearch?.(inputValue);
   };
 
-  const handleFocus = () => {
+  const handleFocus = (): void => {
     setIsFocused(true);
   };
 
-  const handleBlur = () => {
+  const handleBlur = (): void => {
     setIsFocused(false);
   };
 

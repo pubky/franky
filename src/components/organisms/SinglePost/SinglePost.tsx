@@ -13,7 +13,7 @@ interface PostProps {
   onClick?: () => void;
 }
 
-export function SinglePost({ postId, clickable = false, isReply = false, onClick }: PostProps) {
+export function SinglePost({ postId, clickable = false, isReply = false, onClick }: PostProps): React.ReactElement {
   const { postDetails } = Hooks.usePostDetails(postId);
   const isDeleted = Libs.isPostDeleted(postDetails?.content);
 

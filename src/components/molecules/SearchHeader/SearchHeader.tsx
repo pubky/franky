@@ -11,7 +11,7 @@ import type { SearchHeaderProps } from './SearchHeader.types';
  *
  * @returns null if tags array is empty (defensive check)
  */
-export function SearchHeader({ tags }: SearchHeaderProps) {
+export function SearchHeader({ tags }: SearchHeaderProps): React.ReactElement | null {
   if (tags.length === 0) {
     return null;
   }

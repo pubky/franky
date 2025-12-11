@@ -3,15 +3,9 @@
 import { useState, useCallback } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
+import type { UsePostReplyOptions, UsePostPostOptions } from './usePost.types';
 
-interface UsePostReplyOptions {
-  postId: string;
-  onSuccess?: (createdPostId: string) => void;
-}
-
-interface UsePostPostOptions {
-  onSuccess?: (createdPostId: string) => void;
-}
+export type { UsePostReplyOptions, UsePostPostOptions } from './usePost.types';
 
 /**
  * Custom hook to handle post creation (both replies and root posts)

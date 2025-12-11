@@ -7,7 +7,13 @@ interface PageSubtitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   title?: string;
 }
 
-export function PageSubtitle({ as: Component = 'h2', className, children, title, ...props }: PageSubtitleProps) {
+export function PageSubtitle({
+  as: Component = 'h2',
+  className,
+  children,
+  title,
+  ...props
+}: PageSubtitleProps): React.ReactElement {
   return (
     <Component
       className={cn('text-xl leading-normal font-light text-muted-foreground lg:text-2xl', className)}

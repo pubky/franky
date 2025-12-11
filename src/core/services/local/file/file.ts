@@ -3,7 +3,7 @@ import * as Core from '@/core';
 export class LocalFileService {
   private constructor() {} // Prevent instantiation
 
-  static async persistFiles({ files }: Core.TPersistFilesParams) {
+  static async persistFiles({ files }: Core.TPersistFilesParams): Promise<void> {
     await Core.FileDetailsModel.bulkSave(files);
   }
 
@@ -16,7 +16,7 @@ export class LocalFileService {
    * @param blobResult - Blob result
    * @param fileResult - File result
    */
-  static async create({ blobResult, fileResult }: Core.TFileAttachmentResult) {
+  static async create({ blobResult, fileResult }: Core.TFileAttachmentResult): Promise<void> {
     const uri = fileResult.meta.url;
     const fileCompositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
 
@@ -42,7 +42,7 @@ export class LocalFileService {
     return await Core.FileDetailsModel.findByIds(compositeFileIds);
   }
 
-  static async deleteById(compositeFileId: string) {
+  static async deleteById(compositeFileId: string): Promise<void> {
     await Core.FileDetailsModel.deleteById(compositeFileId);
   }
 }

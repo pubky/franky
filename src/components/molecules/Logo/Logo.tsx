@@ -14,7 +14,7 @@ export function Logo({
   height = 36,
   noLink = false,
   ...props
-}: LogoProps & React.HTMLAttributes<HTMLAnchorElement>) {
+}: LogoProps & React.HTMLAttributes<HTMLAnchorElement>): React.ReactElement {
   return !noLink ? (
     <Atoms.Link
       href="/"
@@ -27,7 +27,15 @@ export function Logo({
   );
 }
 
-const LogoImage = ({ width, height, className }: { width: number; height: number; className?: string }) => {
+const LogoImage = ({
+  width,
+  height,
+  className,
+}: {
+  width: number;
+  height: number;
+  className?: string;
+}): React.ReactElement => {
   return (
     <Image
       src="/pubky-logo.svg"

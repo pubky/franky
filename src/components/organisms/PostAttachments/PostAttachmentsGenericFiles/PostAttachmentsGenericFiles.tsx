@@ -6,7 +6,9 @@ type PostAttachmentsGenericFilesProps = {
   genericFiles: AttachmentConstructed[];
 };
 
-export const PostAttachmentsGenericFiles = ({ genericFiles }: PostAttachmentsGenericFilesProps) => {
+export const PostAttachmentsGenericFiles = ({
+  genericFiles,
+}: PostAttachmentsGenericFilesProps): React.ReactElement | null => {
   const pdfs = genericFiles.filter((f) => f.type === 'application/pdf');
 
   if (!pdfs.length) return null;

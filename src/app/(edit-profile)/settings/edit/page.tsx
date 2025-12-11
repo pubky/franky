@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Edit your profile on pubky app.',
 });
 
-export default function SettingsEditPage() {
+export default function SettingsEditPage(): React.ReactElement {
   return <Templates.EditProfile />;
 }

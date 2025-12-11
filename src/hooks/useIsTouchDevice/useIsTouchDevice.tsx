@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
  * Returns false on the server and during initial render to prevent hydration mismatches.
  * Updates to the actual touch capability after component mounts on the client.
  */
-export function useIsTouchDevice() {
+export function useIsTouchDevice(): boolean {
   // Initialize with false to ensure stable initial value on server
   const [isTouch, setIsTouch] = useState(false);
 

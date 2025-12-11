@@ -8,7 +8,7 @@ interface HeadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
-export function Heading({ level = 1, children, className, size = 'md' }: HeadingProps) {
+export function Heading({ level = 1, children, className, size = 'md' }: HeadingProps): React.ReactElement {
   const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
   const sizeClasses = {

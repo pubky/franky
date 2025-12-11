@@ -7,7 +7,7 @@ import * as Organisms from '@/organisms';
  * Static layout template that renders the ProfileTagged organism.
  * Templates should only handle layout concerns, not data fetching.
  */
-export function ProfilePageTagged() {
+export function ProfilePageTagged(): React.ReactElement {
   return (
     <Atoms.Container className="mt-6 lg:mt-0">
       <Organisms.ProfileTagged />

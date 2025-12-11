@@ -14,14 +14,22 @@ interface UsersListProps {
   maxUsers?: number;
 }
 
-export function UsersList({ users, onFollow, onSeeAll, className, title, maxUsers = 3, ...props }: UsersListProps) {
+export function UsersList({
+  users,
+  onFollow,
+  onSeeAll,
+  className,
+  title,
+  maxUsers = 3,
+  ...props
+}: UsersListProps): React.ReactElement {
   const displayUsers = users.slice(0, maxUsers);
 
-  const handleFollow = (userId: string) => {
+  const handleFollow = (userId: string): void => {
     onFollow?.(userId);
   };
 
-  const handleSeeAll = () => {
+  const handleSeeAll = (): void => {
     onSeeAll?.();
   };
 

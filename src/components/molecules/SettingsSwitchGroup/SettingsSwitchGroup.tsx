@@ -8,7 +8,7 @@ export interface SettingsSwitchGroupProps {
   className?: string;
 }
 
-export function SettingsSwitchGroup({ children, className }: SettingsSwitchGroupProps) {
+export function SettingsSwitchGroup({ children, className }: SettingsSwitchGroupProps): React.ReactElement {
   return (
     <div
       className={Libs.cn(

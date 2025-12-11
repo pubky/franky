@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 
-export function useElementHeight() {
+export function useElementHeight(): { ref: React.RefObject<HTMLDivElement | null>; height: number } {
   const [height, setHeight] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 

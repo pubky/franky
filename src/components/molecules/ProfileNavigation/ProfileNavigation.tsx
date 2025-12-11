@@ -23,8 +23,8 @@ export const ProfileNavigation = ({
   backButtonDisabled?: boolean;
   hiddenContinueButton?: boolean;
   continueButtonLoading?: boolean;
-}) => {
-  const onHandleContinueButton = () => {
+}): React.ReactElement => {
+  const onHandleContinueButton = (): void => {
     onContinue();
   };
 

@@ -30,7 +30,7 @@ type CarouselContextProps = {
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 
-function useCarousel() {
+function useCarousel(): CarouselContextProps {
   const context = React.useContext(CarouselContext);
 
   if (!context) {
@@ -48,7 +48,7 @@ function Carousel({
   className,
   children,
   ...props
-}: React.ComponentProps<'div'> & CarouselProps) {
+}: React.ComponentProps<'div'> & CarouselProps): React.ReactElement {
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
@@ -59,17 +59,17 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
+  const onSelect = React.useCallback((api: CarouselApi): void => {
     if (!api) return;
     setCanScrollPrev(api.canScrollPrev());
     setCanScrollNext(api.canScrollNext());
   }, []);
 
-  const scrollPrev = React.useCallback(() => {
+  const scrollPrev = React.useCallback((): void => {
     api?.scrollPrev();
   }, [api]);
 
-  const scrollNext = React.useCallback(() => {
+  const scrollNext = React.useCallback((): void => {
     api?.scrollNext();
   }, [api]);
 
@@ -129,7 +129,7 @@ function Carousel({
   );
 }
 
-function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
+function CarouselContent({ className, ...props }: React.ComponentProps<'div'>): React.ReactElement {
   const { carouselRef, orientation } = useCarousel();
 
   return (
@@ -139,7 +139,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
+function CarouselItem({ className, ...props }: React.ComponentProps<'div'>): React.ReactElement {
   const { orientation } = useCarousel();
 
   return (
@@ -158,7 +158,7 @@ function CarouselPrevious({
   variant = 'secondary',
   size = 'icon',
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: React.ComponentProps<typeof Button>): React.ReactElement {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
   return (
@@ -188,7 +188,7 @@ function CarouselNext({
   variant = 'secondary',
   size = 'icon',
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: React.ComponentProps<typeof Button>): React.ReactElement {
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   return (

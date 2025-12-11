@@ -31,14 +31,14 @@ function buildPostStreamUrl(
  */
 export const postStreamApi = {
   // All posts (no additional required parameters)
-  all: (params: Core.TStreamAllParams) =>
+  all: (params: Core.TStreamAllParams): string =>
     buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Sources requiring observer_id
-  following: (params: Core.TStreamWithObserverParams) =>
+  following: (params: Core.TStreamWithObserverParams): string =>
     buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, Core.STREAM_PREFIX.POSTS_KEYS),
 
-  followers: (params: Core.TStreamWithObserverParams) =>
+  followers: (params: Core.TStreamWithObserverParams): string =>
     buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   friends: (params: Core.TStreamWithObserverParams) =>
@@ -82,4 +82,4 @@ export function buildPostStreamBodyUrl(params: Core.TStreamPostsByIdsParams) {
   return body;
 }
 
-export type PostStreamApiEndpoint = keyof typeof postStreamApi;
+export type { PostStreamApiEndpoint } from './postStream.types';

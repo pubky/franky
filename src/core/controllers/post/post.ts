@@ -11,7 +11,7 @@ export class PostController {
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getPostDetails({ compositeId }: Core.TCompositeId) {
+  static async getPostDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
     return await Core.PostApplication.getPostDetails({ compositeId });
   }
 
@@ -21,7 +21,7 @@ export class PostController {
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post counts (with default values if not found)
    */
-  static async getPostCounts({ compositeId }: Core.TCompositeId) {
+  static async getPostCounts({ compositeId }: Core.TCompositeId): Promise<Core.PostCountsType> {
     return await Core.PostApplication.getPostCounts({ compositeId });
   }
 
@@ -139,7 +139,7 @@ export class PostController {
    * @param params - Parameters object
    * @param params.postId - ID of the post to delete
    */
-  static async delete({ compositePostId }: Core.TDeletePostParams) {
+  static async delete({ compositePostId }: Core.TDeletePostParams): Promise<void> {
     const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 

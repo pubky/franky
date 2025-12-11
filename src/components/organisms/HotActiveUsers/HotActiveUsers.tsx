@@ -9,8 +9,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
 import type { HotActiveUsersProps } from './HotActiveUsers.types';
-
-const DEFAULT_USERS_LIMIT = 10;
+import { DEFAULT_USERS_LIMIT } from './HotActiveUsers.constants';
 
 /**
  * Get the user stream ID based on reach filter.
@@ -54,7 +53,7 @@ function useActiveUsersStreamId(currentUserPubky: Core.Pubky | null): Core.UserS
  * - FOLLOWING: People the current user follows
  * - FRIENDS: Friends of the current user
  */
-export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotActiveUsersProps) {
+export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotActiveUsersProps): React.ReactElement {
   const router = useRouter();
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
   const streamId = useActiveUsersStreamId(currentUserPubky);
@@ -69,11 +68,11 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
 
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
-  const handleUserClick = (pubky: Core.Pubky) => {
+  const handleUserClick = (pubky: Core.Pubky): void => {
     router.push(`${APP_ROUTES.PROFILE}/${pubky}`);
   };
 
-  const handleFollowClick = async (userId: Core.Pubky, isCurrentlyFollowing: boolean) => {
+  const handleFollowClick = async (userId: Core.Pubky, isCurrentlyFollowing: boolean): Promise<void> => {
     await toggleFollow(userId, isCurrentlyFollowing);
   };
 

@@ -16,7 +16,10 @@ import * as Types from './PostReplies.types';
  * It does NOT use pagination - for full replies view, see TimelineRepliesWithParent.
  */
 
-export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostRepliesProps) {
+export function TimelinePostReplies({
+  postId,
+  onPostClick,
+}: Types.TimelinePostRepliesProps): React.ReactElement | null {
   const [replyIds, setReplyIds] = useState<string[]>([]);
 
   // Watch for changes in post_counts to trigger refetch when replies count changes

@@ -91,7 +91,7 @@ export class PostStreamApplication {
    * @param streamHead - Detects if the call is coming from the streamCoordinator.
    * @param streamId - ID of the stream. If not provided, it means that it is a single post operation.
    */
-  static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
+  static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams): Promise<void> {
     try {
       const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
@@ -161,7 +161,7 @@ export class PostStreamApplication {
     };
   }
 
-  private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
+  private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams): Promise<void> {
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
     if (cacheMissUserIds.length > 0) {
       const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
@@ -231,7 +231,7 @@ export class PostStreamApplication {
   private static async persistUnreadStreamChunkAndUpdateCounts({
     streamId,
     compositePostIds,
-  }: Core.TPersistUnreadNewStreamChunkParams) {
+  }: Core.TPersistUnreadNewStreamChunkParams): Promise<void> {
     await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({ stream: compositePostIds, streamId });
     // The authorId and postId are going to be use to identify the replies parent id
     const [replyParentAuthorId, invokeEndpoint, replyParentPostId] = Core.breakDownStreamId(streamId);

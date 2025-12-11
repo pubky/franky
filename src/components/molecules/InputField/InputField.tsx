@@ -34,7 +34,7 @@ export function InputField({
   disabled = false,
   readOnly = false,
   onClick,
-  onClickIcon = () => {},
+  onClickIcon = (): void => {},
   className,
   icon,
   variant = 'default',
@@ -49,7 +49,7 @@ export function InputField({
   message,
   messageType = 'default',
   size = 'md',
-}: InputFieldProps) {
+}: InputFieldProps): React.ReactElement {
   const containerClasses = variant === 'dashed' && 'border-dashed';
 
   const statusClasses = {

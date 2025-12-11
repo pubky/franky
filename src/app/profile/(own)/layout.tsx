@@ -13,7 +13,7 @@ import * as Providers from '@/providers';
  * @see {@link ProfilePageContainer} for business logic
  * @see {@link ProfilePageLayout} for presentation
  */
-export default function ProfileLayout({ children }: { children: React.ReactNode }) {
+export default function ProfileLayout({ children }: { children: React.ReactNode }): React.ReactElement {
   return (
     <Providers.ProfileProvider>
       <Organisms.ProfilePageContainer>{children}</Organisms.ProfilePageContainer>

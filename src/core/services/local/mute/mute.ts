@@ -1,7 +1,8 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import type { MuteAction } from './mute.types';
 
-type MuteAction = 'mute' | 'unmute';
+export type { MuteAction } from './mute.types';
 
 export class LocalMuteService {
   private static readonly DEFAULT_RELATIONSHIP = {

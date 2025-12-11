@@ -7,7 +7,7 @@ import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 
-export const CreateProfileForm = () => {
+export const CreateProfileForm = (): React.ReactElement => {
   const { pubky, setShowWelcomeDialog } = Core.useOnboardingStore();
 
   const { state, errors, handlers, cropDialog, fileInputRef, isSubmitDisabled } = Hooks.useProfileForm({

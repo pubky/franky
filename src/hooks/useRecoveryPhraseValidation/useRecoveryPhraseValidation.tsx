@@ -1,20 +1,15 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
+import type {
+  UseRecoveryPhraseValidationProps,
+  UseRecoveryPhraseValidationReturn,
+} from './useRecoveryPhraseValidation.types';
 
-export interface UseRecoveryPhraseValidationProps {
-  recoveryWords: string[];
-}
-
-export interface UseRecoveryPhraseValidationReturn {
-  userWords: string[];
-  errors: boolean[];
-  remainingWords: Array<{ word: string; index: number; isUsed: boolean }>;
-  handleWordClick: (word: string) => void;
-  validateWords: () => boolean;
-  clearWord: (index: number) => void;
-  isComplete: boolean;
-}
+export type {
+  UseRecoveryPhraseValidationProps,
+  UseRecoveryPhraseValidationReturn,
+} from './useRecoveryPhraseValidation.types';
 
 export function useRecoveryPhraseValidation({
   recoveryWords,

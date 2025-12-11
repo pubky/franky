@@ -2,7 +2,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Types from './WordSlot.types';
 
-export const WordSlot = (props: Types.WordSlotProps) => {
+export const WordSlot = (props: Types.WordSlotProps): React.ReactElement => {
   const { index, word, mode } = props;
 
   if (mode === 'editable') {
@@ -78,7 +78,7 @@ export const WordSlot = (props: Types.WordSlotProps) => {
 
   const title = canClear ? 'Click to remove this word' : '';
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     if (canClear) onClear(index);
   };
 

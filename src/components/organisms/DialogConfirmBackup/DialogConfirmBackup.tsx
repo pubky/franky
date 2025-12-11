@@ -10,18 +10,18 @@ interface DialogConfirmBackupProps {
   onConfirm?: () => void;
 }
 
-export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
+export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps): React.ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [isBackupOpen, setIsBackupOpen] = useState(false);
   const { clearSecrets } = Core.useOnboardingStore();
 
-  const handleConfirm = () => {
+  const handleConfirm = (): void => {
     clearSecrets();
     setIsOpen(false);
     onConfirm?.();
   };
 
-  const handleBackupMethods = () => {
+  const handleBackupMethods = (): void => {
     setIsOpen(false);
     setIsBackupOpen(true);
   };

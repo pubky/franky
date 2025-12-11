@@ -22,7 +22,7 @@ export function SidebarSection({
   footerTestId,
   className,
   'data-testid': dataTestId,
-}: SidebarSectionProps) {
+}: SidebarSectionProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults

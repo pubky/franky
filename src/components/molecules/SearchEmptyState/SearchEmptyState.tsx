@@ -9,7 +9,7 @@ import * as Molecules from '@/molecules';
  * Displayed when no tags are provided in the URL.
  * Guides the user on how to search for posts.
  */
-export function SearchEmptyState() {
+export function SearchEmptyState(): React.ReactElement {
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/tagged-empty-state.png"

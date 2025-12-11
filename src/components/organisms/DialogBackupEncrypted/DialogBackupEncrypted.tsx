@@ -13,7 +13,7 @@ interface DialogBackupEncryptedProps {
   children?: React.ReactNode;
 }
 
-function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
+function RecoveryStep1({ setStep }: { setStep: (step: number) => void }): React.ReactElement {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { secretKey, pubky } = useOnboardingStore();
@@ -21,7 +21,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   const passwordStrength = calculatePasswordStrength(password);
   const passwordsMatch = password === confirmPassword && password !== '';
 
-  const handleDownload = () => {
+  const handleDownload = (): void => {
     void Identity.createRecoveryFile(
       {
         pubky,
@@ -32,7 +32,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
     setStep(2);
   };
 
-  const isFormValid = () => {
+  const isFormValid = (): boolean => {
     return Boolean(password && passwordsMatch);
   };
 
@@ -164,7 +164,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   );
 }
 
-function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
+function RecoveryStep2({ handleClose }: { handleClose: () => void }): React.ReactElement {
   return (
     <>
       <Atoms.DialogHeader>
@@ -197,10 +197,10 @@ function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
   );
 }
 
-export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) {
+export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps): React.ReactElement {
   const [step, setStep] = useState(1);
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     //delay 1 second
     setTimeout(() => {
       setStep(1);

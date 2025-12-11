@@ -9,7 +9,7 @@ type PostAttachmentsCarouselImageProps = {
   id: string;
 };
 
-export const PostAttachmentsCarouselImage = ({ image, id }: PostAttachmentsCarouselImageProps) => {
+export const PostAttachmentsCarouselImage = ({ image, id }: PostAttachmentsCarouselImageProps): React.ReactElement => {
   const [isMainLoaded, setIsMainLoaded] = useState(image.type === 'image/gif');
 
   return (

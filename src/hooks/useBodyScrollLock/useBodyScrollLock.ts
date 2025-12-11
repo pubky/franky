@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef } from 'react';
 
-export function useBodyScrollLock(locked: boolean) {
+export function useBodyScrollLock(locked: boolean): void {
   const originalOverflowRef = useRef<string | null>(null);
 
   // Handle lock/unlock logic

@@ -4,7 +4,7 @@ export interface ProfilePageLayoutWrapperProps {
   children: React.ReactNode;
 }
 
-export function ProfilePageLayoutWrapper({ children }: ProfilePageLayoutWrapperProps) {
+export function ProfilePageLayoutWrapper({ children }: ProfilePageLayoutWrapperProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults={true}

@@ -9,21 +9,21 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as App from '@/app';
 
-export const HomeActions = () => {
+export const HomeActions = (): React.ReactElement => {
   const router = useRouter();
 
-  const handleCreateAccount = () => {
+  const handleCreateAccount = (): void => {
     router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
-  const handleSignIn = () => {
+  const handleSignIn = (): void => {
     router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
   return <Molecules.ActionButtons onSignIn={handleSignIn} onCreateAccount={handleCreateAccount} />;
 };
 
-export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement => {
   return (
     <Atoms.FooterLinks className={Libs.cn('flex-row content-end justify-end sm:pr-16', props.className)} {...props}>
       By creating a Pubky account, you agree to the <Organisms.DialogTerms />, <Organisms.DialogPrivacy />, and confirm
@@ -36,7 +36,7 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
   );
 };
 
-export const HomeSectionTitle = () => {
+export const HomeSectionTitle = (): React.ReactElement => {
   return (
     <Atoms.Container className="flex-row items-start gap-2">
       <Atoms.Typography size="md" className="self-center font-light text-brand sm:text-2xl">
@@ -47,7 +47,7 @@ export const HomeSectionTitle = () => {
   );
 };
 
-export const HomePageHeading = () => {
+export const HomePageHeading = (): React.ReactElement => {
   return (
     <Atoms.Heading level={1} size="2xl">
       <span className="text-brand">Unlock</span> <br className="block sm:hidden" />

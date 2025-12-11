@@ -36,7 +36,7 @@ export function TextareaField({
   rows = 4,
   message,
   messageType = 'default',
-}: TextareaFieldProps) {
+}: TextareaFieldProps): React.ReactElement {
   const statusClasses = {
     default: '',
     success: 'border-brand text-brand',

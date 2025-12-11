@@ -10,7 +10,7 @@ import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 import * as Config from '@/config';
 
-export const SignInContent = () => {
+export const SignInContent = (): React.ReactElement => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const retryCountRef = useRef(0);
@@ -19,7 +19,7 @@ export const SignInContent = () => {
   const isGeneratingRef = useRef(false);
   const MAX_RETRY_ATTEMPTS = 3;
 
-  const fetchUrl = async (options?: { viaRetry?: boolean }) => {
+  const fetchUrl = async (options?: { viaRetry?: boolean }): Promise<void> => {
     const requestId = Symbol('fetchUrl');
     activeRequestRef.current = requestId;
     isGeneratingRef.current = true;
@@ -102,7 +102,7 @@ export const SignInContent = () => {
   const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
 
-  const copyAuthUrlToClipboard = async () => {
+  const copyAuthUrlToClipboard = async (): Promise<void> => {
     if (!url) return;
 
     try {
@@ -112,7 +112,7 @@ export const SignInContent = () => {
     }
   };
 
-  const handleAuthorizeClick = async () => {
+  const handleAuthorizeClick = async (): Promise<void> => {
     if (isLoading || isGeneratingRef.current) return;
 
     if (!url) {
@@ -222,7 +222,7 @@ export const SignInContent = () => {
   );
 };
 
-export const SignInFooter = () => {
+export const SignInFooter = (): React.ReactElement => {
   return (
     <Atoms.FooterLinks className="py-6">
       Not able to sign in with{' '}
@@ -234,7 +234,7 @@ export const SignInFooter = () => {
   );
 };
 
-export const SignInHeader = () => {
+export const SignInHeader = (): React.ReactElement => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">

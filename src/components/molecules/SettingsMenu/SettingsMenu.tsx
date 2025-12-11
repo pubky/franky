@@ -3,29 +3,13 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
-import * as Libs from '@/libs';
-import { SETTINGS_ROUTES } from '@/app';
+import { SETTINGS_MENU_ITEMS } from './SettingsMenu.constants';
+import type { SettingsMenuProps } from './SettingsMenu.types';
 
-export const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
-  { icon: Libs.UserRound, label: 'Account', path: SETTINGS_ROUTES.ACCOUNT },
-  { icon: Libs.Bell, label: 'Notifications', path: SETTINGS_ROUTES.NOTIFICATIONS },
-  { icon: Libs.Shield, label: 'Privacy & Safety', path: SETTINGS_ROUTES.PRIVACY_SAFETY },
-  { icon: Libs.MegaphoneOff, label: 'Muted Users', path: SETTINGS_ROUTES.MUTED_USERS },
-  { icon: Libs.Globe, label: 'Language', path: SETTINGS_ROUTES.LANGUAGE },
-  { icon: Libs.CircleHelp, label: 'Help', path: SETTINGS_ROUTES.HELP },
-];
+export { SETTINGS_MENU_ITEMS } from './SettingsMenu.constants';
+export type { SettingsMenuItem, SettingsMenuProps } from './SettingsMenu.types';
 
-export interface SettingsMenuItem {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  label: string;
-  path: string;
-}
-
-export interface SettingsMenuProps {
-  className?: string;
-}
-
-export function SettingsMenu({ className }: SettingsMenuProps) {
+export function SettingsMenu({ className }: SettingsMenuProps): React.ReactElement {
   const pathname = usePathname();
 
   return (

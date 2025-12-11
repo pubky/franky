@@ -10,7 +10,7 @@ export class LocalPostService {
    * @param postId - ID of the post to read
    * @returns Post details
    */
-  static async readPostDetails({ postId }: { postId: string }) {
+  static async readPostDetails({ postId }: { postId: string }): Promise<Core.PostDetailsModelSchema | null> {
     try {
       return await Core.PostDetailsModel.findById(postId);
     } catch (error) {
@@ -21,7 +21,7 @@ export class LocalPostService {
     }
   }
 
-  static async updatePostCounts({ postCompositeId, countChanges }: Core.TPostCountsParams) {
+  static async updatePostCounts({ postCompositeId, countChanges }: Core.TPostCountsParams): Promise<void> {
     await Core.PostCountsModel.updateCounts({ postCompositeId, countChanges });
   }
 
@@ -42,7 +42,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ compositePostId, post }: Core.TLocalSavePostParams) {
+  static async create({ compositePostId, post }: Core.TLocalSavePostParams): Promise<void> {
     const { content, kind, parent: parentUri, attachments, embed } = post;
 
     const repostedUri = embed?.uri ?? null;

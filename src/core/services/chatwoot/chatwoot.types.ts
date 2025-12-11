@@ -1,5 +1,17 @@
 import * as Core from '@/core';
 
+/**
+ * Chatwoot API configuration
+ */
+export interface TChatwootApiConfig {
+  baseUrl: string;
+  accountId: string;
+  headers: {
+    api_access_token: string;
+    'Content-Type': string;
+  };
+}
+
 export interface TChatwootSubmitInput {
   pubky: Core.Pubky;
   comment: string;

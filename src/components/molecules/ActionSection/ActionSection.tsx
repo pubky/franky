@@ -17,7 +17,7 @@ interface ActionSectionProps {
   }>;
 }
 
-export function ActionSection({ children, className, actions = [] }: ActionSectionProps) {
+export function ActionSection({ children, className, actions = [] }: ActionSectionProps): React.ReactElement {
   return (
     <Atoms.Container className={Libs.cn('w-full flex-row gap-6', className)}>
       <Atoms.Container className="w-full flex-col items-start justify-start gap-4">{children}</Atoms.Container>

@@ -20,7 +20,7 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/logout': { step: 1, title: 'Signed out' },
 };
 
-export function Header() {
+export function Header(): React.ReactElement {
   const pathname = usePathname();
   const { isAuthenticated } = Core.useAuthStore();
 
@@ -44,10 +44,10 @@ export function Header() {
   );
 }
 
-export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElement>) {
+export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElement>): React.ReactElement {
   const router = useRouter();
 
-  const handleSignIn = () => {
+  const handleSignIn = (): void => {
     router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
@@ -59,7 +59,7 @@ export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButton
   );
 }
 
-export const HeaderHome = () => {
+export const HeaderHome = (): React.ReactElement => {
   return (
     <Atoms.Container className="flex-1 flex-row items-center justify-end">
       <Molecules.HeaderSocialLinks />
@@ -68,7 +68,7 @@ export const HeaderHome = () => {
   );
 };
 
-export const HeaderSignIn = () => {
+export const HeaderSignIn = (): React.ReactElement => {
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
   const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
 

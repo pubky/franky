@@ -6,7 +6,7 @@ import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 
-export const EditProfileForm = () => {
+export const EditProfileForm = (): React.ReactElement => {
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
   const { state, errors, handlers, cropDialog, fileInputRef, isSubmitDisabled } = Hooks.useProfileForm({

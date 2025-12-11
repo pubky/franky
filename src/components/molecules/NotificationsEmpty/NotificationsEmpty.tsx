@@ -3,7 +3,7 @@
 import { Frown } from 'lucide-react';
 import * as Molecules from '@/molecules';
 
-export function NotificationsEmpty() {
+export function NotificationsEmpty(): React.ReactElement {
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/notifications-empty-state.png"

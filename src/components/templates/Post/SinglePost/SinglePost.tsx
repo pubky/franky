@@ -6,7 +6,7 @@ import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 
-export function SinglePost() {
+export function SinglePost(): React.ReactElement {
   const { postId, userId } = useParams() as { postId: string; userId: string };
   const pId = Core.buildCompositeId({ pubky: userId, id: postId });
 

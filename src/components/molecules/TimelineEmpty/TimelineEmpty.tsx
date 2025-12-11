@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
  *
  * Message displayed when timeline has no posts.
  */
-export function TimelineEmpty() {
+export function TimelineEmpty(): React.ReactElement {
   return (
     <Atoms.Container className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">

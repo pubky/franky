@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageContainer } from './ProfilePageContainer';
-import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
+import { PROFILE_PAGE_TYPES } from '@/app/profile/profile.types';
 
 // Mock Core
 const mockCurrentUserPubky = 'user123';
