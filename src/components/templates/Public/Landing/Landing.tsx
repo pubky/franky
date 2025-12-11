@@ -1,7 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 
-export function Landing() {
+export function Landing(): React.ReactElement {
   return (
     <>
       <Atoms.ImageBackground image="/images/bg-home.svg" mobileImage="/images/bg-home-mobile.svg" />

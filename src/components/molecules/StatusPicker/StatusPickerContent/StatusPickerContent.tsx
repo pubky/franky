@@ -8,7 +8,10 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Types from './index';
 
-export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.StatusPickerContentProps) {
+export function StatusPickerContent({
+  onStatusSelect,
+  currentStatus,
+}: Types.StatusPickerContentProps): React.ReactElement {
   const [customStatus, setCustomStatus] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -29,17 +32,17 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
     }
   }, [currentStatus, isCustomStatus, parsed.emoji, parsed.text]);
 
-  const handlePredefinedStatusClick = (statusValue: string) => {
+  const handlePredefinedStatusClick = (statusValue: string): void => {
     onStatusSelect(statusValue);
     setCustomStatus('');
     setSelectedEmoji('');
   };
 
-  const isValidCustomStatus = () => {
+  const isValidCustomStatus = (): boolean => {
     return Boolean(customStatus && selectedEmoji);
   };
 
-  const handleCustomStatusSave = () => {
+  const handleCustomStatusSave = (): void => {
     if (isValidCustomStatus()) {
       onStatusSelect(`${selectedEmoji}${customStatus}`);
       setCustomStatus('');
@@ -47,7 +50,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
     }
   };
 
-  const handleEmojiSelect = (emoji: { native: string }) => {
+  const handleEmojiSelect = (emoji: { native: string }): void => {
     setSelectedEmoji(emoji.native);
     setShowEmojiPicker(false);
     // Refocus the input after emoji is selected so Enter key works

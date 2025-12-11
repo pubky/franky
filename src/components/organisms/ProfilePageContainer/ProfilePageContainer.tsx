@@ -40,7 +40,7 @@ export interface ProfilePageContainerProps {
  * }
  * ```
  */
-export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
+export function ProfilePageContainer({ children }: ProfilePageContainerProps): React.ReactElement {
   // Business logic: Get profile context (pubky and isOwnProfile)
   const { pubky, isOwnProfile } = Providers.useProfileContext();
 

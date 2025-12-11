@@ -1,7 +1,7 @@
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 
-export function PopoverTradeoffs({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function PopoverTradeoffs({ ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return (
     <Atoms.Popover hover>
       <Atoms.PopoverTrigger asChild>

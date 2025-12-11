@@ -18,7 +18,7 @@ interface BackupMethodCardProps {
   dialog: React.ReactNode;
 }
 
-function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCardProps) {
+function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCardProps): React.ReactElement {
   return (
     <Atoms.Card className="w-full flex-[1_0_0] flex-col gap-3 px-0 py-0 md:gap-6">
       {/* Card Header */}
@@ -41,7 +41,7 @@ function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCar
   );
 }
 
-export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
+export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}): React.ReactElement {
   const { mnemonic } = Core.useOnboardingStore();
 
   return (

@@ -29,3 +29,16 @@ export type TUserQueryParams =
 
 // Path parameters that should NOT be added to query string
 export const USER_PATH_PARAMS = ['user_id', 'label'] as const;
+
+export type UserApiEndpoint =
+  | 'view'
+  | 'counts'
+  | 'details'
+  | 'followers'
+  | 'following'
+  | 'friends'
+  | 'muted'
+  | 'notifications'
+  | 'relationship'
+  | 'taggers'
+  | 'tags';

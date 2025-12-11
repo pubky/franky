@@ -8,14 +8,14 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-export function PublicKeyCard() {
+export function PublicKeyCard(): React.ReactElement {
   const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
     if (pubky === '') {
-      const generatePubky = () => {
+      const generatePubky = (): void => {
         const keypair = Libs.Identity.generateKeypair();
         setKeypair(keypair.pubky, keypair.secretKey);
         setMnemonic(keypair.mnemonic);
@@ -25,13 +25,13 @@ export function PublicKeyCard() {
     }
   }, [pubky, setKeypair, setMnemonic]);
 
-  const handleCopyToClipboard = () => {
+  const handleCopyToClipboard = (): void => {
     if (pubky) {
       copyToClipboard(pubky);
     }
   };
 
-  const handleShare = async () => {
+  const handleShare = async (): Promise<void> => {
     if (!pubky) return;
 
     try {

@@ -1,5 +1,5 @@
 import { ProfileStats } from '@/hooks/useProfileHeader/useProfileHeader';
-import { ProfilePageType, FilterBarPageType } from '@/app/profile/types';
+import { ProfilePageType, FilterBarPageType } from '@/app/profile/profile.types';
 
 export interface ProfilePageLayoutActions {
   onEdit: () => void;

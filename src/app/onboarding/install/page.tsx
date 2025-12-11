@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding install page on pubky app.',
 });
 
-export default function InstallPage() {
+export default function InstallPage(): React.ReactElement {
   return <Templates.Install />;
 }

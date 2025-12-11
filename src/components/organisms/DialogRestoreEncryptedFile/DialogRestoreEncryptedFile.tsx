@@ -7,18 +7,18 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }) {
+export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }): React.ReactElement {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [isRestoring, setIsRestoring] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = () => {
+  const handleFileSelect = (): void => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file extension
@@ -31,7 +31,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     }
   };
 
-  const handleRestore = async () => {
+  const handleRestore = async (): Promise<void> => {
     // Guard against double-submit race condition
     if (isRestoring) return;
 
@@ -75,7 +75,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     }
   };
 
-  const handleReset = () => {
+  const handleReset = (): void => {
     setSelectedFile(null);
     setPassword('');
     setError('');
@@ -85,7 +85,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     }
   };
 
-  const isFormValid = () => {
+  const isFormValid = (): boolean => {
     return Boolean(selectedFile && password && !isRestoring);
   };
 

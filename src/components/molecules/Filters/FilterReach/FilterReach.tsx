@@ -9,7 +9,7 @@ export function FilterReach({
   selectedTab,
   defaultSelectedTab = Core.REACH.ALL,
   onTabChange,
-}: Molecules.BaseFilterProps<Core.ReachType>) {
+}: Molecules.BaseFilterProps<Core.ReachType>): React.ReactElement {
   const items = React.useMemo(
     () => [
       { key: Core.REACH.ALL, label: 'All', icon: Libs.Radio },

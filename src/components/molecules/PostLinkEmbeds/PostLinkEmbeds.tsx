@@ -6,19 +6,7 @@ import LinkifyIt from 'linkify-it';
 import * as Atoms from '@/atoms';
 import * as Providers from './Providers';
 import * as Types from './PostLinkEmbeds.types';
-
-// Register all embed providers here
-const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
-  Providers.Youtube,
-  Providers.Vimeo,
-  Providers.Twitter,
-  Providers.Generic,
-  // Add more providers here:
-  // Providers.Twitch,
-];
-
-// Protocol types to ignore when parsing links
-const IGNORED_PROTOCOLS = ['ftp:', 'mailto:'];
+import { EMBED_PROVIDERS, IGNORED_PROTOCOLS } from './PostLinkEmbeds.constants';
 
 /**
  * Create a hostname-to-provider lookup map for O(1) performance
@@ -39,7 +27,7 @@ const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
  * Parse content for URLs
  * Returns the first URL
  */
-const parseContentForUrl = (content: string) => {
+const parseContentForUrl = (content: string): string | undefined => {
   const linkify = new LinkifyIt();
 
   // Disable unwanted protocol types
@@ -81,7 +69,7 @@ const parseUrlForLinkEmbed = async (url: string): Promise<Types.ParseUrlForLinkE
   }
 };
 
-export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
+export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps): React.ReactElement | null => {
   const [embed, setEmbed] = React.useState<Types.ParseUrlForLinkEmbedResult['embed']>(null);
   const [provider, setProvider] = React.useState<Types.ParseUrlForLinkEmbedResult['provider']>(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -89,7 +77,7 @@ export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
   React.useEffect(() => {
     let cancelled = false;
 
-    const getLinkEmbed = async () => {
+    const getLinkEmbed = async (): Promise<void> => {
       const url = parseContentForUrl(content);
       if (!url) return;
 

@@ -25,8 +25,11 @@ const timeframeTabs: { key: Core.TimeframeType; label: string; icon: React.Compo
  *
  * Filter component for selecting timeframe (Today, This Month, All Time).
  */
-export function FilterTimeframe({ selectedTab = Core.TIMEFRAME.TODAY, onTabChange }: FilterTimeframeProps) {
-  const handleTabClick = (tab: Core.TimeframeType) => {
+export function FilterTimeframe({
+  selectedTab = Core.TIMEFRAME.TODAY,
+  onTabChange,
+}: FilterTimeframeProps): React.ReactElement {
+  const handleTabClick = (tab: Core.TimeframeType): void => {
     onTabChange?.(tab);
   };
 
@@ -59,7 +62,7 @@ export function FilterTimeframe({ selectedTab = Core.TIMEFRAME.TODAY, onTabChang
  * Uses the hot store for state management.
  * Desktop version with sticky positioning.
  */
-export function HotFeedSidebar() {
+export function HotFeedSidebar(): React.ReactElement {
   const { reach, setReach, timeframe, setTimeframe } = Core.useHotStore();
 
   return (
@@ -78,7 +81,7 @@ export function HotFeedSidebar() {
  * Left drawer for Hot feed (tablet/mobile) - displays reach and timeframe filters.
  * Uses the hot store for state management.
  */
-export function HotFeedDrawer() {
+export function HotFeedDrawer(): React.ReactElement {
   const { reach, setReach, timeframe, setTimeframe } = Core.useHotStore();
 
   return (

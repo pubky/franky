@@ -1,7 +1,7 @@
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 
-export function PublicKey() {
+export function PublicKey(): React.ReactElement {
   return (
     <Molecules.OnboardingLayout testId="public-key-content" navigation={<Molecules.PublicKeyNavigation />}>
       <Molecules.PublicKeyHeader />

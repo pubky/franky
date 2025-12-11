@@ -48,3 +48,11 @@ export type TMissingUsersParams = {
   cacheMissUserIds: Core.Pubky[];
   viewerId?: Core.Pubky;
 };
+
+/**
+ * Internal type for fetchStreamFromNexus parameters
+ * Extends the internal fetch params type with optional cached stream data
+ */
+export type TFetchStreamFromNexusParams = TFetchUserStreamChunkParams & {
+  cachedStream?: { stream: Core.Pubky[] } | null;
+};

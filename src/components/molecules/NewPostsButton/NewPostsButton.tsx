@@ -21,7 +21,12 @@ import type { NewPostsButtonProps } from './NewPostsButton.types';
  * />
  * ```
  */
-export function NewPostsButton({ count, onClick, visible, isScrolled = false }: NewPostsButtonProps) {
+export function NewPostsButton({
+  count,
+  onClick,
+  visible,
+  isScrolled = false,
+}: NewPostsButtonProps): React.ReactElement | null {
   if (!visible || count === 0) return null;
 
   return (

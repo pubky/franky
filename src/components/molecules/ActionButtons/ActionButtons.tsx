@@ -16,7 +16,7 @@ export function ActionButtons({
   signInText = 'Sign in',
   createAccountText = 'Create account',
   ...props
-}: ActionButtonsProps) {
+}: ActionButtonsProps): React.ReactElement {
   return (
     <Atoms.Container className={Libs.cn('flex-row gap-3 sm:items-center', className)} {...props}>
       <Atoms.Button id="sign-in-btn" variant="secondary" className="w-[158px] sm:w-auto" size="lg" onClick={onSignIn}>

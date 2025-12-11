@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
  *
  * Message displayed when user has reached the end of the timeline.
  */
-export function TimelineEndMessage() {
+export function TimelineEndMessage(): React.ReactElement {
   return (
     <Atoms.Container className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">

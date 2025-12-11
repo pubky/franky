@@ -12,7 +12,7 @@ interface RootContainerProps {
   children: React.ReactNode;
 }
 
-export function RootContainer({ children }: RootContainerProps) {
+export function RootContainer({ children }: RootContainerProps): React.ReactElement {
   return (
     <Atoms.Container as="html">
       <Atoms.Container as="body" className={`${interTight.variable} antialiased`}>

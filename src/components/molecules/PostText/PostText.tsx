@@ -13,7 +13,7 @@ type PostTextProps = {
   content: string;
 };
 
-export const PostText = ({ content }: PostTextProps) => {
+export const PostText = ({ content }: PostTextProps): React.ReactElement => {
   return (
     <Atoms.Container
       overrideDefaults

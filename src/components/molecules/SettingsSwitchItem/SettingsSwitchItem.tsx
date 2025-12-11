@@ -13,7 +13,14 @@ export interface SettingsSwitchItemProps {
   className?: string;
 }
 
-export function SettingsSwitchItem({ id, label, checked, disabled, onChange, className }: SettingsSwitchItemProps) {
+export function SettingsSwitchItem({
+  id,
+  label,
+  checked,
+  disabled,
+  onChange,
+  className,
+}: SettingsSwitchItemProps): React.ReactElement {
   return (
     <div className={Libs.cn('inline-flex h-8 w-full items-center justify-between', className)}>
       <Atoms.Typography size="sm" className="font-semibold">

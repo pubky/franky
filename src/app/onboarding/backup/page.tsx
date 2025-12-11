@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding backup page on pubky app.',
 });
 
-export default function BackupPage() {
+export default function BackupPage(): React.ReactElement {
   return <Templates.Backup />;
 }

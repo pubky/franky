@@ -4,13 +4,13 @@ import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import type { SinglePostReplyInputProps } from './SinglePostReplyInput.types';
 
-export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps) {
+export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps): React.ReactElement {
   const { content, setContent, reply, isSubmitting } = Hooks.usePost();
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
 
-  const handleReplySubmit = () => reply({ postId, onSuccess });
+  const handleReplySubmit = (): Promise<void> => reply({ postId, onSuccess });
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter' && !e.shiftKey && !isSubmitting) {
       e.preventDefault();
       void handleReplySubmit();

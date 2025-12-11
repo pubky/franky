@@ -10,7 +10,7 @@ import * as Libs from '@/libs';
 import * as App from '@/app';
 import * as Hooks from '@/hooks';
 
-export function HomeserverCard() {
+export function HomeserverCard(): React.ReactElement {
   const router = useRouter();
 
   const { toast } = Molecules.useToast();
@@ -31,13 +31,13 @@ export function HomeserverCard() {
     }
   }, []);
 
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const formatted = Libs.formatInviteCode(e.target.value);
     setInviteCode(formatted);
     setContinueButtonDisabled(formatted.length !== 14);
   };
 
-  const showErrorToast = () => {
+  const showErrorToast = (): void => {
     const toastInstance = toast({
       title: 'Error signing up',
       description: 'Invalid invite code or already used. Please try again.',
@@ -53,7 +53,7 @@ export function HomeserverCard() {
     });
   };
 
-  const onHandleContinueButton = async () => {
+  const onHandleContinueButton = async (): Promise<void> => {
     try {
       setContinueButtonDisabled(true);
       setStatus('default');
@@ -73,7 +73,7 @@ export function HomeserverCard() {
     }
   };
 
-  const isFormValid = () => {
+  const isFormValid = (): boolean => {
     return !continueButtonDisabled && !isLoading;
   };
 

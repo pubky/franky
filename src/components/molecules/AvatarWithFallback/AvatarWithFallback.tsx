@@ -20,7 +20,7 @@ export function AvatarWithFallback({
   className,
   fallbackClassName,
   alt,
-}: AvatarWithFallbackProps) {
+}: AvatarWithFallbackProps): React.ReactElement {
   const [imageError, setImageError] = useState(false);
 
   // Reset error state when avatarUrl changes

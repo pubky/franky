@@ -20,7 +20,14 @@ import { TAG_MAX_LENGTH, TAGS_MAX_TOTAL_CHARS, TAGS_MAX_COUNT } from './UserList
  * FollowButton
  * Renders follow/unfollow button in icon or text variant
  */
-function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, variant, onClick }: FollowButtonProps) {
+function FollowButton({
+  isFollowing,
+  isLoading,
+  isStatusLoading,
+  displayName,
+  variant,
+  onClick,
+}: FollowButtonProps): React.ReactElement {
   // Show loading if action is in progress OR if status is still being loaded
   const showLoading = isLoading || isStatusLoading;
 
@@ -88,7 +95,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
  * MeButton
  * Disabled button shown when viewing own profile
  */
-function MeButton({ className }: { className?: string }) {
+function MeButton({ className }: { className?: string }): React.ReactElement {
   return (
     <Atoms.Button
       variant="secondary"
@@ -106,7 +113,7 @@ function MeButton({ className }: { className?: string }) {
  * StatsSubtitle
  * Compact stats display with icons (for sidebar)
  */
-function StatsSubtitle({ tags, posts }: StatsSubtitleProps) {
+function StatsSubtitle({ tags, posts }: StatsSubtitleProps): React.ReactElement {
   return (
     <Atoms.Container overrideDefaults className="flex items-center gap-2 text-sm text-muted-foreground/50">
       <Atoms.Container overrideDefaults className="flex items-center gap-1">
@@ -129,7 +136,7 @@ function StatsSubtitle({ tags, posts }: StatsSubtitleProps) {
  * UserStats
  * Full stats display with labels (for profile pages)
  */
-function UserStats({ tags, posts }: UserStatsProps) {
+function UserStats({ tags, posts }: UserStatsProps): React.ReactElement {
   return (
     <Atoms.Container overrideDefaults className="flex shrink-0 items-center gap-3">
       <Atoms.Container className="items-start">
@@ -184,7 +191,7 @@ function getDisplayTags(tags: string[]): string[] {
  * TagsList
  * Renders tags with smart limiting based on character count
  */
-function TagsList({ tags, className }: { tags: string[]; className?: string }) {
+function TagsList({ tags, className }: { tags: string[]; className?: string }): React.ReactElement | null {
   if (tags.length === 0) return null;
 
   const displayTags = getDisplayTags(tags);
@@ -221,7 +228,7 @@ function CompactVariant({
   dataTestId,
   onUserClick,
   onFollowClick,
-}: VariantProps) {
+}: VariantProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults
@@ -284,7 +291,7 @@ function FullVariant({
   className,
   dataTestId,
   onFollowClick,
-}: VariantProps) {
+}: VariantProps): React.ReactElement {
   return (
     <Atoms.Container
       className={Libs.cn('gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0', className)}
@@ -372,7 +379,7 @@ export function UserListItem({
   onFollowClick,
   className,
   'data-testid': dataTestId,
-}: UserListItemProps) {
+}: UserListItemProps): React.ReactElement {
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
   const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
@@ -381,11 +388,11 @@ export function UserListItem({
   const stats = user.stats || user.counts || { tags: 0, posts: 0 };
   const isFollowing = isFollowingProp ?? user.isFollowing ?? false;
 
-  const handleUserClick = () => {
+  const handleUserClick = (): void => {
     onUserClick?.(user.id);
   };
 
-  const handleFollowClick = (e: React.MouseEvent) => {
+  const handleFollowClick = (e: React.MouseEvent): void => {
     e.preventDefault();
     e.stopPropagation();
     onFollowClick?.(user.id, isFollowing);

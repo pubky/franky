@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
 import type { NotificationIconProps } from './NotificationIcon.types';
 import { NOTIFICATION_ICON_MAP, ICON_SIZE, BADGE_SIZE } from './NotificationIcon.constants';
 
-export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
+export function NotificationIcon({ type, showBadge }: NotificationIconProps): React.ReactElement {
   const IconComponent = NOTIFICATION_ICON_MAP[type] || Icons.StickyNote;
 
   return (

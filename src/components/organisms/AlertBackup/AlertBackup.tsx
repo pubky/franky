@@ -13,7 +13,7 @@ import * as Organisms from '@/organisms';
  * Shows an alert when user has a secret key that needs to be backed up.
  * No props needed - manages its own state internally.
  */
-export const AlertBackup = () => {
+export const AlertBackup = (): React.ReactElement | null => {
   const { secretKey } = Core.useOnboardingStore();
   const [showAlert, setShowAlert] = useState(false);
 
@@ -23,7 +23,7 @@ export const AlertBackup = () => {
     }
   }, [secretKey]);
 
-  const handleDismiss = () => {
+  const handleDismiss = (): void => {
     setShowAlert(false);
   };
 

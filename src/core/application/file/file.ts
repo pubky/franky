@@ -17,7 +17,7 @@ export class FileApplication {
    * @param params.blobResult - Normalized blob result
    * @param params.fileResult - Normalized file result
    */
-  static async upload({ fileAttachments }: Core.FilesListParams) {
+  static async upload({ fileAttachments }: Core.FilesListParams): Promise<void> {
     await Promise.all(
       fileAttachments.map(async (fileAttachment) => {
         const { blobResult, fileResult } = fileAttachment;
@@ -31,7 +31,7 @@ export class FileApplication {
     );
   }
 
-  static async delete(fileAttachments: string[]) {
+  static async delete(fileAttachments: string[]): Promise<void> {
     await Promise.all(
       fileAttachments.map(async (fileUri) => {
         // Delete the file metadata
@@ -56,7 +56,7 @@ export class FileApplication {
     );
   }
 
-  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
+  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams): Promise<Core.AttachmentConstructed[]> {
     const compositeFileIds = fileAttachments.flatMap((uri) => {
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
       return compositeId ? [compositeId] : [];
@@ -81,7 +81,7 @@ export class FileApplication {
    * @param fileUris - Array of file URIs to fetch and persist
    * @returns Promise that resolves when files are persisted
    */
-  static async persistFiles(fileUris: string[]) {
+  static async persistFiles(fileUris: string[]): Promise<void> {
     if (fileUris.length === 0) {
       return;
     }

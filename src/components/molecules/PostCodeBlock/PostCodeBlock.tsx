@@ -10,7 +10,7 @@ import * as Atoms from '@/atoms';
 
 type PostCodeBlockProps = ClassAttributes<HTMLElement> & HTMLAttributes<HTMLElement> & ExtraProps;
 
-export const PostCodeBlock = (props: PostCodeBlockProps) => {
+export const PostCodeBlock = (props: PostCodeBlockProps): React.ReactElement => {
   const [copied, setCopied] = useState(false);
 
   const { children, className, node: _node, ref: _ref, ...rest } = props;
@@ -18,7 +18,7 @@ export const PostCodeBlock = (props: PostCodeBlockProps) => {
   const lang = /language-(\w+)/.exec(className || '')?.[1];
   const codeSyntaxHighlight = String(children).replace(/\n$/, '');
 
-  const copyCodeBlock = async () => {
+  const copyCodeBlock = async (): Promise<void> => {
     if (copied) return;
 
     try {

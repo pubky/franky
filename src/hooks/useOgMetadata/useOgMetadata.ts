@@ -1,13 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { OgMetadata } from './useOgMetadata.types';
 
-export interface OgMetadata {
-  url: string;
-  title: string | null;
-  image: string | null;
-  type: 'website' | 'image' | 'video' | 'audio';
-}
+export type { OgMetadata } from './useOgMetadata.types';
 
 // Simple in-memory cache for metadata
 // This provides basic caching without the complexity of SWR

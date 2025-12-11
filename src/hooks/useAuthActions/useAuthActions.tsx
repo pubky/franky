@@ -7,7 +7,17 @@ import { useAuthStatus } from '../useAuthStatus';
 import { ROUTE_ACCESS_MAP } from '@/providers/RouteGuardProvider/RouteGuardProvider.constants';
 import * as App from '@/app';
 
-export function useAuthActions() {
+export function useAuthActions(): {
+  completeProfileCreation: (profileData: {
+    name?: string;
+    bio?: string;
+    avatar?: string;
+  }) => Promise<{ success: boolean; profileData?: { name?: string; bio?: string; avatar?: string }; error?: unknown }>;
+  logout: () => void;
+  canAccessRoute: (route: string) => boolean;
+  navigateIfAllowed: (route: string) => void;
+  currentStatus: number;
+} {
   const router = useRouter();
   const { status } = useAuthStatus();
   const onboardingStore = Core.useOnboardingStore();

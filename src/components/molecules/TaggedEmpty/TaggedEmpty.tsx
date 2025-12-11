@@ -4,7 +4,7 @@ import { Tag } from 'lucide-react';
 import * as Molecules from '@/molecules';
 import type { TaggedEmptyProps } from './TaggedEmpty.types';
 
-export function TaggedEmpty({ onTagAdd }: TaggedEmptyProps) {
+export function TaggedEmpty({ onTagAdd }: TaggedEmptyProps): React.ReactElement {
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/tagged-empty-state.png"

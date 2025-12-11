@@ -30,11 +30,11 @@ export function PostTag({
   onClose,
   color,
   className,
-}: PostTagProps) {
+}: PostTagProps): React.ReactElement {
   const tagColor = color || Libs.generateRandomColor(label);
   const backgroundGradient = `linear-gradient(90deg, ${Libs.hexToRgba('#05050A', 0.7)} 0%, ${Libs.hexToRgba('#05050A', 0.7)} 100%), linear-gradient(90deg, ${tagColor} 0%, ${tagColor} 100%)`;
 
-  const handleClose = (e: React.MouseEvent) => {
+  const handleClose = (e: React.MouseEvent): void => {
     e.stopPropagation();
     onClose?.(e);
   };

@@ -4,8 +4,9 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import { SUPPORT_LINKS } from './Help.constants';
 
-const FAQ_QUESTIONS: Molecules.FAQAccordionItem[] = [
+const faqQuestions: Molecules.FAQAccordionItem[] = [
   {
     id: '1',
     question: 'How can I update my profile information?',
@@ -59,16 +60,11 @@ const FAQ_QUESTIONS: Molecules.FAQAccordionItem[] = [
   },
 ];
 
-const SUPPORT_LINKS = {
-  userGuide: 'https://support.synonym.to/hc/pubky-app-help-center/en',
-  telegram: 'https://t.me/pubkychat',
-} as const;
-
 export interface HelpProps {
   className?: string;
 }
 
-export function Help({ className }: HelpProps) {
+export function Help({ className }: HelpProps): React.ReactElement {
   const handleUserGuideClick = React.useCallback(() => {
     window.open(SUPPORT_LINKS.userGuide, '_blank', 'noopener,noreferrer');
   }, []);
@@ -85,7 +81,7 @@ export function Help({ className }: HelpProps) {
         <h2 className="text-2xl leading-8 font-bold text-foreground">FAQ</h2>
       </div>
       <p className="text-base leading-6 font-medium text-foreground">Frequently asked questions from Pubky users</p>
-      <Molecules.FAQAccordion items={FAQ_QUESTIONS} />
+      <Molecules.FAQAccordion items={faqQuestions} />
 
       <Molecules.SettingsDivider className="my-6 h-px w-full bg-white/10" />
 

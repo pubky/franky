@@ -1,5 +1,10 @@
 import { type Pubky, type Timestamp, type TagModel } from '@/core';
 
+/**
+ * HTTP method type for API requests
+ */
+export type HttpMethod = 'GET' | 'POST';
+
 export enum StreamSorting {
   TIMELINE = 'timeline',
   ENGAGEMENT = 'total_engagement',

@@ -5,7 +5,7 @@ import * as Organisms from '@/organisms';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import type { DialogReplyProps } from './DialogReply.types';
 
-export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyProps) {
+export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyProps): React.ReactElement {
   return (
     <Atoms.Dialog open={open} onOpenChange={onOpenChangeAction}>
       <Atoms.DialogContent className="w-3xl" hiddenTitle="Reply to post">

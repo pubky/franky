@@ -15,7 +15,7 @@ import { ProfilePageHeader } from '@/organisms';
  * Shows profile header, tagged section, and links.
  * Uses ProfileContext to get the target user's pubky.
  */
-export function ProfileProfile() {
+export function ProfileProfile(): React.ReactElement {
   // Get the profile pubky and isOwnProfile from context
   const { pubky, isOwnProfile } = Providers.useProfileContext();
 

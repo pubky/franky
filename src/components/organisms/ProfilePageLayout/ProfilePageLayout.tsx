@@ -44,7 +44,7 @@ export function ProfilePageLayout({
   navigateToPage,
   isLoading,
   isOwnProfile = true,
-}: ProfilePageLayoutProps) {
+}: ProfilePageLayoutProps): React.ReactElement {
   const [isAvatarZoomOpen, setIsAvatarZoomOpen] = useState(false);
 
   // Stabilize callbacks to prevent unnecessary re-renders in child components

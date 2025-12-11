@@ -5,7 +5,13 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import type { TaggedListProps } from './TaggedList.types';
 
-export function TaggedList({ tags, hasMore = false, isLoadingMore = false, onLoadMore, onTagToggle }: TaggedListProps) {
+export function TaggedList({
+  tags,
+  hasMore = false,
+  isLoadingMore = false,
+  onLoadMore,
+  onTagToggle,
+}: TaggedListProps): React.ReactElement {
   const { sentinelRef } = Hooks.useInfiniteScroll({
     onLoadMore: onLoadMore || (() => {}),
     hasMore,

@@ -13,7 +13,7 @@ import * as Hooks from '@/hooks';
  * - Infinite scroll pagination
  * - Loading/error/empty states
  */
-export function NotificationsContainer() {
+export function NotificationsContainer(): React.ReactElement {
   const { notifications, unreadNotifications, isLoading, isLoadingMore, hasMore, error, loadMore, markAllAsRead } =
     Hooks.useNotifications();
 

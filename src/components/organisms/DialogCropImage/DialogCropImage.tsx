@@ -11,6 +11,7 @@ import 'react-easy-crop/react-easy-crop.css';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import { DEFAULT_FILE_NAME } from './DialogCropImage.constants';
 
 type DialogCropImageProps = {
   open: boolean;
@@ -22,9 +23,15 @@ type DialogCropImageProps = {
   onCrop: (file: File, previewUrl: string) => void;
 };
 
-const DEFAULT_FILE_NAME = 'cropped-image.png';
-
-export function DialogCropImage({ open, imageSrc, fileName, fileType, onClose, onBack, onCrop }: DialogCropImageProps) {
+export function DialogCropImage({
+  open,
+  imageSrc,
+  fileName,
+  fileType,
+  onClose,
+  onBack,
+  onCrop,
+}: DialogCropImageProps): React.ReactElement {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);

@@ -13,7 +13,7 @@ export class UserApplication {
     follower,
     followee,
     activeStreamId,
-  }: Core.TUserApplicationFollowParams) {
+  }: Core.TUserApplicationFollowParams): Promise<void> {
     if (eventType === Core.HomeserverAction.PUT) {
       await Core.LocalFollowService.create({ follower, followee, activeStreamId });
     } else if (eventType === Core.HomeserverAction.DELETE) {
@@ -27,7 +27,7 @@ export class UserApplication {
    * Performs local database operations and syncs with the homeserver.
    * @param params - Parameters containing event type, URLs, JSON data, and user IDs
    */
-  static async mute({ eventType, muteUrl, muteJson, muter, mutee }: Core.TUserApplicationMuteParams) {
+  static async mute({ eventType, muteUrl, muteJson, muter, mutee }: Core.TUserApplicationMuteParams): Promise<void> {
     if (eventType === Core.HomeserverAction.PUT) {
       await Core.LocalMuteService.create({ muter, mutee });
       await Core.HomeserverService.request(eventType, muteUrl, muteJson);

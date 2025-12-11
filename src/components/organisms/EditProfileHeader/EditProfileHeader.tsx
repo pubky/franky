@@ -5,13 +5,13 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-export const EditProfileHeader = () => {
+export const EditProfileHeader = (): React.ReactElement => {
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
   const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky ?? '', length: 10 });
 
-  const handleCopyToClipboard = () => {
+  const handleCopyToClipboard = (): void => {
     if (currentUserPubky) {
       copyToClipboard(currentUserPubky);
     }

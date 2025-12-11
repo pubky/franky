@@ -3,44 +3,17 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import * as Types from '@/app/profile/types';
+import { PROFILE_MENU_ITEMS } from './ProfilePageMobileMenu.constants';
+import type { ProfilePageMobileMenuProps } from './ProfilePageMobileMenu.types';
 
-export interface ProfileMenuItem {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  label: string;
-  pageType: Types.ProfilePageType;
-  /** Whether this item should only be shown for own profile */
-  ownProfileOnly?: boolean;
-}
-
-export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
-  { icon: Libs.CircleUserRound, label: 'Profile', pageType: Types.PROFILE_PAGE_TYPES.PROFILE },
-  {
-    icon: Libs.Bell,
-    label: 'Notifications',
-    pageType: Types.PROFILE_PAGE_TYPES.NOTIFICATIONS,
-    ownProfileOnly: true, // Notifications only make sense for logged-in user
-  },
-  { icon: Libs.MessageCircle, label: 'Replies', pageType: Types.PROFILE_PAGE_TYPES.REPLIES },
-  { icon: Libs.StickyNote, label: 'Posts', pageType: Types.PROFILE_PAGE_TYPES.POSTS },
-  { icon: Libs.UsersRound, label: 'Followers', pageType: Types.PROFILE_PAGE_TYPES.FOLLOWERS },
-  { icon: Libs.UsersRound2, label: 'Following', pageType: Types.PROFILE_PAGE_TYPES.FOLLOWING },
-  { icon: Libs.HeartHandshake, label: 'Friends', pageType: Types.PROFILE_PAGE_TYPES.FRIENDS },
-  { icon: Libs.Tag, label: 'Tagged', pageType: Types.PROFILE_PAGE_TYPES.UNIQUE_TAGS },
-];
-
-export interface ProfilePageMobileMenuProps {
-  activePage: Types.ProfilePageType;
-  onPageChangeAction: (page: Types.ProfilePageType) => void;
-  /** Whether this is the logged-in user's own profile */
-  isOwnProfile?: boolean;
-}
+export { PROFILE_MENU_ITEMS } from './ProfilePageMobileMenu.constants';
+export type { ProfileMenuItem, ProfilePageMobileMenuProps } from './ProfilePageMobileMenu.types';
 
 export function ProfilePageMobileMenu({
   activePage,
   onPageChangeAction,
   isOwnProfile = true,
-}: ProfilePageMobileMenuProps) {
+}: ProfilePageMobileMenuProps): React.ReactElement {
   // Filter menu items based on isOwnProfile
   const visibleItems = React.useMemo(() => {
     return PROFILE_MENU_ITEMS.filter((item) => {

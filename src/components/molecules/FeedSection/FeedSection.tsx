@@ -15,7 +15,11 @@ export interface FeedSectionProps {
   className?: string;
 }
 
-export function FeedSection({ feeds: customFeeds, showCreateButton = true, className }: FeedSectionProps) {
+export function FeedSection({
+  feeds: customFeeds,
+  showCreateButton = true,
+  className,
+}: FeedSectionProps): React.ReactElement {
   const defaultFeeds: FeedItem[] = [
     { icon: Libs.UsersRound2, label: 'Following' },
     { icon: Libs.Bitcoin, label: 'Based Bitcoin' },

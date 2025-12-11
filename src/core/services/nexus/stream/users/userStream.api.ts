@@ -101,4 +101,4 @@ export function buildUserStreamBodyUrl(params: Core.TUserStreamUsersByIdsParams)
   return body;
 }
 
-export type UserStreamApiEndpoint = keyof typeof userStreamApi;
+export type { UserStreamApiEndpoint } from './userStream.types';

@@ -4,7 +4,7 @@ interface PostThreadSpacerProps {
   'data-testid'?: string;
 }
 
-export const PostThreadSpacer = ({ 'data-testid': dataTestId }: PostThreadSpacerProps) => {
+export const PostThreadSpacer = ({ 'data-testid': dataTestId }: PostThreadSpacerProps): React.ReactElement => {
   return (
     <Atoms.Container overrideDefaults className="flex h-4" data-testid={dataTestId}>
       <Atoms.Container overrideDefaults className="w-3 border-l border-border" />

@@ -6,7 +6,11 @@ import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
 
-export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
+export function ProfilePageHeader({
+  profile,
+  actions,
+  isOwnProfile = true,
+}: Types.ProfilePageHeaderProps): React.ReactElement {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const {
     onEdit,

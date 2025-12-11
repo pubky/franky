@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { UserRoundPlus } from 'lucide-react';
 import * as Atoms from '@/atoms';
 
-export function FriendsEmpty() {
+export function FriendsEmpty(): React.ReactElement {
   return (
     <Atoms.Container data-cy="profile-friends-empty" className="relative items-center gap-6 px-0 py-6">
       {/* Background image */}

@@ -37,8 +37,8 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
       autoFocus = false,
     },
     ref,
-  ) => {
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  ): React.ReactElement => {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
       if (e.key === 'Enter' && value.trim()) {
         e.preventDefault();
         e.stopPropagation();
@@ -46,7 +46,7 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
       }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
       onChange?.(e.target.value);
     };
 

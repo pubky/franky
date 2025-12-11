@@ -9,7 +9,7 @@ interface PostCountsProps {
   postId: string;
 }
 
-export function SinglePostCounts({ postId }: PostCountsProps) {
+export function SinglePostCounts({ postId }: PostCountsProps): React.ReactElement {
   const countsData = useLiveQuery(() => Core.db.post_counts.get(postId), [postId], null);
 
   const tagsCount = countsData?.tags ?? 0;

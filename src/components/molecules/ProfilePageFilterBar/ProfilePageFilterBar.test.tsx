@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageFilterBar, getDefaultItems } from './ProfilePageFilterBar';
-import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
+import { PROFILE_PAGE_TYPES } from '@/app/profile/profile.types';
 import * as Hooks from '@/hooks';
 
 const mockStats: Hooks.ProfileStats = {

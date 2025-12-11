@@ -1,7 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export function PopoverPublicKey({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function PopoverPublicKey({ ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return (
     <Atoms.Popover hover>
       <Atoms.PopoverTrigger asChild>

@@ -6,6 +6,6 @@ import * as Organisms from '@/organisms';
  * Template for displaying the current user's profile (mobile view).
  * Delegates all logic to the ProfileProfile organism.
  */
-export function ProfilePageProfile() {
+export function ProfilePageProfile(): React.ReactElement {
   return <Organisms.ProfileProfile />;
 }

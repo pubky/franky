@@ -4,23 +4,9 @@ import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Config from '@/config';
+import type { UserProfile, UseUserProfileResult } from './useUserProfile.types';
 
-export interface UserProfile {
-  name: string;
-  bio: string;
-  publicKey: string;
-  emoji: string;
-  status: string;
-  avatarUrl?: string;
-  link: string;
-  /** User's external links (social media, websites, etc.) */
-  links?: Core.NexusUserLink[] | null;
-}
-
-export interface UseUserProfileResult {
-  profile: UserProfile | null;
-  isLoading: boolean;
-}
+export type { UserProfile, UseUserProfileResult } from './useUserProfile.types';
 
 /**
  * Hook for fetching and transforming user profile data.

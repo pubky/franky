@@ -20,3 +20,5 @@ export type TSearchResult = string[];
 
 // Path parameters that should NOT be added to query string
 export const SEARCH_PATH_PARAMS = ['tag', 'prefix'] as const;
+
+export type SearchApiEndpoint = 'byTag' | 'byPrefix' | 'byUser' | 'byUsername';

@@ -4,7 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import type { DialogFeedbackSuccessProps } from './DialogFeedbackSuccess.types';
 
-export function DialogFeedbackSuccess({ onOpenChange }: DialogFeedbackSuccessProps) {
+export function DialogFeedbackSuccess({ onOpenChange }: DialogFeedbackSuccessProps): React.ReactElement {
   return (
     <>
       <Atoms.DialogHeader>

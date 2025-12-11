@@ -12,7 +12,7 @@ export interface PostContentOrganismProps {
   className?: string;
 }
 
-export function PostContent({ postId, className }: PostContentOrganismProps) {
+export function PostContent({ postId, className }: PostContentOrganismProps): React.ReactElement {
   // Fetch post details for content
   const postDetails = useLiveQuery(async () => {
     return await Core.PostDetailsModel.findById(postId);

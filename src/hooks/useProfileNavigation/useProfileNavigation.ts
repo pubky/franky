@@ -3,8 +3,9 @@
 import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { PROFILE_ROUTES } from '@/app';
-import { PROFILE_PAGE_TYPES, ProfilePageType, FilterBarPageType } from '@/app/profile/types';
+import { PROFILE_PAGE_TYPES, ProfilePageType, FilterBarPageType } from '@/app/profile/profile.types';
 import * as Providers from '@/providers';
+import type { UseProfileNavigationReturn } from './useProfileNavigation.types';
 
 /**
  * Profile routes configuration - single source of truth
@@ -130,23 +131,7 @@ const getPageTypeFromDynamicPath = (pathname: string): ProfilePageType | null =>
   return PROFILE_PAGE_TYPES.POSTS;
 };
 
-/**
- * Return type for the useProfileNavigation hook
- */
-export interface UseProfileNavigationReturn {
-  /**
-   * The currently active profile page based on the current pathname
-   */
-  activePage: ProfilePageType;
-  /**
-   * The active page for the filter bar (excludes PROFILE page type)
-   */
-  filterBarActivePage: FilterBarPageType;
-  /**
-   * Navigate to a specific profile page
-   */
-  navigateToPage: (page: ProfilePageType) => void;
-}
+export type { UseProfileNavigationReturn } from './useProfileNavigation.types';
 
 /**
  * Custom hook for managing profile page navigation

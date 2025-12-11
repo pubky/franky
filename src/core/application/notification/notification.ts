@@ -23,7 +23,7 @@ export class NotificationApplication {
    * @param pubky - The user's public key
    * @returns The new lastRead timestamp
    */
-  static markAllAsRead({ meta, last_read }: LastReadResult) {
+  static markAllAsRead({ meta, last_read }: LastReadResult): void {
     Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, last_read.toJson()).catch((error) =>
       Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
     );
@@ -166,7 +166,10 @@ export class NotificationApplication {
    *
    * @param notifications - Array of flat notifications to extract post and user references from
    */
-  private static async fetchMissingEntities(notifications: Core.FlatNotification[], viewerId: Core.Pubky) {
+  private static async fetchMissingEntities(
+    notifications: Core.FlatNotification[],
+    viewerId: Core.Pubky,
+  ): Promise<void> {
     const { relatedPostIds, relatedUserIds } = this.loopAndParseNotifications(notifications);
 
     const notPersistedPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(relatedPostIds);
@@ -188,7 +191,7 @@ export class NotificationApplication {
     const relatedPostIds = new Set<string>();
     const relatedUserIds = new Set<Core.Pubky>();
 
-    const addPostUri = (uri: string | undefined) => {
+    const addPostUri = (uri: string | undefined): void => {
       if (!uri) return;
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });
       if (compositeId) {

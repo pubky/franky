@@ -9,12 +9,12 @@ interface DialogDeleteAccountProps {
   onDeleteAccount?: () => void;
 }
 
-export function DialogDeleteAccount({ isOpen, onOpenChangeAction }: DialogDeleteAccountProps) {
-  const handleDeleteAccount = () => {
+export function DialogDeleteAccount({ isOpen, onOpenChangeAction }: DialogDeleteAccountProps): React.ReactElement {
+  const handleDeleteAccount = (): void => {
     onOpenChangeAction(false);
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     onOpenChangeAction(false);
   };
 

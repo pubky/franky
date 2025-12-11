@@ -10,7 +10,7 @@ export class TagController {
    * @param params.label - Tag label
    * @param params.taggerId - ID of the user adding the tag
    */
-  static async create(params: Core.TTagEventParams) {
+  static async create(params: Core.TTagEventParams): Promise<void> {
     const tag = Core.TagNormalizer.from(params);
 
     await Core.TagApplication.create({ tagList: [tag] });
@@ -23,7 +23,7 @@ export class TagController {
    * @param params.label - Tag label to remove
    * @param params.taggerId - ID of the user removing the tag
    */
-  static async delete(params: Core.TTagEventParams) {
+  static async delete(params: Core.TTagEventParams): Promise<void> {
     const { tagUrl, label, taggerId, taggedId, taggedKind } = Core.TagNormalizer.from(params);
 
     await Core.TagApplication.delete({

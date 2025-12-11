@@ -17,7 +17,7 @@ import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.typ
  * 3. Active Users - Influential users list
  * 4. Trending Posts - Timeline of popular posts
  */
-export function Hot() {
+export function Hot(): React.ReactElement {
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
 

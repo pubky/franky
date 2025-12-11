@@ -9,7 +9,7 @@ interface PostUserDetailsProps {
   postId: string;
 }
 
-export function SinglePostUserDetails({ postId }: PostUserDetailsProps) {
+export function SinglePostUserDetails({ postId }: PostUserDetailsProps): React.ReactElement | null {
   // TODO: Shall we do defensive parsing here or in the component that calls this?
   const { pubky: authorId } = Core.parseCompositeId(postId);
   const userDetails = useLiveQuery(() => Core.db.user_details.get(authorId).then((details) => details), [authorId]);

@@ -6,13 +6,14 @@ import { QRCodeSVG } from 'qrcode.react';
 import * as Atoms from '@/atoms';
 import * as Config from '@/config';
 import * as Libs from '@/libs';
+import { MOBILE_EXPORT_DESCRIPTION, MOBILE_IMPORT_DESCRIPTION } from './DialogBackupExport.constants';
 
 interface DialogBackupExportProps {
   mnemonic?: string;
   children?: React.ReactNode;
 }
 
-const IMPORT_DESCRIPTION = (
+const importDescription = (
   <>
     1. Open Pubky Ring, tap &apos;Add pubky&apos; <br />
     2. Choose &apos;Import pubky&apos; option <br />
@@ -21,7 +22,7 @@ const IMPORT_DESCRIPTION = (
   </>
 );
 
-const EXPORT_DESCRIPTION = (
+const exportDescription = (
   <>
     1. Open Pubky Ring, tap &apos;Add pubky&apos; <br />
     2. Choose the &apos;Import pubky&apos; option
@@ -30,19 +31,13 @@ const EXPORT_DESCRIPTION = (
   </>
 );
 
-const MOBILE_EXPORT_DESCRIPTION =
-  'Tap the button below to export your pubky and import it into Pubky Ring for a safer and easier sign-in experience.';
-
-const MOBILE_IMPORT_DESCRIPTION =
-  'Tap the button below to import your recovery phrase into Pubky Ring for a safer and easier sign-in experience.';
-
-export function DialogBackupExport({ mnemonic, children }: DialogBackupExportProps) {
+export function DialogBackupExport({ mnemonic, children }: DialogBackupExportProps): React.ReactElement {
   const qrValue = mnemonic ? Libs.generatePubkyRingDeeplink(mnemonic) : Config.PUBKY_CORE_URL;
-  const descriptionContent = mnemonic ? IMPORT_DESCRIPTION : EXPORT_DESCRIPTION;
+  const descriptionContent = mnemonic ? importDescription : exportDescription;
   const mobileDescription = mnemonic ? MOBILE_IMPORT_DESCRIPTION : MOBILE_EXPORT_DESCRIPTION;
   const dialogTitle = mnemonic ? 'Import recovery phrase' : 'Pubky Ring export';
 
-  const handleMobileButtonClick = () => {
+  const handleMobileButtonClick = (): void => {
     if (typeof window !== 'undefined') {
       const url = mnemonic ? Libs.generatePubkyRingDeeplink(mnemonic) : Config.PUBKY_CORE_URL;
       window.open(url, '_blank');

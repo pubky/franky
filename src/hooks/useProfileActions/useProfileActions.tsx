@@ -6,20 +6,9 @@ import * as Core from '@/core';
 import { AUTH_ROUTES, SETTINGS_ROUTES } from '@/app';
 // Import directly to avoid circular dependency with @/hooks barrel
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+import type { ProfileActions, UseProfileActionsProps } from './useProfileActions.types';
 
-export interface ProfileActions {
-  onEdit: () => void;
-  onCopyPublicKey: () => void;
-  onCopyLink: () => void;
-  onSignOut: () => void;
-  onStatusChange: (status: string) => void;
-  isLoggingOut: boolean;
-}
-
-export interface UseProfileActionsProps {
-  publicKey: string;
-  link: string;
-}
+export type { ProfileActions, UseProfileActionsProps } from './useProfileActions.types';
 
 /**
  * Hook for profile action handlers (navigation and side effects).

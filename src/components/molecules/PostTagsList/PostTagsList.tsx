@@ -19,7 +19,7 @@ export function PostTagsList({
   onAddButtonClick,
   onEmojiClick,
   className,
-}: Types.PostTagsListProps) {
+}: Types.PostTagsListProps): React.ReactElement {
   const [inputValue, setInputValue] = React.useState('');
   const [isAdding, setIsAdding] = React.useState(addMode ? false : showInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -31,7 +31,7 @@ export function PostTagsList({
     }
   }, [addMode, isAdding, inputValue]);
 
-  const handleTagSubmit = (value: string) => {
+  const handleTagSubmit = (value: string): void => {
     if (value.trim()) {
       onTagAdd?.(value.trim());
       setInputValue('');

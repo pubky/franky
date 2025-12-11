@@ -16,7 +16,13 @@ export interface PostMainProps {
   isLastReply?: boolean;
 }
 
-export function PostMain({ postId, onClick, className, isReply = false, isLastReply = false }: PostMainProps) {
+export function PostMain({
+  postId,
+  onClick,
+  className,
+  isReply = false,
+  isLastReply = false,
+}: PostMainProps): React.ReactElement {
   const { postDetails } = Hooks.usePostDetails(postId);
   const isDeleted = Libs.isPostDeleted(postDetails?.content);
 
@@ -28,11 +34,11 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   // Determine thread connector variant based on reply status
   const connectorVariant = isLastReply ? POST_THREAD_CONNECTOR_VARIANTS.LAST : POST_THREAD_CONNECTOR_VARIANTS.REGULAR;
 
-  const handleReplyClick = () => {
+  const handleReplyClick = (): void => {
     setReplyDialogOpen(true);
   };
 
-  const handleFooterClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleFooterClick = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation();
   };
 

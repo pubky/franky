@@ -15,6 +15,49 @@ interface MetadataProps {
 }
 import * as Config from '@/config';
 
+interface MetadataResult {
+  metadataBase: URL;
+  title: string;
+  description: string;
+  keywords: string;
+  authors: Array<{ name: string }>;
+  creator: string;
+  icons: {
+    icon: string;
+    shortcut: string;
+    apple: string;
+  };
+  openGraph: {
+    title: string;
+    description: string;
+    url: string;
+    siteName: string;
+    images: Array<{
+      url: string;
+      width: number;
+      height: number;
+      alt: string;
+    }>;
+    locale: string;
+    type: string;
+  };
+  twitter: {
+    card: 'summary_large_image';
+    title: string;
+    description: string;
+    images: string[];
+    creator: string;
+    site: string;
+  };
+  robots: {
+    index: boolean;
+    follow: boolean;
+  };
+  alternates: {
+    canonical: string;
+  };
+}
+
 export function Metadata({
   title,
   description,
@@ -29,7 +72,7 @@ export function Metadata({
   creator = Config.DEFAULT_CREATOR,
   site = Config.DEFAULT_URL,
   favicon = '/pubky-favicon.svg',
-}: MetadataProps) {
+}: MetadataProps): MetadataResult {
   return {
     metadataBase: new URL(Config.DEFAULT_URL),
     title,

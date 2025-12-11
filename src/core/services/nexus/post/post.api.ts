@@ -9,17 +9,17 @@ import * as Core from '@/core';
 const PREFIX = 'v0/post';
 
 export const postApi = {
-  view: (params: Core.TPostViewParams) => {
+  view: (params: Core.TPostViewParams): string => {
     const author = Core.encodePathSegment(params.author_id);
     const post = Core.encodePathSegment(params.post_id);
     return Core.buildUrlWithQuery(`${PREFIX}/${author}/${post}`, params, Core.POST_PATH_PARAMS);
   },
-  bookmarks: (params: Core.TPostBase) => {
+  bookmarks: (params: Core.TPostBase): string => {
     const author = Core.encodePathSegment(params.author_id);
     const post = Core.encodePathSegment(params.post_id);
     return Core.buildUrlWithQuery(`${PREFIX}/${author}/${post}/bookmarks`, params, Core.POST_PATH_PARAMS);
   },
-  counts: (params: Core.TPostBasePathParams) => {
+  counts: (params: Core.TPostBasePathParams): string => {
     const author = Core.encodePathSegment(params.author_id);
     const post = Core.encodePathSegment(params.post_id);
     return Core.buildNexusUrl(`${PREFIX}/${author}/${post}/counts`);
@@ -42,4 +42,4 @@ export const postApi = {
   },
 };
 
-export type PostApiEndpoint = keyof typeof postApi;
+export type { PostApiEndpoint } from './post.types';

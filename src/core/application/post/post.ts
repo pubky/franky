@@ -2,7 +2,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostApplication {
-  static async create({ postUrl, compositePostId, post, fileAttachments, tags }: Core.TCreatePostInput) {
+  static async create({ postUrl, compositePostId, post, fileAttachments, tags }: Core.TCreatePostInput): Promise<void> {
     if (fileAttachments && fileAttachments.length > 0) {
       await Core.FileApplication.upload({ fileAttachments });
     }
@@ -14,7 +14,7 @@ export class PostApplication {
     }
   }
 
-  static async delete({ compositePostId }: Core.TDeletePostParams) {
+  static async delete({ compositePostId }: Core.TDeletePostParams): Promise<void> {
     const post = await Core.PostDetailsModel.findById(compositePostId);
 
     if (!post) {

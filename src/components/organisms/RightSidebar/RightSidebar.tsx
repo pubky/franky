@@ -3,7 +3,7 @@ import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 import type { RightSidebarProps } from './RightSidebar.types';
 
-export function RightSidebar({ className }: RightSidebarProps) {
+export function RightSidebar({ className }: RightSidebarProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults

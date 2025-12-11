@@ -103,7 +103,7 @@ export class HomeserverService {
     }
   }
 
-  private async checkHomeserver(pubky: Core.Pubky) {
+  private async checkHomeserver(pubky: Core.Pubky): Promise<string | undefined> {
     try {
       const pubkyPublicKey = Pubky.PublicKey.from(pubky);
       const homeserver = await this.client.getHomeserver(pubkyPublicKey);
@@ -125,7 +125,7 @@ export class HomeserverService {
     }
   }
 
-  private async checkSession(pubky: Core.Pubky) {
+  private async checkSession(pubky: Core.Pubky): Promise<Pubky.Session | undefined> {
     try {
       const pubkyPublicKey = Pubky.PublicKey.from(pubky);
       const session = await this.client.session(pubkyPublicKey);
@@ -145,7 +145,7 @@ export class HomeserverService {
     }
   }
 
-  private async signin(keypair: Pubky.Keypair) {
+  private async signin(keypair: Pubky.Keypair): Promise<void> {
     try {
       await this.client.signin(keypair);
       Libs.Logger.debug('Signin successful', { keypair });

@@ -9,7 +9,7 @@ export interface SettingsProps {
   children: React.ReactNode;
 }
 
-export function Settings({ children }: SettingsProps) {
+export function Settings({ children }: SettingsProps): React.ReactElement {
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
 
@@ -35,7 +35,7 @@ export function Settings({ children }: SettingsProps) {
   );
 }
 
-export function SettingsLeftSidebar() {
+export function SettingsLeftSidebar(): React.ReactElement {
   return (
     <div className="sticky top-[100px] w-full self-start">
       <Molecules.SettingsMenu />
@@ -43,7 +43,7 @@ export function SettingsLeftSidebar() {
   );
 }
 
-export function SettingsRightSidebar() {
+export function SettingsRightSidebar(): React.ReactElement {
   return (
     <div className="sticky top-[100px] self-start">
       <Molecules.SettingsInfo />
@@ -51,10 +51,10 @@ export function SettingsRightSidebar() {
   );
 }
 
-export function SettingsLeftDrawer() {
+export function SettingsLeftDrawer(): React.ReactElement {
   return <Molecules.SettingsMenu />;
 }
 
-export function SettingsRightDrawer() {
+export function SettingsRightDrawer(): React.ReactElement {
   return <Molecules.SettingsInfo />;
 }

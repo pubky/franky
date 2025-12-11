@@ -16,7 +16,7 @@ import * as Providers from '@/providers';
  * - Managing loading and empty states
  * Uses ProfileContext to get the target user's pubky.
  */
-export function ProfileTagged() {
+export function ProfileTagged(): React.ReactElement {
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
 

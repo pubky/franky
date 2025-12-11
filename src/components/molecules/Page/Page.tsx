@@ -15,7 +15,11 @@ interface PageTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   size?: 'medium' | 'large';
 }
 
-export function PageContainer({ as: Component = 'div', size = 'default', ...props }: PageContainerProps) {
+export function PageContainer({
+  as: Component = 'div',
+  size = 'default',
+  ...props
+}: PageContainerProps): React.ReactElement {
   const sizeClasses = {
     default: 'container mx-auto max-w-[1200px]',
     narrow: 'container mx-auto max-w-[588px]',
@@ -28,7 +32,7 @@ export function PageContainer({ as: Component = 'div', size = 'default', ...prop
   );
 }
 
-export function PageTitle({ children, className, size = 'large', ...props }: PageTitleProps) {
+export function PageTitle({ children, className, size = 'large', ...props }: PageTitleProps): React.ReactElement {
   const sizeClasses = {
     medium: 'text-4xl lg:text-[60px]',
     large: 'text-5xl lg:text-6xl',

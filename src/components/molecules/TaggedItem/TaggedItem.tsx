@@ -8,17 +8,23 @@ import { APP_ROUTES } from '@/app/routes';
 import type { TaggedItemProps } from './TaggedItem.types';
 import { MAX_VISIBLE_AVATARS } from './TaggedItem.constants';
 
-export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideAvatars = false }: TaggedItemProps) {
+export function TaggedItem({
+  tag,
+  onTagClick,
+  onSearchClick,
+  maxTagLength,
+  hideAvatars = false,
+}: TaggedItemProps): React.ReactElement {
   const router = useRouter();
   const visibleTaggers = tag.taggers.slice(0, MAX_VISIBLE_AVATARS);
   const overflowCount = tag.taggers.length - MAX_VISIBLE_AVATARS;
   const displayLabel = maxTagLength ? Libs.truncateString(tag.label, maxTagLength) : tag.label;
 
-  const handleTagClick = () => {
+  const handleTagClick = (): void => {
     onTagClick(tag);
   };
 
-  const handleSearchClick = () => {
+  const handleSearchClick = (): void => {
     if (onSearchClick) {
       onSearchClick();
     } else {

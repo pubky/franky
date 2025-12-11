@@ -7,23 +7,28 @@ import * as Libs from '@/libs';
 import { POST_MAX_TAGS } from '@/config';
 import type { PostInputTagsProps } from './PostInputTags.types';
 
-export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, disabled = false }: PostInputTagsProps) {
+export function PostInputTags({
+  tags,
+  onTagsChange,
+  maxTags = POST_MAX_TAGS,
+  disabled = false,
+}: PostInputTagsProps): React.ReactElement {
   const [isAddingTag, setIsAddingTag] = useState(false);
 
   const isAtLimit = tags.length >= maxTags;
   const isDisabled = disabled || isAtLimit;
 
-  const handleTagAdd = (tag: string) => {
+  const handleTagAdd = (tag: string): void => {
     // Duplicate check is handled by useTagInput internally
     onTagsChange([...tags, tag]);
   };
 
-  const handleInputBlur = () => {
+  const handleInputBlur = (): void => {
     // Will be called by TagInput when input loses focus and is empty
     setIsAddingTag(false);
   };
 
-  const handleCloseInput = () => {
+  const handleCloseInput = (): void => {
     setIsAddingTag(false);
   };
 

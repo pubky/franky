@@ -16,13 +16,13 @@ export interface LanguageProps {
   className?: string;
 }
 
-export function Language({ className }: LanguageProps) {
+export function Language({ className }: LanguageProps): React.ReactElement {
   const [selectedLanguage, setSelectedLanguage] = React.useState('english');
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent): void => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }

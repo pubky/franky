@@ -29,7 +29,7 @@ export function AvatarGroup({
   maxAvatars = 6,
   className,
   'data-testid': dataTestId,
-}: AvatarGroupProps) {
+}: AvatarGroupProps): React.ReactElement | null {
   const visibleItems = items.slice(0, maxAvatars);
 
   // Overflow is based on totalCount minus visible avatars

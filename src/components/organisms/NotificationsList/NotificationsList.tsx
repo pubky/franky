@@ -6,7 +6,7 @@ import * as Organisms from '@/organisms';
 import type { NotificationsListProps } from './NotificationsList.types';
 import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 
-export function NotificationsList({ notifications, unreadNotifications }: NotificationsListProps) {
+export function NotificationsList({ notifications, unreadNotifications }: NotificationsListProps): React.ReactElement {
   // Create a Set of unread notification business keys for O(1) lookup
   // Early return optimization for empty unread list
   const unreadKeys = useMemo(() => {

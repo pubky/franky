@@ -16,7 +16,7 @@ interface SidebarButtonDivProps extends Omit<React.HTMLAttributes<HTMLDivElement
   asChild: true;
 }
 
-export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps) {
+export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps): React.ReactElement {
   const { icon: Icon, children, className, asChild, ...restProps } = props;
 
   const buttonContent = (

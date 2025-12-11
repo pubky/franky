@@ -15,3 +15,5 @@ export type TFileParams = {
   file_id: string;
   variant: FileVariant;
 };
+
+export type FilesApiEndpoint = 'getAvatarUrl' | 'getFileUrl' | 'getFiles';

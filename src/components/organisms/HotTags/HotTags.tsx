@@ -18,17 +18,17 @@ import type { HotTagsProps } from './HotTags.types';
  * Note: This is an Organism because it interacts with Core via hooks (useHotTags)
  * and handles routing.
  */
-export function HotTags({ className }: HotTagsProps) {
+export function HotTags({ className }: HotTagsProps): React.ReactElement {
   const router = useRouter();
   const { tags } = Hooks.useHotTags();
 
   const displayTags = tags.slice(0, MAX_TAGS);
 
-  const handleTagClick = (tagName: string) => {
+  const handleTagClick = (tagName: string): void => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
   };
 
-  const handleSeeAll = () => {
+  const handleSeeAll = (): void => {
     router.push(APP_ROUTES.HOT);
   };
 

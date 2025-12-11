@@ -36,7 +36,7 @@ export function Typography({
   overrideDefaults = false,
   'data-testid': dataTestId,
   ...props
-}: TypographyProps & React.HTMLAttributes<HTMLElement>) {
+}: TypographyProps & React.HTMLAttributes<HTMLElement>): React.ReactElement {
   const sizeClasses = {
     xs: 'text-xs font-medium',
     sm: 'text-sm font-semibold',

@@ -6,6 +6,6 @@ import * as Organisms from '@/organisms';
  * Template for displaying the friends list.
  * Delegates all logic to the ProfileFriends organism.
  */
-export function ProfilePageFriends() {
+export function ProfilePageFriends(): React.ReactElement {
   return <Organisms.ProfileFriends />;
 }

@@ -1,5 +1,6 @@
 import * as Config from '@/config';
 import * as Libs from '@/libs';
+import type { HttpMethod } from './nexus.types';
 
 /**
  * Shared API utilities for all endpoints
@@ -7,9 +8,7 @@ import * as Libs from '@/libs';
 export const HTTP_METHODS = {
   GET: 'GET',
   POST: 'POST',
-};
-
-type HttpMethod = keyof typeof HTTP_METHODS;
+} as const;
 
 export function buildNexusUrl(endpoint: string): string {
   return `${Config.NEXUS_URL}/${endpoint}`;
@@ -76,7 +75,7 @@ export function createFetchOptions(method: HttpMethod = 'GET', body?: BodyInit |
  * @param response - Response object with ok, status, and statusText properties
  * @throws {NexusError} When response is not ok (status >= 400)
  */
-export function ensureHttpResponseOk({ ok, status, statusText }: Response) {
+export function ensureHttpResponseOk({ ok, status, statusText }: Response): void {
   if (!ok) {
     const errorType = Libs.mapHttpStatusToNexusErrorType(status);
     throw Libs.createNexusError(errorType, `Request failed: ${statusText}`, status, {

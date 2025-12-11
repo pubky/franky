@@ -15,7 +15,7 @@ import * as Organisms from '@/organisms';
  * Shared content for Home feed sidebars - WhoToFollow, ActiveUsers, HotTags, FeedbackCard.
  * Used by both HomeFeedRightSidebar (desktop) and HomeFeedRightDrawer (tablet).
  */
-function HomeFeedContent() {
+function HomeFeedContent(): React.ReactElement {
   return (
     <>
       <Organisms.WhoToFollow />
@@ -36,7 +36,7 @@ function HomeFeedContent() {
  * Right sidebar for Home feed - displays WhoToFollow, ActiveUsers, HotTags, FeedbackCard.
  * Desktop version.
  */
-export function HomeFeedRightSidebar() {
+export function HomeFeedRightSidebar(): React.ReactElement {
   return <HomeFeedContent />;
 }
 
@@ -45,7 +45,7 @@ export function HomeFeedRightSidebar() {
  *
  * Right drawer for Home feed (tablet) - displays WhoToFollow, ActiveUsers, HotTags, FeedbackCard.
  */
-export function HomeFeedRightDrawer() {
+export function HomeFeedRightDrawer(): React.ReactElement {
   return (
     <Atoms.Container overrideDefaults className="flex flex-col gap-6">
       <HomeFeedContent />
@@ -58,7 +58,7 @@ export function HomeFeedRightDrawer() {
  *
  * Right drawer for Home feed (mobile) - displays FeedSection.
  */
-export function HomeFeedRightDrawerMobile() {
+export function HomeFeedRightDrawerMobile(): React.ReactElement {
   return (
     <Molecules.FeedSection
       feeds={[
@@ -81,7 +81,7 @@ export function HomeFeedRightDrawerMobile() {
  * Right sidebar for Hot feed - displays WhoToFollow, FeedbackCard.
  * Desktop version with sticky positioning.
  */
-export function HotFeedRightSidebar() {
+export function HotFeedRightSidebar(): React.ReactElement {
   return (
     <>
       <Organisms.WhoToFollow />
@@ -97,7 +97,7 @@ export function HotFeedRightSidebar() {
  *
  * Right drawer for Hot feed (tablet/mobile) - displays WhoToFollow, FeedbackCard.
  */
-export function HotFeedRightDrawer() {
+export function HotFeedRightDrawer(): React.ReactElement {
   return (
     <Atoms.Container overrideDefaults className="flex flex-col gap-6">
       <Organisms.WhoToFollow />

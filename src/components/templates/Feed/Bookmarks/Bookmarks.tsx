@@ -10,7 +10,7 @@ import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.typ
  * Sort and Content filters affect the bookmarks stream.
  * Reach filter is hidden as it's not supported by the Nexus API for bookmarks.
  */
-export function Bookmarks() {
+export function Bookmarks(): React.ReactElement {
   return (
     <Organisms.ContentLayout
       leftSidebarContent={<Organisms.HomeFeedSidebar hideReachFilter />}

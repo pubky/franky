@@ -13,7 +13,7 @@ import * as Providers from '@/providers';
  * Handles data fetching, loading states, and follow/unfollow actions.
  * Uses ProfileContext to get the target user's pubky.
  */
-export function ProfileFollowers() {
+export function ProfileFollowers(): React.ReactElement {
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
   // Get the current logged-in user's pubky
@@ -33,7 +33,7 @@ export function ProfileFollowers() {
   });
 
   // Handle follow/unfollow action
-  const handleFollow = async (userId: Core.Pubky, isCurrentlyFollowing: boolean) => {
+  const handleFollow = async (userId: Core.Pubky, isCurrentlyFollowing: boolean): Promise<void> => {
     await toggleFollow(userId, isCurrentlyFollowing);
   };
 

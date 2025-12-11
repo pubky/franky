@@ -12,7 +12,7 @@ import * as Core from '@/core';
  * Self-contained welcome dialog that manages its own state and data.
  * No props needed - it fetches user data and manages dialog state internally.
  */
-export function DialogWelcome() {
+export function DialogWelcome(): React.ReactElement | null {
   const { currentUserPubky } = Core.useAuthStore();
   const { showWelcomeDialog, setShowWelcomeDialog } = Core.useOnboardingStore();
 
@@ -34,11 +34,11 @@ export function DialogWelcome() {
   const initials = Libs.extractInitials({ name: userDetails.name, maxLength: 2 });
   const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
 
-  const handleCopyToClipboard = () => {
+  const handleCopyToClipboard = (): void => {
     copyToClipboard(currentUserPubky);
   };
 
-  const handleExplorePubky = () => {
+  const handleExplorePubky = (): void => {
     // Set welcome dialog to false permanently - it will never show again for this user
     setShowWelcomeDialog(false);
   };

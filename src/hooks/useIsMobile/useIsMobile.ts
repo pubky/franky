@@ -2,19 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import * as Config from '@/config';
+import type { UseIsMobileOptions } from './useIsMobile.types';
 
-interface UseIsMobileOptions {
-  /**
-   * Breakpoint threshold (default: 'lg' = 1024px)
-   * Viewport width below this value is considered mobile
-   */
-  breakpoint?: Config.Breakpoint;
-  /**
-   * Debounce delay in milliseconds (default: 150ms)
-   * Prevents excessive re-renders during window resize
-   */
-  debounceMs?: number;
-}
+export type { UseIsMobileOptions } from './useIsMobile.types';
 
 /**
  * Hook to detect if the viewport is below a specified breakpoint
@@ -55,7 +45,7 @@ export function useIsMobile(options: UseIsMobileOptions = {}): boolean {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
 
-    const handleResize = () => {
+    const handleResize = (): void => {
       if (typeof window !== 'undefined') {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(checkIsMobile, debounceMs);

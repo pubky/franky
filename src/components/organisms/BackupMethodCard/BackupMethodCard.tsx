@@ -6,7 +6,7 @@ import * as Organisms from '@/organisms';
 import * as Stores from '@/core';
 import * as Libs from '@/libs';
 
-export const BackupMethodCard = () => {
+export const BackupMethodCard = (): React.ReactElement => {
   const { mnemonic } = Stores.useOnboardingStore();
   return (
     <Molecules.ContentCard

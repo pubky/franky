@@ -9,7 +9,7 @@ import type {
 } from './follow.types';
 
 export class LocalFollowService {
-  static async create({ follower, followee, activeStreamId }: CreateFollowParams) {
+  static async create({ follower, followee, activeStreamId }: CreateFollowParams): Promise<void> {
     try {
       let becomingFriends = false;
 
@@ -76,7 +76,7 @@ export class LocalFollowService {
     }
   }
 
-  static async delete({ follower, followee, activeStreamId }: DeleteFollowParams) {
+  static async delete({ follower, followee, activeStreamId }: DeleteFollowParams): Promise<void> {
     try {
       let breakingFriendship = false;
 

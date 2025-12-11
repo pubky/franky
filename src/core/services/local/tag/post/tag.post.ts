@@ -21,7 +21,7 @@ export class LocalPostTagService {
    * @throws {AppError} When user has already tagged this post with the same label
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ taggedId: postId, label, taggerId }: Core.TLocalTagParams) {
+  static async create({ taggedId: postId, label, taggerId }: Core.TLocalTagParams): Promise<void> {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const postTagsModel = await Core.PostTagsModel.getOrCreate<string, Core.PostTagsModelSchema>(postId);
@@ -64,7 +64,7 @@ export class LocalPostTagService {
    * @throws {AppError} When post has no tags or user hasn't tagged with this label
    * @throws {DatabaseError} When database operations fail
    */
-  static async delete({ taggedId: postId, label, taggerId }: Core.TLocalTagParams) {
+  static async delete({ taggedId: postId, label, taggerId }: Core.TLocalTagParams): Promise<void> {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const tagsData = await Core.PostTagsModel.findById(postId);
@@ -108,7 +108,7 @@ export class LocalPostTagService {
    * @param postTagsModel - The PostTagsModel instance to save
    * @private
    */
-  private static async savePostTagsModel(postId: string, postTagsModel: Core.PostTagsModel) {
+  private static async savePostTagsModel(postId: string, postTagsModel: Core.PostTagsModel): Promise<void> {
     await Core.PostTagsModel.upsert({
       id: postId,
       tags: postTagsModel.tags as Core.NexusTag[],

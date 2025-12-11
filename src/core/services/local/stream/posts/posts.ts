@@ -259,7 +259,7 @@ export class LocalStreamPostsService {
    * @param posts - Array of posts from Nexus API
    * @returns Array of composite post IDs (author:postId)
    */
-  static async persistNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
+  static async persistNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams): Promise<void> {
     const postStream = await Core.PostStreamModel.findById(streamId);
 
     if (!postStream) {
@@ -301,7 +301,7 @@ export class LocalStreamPostsService {
    * @param streamId - The stream ID to persist the new chunk to
    * @returns
    */
-  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
+  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams): Promise<void> {
     const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
     if (!unreadPostStream) {
       await Core.UnreadPostStreamModel.upsert(streamId, stream);

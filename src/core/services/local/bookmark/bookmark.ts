@@ -26,7 +26,7 @@ export class LocalBookmarkService {
   /**
    * Persists a bookmark operation (create or delete).
    */
-  static async persist(action: Core.HomeserverAction, { userId, postId }: Core.TBookmarkEventParams) {
+  static async persist(action: Core.HomeserverAction, { userId, postId }: Core.TBookmarkEventParams): Promise<void> {
     const isCreate = action === Core.HomeserverAction.PUT;
 
     try {

@@ -9,7 +9,7 @@ export interface SettingsMobileMenuProps {
   className?: string;
 }
 
-export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
+export function SettingsMobileMenu({ className }: SettingsMobileMenuProps): React.ReactElement {
   const pathname = usePathname();
   const router = useRouter();
 

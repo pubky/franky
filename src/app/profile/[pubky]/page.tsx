@@ -6,6 +6,6 @@ import * as Templates from '@/templates';
  * Unlike the own profile which shows notifications, this shows the user's
  * posts by default since notifications only make sense for the logged-in user.
  */
-export default function DynamicProfilePage() {
+export default function DynamicProfilePage(): React.ReactElement {
   return <Templates.ProfilePagePosts />;
 }

@@ -12,7 +12,9 @@ type PostAttachmentsImagesAndVideosProps = {
   imagesAndVideos: AttachmentConstructed[];
 };
 
-export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachmentsImagesAndVideosProps) => {
+export const PostAttachmentsImagesAndVideos = ({
+  imagesAndVideos,
+}: PostAttachmentsImagesAndVideosProps): React.ReactElement => {
   const total = imagesAndVideos.length;
   const [open, setOpen] = useState(false);
   const [api, setApi] = useState<CarouselApi>();
@@ -20,7 +22,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
 
   const { toast } = useToast();
 
-  const handleFullscreen = () => {
+  const handleFullscreen = (): void => {
     const currentMedia = document.getElementById(`media-item-${currentIndex}`);
 
     if (currentMedia) {

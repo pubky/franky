@@ -6,7 +6,7 @@ import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import { useUserDetails } from '@/hooks/useUserDetails';
 
-export const PostMentions = (props: RemarkAnchorProps) => {
+export const PostMentions = (props: RemarkAnchorProps): React.ReactElement | null => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
 
   const mentionText = extractTextFromChildren(children);

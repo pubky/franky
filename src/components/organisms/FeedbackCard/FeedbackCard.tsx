@@ -8,7 +8,7 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-export function FeedbackCard() {
+export function FeedbackCard(): React.ReactElement {
   const { userDetails } = Hooks.useCurrentUserProfile();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 

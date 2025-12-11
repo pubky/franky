@@ -20,7 +20,7 @@ export function PostInput({
   placeholder,
   showThreadConnector = false,
   expanded = false,
-}: PostInputProps) {
+}: PostInputProps): React.ReactElement {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isExpanded, setIsExpanded] = useState(expanded);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -41,7 +41,7 @@ export function PostInput({
     // Only add listener if component can be collapsed (expanded prop is false)
     if (expanded) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent): void => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         // Only collapse if there's no content and no tags
         if (!content.trim() && tags.length === 0) {
@@ -61,7 +61,7 @@ export function PostInput({
     if (!content.trim() || isSubmitting) return;
 
     // Wrapper that prepends to timeline and calls original onSuccess
-    const handleSuccess = (createdPostId: string) => {
+    const handleSuccess = (createdPostId: string): void => {
       // Prepend to timeline if inside TimelineFeed context
       timelineFeed?.prependPosts(createdPostId);
       // Call original onSuccess callback if provided
@@ -75,7 +75,7 @@ export function PostInput({
     }
   }, [content, variant, postId, reply, post, isSubmitting, onSuccess, timelineFeed]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     const value = e.target.value;
     if (value.length <= POST_MAX_CHARACTER_LENGTH) {
       setContent(value);

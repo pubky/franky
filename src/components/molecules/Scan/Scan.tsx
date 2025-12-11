@@ -12,7 +12,7 @@ import * as Config from '@/config';
 import * as Core from '@/core';
 import * as App from '@/app';
 
-export const ScanContent = () => {
+export const ScanContent = (): React.ReactElement => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const retryCountRef = useRef(0);
@@ -24,7 +24,7 @@ export const ScanContent = () => {
   const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
 
-  const fetchUrl = async (options?: { viaRetry?: boolean }) => {
+  const fetchUrl = async (options?: { viaRetry?: boolean }): Promise<void> => {
     const requestId = Symbol('fetchUrl');
     activeRequestRef.current = requestId;
     isGeneratingRef.current = true;
@@ -104,7 +104,7 @@ export const ScanContent = () => {
     }
   };
 
-  const copyAuthUrlToClipboard = async () => {
+  const copyAuthUrlToClipboard = async (): Promise<void> => {
     if (!url) return;
 
     try {
@@ -114,7 +114,7 @@ export const ScanContent = () => {
     }
   };
 
-  const handleMobileAuth = async () => {
+  const handleMobileAuth = async (): Promise<void> => {
     if (isLoading || isGeneratingRef.current) return;
 
     if (!url) {
@@ -218,7 +218,7 @@ export const ScanContent = () => {
   );
 };
 
-export const ScanFooter = () => {
+export const ScanFooter = (): React.ReactElement => {
   return (
     <Atoms.FooterLinks className="py-6">
       Use{' '}
@@ -234,7 +234,7 @@ export const ScanFooter = () => {
   );
 };
 
-export const ScanHeader = ({ isMobile }: { isMobile: boolean }) => {
+export const ScanHeader = ({ isMobile }: { isMobile: boolean }): React.ReactElement => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
@@ -253,10 +253,10 @@ export const ScanHeader = ({ isMobile }: { isMobile: boolean }) => {
   );
 };
 
-export const ScanNavigation = () => {
+export const ScanNavigation = (): React.ReactElement => {
   const router = useRouter();
 
-  const onHandleBackButton = () => {
+  const onHandleBackButton = (): void => {
     router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 

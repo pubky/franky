@@ -22,7 +22,7 @@ import {
  * Organism that displays the top 3 trending tags as featured cards.
  * Fetches hot tags based on reach and timeframe filters from the hot store.
  */
-export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
+export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps): React.ReactElement | null {
   const router = useRouter();
   const { reach, timeframe } = Core.useHotStore();
 
@@ -55,7 +55,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
   // Get user avatars for all taggers
   const { getUsersWithAvatars } = Hooks.useBulkUserAvatars(allTaggerIds);
 
-  const handleTagClick = (tagName: string) => {
+  const handleTagClick = (tagName: string): void => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
   };
 

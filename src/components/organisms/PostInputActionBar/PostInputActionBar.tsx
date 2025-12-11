@@ -13,7 +13,7 @@ export function PostInputActionBar({
   onPostClick,
   isPostDisabled = false,
   isSubmitting = false,
-}: PostInputActionBarProps) {
+}: PostInputActionBarProps): React.ReactElement {
   const commonButtonProps = React.useMemo(
     () => ({
       variant: 'secondary' as const,

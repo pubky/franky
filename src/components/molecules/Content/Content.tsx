@@ -18,7 +18,13 @@ interface ContentCardProps {
   layout?: 'row' | 'column';
 }
 
-export function ContentCard({ children, className, classNameImage, image, layout = 'row' }: ContentCardProps) {
+export function ContentCard({
+  children,
+  className,
+  classNameImage,
+  image,
+  layout = 'row',
+}: ContentCardProps): React.ReactElement {
   const layoutClasses = {
     row: 'flex-col lg:flex-row',
     column: 'flex-col',
@@ -49,7 +55,12 @@ interface ContentContainerProps {
   gap?: 'sm' | 'md' | 'lg';
 }
 
-export function ContentContainer({ children, className, maxWidth = 'lg', gap = 'md' }: ContentContainerProps) {
+export function ContentContainer({
+  children,
+  className,
+  maxWidth = 'lg',
+  gap = 'md',
+}: ContentContainerProps): React.ReactElement {
   const maxWidthClasses = {
     sm: 'max-w-[588px]',
     md: 'max-w-[800px]',
@@ -81,7 +92,7 @@ export function ContentImage({
   containerClassName,
   hiddenOnMobile = true,
   ...imageProps
-}: ContentImageProps) {
+}: ContentImageProps): React.ReactElement {
   return (
     <div
       className={Libs.cn(hiddenOnMobile ? 'hidden lg:flex' : 'flex', containerClassName)}

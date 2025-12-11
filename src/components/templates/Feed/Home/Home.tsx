@@ -2,7 +2,7 @@ import * as Organisms from '@/organisms';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.types';
 
-export function Home() {
+export function Home(): React.ReactElement {
   return (
     <>
       <Organisms.DialogWelcome />

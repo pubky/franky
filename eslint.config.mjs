@@ -6,6 +6,7 @@ import pluginStorybook from 'eslint-plugin-storybook';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import componentLayerRules from './eslint.config.component-layers.mjs';
+import codeStyleRules from './eslint.config.code-style.mjs';
 
 const eslintConfig = [
   {
@@ -85,6 +86,8 @@ const eslintConfig = [
   },
   // Component layer enforcement rules (ADR-0011, ADR-0012)
   ...componentLayerRules,
+  // Code style enforcement rules (ADR-0013)
+  ...codeStyleRules,
 ];
 
 export default eslintConfig;

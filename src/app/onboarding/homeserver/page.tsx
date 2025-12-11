@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding homeserver page on pubky app.',
 });
 
-export default function HomeserverPage() {
+export default function HomeserverPage(): React.ReactElement {
   return <Templates.Homeserver />;
 }

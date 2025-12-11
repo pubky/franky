@@ -1,13 +1,6 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
-
-/**
- * Internal type for fetchStreamFromNexus parameters
- * Extends the internal fetch params type with optional cached stream data
- */
-type TFetchStreamFromNexusParams = Core.TFetchUserStreamChunkParams & {
-  cachedStream?: { stream: Core.Pubky[] } | null;
-};
+import type { TFetchStreamFromNexusParams } from './users.types';
 
 /**
  * User Stream Application

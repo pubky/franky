@@ -8,7 +8,7 @@ export interface PrivacyProps {
   className?: string;
 }
 
-export function Privacy({ className }: PrivacyProps) {
+export function Privacy({ className }: PrivacyProps): React.ReactElement {
   const [showConfirmation, setShowConfirmation] = React.useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('checkLink');
@@ -25,12 +25,12 @@ export function Privacy({ className }: PrivacyProps) {
     return true;
   });
 
-  const handleConfirmationToggle = (checked: boolean) => {
+  const handleConfirmationToggle = (checked: boolean): void => {
     setShowConfirmation(checked);
     localStorage.setItem('checkLink', String(checked));
   };
 
-  const handleBlurToggle = (checked: boolean) => {
+  const handleBlurToggle = (checked: boolean): void => {
     setBlurCensored(checked);
     localStorage.setItem('blurCensored', String(checked));
   };

@@ -12,7 +12,7 @@ import * as Types from './ContentLayout.types';
 /**
  * Reusable sticky sidebar component for left and right sidebars
  */
-function StickySidebar({ children }: Types.StickySidebarProps) {
+function StickySidebar({ children }: Types.StickySidebarProps): React.ReactElement {
   return (
     <Atoms.Container
       overrideDefaults
@@ -40,7 +40,7 @@ export function ContentLayout({
   showLeftMobileButton = true,
   showRightMobileButton = true,
   className,
-}: Types.ContentLayoutProps) {
+}: Types.ContentLayoutProps): React.ReactElement {
   const { layout } = Core.useHomeStore();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);

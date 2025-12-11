@@ -7,7 +7,7 @@ export const ImageBackground = ({
 }: {
   image: string;
   mobileImage?: string;
-} & React.HTMLAttributes<HTMLDivElement>) => {
+} & React.HTMLAttributes<HTMLDivElement>): React.ReactElement => {
   const baseClasses = 'fixed inset-0 bg-cover bg-center bg-no-repeat -z-10';
 
   if (!mobileImage) {

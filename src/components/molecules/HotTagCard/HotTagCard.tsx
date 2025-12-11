@@ -21,14 +21,14 @@ export function HotTagCard({
   onClick,
   className,
   'data-testid': dataTestId,
-}: HotTagCardProps) {
+}: HotTagCardProps): React.ReactElement {
   const tagColor = React.useMemo(() => Libs.generateRandomColor(tagName), [tagName]);
 
-  const handleClick = () => {
+  const handleClick = (): void => {
     onClick?.(tagName);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       onClick?.(tagName);

@@ -9,7 +9,7 @@ export interface ButtonFiltersProps {
   position?: 'left' | 'right';
 }
 
-export function ButtonFilters({ onClick, className, position = 'left' }: ButtonFiltersProps) {
+export function ButtonFilters({ onClick, className, position = 'left' }: ButtonFiltersProps): React.ReactElement {
   const isLeft = position === 'left';
   const positionClasses = isLeft ? 'left-0' : 'right-0';
   const roundedClasses = isLeft ? 'rounded-l-none rounded-r-full' : 'rounded-r-none rounded-l-full';

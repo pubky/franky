@@ -12,7 +12,7 @@ interface GenericPreviewProps {
  * Generic website preview component using SWR for caching
  * Fetches OpenGraph metadata via /api/og-metadata
  */
-export function GenericPreview({ url }: GenericPreviewProps) {
+export function GenericPreview({ url }: GenericPreviewProps): React.ReactElement | null {
   const { metadata, isLoading, error } = Hooks.useOgMetadata(url);
 
   if (isLoading) {

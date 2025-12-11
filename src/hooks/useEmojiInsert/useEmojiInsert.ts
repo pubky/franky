@@ -24,7 +24,11 @@ import type { UseEmojiInsertOptions } from './useEmojiInsert.types';
  * <EmojiPicker onEmojiSelect={handleEmojiSelect} />
  * ```
  */
-export function useEmojiInsert({ inputRef, value, onChange }: UseEmojiInsertOptions) {
+export function useEmojiInsert({
+  inputRef,
+  value,
+  onChange,
+}: UseEmojiInsertOptions): (emoji: { native: string }) => void {
   return useCallback(
     (emoji: { native: string }) => {
       const input = inputRef.current;

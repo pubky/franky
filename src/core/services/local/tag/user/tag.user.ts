@@ -4,7 +4,7 @@ import * as Libs from '@/libs';
 export class LocalUserTagService {
   private static readonly TAG_TABLES = [Core.UserTagsModel.table, Core.UserCountsModel.table] as const;
 
-  static async create({ taggerId, taggedId, label }: Core.TLocalTagParams) {
+  static async create({ taggerId, taggedId, label }: Core.TLocalTagParams): Promise<void> {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const userTagsModel = await Core.UserTagsModel.getOrCreate<Core.Pubky, Core.UserTagsModelSchema>(taggedId);
@@ -37,7 +37,7 @@ export class LocalUserTagService {
     // Update tagged user_counts, unique_tags. For that we need to check user tags
   }
 
-  static async delete({ taggerId, taggedId, label }: Core.TLocalTagParams) {
+  static async delete({ taggerId, taggedId, label }: Core.TLocalTagParams): Promise<void> {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const userTagsModel = await Core.UserTagsModel.findById(taggedId);
@@ -81,7 +81,7 @@ export class LocalUserTagService {
    * @param userTagsModel - The UserTagsModel instance to save
    * @private
    */
-  private static async saveUserTagsModel(userId: Core.Pubky, userTagsModel: Core.UserTagsModel) {
+  private static async saveUserTagsModel(userId: Core.Pubky, userTagsModel: Core.UserTagsModel): Promise<void> {
     await Core.UserTagsModel.upsert({
       id: userId,
       tags: userTagsModel.tags as Core.NexusTag[],

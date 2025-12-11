@@ -22,7 +22,7 @@ import * as Core from '@/core';
  *
  * i.e. CoordinatorsManager (UI) → Coordinators → Controllers → Application → Services
  */
-export function CoordinatorsManager() {
+export function CoordinatorsManager(): null {
   const pathname = usePathname();
 
   // Start coordinators on mount, stop on unmount

@@ -19,7 +19,7 @@ import {
 } from './NotificationItem.utils';
 import type { NotificationItemProps } from './NotificationItem.types';
 
-export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
+export function NotificationItem({ notification, isUnread }: NotificationItemProps): React.ReactElement {
   // Extract the user ID from the notification (the actor who triggered it)
   const actorUserId = getUserIdFromNotification(notification);
 

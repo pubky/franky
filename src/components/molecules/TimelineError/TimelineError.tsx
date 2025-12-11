@@ -9,7 +9,7 @@ interface TimelineErrorProps {
  *
  * Error message display for timeline loading errors.
  */
-export function TimelineError({ message }: TimelineErrorProps) {
+export function TimelineError({ message }: TimelineErrorProps): React.ReactElement {
   return (
     <Atoms.Container className="flex items-center justify-center py-4">
       <Atoms.Typography size="sm" className="text-destructive">

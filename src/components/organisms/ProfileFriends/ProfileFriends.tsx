@@ -15,7 +15,7 @@ import * as Providers from '@/providers';
  *
  * Note: Friends are by definition mutual follows, so isFollowing is always true.
  */
-export function ProfileFriends() {
+export function ProfileFriends(): React.ReactElement {
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
   // Get the current logged-in user's pubky
@@ -35,7 +35,7 @@ export function ProfileFriends() {
   });
 
   // Handle follow/unfollow action
-  const handleFollow = async (userId: Core.Pubky, isCurrentlyFollowing: boolean) => {
+  const handleFollow = async (userId: Core.Pubky, isCurrentlyFollowing: boolean): Promise<void> => {
     await toggleFollow(userId, isCurrentlyFollowing);
   };
 

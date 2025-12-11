@@ -16,7 +16,7 @@ export function List({
   variant = 'default',
   'data-testid': dataTestId,
   ...props
-}: ListProps & React.HTMLAttributes<HTMLElement>) {
+}: ListProps & React.HTMLAttributes<HTMLElement>): React.ReactElement {
   const variantClasses = {
     default: 'list-disc',
     decimal: 'list-decimal',

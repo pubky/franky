@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageMobileMenu, PROFILE_MENU_ITEMS } from './ProfilePageMobileMenu';
-import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
+import { PROFILE_PAGE_TYPES } from '@/app/profile/profile.types';
 
 describe('ProfilePageMobileMenu', () => {
   it('renders all menu items', () => {

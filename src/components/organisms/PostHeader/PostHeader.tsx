@@ -12,7 +12,12 @@ export interface PostHeaderProps {
   maxLength?: number;
 }
 
-export function PostHeader({ postId, isReplyInput = false, characterCount, maxLength }: PostHeaderProps) {
+export function PostHeader({
+  postId,
+  isReplyInput = false,
+  characterCount,
+  maxLength,
+}: PostHeaderProps): React.ReactElement {
   // Extract userId from postId (format: userId:postId or just userId if isReplyInput is true)
   const userId = isReplyInput ? postId : postId.split(':')[0];
 

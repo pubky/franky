@@ -6,13 +6,13 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-export const CreateProfileHeader = () => {
+export const CreateProfileHeader = (): React.ReactElement => {
   const { pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
   const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
 
-  const handleCopyToClipboard = () => {
+  const handleCopyToClipboard = (): void => {
     copyToClipboard(pubky);
   };
 

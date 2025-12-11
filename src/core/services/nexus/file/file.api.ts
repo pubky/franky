@@ -13,14 +13,14 @@ const STATIC_PREFIX = 'files';
  * Files by IDs endpoint (POST request)
  * Returns both the URL and the request body for the POST request
  */
-export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
+export function buildFileBodyUrl(fileUris: Core.Pubky[]): Core.TFileBody {
   // Build request body
   const body: Core.TFileBody = { uris: fileUris };
   return body;
 }
 
 export const filesApi = {
-  getAvatarUrl: (pubky: Core.Pubky) => {
+  getAvatarUrl: (pubky: Core.Pubky): string => {
     const encodedPubky = Core.encodePathSegment(pubky);
     return Core.buildCdnUrl(`avatar/${encodedPubky}`);
   },
@@ -35,4 +35,4 @@ export const filesApi = {
   }),
 };
 
-export type FilesApiEndpoint = keyof typeof filesApi;
+export type { FilesApiEndpoint } from './file.types';

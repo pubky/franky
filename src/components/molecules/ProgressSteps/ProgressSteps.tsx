@@ -7,7 +7,7 @@ interface ProgressStepsProps {
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 
-export function ProgressSteps({ currentStep, totalSteps, className }: ProgressStepsProps) {
+export function ProgressSteps({ currentStep, totalSteps, className }: ProgressStepsProps): React.ReactElement {
   return (
     <>
       {/* Progress Steps - Desktop */}

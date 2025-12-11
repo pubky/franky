@@ -6,6 +6,6 @@ import * as Organisms from '@/organisms';
  * Template for displaying the following list.
  * Delegates all logic to the ProfileFollowing organism.
  */
-export function ProfilePageFollowing() {
+export function ProfilePageFollowing(): React.ReactElement {
   return <Organisms.ProfileFollowing />;
 }

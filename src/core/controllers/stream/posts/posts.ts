@@ -96,7 +96,7 @@ export class StreamPostsController {
    * Merge the unread stream with the post stream
    * @param params - The stream ID to merge the unread stream with the post stream
    */
-  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams) {
+  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams): Promise<void> {
     return await Core.PostStreamApplication.mergeUnreadStreamWithPostStream(params);
   }
 

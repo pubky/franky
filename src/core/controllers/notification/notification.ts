@@ -9,7 +9,7 @@ export class NotificationController {
    * @param userId - The user ID to fetch notifications for
    * @returns Promise resolving when notifications are updated
    */
-  static async notifications({ userId }: Core.TReadProfileParams) {
+  static async notifications({ userId }: Core.TReadProfileParams): Promise<void> {
     const notificationStore = Core.useNotificationStore.getState();
     const lastRead = notificationStore.selectLastRead();
     const unread = await Core.NotificationApplication.notifications({ userId, lastRead });
@@ -21,7 +21,7 @@ export class NotificationController {
    * This resets the unread count to 0 and updates the local store.
    * Should be called when the user enters the notifications page.
    */
-  static markAllAsRead() {
+  static markAllAsRead(): void {
     const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
 
     // Create new lastRead with current timestamp using normalizer

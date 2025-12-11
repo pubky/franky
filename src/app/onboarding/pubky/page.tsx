@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding pubky page on pubky app.',
 });
 
-export default function PubkyPage() {
+export default function PubkyPage(): React.ReactElement {
   return <Templates.PublicKey />;
 }

@@ -1,6 +1,6 @@
 import * as Molecules from '@/molecules';
 
-export function Scan() {
+export function Scan(): React.ReactElement {
   return (
     <Molecules.OnboardingLayout testId="scan-page-content" navigation={<Molecules.ScanNavigation />}>
       <Molecules.ScanContent />

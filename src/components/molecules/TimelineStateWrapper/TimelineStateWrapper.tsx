@@ -17,7 +17,7 @@ export function TimelineStateWrapper({
   loadingComponent,
   errorComponent,
   emptyComponent,
-}: Types.TimelineStateWrapperProps) {
+}: Types.TimelineStateWrapperProps): React.ReactElement {
   // Loading state (initial load)
   if (loading) {
     return <>{loadingComponent ?? <Molecules.TimelineLoading />}</>;

@@ -175,7 +175,10 @@ function shouldUsePrimaryUserLink(notification: FlatNotification): boolean {
  * @param notification - The notification to process
  * @returns Object with notificationLink and userProfileLink
  */
-export function getNotificationLink(notification: FlatNotification) {
+export function getNotificationLink(notification: FlatNotification): {
+  notificationLink: string | null;
+  userProfileLink: string | null;
+} {
   // Get user ID to create profile link
   const userId = getUserIdFromNotification(notification);
   const userProfileLink = userId ? getUserProfileLink(userId) : null;

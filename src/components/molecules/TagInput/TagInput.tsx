@@ -20,7 +20,7 @@ export function TagInput({
   currentTagsCount = 0,
   limitReachedPlaceholder = 'limit reached',
   onBlur,
-}: TagInputProps) {
+}: TagInputProps): React.ReactElement {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

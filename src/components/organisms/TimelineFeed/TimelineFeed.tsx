@@ -54,7 +54,7 @@ export function useTimelineFeedContext(): TimelineFeedContextValue | null {
  * <TimelineFeed variant="profile" />
  * ```
  */
-export function TimelineFeed({ variant, children }: TimelineFeedProps) {
+export function TimelineFeed({ variant, children }: TimelineFeedProps): React.ReactElement {
   const streamId = useTimelineFeedStreamId(variant);
 
   // Show loading state while waiting for stream ID (e.g., profile data loading)
@@ -80,7 +80,7 @@ function TimelineFeedContent({
   streamId: Core.PostStreamId;
   variant: TimelineFeedProps['variant'];
   children?: TimelineFeedProps['children'];
-}) {
+}): React.ReactElement {
   const {
     postIds: rawPostIds,
     loading,

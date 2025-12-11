@@ -6,7 +6,9 @@ interface PopoverInviteHomeserverProps {
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 
-export function PopoverInviteHomeserver({ className = 'hover:bg-brand/10' }: PopoverInviteHomeserverProps) {
+export function PopoverInviteHomeserver({
+  className = 'hover:bg-brand/10',
+}: PopoverInviteHomeserverProps): React.ReactElement {
   return (
     <Atoms.Popover hover>
       <Atoms.PopoverTrigger asChild>

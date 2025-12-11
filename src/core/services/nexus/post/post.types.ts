@@ -27,3 +27,5 @@ export type TPostQueryParams = Core.TPostViewParams | Core.TPostBase | Core.TPos
 
 // Path parameters that should NOT be added to query string
 export const POST_PATH_PARAMS = ['author_id', 'post_id', 'label'] as const;
+
+export type PostApiEndpoint = 'view' | 'bookmarks' | 'counts' | 'details' | 'taggers' | 'tags';

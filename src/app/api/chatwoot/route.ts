@@ -11,7 +11,7 @@ import * as Libs from '@/libs';
  * All validation is handled by the controller layer.
  * This route only parses the request body and delegates to the controller.
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
     const { pubky, comment, name } = body;

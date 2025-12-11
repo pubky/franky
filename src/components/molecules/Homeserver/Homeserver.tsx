@@ -7,7 +7,7 @@ import * as Organisms from '@/organisms';
 import * as Atoms from '@/atoms';
 import * as App from '@/app';
 
-export const HomeserverHeader = () => {
+export const HomeserverHeader = (): React.ReactElement => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
@@ -18,7 +18,7 @@ export const HomeserverHeader = () => {
   );
 };
 
-export const HomeserverFooter = () => {
+export const HomeserverFooter = (): React.ReactElement => {
   return (
     <Atoms.FooterLinks>
       By creating an account on the Pubky homeserver, you agree to the <Organisms.DialogTerms />,{' '}
@@ -35,10 +35,10 @@ export const HomeserverNavigation = ({
   continueButtonDisabled: boolean;
   onHandleContinueButton: () => void;
   continueText: string;
-}) => {
+}): React.ReactElement => {
   const router = useRouter();
 
-  const onHandleBackButton = () => {
+  const onHandleBackButton = (): void => {
     router.push(App.ONBOARDING_ROUTES.BACKUP);
   };
 

@@ -20,7 +20,7 @@ export function ProfilePageEmptyState({
   title,
   subtitle,
   children,
-}: ProfilePageEmptyStateProps) {
+}: ProfilePageEmptyStateProps): React.ReactElement {
   return (
     <Atoms.Container className="relative flex flex-col items-center justify-center gap-6 p-6">
       {/* Background image */}

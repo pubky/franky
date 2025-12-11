@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
 import * as Icons from '@/libs/icons';
 import * as Types from './index';
 
-export function ProfilePageLinks({ links }: Types.ProfilePageLinksProps) {
+export function ProfilePageLinks({ links }: Types.ProfilePageLinksProps): React.ReactElement {
   // Transform raw links from Nexus into the format we need for rendering
   const transformedLinks = useMemo(
     () =>

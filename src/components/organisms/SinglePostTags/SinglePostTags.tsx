@@ -5,14 +5,13 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
+import { MAX_VISIBLE_USERS } from './SinglePostTags.constants';
 
 interface PostTagsProps {
   postId: string;
 }
 
-const MAX_VISIBLE_USERS = 5;
-
-export const SinglePostTags = ({ postId }: PostTagsProps) => {
+export const SinglePostTags = ({ postId }: PostTagsProps): React.ReactElement => {
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
   const [inputValue, setInputValue] = useState('');
   const [isAdding, setIsAdding] = useState(false);
@@ -23,7 +22,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
     [],
   );
 
-  const handleAddTag = async () => {
+  const handleAddTag = async (): Promise<void> => {
     try {
       if (!inputValue.trim() || isAdding || !currentUserId) return;
       setIsAdding(true);
@@ -43,7 +42,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
     }
   };
 
-  const handleToggleTag = async (tagLabel: string) => {
+  const handleToggleTag = async (tagLabel: string): Promise<void> => {
     try {
       if (!currentUserId) return;
       const tag = tags?.find((t) => t.label === tagLabel);
@@ -70,7 +69,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
     if (e.key === 'Enter') {
       handleAddTag();
     }

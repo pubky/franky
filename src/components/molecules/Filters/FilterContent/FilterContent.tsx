@@ -9,7 +9,7 @@ export function FilterContent({
   selectedTab,
   defaultSelectedTab = Core.CONTENT.ALL,
   onTabChange,
-}: Molecules.BaseFilterProps<Core.ContentType>) {
+}: Molecules.BaseFilterProps<Core.ContentType>): React.ReactElement {
   const items = React.useMemo(
     () => [
       { key: Core.CONTENT.ALL, label: 'All', icon: Libs.Layers },

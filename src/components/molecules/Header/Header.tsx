@@ -6,14 +6,13 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
-import * as App from '@/app';
+import { NAVIGATION_ITEMS } from './Header.constants';
+import type { HeaderContainerProps, NavigationItem, HeaderNavigationButtonsProps } from './Header.types';
 
-export interface HeaderContainerProps {
-  children: React.ReactNode;
-  className?: string;
-}
+export type { HeaderContainerProps, NavigationItem, HeaderNavigationButtonsProps } from './Header.types';
+export { NAVIGATION_ITEMS } from './Header.constants';
 
-export const HeaderContainer = ({ children, className }: HeaderContainerProps) => {
+export const HeaderContainer = ({ children, className }: HeaderContainerProps): React.ReactElement => {
   return (
     <Atoms.Container
       overrideDefaults
@@ -41,7 +40,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
   );
 };
 
-export const HeaderTitle = ({ currentTitle }: { currentTitle: string }) => {
+export const HeaderTitle = ({ currentTitle }: { currentTitle: string }): React.ReactElement => {
   return (
     <Atoms.Container className="hidden flex-1 md:flex">
       <Atoms.Heading level={2} size="lg" className="font-normal text-muted-foreground">
@@ -51,11 +50,11 @@ export const HeaderTitle = ({ currentTitle }: { currentTitle: string }) => {
   );
 };
 
-export const HeaderOnboarding = ({ currentStep }: { currentStep: number }) => {
+export const HeaderOnboarding = ({ currentStep }: { currentStep: number }): React.ReactElement => {
   return <Molecules.ProgressSteps currentStep={currentStep} totalSteps={5} />;
 };
 
-export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return (
     <Atoms.Container
       data-testid="header-social-links"
@@ -74,26 +73,11 @@ export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElem
   );
 }
 
-type NavigationItem = {
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-};
-
-type HeaderNavigationButtonsProps = {
-  counter?: number;
-  avatarImage?: string;
-  avatarInitial?: string;
-};
-
-const NAVIGATION_ITEMS: NavigationItem[] = [
-  { href: App.APP_ROUTES.HOME, icon: Libs.Home, label: 'Home' },
-  { href: App.APP_ROUTES.HOT, icon: Libs.Flame, label: 'Hot' },
-  { href: App.APP_ROUTES.BOOKMARKS, icon: Libs.Bookmark, label: 'Bookmarks' },
-  { href: App.APP_ROUTES.SETTINGS, icon: Libs.Settings, label: 'Settings' },
-];
-
-const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isActive: boolean }) => (
+const NavigationButton = ({
+  href,
+  icon: Icon,
+  isActive,
+}: NavigationItem & { isActive: boolean }): React.ReactElement => (
   <Atoms.Link href={href}>
     <Atoms.Button
       className={Libs.cn('h-12 w-12', isActive ? '' : 'border bg-transparent')}
@@ -110,7 +94,7 @@ export function HeaderNavigationButtons({
   counter = 0,
   avatarImage,
   avatarInitial = 'U',
-}: HeaderNavigationButtonsProps) {
+}: HeaderNavigationButtonsProps): React.ReactElement {
   const pathname = usePathname();
   const counterString = counter > 21 ? '21+' : counter.toString();
 

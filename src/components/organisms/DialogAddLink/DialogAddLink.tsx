@@ -15,23 +15,23 @@ const labelSchema = z
 
 const urlSchema = z.string().trim().url('Invalid URL');
 
-export function DialogAddLink({ onSave }: { onSave: (label: string, url: string) => void }) {
+export function DialogAddLink({ onSave }: { onSave: (label: string, url: string) => void }): React.ReactElement {
   const [label, setLabel] = useState('');
   const [url, setUrl] = useState('');
   const [labelError, setLabelError] = useState<string | null>(null);
   const [urlError, setUrlError] = useState<string | null>(null);
 
-  const validateLabel = (value: string) => {
+  const validateLabel = (value: string): void => {
     const result = labelSchema.safeParse(value);
     setLabelError(result.success ? null : (result.error.issues[0]?.message ?? 'Invalid label'));
   };
 
-  const validateUrl = (value: string) => {
+  const validateUrl = (value: string): void => {
     const result = urlSchema.safeParse(value);
     setUrlError(result.success ? null : (result.error.issues[0]?.message ?? 'Invalid URL'));
   };
 
-  const handleSave = () => {
+  const handleSave = (): void => {
     const trimmedLabel = label.trim();
     const trimmedUrl = url.trim();
 

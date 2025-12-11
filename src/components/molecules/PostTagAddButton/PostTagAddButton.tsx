@@ -3,7 +3,7 @@ import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import type { PostTagAddButtonProps } from './PostTagAddButton.types';
 
-export function PostTagAddButton({ onClick, className, disabled }: PostTagAddButtonProps) {
+export function PostTagAddButton({ onClick, className, disabled }: PostTagAddButtonProps): React.ReactElement {
   return (
     <Atoms.Button
       onClick={onClick}

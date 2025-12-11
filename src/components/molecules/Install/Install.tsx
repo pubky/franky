@@ -11,7 +11,7 @@ import * as Config from '@/config';
 import * as App from '@/app';
 import * as Core from '@/core';
 
-export const InstallCard = () => {
+export const InstallCard = (): React.ReactElement => {
   return (
     <Molecules.ContentCard
       image={{
@@ -40,7 +40,7 @@ export const InstallCard = () => {
   );
 };
 
-export const InstallFooter = () => {
+export const InstallFooter = (): React.ReactElement => {
   return (
     <Atoms.FooterLinks className="py-6">
       Use{' '}
@@ -56,7 +56,7 @@ export const InstallFooter = () => {
   );
 };
 
-export const InstallHeader = () => {
+export const InstallHeader = (): React.ReactElement => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
@@ -67,17 +67,17 @@ export const InstallHeader = () => {
   );
 };
 
-export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement => {
   const router = useRouter();
   const { reset } = Core.useOnboardingStore();
 
-  const handleCreate = () => {
+  const handleCreate = (): void => {
     // Reset any existing keypair to ensure a fresh one is generated
     reset();
     router.push(App.ONBOARDING_ROUTES.PUBKY);
   };
 
-  const handleContinue = () => {
+  const handleContinue = (): void => {
     router.push(App.ONBOARDING_ROUTES.SCAN);
   };
 
@@ -103,7 +103,7 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
   );
 };
 
-export function StoreButtons({ className }: React.HTMLAttributes<HTMLDivElement>) {
+export function StoreButtons({ className }: React.HTMLAttributes<HTMLDivElement>): React.ReactElement {
   return (
     <Atoms.Container className={Libs.cn('flex-row justify-around gap-4 sm:justify-start', className)}>
       <Organisms.DialogDownloadPubkyRing store="apple" />

@@ -6,10 +6,10 @@ import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as App from '@/app';
 
-export const SignInNavigation = () => {
+export const SignInNavigation = (): React.ReactElement => {
   const router = useRouter();
 
-  const handleRestore = () => {
+  const handleRestore = (): void => {
     router.push(App.HOME_ROUTES.HOME);
   };
 

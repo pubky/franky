@@ -44,7 +44,9 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Authentication URL and promise to the generated authentication URL
    */
-  static async generateAuthUrl({ secretKey }: Core.TSecretKey) {
+  static async generateAuthUrl({
+    secretKey,
+  }: Core.TSecretKey): Promise<{ url: string; auth: Promise<Core.PublicKeyType> }> {
     const homeserverService = Core.HomeserverService.getInstance(secretKey);
     return await homeserverService.generateAuthUrl();
   }
@@ -57,7 +59,7 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Void
    */
-  static async logout({ pubky, secretKey }: Core.TLogoutParams) {
+  static async logout({ pubky, secretKey }: Core.TLogoutParams): Promise<void> {
     const homeserverService = Core.HomeserverService.getInstance(secretKey);
     await homeserverService.logout(pubky);
 
