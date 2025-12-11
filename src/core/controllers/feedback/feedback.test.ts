@@ -5,11 +5,13 @@ import type { TFeedbackSubmitParams } from './feedback.types';
 
 const testData = {
   userPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
+  userName: 'Test User',
 };
 
 const createFeedbackParams = (overrides: Partial<TFeedbackSubmitParams> = {}): TFeedbackSubmitParams => ({
   pubky: testData.userPubky,
   comment: 'This is a test feedback comment',
+  name: testData.userName,
   ...overrides,
 });
 
@@ -37,18 +39,19 @@ describe('FeedbackController', () => {
       expect(submitSpy).toHaveBeenCalledWith({
         pubky: testData.userPubky,
         comment: params.comment,
+        name: testData.userName,
       });
     });
 
     it('should throw when pubky is missing', async () => {
-      const params = createFeedbackParams({ pubky: '' });
+      const params = createFeedbackParams({ pubky: '' as Core.Pubky });
 
       await expect(FeedbackController.submit(params)).rejects.toThrow(
         'Pubky is required and must be a non-empty string',
       );
     });
 
-    it('should throw when pubky is not a string', async () => {
+    it('should throw when pubky is null', async () => {
       const params = createFeedbackParams({ pubky: null as unknown as Core.Pubky });
 
       await expect(FeedbackController.submit(params)).rejects.toThrow(
@@ -64,7 +67,7 @@ describe('FeedbackController', () => {
       );
     });
 
-    it('should throw when comment is not a string', async () => {
+    it('should throw when comment is null', async () => {
       const params = createFeedbackParams({ comment: null as unknown as string });
 
       await expect(FeedbackController.submit(params)).rejects.toThrow(
@@ -78,6 +81,22 @@ describe('FeedbackController', () => {
 
       await expect(FeedbackController.submit(params)).rejects.toThrow(
         `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+      );
+    });
+
+    it('should throw when name is missing', async () => {
+      const params = createFeedbackParams({ name: '' });
+
+      await expect(FeedbackController.submit(params)).rejects.toThrow(
+        'Name is required and must be a non-empty string',
+      );
+    });
+
+    it('should throw when name is null', async () => {
+      const params = createFeedbackParams({ name: null as unknown as string });
+
+      await expect(FeedbackController.submit(params)).rejects.toThrow(
+        'Name is required and must be a non-empty string',
       );
     });
 
@@ -99,6 +118,7 @@ describe('FeedbackController', () => {
       expect(submitSpy).toHaveBeenCalledWith({
         pubky: testData.userPubky,
         comment: maxLengthComment,
+        name: testData.userName,
       });
     });
   });

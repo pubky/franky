@@ -1,36 +1,29 @@
 'use client';
 
-import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import * as Hooks from '@/hooks';
+import { useState, useCallback, useMemo } from 'react';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 
 /**
- * Custom hook to handle feedback submission
+ * Hook to handle feedback submission to Chatwoot.
  *
- * @returns Object containing feedback state, handleChange function, submit method, isSubmitting state, isSuccess state, hasContent flag, and reset function
+ * Fetches current user data internally via useCurrentUserProfile.
+ * Submission is guarded - requires authenticated user with loaded profile.
  *
- * @example
- * ```tsx
- * const { feedback, handleChange, submit, isSubmitting, isSuccess, hasContent, reset } = useFeedback();
- *
- * <Textarea value={feedback} onChange={handleChange} />
- * <Button onClick={submit} disabled={!hasContent || isSubmitting}>Send</Button>
- * ```
+ * @returns feedback - Current feedback text
+ * @returns handleChange - Handler for textarea onChange
+ * @returns submit - Async function to submit feedback
+ * @returns isSubmitting - True while submission is in progress
+ * @returns isSuccess - True after successful submission
+ * @returns hasContent - True if feedback has non-whitespace content
+ * @returns reset - Resets all state to initial values
  */
 export function useFeedback() {
-  const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { toast } = Molecules.useToast();
+  const { currentUserPubky, userDetails } = Hooks.useCurrentUserProfile();
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  // Use ref to store the current feedback value to avoid dependency in submit callback
-  const feedbackRef = useRef(feedback);
-
-  // Keep ref in sync with the state
-  useEffect(() => {
-    feedbackRef.current = feedback;
-  }, [feedback]);
 
   const showErrorToast = useCallback(
     (description: string) => {
@@ -48,10 +41,9 @@ export function useFeedback() {
   }, []);
 
   const submit = useCallback(async () => {
-    // Read current feedback value from ref to avoid dependency
-    const currentFeedback = feedbackRef.current.trim();
+    const currentFeedback = feedback.trim();
 
-    if (!currentFeedback || isSubmitting || !currentUserPubky) return;
+    if (!currentFeedback || isSubmitting || !currentUserPubky || !userDetails?.name) return;
 
     setIsSubmitting(true);
     try {
@@ -63,6 +55,7 @@ export function useFeedback() {
         body: JSON.stringify({
           pubky: currentUserPubky,
           comment: currentFeedback,
+          name: userDetails.name,
         }),
       });
 
@@ -74,18 +67,17 @@ export function useFeedback() {
       }
 
       setIsSuccess(true);
-      setFeedback('');
+      // Note: feedback is cleared by reset() when dialog closes, no need to clear here
     } catch (error) {
       console.error('Error submitting feedback:', error);
       showErrorToast('Failed to submit feedback. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
-  }, [isSubmitting, currentUserPubky, showErrorToast]);
+  }, [feedback, isSubmitting, currentUserPubky, userDetails?.name, showErrorToast]);
 
   const reset = useCallback(() => {
     setFeedback('');
-    feedbackRef.current = '';
     setIsSuccess(false);
     setIsSubmitting(false);
   }, []);

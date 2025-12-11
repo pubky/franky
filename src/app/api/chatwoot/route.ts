@@ -14,10 +14,10 @@ import * as Libs from '@/libs';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { pubky, comment } = body;
+    const { pubky, comment, name } = body;
 
     // Delegate to controller - validation happens there
-    await Core.FeedbackController.submit({ pubky, comment });
+    await Core.FeedbackController.submit({ pubky, comment, name });
 
     return NextResponse.json({ message: 'Success' });
   } catch (error) {

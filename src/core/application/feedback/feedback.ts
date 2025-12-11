@@ -6,9 +6,8 @@ import * as Types from './feedback.types';
  * Feedback application service.
  *
  * Orchestrates feedback submission workflow:
- * 1. Fetches user profile to get display name (falls back to pubky if unavailable)
- * 2. Calls Chatwoot service to submit feedback
- * 3. Logs errors for observability
+ * 1. Calls Chatwoot service to submit feedback
+ * 2. Logs errors for observability
  *
  * This layer is called by the controller and handles cross-domain orchestration.
  */
@@ -18,36 +17,23 @@ export class FeedbackApplication {
   /**
    * Submit feedback to Chatwoot
    *
-   * Orchestrates the feedback submission by fetching user details
-   * and delegating to the Chatwoot service.
+   * Orchestrates the feedback submission by delegating to the Chatwoot service.
    *
    * @param params - Parameters object
    * @param params.pubky - User's public key
    * @param params.comment - Feedback comment
+   * @param params.name - User's display name
    * @throws AppError if submission fails
    */
   static async submit(params: Types.TFeedbackSubmitInput): Promise<void> {
     try {
-      const { pubky, comment } = params;
-
-      // Get user profile to retrieve display name
-      let name: string | undefined;
-      try {
-        const userDetails = await Core.ProfileController.read({ userId: pubky });
-        name = userDetails?.name;
-      } catch (error) {
-        // If profile read fails, log but continue with pubky as fallback
-        Libs.Logger.warn('Failed to fetch user profile for feedback', { pubky, error });
-      }
-
-      // Use pubky as fallback if name is not available
-      const displayName = name || pubky;
+      const { pubky, comment, name } = params;
 
       // Delegate to Chatwoot service
       await Core.ChatwootService.submit({
         pubky,
         comment,
-        name: displayName,
+        name,
       });
     } catch (error) {
       // Log error for observability

@@ -11,6 +11,7 @@ const testData = {
 const createFeedbackInput = (overrides: Partial<TFeedbackSubmitInput> = {}): TFeedbackSubmitInput => ({
   pubky: testData.userPubky,
   comment: 'This is a test feedback comment',
+  name: testData.userName,
   ...overrides,
 });
 
@@ -20,16 +21,10 @@ describe('FeedbackApplication', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
 
-    // Mock ProfileController
-    vi.spyOn(Core.ProfileController, 'read').mockResolvedValue({
-      name: testData.userName,
-    } as Core.ProfileModelSchema);
-
     // Mock ChatwootService
     vi.spyOn(Core.ChatwootService, 'submit').mockResolvedValue(undefined);
 
     // Mock Logger
-    vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
     vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
     // Import FeedbackApplication
@@ -38,43 +33,8 @@ describe('FeedbackApplication', () => {
   });
 
   describe('submit', () => {
-    it('should fetch user profile and submit to Chatwoot with name', async () => {
+    it('should submit to Chatwoot with all parameters', async () => {
       const input = createFeedbackInput();
-      const chatwootSpy = vi.spyOn(Core.ChatwootService, 'submit');
-
-      await FeedbackApplication.submit(input);
-
-      expect(Core.ProfileController.read).toHaveBeenCalledWith({ userId: testData.userPubky });
-      expect(chatwootSpy).toHaveBeenCalledWith({
-        pubky: testData.userPubky,
-        comment: input.comment,
-        name: testData.userName,
-      });
-    });
-
-    it('should use pubky as fallback name when profile read fails', async () => {
-      const input = createFeedbackInput();
-      vi.spyOn(Core.ProfileController, 'read').mockRejectedValue(new Error('Profile not found'));
-      const chatwootSpy = vi.spyOn(Core.ChatwootService, 'submit');
-
-      await FeedbackApplication.submit(input);
-
-      expect(Libs.Logger.warn).toHaveBeenCalledWith('Failed to fetch user profile for feedback', {
-        pubky: testData.userPubky,
-        error: expect.any(Error),
-      });
-      expect(chatwootSpy).toHaveBeenCalledWith({
-        pubky: testData.userPubky,
-        comment: input.comment,
-        name: testData.userPubky,
-      });
-    });
-
-    it('should use pubky as fallback when profile has no name', async () => {
-      const input = createFeedbackInput();
-      vi.spyOn(Core.ProfileController, 'read').mockResolvedValue({
-        name: undefined,
-      } as Core.ProfileModelSchema);
       const chatwootSpy = vi.spyOn(Core.ChatwootService, 'submit');
 
       await FeedbackApplication.submit(input);
@@ -82,7 +42,7 @@ describe('FeedbackApplication', () => {
       expect(chatwootSpy).toHaveBeenCalledWith({
         pubky: testData.userPubky,
         comment: input.comment,
-        name: testData.userPubky,
+        name: testData.userName,
       });
     });
 

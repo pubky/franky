@@ -6,19 +6,11 @@ import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
 // Mock fetch
 global.fetch = vi.fn();
 
-// Mock hooks
-const mockToast = vi.fn();
-vi.mock('@/hooks', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/hooks')>();
-  return {
-    ...actual,
-    useCurrentUserProfile: vi.fn(() => ({
-      currentUserPubky: 'test-user-123',
-    })),
-  };
-});
+const TEST_USER_PUBKY = 'test-user-123';
+const TEST_USER_NAME = 'Test User';
 
 // Mock molecules
+const mockToast = vi.fn();
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
@@ -29,9 +21,24 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
+// Mock useCurrentUserProfile hook
+const mockUseCurrentUserProfile = vi.fn();
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCurrentUserProfile: () => mockUseCurrentUserProfile(),
+  };
+});
+
 describe('useFeedback', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: authenticated user with profile loaded
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: TEST_USER_PUBKY,
+      userDetails: { name: TEST_USER_NAME },
+    });
     // Default successful fetch response
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
@@ -68,7 +75,7 @@ describe('useFeedback', () => {
       expect(result.current.hasContent).toBe(true);
     });
 
-    it('should accept feedback value regardless of length (truncation handled by textarea maxLength)', () => {
+    it('should accept feedback value regardless of length (prevention handled by textarea maxLength)', () => {
       const { result } = renderHook(() => useFeedback());
       const longText = 'a'.repeat(FEEDBACK_MAX_CHARACTER_LENGTH + 10);
 
@@ -79,7 +86,8 @@ describe('useFeedback', () => {
         result.current.handleChange(event);
       });
 
-      // The hook accepts the value as-is; truncation is handled by the textarea's maxLength attribute
+      // In real browser usage, the textarea's maxLength attribute prevents input beyond the limit.
+      // This test simulates a direct handleChange call bypassing browser restrictions to test hook behavior in isolation.
       expect(result.current.feedback.length).toBe(FEEDBACK_MAX_CHARACTER_LENGTH + 10);
     });
 
@@ -141,6 +149,7 @@ describe('useFeedback', () => {
 
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.isSuccess).toBe(false);
+      expect(global.fetch).not.toHaveBeenCalled();
     });
 
     it('should not submit when feedback is only whitespace', async () => {
@@ -159,9 +168,10 @@ describe('useFeedback', () => {
 
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.isSuccess).toBe(false);
+      expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it('should set isSubmitting to true during submission', async () => {
+    it('should submit feedback and set isSuccess on success', async () => {
       const { result } = renderHook(() => useFeedback());
 
       act(() => {
@@ -171,7 +181,6 @@ describe('useFeedback', () => {
         result.current.handleChange(event);
       });
 
-      // Start submission
       await act(async () => {
         await result.current.submit();
       });
@@ -187,44 +196,25 @@ describe('useFeedback', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          pubky: 'test-user-123',
+          pubky: TEST_USER_PUBKY,
           comment: 'Test feedback',
-        }),
-      });
-    });
-
-    it('should set isSuccess to true after successful submission', async () => {
-      const { result } = renderHook(() => useFeedback());
-
-      act(() => {
-        const event = {
-          target: { value: 'Test feedback' },
-        } as React.ChangeEvent<HTMLTextAreaElement>;
-        result.current.handleChange(event);
-      });
-
-      await act(async () => {
-        await result.current.submit();
-      });
-
-      await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-        expect(result.current.isSubmitting).toBe(false);
-      });
-
-      expect(global.fetch).toHaveBeenCalledWith('/api/chatwoot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          pubky: 'test-user-123',
-          comment: 'Test feedback',
+          name: TEST_USER_NAME,
         }),
       });
     });
 
     it('should not submit when already submitting', async () => {
+      // Create a delayed fetch to simulate network latency
+      let resolveFirstFetch: () => void;
+      const firstFetchPromise = new Promise<void>((resolve) => {
+        resolveFirstFetch = resolve;
+      });
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockImplementationOnce(async () => {
+        await firstFetchPromise;
+        return { ok: true, json: async () => ({}) } as Response;
+      });
+
       const { result } = renderHook(() => useFeedback());
 
       act(() => {
@@ -234,25 +224,85 @@ describe('useFeedback', () => {
         result.current.handleChange(event);
       });
 
-      // Start first submission (don't await to test concurrent submission)
-      const submitPromise = act(async () => {
-        await result.current.submit();
+      // Start first submission (don't await)
+      let submitPromise: Promise<void>;
+      act(() => {
+        submitPromise = result.current.submit();
       });
 
-      // Immediately try to submit again (should be prevented by guard)
-      // Note: This will show a warning but is intentional for testing concurrent calls
+      // Wait for isSubmitting to be true
+      await waitFor(() => {
+        expect(result.current.isSubmitting).toBe(true);
+      });
+
+      // Try to submit again while first is in progress (should be blocked)
       await act(async () => {
         await result.current.submit();
       });
 
-      // Wait for first submission to complete
-      await submitPromise;
+      // Resolve the first fetch
+      resolveFirstFetch!();
 
-      // Should have completed successfully (only once)
+      // Wait for first submission to complete
+      await act(async () => {
+        await submitPromise!;
+      });
+
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true);
         expect(result.current.isSubmitting).toBe(false);
       });
+
+      // Fetch should only be called once (second submit was blocked)
+      expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not submit when currentUserPubky is null', async () => {
+      mockUseCurrentUserProfile.mockReturnValue({
+        currentUserPubky: null,
+        userDetails: { name: TEST_USER_NAME },
+      });
+
+      const { result } = renderHook(() => useFeedback());
+
+      act(() => {
+        const event = {
+          target: { value: 'Test feedback' },
+        } as React.ChangeEvent<HTMLTextAreaElement>;
+        result.current.handleChange(event);
+      });
+
+      await act(async () => {
+        await result.current.submit();
+      });
+
+      expect(result.current.isSubmitting).toBe(false);
+      expect(result.current.isSuccess).toBe(false);
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should not submit when userDetails.name is missing', async () => {
+      mockUseCurrentUserProfile.mockReturnValue({
+        currentUserPubky: TEST_USER_PUBKY,
+        userDetails: null,
+      });
+
+      const { result } = renderHook(() => useFeedback());
+
+      act(() => {
+        const event = {
+          target: { value: 'Test feedback' },
+        } as React.ChangeEvent<HTMLTextAreaElement>;
+        result.current.handleChange(event);
+      });
+
+      await act(async () => {
+        await result.current.submit();
+      });
+
+      expect(result.current.isSubmitting).toBe(false);
+      expect(result.current.isSuccess).toBe(false);
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 
