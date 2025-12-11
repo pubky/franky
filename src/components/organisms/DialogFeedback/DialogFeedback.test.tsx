@@ -79,6 +79,23 @@ vi.mock('@/organisms', () => ({
   ),
 }));
 
+// Mock DialogFeedbackContent and DialogFeedbackSuccess
+vi.mock('./DialogFeedbackContent', () => ({
+  DialogFeedbackContent: ({ feedback, currentUserPubky }: { feedback: string; currentUserPubky: string }) => (
+    <div data-testid="dialog-feedback-content" data-feedback={feedback} data-user={currentUserPubky}>
+      DialogFeedbackContent
+    </div>
+  ),
+}));
+
+vi.mock('./DialogFeedbackSuccess', () => ({
+  DialogFeedbackSuccess: ({ onOpenChange }: { onOpenChange: (open: boolean) => void }) => (
+    <div data-testid="dialog-feedback-success" onClick={() => onOpenChange(false)}>
+      DialogFeedbackSuccess
+    </div>
+  ),
+}));
+
 // Mock atoms
 vi.mock('@/atoms', () => ({
   Dialog: ({
@@ -258,9 +275,8 @@ describe('DialogFeedback', () => {
   it('renders feedback form when not in success state', () => {
     render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
 
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Provide Feedback');
-    expect(screen.getByTestId('textarea')).toBeInTheDocument();
-    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-feedback-content')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-feedback-content')).toHaveAttribute('data-user', 'test-user-123');
   });
 
   it('renders success state when isSuccess is true', () => {
@@ -276,102 +292,13 @@ describe('DialogFeedback', () => {
 
     render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
 
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Feedback Received');
-    expect(screen.getByTestId('dialog-description')).toHaveTextContent('Thank you for helping us improve Pubky.');
+    expect(screen.getByTestId('dialog-feedback-success')).toBeInTheDocument();
   });
 
-  it('shows Send button when hasContent is true', () => {
-    mockUseFeedback.mockReturnValue({
-      feedback: 'Test feedback',
-      handleChange: mockHandleChange,
-      submit: mockSubmit,
-      isSubmitting: false,
-      isSuccess: false,
-      hasContent: true,
-      reset: mockReset,
-    });
-
+  it('renders DialogFeedbackContent when not in success state', () => {
     render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
 
-    const buttons = screen.getAllByTestId('button');
-    const sendButton = buttons.find((btn) => btn.textContent?.includes('Send'));
-    expect(sendButton).toBeInTheDocument();
-  });
-
-  it('does not show Send button when hasContent is false', () => {
-    render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
-
-    const buttons = screen.queryAllByTestId('button');
-    const sendButton = buttons.find((btn) => btn.textContent?.includes('Send'));
-    // Button is always rendered but hidden with opacity-0 when hasContent is false
-    expect(sendButton).toBeDefined();
-    const container = sendButton?.closest('[data-testid="container"]');
-    expect(container).toHaveClass('opacity-0');
-  });
-
-  it('calls handleChange when textarea value changes', () => {
-    render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
-
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.change(textarea, { target: { value: 'New feedback' } });
-
-    expect(mockHandleChange).toHaveBeenCalled();
-  });
-
-  it('calls submit when Send button is clicked', () => {
-    mockUseFeedback.mockReturnValue({
-      feedback: 'Test feedback',
-      handleChange: mockHandleChange,
-      submit: mockSubmit,
-      isSubmitting: false,
-      isSuccess: false,
-      hasContent: true,
-      reset: mockReset,
-    });
-
-    render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
-
-    const buttons = screen.getAllByTestId('button');
-    const sendButton = buttons.find((btn) => btn.textContent?.includes('Send'));
-    fireEvent.click(sendButton!);
-
-    expect(mockSubmit).toHaveBeenCalled();
-  });
-
-  it('disables Send button when isSubmitting is true', () => {
-    mockUseFeedback.mockReturnValue({
-      feedback: 'Test feedback',
-      handleChange: mockHandleChange,
-      submit: mockSubmit,
-      isSubmitting: true,
-      isSuccess: false,
-      hasContent: true,
-      reset: mockReset,
-    });
-
-    render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
-
-    const buttons = screen.getAllByTestId('button');
-    // When submitting, button shows loader icon, so find by variant and disabled state
-    const sendButton = buttons.find((btn) => btn.getAttribute('data-variant') === 'secondary' && btn.disabled);
-    expect(sendButton).toBeDefined();
-    expect(sendButton).toBeDisabled();
-  });
-
-  it('shows loader icon when isSubmitting is true', () => {
-    mockUseFeedback.mockReturnValue({
-      feedback: 'Test feedback',
-      handleChange: mockHandleChange,
-      submit: mockSubmit,
-      isSubmitting: true,
-      isSuccess: false,
-      hasContent: true,
-      reset: mockReset,
-    });
-
-    render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
-
-    expect(screen.getByTestId('loader-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-feedback-content')).toBeInTheDocument();
   });
 
   it('calls reset when dialog closes', () => {
@@ -395,14 +322,13 @@ describe('DialogFeedback', () => {
 
     render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
 
-    const buttons = screen.getAllByTestId('button');
-    const closeButton = buttons.find((btn) => btn.textContent?.includes("You're welcome!"));
-    fireEvent.click(closeButton!);
+    const successComponent = screen.getByTestId('dialog-feedback-success');
+    fireEvent.click(successComponent);
 
     expect(mockOnOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it('passes characterCount to PostHeader when feedback has content', () => {
+  it('passes feedback to DialogFeedbackContent', () => {
     mockUseFeedback.mockReturnValue({
       feedback: 'Test',
       handleChange: mockHandleChange,
@@ -415,8 +341,8 @@ describe('DialogFeedback', () => {
 
     render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
 
-    const postHeader = screen.getByTestId('post-header');
-    expect(postHeader).toHaveAttribute('data-character-count', '4');
+    const contentComponent = screen.getByTestId('dialog-feedback-content');
+    expect(contentComponent).toHaveAttribute('data-feedback', 'Test');
   });
 
   it('applies correct className to DialogContent', () => {
