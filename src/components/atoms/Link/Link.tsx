@@ -7,6 +7,7 @@ import * as Libs from '@/libs';
 interface LinkProps extends ComponentProps<typeof NextLink> {
   variant?: 'default' | 'muted';
   size?: 'default' | 'lg' | 'xl';
+  overrideDefaults?: boolean;
 }
 
 /**
@@ -34,7 +35,13 @@ interface LinkProps extends ComponentProps<typeof NextLink> {
  * <a href="mailto:...">Email</a>
  * <a href="tel:...">Phone</a>
  */
-export function Link({ variant = 'default', size = 'default', className, ...props }: LinkProps) {
+export function Link({
+  variant = 'default',
+  size = 'default',
+  overrideDefaults = false,
+  className,
+  ...props
+}: LinkProps) {
   const linkVariants = cva('cursor-pointer text-brand hover:text-brand/80 transition-colors', {
     variants: {
       variant: {
@@ -49,7 +56,7 @@ export function Link({ variant = 'default', size = 'default', className, ...prop
     },
   });
 
-  const linkClassName = Libs.cn(linkVariants({ variant, size }), className);
+  const linkClassName = overrideDefaults ? className : Libs.cn(linkVariants({ variant, size }), className);
 
   // Check if href is an external URL
   const href = props.href?.toString() || '';

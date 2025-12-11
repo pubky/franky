@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 
 export interface PostContentOrganismProps {
@@ -25,8 +26,8 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
   return (
     <Atoms.Container className={Libs.cn('gap-3', className)}>
       <Molecules.PostText content={postDetails.content} />
-
       <Molecules.PostLinkEmbeds content={postDetails.content} />
+      <Organisms.PostAttachments attachments={postDetails.attachments} />
     </Atoms.Container>
   );
 }

@@ -15,6 +15,7 @@ import {
   hoursAgo,
   daysAgo,
   formatNotificationTime,
+  isPostDeleted,
 } from './utils';
 
 describe('Utils', () => {
@@ -924,6 +925,36 @@ describe('Utils', () => {
         const timestamp = now - 7 * 24 * 60 * 60 * 1000; // exactly 7 days
         expect(formatNotificationTime(timestamp, true)).toBe('7 DAYS AGO');
       });
+    });
+  });
+
+  describe('isPostDeleted', () => {
+    it('should return true for "[DELETED]" content', () => {
+      expect(isPostDeleted('[DELETED]')).toBe(true);
+    });
+
+    it('should return false for regular content', () => {
+      expect(isPostDeleted('Hello world')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isPostDeleted('')).toBe(false);
+    });
+
+    it('should return false for undefined', () => {
+      expect(isPostDeleted(undefined)).toBe(false);
+    });
+
+    it('should return false for similar but not exact match', () => {
+      expect(isPostDeleted('[deleted]')).toBe(false);
+      expect(isPostDeleted('DELETED')).toBe(false);
+      expect(isPostDeleted('[DELETED] ')).toBe(false);
+      expect(isPostDeleted(' [DELETED]')).toBe(false);
+    });
+
+    it('should return false for content containing "[DELETED]"', () => {
+      expect(isPostDeleted('This post is [DELETED]')).toBe(false);
+      expect(isPostDeleted('[DELETED] post')).toBe(false);
     });
   });
 });
