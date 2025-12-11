@@ -5,11 +5,6 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
-vi.mock('@/config', () => ({
-  POST_MAX_CHARACTER_LENGTH: 2000,
-  POST_MAX_TAGS: 5,
-}));
-
 vi.mock('@/atoms', () => ({
   Container: ({
     children,
@@ -170,7 +165,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
   });
 
@@ -233,7 +227,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} onSuccess={mockOnSuccess} />);
@@ -259,7 +252,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" onSuccess={mockOnSuccess} />);
@@ -277,6 +269,7 @@ describe('PostInput', () => {
     });
   });
 
+  // todo: extend test to include attachments
   it('disables post button when content is empty', () => {
     mockUsePost.mockReturnValue({
       content: '',
@@ -286,7 +279,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
@@ -305,7 +297,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: true,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
