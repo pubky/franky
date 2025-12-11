@@ -111,7 +111,8 @@ const envSchema = z.object({
     .string()
     .min(1)
     .optional()
-    .transform((val) => (val ? parseInt(val, 10) : undefined)),
+    .default('26')
+    .transform((val) => parseInt(val, 10)),
 
   NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.png'),
   NEXT_PUBLIC_SITE_NAME: z.string().optional().default('Pubky App'),

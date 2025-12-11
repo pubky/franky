@@ -250,12 +250,14 @@ describe('ChatwootService', () => {
         BASE_URL_SUPPORT: mockEnv.Env.BASE_URL_SUPPORT,
         SUPPORT_API_ACCESS_TOKEN: mockEnv.Env.SUPPORT_API_ACCESS_TOKEN,
         SUPPORT_ACCOUNT_ID: mockEnv.Env.SUPPORT_ACCOUNT_ID,
+        SUPPORT_FEEDBACK_INBOX_ID: mockEnv.Env.SUPPORT_FEEDBACK_INBOX_ID,
       };
 
       // Override the Env values to undefined to test service validation
       (mockEnv.Env as unknown as { BASE_URL_SUPPORT?: string }).BASE_URL_SUPPORT = undefined;
       (mockEnv.Env as unknown as { SUPPORT_API_ACCESS_TOKEN?: string }).SUPPORT_API_ACCESS_TOKEN = undefined;
       (mockEnv.Env as unknown as { SUPPORT_ACCOUNT_ID?: string }).SUPPORT_ACCOUNT_ID = undefined;
+      (mockEnv.Env as unknown as { SUPPORT_FEEDBACK_INBOX_ID?: number }).SUPPORT_FEEDBACK_INBOX_ID = undefined;
 
       const input = createChatwootInput();
 
@@ -267,6 +269,8 @@ describe('ChatwootService', () => {
         originalValues.SUPPORT_API_ACCESS_TOKEN!;
       (mockEnv.Env as unknown as { SUPPORT_ACCOUNT_ID: string }).SUPPORT_ACCOUNT_ID =
         originalValues.SUPPORT_ACCOUNT_ID!;
+      (mockEnv.Env as unknown as { SUPPORT_FEEDBACK_INBOX_ID: number }).SUPPORT_FEEDBACK_INBOX_ID =
+        originalValues.SUPPORT_FEEDBACK_INBOX_ID!;
     });
 
     it('should handle case-insensitive email matching in contact search', async () => {
