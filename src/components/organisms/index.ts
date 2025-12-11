@@ -8,6 +8,7 @@ export * from './DialogAddLink';
 export * from './DialogAge';
 export * from './DialogBackup';
 export * from './DialogBackupPhrase';
+export * from './DialogCheckLink';
 export * from './DialogBackupExport';
 export * from './DialogConfirmBackup';
 export * from './DialogBackupEncrypted';

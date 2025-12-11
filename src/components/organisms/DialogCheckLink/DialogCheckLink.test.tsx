@@ -1,0 +1,310 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { DialogCheckLink } from './DialogCheckLink';
+
+// Mock atoms
+vi.mock('@/atoms', () => ({
+  Dialog: ({
+    children,
+    open,
+    onOpenChange,
+  }: {
+    children: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog" data-open={open} data-on-open-change={!!onOpenChange}>
+      {children}
+    </div>
+  ),
+  DialogContent: ({
+    children,
+    className,
+    hiddenTitle,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    hiddenTitle?: string;
+  }) => (
+    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
+      {hiddenTitle && (
+        <h2 className="sr-only" data-testid="dialog-hidden-title">
+          {hiddenTitle}
+        </h2>
+      )}
+      {children}
+    </div>
+  ),
+  DialogHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-header" className={className}>
+      {children}
+    </div>
+  ),
+  DialogTitle: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <h2 data-testid="dialog-title" className={className}>
+      {children}
+    </h2>
+  ),
+  DialogDescription: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <p data-testid="dialog-description" className={className}>
+      {children}
+    </p>
+  ),
+  DialogFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-footer" className={className}>
+      {children}
+    </div>
+  ),
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
+  Typography: ({
+    children,
+    className,
+    as: Tag = 'p',
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    as?: string;
+    [key: string]: unknown;
+  }) => (
+    <Tag data-testid="typography" className={className} {...props}>
+      {children}
+    </Tag>
+  ),
+  Button: ({
+    children,
+    variant,
+    size,
+    className,
+    onClick,
+    ...props
+  }: {
+    children: React.ReactNode;
+    variant?: string;
+    size?: string;
+    className?: string;
+    onClick?: () => void;
+    [key: string]: unknown;
+  }) => (
+    <button
+      data-testid={variant ? `button-${variant}` : 'button'}
+      data-variant={variant}
+      data-size={size}
+      className={className}
+      onClick={onClick}
+      {...props}
+    >
+      {children}
+    </button>
+  ),
+  Checkbox: ({
+    id,
+    checked,
+    onCheckedChange,
+    label,
+  }: {
+    id?: string;
+    checked?: boolean;
+    onCheckedChange?: (checked: boolean) => void;
+    label?: string;
+  }) => (
+    <div data-testid="checkbox-wrapper">
+      <input
+        type="checkbox"
+        id={id}
+        data-testid="checkbox"
+        checked={checked}
+        onChange={(e) => onCheckedChange?.(e.target.checked)}
+      />
+      {label && (
+        <label htmlFor={id} data-testid="checkbox-label">
+          {label}
+        </label>
+      )}
+    </div>
+  ),
+}));
+
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    setStorageBoolean: vi.fn(),
+    getStorageBoolean: vi.fn().mockReturnValue(true),
+    STORAGE_KEYS: {
+      CHECK_LINK: 'checkLink',
+      BLUR_CENSORED: 'blurCensored',
+    },
+  };
+});
+
+// Mock window.open
+const mockWindowOpen = vi.fn();
+Object.defineProperty(window, 'open', {
+  value: mockWindowOpen,
+  writable: true,
+});
+
+const defaultProps = {
+  open: true,
+  onOpenChangeAction: vi.fn(),
+  linkUrl: 'https://example.com/some/path',
+} as const;
+
+describe('DialogCheckLink', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders with default props', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+
+    const dialog = screen.getByTestId('dialog');
+    const content = screen.getByTestId('dialog-content');
+    const header = screen.getByTestId('dialog-header');
+    const title = screen.getByTestId('dialog-title');
+
+    expect(dialog).toBeInTheDocument();
+    expect(content).toBeInTheDocument();
+    expect(header).toBeInTheDocument();
+    expect(title).toBeInTheDocument();
+  });
+
+  it('renders with correct title', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Double-check this link');
+  });
+
+  it('renders the link URL', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    expect(screen.getByText('https://example.com/some/path')).toBeInTheDocument();
+  });
+
+  it('truncates long URLs', () => {
+    const longUrl = 'https://example.com/this/is/a/very/long/path/that/needs/to/be/truncated';
+    render(<DialogCheckLink {...defaultProps} linkUrl={longUrl} />);
+    // truncateMiddle with 50 chars should truncate this URL
+    const truncatedUrl = screen.getByText(/https:\/\/example\.com.*\.\.\..*truncated/);
+    expect(truncatedUrl).toBeInTheDocument();
+  });
+
+  it('renders Cancel and Continue buttons', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(screen.getByText('Continue')).toBeInTheDocument();
+  });
+
+  it('renders the checkbox with label', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    expect(screen.getByTestId('checkbox')).toBeInTheDocument();
+    expect(screen.getByTestId('checkbox-label')).toHaveTextContent("Don't show this again");
+  });
+
+  it('handles click events on Cancel button', () => {
+    const onOpenChangeAction = vi.fn();
+    render(<DialogCheckLink {...defaultProps} onOpenChangeAction={onOpenChangeAction} />);
+
+    const cancelButton = screen.getByText('Cancel');
+    fireEvent.click(cancelButton);
+
+    expect(onOpenChangeAction).toHaveBeenCalledWith(false);
+  });
+
+  it('handles click events on Continue button', () => {
+    const onOpenChangeAction = vi.fn();
+    render(<DialogCheckLink {...defaultProps} onOpenChangeAction={onOpenChangeAction} />);
+
+    const continueButton = screen.getByText('Continue');
+    fireEvent.click(continueButton);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith(defaultProps.linkUrl, '_blank', 'noopener,noreferrer');
+    expect(onOpenChangeAction).toHaveBeenCalledWith(false);
+  });
+
+  it('does not call setStorageBoolean when checkbox is unchecked and Continue is clicked', async () => {
+    const { setStorageBoolean } = await import('@/libs');
+    render(<DialogCheckLink {...defaultProps} />);
+
+    const continueButton = screen.getByText('Continue');
+    fireEvent.click(continueButton);
+
+    expect(setStorageBoolean).not.toHaveBeenCalled();
+  });
+
+  it('calls setStorageBoolean when checkbox is checked and Continue is clicked', async () => {
+    const { setStorageBoolean, STORAGE_KEYS } = await import('@/libs');
+    render(<DialogCheckLink {...defaultProps} />);
+
+    const checkbox = screen.getByTestId('checkbox');
+    fireEvent.click(checkbox);
+
+    const continueButton = screen.getByText('Continue');
+    fireEvent.click(continueButton);
+
+    expect(setStorageBoolean).toHaveBeenCalledWith(STORAGE_KEYS.CHECK_LINK, false);
+  });
+
+  it('applies correct button variants', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    const cancelButton = screen.getByText('Cancel').closest('button');
+    const continueButton = screen.getByText('Continue').closest('button');
+
+    expect(cancelButton).toHaveAttribute('data-variant', 'outline');
+    expect(continueButton).not.toHaveAttribute('data-variant');
+  });
+
+  it('renders ExternalLink icon in Continue button', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    const continueButton = screen.getByText('Continue').closest('button');
+    const icon = continueButton?.querySelector('svg');
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveClass('lucide-external-link');
+  });
+
+  it('uses w-2xl class for dialog content', () => {
+    render(<DialogCheckLink {...defaultProps} />);
+    const content = screen.getByTestId('dialog-content');
+    expect(content).toHaveClass('w-2xl');
+  });
+});
+
+describe('DialogCheckLink - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('matches snapshot for default DialogCheckLink', () => {
+    const { container } = render(<DialogCheckLink {...defaultProps} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when closed', () => {
+    const { container } = render(<DialogCheckLink {...defaultProps} open={false} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with long URL', () => {
+    const longUrl = 'https://example.com/this/is/a/very/long/path/that/needs/to/be/truncated/properly';
+    const { container } = render(<DialogCheckLink {...defaultProps} linkUrl={longUrl} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with short URL', () => {
+    const shortUrl = 'https://x.com';
+    const { container } = render(<DialogCheckLink {...defaultProps} linkUrl={shortUrl} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

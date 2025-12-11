@@ -10,29 +10,21 @@ export interface PrivacyProps {
 
 export function Privacy({ className }: PrivacyProps) {
   const [showConfirmation, setShowConfirmation] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('checkLink');
-      return saved !== null ? saved === 'true' : true;
-    }
-    return true;
+    return Libs.getStorageBoolean(Libs.STORAGE_KEYS.CHECK_LINK);
   });
 
   const [blurCensored, setBlurCensored] = React.useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('blurCensored');
-      return saved !== null ? saved === 'true' : true;
-    }
-    return true;
+    return Libs.getStorageBoolean(Libs.STORAGE_KEYS.BLUR_CENSORED);
   });
 
   const handleConfirmationToggle = (checked: boolean) => {
     setShowConfirmation(checked);
-    localStorage.setItem('checkLink', String(checked));
+    Libs.setStorageBoolean(Libs.STORAGE_KEYS.CHECK_LINK, checked);
   };
 
   const handleBlurToggle = (checked: boolean) => {
     setBlurCensored(checked);
-    localStorage.setItem('blurCensored', String(checked));
+    Libs.setStorageBoolean(Libs.STORAGE_KEYS.BLUR_CENSORED, checked);
   };
 
   return (

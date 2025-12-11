@@ -1,8 +1,51 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ProfilePageLinks } from './ProfilePageLinks';
 import * as Core from '@/core';
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  DialogCheckLink: ({
+    open,
+    onOpenChangeAction,
+    linkUrl,
+  }: {
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+    linkUrl: string;
+  }) => (
+    <div data-testid="dialog-check-link" data-open={open} data-link-url={linkUrl}>
+      <button data-testid="dialog-close" onClick={() => onOpenChangeAction(false)}>
+        Close
+      </button>
+    </div>
+  ),
+}));
+
+// Mock libs
+const mockGetStorageBoolean = vi.fn();
+const mockSetStorageBoolean = vi.fn();
+
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    getStorageBoolean: (...args: unknown[]) => mockGetStorageBoolean(...args),
+    setStorageBoolean: (...args: unknown[]) => mockSetStorageBoolean(...args),
+    STORAGE_KEYS: {
+      CHECK_LINK: 'checkLink',
+      BLUR_CENSORED: 'blurCensored',
+    },
+  };
+});
+
+// Mock window.open
+const mockWindowOpen = vi.fn();
+Object.defineProperty(window, 'open', {
+  value: mockWindowOpen,
+  writable: true,
+});
 
 const defaultLinks: Core.NexusUserDetails['links'] = [
   { title: 'bitcoin.org', url: 'https://bitcoin.org' },
@@ -11,6 +54,11 @@ const defaultLinks: Core.NexusUserDetails['links'] = [
 ];
 
 describe('ProfilePageLinks', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetStorageBoolean.mockReturnValue(true); // Default: checkLink enabled
+  });
+
   it('renders heading correctly', () => {
     render(<ProfilePageLinks links={defaultLinks} />);
     expect(screen.getByText('Links')).toBeInTheDocument();
@@ -28,8 +76,6 @@ describe('ProfilePageLinks', () => {
     defaultLinks?.forEach((link) => {
       const linkElement = screen.getByText(link.title).closest('a');
       expect(linkElement).toHaveAttribute('href', link.url);
-      expect(linkElement).toHaveAttribute('target', '_blank');
-      expect(linkElement).toHaveAttribute('rel', 'noopener noreferrer');
     });
   });
 
@@ -49,7 +95,7 @@ describe('ProfilePageLinks', () => {
   it('applies correct link styling', () => {
     render(<ProfilePageLinks links={defaultLinks} />);
     const linkElement = screen.getByText('bitcoin.org').closest('a');
-    expect(linkElement).toHaveClass('flex', 'items-center', 'gap-2.5', 'py-1');
+    expect(linkElement).toHaveClass('flex', 'items-center', 'gap-2.5', 'py-1', 'cursor-pointer');
   });
 
   it('renders no links message when links array is empty', () => {
@@ -61,9 +107,68 @@ describe('ProfilePageLinks', () => {
     render(<ProfilePageLinks />);
     expect(screen.getByText('No links added yet.')).toBeInTheDocument();
   });
+
+  it('renders DialogCheckLink component', () => {
+    render(<ProfilePageLinks links={defaultLinks} />);
+    expect(screen.getByTestId('dialog-check-link')).toBeInTheDocument();
+  });
+});
+
+describe('ProfilePageLinks - Link Click Behavior', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('opens dialog when clicking link and checkLink is enabled (default)', () => {
+    mockGetStorageBoolean.mockReturnValue(true);
+    render(<ProfilePageLinks links={defaultLinks} />);
+
+    const linkElement = screen.getByText('bitcoin.org').closest('a');
+    fireEvent.click(linkElement!);
+
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'true');
+    expect(dialog).toHaveAttribute('data-link-url', 'https://bitcoin.org');
+    expect(mockWindowOpen).not.toHaveBeenCalled();
+  });
+
+  it('opens link directly when checkLink is disabled', () => {
+    mockGetStorageBoolean.mockReturnValue(false);
+    render(<ProfilePageLinks links={defaultLinks} />);
+
+    const linkElement = screen.getByText('bitcoin.org').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('https://bitcoin.org', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
+
+  it('opens mailto links directly without dialog', () => {
+    mockGetStorageBoolean.mockReturnValue(true); // checkLink enabled
+    const linksWithEmail: Core.NexusUserDetails['links'] = [{ title: 'Email', url: 'mailto:test@example.com' }];
+    render(<ProfilePageLinks links={linksWithEmail} />);
+
+    const linkElement = screen.getByText('Email').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('mailto:test@example.com', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
+
+  it('calls getStorageBoolean on mount with STORAGE_KEYS.CHECK_LINK', () => {
+    render(<ProfilePageLinks links={defaultLinks} />);
+    expect(mockGetStorageBoolean).toHaveBeenCalledWith('checkLink');
+  });
 });
 
 describe('ProfilePageLinks - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetStorageBoolean.mockReturnValue(true);
+  });
+
   it('matches snapshot with links', () => {
     const { container } = render(<ProfilePageLinks links={defaultLinks} />);
     expect(container.firstChild).toMatchSnapshot();
@@ -77,6 +182,12 @@ describe('ProfilePageLinks - Snapshots', () => {
 
   it('matches snapshot with empty links', () => {
     const { container } = render(<ProfilePageLinks links={[]} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with mailto link', () => {
+    const linksWithEmail: Core.NexusUserDetails['links'] = [{ title: 'Contact', url: 'mailto:hello@example.com' }];
+    const { container } = render(<ProfilePageLinks links={linksWithEmail} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

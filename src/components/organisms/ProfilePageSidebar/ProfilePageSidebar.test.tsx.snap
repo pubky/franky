@@ -64,7 +64,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
     </button>
   </div>
   <div
-    class="flex flex-col"
+    class="mx-auto w-full flex-col flex"
     data-testid="container"
   >
     <h2
@@ -74,7 +74,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
       Links
     </h2>
     <div
-      class="flex flex-col"
+      class="mx-auto w-full flex-col flex"
       data-testid="container"
     >
       <div

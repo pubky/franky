@@ -10,5 +10,6 @@ export * from './network';
 export * from './password';
 export * from './share';
 export * from './status';
+export * from './storage';
 export * from './svg';
 export * from './utils';
