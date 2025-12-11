@@ -158,9 +158,11 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
   protected setupListeners() {
     // Listen to auth store changes
     this.authStoreUnsubscribe = Core.useAuthStore.subscribe((state, prevState) => {
-      if (state.isAuthenticated !== prevState.isAuthenticated) {
+      const isAuthenticated = state.selectIsAuthenticated();
+      const wasAuthenticated = prevState.selectIsAuthenticated();
+      if (isAuthenticated !== wasAuthenticated) {
         Logger.debug('Auth state changed', {
-          isAuthenticated: state.isAuthenticated,
+          isAuthenticated,
         });
         this.evaluateAndStartPolling();
       }
@@ -253,9 +255,9 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
       return false;
     }
 
-    // Must be authenticated
+    // Must have a session with a profile
     const authState = Core.useAuthStore.getState();
-    if (!authState.isAuthenticated) {
+    if (!authState.selectIsAuthenticated() || !authState.hasProfile) {
       return false;
     }
 
@@ -307,8 +309,11 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
     }
 
     const authState = Core.useAuthStore.getState();
-    if (!authState.isAuthenticated) {
+    if (!authState.selectIsAuthenticated()) {
       return PollingInactiveReason.NOT_AUTHENTICATED;
+    }
+    if (!authState.hasProfile) {
+      return PollingInactiveReason.NO_PROFILE;
     }
 
     const userId = authState.currentUserPubky;

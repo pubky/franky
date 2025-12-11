@@ -18,27 +18,40 @@ export class AuthController {
       Libs.Logger.error('Failed to sign in. Please try again.', { keypair });
       return false;
     }
-    await this.persistSessionAndBootstrap(session);
+    await this.initializeAuthenticatedSession(session);
     return true;
   }
 
   /**
-   * Persists the session related data and initializes the application bootstrap.
+   * Bootstrap data to initialize the application snapshot.
    * @param params - Object containing session and pubky data from authentication
    * @param params.session - The user session data
    * @param params.pubky - The user's public key identifier
    */
-  static async persistSessionAndBootstrap({ session }: Core.THomeserverSessionResult) {
-    const pubky = Libs.Identity.pubkyFromSession({ session });
-    const authStore = Core.useAuthStore.getState();
-    authStore.setSession(session);
-    authStore.setCurrentUserPubky(pubky);
+  private static async hydrateMeImAlive({ pubky }: Core.TPubkyParams) {
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
     const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notification);
-    authStore.setAuthenticated(true);
+  }
+
+  /**
+   * Initializes the authenticated session and checks if the user is signed up (profile.json in homeserver).
+   * @param params - Object containing session data from authentication
+   * @param params.session - The user session data
+   */
+  static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
+    const pubky = Libs.Identity.pubkyFromSession({ session });
+    const authStore = Core.useAuthStore.getState();
+    const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
+    if (isSignedUp) {
+      // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
+      // it will redirect to home page and after it would hit the bootstrap endpoint
+      await this.hydrateMeImAlive({ pubky });
+    }
+    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
+    authStore.init(initialState);
   }
 
   /**
@@ -54,7 +67,6 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session }));
-    authStore.setAuthenticated(true);
   }
 
   /**
@@ -80,7 +92,7 @@ export class AuthController {
     password,
   }: Core.TLoginWithEncryptedFileParams): Promise<boolean> {
     const keypair = await Libs.Identity.decryptRecoveryFile({ encryptedFile, passphrase: password });
-    return await this.signIn({ keypair })
+    return await this.signIn({ keypair });
   }
 
   /**
@@ -128,7 +140,7 @@ export class AuthController {
 
     const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notification);
-    authStore.setAuthenticated(true);
+    authStore.setHasProfile(true);
   }
 
   /**

@@ -141,7 +141,7 @@ describe('AuthController', () => {
       const authStoreState: Core.AuthStore = {
         currentUserPubky: TEST_PUBKY,
         session: null,
-        isAuthenticated: false,
+        selectIsAuthenticated: vi.fn(() => false),
         setSession: vi.fn(),
         setCurrentUserPubky: vi.fn(),
         setAuthenticated: vi.fn(),
@@ -165,7 +165,7 @@ describe('AuthController', () => {
       const authStoreState: Core.AuthStore = {
         currentUserPubky: null,
         session: null,
-        isAuthenticated: false,
+        selectIsAuthenticated: vi.fn(() => false),
         setSession: vi.fn(),
         setCurrentUserPubky: vi.fn(),
         setAuthenticated: vi.fn(),

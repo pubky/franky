@@ -8,7 +8,9 @@ import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 
 export const CreateProfileForm = () => {
-  const { pubky, setShowWelcomeDialog } = Core.useOnboardingStore();
+  const { setShowWelcomeDialog } = Core.useOnboardingStore();
+  const authStore = Core.useAuthStore();
+  const pubky = authStore.selectCurrentUserPubky();
 
   const { state, errors, handlers, cropDialog, fileInputRef, isSubmitDisabled } = Hooks.useProfileForm({
     mode: 'create',

@@ -49,11 +49,10 @@ export class ProfileApplication {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
       const authStore = Core.useAuthStore.getState();
       authStore.setCurrentUserPubky(pubky);
-      authStore.setAuthenticated(true);
+      authStore.setHasProfile(true);
     } catch (error) {
-      const authStore = Core.useAuthStore.getState();
-      authStore.setAuthenticated(false);
-      authStore.setCurrentUserPubky(null);
+      // TODO: Previously we were resetting the auth store here. Check #571 PR for more details.
+      // Jump again in that case, when we will work in error handling. NEXT
       throw error;
     }
   }

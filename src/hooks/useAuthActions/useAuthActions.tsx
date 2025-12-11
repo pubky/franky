@@ -7,6 +7,8 @@ import { useAuthStatus } from '../useAuthStatus';
 import { ROUTE_ACCESS_MAP } from '@/providers/RouteGuardProvider/RouteGuardProvider.constants';
 import * as App from '@/app';
 
+// TODO: Delete this hook. It seems to be unused
+// Before, check if it could be useful to integrate somewhere
 export function useAuthActions() {
   const router = useRouter();
   const { status } = useAuthStatus();
@@ -18,9 +20,8 @@ export function useAuthActions() {
     async (profileData: { name?: string; bio?: string; avatar?: string }) => {
       try {
         // Set the user as authenticated with their pubky
-        authStore.setCurrentUserPubky(onboardingStore.pubky);
-        authStore.setAuthenticated(true);
-        authStore.setSession(null);
+        authStore.setCurrentUserPubky(authStore.selectCurrentUserPubky());
+        authStore.setHasProfile(true);
 
         // Set welcome dialog to show for new users
         onboardingStore.setShowWelcomeDialog(true);

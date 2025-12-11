@@ -4,18 +4,28 @@ import { Session } from '@synonymdev/pubky';
 export interface AuthState {
   currentUserPubky: Core.Pubky | null;
   session: Session | null;
-  isAuthenticated: boolean;
+  hasProfile: boolean;
+  hasHydrated: boolean;
+}
+
+export interface AuthInitParams {
+  session: Session;
+  currentUserPubky: Core.Pubky;
+  hasProfile: boolean;
 }
 
 export interface AuthActions {
+  reset: () => void;
+  init: (params: AuthInitParams) => void;
   setCurrentUserPubky: (pubky: Core.Pubky | null) => void;
   setSession: (session: Session | null) => void;
-  setAuthenticated: (isAuthenticated: boolean) => void;
-  reset: () => void;
+  setHasProfile: (hasProfile: boolean) => void;
+  setHasHydrated: (hasHydrated: boolean) => void;
 }
 
 export interface AuthSelectors {
   selectCurrentUserPubky: () => Core.Pubky;
+  selectIsAuthenticated: () => boolean;
 }
 
 export type AuthStore = AuthState & AuthActions & AuthSelectors;
@@ -23,13 +33,16 @@ export type AuthStore = AuthState & AuthActions & AuthSelectors;
 export const authInitialState: AuthState = {
   currentUserPubky: null,
   session: null,
-  isAuthenticated: false,
+  hasProfile: false,
+  hasHydrated: false,
 };
 
 export enum AuthActionTypes {
+  INIT = 'INIT',
+  RESET = 'RESET',
   SET_PUBKY = 'SET_PUBKY',
   SET_SESSION = 'SET_SESSION',
   CLEAR_SESSION = 'CLEAR_SESSION',
-  SET_AUTHENTICATED = 'SET_AUTHENTICATED',
-  RESET = 'RESET',
+  SET_HAS_PROFILE = 'SET_HAS_PROFILE',
+  SET_HAS_HYDRATED = 'SET_HAS_HYDRATED',
 }

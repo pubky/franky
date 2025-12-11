@@ -82,7 +82,8 @@ const setupExistingPost = async () => {
 const setupAuthUser = (pubky: Core.Pubky) => {
   const authStore = Core.useAuthStore.getState();
   authStore.setCurrentUserPubky(pubky);
-  authStore.setAuthenticated(true);
+  // Authentication is now derived from session
+  authStore.setSession({} as any);
 };
 
 const cleanupAuthUser = () => {

@@ -10,23 +10,30 @@ export function useAuthStatus(): AuthStatusResult {
   const authStore = Core.useAuthStore();
 
   const authStatusResult = useMemo((): AuthStatusResult => {
-    // Check if stores are still hydrating
-    const isLoading = !onboardingStore.hasHydrated;
 
-    // Check if user has keypair
-    const hasKeypair = Boolean(onboardingStore.pubky && onboardingStore.secretKey);
+    // Check if stores are still hydrating
+    const isLoading = !onboardingStore.hasHydrated || !authStore.hasHydrated;
+
+    // Check if user has keypair (session)
+    const hasKeypair = authStore.session !== null;
 
     // Check if user has profile data
-    const hasProfile = authStore.isAuthenticated;
+    const hasProfile = authStore.hasProfile;
 
     // Determine the authentication status
     let status: AuthStatus;
 
-    // TODO: add validation here to check when the user has a session but no profile
-    if (!authStore.isAuthenticated) {
-      status = AuthStatus.UNAUTHENTICATED;
-    } else {
+    // User has session but no profile - needs to complete onboarding
+    if (hasKeypair && !hasProfile) {
+      status = AuthStatus.NEEDS_PROFILE_CREATION;
+    }
+    // User has profile - fully authenticated
+    else if (hasKeypair && hasProfile) {
       status = AuthStatus.AUTHENTICATED;
+    }
+    // No session - unauthenticated
+    else {
+      status = AuthStatus.UNAUTHENTICATED;
     }
 
     return {
@@ -36,7 +43,7 @@ export function useAuthStatus(): AuthStatusResult {
       hasProfile,
       isFullyAuthenticated: status === AuthStatus.AUTHENTICATED,
     };
-  }, [onboardingStore.hasHydrated, onboardingStore.pubky, onboardingStore.secretKey, authStore.isAuthenticated]);
+  }, [onboardingStore.hasHydrated, authStore.hasHydrated, authStore.session, authStore.hasProfile]);
 
   return authStatusResult;
 }

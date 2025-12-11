@@ -38,10 +38,9 @@ const mockKeypairStore = {
 const mockUserStore = {
   pubky: '',
   session: null as Session | null,
-  isAuthenticated: false,
+  selectIsAuthenticated: vi.fn(() => false),
   setSession: vi.fn(),
   clearSession: vi.fn(),
-  setAuthenticated: vi.fn(),
   clearCurrentUser: vi.fn(),
   clearAllErrors: vi.fn(),
   clearAllLoading: vi.fn(),
@@ -140,13 +139,13 @@ describe('HomeserverService', () => {
     mockKeypairStore.pubky = '';
     mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
     mockKeypairStore.session = null;
-    mockKeypairStore.isAuthenticated = false;
+    mockKeypairStore.selectIsAuthenticated = vi.fn(() => false);
 
     mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
     mockUserStore.pubky = '';
     mockUserStore.session = null;
-    mockUserStore.isAuthenticated = false;
+    mockUserStore.selectIsAuthenticated = vi.fn(() => false);
 
     // Use dynamic imports to ensure mocked modules are loaded
     const homeserverModule = await import('@/core/services/homeserver/homeserver');
@@ -231,7 +230,7 @@ describe('HomeserverService', () => {
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       service['currentKeypair'] = createMockTKeyPair();
 
       const mockClient = service['client'] as unknown as MockClient;
@@ -248,7 +247,7 @@ describe('HomeserverService', () => {
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       service['currentKeypair'] = createMockTKeyPair();
 
       const error = new Error('Server error');
@@ -266,7 +265,7 @@ describe('HomeserverService', () => {
     beforeEach(async () => {
       // Set up authenticated state for data operations
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
       const service = HomeserverService.getInstance(TEST_SECRET_KEY);
@@ -334,7 +333,7 @@ describe('HomeserverService', () => {
     beforeEach(async () => {
       // Set up authenticated state for edge cases
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
       const service = HomeserverService.getInstance(TEST_SECRET_KEY);
@@ -399,7 +398,7 @@ describe('HomeserverService', () => {
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       service['currentKeypair'] = createMockTKeyPair();
 
       const mockClient = service['client'] as unknown as MockClient;
@@ -420,7 +419,7 @@ describe('HomeserverService', () => {
 
       // Ensure not authenticated
       mockUserStore.session = null;
-      mockUserStore.isAuthenticated = false;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => false);
       mockOnboardingStore.secretKey = new Uint8Array(0);
 
       // Mock the client to return a successful response
@@ -435,7 +434,7 @@ describe('HomeserverService', () => {
 
       // Ensure not authenticated
       mockUserStore.session = null;
-      mockUserStore.isAuthenticated = false;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => false);
 
       // Mock the client to return a successful logout
       vi.spyOn(service['client'], 'signout').mockResolvedValue(undefined);
@@ -449,7 +448,7 @@ describe('HomeserverService', () => {
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
       service['currentKeypair'] = createMockTKeyPair();
 
@@ -467,7 +466,7 @@ describe('HomeserverService', () => {
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
-      mockUserStore.isAuthenticated = true;
+      mockUserStore.selectIsAuthenticated = vi.fn(() => true);
       service['currentKeypair'] = createMockTKeyPair();
 
       const mockClient = service['client'] as unknown as MockClient;

@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { userUriBuilder } from 'pubky-app-specs';
 
 export class AuthApplication {
   private constructor() {} // Prevent instantiation
@@ -68,5 +69,25 @@ export class AuthApplication {
    */
   static async generateSignupToken() {
     return await Core.HomeserverService.generateSignupToken();
+  }
+
+  /**
+   * In the application, there are two signups to do. 
+   * 1. First the user has to register the user key in the homeserver, throw the inviation code
+   * 2. Then the user has to create a profile.json file in the homeserver. That file acts as a proof that the user has signed up.
+   * This is a critical step because after that it will start indexing all user related data
+   *
+   * @param params - Parameters containing the user's public key
+   * @param params.pubky - The user's public key identifier
+   * @returns Promise resolving to the user profile or undefined if not found
+   */
+  static async userIsSignedUp({ pubky }: Core.TPubkyParams): Promise<boolean> {
+    try {
+      await Core.HomeserverService.request(Core.HomeserverAction.GET, userUriBuilder(pubky));
+      return true;
+    } catch (error) {
+      Libs.Logger.error('User profile.json missing in homeserver. Please PUT that file first.', { pubky });
+      return false;
+    }
   }
 }

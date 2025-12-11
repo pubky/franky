@@ -3,17 +3,15 @@
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
-import * as Config from '@/config';
 import * as Core from '@/core';
-import * as App from '@/app';
+import * as Config from '@/config';
 import { Session } from '@synonymdev/pubky';
 
-export const ScanContent = () => {
+export const SignInContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const retryCountRef = useRef(0);
@@ -21,9 +19,6 @@ export const ScanContent = () => {
   const activeRequestRef = useRef<symbol | null>(null);
   const isGeneratingRef = useRef(false);
   const MAX_RETRY_ATTEMPTS = 3;
-
-  const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
 
   const fetchUrl = async (options?: { viaRetry?: boolean }) => {
     const requestId = Symbol('fetchUrl');
@@ -45,17 +40,16 @@ export const ScanContent = () => {
       }
 
       // Always attach handlers to avoid unhandled rejections even if unmounted
-      awaitApproval
-        .then(async (session: Session) => {
+      awaitApproval.then(async (session: Session) => {
           // Ignore if unmounted or superseded
           if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
           try {
-            await Core.AuthController.persistSessionAndBootstrap({ session });
+            await Core.AuthController.initializeAuthenticatedSession({ session });
           } catch (error) {
-            Libs.Logger.error('Failed to persist session and bootstrap:', error);
+            Libs.Logger.error('Failed to persist session and check profile:', error);
             if (!isMountedRef.current) return;
             Molecules.toast({
-              title: 'Authorization failed',
+              title: 'Sign in failed. Please try again.',
               description: 'Unable to complete authorization with Pubky Ring. Please try again.',
             });
           }
@@ -90,7 +84,7 @@ export const ScanContent = () => {
       } else if (isMountedRef.current) {
         Molecules.toast({
           title: 'QR code generation failed',
-          description: 'Unable to generate auth QR code. Please refresh and try again.',
+          description: 'Unable to generate sign-in QR code. Please refresh and try again.',
         });
       }
     } finally {
@@ -102,6 +96,9 @@ export const ScanContent = () => {
     }
   };
 
+  const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
+
   const copyAuthUrlToClipboard = async () => {
     if (!url) return;
 
@@ -112,7 +109,7 @@ export const ScanContent = () => {
     }
   };
 
-  const handleMobileAuth = async () => {
+  const handleAuthorizeClick = async () => {
     if (isLoading || isGeneratingRef.current) return;
 
     if (!url) {
@@ -152,6 +149,11 @@ export const ScanContent = () => {
   };
 
   useEffect(() => {
+    // Clear onboarding storage when sign-in flow begins to prevent backup reminders from showing for existing users
+    Core.useOnboardingStore.getState().reset();
+  }, []);
+
+  useEffect(() => {
     isMountedRef.current = true;
     fetchUrl();
     return () => {
@@ -166,7 +168,7 @@ export const ScanContent = () => {
     <>
       {/** Desktop view */}
       <Atoms.Container size="container" className="hidden md:flex">
-        <ScanHeader isMobile={false} />
+        <SignInHeader />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="items-center justify-center">
             <div className="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
@@ -187,20 +189,21 @@ export const ScanContent = () => {
 
       {/** Mobile view */}
       <Atoms.Container size="container" className="md:hidden">
-        <ScanHeader isMobile={true} />
+        <SignInHeader />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="flex-col items-center justify-center gap-12 lg:flex-row">
             <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
             <Atoms.Button
               className="h-[60px] w-full rounded-full"
               size="lg"
-              onClick={handleMobileAuth}
+              onClick={handleAuthorizeClick}
               disabled={isLoading || !url}
+              aria-busy={isLoading}
             >
               {isLoading ? (
                 <>
                   <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
+                  <span aria-live="polite">Generating...</span>
                 </>
               ) : (
                 <>
@@ -216,53 +219,25 @@ export const ScanContent = () => {
   );
 };
 
-export const ScanFooter = () => {
+export const SignInFooter = () => {
   return (
     <Atoms.FooterLinks className="py-6">
-      Use{' '}
-      <Atoms.Link href={Config.PUBKY_RING_URL} target="_blank">
+      Not able to sign in with{' '}
+      <Atoms.Link href="https://pubkyring.app/" target="_blank" rel="noopener noreferrer">
         Pubky Ring
-      </Atoms.Link>{' '}
-      or any other{' '}
-      <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
-        Pubky Core
       </Atoms.Link>
-      –powered keychain.
+      ? Use the recovery phrase or encrypted file to restore your account.
     </Atoms.FooterLinks>
   );
 };
 
-export const ScanHeader = ({ isMobile }: { isMobile: boolean }) => {
+export const SignInHeader = () => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        {isMobile ? (
-          <>
-            Tap to <span className="text-brand">Authorize.</span>
-          </>
-        ) : (
-          <>
-            Scan <span className="text-brand">QR Code.</span>
-          </>
-        )}
+        Sign in to <span className="text-brand">Pubky.</span>
       </Molecules.PageTitle>
-      <Atoms.PageSubtitle>Open Pubky Ring, create a pubky, and scan the QR.</Atoms.PageSubtitle>
+      <Atoms.PageSubtitle>Authorize with Pubky Ring to sign in.</Atoms.PageSubtitle>
     </Atoms.PageHeader>
-  );
-};
-
-export const ScanNavigation = () => {
-  const router = useRouter();
-
-  const onHandleBackButton = () => {
-    router.push(App.ONBOARDING_ROUTES.INSTALL);
-  };
-
-  return (
-    <Molecules.ButtonsNavigation
-      continueButtonDisabled={true}
-      hiddenContinueButton={true}
-      onHandleBackButton={onHandleBackButton}
-    />
   );
 };

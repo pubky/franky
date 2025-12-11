@@ -57,7 +57,8 @@ function setupAuthenticatedTest(userId = 'user123') {
     undefined,
   ] as Core.TStreamIdBreakdown);
 
-  Core.useAuthStore.getState().setAuthenticated(true);
+  // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
   Core.useAuthStore.getState().setCurrentUserPubky(userId as unknown as Core.Pubky);
   const coordinator = Core.StreamCoordinator.getInstance();
   return { getStreamHeadSpy, getOrFetchStreamSliceSpy, coordinator };
@@ -404,7 +405,8 @@ describe('StreamCoordinator', () => {
         undefined,
       ] as Core.TStreamIdBreakdown);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       // Reset instance first to ensure clean state
@@ -445,8 +447,9 @@ describe('StreamCoordinator', () => {
       coordinator.destroy();
 
       // Change auth state (should not trigger polling)
-      Core.useAuthStore.getState().setAuthenticated(false);
-      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setSession(null);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
 
       vi.advanceTimersByTime(10_000);
       expect(getOrFetchStreamSliceSpy.mock.calls.length).toBe(callCount);
@@ -1195,13 +1198,14 @@ describe('StreamCoordinator', () => {
     const callCount = getOrFetchStreamSliceSpy.mock.calls.length;
 
     // De-authenticate -> should stop
-    Core.useAuthStore.getState().setAuthenticated(false);
+    Core.useAuthStore.getState().setSession(null);
     vi.advanceTimersByTime(2_000);
     expect(getOrFetchStreamSliceSpy.mock.calls.length).toBe(callCount);
 
     // Re-authenticate -> must also have a pubky set before polling can succeed
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     vi.advanceTimersByTime(1_000);
     await flushPromises();
     expect(getOrFetchStreamSliceSpy.mock.calls.length).toBeGreaterThan(callCount);

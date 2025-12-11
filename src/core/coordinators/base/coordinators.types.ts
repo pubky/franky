@@ -43,6 +43,11 @@ export enum PollingInactiveReason {
   NOT_AUTHENTICATED = 'NOT_AUTHENTICATED',
 
   /**
+   * User does not have a profile
+   */
+  NO_PROFILE = 'NO_PROFILE',
+
+  /**
    * Current route does not support polling
    */
   ROUTE_DISABLED = 'ROUTE_DISABLED',

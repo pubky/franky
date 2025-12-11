@@ -20,7 +20,8 @@ type CoordinatorConfigWithBase = Core.NotificationCoordinatorConfig & PollingSer
  */
 function setupAuthenticatedTest(userId = 'user123') {
   const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
-  Core.useAuthStore.getState().setAuthenticated(true);
+  // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
   Core.useAuthStore.getState().setCurrentUserPubky(userId as unknown as Core.Pubky);
   const coordinator = Core.NotificationCoordinator.getInstance();
   return { spy, coordinator };
@@ -64,7 +65,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coord1 = Core.NotificationCoordinator.getInstance();
@@ -102,7 +104,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coord1 = Core.NotificationCoordinator.getInstance();
@@ -184,7 +187,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -211,7 +215,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -242,7 +247,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -270,7 +276,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -314,7 +321,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -329,7 +337,8 @@ describe('NotificationCoordinator', () => {
 
       // Change auth state (should not trigger polling)
       Core.useAuthStore.getState().setAuthenticated(false);
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
 
       vi.advanceTimersByTime(10_000);
       expect(spy).toHaveBeenCalledTimes(1); // No additional calls
@@ -340,7 +349,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -392,7 +402,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coord1 = Core.NotificationCoordinator.getInstance();
@@ -421,7 +432,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       // Don't set userId (will be null)
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -446,7 +458,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky(undefined as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -467,7 +480,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -488,7 +502,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -512,7 +527,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       // Start with null userId
       Core.useAuthStore.getState().setCurrentUserPubky(null as unknown as Core.Pubky);
 
@@ -539,7 +555,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user1' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -815,7 +832,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -840,7 +858,8 @@ describe('NotificationCoordinator', () => {
         .spyOn(Core.NotificationController, 'notifications')
         .mockResolvedValue(undefined as unknown as never);
 
-      Core.useAuthStore.getState().setAuthenticated(true);
+      // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
       const coordinator = Core.NotificationCoordinator.getInstance();
@@ -864,7 +883,8 @@ describe('NotificationCoordinator', () => {
   it('polls on interval when started (no pollOnStart)', () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     const coordinator = Core.NotificationCoordinator.getInstance();
@@ -883,7 +903,8 @@ describe('NotificationCoordinator', () => {
   it('restarts polling when interval changes via configure()', () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     const coordinator = Core.NotificationCoordinator.getInstance();
@@ -902,7 +923,8 @@ describe('NotificationCoordinator', () => {
   it('respects page visibility: pauses when hidden, resumes when visible', async () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     // Set page to hidden before starting
@@ -950,7 +972,8 @@ describe('NotificationCoordinator', () => {
   it('ignores page visibility when respectPageVisibility is false', async () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     // Make page hidden
@@ -976,7 +999,8 @@ describe('NotificationCoordinator', () => {
   it('stops when de-authenticated and resumes when authenticated again', async () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     const coordinator = Core.NotificationCoordinator.getInstance();
@@ -993,7 +1017,8 @@ describe('NotificationCoordinator', () => {
 
     // Re-authenticate -> must also have a pubky set before polling can succeed
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     vi.advanceTimersByTime(1_000);
     expect(spy).toHaveBeenCalledTimes(3);
   });
@@ -1001,7 +1026,8 @@ describe('NotificationCoordinator', () => {
   it('pauses on disabled route then resumes on allowed route', async () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     const coordinator = Core.NotificationCoordinator.getInstance();
@@ -1024,7 +1050,8 @@ describe('NotificationCoordinator', () => {
   it('forwards the correct userId to NotificationController.notifications', async () => {
     const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('userABC' as unknown as Core.Pubky);
 
     const coordinator = Core.NotificationCoordinator.getInstance();
@@ -1044,7 +1071,8 @@ describe('NotificationCoordinator', () => {
       .mockRejectedValueOnce(new Error('network'))
       .mockResolvedValue(undefined as unknown as never);
 
-    Core.useAuthStore.getState().setAuthenticated(true);
+    // Authentication is now derived from session, so we need to set session
+  Core.useAuthStore.getState().setSession({} as any);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
 
     const coordinator = Core.NotificationCoordinator.getInstance();
