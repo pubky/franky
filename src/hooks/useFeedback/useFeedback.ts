@@ -43,7 +43,13 @@ export function useFeedback() {
   const submit = useCallback(async () => {
     const currentFeedback = feedback.trim();
 
-    if (!currentFeedback || isSubmitting || !currentUserPubky || !userDetails?.name) return;
+    if (!currentFeedback) return;
+    if (isSubmitting) return;
+
+    if (!currentUserPubky || !userDetails?.name) {
+      showErrorToast('User profile not loaded. Please try again.');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
