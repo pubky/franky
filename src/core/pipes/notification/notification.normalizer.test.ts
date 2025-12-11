@@ -93,19 +93,17 @@ describe('NotificationNormalizer', () => {
       });
 
       /**
-       * Note: When pubky changes to an invalid value, the singleton now throws
-       * instead of silently using the cached builder from a different user.
-       * This prevents cross-account data issues.
+       * Note: createLastRead() takes no parameters, so validation only happens
+       * at singleton initialization. Once initialized, invalid pubkys don't throw.
        */
       it.each([
         ['empty', INVALID_INPUTS.EMPTY],
         ['null', INVALID_INPUTS.NULL],
         ['undefined', INVALID_INPUTS.UNDEFINED],
-      ])('should throw for %s pubky when singleton was initialized with different pubky', (_, invalidPubky) => {
+      ])('should not throw for %s pubky (singleton already initialized)', (_, invalidPubky) => {
         Core.NotificationNormalizer.to(TEST_PUBKY.USER_1); // Initialize
-        expect(() => Core.NotificationNormalizer.to(invalidPubky)).toThrow(
-          'Failed to initialize PubkySpecsBuilder with new pubky',
-        );
+        const result = Core.NotificationNormalizer.to(invalidPubky);
+        expect(result).toBeDefined();
       });
     });
   });

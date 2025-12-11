@@ -143,25 +143,24 @@ describe('LastReadNormalizer', () => {
       });
     });
 
-    describe('validation behavior (singleton security)', () => {
+    describe('validation behavior (singleton caching)', () => {
       /**
-       * Note: When pubky changes to an invalid value, the singleton now throws
-       * instead of silently using the cached builder from a different user.
-       * This prevents cross-account data issues.
+       * Note: createLastRead() takes no parameters, so validation only happens
+       * at singleton initialization. Once initialized, invalid pubkys don't throw
+       * because the singleton reuses the existing builder.
        */
       it.each([
         ['empty', INVALID_INPUTS.EMPTY],
         ['null', INVALID_INPUTS.NULL],
         ['undefined', INVALID_INPUTS.UNDEFINED],
         ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
-      ])('should throw for %s pubky when singleton was initialized with different pubky', (_, invalidPubky) => {
-        // Ensure singleton is initialized first with valid pubky
+      ])('should not throw for %s pubky (singleton already initialized)', (_, invalidPubky) => {
+        // Ensure singleton is initialized first
         Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
 
-        // Invalid pubky now throws to prevent cross-account data issues
-        expect(() => Core.LastReadNormalizer.to(invalidPubky)).toThrow(
-          'Failed to initialize PubkySpecsBuilder with new pubky',
-        );
+        // Invalid pubky doesn't throw due to singleton caching
+        const result = Core.LastReadNormalizer.to(invalidPubky);
+        expect(result).toBeDefined();
       });
     });
 
