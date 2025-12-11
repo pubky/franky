@@ -13,16 +13,26 @@ export class PubkySpecsSingleton {
       this.builder = new PubkySpecsBuilder(pubky);
       this.currentPubky = pubky;
     }
-    // If pubky has changed, recreate the builder only if the new pubky is valid
+    // If pubky has changed, recreate the builder
     else if (this.currentPubky !== pubky) {
       try {
         this.builder = new PubkySpecsBuilder(pubky);
         this.currentPubky = pubky;
-      } catch {
-        Libs.Logger.error('Invalid pubky. Using existing builder.', { pubky });
-        return this.builder;
+      } catch (e) {
+        Libs.Logger.error('Invalid pubky. Cannot create builder.', { pubky, error: e });
+        throw new Error('Failed to initialize PubkySpecsBuilder with new pubky');
       }
     }
     return this.builder;
+  }
+
+  /**
+   * Resets the singleton state. Should be called during sign-out
+   * to ensure clean state for subsequent sign-ins.
+   * Also useful for testing purposes.
+   */
+  static reset(): void {
+    this.builder = null;
+    this.currentPubky = null;
   }
 }
