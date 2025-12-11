@@ -103,6 +103,38 @@ describe('Dialog - Snapshots', () => {
     expect(normalizedContainer).toMatchSnapshot();
   });
 
+  it('matches snapshot for DialogContent with overrideDefaults', () => {
+    render(
+      <Dialog open={true}>
+        <DialogContent overrideDefaults={true}>
+          <DialogHeader>
+            <DialogTitle>Dialog Title</DialogTitle>
+          </DialogHeader>
+          <div>Dialog Content</div>
+        </DialogContent>
+      </Dialog>,
+    );
+    const dialogContent = screen.getByTestId('dialog-content');
+    const normalizedContainer = normaliseRadixIds(dialogContent.parentElement as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogContent without overrideDefaults', () => {
+    render(
+      <Dialog open={true}>
+        <DialogContent overrideDefaults={false}>
+          <DialogHeader>
+            <DialogTitle>Dialog Title</DialogTitle>
+          </DialogHeader>
+          <div>Dialog Content</div>
+        </DialogContent>
+      </Dialog>,
+    );
+    const dialogContent = screen.getByTestId('dialog-content');
+    const normalizedContainer = normaliseRadixIds(dialogContent.parentElement as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
+  });
+
   it('matches snapshot for DialogHeader', () => {
     render(
       <Dialog open={true}>
@@ -137,7 +169,7 @@ describe('Dialog - Snapshots', () => {
   });
 
   it('matches snapshot for complete dialog structure', () => {
-    const { container } = render(
+    render(
       <Dialog open={true}>
         <DialogTrigger>Open Dialog</DialogTrigger>
         <DialogContent>
@@ -153,7 +185,8 @@ describe('Dialog - Snapshots', () => {
         </DialogContent>
       </Dialog>,
     );
-    const normalizedContainer = normaliseRadixIds(container);
-    expect(normalizedContainer.firstChild).toMatchSnapshot();
+    const dialogContent = screen.getByTestId('dialog-content');
+    const normalizedContainer = normaliseRadixIds(dialogContent.parentElement as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 });

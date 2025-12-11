@@ -18,6 +18,15 @@ exports[`Typography - Snapshots > matches snapshot for extra large size 1`] = `
 </p>
 `;
 
+exports[`Typography - Snapshots > matches snapshot for extra small size 1`] = `
+<p
+  class="text-xs font-medium text-foreground"
+  data-testid="typography"
+>
+  Extra small text
+</p>
+`;
+
 exports[`Typography - Snapshots > matches snapshot for h1 element 1`] = `
 <h1
   class="text-xl font-semibold text-foreground"

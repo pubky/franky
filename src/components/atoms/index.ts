@@ -1,8 +1,10 @@
+export * from './Audio';
 export * from './Avatar';
 export * from './AvatarEmojiBadge';
 export * from './Badge';
 export * from './Button';
 export * from './Card';
+export * from './Carousel';
 export * from './Container';
 export * from './Dialog';
 export * from './Filter';
@@ -31,3 +33,4 @@ export * from './Toggle';
 export * from './Switch';
 export * from './Typography';
 export * from './Tag';
+export * from './Video';
