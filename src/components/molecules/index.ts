@@ -38,6 +38,7 @@ export * from './ProfilePageLinks';
 export * from './ProfilePageLayoutWrapper';
 export * from './ProfileNavigation';
 export * from './PostCodeBlock';
+export * from './PostDeleted';
 export * from './PostHashtags';
 export * from './PostLinkEmbeds';
 export * from './PostTag';
