@@ -144,7 +144,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label 1`] = `
     data-testid="container"
   >
     <label
-      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
       for="_r_e_"
     >
@@ -197,7 +197,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label and checked 1`] = `
     data-testid="container"
   >
     <label
-      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
       for="_r_h_"
     >
@@ -226,7 +226,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label and description 1`] 
     data-testid="container"
   >
     <label
-      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base font-medium leading-none text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
       for="_r_f_"
     >
