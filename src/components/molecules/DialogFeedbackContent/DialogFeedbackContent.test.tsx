@@ -2,21 +2,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogFeedbackContent } from './DialogFeedbackContent';
 
-// Mock organisms
-vi.mock('@/organisms', () => ({
-  PostHeader: vi.fn(
-    ({ postId, characterCount, maxLength }: { postId: string; characterCount?: number; maxLength?: number }) => (
-      <div
-        data-testid="post-header"
-        data-post-id={postId}
-        data-character-count={characterCount}
-        data-max-length={maxLength}
-      >
-        PostHeader
-      </div>
-    ),
-  ),
-}));
+// Mock PostHeader component for testing
+const MockPostHeader = ({
+  postId,
+  characterCount,
+  maxLength,
+}: {
+  postId: string;
+  characterCount?: number;
+  maxLength?: number;
+}) => (
+  <div
+    data-testid="post-header"
+    data-post-id={postId}
+    data-character-count={characterCount}
+    data-max-length={maxLength}
+  >
+    PostHeader
+  </div>
+);
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -129,6 +133,7 @@ describe('DialogFeedbackContent', () => {
     isSubmitting: false,
     hasContent: false,
     currentUserPubky: 'test-user-123',
+    children: <MockPostHeader postId="test-user-123" maxLength={1000} />,
   };
 
   beforeEach(() => {
@@ -216,15 +221,23 @@ describe('DialogFeedbackContent', () => {
     expect(screen.getByTestId('send-icon')).toBeInTheDocument();
   });
 
-  it('passes characterCount to PostHeader when feedback has content', () => {
-    render(<DialogFeedbackContent {...defaultProps} feedback="Test" />);
+  it('renders children (PostHeader) correctly', () => {
+    render(
+      <DialogFeedbackContent {...defaultProps}>
+        <MockPostHeader postId="test-user-123" characterCount={4} maxLength={1000} />
+      </DialogFeedbackContent>,
+    );
 
     const postHeader = screen.getByTestId('post-header');
     expect(postHeader).toHaveAttribute('data-character-count', '4');
   });
 
-  it('does not pass characterCount to PostHeader when feedback is empty', () => {
-    render(<DialogFeedbackContent {...defaultProps} feedback="" />);
+  it('renders children without characterCount when feedback is empty', () => {
+    render(
+      <DialogFeedbackContent {...defaultProps}>
+        <MockPostHeader postId="test-user-123" maxLength={1000} />
+      </DialogFeedbackContent>,
+    );
 
     const postHeader = screen.getByTestId('post-header');
     expect(postHeader).not.toHaveAttribute('data-character-count');
@@ -241,6 +254,7 @@ describe('DialogFeedbackContent - Snapshots', () => {
     isSubmitting: false,
     hasContent: false,
     currentUserPubky: 'test-user-123',
+    children: <MockPostHeader postId="test-user-123" maxLength={1000} />,
   };
 
   beforeEach(() => {

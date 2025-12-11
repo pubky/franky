@@ -20,7 +20,47 @@
 atoms/     → Basic components (Button, Input, Avatar)
 molecules/ → Atom combinations (InputField, WordSlot)
 organisms/ → Complex components (Forms, Dialogs)
+templates/ → Page layouts (never import other templates)
 ```
+
+### 4. **Component Composition Rules (ADR-0011)**
+
+**Molecules must never import organisms.** When a molecule needs to render an organism, pass it via `children` or named slot props:
+
+```tsx
+// ❌ WRONG: Molecule importing Organism
+import { PostHeader } from '@/organisms';
+export function DialogFeedbackContent() {
+  return <PostHeader />; // Direct import violates hierarchy
+}
+
+// ✅ CORRECT: Molecule receives organism as children
+export function DialogFeedbackContent({ children }) {
+  return <>{children}<Textarea /></>;
+}
+
+// Parent organism composes and injects
+export function DialogFeedback() {
+  return (
+    <Molecules.DialogFeedbackContent>
+      <Organisms.PostHeader />
+    </Molecules.DialogFeedbackContent>
+  );
+}
+```
+
+**Dependency Rules:**
+- **Atoms** → Import nothing from component library (only external libs, utils, type imports)
+- **Molecules** → Import from `@/atoms` and `@/molecules` (never from `@/organisms` or `@/templates`)
+- **Organisms** → Import from `@/atoms`, `@/molecules`, and `@/organisms` (never from `@/templates`)
+- **Templates** → Import from `@/atoms`, `@/molecules`, `@/organisms`, and **layout templates only** (never from page templates)
+
+**Automated Enforcement:**
+These rules are automatically enforced by ESLint (ADR-0012). Violations will fail CI/CD builds. If you see a linting error, pass the component via `children` props instead of importing it directly.
+
+See:
+- [ADR-0011: Component Composition via Children Props](../docs/adr/0011-component-composition-children-pattern.md)
+- [ADR-0012: Component Layer ESLint Enforcement](../docs/adr/0012-component-layer-eslint-enforcement.md)
 
 ## 📁 File Structure Template
 

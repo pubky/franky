@@ -2,12 +2,62 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { useEffect } from 'react';
 import { PostAttachmentsImagesAndVideos } from './PostAttachmentsImagesAndVideos';
-import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
+import type { AttachmentConstructed } from '../PostAttachments.types';
 
-// Mock useToast
+// Mock useToast and Carousel components from @/molecules
 const mockToast = vi.fn();
 vi.mock('@/molecules', () => ({
   useToast: () => ({ toast: mockToast }),
+  Carousel: ({
+    children,
+    opts,
+    setApi,
+    className,
+  }: {
+    children: React.ReactNode;
+    opts?: { startIndex?: number; loop?: boolean };
+    setApi?: (api: unknown) => void;
+    className?: string;
+  }) => {
+    // Simulate setting the API in useEffect to avoid infinite re-renders
+    useEffect(() => {
+      if (setApi) {
+        setApi({
+          selectedScrollSnap: () => 0,
+          on: vi.fn(),
+        });
+      }
+    }, [setApi]);
+    return (
+      <div data-testid="carousel" data-start-index={opts?.startIndex} data-loop={opts?.loop} className={className}>
+        {children}
+      </div>
+    );
+  },
+  CarouselContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="carousel-content" className={className}>
+      {children}
+    </div>
+  ),
+  CarouselItem: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="carousel-item" className={className}>
+      {children}
+    </div>
+  ),
+  CarouselPrevious: ({ className }: { className?: string }) => (
+    <button data-testid="carousel-previous" className={className}>
+      Previous
+    </button>
+  ),
+  CarouselNext: ({ className }: { className?: string }) => (
+    <button data-testid="carousel-next" className={className}>
+      Next
+    </button>
+  ),
+}));
+
+// Mock PostAttachmentsCarouselImage (local import)
+vi.mock('../PostAttachmentsCarouselImage', () => ({
   PostAttachmentsCarouselImage: ({
     id,
     image,
@@ -160,52 +210,6 @@ vi.mock('@/atoms', () => ({
     'data-testid'?: string;
   }) => (
     <video data-testid={dataTestId || 'video'} src={src} data-pause-video={pauseVideo} className={className} id={id} />
-  ),
-  Carousel: ({
-    children,
-    opts,
-    setApi,
-    className,
-  }: {
-    children: React.ReactNode;
-    opts?: { startIndex?: number; loop?: boolean };
-    setApi?: (api: unknown) => void;
-    className?: string;
-  }) => {
-    // Simulate setting the API in useEffect to avoid infinite re-renders
-    useEffect(() => {
-      if (setApi) {
-        setApi({
-          selectedScrollSnap: () => 0,
-          on: vi.fn(),
-        });
-      }
-    }, [setApi]);
-    return (
-      <div data-testid="carousel" data-start-index={opts?.startIndex} data-loop={opts?.loop} className={className}>
-        {children}
-      </div>
-    );
-  },
-  CarouselContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="carousel-content" className={className}>
-      {children}
-    </div>
-  ),
-  CarouselItem: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="carousel-item" className={className}>
-      {children}
-    </div>
-  ),
-  CarouselPrevious: ({ className }: { className?: string }) => (
-    <button data-testid="carousel-previous" className={className}>
-      Previous
-    </button>
-  ),
-  CarouselNext: ({ className }: { className?: string }) => (
-    <button data-testid="carousel-next" className={className}>
-      Next
-    </button>
   ),
   Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
     <span data-testid="typography" data-size={size} className={className}>

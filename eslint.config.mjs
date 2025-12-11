@@ -5,6 +5,7 @@ import pluginReactHooks from 'eslint-plugin-react-hooks';
 import pluginStorybook from 'eslint-plugin-storybook';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
+import componentLayerRules from './eslint.config.component-layers.mjs';
 
 const eslintConfig = [
   {
@@ -82,6 +83,8 @@ const eslintConfig = [
       'storybook/no-redundant-story-name': 'off',
     },
   },
+  // Component layer enforcement rules (ADR-0011, ADR-0012)
+  ...componentLayerRules,
 ];
 
 export default eslintConfig;

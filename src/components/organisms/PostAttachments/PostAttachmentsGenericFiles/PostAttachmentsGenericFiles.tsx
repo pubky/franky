@@ -1,6 +1,6 @@
 import * as Atoms from '@/atoms';
 import * as Icons from '@/libs/icons';
-import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
+import type { AttachmentConstructed } from '../PostAttachments.types';
 
 type PostAttachmentsGenericFilesProps = {
   genericFiles: AttachmentConstructed[];

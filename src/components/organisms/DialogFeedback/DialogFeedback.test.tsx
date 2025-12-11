@@ -79,16 +79,22 @@ vi.mock('@/organisms', () => ({
   ),
 }));
 
-// Mock DialogFeedbackContent and DialogFeedbackSuccess
-vi.mock('./DialogFeedbackContent', () => ({
-  DialogFeedbackContent: ({ feedback, currentUserPubky }: { feedback: string; currentUserPubky: string }) => (
+// Mock molecules
+vi.mock('@/molecules', () => ({
+  DialogFeedbackContent: ({
+    feedback,
+    currentUserPubky,
+    children,
+  }: {
+    feedback: string;
+    currentUserPubky: string;
+    children?: React.ReactNode;
+  }) => (
     <div data-testid="dialog-feedback-content" data-feedback={feedback} data-user={currentUserPubky}>
+      {children}
       DialogFeedbackContent
     </div>
   ),
-}));
-
-vi.mock('./DialogFeedbackSuccess', () => ({
   DialogFeedbackSuccess: ({ onOpenChange }: { onOpenChange: (open: boolean) => void }) => (
     <div data-testid="dialog-feedback-success" onClick={() => onOpenChange(false)}>
       DialogFeedbackSuccess

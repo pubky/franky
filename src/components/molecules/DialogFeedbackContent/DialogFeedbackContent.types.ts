@@ -5,4 +5,5 @@ export interface DialogFeedbackContentProps {
   isSubmitting: boolean;
   hasContent: boolean;
   currentUserPubky: string;
+  children: React.ReactNode;
 }

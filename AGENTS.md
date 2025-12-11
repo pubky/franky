@@ -51,7 +51,9 @@ When working on this codebase, prioritize reading these files in order:
     │   ├── 0007-dexie-version-normalization.md
     │   ├── 0008-coordinators-layer.md
     │   ├── 0009-application-cross-domain-orchestration.md
-│   └── 0010-notification-application-orchestration.md
+│   ├── 0010-notification-application-orchestration.md
+│   ├── 0011-component-composition-children-pattern.md
+│   └── 0012-component-layer-eslint-enforcement.md
     └── snapshot-testing.md         # Snapshot testing philosophy
 ```
 
@@ -100,9 +102,9 @@ All write operations:
 Follow atomic design principles:
 
 - **Atoms**: Base components (Button, Input, Badge)
-- **Molecules**: Simple compositions (SearchBar, PostCard)
-- **Organisms**: Complex features (PostFeed, UserProfile)
-- **Templates**: Page layouts
+- **Molecules**: Simple compositions (SearchBar, PostCard) - can import atoms and other molecules
+- **Organisms**: Complex features (PostFeed, UserProfile) - can import atoms, molecules, and other organisms
+- **Templates**: Page layouts - can import atoms, molecules, organisms, but never other templates
 
 **Standards:**
 
@@ -154,6 +156,8 @@ ADRs document key architectural choices. They capture the **why** behind decisio
 - [0008: Coordinators Layer](docs/adr/0008-coordinators-layer.md) - System-initiated workflows
 - [0009: Application Cross-Domain Orchestration](docs/adr/0009-application-cross-domain-orchestration.md) - Application-to-Application calls for workflow orchestration
 - [0010: Notification Application Orchestration](docs/adr/0010-notification-application-orchestration.md) - NotificationApplication cross-domain entity aggregation privilege
+- [0011: Component Composition via Children Props](docs/adr/0011-component-composition-children-pattern.md) - Molecules receive organisms via children props
+- [0012: Component Layer ESLint Enforcement](docs/adr/0012-component-layer-eslint-enforcement.md) - Automated enforcement of component composition rules
 
 **Creating new ADRs**: Use `docs/adr/TEMPLATE.md` as the starting point.
 
@@ -210,6 +214,7 @@ For non-Cursor IDEs:
 ❌ **Don't commit untested code** - Run tests in sandbox first  
 ❌ **Don't duplicate logic across layers** - Single responsibility per layer  
 ❌ **Don't return un-normalized data** - Pipes must normalize external shapes
+❌ **Don't let molecules import organisms** - Pass organisms via children props (ADR-0011, enforced by ADR-0012)
 
 ## Common Development Workflows
 

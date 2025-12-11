@@ -15,6 +15,13 @@ exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
       data-testid="dialog-feedback-content"
       data-user="test-user-123"
     >
+      <div
+        data-max-length="1000"
+        data-post-id="test-user-123"
+        data-testid="post-header"
+      >
+        PostHeader
+      </div>
       DialogFeedbackContent
     </div>
   </div>
@@ -55,6 +62,14 @@ exports[`DialogFeedback - Snapshots > matches snapshot when submitting 1`] = `
       data-testid="dialog-feedback-content"
       data-user="test-user-123"
     >
+      <div
+        data-character-count="21"
+        data-max-length="1000"
+        data-post-id="test-user-123"
+        data-testid="post-header"
+      >
+        PostHeader
+      </div>
       DialogFeedbackContent
     </div>
   </div>
@@ -76,6 +91,14 @@ exports[`DialogFeedback - Snapshots > matches snapshot with feedback content 1`]
       data-testid="dialog-feedback-content"
       data-user="test-user-123"
     >
+      <div
+        data-character-count="21"
+        data-max-length="1000"
+        data-post-id="test-user-123"
+        data-testid="post-header"
+      >
+        PostHeader
+      </div>
       DialogFeedbackContent
     </div>
   </div>

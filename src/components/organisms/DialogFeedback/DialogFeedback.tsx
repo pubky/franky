@@ -4,9 +4,10 @@ import { useEffect } from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
-import { DialogFeedbackContent } from './DialogFeedbackContent';
-import { DialogFeedbackSuccess } from './DialogFeedbackSuccess';
+import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import type { DialogFeedbackProps } from './DialogFeedback.types';
+import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
 
 export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
@@ -29,16 +30,23 @@ export function DialogFeedback({ open, onOpenChange }: DialogFeedbackProps) {
     <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
       <Atoms.DialogContent className="w-2xl" hiddenTitle="Provide Feedback">
         {isSuccess ? (
-          <DialogFeedbackSuccess onOpenChange={onOpenChange} />
+          <Molecules.DialogFeedbackSuccess onOpenChange={onOpenChange} />
         ) : (
-          <DialogFeedbackContent
+          <Molecules.DialogFeedbackContent
             feedback={feedback}
             handleChange={handleChange}
             submit={submit}
             isSubmitting={isSubmitting}
             hasContent={hasContent}
             currentUserPubky={currentUserPubky}
-          />
+          >
+            <Organisms.PostHeader
+              postId={currentUserPubky}
+              isReplyInput={true}
+              characterCount={feedback.length > 0 ? feedback.length : undefined}
+              maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}
+            />
+          </Molecules.DialogFeedbackContent>
         )}
       </Atoms.DialogContent>
     </Atoms.Dialog>
