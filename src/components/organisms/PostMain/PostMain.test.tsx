@@ -2,12 +2,18 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostMain } from './PostMain';
 
-// Use real libs, only stub cn for deterministic class joining
+// Use vi.hoisted to define mock functions before vi.mock calls (which are hoisted)
+const { mockIsPostDeleted } = vi.hoisted(() => ({
+  mockIsPostDeleted: vi.fn(() => false),
+}));
+
+// Use real libs, only stub cn for deterministic class joining and isPostDeleted for control
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
     cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+    isPostDeleted: mockIsPostDeleted,
   };
 });
 
@@ -88,19 +94,24 @@ vi.mock('@/organisms', () => ({
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
+  PostDeleted: () => <div data-testid="post-deleted">PostDeleted</div>,
 }));
 
-// Mock useElementHeight hook
+// Mock hooks
 vi.mock('@/hooks', () => ({
   useElementHeight: vi.fn(() => ({
     ref: vi.fn(),
     height: 150,
+  })),
+  usePostDetails: vi.fn(() => ({
+    postDetails: { content: 'Some post content' },
   })),
 }));
 
 describe('PostMain', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsPostDeleted.mockReturnValue(false);
   });
 
   it('renders header, content, tags and actions', () => {
@@ -139,6 +150,30 @@ describe('PostMain', () => {
     expect(connector).toHaveAttribute('data-height', '150');
     expect(connector).toHaveAttribute('data-variant', 'regular');
   });
+
+  it('renders PostDeleted when post is deleted', () => {
+    mockIsPostDeleted.mockReturnValue(true);
+
+    render(<PostMain postId="post-deleted" />);
+
+    expect(screen.getByTestId('post-deleted')).toBeInTheDocument();
+    expect(screen.queryByTestId('post-header')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('post-content')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('post-tags-list')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('post-actions')).not.toBeInTheDocument();
+  });
+
+  it('renders normal content when post is not deleted', () => {
+    mockIsPostDeleted.mockReturnValue(false);
+
+    render(<PostMain postId="post-normal" />);
+
+    expect(screen.queryByTestId('post-deleted')).not.toBeInTheDocument();
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+    expect(screen.getByTestId('post-tags-list')).toBeInTheDocument();
+    expect(screen.getByTestId('post-actions')).toBeInTheDocument();
+  });
 });
 
 describe('PostMain - Snapshots', () => {
@@ -159,6 +194,12 @@ describe('PostMain - Snapshots', () => {
 
   it('matches snapshot with isReply false', () => {
     const { container } = render(<PostMain postId="post-no-reply-456" isReply={false} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with deleted post', () => {
+    mockIsPostDeleted.mockReturnValue(true);
+    const { container } = render(<PostMain postId="post-deleted-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
