@@ -2,6 +2,7 @@ export * from './useCopyToClipboard';
 export * from './useIsTouchDevice';
 export * from './useAuthStatus';
 export * from './useAuthActions';
+export * from './useAuthUrl';
 export * from './useElementHeight';
 export * from './useEmojiInsert';
 export * from './useInfiniteScroll';
