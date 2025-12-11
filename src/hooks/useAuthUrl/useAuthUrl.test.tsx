@@ -182,9 +182,7 @@ describe('useAuthUrl', () => {
         awaitApproval: mockAwaitApproval,
       });
 
-      mockInitializeAuthenticatedSession.mockRejectedValue(
-        new Error('Failed to initialize session')
-      );
+      mockInitializeAuthenticatedSession.mockRejectedValue(new Error('Failed to initialize session'));
 
       renderHook(() => useAuthUrl());
 
@@ -223,7 +221,7 @@ describe('useAuthUrl', () => {
           expect(result.current.url).toBe('pubkyring://authorize?token=retry-success');
           expect(result.current.isLoading).toBe(false);
         },
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
 
       // Should have called getAuthUrl 3 times total (initial + 2 retries)
@@ -244,7 +242,7 @@ describe('useAuthUrl', () => {
             description: 'Unable to generate sign-in QR code. Please refresh and try again.',
           });
         },
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
 
       expect(result.current.isLoading).toBe(false);
@@ -260,10 +258,10 @@ describe('useAuthUrl', () => {
         () => {
           expect(mockLoggerError).toHaveBeenCalledWith(
             expect.stringContaining('Failed to generate auth URL'),
-            expect.any(Error)
+            expect.any(Error),
           );
         },
-        { timeout: 3000 }
+        { timeout: 3000 },
       );
     });
   });

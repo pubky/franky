@@ -1,10 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 
-// Mock homeserver
-const mockHomeserver = {
-  fetch: vi.fn().mockResolvedValue({ ok: true }),
-};
+// Mock HomeserverService
+vi.mock('@/core/services/homeserver', () => ({
+  HomeserverService: {
+    request: vi.fn(),
+  },
+}));
+
+// Mock FileApplication
+vi.mock('@/core/application/file', () => ({
+  FileApplication: {
+    upload: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
+
+// Mock TagApplication
+vi.mock('@/core/application/tag', () => ({
+  TagApplication: {
+    create: vi.fn(),
+  },
+}));
 
 // Mock pubky-app-specs
 vi.mock('pubky-app-specs', () => ({
@@ -81,9 +98,12 @@ const setupExistingPost = async () => {
 
 const setupAuthUser = (pubky: Core.Pubky) => {
   const authStore = Core.useAuthStore.getState();
-  authStore.setCurrentUserPubky(pubky);
-  // Authentication is now derived from session
-  authStore.setSession({} as any);
+  authStore.init({
+    currentUserPubky: pubky,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    session: {} as any,
+    hasProfile: false,
+  });
 };
 
 const cleanupAuthUser = () => {
@@ -92,21 +112,10 @@ const cleanupAuthUser = () => {
 
 describe('PostController', () => {
   beforeEach(async () => {
-    vi.resetModules();
     vi.clearAllMocks();
-    mockHomeserver.fetch.mockClear();
 
-    // Mock Core module
-    vi.doMock('@/core', async () => {
-      const actual = await vi.importActual('@/core');
-      return {
-        ...actual,
-        HomeserverService: {
-          getInstance: vi.fn(() => mockHomeserver),
-          request: vi.fn(async () => undefined),
-        },
-      };
-    });
+    // Mock HomeserverService.request to resolve successfully
+    vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
 
     // Initialize database and clear tables
     await Core.db.initialize();
@@ -201,7 +210,6 @@ describe('PostController', () => {
 
   describe('create', () => {
     it('should create a post and sync to homeserver', async () => {
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
       const { PostController } = await import('./post');
 
       await PostController.create(createPostParams('Hello, world!'));
@@ -212,11 +220,17 @@ describe('PostController', () => {
       const savedPost = allPosts[0];
       expect(savedPost.content).toBe('Hello, world!');
       expect(savedPost.kind).toBe('short'); // PubkyAppPostKind.Short
+
+      // Verify homeserver sync was called
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.stringContaining('pubky://'),
+        expect.any(Object),
+      );
     });
 
     it('should create a reply when parentPostId is provided', async () => {
       await setupExistingPost();
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
       const { PostController } = await import('./post');
 
       await PostController.create(createPostParams('This is a reply', testData.fullPostId));
@@ -226,6 +240,13 @@ describe('PostController', () => {
 
       expect(replyPost).toBeTruthy();
       expect(replyPost!.kind).toBe('short'); // PubkyAppPostKind.Short
+
+      // Verify homeserver sync was called
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.stringContaining('pubky://'),
+        expect.any(Object),
+      );
     });
 
     it('should throw error when parent post not found', async () => {
@@ -255,7 +276,6 @@ describe('PostController', () => {
 
     it('should create a repost when originalPostId is provided', async () => {
       await setupExistingPost();
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
       const { PostController } = await import('./post');
 
       await PostController.create({
@@ -269,6 +289,13 @@ describe('PostController', () => {
 
       expect(repost).toBeTruthy();
       expect(repost!.kind).toBe('short');
+
+      // Verify homeserver sync was called
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.stringContaining('pubky://'),
+        expect.any(Object),
+      );
     });
 
     it('should throw error when original post not found for repost', async () => {
@@ -285,7 +312,6 @@ describe('PostController', () => {
 
     it('should create repost with empty content', async () => {
       await setupExistingPost();
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
       const { PostController } = await import('./post');
 
       await PostController.create({
@@ -298,6 +324,13 @@ describe('PostController', () => {
       const repost = allPosts.find((p) => p.content === '');
 
       expect(repost).toBeTruthy();
+
+      // Verify homeserver sync was called
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.stringContaining('pubky://'),
+        expect.any(Object),
+      );
     });
   });
 

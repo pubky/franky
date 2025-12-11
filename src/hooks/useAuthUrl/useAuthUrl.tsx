@@ -13,18 +13,18 @@ const MAX_RETRY_ATTEMPTS = 3;
 
 /**
  * Manages the authentication URL lifecycle for Pubky Ring authorization.
- * 
+ *
  * Handles:
  * - Auth URL generation with automatic retries and exponential backoff
  * - Request deduplication to prevent race conditions
  * - Component mounting guards to prevent state updates after unmount
  * - Async approval promise handling and session initialization
  * - Error handling with user-facing toast notifications
- * 
+ *
  * @example
  * ```tsx
  * const { url, isLoading, fetchUrl } = useAuthUrl();
- * 
+ *
  * return (
  *   <div>
  *     {isLoading ? (
@@ -42,16 +42,16 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
 
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Ref to track if component is still mounted (prevents state updates after unmount)
   const isMountedRef = useRef(true);
-  
+
   // Ref to track the latest request (prevents race conditions with stale requests)
   const activeRequestRef = useRef<symbol | null>(null);
-  
+
   // Ref to track if URL generation is in progress (including retries)
   const isGeneratingRef = useRef(false);
-  
+
   // Ref to track retry attempts
   const retryCountRef = useRef(0);
 
@@ -77,7 +77,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     try {
       // Request auth URL from controller
       const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
-      
+
       if (!authorizationUrl) {
         isGeneratingRef.current = false;
         if (isMountedRef.current) setIsLoading(false);
@@ -98,7 +98,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           } catch (error) {
             Libs.Logger.error('Failed to persist session and check profile:', error);
             if (!isMountedRef.current) return;
-            
+
             Molecules.toast({
               title: 'Sign in failed. Please try again.',
               description: 'Unable to complete authorization with Pubky Ring. Please try again.',
@@ -128,11 +128,8 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
       // Increment retry count and attempt retry if under limit
       retryCountRef.current += 1;
       const attempts = retryCountRef.current;
-      
-      Libs.Logger.error(
-        `Failed to generate auth URL (attempt ${attempts} of ${MAX_RETRY_ATTEMPTS}):`,
-        error
-      );
+
+      Libs.Logger.error(`Failed to generate auth URL (attempt ${attempts} of ${MAX_RETRY_ATTEMPTS}):`, error);
 
       if (attempts < MAX_RETRY_ATTEMPTS) {
         willRetry = true;

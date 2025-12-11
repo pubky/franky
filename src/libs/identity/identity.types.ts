@@ -1,4 +1,4 @@
-import { Keypair } from "@synonymdev/pubky";
+import { Keypair } from '@synonymdev/pubky';
 
 /**
  * A keypair with its associated mnemonic recovery phrase

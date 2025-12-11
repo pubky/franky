@@ -11,7 +11,7 @@ export const createOnboardingSelectors = (get: ZustandGet<OnboardingStore>) => (
   selectSecretKey: () => {
     const keypair = get().keypair;
     if (!keypair) {
-        // TODO: Specific error type
+      // TODO: Specific error type
       throw new Error('Keypair is not available. Please generate a keypair first.');
     }
     return Libs.Identity.secretKeyToHex(keypair.secretKey());
@@ -25,7 +25,7 @@ export const createOnboardingSelectors = (get: ZustandGet<OnboardingStore>) => (
   selectPublicKey: () => {
     const keypair = get().keypair;
     if (!keypair) {
-        // TODO: Specific error type
+      // TODO: Specific error type
       throw new Error('Keypair is not available. Please generate a keypair first.');
     }
     return keypair.publicKey.z32();
@@ -39,7 +39,7 @@ export const createOnboardingSelectors = (get: ZustandGet<OnboardingStore>) => (
   selectMnemonic: () => {
     const mnemonic = get().mnemonic;
     if (!mnemonic) {
-        // TODO: Specific error type
+      // TODO: Specific error type
       throw new Error('Mnemonic is not available. Please generate a keypair first.');
     }
     return mnemonic;

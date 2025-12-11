@@ -10,10 +10,6 @@ export interface TPublicKeyParams {
   publicKey: PublicKey;
 }
 
-export interface TKeypairParams {
-  keypair: Keypair;
-}
-
 export interface TSignUpParams {
   keypair: Keypair;
   signupToken: string;

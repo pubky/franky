@@ -5,7 +5,7 @@ import { AlertBackup } from './AlertBackup';
 // Mock Core module
 vi.mock('@/core', () => ({
   useOnboardingStore: vi.fn(() => ({
-    secretKey: 'test-secret-key',
+    keypair: 'test-keypair-value',
   })),
 }));
 

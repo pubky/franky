@@ -11,7 +11,7 @@ export const createAuthSelectors = (get: ZustandGet<AuthStore>) => ({
     }
     return pubky;
   },
-  
+
   /**
    * User is authenticated when they have a valid session
    */

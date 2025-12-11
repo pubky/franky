@@ -1,15 +1,13 @@
-import type { Keypair, Session } from '@synonymdev/pubky';
+import type { Session } from '@synonymdev/pubky';
+
+import * as Core from '@/core';
 
 export type FetchOptions = {
   method?: HomeserverAction;
   body?: string | Uint8Array;
 };
 
-export type TKeypairParams = {
-  keypair: Keypair;
-};
-
-export type THomeserverSignUpParams = TKeypairParams & {
+export type THomeserverSignUpParams = Core.TKeypairParams & {
   signupToken: string;
 };
 

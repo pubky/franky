@@ -10,7 +10,6 @@ export function useAuthStatus(): AuthStatusResult {
   const authStore = Core.useAuthStore();
 
   const authStatusResult = useMemo((): AuthStatusResult => {
-
     // Check if stores are still hydrating
     const isLoading = !onboardingStore.hasHydrated || !authStore.hasHydrated;
 

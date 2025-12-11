@@ -34,7 +34,6 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
 
   // Determine if the current route is accessible based on authentication status
   const isRouteAccessible = useMemo(() => {
-
     // Public routes are ALWAYS accessible, even during loading
     if (App.PUBLIC_ROUTES.includes(pathname)) return true;
 
@@ -68,7 +67,7 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
     // Runtime validation: ensure redirect target is actually in allowed routes
     if (redirectTo && !routeAccess.allowedRoutes.includes(redirectTo)) {
       Libs.Logger.error(
-        `RouteGuard configuration error: redirectTo "${redirectTo}" is not in allowedRoutes for status "${status}"`
+        `RouteGuard configuration error: redirectTo "${redirectTo}" is not in allowedRoutes for status "${status}"`,
       );
       return;
     }

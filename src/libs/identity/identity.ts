@@ -3,7 +3,12 @@ import * as bip39 from 'bip39';
 import * as Core from '@/core';
 
 import * as Libs from '@/libs';
-import type { TKeypairWithMnemonic, TMnemonicWords, TCreateRecoveryFileParams, TDecryptRecoveryFileParams } from './identity.types';
+import type {
+  TKeypairWithMnemonic,
+  TMnemonicWords,
+  TCreateRecoveryFileParams,
+  TDecryptRecoveryFileParams,
+} from './identity.types';
 
 export class Identity {
   /**
@@ -13,7 +18,6 @@ export class Identity {
    * @returns void
    */
   static async createRecoveryFile({ keypair, passphrase }: TCreateRecoveryFileParams): Promise<void> {
-
     try {
       const recoveryFile = keypair.createRecoveryFile(passphrase);
       this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
@@ -38,7 +42,13 @@ export class Identity {
    * @param filename - The filename to use for the download
    * @returns void
    */
-  private static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
+  private static async handleDownloadRecoveryFile({
+    recoveryFile,
+    filename,
+  }: {
+    recoveryFile: Uint8Array;
+    filename: string;
+  }) {
     try {
       const arrayBuffer = new ArrayBuffer(recoveryFile.byteLength);
       new Uint8Array(arrayBuffer).set(recoveryFile);
@@ -108,7 +118,6 @@ export class Identity {
       }
 
       return words.join(' ');
-      
     } catch (error) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.UNEXPECTED_ERROR,

@@ -14,21 +14,21 @@ import * as Organisms from '@/organisms';
  * No props needed - manages its own state internally.
  */
 export const AlertBackup = () => {
-  const { secretKey } = Core.useOnboardingStore();
+  const { keypair } = Core.useOnboardingStore();
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (secretKey) {
+    if (keypair) {
       setShowAlert(true);
     }
-  }, [secretKey]);
+  }, [keypair]);
 
   const handleDismiss = () => {
     setShowAlert(false);
   };
 
   // Don't show alert if there's no secretKey or it was dismissed
-  if (!secretKey || !showAlert) {
+  if (!keypair || !showAlert) {
     return null;
   }
 

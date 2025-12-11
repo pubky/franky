@@ -4,12 +4,11 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
-const PKARR_RELAYS = Config.PKARR_RELAYS.split(',');
+const _PKARR_RELAYS = Config.PKARR_RELAYS.split(',');
 const TESTNET = Config.TESTNET.toString() === 'true';
 const CAPABILITIES = '/pub/pubky.app/:rw';
 
 export class HomeserverService {
-
   private constructor() {}
 
   /**
@@ -222,7 +221,7 @@ export class HomeserverService {
       Libs.Logger.debug('Response from homeserver', { response });
       return response;
     } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url:"signout" });
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url: 'signout' });
     }
   }
 
@@ -231,10 +230,10 @@ export class HomeserverService {
       const { client } = this.getClient();
       // Resolve pubky:// URLs to HTTPS URLs before fetching
       const resolvedUrl = url.startsWith('pubky://') ? resolvePubky(url) : url;
-      const response = await client.fetch(resolvedUrl, { 
-        method: options?.method, 
-        body: options?.body as BodyInit | undefined, 
-        credentials: 'include' 
+      const response = await client.fetch(resolvedUrl, {
+        method: options?.method,
+        body: options?.body as BodyInit | undefined,
+        credentials: 'include',
       });
 
       Libs.Logger.debug('Response from homeserver', { response });
@@ -360,7 +359,7 @@ export class HomeserverService {
    * @param {Core.FetchOptions} [options] - Optional fetch options.
    * @returns {Promise<Response>} The fetch response.
    */
-  static async get(url: string, options?: Core.FetchOptions): Promise<Response> {
+  static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
     const { publicStorage } = this.getClient();
     return await publicStorage.getJson(url as Address);
   }

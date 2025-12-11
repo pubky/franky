@@ -79,7 +79,7 @@ export const UNAUTHENTICATED_ROUTES = {
 };
 
 export const NEEDS_PROFILE_CREATION_ROUTES = {
-  allowedRoutes: [ ONBOARDING_ROUTES.PROFILE ],
+  allowedRoutes: [ONBOARDING_ROUTES.PROFILE],
   redirectTo: ONBOARDING_ROUTES.PROFILE,
 };
 

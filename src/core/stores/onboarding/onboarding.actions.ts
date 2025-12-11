@@ -4,10 +4,10 @@ import {
   onboardingInitialState,
   OnboardingActionTypes,
 } from './onboarding.types';
-import { ZustandGet, type ZustandSet } from '../stores.types';
+import { type ZustandSet } from '../stores.types';
 import { Keypair } from '@synonymdev/pubky';
 
-export const createOnboardingActions = (set: ZustandSet<OnboardingStore>, get: ZustandGet<OnboardingStore>): OnboardingActions => ({
+export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): OnboardingActions => ({
   reset: () => {
     set(
       (state) => ({

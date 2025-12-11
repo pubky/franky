@@ -20,7 +20,7 @@ export function HomeserverCard() {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
-  
+
   const keypair = Core.useOnboardingStore.getState().keypair;
 
   // generate an invite code and put it in console log if you are in development mode

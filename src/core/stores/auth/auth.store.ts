@@ -25,10 +25,8 @@ export const useAuthStore = create<AuthStore>()(
 
         // Set hasHydrated to true after rehydration
         onRehydrateStorage: () => (state) => {
-          console.log('🔵 AUTH STORE: onRehydrateStorage called', { state: !!state, hasHydrated: state?.hasHydrated });
           if (state) {
             state.setHasHydrated(true);
-            console.log('🟢 AUTH STORE: setHasHydrated(true) called', { hasHydrated: state.hasHydrated });
           }
         },
       },

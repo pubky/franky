@@ -14,10 +14,7 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Session and pubky of the signed up user
    */
-  static async signUp({
-    keypair,
-    signupToken
-  }: Core.THomeserverSignUpParams): Promise<Core.THomeserverSessionResult> {
+  static async signUp({ keypair, signupToken }: Core.THomeserverSignUpParams): Promise<Core.THomeserverSessionResult> {
     return await Core.HomeserverService.signUp({ keypair, signupToken });
   }
 
@@ -29,11 +26,13 @@ export class AuthApplication {
    * @param params.secretKey - Secret key for homeserver service
    * @returns Session and pubky of the authenticated user
    */
-  static async signIn({
-    keypair
-  }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
+  static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
     if (!keypair) {
-      throw new Libs.AppError(Libs.CommonErrorType.INVALID_INPUT, 'Keypair not found in onboarding store. Please regenerate your keys and try again.', 400);
+      throw new Libs.AppError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Keypair not found in onboarding store. Please regenerate your keys and try again.',
+        400,
+      );
     }
     return await Core.HomeserverService.signIn({ keypair });
   }
@@ -72,7 +71,7 @@ export class AuthApplication {
   }
 
   /**
-   * In the application, there are two signups to do. 
+   * In the application, there are two signups to do.
    * 1. First the user has to register the user key in the homeserver, throw the inviation code
    * 2. Then the user has to create a profile.json file in the homeserver. That file acts as a proof that the user has signed up.
    * This is a critical step because after that it will start indexing all user related data
@@ -85,7 +84,7 @@ export class AuthApplication {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.GET, userUriBuilder(pubky));
       return true;
-    } catch (error) {
+    } catch {
       Libs.Logger.error('User profile.json missing in homeserver. Please PUT that file first.', { pubky });
       return false;
     }

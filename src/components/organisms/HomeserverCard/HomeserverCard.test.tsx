@@ -10,14 +10,22 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
+// Mock keypair for testing
+const mockKeypair = { mockKeypairData: 'mock-keypair' };
+
 // Mock the onboarding store
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    useOnboardingStore: vi.fn(),
+    useOnboardingStore: Object.assign(vi.fn(), {
+      getState: vi.fn(() => ({
+        keypair: mockKeypair,
+      })),
+    }),
     AuthController: {
       signUp: vi.fn(),
+      generateSignupToken: vi.fn().mockResolvedValue('mock-token'),
     },
   };
 });
@@ -112,7 +120,6 @@ vi.mock('@/atoms', async () => {
 describe('HomeserverCard', () => {
   const mockPush = vi.fn();
   const mockSignUp = vi.fn();
-  const mockSetInviteCode = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -120,12 +127,6 @@ describe('HomeserverCard', () => {
     // Setup router mock
     (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({
       push: mockPush,
-    });
-
-    // Setup onboarding store mock
-    (Core.useOnboardingStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      inviteCode: '',
-      setInviteCode: mockSetInviteCode,
     });
 
     // Setup AuthController mock
@@ -175,7 +176,7 @@ describe('HomeserverCard', () => {
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalledWith({
         signupToken: 'ABCD-EFGH-IJKL',
-        keypair: { pubky: undefined, secretKey: undefined },
+        keypair: mockKeypair,
       });
     });
 
@@ -198,7 +199,7 @@ describe('HomeserverCard', () => {
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalledWith({
         signupToken: 'ABCD-EFGH-IJKL',
-        keypair: { pubky: undefined, secretKey: undefined },
+        keypair: mockKeypair,
       });
     });
   });

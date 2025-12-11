@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Pubky } from '@/core';
-import type { PubkyAppUser } from 'pubky-app-specs';
+import type { PubkyAppUser, UserResult } from 'pubky-app-specs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({}));
@@ -20,7 +20,7 @@ vi.mock('@/core/services/homeserver', () => ({
 }));
 
 // Mock auth store used by application layer
-let mockAuthState: { setCurrentUserPubky: ReturnType<typeof vi.fn>; setAuthenticated: ReturnType<typeof vi.fn> };
+let mockAuthState: { setCurrentUserPubky: ReturnType<typeof vi.fn>; setHasProfile: ReturnType<typeof vi.fn> };
 vi.mock('@/core/stores', () => ({
   useAuthStore: {
     getState: vi.fn(() => mockAuthState),
@@ -37,7 +37,7 @@ beforeEach(async () => {
 
   mockAuthState = {
     setCurrentUserPubky: vi.fn(),
-    setAuthenticated: vi.fn(),
+    setHasProfile: vi.fn(),
   };
 
   // Re-import after resetModules
@@ -168,10 +168,10 @@ describe('ProfileApplication', () => {
       expect(profile.toJson).toHaveBeenCalledTimes(1);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, url, profileJson);
       expect(mockAuthState.setCurrentUserPubky).toHaveBeenCalledWith(pubky);
-      expect(mockAuthState.setAuthenticated).toHaveBeenCalledWith(true);
+      expect(mockAuthState.setHasProfile).toHaveBeenCalledWith(true);
     });
 
-    it('resets auth state and rethrows on failure', async () => {
+    it('rethrows on failure without resetting auth state', async () => {
       const profileJson = { name: 'Bob' };
       const profile = { toJson: vi.fn(() => profileJson) } as unknown as PubkyAppUser;
       const url = 'pubky://user/pub/pubky.app/user';
@@ -181,8 +181,9 @@ describe('ProfileApplication', () => {
 
       await expect(ProfileApplication.create({ profile, url, pubky })).rejects.toThrow('create failed');
 
-      expect(mockAuthState.setAuthenticated).toHaveBeenCalledWith(false);
-      expect(mockAuthState.setCurrentUserPubky).toHaveBeenCalledWith(null);
+      // Auth state should not be modified on error (see TODO in profile.ts)
+      expect(mockAuthState.setHasProfile).not.toHaveBeenCalled();
+      expect(mockAuthState.setCurrentUserPubky).not.toHaveBeenCalled();
     });
   });
 

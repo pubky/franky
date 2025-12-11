@@ -6,14 +6,17 @@ import { Session } from '@synonymdev/pubky';
 // Actions/Mutators - State modification functions
 export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
   init: ({ session, currentUserPubky, hasProfile }: AuthInitParams) => {
-    set((state) => ({
-      ...state,
-      session,
-      currentUserPubky,
-      hasProfile 
-    }),
-    false, AuthActionTypes.INIT
-  )},
+    set(
+      (state) => ({
+        ...state,
+        session,
+        currentUserPubky,
+        hasProfile,
+      }),
+      false,
+      AuthActionTypes.INIT,
+    );
+  },
   // Storage management
   reset: () => {
     set(

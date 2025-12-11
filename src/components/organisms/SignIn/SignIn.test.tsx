@@ -272,7 +272,7 @@ describe('SignInContent', () => {
   // in useAuthUrl.test.tsx since that logic was extracted to the hook
 
   // Note: Unmount cleanup and request deduplication are tested in useAuthUrl.test.tsx
-  
+
   it('button disabled when loading', async () => {
     // Mock loading state
     const Hooks = await import('@/hooks');

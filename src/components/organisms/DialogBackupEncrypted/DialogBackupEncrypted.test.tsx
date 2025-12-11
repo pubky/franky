@@ -22,13 +22,13 @@ vi.mock('next/image', () => ({
 }));
 
 // Mock stores
+const mockKeypair = { mockKeypairData: 'mock-keypair' };
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
     useOnboardingStore: () => ({
-      secretKey: 'mock-secret-key',
-      pubky: 'mock-public-key',
+      keypair: mockKeypair,
     }),
   };
 });
@@ -190,13 +190,10 @@ describe('DialogBackupEncrypted', () => {
     // Press Enter on password input
     fireEvent.keyDown(passwordInput, { key: 'Enter' });
 
-    expect(mockCreateRecoveryFile).toHaveBeenCalledWith(
-      {
-        pubky: 'mock-public-key',
-        secretKey: 'mock-secret-key',
-      },
-      'TestPassword123!',
-    );
+    expect(mockCreateRecoveryFile).toHaveBeenCalledWith({
+      keypair: mockKeypair,
+      passphrase: 'TestPassword123!',
+    });
   });
 
   it('does not trigger download on Enter when passwords do not match', () => {
@@ -234,13 +231,10 @@ describe('DialogBackupEncrypted', () => {
     // Press Enter on confirm password input
     fireEvent.keyDown(confirmPasswordInput, { key: 'Enter' });
 
-    expect(mockCreateRecoveryFile).toHaveBeenCalledWith(
-      {
-        pubky: 'mock-public-key',
-        secretKey: 'mock-secret-key',
-      },
-      'TestPassword123!',
-    );
+    expect(mockCreateRecoveryFile).toHaveBeenCalledWith({
+      keypair: mockKeypair,
+      passphrase: 'TestPassword123!',
+    });
   });
 
   it('does not trigger download on Enter from confirm password when passwords do not match', () => {
