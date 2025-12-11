@@ -6,6 +6,7 @@ import * as Hooks from '@/hooks';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 
 export interface PostMainProps {
   postId: string;
@@ -25,7 +26,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
   // Determine thread connector variant based on reply status
-  const connectorVariant = isLastReply ? 'last' : 'regular';
+  const connectorVariant = isLastReply ? POST_THREAD_CONNECTOR_VARIANTS.LAST : POST_THREAD_CONNECTOR_VARIANTS.REGULAR;
 
   const handleReplyClick = () => {
     setReplyDialogOpen(true);
