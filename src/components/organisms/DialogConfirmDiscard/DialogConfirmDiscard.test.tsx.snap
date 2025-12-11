@@ -27,7 +27,7 @@ exports[`DialogConfirmDiscard - Snapshots > matches snapshot for default DialogC
       </h2>
     </div>
     <p
-      class="text-base leading-6 font-normal tracking-wide text-white/80"
+      class="text-base tracking-wide text-white/80"
       data-testid="typography"
     >
       If you do, you will lose the content.
@@ -36,7 +36,6 @@ exports[`DialogConfirmDiscard - Snapshots > matches snapshot for default DialogC
       data-testid="dialog-footer"
     >
       <button
-        class="order-1 sm:order-2"
         data-size="lg"
         data-testid="button-destructive"
         data-variant="destructive"
@@ -73,7 +72,6 @@ exports[`DialogConfirmDiscard - Snapshots > matches snapshot for default DialogC
         Discard
       </button>
       <button
-        class="order-2 sm:order-1"
         data-size="lg"
         data-testid="button-outline"
         data-variant="outline"
@@ -112,7 +110,7 @@ exports[`DialogConfirmDiscard - Snapshots > matches snapshot when closed 1`] = `
       </h2>
     </div>
     <p
-      class="text-base leading-6 font-normal tracking-wide text-white/80"
+      class="text-base tracking-wide text-white/80"
       data-testid="typography"
     >
       If you do, you will lose the content.
@@ -121,7 +119,6 @@ exports[`DialogConfirmDiscard - Snapshots > matches snapshot when closed 1`] = `
       data-testid="dialog-footer"
     >
       <button
-        class="order-1 sm:order-2"
         data-size="lg"
         data-testid="button-destructive"
         data-variant="destructive"
@@ -158,7 +155,6 @@ exports[`DialogConfirmDiscard - Snapshots > matches snapshot when closed 1`] = `
         Discard
       </button>
       <button
-        class="order-2 sm:order-1"
         data-size="lg"
         data-testid="button-outline"
         data-variant="outline"

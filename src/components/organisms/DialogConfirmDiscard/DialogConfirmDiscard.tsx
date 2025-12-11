@@ -20,15 +20,15 @@ export function DialogConfirmDiscard({ open, onOpenChange, onConfirm }: DialogCo
         <Atoms.DialogHeader>
           <Atoms.DialogTitle>Do you want to close it?</Atoms.DialogTitle>
         </Atoms.DialogHeader>
-        <Atoms.Typography className="text-base leading-6 font-normal tracking-wide text-white/80">
+        <Atoms.Typography className="text-base tracking-wide text-white/80">
           If you do, you will lose the content.
         </Atoms.Typography>
         <Atoms.DialogFooter>
-          <Atoms.Button variant="destructive" size="lg" onClick={handleDiscard} className="order-1 sm:order-2">
+          <Atoms.Button variant="destructive" size="lg" onClick={handleDiscard}>
             <Libs.Trash2 className="h-4 w-4" />
             Discard
           </Atoms.Button>
-          <Atoms.Button variant="outline" size="lg" onClick={handleCancel} className="order-2 sm:order-1">
+          <Atoms.Button variant="outline" size="lg" onClick={handleCancel}>
             Cancel
           </Atoms.Button>
         </Atoms.DialogFooter>

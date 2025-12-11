@@ -134,9 +134,10 @@ describe('NewPostCTA', () => {
     render(<NewPostCTA />);
     const button = screen.getByTestId('new-post-cta');
     expect(button).toHaveClass('fixed');
-    expect(button).toHaveClass('bottom-6');
+    expect(button).toHaveClass('bottom-[72px]');
     expect(button).toHaveClass('right-3');
-    expect(button).toHaveClass('sm:bottom-10');
+    expect(button).toHaveClass('md:bottom-20');
+    expect(button).toHaveClass('lg:bottom-6');
     expect(button).toHaveClass('sm:right-10');
   });
 
