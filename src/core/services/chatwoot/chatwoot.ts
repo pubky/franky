@@ -143,6 +143,7 @@ export class ChatwootService {
     if (!contact.contact_inboxes || contact.contact_inboxes.length === 0) {
       throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Contact has no inbox associations', 500, {
         contactId: contact.id,
+        email,
       });
     }
 
