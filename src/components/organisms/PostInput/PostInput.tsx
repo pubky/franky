@@ -6,6 +6,7 @@ import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputTags } from '../PostInputTags';
 import { PostInputActionBar } from '../PostInputActionBar';
 import { useTimelineFeedContext } from '../TimelineFeed/TimelineFeed';
@@ -109,7 +110,7 @@ export function PostInput({
       className="relative cursor-pointer rounded-md border border-dashed border-input p-6"
       onClick={handleExpand}
     >
-      {showThreadConnector && <Atoms.DialogPostReplyThreadConnector />}
+      {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
       <Atoms.Container className="gap-4">
         {currentUserPubky && (
           <Organisms.PostHeader

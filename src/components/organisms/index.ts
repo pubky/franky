@@ -36,6 +36,7 @@ export * from './HotActiveUsers';
 export * from './HomeserverCard';
 export * from './LeftSidebar';
 export * from './PostActionsBar';
+export * from './PostAttachments';
 export * from './PostContent';
 export * from './PostHeader';
 export * from './PostInput';

@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
@@ -10,45 +11,52 @@ vi.mock('@/config', () => ({
   POST_MAX_TAGS: 5,
 }));
 
-vi.mock('@/atoms', () => ({
-  Container: ({
-    children,
-    className,
-    overrideDefaults,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    overrideDefaults?: boolean;
-  }) => (
-    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
-      {children}
-    </div>
-  ),
-  Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
-    <textarea
-      ref={ref}
-      data-testid="textarea"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      disabled={disabled}
-    />
-  )),
-  DialogPostReplyThreadConnector: vi.fn(() => <div data-testid="thread-connector" />),
-  Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
-    <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
-      {children}
-    </button>
-  )),
-  Typography: vi.fn(({ children, as, size, className }) => {
-    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+vi.mock('@/atoms', async () => {
+  const { POST_THREAD_CONNECTOR_VARIANTS } =
+    await import('@/components/atoms/PostThreadConnector/PostThreadConnector.constants');
+  return {
+    Container: ({
+      children,
+      className,
+      overrideDefaults,
+    }: {
+      children: React.ReactNode;
+      className?: string;
+      overrideDefaults?: boolean;
+    }) => (
+      <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
         {children}
-      </Tag>
-    );
-  }),
-}));
+      </div>
+    ),
+    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
+      <textarea
+        ref={ref}
+        data-testid="textarea"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        disabled={disabled}
+      />
+    )),
+    PostThreadConnector: vi.fn(({ height, variant }) => (
+      <div data-testid="thread-connector" data-height={height} data-variant={variant} />
+    )),
+    POST_THREAD_CONNECTOR_VARIANTS,
+    Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
+      <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
+        {children}
+      </button>
+    )),
+    Typography: vi.fn(({ children, as, size, className }) => {
+      const Tag = (as || 'p') as React.ElementType;
+      return (
+        <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+          {children}
+        </Tag>
+      );
+    }),
+  };
+});
 
 vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(({ postId, isReplyInput, characterCount, maxLength }) => (
@@ -60,6 +68,10 @@ vi.mock('@/organisms', () => ({
       data-max={maxLength}
     />
   )),
+}));
+
+vi.mock('../TimelineFeed/TimelineFeed', () => ({
+  useTimelineFeedContext: vi.fn(() => null),
 }));
 
 vi.mock('../PostInputTags', () => ({
@@ -158,7 +170,7 @@ describe('PostInput', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPostControllerCreate.mockResolvedValue(undefined);
+    mockPostControllerCreate.mockResolvedValue('test-post-id');
     mockReply.mockReturnValue(async () => {});
     mockPost.mockReturnValue(async () => {});
 
@@ -170,7 +182,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
   });
 
@@ -193,7 +204,9 @@ describe('PostInput', () => {
   it('shows thread connector when showThreadConnector is true', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" showThreadConnector={true} />);
 
-    expect(screen.getByTestId('thread-connector')).toBeInTheDocument();
+    const connector = screen.getByTestId('thread-connector');
+    expect(connector).toBeInTheDocument();
+    expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY);
   });
 
   it('does not show thread connector when showThreadConnector is false', () => {
@@ -233,7 +246,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} onSuccess={mockOnSuccess} />);
@@ -259,7 +271,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" onSuccess={mockOnSuccess} />);
@@ -277,6 +288,7 @@ describe('PostInput', () => {
     });
   });
 
+  // todo: extend test to include attachments
   it('disables post button when content is empty', () => {
     mockUsePost.mockReturnValue({
       content: '',
@@ -286,7 +298,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
@@ -305,7 +316,6 @@ describe('PostInput', () => {
       reply: mockReply,
       post: mockPost,
       isSubmitting: true,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
@@ -333,7 +343,6 @@ describe('PostInput - Snapshots', () => {
       reply: vi.fn(),
       post: vi.fn(),
       isSubmitting: false,
-      error: null,
     });
   });
 

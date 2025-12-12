@@ -1,0 +1,73 @@
+import * as Config from '@/config';
+import * as Libs from '@/libs';
+import * as Core from '@/core';
+
+export class FeedbackValidators {
+  private constructor() {}
+
+  /**
+   * Validates and normalizes pubky input.
+   * Throws an error if validation fails.
+   *
+   * @param pubky - User's public key to validate
+   * @returns Normalized pubky (trimmed)
+   * @throws AppError if pubky is invalid
+   */
+  static validatePubky(pubky: string | undefined | null): Core.Pubky {
+    if (!pubky || pubky.trim() === '') {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Pubky is required and must be a non-empty string',
+        400,
+      );
+    }
+    return pubky.trim() as Core.Pubky;
+  }
+
+  /**
+   * Validates and normalizes comment input.
+   * Throws an error if validation fails.
+   *
+   * @param comment - Feedback comment to validate
+   * @returns Normalized comment (trimmed)
+   * @throws AppError if comment is invalid
+   */
+  static validateComment(comment: string | undefined | null): string {
+    if (!comment || comment.trim() === '') {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Comment is required and must be a non-empty string',
+        400,
+      );
+    }
+
+    if (comment.length > Config.FEEDBACK_MAX_CHARACTER_LENGTH) {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+        400,
+      );
+    }
+
+    return comment.trim();
+  }
+
+  /**
+   * Validates and normalizes name input.
+   * Throws an error if validation fails.
+   *
+   * @param name - User's display name to validate
+   * @returns Normalized name (trimmed)
+   * @throws AppError if name is invalid
+   */
+  static validateName(name: string | undefined | null): string {
+    if (!name || name.trim() === '') {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Name is required and must be a non-empty string',
+        400,
+      );
+    }
+    return name.trim();
+  }
+}

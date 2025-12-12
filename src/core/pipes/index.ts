@@ -14,3 +14,4 @@ export * from './bookmark';
 export * from './notification';
 export * from './lastRead';
 export * from './feed';
+export * from './feedback';

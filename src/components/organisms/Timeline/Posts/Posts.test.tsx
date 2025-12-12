@@ -75,9 +75,8 @@ const mockUseRouter = vi.mocked(useRouter);
 const mockUseInfiniteScroll = vi.mocked(Hooks.useInfiniteScroll);
 const mockUsePostNavigation = vi.mocked(Hooks.usePostNavigation);
 
+const mockPostIds = ['author1:post1', 'author2:post2', 'author3:post3'];
 describe('TimelinePosts', () => {
-  const mockPostIds = ['author1:post1', 'author2:post2', 'author3:post3'];
-
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -139,6 +138,7 @@ describe('TimelinePosts', () => {
 
       await waitFor(() => {
         expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading-more')).not.toBeInTheDocument();
       });
     });
 
@@ -175,6 +175,8 @@ describe('TimelinePosts', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-empty')).toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading-more')).not.toBeInTheDocument();
       });
     });
 
@@ -194,6 +196,8 @@ describe('TimelinePosts', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-end-message')).toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading-more')).not.toBeInTheDocument();
       });
     });
   });
@@ -214,6 +218,8 @@ describe('TimelinePosts', () => {
       await waitFor(() => {
         expect(screen.getByTestId('timeline-initial-error')).toBeInTheDocument();
         expect(screen.getByText(/network error/i)).toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading-more')).not.toBeInTheDocument();
       });
     });
 
@@ -231,6 +237,8 @@ describe('TimelinePosts', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-error')).toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('timeline-loading-more')).not.toBeInTheDocument();
       });
     });
 
@@ -432,11 +440,12 @@ describe('TimelinePosts', () => {
       });
     });
 
-    it('should handle different post lists', async () => {
-      const customPostIds = ['author4:post4', 'author5:post5'];
+    it('should handle large number of posts in list', async () => {
+      const largePostCount = 2100;
+      const largePostIds = Array.from({ length: largePostCount }, (_, i) => `author${i + 1}:post${i + 1}`);
       render(
         <TimelinePosts
-          postIds={customPostIds}
+          postIds={largePostIds}
           loading={false}
           loadingMore={false}
           error={null}
@@ -446,8 +455,10 @@ describe('TimelinePosts', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId('post-author4:post4')).toBeInTheDocument();
-        expect(screen.getByTestId('post-author5:post5')).toBeInTheDocument();
+        const postContainers = screen.getAllByTestId(/^post-/);
+        expect(postContainers).toHaveLength(largePostCount);
+        expect(screen.getByTestId('post-author1:post1')).toBeInTheDocument();
+        expect(screen.getByTestId(`post-author${largePostCount}:post${largePostCount}`)).toBeInTheDocument();
       });
     });
   });
@@ -494,78 +505,71 @@ describe('TimelinePosts', () => {
       });
     });
   });
+});
 
-  describe('Snapshots', () => {
-    it('should match snapshot for loading state', () => {
-      const { container } = render(
-        <TimelinePosts
-          postIds={[]}
-          loading={true}
-          loadingMore={false}
-          error={null}
-          hasMore={true}
-          loadMore={vi.fn()}
-        />,
-      );
+describe('TimelinePosts - Snapshots', () => {
+  it('should match snapshot for loading state', () => {
+    const { container } = render(
+      <TimelinePosts postIds={[]} loading={true} loadingMore={false} error={null} hasMore={true} loadMore={vi.fn()} />,
+    );
 
-      expect(container).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot for empty state', async () => {
+    const { container } = render(
+      <TimelinePosts
+        postIds={[]}
+        loading={false}
+        loadingMore={false}
+        error={null}
+        hasMore={false}
+        loadMore={vi.fn()}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('timeline-empty')).toBeInTheDocument();
     });
 
-    it('should match snapshot for empty state', async () => {
-      const { container } = render(
-        <TimelinePosts
-          postIds={[]}
-          loading={false}
-          loadingMore={false}
-          error={null}
-          hasMore={false}
-          loadMore={vi.fn()}
-        />,
-      );
+    expect(container).toMatchSnapshot();
+  });
 
-      await waitFor(() => {
-        expect(screen.getByTestId('timeline-empty')).toBeInTheDocument();
-      });
+  it('should match snapshot for error state', async () => {
+    const { container } = render(
+      <TimelinePosts
+        postIds={[]}
+        loading={false}
+        loadingMore={false}
+        error="Network error"
+        hasMore={false}
+        loadMore={vi.fn()}
+      />,
+    );
 
-      expect(container).toMatchSnapshot();
+    await waitFor(() => {
+      expect(screen.getByTestId('timeline-initial-error')).toBeInTheDocument();
     });
 
-    it('should match snapshot for error state', async () => {
-      const { container } = render(
-        <TimelinePosts
-          postIds={[]}
-          loading={false}
-          loadingMore={false}
-          error="Network error"
-          hasMore={false}
-          loadMore={vi.fn()}
-        />,
-      );
+    expect(container).toMatchSnapshot();
+  });
 
-      await waitFor(() => {
-        expect(screen.getByTestId('timeline-initial-error')).toBeInTheDocument();
-      });
+  it('should match snapshot with posts', async () => {
+    const { container } = render(
+      <TimelinePosts
+        postIds={mockPostIds}
+        loading={false}
+        loadingMore={false}
+        error={null}
+        hasMore={true}
+        loadMore={vi.fn()}
+      />,
+    );
 
-      expect(container).toMatchSnapshot();
+    await waitFor(() => {
+      expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
     });
 
-    it('should match snapshot with posts', async () => {
-      const { container } = render(
-        <TimelinePosts
-          postIds={mockPostIds}
-          loading={false}
-          loadingMore={false}
-          error={null}
-          hasMore={true}
-          loadMore={vi.fn()}
-        />,
-      );
-
-      await waitFor(() => {
-        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
-      });
-
-      expect(container).toMatchSnapshot();
-    });
+    expect(container).toMatchSnapshot();
   });
 });
