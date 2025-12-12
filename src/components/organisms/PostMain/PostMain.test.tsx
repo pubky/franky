@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as Hooks from '@/hooks';
 import { PostMain } from './PostMain';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 
@@ -117,6 +118,21 @@ vi.mock('@/organisms', () => ({
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
   PostDeleted: () => <div data-testid="post-deleted">PostDeleted</div>,
+  RepostHeader: ({
+    isCurrentUserRepost,
+    onUndo,
+    isUndoing,
+  }: {
+    isCurrentUserRepost: boolean;
+    onUndo?: () => void;
+    isUndoing?: boolean;
+  }) => (
+    <div data-testid="repost-header" data-is-current-user={isCurrentUserRepost} data-is-undoing={isUndoing}>
+      <button data-testid="repost-undo" onClick={onUndo}>
+        Undo repost
+      </button>
+    </div>
+  ),
 }));
 
 // Mock hooks
@@ -127,6 +143,15 @@ vi.mock('@/hooks', () => ({
   })),
   usePostDetails: vi.fn(() => ({
     postDetails: { content: 'Some post content' },
+  })),
+  useRepostInfo: vi.fn(() => ({
+    isRepost: false,
+    isCurrentUserRepost: false,
+    originalPostId: null,
+  })),
+  useDeletePost: vi.fn(() => ({
+    deletePost: vi.fn(),
+    isDeleting: false,
   })),
 }));
 
@@ -195,6 +220,19 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
     expect(screen.getByTestId('post-tags-list')).toBeInTheDocument();
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
+  });
+
+  it('shows repost header when post is a repost by current user', () => {
+    const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: true,
+      isCurrentUserRepost: true,
+      originalPostId: 'orig',
+    } as never);
+
+    render(<PostMain postId="me:repost-1" />);
+
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
   });
 });
 

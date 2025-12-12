@@ -20,6 +20,10 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { postDetails } = Hooks.usePostDetails(postId);
   const isDeleted = Libs.isPostDeleted(postDetails?.content);
 
+  const { isRepost, isCurrentUserRepost } = Hooks.useRepostInfo(postId);
+  const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
+  const showRepostHeader = isRepost && isCurrentUserRepost;
+
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
   const [repostDialogOpen, setRepostDialogOpen] = useState(false);
 
@@ -53,19 +57,28 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
           {isDeleted ? (
             <Molecules.PostDeleted />
           ) : (
-            <Atoms.CardContent className="flex flex-col gap-4 p-6">
-              <Organisms.PostHeader postId={postId} />
-              <Organisms.PostContent postId={postId} />
-              <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
-                <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
-                <Organisms.PostActionsBar
-                  postId={postId}
-                  onReplyClick={handleReplyClick}
-                  onRepostClick={handleRepostClick}
-                  className="w-full flex-1 justify-start md:justify-end"
+            <>
+              {showRepostHeader && (
+                <Molecules.RepostHeader
+                  isCurrentUserRepost={isCurrentUserRepost}
+                  onUndo={() => deletePost()}
+                  isUndoing={isDeleting}
                 />
-              </Atoms.Container>
-            </Atoms.CardContent>
+              )}
+              <Atoms.CardContent className="flex flex-col gap-4 p-6">
+                <Organisms.PostHeader postId={postId} />
+                <Organisms.PostContent postId={postId} />
+                <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
+                  <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
+                  <Organisms.PostActionsBar
+                    postId={postId}
+                    onReplyClick={handleReplyClick}
+                    onRepostClick={handleRepostClick}
+                    className="w-full flex-1 justify-start md:justify-end"
+                  />
+                </Atoms.Container>
+              </Atoms.CardContent>
+            </>
           )}
         </Atoms.Card>
       </Atoms.Container>
