@@ -1,7 +1,7 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import { postStreamQueue } from './post-stream-queue';
-import { muteFilter } from './mute-filter';
+import { postStreamQueue } from './muting/post-stream-queue';
+import { muteFilter } from './muting/mute-filter';
 
 export class PostStreamApplication {
   private constructor() {}

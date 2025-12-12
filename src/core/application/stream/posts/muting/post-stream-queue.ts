@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { TQueueEntry } from './post.types';
+import { TQueueEntry } from '../post.types';
 import { CollectParams, CollectResult } from './post-stream-queue.types';
 
 const MAX_FETCH_ITERATIONS = 5;

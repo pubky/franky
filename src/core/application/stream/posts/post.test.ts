@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as Core from '@/core';
-import { postStreamQueue } from './post-stream-queue';
-import { muteFilter } from './mute-filter';
+import { postStreamQueue } from './muting/post-stream-queue';
+import { muteFilter } from './muting/mute-filter';
 
 describe('PostStreamApplication', () => {
   const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId;

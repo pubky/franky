@@ -1,4 +1,4 @@
-import { TPostStreamChunkResponse } from './post.types';
+import { TPostStreamChunkResponse } from '../post.types';
 
 export type FetchResult = TPostStreamChunkResponse;
 export type FetchFn = (cursor: number) => Promise<FetchResult>;
