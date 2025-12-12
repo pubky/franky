@@ -38,6 +38,7 @@ export * from './LeftSidebar';
 export * from './PostActionsBar';
 export * from './PostAttachments';
 export * from './PostContent';
+export * from './PostContentBase';
 export * from './PostHeader';
 export * from './PostInput';
 export * from './PostInputActionBar';

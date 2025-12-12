@@ -161,9 +161,7 @@ export function PostInput({
 
         {/* Repost preview - shown inside the dashed border for repost variant */}
         {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
-          <Atoms.Card className="rounded-md py-0">
-            <Molecules.PostPreviewCard postId={originalPostId} isRepostPreview={true} />
-          </Atoms.Card>
+          <Molecules.PostPreviewCard postId={originalPostId} />
         )}
 
         {/* Expandable section with animation */}

@@ -16,9 +16,7 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
         </Atoms.DialogHeader>
         <Atoms.Container className="gap-3">
           {/* Post being replied to */}
-          <Atoms.Card className="rounded-md py-0">
-            <Molecules.PostPreviewCard postId={postId} />
-          </Atoms.Card>
+          <Molecules.PostPreviewCard postId={postId} />
 
           {/* Reply input */}
           <Atoms.Container className="relative pl-6" overrideDefaults>

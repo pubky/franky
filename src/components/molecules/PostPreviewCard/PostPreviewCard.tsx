@@ -2,24 +2,16 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
-import * as Molecules from '@/molecules';
-import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
 import type { PostPreviewCardProps } from './PostPreviewCard.types';
 
-export function PostPreviewCard({ postId, children, isRepostPreview = false }: PostPreviewCardProps) {
-  const { isRepost, isCurrentUserRepost } = Hooks.useRepostInfo(postId);
-  const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
-
-  const showRepostHeader = isRepost && isCurrentUserRepost && !isRepostPreview;
-
+export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
   return (
-    <>
-      {showRepostHeader && <Molecules.RepostHeader onUndo={() => deletePost()} isUndoing={isDeleting} />}
+    <Atoms.Card className={Libs.cn('rounded-md py-0', className)}>
       <Atoms.CardContent className="flex flex-col gap-4 p-6">
         <Organisms.PostHeader postId={postId} />
-        <Organisms.PostContent postId={postId} isRepostPreview={isRepostPreview} />
-        {children}
+        <Organisms.PostContentBase postId={postId} />
       </Atoms.CardContent>
-    </>
+    </Atoms.Card>
   );
 }

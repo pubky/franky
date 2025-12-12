@@ -19,9 +19,10 @@ export interface PostMainProps {
 export function PostMain({ postId, onClick, className, isReply = false, isLastReply = false }: PostMainProps) {
   const { postDetails } = Hooks.usePostDetails(postId);
   const isDeleted = Libs.isPostDeleted(postDetails?.content);
-
+  // Get repost information (uses isRepost and isCurrentUserRepost for header display)
   const { isRepost, isCurrentUserRepost } = Hooks.useRepostInfo(postId);
   const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
+
   const showRepostHeader = isRepost && isCurrentUserRepost;
 
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
@@ -58,7 +59,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
             <Molecules.PostDeleted />
           ) : (
             <>
-              {showRepostHeader && <Molecules.RepostHeader onUndo={() => deletePost()} isUndoing={isDeleting} />}
+              {showRepostHeader && <Molecules.RepostHeader onUndo={deletePost} isUndoing={isDeleting} />}
               <Atoms.CardContent className="flex flex-col gap-4 p-6">
                 <Organisms.PostHeader postId={postId} />
                 <Organisms.PostContent postId={postId} />

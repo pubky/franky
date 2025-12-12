@@ -142,6 +142,7 @@ vi.mock('@/hooks', () => ({
     isCurrentUserRepost: false,
     originalPostId: null,
     isLoading: false,
+    hasError: false,
   })),
   useDeletePost: vi.fn(() => ({
     deletePost: vi.fn(),
@@ -224,6 +225,7 @@ describe('PostMain', () => {
       isCurrentUserRepost: true,
       originalPostId: 'orig',
       isLoading: false,
+      hasError: false,
     });
 
     render(<PostMain postId="me:repost-1" />);
