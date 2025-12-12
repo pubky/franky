@@ -22,7 +22,6 @@ export const useSettingsStore = create<SettingsStore>()(
           language: state.language,
           updatedAt: state.updatedAt,
           version: state.version,
-          hasHydrated: false, // Will be set by rehydration handler
         }),
 
         // Set hasHydrated to true after rehydration
