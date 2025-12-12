@@ -85,7 +85,6 @@ export function PostInput({
     const value = e.target.value;
     if (value.length <= POST_MAX_CHARACTER_LENGTH) {
       setContent(value);
-      onContentChange?.(value, tags);
     }
   };
 
@@ -94,10 +93,9 @@ export function PostInput({
     (newValue: string) => {
       if (newValue.length <= POST_MAX_CHARACTER_LENGTH) {
         setContent(newValue);
-        onContentChange?.(newValue, tags);
       }
     },
-    [setContent, tags, onContentChange],
+    [setContent],
   );
 
   const handleEmojiSelect = Hooks.useEmojiInsert({
@@ -162,11 +160,7 @@ export function PostInput({
                       label={tag}
                       showClose={!isSubmitting}
                       onClose={() => {
-                        setTags((prevTags) => {
-                          const newTags = prevTags.filter((_, i) => i !== index);
-                          onContentChange?.(content, newTags);
-                          return newTags;
-                        });
+                        setTags((prevTags) => prevTags.filter((_, i) => i !== index));
                       }}
                     />
                   ))}
@@ -174,14 +168,7 @@ export function PostInput({
               )}
 
               <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-                <PostInputTags
-                  tags={tags}
-                  onTagsChange={(newTags) => {
-                    setTags(newTags);
-                    onContentChange?.(content, newTags);
-                  }}
-                  disabled={isSubmitting}
-                />
+                <PostInputTags tags={tags} onTagsChange={setTags} disabled={isSubmitting} />
                 <PostInputActionBar
                   onPostClick={handleSubmit}
                   onEmojiClick={() => setShowEmojiPicker(true)}

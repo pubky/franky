@@ -2,6 +2,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { NewPostCTA } from './NewPostCTA';
 
+// Mock hooks - default to authenticated user
+const mockUseAuthStatus = vi.fn(() => ({
+  isFullyAuthenticated: true,
+  isLoading: false,
+  status: 'AUTHENTICATED',
+  hasKeypair: true,
+  hasProfile: true,
+}));
+
+vi.mock('@/hooks', () => ({
+  useAuthStatus: () => mockUseAuthStatus(),
+}));
+
 // Mock Radix UI Dialog components
 vi.mock('@radix-ui/react-dialog', () => ({
   Root: ({
@@ -118,11 +131,43 @@ vi.mock('@/libs', async (importOriginal) => {
 describe('NewPostCTA', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset to authenticated state for most tests
+    mockUseAuthStatus.mockReturnValue({
+      isFullyAuthenticated: true,
+      isLoading: false,
+      status: 'AUTHENTICATED',
+      hasKeypair: true,
+      hasProfile: true,
+    });
   });
 
   it('renders button with correct test id', () => {
     render(<NewPostCTA />);
     expect(screen.getByTestId('new-post-cta')).toBeInTheDocument();
+  });
+
+  it('returns null when user is not authenticated', () => {
+    mockUseAuthStatus.mockReturnValue({
+      isFullyAuthenticated: false,
+      isLoading: false,
+      status: 'UNAUTHENTICATED',
+      hasKeypair: false,
+      hasProfile: false,
+    });
+    const { container } = render(<NewPostCTA />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('returns null while loading auth status', () => {
+    mockUseAuthStatus.mockReturnValue({
+      isFullyAuthenticated: false,
+      isLoading: true,
+      status: 'UNAUTHENTICATED',
+      hasKeypair: false,
+      hasProfile: false,
+    });
+    const { container } = render(<NewPostCTA />);
+    expect(container.firstChild).toBeNull();
   });
 
   it('renders Plus icon', () => {

@@ -258,12 +258,12 @@ describe('DialogNewPost - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const onOpenChangeAction = vi.fn();
     const { container } = render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-    expect(container.firstChild).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 
   it('matches snapshot with open prop', () => {
     const onOpenChangeAction = vi.fn();
     const { container } = render(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
-    expect(container.firstChild).toMatchSnapshot();
+    expect(container).toMatchSnapshot();
   });
 });

@@ -2,11 +2,24 @@
 
 import { useState } from 'react';
 import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 
+/**
+ * Floating Action Button (FAB) for creating new posts.
+ *
+ * This component only renders for authenticated users to prevent
+ * showing a non-functional CTA on public routes like the landing page.
+ */
 export function NewPostCTA() {
   const [open, setOpen] = useState(false);
+  const { isFullyAuthenticated, isLoading } = Hooks.useAuthStatus();
+
+  // Only show FAB for authenticated users
+  if (isLoading || !isFullyAuthenticated) {
+    return null;
+  }
 
   return (
     <Atoms.Dialog open={open} onOpenChange={setOpen}>
