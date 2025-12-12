@@ -1,7 +1,7 @@
 import { defineConfig } from 'cypress';
 import { config } from 'dotenv';
 
-import { readdirSync, rmdir, unlink, rename, appendFileSync } from 'fs';
+import { readdirSync, rm, unlink, rename, appendFileSync } from 'fs';
 import { defaultMs } from './support/slow-down';
 
 config({ path: '../.env' });
@@ -58,7 +58,7 @@ export default defineConfig({
           console.log('deleting folder %s', folderName);
 
           return new Promise((resolve, _reject) => {
-            rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+            rm(folderName, { maxRetries: 10, recursive: true, force: true }, (err) => {
               if (err) {
                 console.error(err);
               }
