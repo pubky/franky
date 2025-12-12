@@ -1,21 +1,25 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { usePost } from './usePost';
 
 // Hoist mock data and functions
-const { mockCurrentUserId, setMockCurrentUserId, mockPostControllerCreate, mockToast } = vi.hoisted(() => {
-  const userId = { current: 'test-user-id' as string | null };
-  const postControllerCreate = vi.fn();
-  const toast = vi.fn();
-  return {
-    mockCurrentUserId: userId,
-    setMockCurrentUserId: (value: string | null) => {
-      userId.current = value;
-    },
-    mockPostControllerCreate: postControllerCreate,
-    mockToast: toast,
-  };
-});
+const { mockCurrentUserId, setMockCurrentUserId, mockPostControllerCreate, mockToast, mockLoggerError } = vi.hoisted(
+  () => {
+    const userId = { current: 'test-user-id' as string | null };
+    const postControllerCreate = vi.fn();
+    const toast = vi.fn();
+    const loggerError = vi.fn();
+    return {
+      mockCurrentUserId: userId,
+      setMockCurrentUserId: (value: string | null) => {
+        userId.current = value;
+      },
+      mockPostControllerCreate: postControllerCreate,
+      mockToast: toast,
+      mockLoggerError: loggerError,
+    };
+  },
+);
 
 // Mock Core
 vi.mock('@/core', async (importOriginal) => {
@@ -45,18 +49,23 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-// Mock console.error to avoid noise in test output
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+// Mock Libs
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    Logger: {
+      ...actual.Logger,
+      error: mockLoggerError,
+    },
+  };
+});
 
 describe('usePost', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setMockCurrentUserId('test-user-id');
     mockPostControllerCreate.mockResolvedValue(undefined);
-  });
-
-  afterEach(() => {
-    mockConsoleError.mockClear();
   });
 
   describe('Initial State', () => {
@@ -130,6 +139,10 @@ describe('usePost', () => {
       });
       expect(result.current.content).toBe('');
       expect(result.current.tags).toEqual([]);
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Reply posted',
+        description: 'Your reply has been posted successfully.',
+      });
       expect(mockOnSuccess).toHaveBeenCalled();
       expect(result.current.isSubmitting).toBe(false);
     });
@@ -227,7 +240,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to submit reply:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to submit reply:', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Reply content'); // Content should not be cleared on error
     });
@@ -313,6 +326,10 @@ describe('usePost', () => {
       });
       expect(result.current.content).toBe('');
       expect(result.current.tags).toEqual([]);
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Post created',
+        description: 'Your post has been created successfully.',
+      });
       expect(mockOnSuccess).toHaveBeenCalled();
       expect(result.current.isSubmitting).toBe(false);
     });
@@ -404,7 +421,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to create post:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to create post:', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Post content'); // Content should not be cleared on error
     });
