@@ -23,7 +23,7 @@ interface TypographyProps {
     | 'blockquote';
   children: ReactNode;
   className?: React.HTMLAttributes<HTMLElement>['className'];
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   overrideDefaults?: boolean;
   'data-testid'?: string;
 }
@@ -38,6 +38,7 @@ export function Typography({
   ...props
 }: TypographyProps & React.HTMLAttributes<HTMLElement>) {
   const sizeClasses = {
+    xs: 'text-xs font-medium',
     sm: 'text-sm font-semibold',
     md: 'text-xl font-semibold',
     lg: 'text-2xl font-bold',

@@ -1,81 +1,108 @@
+import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
+import { POST_THREAD_CONNECTOR_VARIANTS } from './PostThreadConnector.constants';
+import type { PostThreadConnectorVariant } from './PostThreadConnector.types';
+
 interface PostThreadConnectorProps {
-  height: number;
-  variant?: 'regular' | 'last' | 'gap-fix';
+  height?: number;
+  variant?: PostThreadConnectorVariant;
   'data-testid'?: string;
 }
 
-// Rounded corner SVG component (from Figma design)
-const RoundedCorner = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 12 12"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="block size-full"
-    preserveAspectRatio="none"
+const DEFAULT_HEIGHT = 96; // Default height in pixels (6rem = 96px)
+
+/**
+ * Encapsulates the vertical thread line functionality
+ * Used as a building block for thread connectors
+ */
+const ThreadLine = () => {
+  return (
+    <Atoms.Container
+      className="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border"
+      overrideDefaults
+    />
+  );
+};
+
+// Base container props shared by height-based variants
+const getBaseContainerProps = (effectiveHeight: number, variant: PostThreadConnectorVariant, dataTestId?: string) => ({
+  className: 'flex w-3 flex-col items-start',
+  style: { height: `${effectiveHeight}px` } as React.CSSProperties,
+  overrideDefaults: true as const,
+  'data-testid': dataTestId,
+  'data-variant': variant,
+});
+
+// Common inner container structure
+const InnerContainer = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
+  <Atoms.Container
+    className={Libs.cn('relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start', className)}
+    overrideDefaults
   >
-    <path d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z" fill="#303034" />
-  </svg>
+    {children}
+  </Atoms.Container>
+);
+
+// Spacer container
+const Spacer = () => <Atoms.Container className="min-h-px w-3 min-w-px shrink-0 grow basis-0" overrideDefaults />;
+
+// Dialog reply variant - completely different structure, doesn't need height
+const DialogReplyVariant = ({ dataTestId }: { dataTestId?: string }) => (
+  <Atoms.Container overrideDefaults data-testid={dataTestId} data-variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY}>
+    {/* Vertical line - 35px long from the post-card edge to the horizontal connector */}
+    <Atoms.Container
+      className="absolute top-[-13px] -left-3 h-[35px] w-px border-l border-secondary"
+      overrideDefaults
+    />
+    {/* Horizontal connector at avatar level */}
+    <Atoms.Container className="absolute top-[22px] -left-3" overrideDefaults>
+      <Libs.LineHorizontal />
+    </Atoms.Container>
+  </Atoms.Container>
 );
 
 export const PostThreadConnector = ({
   height,
-  variant = 'regular',
+  variant = POST_THREAD_CONNECTOR_VARIANTS.REGULAR,
   'data-testid': dataTestId,
 }: PostThreadConnectorProps) => {
-  // Use a minimum height to prevent invisible render
-  const effectiveHeight = height || 96;
-
-  if (variant === 'last') {
-    return (
-      <div
-        className="flex h-[96px] w-[12px] flex-col items-start"
-        style={{ height: `${effectiveHeight}px` }}
-        data-testid={dataTestId}
-        data-variant="last"
-      >
-        <div className="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start">
-          <div className="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border" />
-          <div className="relative size-[12px] shrink-0">
-            <RoundedCorner />
-          </div>
-        </div>
-        <div className="min-h-px w-[12px] min-w-px shrink-0 grow basis-0" />
-      </div>
-    );
+  // Dialog reply is special - doesn't need height calculation
+  if (variant === POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY) {
+    return <DialogReplyVariant dataTestId={dataTestId} />;
   }
 
-  if (variant === 'gap-fix') {
-    return (
-      <div
-        className="flex h-[12px] w-[12px] flex-col items-start"
-        style={{ height: `${effectiveHeight}px` }}
-        data-testid={dataTestId}
-        data-variant="gap-fix"
-      >
-        <div className="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start">
-          <div className="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border" />
-        </div>
-      </div>
-    );
-  }
+  // Calculate effective height for variants that need it
+  const effectiveHeight = height || DEFAULT_HEIGHT;
+  const baseProps = getBaseContainerProps(effectiveHeight, variant, dataTestId);
 
-  // Regular variant (default)
-  return (
-    <div
-      className="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
-      style={{ height: `${effectiveHeight}px` }}
-      data-testid={dataTestId}
-      data-variant="regular"
-    >
-      <div className="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start">
-        <div className="min-h-px w-full min-w-px shrink-0 grow basis-0" />
-        <div className="relative size-[12px] shrink-0">
-          <RoundedCorner />
-        </div>
-      </div>
-      <div className="min-h-px w-[12px] min-w-px shrink-0 grow basis-0" />
-    </div>
-  );
+  switch (variant) {
+    case POST_THREAD_CONNECTOR_VARIANTS.LAST:
+      // Last variant - shows a rounded corner at the end
+      return (
+        <Atoms.Container {...baseProps}>
+          <InnerContainer>
+            <ThreadLine />
+            <Atoms.Container className="relative size-3 shrink-0" overrideDefaults>
+              <Libs.RoundedCorner />
+            </Atoms.Container>
+          </InnerContainer>
+          <Spacer />
+        </Atoms.Container>
+      );
+
+    case POST_THREAD_CONNECTOR_VARIANTS.REGULAR:
+    default:
+      // Regular variant (default) - shows a rounded corner in the middle
+      return (
+        <Atoms.Container {...baseProps} className={Libs.cn(baseProps.className, 'border-l border-border')}>
+          <InnerContainer className="min-w-3">
+            <Atoms.Container className="min-h-px w-full min-w-px shrink-0 grow basis-0" overrideDefaults />
+            <Atoms.Container className="relative size-3 shrink-0" overrideDefaults>
+              <Libs.RoundedCorner />
+            </Atoms.Container>
+          </InnerContainer>
+          <Spacer />
+        </Atoms.Container>
+      );
+  }
 };

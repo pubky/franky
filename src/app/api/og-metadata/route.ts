@@ -18,6 +18,14 @@ import { OG_PATTERNS, extractFromHtml } from '@/libs/html';
  *
  * @see docs/adr/XXXX-secure-og-metadata-fetching.md (TODO: Create ADR)
  */
+
+const CACHE_HEADERS = {
+  headers: {
+    // Cache for 1 hour on CDN, stale-while-revalidate for 24 hours
+    'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+  },
+};
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -117,7 +125,7 @@ export async function GET(request: NextRequest) {
         headers: {
           'User-Agent':
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-          Accept: 'text/html',
+          Accept: 'text/html, image/*, video/*, audio/*',
         },
         redirect: 'follow',
       });
@@ -138,6 +146,13 @@ export async function GET(request: NextRequest) {
 
     // 9. Validate content-type
     const contentType = response.headers.get('content-type');
+    const mediaTypes = ['image', 'video', 'audio'];
+    const foundMediaType = mediaTypes.find((type) => contentType?.startsWith(type));
+
+    if (foundMediaType) {
+      return NextResponse.json({ url, type: foundMediaType }, CACHE_HEADERS);
+    }
+
     if (!contentType?.includes('text/html')) {
       return NextResponse.json({ error: 'Not HTML content' }, { status: 400 });
     }
@@ -226,13 +241,9 @@ export async function GET(request: NextRequest) {
         url: truncateMiddle(url, 40), // Truncate URL with "..." in the middle (max 40 chars)
         title: title ? truncateString(title.trim(), 50) : null, // Truncate title with "..." at the end (max 50 chars)
         image: normalizedImage,
+        type: 'website',
       },
-      {
-        headers: {
-          // Cache for 1 hour on CDN, stale-while-revalidate for 24 hours
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
-        },
-      },
+      CACHE_HEADERS,
     );
   } catch (error) {
     console.error('OG metadata fetch error:', error);

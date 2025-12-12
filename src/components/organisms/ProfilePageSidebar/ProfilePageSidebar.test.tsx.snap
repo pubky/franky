@@ -101,7 +101,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
       Feedback
     </h2>
     <div
-      class="flex flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+      class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
       data-testid="container"
     >
       <div
@@ -130,7 +130,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
         </div>
       </div>
       <button
-        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
+        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground"
         data-slot="button"
       >
         What do you think about Pubky?

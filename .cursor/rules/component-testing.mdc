@@ -303,6 +303,57 @@ This document outlines the essential rules and patterns for creating unit tests 
    
    **Note**: Icon utility functions like `getIconFromUrl` return actual icon components. Always use real implementations to ensure snapshots capture the correct icons.
 
+   ### Radix UI Components: Always Use Real Implementations
+   Radix UI components (e.g., `Dialog`, `Sheet`, `DropdownMenu`, `Popover`) should **never** be mocked in component tests. Always use real Radix UI implementations to ensure:
+   - Tests validate actual component behaviour and context requirements
+   - Portal rendering works correctly
+   - Accessibility attributes are properly applied
+   - Context enforcement is validated (e.g., `DialogTrigger` must be within `Dialog`)
+   
+   ✅ **Good: Use real Radix UI components**
+   ```typescript
+   import * as Atoms from '@/atoms';
+   import { render, screen } from '@testing-library/react';
+   import { Dialog } from './Dialog';
+   
+   it('renders dialog with proper context', () => {
+     render(
+       <Atoms.Dialog open={true}>
+         <Atoms.DialogTrigger>Open</Atoms.DialogTrigger>
+         <Atoms.DialogContent>Content</Atoms.DialogContent>
+       </Atoms.Dialog>
+     );
+     expect(screen.getByRole('dialog')).toBeInTheDocument();
+   });
+   
+   it('matches snapshot with real Radix UI', () => {
+     const { container } = render(
+       <Atoms.Dialog open={true}>
+         <Atoms.DialogContent>Content</Atoms.DialogContent>
+       </Atoms.Dialog>
+     );
+     // Use normaliseRadixIds for snapshot tests to handle dynamic IDs
+     const dialog = document.querySelector('[role="dialog"]');
+     expect(normaliseRadixIds(dialog?.parentElement)).toMatchSnapshot();
+   });
+   ```
+   
+   ❌ **Bad: Mocking Radix UI components**
+   ```typescript
+   // Don't do this - use real Radix UI components
+   vi.mock('@radix-ui/react-dialog', () => ({
+     Root: ({ children }) => <div>{children}</div>,
+     Trigger: ({ children }) => <button>{children}</button>,
+     Content: ({ children }) => <div>{children}</div>,
+   }));
+   ```
+   
+   **Important Notes**:
+   - When testing Radix UI components, ensure child components are wrapped within their required parent context (e.g., `DialogTrigger` within `Dialog`)
+   - For Portal-rendered content (like `DialogContent`), set `open={true}` to ensure content is rendered in the DOM
+   - Use `normaliseRadixIds` utility from `@/libs/utils/utils` for snapshot tests to normalise dynamic Radix UI IDs
+   - Components that use `@/atoms` wrappers (which themselves use Radix UI) should test with real atom implementations
+
 ## Testing Workflow
 
 10. **Always run new or edited tests in sandbox to generate snapshot files and check they pass, and fix if failing**
