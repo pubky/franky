@@ -64,11 +64,7 @@ const SUPPORT_LINKS = {
   telegram: 'https://t.me/pubkychat',
 } as const;
 
-export interface HelpProps {
-  className?: string;
-}
-
-export function Help({ className }: HelpProps) {
+export function Help() {
   const handleUserGuideClick = React.useCallback(() => {
     window.open(SUPPORT_LINKS.userGuide, '_blank', 'noopener,noreferrer');
   }, []);
@@ -78,7 +74,7 @@ export function Help({ className }: HelpProps) {
   }, []);
 
   return (
-    <Molecules.SettingsSectionCard className={className}>
+    <Molecules.SettingsSectionCard>
       {/* FAQ Section */}
       <div className="inline-flex items-center justify-start gap-2">
         <Libs.HelpCircle size={24} />

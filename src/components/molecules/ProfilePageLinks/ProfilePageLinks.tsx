@@ -1,30 +1,17 @@
 'use client';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 import type { ProfilePageLinksProps } from './ProfilePageLinks.types';
 
 export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
-  const [checkLinkEnabled, setCheckLinkEnabled] = useState<boolean | null>(null);
+  const { privacy } = Core.useSettingsStore();
+  const checkLinkEnabled = privacy.showConfirm;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
-
-  // Read checkLink setting from localStorage
-  useEffect(() => {
-    setCheckLinkEnabled(Libs.getStorageBoolean(Libs.STORAGE_KEYS.CHECK_LINK));
-  }, []);
-
-  // Listen for localStorage changes (from Settings or dialog)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setCheckLinkEnabled(Libs.getStorageBoolean(Libs.STORAGE_KEYS.CHECK_LINK));
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
 
   // Transform raw links from Nexus into the format we need for rendering
   const transformedLinks = useMemo(
@@ -62,10 +49,6 @@ export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
 
   const handleDialogOpenChange = useCallback((open: boolean) => {
     setDialogOpen(open);
-    // Re-read localStorage in case it was changed by the dialog
-    if (!open) {
-      setCheckLinkEnabled(Libs.getStorageBoolean(Libs.STORAGE_KEYS.CHECK_LINK));
-    }
   }, []);
 
   return (

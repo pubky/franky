@@ -28,11 +28,6 @@ describe('Account', () => {
     expect(screen.getByText('Download your data')).toBeInTheDocument();
     expect(screen.getByText('Delete your account')).toBeInTheDocument();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<Account className="custom-account" />);
-    expect(container.firstChild).toBeInTheDocument();
-  });
 });
 
 describe('Account - Snapshots', () => {

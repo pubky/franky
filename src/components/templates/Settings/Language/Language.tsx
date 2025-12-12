@@ -3,21 +3,11 @@
 import * as React from 'react';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
+import * as Config from '@/config';
 
-const languages = [
-  { code: 'english', name: 'English', flag: '🇺🇸' },
-  { code: 'spanish', name: 'Spanish', flag: '🇪🇸', disabled: true },
-  { code: 'german', name: 'German', flag: '🇩🇪', disabled: true },
-  { code: 'french', name: 'French', flag: '🇫🇷', disabled: true },
-  { code: 'italian', name: 'Italian', flag: '🇮🇹', disabled: true },
-];
-
-export interface LanguageProps {
-  className?: string;
-}
-
-export function Language({ className }: LanguageProps) {
-  const [selectedLanguage, setSelectedLanguage] = React.useState('english');
+export function Language() {
+  const { language, setLanguage } = Core.useSettingsStore();
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
@@ -32,14 +22,13 @@ export function Language({ className }: LanguageProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const selectedLang = languages.find((lang) => lang.code === selectedLanguage) || languages[0];
+  const selectedLang = Config.LANGUAGES.find((lang) => lang.code === language) || Config.LANGUAGES[0];
 
   return (
     <Molecules.SettingsSectionCard
       icon={Libs.Languages}
       title="Language"
       description="Choose your preferred language for the Pubky interface."
-      className={className}
     >
       <div className="inline-flex w-full flex-col items-start justify-start gap-2 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]">
         <p className="text-xs font-bold text-muted-foreground uppercase">Display language</p>
@@ -72,12 +61,12 @@ export function Language({ className }: LanguageProps) {
                 'animate-in py-2 duration-200 fade-in-0 zoom-in-95',
               )}
             >
-              {languages.map((lang) => (
+              {Config.LANGUAGES.map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => {
                     if (!lang.disabled) {
-                      setSelectedLanguage(lang.code);
+                      setLanguage(lang.code);
                       setIsOpen(false);
                     }
                   }}
@@ -85,12 +74,12 @@ export function Language({ className }: LanguageProps) {
                   className={Libs.cn(
                     'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
                     lang.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:bg-accent',
-                    selectedLanguage === lang.code && 'bg-accent/50',
+                    language === lang.code && 'bg-accent/50',
                   )}
                 >
                   <span className="text-2xl">{lang.flag}</span>
                   <span className="font-light">{lang.name}</span>
-                  {selectedLanguage === lang.code && <Libs.Check size={16} className="ml-auto" />}
+                  {language === lang.code && <Libs.Check size={16} className="ml-auto" />}
                 </button>
               ))}
             </div>

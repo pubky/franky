@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ProfilePageLinks } from './ProfilePageLinks';
 import * as Core from '@/core';
+import { defaultPrivacyPreferences } from '@/core/stores/settings/settings.types';
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
@@ -23,20 +24,13 @@ vi.mock('@/organisms', () => ({
   ),
 }));
 
-// Mock libs
-const mockGetStorageBoolean = vi.fn();
-const mockSetStorageBoolean = vi.fn();
-
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+// Mock settings store
+const mockUseSettingsStore = vi.fn();
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    getStorageBoolean: (...args: unknown[]) => mockGetStorageBoolean(...args),
-    setStorageBoolean: (...args: unknown[]) => mockSetStorageBoolean(...args),
-    STORAGE_KEYS: {
-      CHECK_LINK: 'checkLink',
-      BLUR_CENSORED: 'blurCensored',
-    },
+    useSettingsStore: () => mockUseSettingsStore(),
   };
 });
 
@@ -56,7 +50,13 @@ const defaultLinks: Core.NexusUserDetails['links'] = [
 describe('ProfilePageLinks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetStorageBoolean.mockReturnValue(true); // Default: checkLink enabled
+    // Default: checkLink enabled (showConfirm: true)
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true,
+      },
+    });
   });
 
   it('renders heading correctly', () => {
@@ -120,7 +120,12 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
   });
 
   it('opens dialog when clicking link and checkLink is enabled (default)', () => {
-    mockGetStorageBoolean.mockReturnValue(true);
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true,
+      },
+    });
     render(<ProfilePageLinks links={defaultLinks} />);
 
     const linkElement = screen.getByText('bitcoin.org').closest('a');
@@ -133,7 +138,12 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
   });
 
   it('opens link directly when checkLink is disabled', () => {
-    mockGetStorageBoolean.mockReturnValue(false);
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: false,
+      },
+    });
     render(<ProfilePageLinks links={defaultLinks} />);
 
     const linkElement = screen.getByText('bitcoin.org').closest('a');
@@ -145,7 +155,12 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
   });
 
   it('opens mailto links directly without dialog', () => {
-    mockGetStorageBoolean.mockReturnValue(true); // checkLink enabled
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
     const linksWithEmail: Core.NexusUserDetails['links'] = [{ title: 'Email', url: 'mailto:test@example.com' }];
     render(<ProfilePageLinks links={linksWithEmail} />);
 
@@ -156,17 +171,17 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
     const dialog = screen.getByTestId('dialog-check-link');
     expect(dialog).toHaveAttribute('data-open', 'false');
   });
-
-  it('calls getStorageBoolean on mount with STORAGE_KEYS.CHECK_LINK', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    expect(mockGetStorageBoolean).toHaveBeenCalledWith('checkLink');
-  });
 });
 
 describe('ProfilePageLinks - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetStorageBoolean.mockReturnValue(true);
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true,
+      },
+    });
   });
 
   it('matches snapshot with links', () => {

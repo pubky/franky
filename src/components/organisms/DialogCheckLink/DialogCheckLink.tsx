@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
+import * as Config from '@/config';
 import type { DialogCheckLinkProps } from './DialogCheckLink.types';
 
 export function DialogCheckLink({ open, onOpenChangeAction, linkUrl }: DialogCheckLinkProps) {
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const { setShowConfirm } = Core.useSettingsStore();
 
   // Reset checkbox when the dialog opens
   useEffect(() => {
@@ -18,7 +21,7 @@ export function DialogCheckLink({ open, onOpenChangeAction, linkUrl }: DialogChe
   const handleContinue = () => {
     // If "Don't show this again" is checked, disable the check
     if (dontShowAgain) {
-      Libs.setStorageBoolean(Libs.STORAGE_KEYS.CHECK_LINK, false);
+      setShowConfirm(false);
     }
 
     // Open link in new tab
@@ -33,7 +36,7 @@ export function DialogCheckLink({ open, onOpenChangeAction, linkUrl }: DialogChe
   };
 
   // Truncate URL for display (preserves beginning and end)
-  const displayUrl = Libs.truncateMiddle(linkUrl, 50);
+  const displayUrl = useMemo(() => Libs.truncateMiddle(linkUrl, Config.URL_TRUNCATE_LENGTH), [linkUrl]);
 
   return (
     <Atoms.Dialog open={open} onOpenChange={onOpenChangeAction}>
@@ -43,7 +46,7 @@ export function DialogCheckLink({ open, onOpenChangeAction, linkUrl }: DialogChe
           <Atoms.DialogDescription>The link is taking you to another site:</Atoms.DialogDescription>
         </Atoms.DialogHeader>
         <Atoms.Container className="gap-3">
-          <Atoms.Typography className="font-bold break-all text-foreground">{displayUrl}</Atoms.Typography>
+          <Atoms.Typography className="text-sm font-bold break-all text-foreground">{displayUrl}</Atoms.Typography>
           <Atoms.Typography className="text-sm text-muted-foreground">
             Are you sure you want to continue?
           </Atoms.Typography>

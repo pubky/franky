@@ -4,26 +4,22 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
+import type { MutedUser } from './MutedUsers.types';
 
-interface MutedUser {
-  id: string;
-  name?: string;
-}
-
-export interface MutedUsersProps {
-  className?: string;
-}
-
-export function MutedUsers({ className }: MutedUsersProps) {
-  const [mutedUsers] = React.useState<MutedUser[]>([]);
+export function MutedUsers() {
+  const { muted, removeMutedUser, clearMutedUsers } = Core.useSettingsStore();
   const [isLoading] = React.useState(false);
+
+  // Convert muted user IDs to MutedUser objects
+  // TODO: Fetch user details from database for muted IDs
+  const mutedUsers: MutedUser[] = muted.map((id) => ({ id }));
 
   return (
     <Molecules.SettingsSectionCard
       icon={Libs.VolumeX}
       title="Muted users"
       description="Here is an overview of all users you muted. You can choose to unmute users if you want."
-      className={className}
     >
       <Atoms.Container overrideDefaults className="inline-flex w-full flex-col gap-3">
         {isLoading ? (
@@ -50,7 +46,12 @@ export function MutedUsers({ className }: MutedUsersProps) {
                     </Atoms.Container>
                   </Atoms.Container>
                   <Atoms.Container overrideDefaults className="flex gap-4">
-                    <Atoms.Button id="unmute-btn" variant="secondary" size="default" onClick={() => {}}>
+                    <Atoms.Button
+                      id="unmute-btn"
+                      variant="secondary"
+                      size="default"
+                      onClick={() => removeMutedUser(mutedUser.id)}
+                    >
                       <Libs.VolumeX size={16} />
                       Unmute
                     </Atoms.Button>
@@ -61,7 +62,12 @@ export function MutedUsers({ className }: MutedUsersProps) {
             {mutedUsers.length > 1 && (
               <>
                 <Molecules.SettingsDivider className="my-6 h-px w-full bg-white/10" />
-                <Atoms.Button variant="secondary" size="default" onClick={() => {}} className="w-(--filter-bar-width)">
+                <Atoms.Button
+                  variant="secondary"
+                  size="default"
+                  onClick={() => clearMutedUsers()}
+                  className="w-(--filter-bar-width)"
+                >
                   <Libs.VolumeX size={16} />
                   Unmute all users
                 </Atoms.Button>

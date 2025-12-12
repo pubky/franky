@@ -17,11 +17,6 @@ describe('Notifications', () => {
     expect(screen.getByText('New repost to your post')).toBeInTheDocument();
     expect(screen.getByText('New friend')).toBeInTheDocument();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<Notifications className="custom-notifications" />);
-    expect(container.firstChild).toBeInTheDocument();
-  });
 });
 
 describe('Notifications - Snapshots', () => {

@@ -142,12 +142,18 @@ vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    setStorageBoolean: vi.fn(),
-    getStorageBoolean: vi.fn().mockReturnValue(true),
-    STORAGE_KEYS: {
-      CHECK_LINK: 'checkLink',
-      BLUR_CENSORED: 'blurCensored',
-    },
+  };
+});
+
+// Mock core - mock useSettingsStore
+const mockSetShowConfirm = vi.fn();
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useSettingsStore: () => ({
+      setShowConfirm: mockSetShowConfirm,
+    }),
   };
 });
 
@@ -167,6 +173,7 @@ const defaultProps = {
 describe('DialogCheckLink', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSetShowConfirm.mockClear();
   });
 
   it('renders with default props', () => {
@@ -234,18 +241,16 @@ describe('DialogCheckLink', () => {
     expect(onOpenChangeAction).toHaveBeenCalledWith(false);
   });
 
-  it('does not call setStorageBoolean when checkbox is unchecked and Continue is clicked', async () => {
-    const { setStorageBoolean } = await import('@/libs');
+  it('does not call setShowConfirm when checkbox is unchecked and Continue is clicked', () => {
     render(<DialogCheckLink {...defaultProps} />);
 
     const continueButton = screen.getByText('Continue');
     fireEvent.click(continueButton);
 
-    expect(setStorageBoolean).not.toHaveBeenCalled();
+    expect(mockSetShowConfirm).not.toHaveBeenCalled();
   });
 
-  it('calls setStorageBoolean when checkbox is checked and Continue is clicked', async () => {
-    const { setStorageBoolean, STORAGE_KEYS } = await import('@/libs');
+  it('calls setShowConfirm when checkbox is checked and Continue is clicked', () => {
     render(<DialogCheckLink {...defaultProps} />);
 
     const checkbox = screen.getByTestId('checkbox');
@@ -254,7 +259,7 @@ describe('DialogCheckLink', () => {
     const continueButton = screen.getByText('Continue');
     fireEvent.click(continueButton);
 
-    expect(setStorageBoolean).toHaveBeenCalledWith(STORAGE_KEYS.CHECK_LINK, false);
+    expect(mockSetShowConfirm).toHaveBeenCalledWith(false);
   });
 
   it('applies correct button variants', () => {
