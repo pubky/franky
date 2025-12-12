@@ -13,6 +13,13 @@ export class NotificationApplication {
    */
   static async notifications({ userId, lastRead }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
     const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
+
+    // Transform to flat notifications for entity fetching
+    const flatNotifications = notificationList.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+
+    // Fetch missing users/posts referenced in notifications
+    await this.fetchMissingEntities(flatNotifications, userId);
+
     return await Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead);
   }
 
