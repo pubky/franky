@@ -1,16 +1,13 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-import * as Hooks from '@/hooks';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
+import { usePostInput } from '@/hooks';
 import { PostInputTags } from '../PostInputTags';
 import { PostInputActionBar } from '../PostInputActionBar';
-import { useTimelineFeedContext } from '../TimelineFeed/TimelineFeed';
-import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 
 export function PostInput({
@@ -22,93 +19,31 @@ export function PostInput({
   expanded = false,
   onContentChange,
 }: PostInputProps) {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(expanded);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { currentUserPubky } = Hooks.useCurrentUserProfile();
-  const { content, setContent, tags, setTags, reply, post, isSubmitting } = Hooks.usePost();
-
-  // Notify parent of content changes
-  useEffect(() => {
-    onContentChange?.(content, tags);
-  }, [content, tags, onContentChange]);
-  const timelineFeed = useTimelineFeedContext();
-
-  // Handle expand on interaction
-  const handleExpand = useCallback(() => {
-    if (!isExpanded) {
-      setIsExpanded(true);
-    }
-  }, [isExpanded]);
-
-  // Handle click outside to collapse (only when expanded prop is false)
-  useEffect(() => {
-    // Only add listener if component can be collapsed (expanded prop is false)
-    if (expanded) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        // Only collapse if there's no content and no tags
-        if (!content.trim() && tags.length === 0) {
-          setIsExpanded(false);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [expanded, content, tags]);
-
-  // Handle submit using reply or post method from hook
-  const handleSubmit = useCallback(async () => {
-    if (!content.trim() || isSubmitting) return;
-
-    // Wrapper that prepends to timeline and calls original onSuccess
-    const handleSuccess = (createdPostId: string) => {
-      // Prepend to timeline if inside TimelineFeed context
-      timelineFeed?.prependPosts(createdPostId);
-      // Call original onSuccess callback if provided
-      onSuccess?.(createdPostId);
-    };
-
-    if (variant === POST_INPUT_VARIANT.REPLY) {
-      await reply({ postId: postId!, onSuccess: handleSuccess });
-    } else {
-      await post({ onSuccess: handleSuccess });
-    }
-  }, [content, variant, postId, reply, post, isSubmitting, onSuccess, timelineFeed]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= POST_MAX_CHARACTER_LENGTH) {
-      setContent(value);
-    }
-  };
-
-  // Wrapper to apply validation when emoji is inserted
-  const handleEmojiChange = useCallback(
-    (newValue: string) => {
-      if (newValue.length <= POST_MAX_CHARACTER_LENGTH) {
-        setContent(newValue);
-      }
-    },
-    [setContent],
-  );
-
-  const handleEmojiSelect = Hooks.useEmojiInsert({
-    inputRef: textareaRef,
-    value: content,
-    onChange: handleEmojiChange,
+  const {
+    textareaRef,
+    containerRef,
+    content,
+    tags,
+    isExpanded,
+    isSubmitting,
+    showEmojiPicker,
+    setShowEmojiPicker,
+    hasContent,
+    displayPlaceholder,
+    currentUserPubky,
+    handleExpand,
+    handleSubmit,
+    handleChange,
+    handleEmojiSelect,
+    setTags,
+  } = usePostInput({
+    variant,
+    postId,
+    onSuccess,
+    placeholder,
+    expanded,
+    onContentChange,
   });
-
-  // Check if content has non-whitespace characters
-  const hasContent = content.trim().length > 0;
-
-  // Determine placeholder text
-  const displayPlaceholder = placeholder ?? POST_INPUT_PLACEHOLDER[variant];
 
   return (
     <Atoms.Container

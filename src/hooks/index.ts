@@ -44,3 +44,4 @@ export * from './useBulkUserAvatars';
 export * from './useSearchStreamId';
 export * from './useConfirmableDialog';
 export * from './useFeedback';
+export * from './usePostInput';
