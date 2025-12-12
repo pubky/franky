@@ -660,7 +660,7 @@ describe('StreamCoordinator', () => {
     });
 
     it('re-evaluates polling when home store sort changes', async () => {
-      const { getOrFetchStreamSliceSpy } = setupIntegrationTest();
+      const { getOrFetchStreamSliceSpy, homeStoreState } = setupIntegrationTest();
 
       // Set up a real subscription spy to verify it's being used
       let subscriptionCallback: ((state: Core.HomeStore, prevState: Core.HomeStore) => void) | null = null;
