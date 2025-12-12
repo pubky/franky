@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { usePost } from './usePost';
+import * as Libs from '@/libs';
 
 // Hoist mock data and functions
 const { mockCurrentUserId, setMockCurrentUserId, mockPostControllerCreate, mockToast } = vi.hoisted(() => {
@@ -45,8 +46,16 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-// Mock console.error to avoid noise in test output
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+// Mock Next.js router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));
+
+const mockLoggerError = vi.spyOn(Libs.Logger, 'error');
 
 describe('usePost', () => {
   beforeEach(() => {
@@ -56,7 +65,7 @@ describe('usePost', () => {
   });
 
   afterEach(() => {
-    mockConsoleError.mockClear();
+    mockLoggerError.mockClear();
   });
 
   describe('Initial State', () => {
@@ -227,7 +236,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to submit reply:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to submit reply', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Reply content'); // Content should not be cleared on error
     });
@@ -404,7 +413,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to create post:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to create post', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Post content'); // Content should not be cleared on error
     });
@@ -548,6 +557,205 @@ describe('usePost', () => {
 
       expect(mockPostControllerCreate).toHaveBeenCalled();
       expect(result.current.content).toBe('');
+    });
+  });
+
+  describe('repost method', () => {
+    it('should be an async function', () => {
+      const { result } = renderHook(() => usePost());
+
+      expect(typeof result.current.repost).toBe('function');
+    });
+
+    it('should create a repost successfully with content (quote repost)', async () => {
+      const { result } = renderHook(() => usePost());
+      const mockOnSuccess = vi.fn();
+
+      act(() => {
+        result.current.setContent('This is great!');
+        result.current.setTags(['tag1']);
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: mockOnSuccess,
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        originalPostId: 'test-post-123',
+        content: 'This is great!',
+        authorId: 'test-user-id',
+        tags: ['tag1'],
+      });
+      expect(result.current.content).toBe('');
+      expect(result.current.tags).toEqual([]);
+      expect(mockOnSuccess).toHaveBeenCalled();
+      expect(result.current.isSubmitting).toBe(false);
+    });
+
+    it('should create a repost successfully without content (simple repost)', async () => {
+      const { result } = renderHook(() => usePost());
+      const mockOnSuccess = vi.fn();
+
+      act(() => {
+        result.current.setContent('');
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: mockOnSuccess,
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        originalPostId: 'test-post-123',
+        content: '',
+        authorId: 'test-user-id',
+        tags: undefined,
+      });
+      expect(result.current.content).toBe('');
+      expect(result.current.tags).toEqual([]);
+      expect(mockOnSuccess).toHaveBeenCalled();
+      expect(result.current.isSubmitting).toBe(false);
+    });
+
+    it('should handle repost with empty tags array', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setContent('Repost comment');
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        originalPostId: 'test-post-123',
+        content: 'Repost comment',
+        authorId: 'test-user-id',
+        tags: undefined,
+      });
+    });
+
+    it('should not submit repost when originalPostId is missing', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setContent('Repost content');
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: '',
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should not submit repost when currentUserId is null', async () => {
+      setMockCurrentUserId(null);
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setContent('Repost content');
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should handle repost error and show toast', async () => {
+      const { result } = renderHook(() => usePost());
+      const mockError = new Error('Failed to create repost');
+      mockPostControllerCreate.mockRejectedValueOnce(mockError);
+
+      act(() => {
+        result.current.setContent('Repost content');
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
+      });
+
+      // Toast should be called directly in catch block
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Failed to repost. Please try again.',
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
+      });
+
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to repost', mockError);
+      expect(result.current.isSubmitting).toBe(false);
+      expect(result.current.content).toBe('Repost content'); // Content should not be cleared on error
+    });
+
+    it('should set isSubmitting to true during repost submission', async () => {
+      const { result } = renderHook(() => usePost());
+      let resolvePromise: () => void;
+      const promise = new Promise<void>((resolve) => {
+        resolvePromise = resolve;
+      });
+      mockPostControllerCreate.mockReturnValueOnce(promise);
+
+      act(() => {
+        result.current.setContent('Repost content');
+      });
+
+      act(() => {
+        result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
+      });
+
+      await waitFor(() => {
+        expect(result.current.isSubmitting).toBe(true);
+      });
+
+      await act(async () => {
+        resolvePromise!();
+        await promise;
+      });
+    });
+
+    it('should trim content before submitting repost', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setContent('  Trimmed repost content  ');
+      });
+
+      await act(async () => {
+        await result.current.repost({
+          originalPostId: 'test-post-123',
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        originalPostId: 'test-post-123',
+        content: 'Trimmed repost content',
+        authorId: 'test-user-id',
+        tags: undefined,
+      });
     });
   });
 });

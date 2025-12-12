@@ -5,7 +5,9 @@ import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
-import type { TimelineFeedProps, TimelineFeedContextValue } from './TimelineFeed.types';
+import * as Providers from '@/providers';
+import * as Libs from '@/libs';
+import { TIMELINE_FEED_VARIANT, type TimelineFeedProps, type TimelineFeedContextValue } from './TimelineFeed.types';
 import { useTimelineFeedStreamId } from './useTimelineFeedStreamId';
 
 /**
@@ -76,6 +78,7 @@ export function TimelineFeed({ variant, children }: TimelineFeedProps) {
 function TimelineFeedContent({
   streamId,
   children,
+  variant,
 }: {
   streamId: Core.PostStreamId;
   variant: TimelineFeedProps['variant'];
@@ -89,6 +92,7 @@ function TimelineFeedContent({
     hasMore,
     loadMore,
     prependPosts,
+    removePosts,
   } = Hooks.useStreamPagination({
     streamId,
   });
@@ -98,6 +102,14 @@ function TimelineFeedContent({
 
   // Watch for unread posts from StreamCoordinator polling
   const { unreadPostIds } = Hooks.useUnreadPosts({ streamId });
+
+  // Determine whether optimistic prepend is safe for this feed
+  const profileContext = useContext(Providers.ProfileContext);
+  const canOptimisticallyPrepend = useMemo(() => {
+    if (variant === TIMELINE_FEED_VARIANT.HOME) return true;
+    if (variant === TIMELINE_FEED_VARIANT.PROFILE) return !!profileContext?.isOwnProfile;
+    return false;
+  }, [variant, profileContext?.isOwnProfile]);
 
   // Track scroll position to show/hide new posts button
   const isScrolled = Hooks.useIsScrolledFromTop();
@@ -133,7 +145,7 @@ function TimelineFeedContent({
       // Scroll to top smoothly
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
-      console.error('Failed to load new posts:', error);
+      Libs.Logger.error('[TimelineFeed] Failed to load new posts', error);
       Molecules.toast({
         title: 'Failed to load new posts',
         description: 'Unable to display new posts. Please try again.',
@@ -142,7 +154,9 @@ function TimelineFeedContent({
   }, [streamId, prependPosts, actualNewPostIds]);
 
   const contextValue: TimelineFeedContextValue = {
+    canOptimisticallyPrepend,
     prependPosts,
+    removePosts,
   };
 
   return (

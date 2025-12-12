@@ -5,28 +5,36 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputTags } from '../PostInputTags';
 import { PostInputActionBar } from '../PostInputActionBar';
 import { useTimelineFeedContext } from '../TimelineFeed/TimelineFeed';
-import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from './PostInput.constants';
+import {
+  POST_INPUT_VARIANT,
+  POST_INPUT_PLACEHOLDER,
+  POST_INPUT_BUTTON_LABEL,
+  POST_INPUT_BUTTON_ARIA_LABEL,
+} from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 
 export function PostInput({
   variant,
   postId,
+  originalPostId,
   onSuccess,
   placeholder,
   showThreadConnector = false,
   expanded = false,
+  hideArticle = false,
 }: PostInputProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isExpanded, setIsExpanded] = useState(expanded);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
-  const { content, setContent, tags, setTags, reply, post, isSubmitting } = Hooks.usePost();
+  const { content, setContent, tags, setTags, reply, post, repost, isSubmitting } = Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
 
   // Handle expand on interaction
@@ -56,24 +64,37 @@ export function PostInput({
     };
   }, [expanded, content, tags]);
 
-  // Handle submit using reply or post method from hook
+  // Handle submit using reply, repost, or post method from hook
   const handleSubmit = useCallback(async () => {
-    if (!content.trim() || isSubmitting) return;
+    if (isSubmitting) return;
+
+    // For replies and posts, require content. For reposts, content is optional.
+    if (variant !== POST_INPUT_VARIANT.REPOST && !content.trim()) return;
 
     // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
-      // Prepend to timeline if inside TimelineFeed context
-      timelineFeed?.prependPosts(createdPostId);
+      // Prepend to timeline only when this feed explicitly allows it
+      // (prevents injecting posts into unrelated streams like other users' profiles, bookmarks, hot, search)
+      if (timelineFeed?.canOptimisticallyPrepend) {
+        timelineFeed.prependPosts(createdPostId);
+      }
       // Call original onSuccess callback if provided
       onSuccess?.(createdPostId);
     };
 
-    if (variant === POST_INPUT_VARIANT.REPLY) {
-      await reply({ postId: postId!, onSuccess: handleSuccess });
-    } else {
-      await post({ onSuccess: handleSuccess });
+    switch (variant) {
+      case POST_INPUT_VARIANT.REPLY:
+        await reply({ postId, onSuccess: handleSuccess });
+        break;
+      case POST_INPUT_VARIANT.REPOST:
+        await repost({ originalPostId, onSuccess: handleSuccess });
+        break;
+      case POST_INPUT_VARIANT.POST:
+      default:
+        await post({ onSuccess: handleSuccess });
+        break;
     }
-  }, [content, variant, postId, reply, post, isSubmitting, onSuccess, timelineFeed]);
+  }, [content, variant, postId, originalPostId, reply, post, repost, isSubmitting, onSuccess, timelineFeed]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -104,6 +125,11 @@ export function PostInput({
   // Determine placeholder text
   const displayPlaceholder = placeholder ?? POST_INPUT_PLACEHOLDER[variant];
 
+  // Determine if post button should be disabled
+  // Reposts allow empty content, replies and posts require content
+  const requiresContent = variant !== POST_INPUT_VARIANT.REPOST;
+  const isPostDisabled = isSubmitting || (requiresContent && !content.trim());
+
   return (
     <Atoms.Container
       ref={containerRef}
@@ -132,6 +158,11 @@ export function PostInput({
           rows={1}
           disabled={isSubmitting}
         />
+
+        {/* Repost preview - shown inside the dashed border for repost variant */}
+        {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
+          <Molecules.PostPreviewCard postId={originalPostId} />
+        )}
 
         {/* Expandable section with animation */}
         <Atoms.Container
@@ -164,8 +195,12 @@ export function PostInput({
                 <PostInputActionBar
                   onPostClick={handleSubmit}
                   onEmojiClick={() => setShowEmojiPicker(true)}
-                  isPostDisabled={!content.trim() || isSubmitting}
+                  isPostDisabled={isPostDisabled}
                   isSubmitting={isSubmitting}
+                  postButtonLabel={POST_INPUT_BUTTON_LABEL[variant]}
+                  postButtonAriaLabel={POST_INPUT_BUTTON_ARIA_LABEL[variant]}
+                  postButtonIcon={variant === POST_INPUT_VARIANT.REPOST ? Libs.Repeat : undefined}
+                  hideArticle={hideArticle}
                 />
               </Atoms.Container>
             </Atoms.Container>

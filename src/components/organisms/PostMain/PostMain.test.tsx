@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as Hooks from '@/hooks';
 import { PostMain } from './PostMain';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 
@@ -72,14 +73,17 @@ vi.mock('@/organisms', () => ({
     postId,
     className,
     onReplyClick,
+    onRepostClick,
   }: {
     postId: string;
     className?: string;
     onReplyClick?: () => void;
+    onRepostClick?: () => void;
   }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
       {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+      {onRepostClick && <button onClick={onRepostClick}>Repost</button>}
     </div>
   ),
   DialogReply: ({
@@ -95,12 +99,32 @@ vi.mock('@/organisms', () => ({
       DialogReply
     </div>
   ),
+  DialogRepost: ({
+    postId,
+    open,
+    onOpenChangeAction,
+  }: {
+    postId: string;
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog-repost" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
+      DialogRepost
+    </div>
+  ),
 }));
 
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
   PostDeleted: () => <div data-testid="post-deleted">PostDeleted</div>,
+  RepostHeader: ({ onUndo, isUndoing }: { onUndo: () => void; isUndoing?: boolean }) => (
+    <div data-testid="repost-header" data-is-undoing={isUndoing}>
+      <button data-testid="repost-undo" onClick={onUndo}>
+        Undo repost
+      </button>
+    </div>
+  ),
 }));
 
 // Mock hooks
@@ -111,6 +135,18 @@ vi.mock('@/hooks', () => ({
   })),
   usePostDetails: vi.fn(() => ({
     postDetails: { content: 'Some post content' },
+  })),
+  useRepostInfo: vi.fn(() => ({
+    isRepost: false,
+    repostAuthorId: null,
+    isCurrentUserRepost: false,
+    originalPostId: null,
+    isLoading: false,
+    hasError: false,
+  })),
+  useDeletePost: vi.fn(() => ({
+    deletePost: vi.fn(),
+    isDeleting: false,
   })),
 }));
 
@@ -179,6 +215,22 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
     expect(screen.getByTestId('post-tags-list')).toBeInTheDocument();
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
+  });
+
+  it('shows repost header when post is a repost by current user', () => {
+    const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: true,
+      repostAuthorId: 'me',
+      isCurrentUserRepost: true,
+      originalPostId: 'orig',
+      isLoading: false,
+      hasError: false,
+    });
+
+    render(<PostMain postId="me:repost-1" />);
+
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
   });
 });
 

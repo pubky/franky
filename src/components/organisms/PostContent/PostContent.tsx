@@ -1,33 +1,35 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
-import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
+import * as Organisms from '@/organisms';
+import type { PostContentOrganismProps } from './PostContent.types';
 
-export interface PostContentOrganismProps {
-  postId: string;
-  className?: string;
-}
-
+/**
+ * PostContent - Wrapper component that handles repost preview rendering.
+ * Uses PostContentBase for the actual content rendering and adds repost preview logic.
+ * When a post is a repost, it renders the original post in a PostPreviewCard.
+ */
 export function PostContent({ postId, className }: PostContentOrganismProps) {
-  // Fetch post details for content
-  const postDetails = useLiveQuery(async () => {
-    return await Core.PostDetailsModel.findById(postId);
-  }, [postId]);
+  // Get repost information (uses isRepost and originalPostId for preview rendering)
+  const { isRepost, originalPostId } = Hooks.useRepostInfo(postId);
 
-  if (!postDetails) {
-    // TODO: Add skeleton loading component for PostContent
-    return <div className="text-muted-foreground">Loading content...</div>;
-  }
+  // Get post details to check if there's content (for spacing)
+  const { postDetails } = Hooks.usePostDetails(postId);
+  const hasContent = (postDetails?.content?.trim().length ?? 0) > 0;
+
+  // Check if we should render the original post preview
+  const canRenderRepostPreview = isRepost && originalPostId;
 
   return (
-    <Atoms.Container className={Libs.cn('gap-3', className)}>
-      <Molecules.PostText content={postDetails.content} />
-      <Molecules.PostLinkEmbeds content={postDetails.content} />
-      <Organisms.PostAttachments attachments={postDetails.attachments} />
-    </Atoms.Container>
+    <>
+      <Organisms.PostContentBase postId={postId} className={className} />
+
+      {/* Original post being reposted */}
+      {canRenderRepostPreview && (
+        <Molecules.PostPreviewCard postId={originalPostId} className={Libs.cn('bg-muted', hasContent && 'mt-4')} />
+      )}
+    </>
   );
 }

@@ -10,7 +10,7 @@ import * as Types from './Posts.types';
  * TimelinePosts
  *
  * Presentational component that displays posts in a timeline with infinite scroll.
- * Receives all data and handlers from parent component.
+ * Receives all data and handlers from a parent component.
  */
 export function TimelinePosts({ postIds, loading, loadingMore, error, hasMore, loadMore }: Types.TimelinePostsProps) {
   const { navigateToPost } = Hooks.usePostNavigation();
@@ -45,7 +45,7 @@ export function TimelinePosts({ postIds, loading, loadingMore, error, hasMore, l
           {!hasMore && !loadingMore && postIds.length > 0 && <Molecules.TimelineEndMessage />}
 
           {/* Infinite scroll sentinel */}
-          <Atoms.Container overrideDefaults className="h-[20px]" ref={sentinelRef} />
+          <Atoms.Container overrideDefaults className="h-5" ref={sentinelRef} />
         </Atoms.Container>
       </Atoms.Container>
     </Molecules.TimelineStateWrapper>

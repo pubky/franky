@@ -49,4 +49,9 @@ export interface UseStreamPaginationResult {
    * @param postIds - A single post ID or array of post IDs to add
    */
   prependPosts: (postIds: string | string[]) => void;
+  /**
+   * Function to remove post(s) from the timeline
+   * @param postIds - A single post ID or array of post IDs to remove
+   */
+  removePosts: (postIds: string | string[]) => void;
 }

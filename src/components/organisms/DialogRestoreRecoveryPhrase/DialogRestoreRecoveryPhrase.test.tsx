@@ -86,19 +86,23 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock Core module
-vi.mock('@/core', () => ({
-  AuthController: {
-    loginWithMnemonic: vi.fn(),
-  },
-  BootstrapController: {
-    run: vi.fn().mockResolvedValue({}),
-  },
-  useAuthStore: {
-    getState: vi.fn().mockReturnValue({
-      currentUserPubky: 'mock-user-pubkey-123',
-    }),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    AuthController: {
+      loginWithMnemonic: vi.fn(),
+    },
+    BootstrapController: {
+      run: vi.fn().mockResolvedValue({}),
+    },
+    useAuthStore: {
+      getState: vi.fn().mockReturnValue({
+        currentUserPubky: 'mock-user-pubkey-123',
+      }),
+    },
+  };
+});
 
 // Mock Molecules module
 const mockToast = vi.fn();

@@ -1,31 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostContent - Snapshots > matches snapshot with empty content 1`] = `
+exports[`PostContent - Snapshots > matches snapshot with repost 1`] = `
 <div
-  class="gap-3"
-  data-testid="container"
->
-  <div
-    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
-    data-testid="container"
-  />
-  <div
-    data-testid="post-attachments"
-  />
-</div>
-`;
-
-exports[`PostContent - Snapshots > matches snapshot with loading state 1`] = `
-<div
-  class="text-muted-foreground"
->
-  Loading content...
-</div>
-`;
-
-exports[`PostContent - Snapshots > matches snapshot with multiline content (preserves newlines) 1`] = `
-<div
-  class="gap-3"
+  class="mx-auto w-full flex-col flex gap-3"
   data-testid="container"
 >
   <div
@@ -33,24 +10,15 @@ exports[`PostContent - Snapshots > matches snapshot with multiline content (pres
     data-testid="container"
   >
     <p>
-      Line 1
-Line 2
-    </p>
-    
-
-    <p>
-      Line 3
+      Quote
     </p>
   </div>
-  <div
-    data-testid="post-attachments"
-  />
 </div>
 `;
 
 exports[`PostContent - Snapshots > matches snapshot with single-line content 1`] = `
 <div
-  class="gap-3"
+  class="mx-auto w-full flex-col flex gap-3"
   data-testid="container"
 >
   <div
@@ -61,48 +29,5 @@ exports[`PostContent - Snapshots > matches snapshot with single-line content 1`]
       One liner
     </p>
   </div>
-  <div
-    data-testid="post-attachments"
-  />
-</div>
-`;
-
-exports[`PostContent - Snapshots > matches snapshot with special characters in content 1`] = `
-<div
-  class="gap-3"
-  data-testid="container"
->
-  <div
-    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
-    data-testid="container"
-  >
-    <p>
-      Content with 
-      &lt;tags&gt;
-       & "quotes" & 'apostrophes'
-    </p>
-  </div>
-  <div
-    data-testid="post-attachments"
-  />
-</div>
-`;
-
-exports[`PostContent - Snapshots > matches snapshot with very long content 1`] = `
-<div
-  class="gap-3"
-  data-testid="container"
->
-  <div
-    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
-    data-testid="container"
-  >
-    <p>
-      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-    </p>
-  </div>
-  <div
-    data-testid="post-attachments"
-  />
 </div>
 `;

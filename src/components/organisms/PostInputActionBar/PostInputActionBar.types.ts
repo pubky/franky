@@ -8,6 +8,10 @@ export interface PostInputActionBarProps {
   onPostClick?: () => void;
   isPostDisabled?: boolean;
   isSubmitting?: boolean;
+  postButtonLabel?: string;
+  postButtonAriaLabel?: string;
+  postButtonIcon?: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  hideArticle?: boolean;
 }
 
 export interface ActionButtonConfig {
