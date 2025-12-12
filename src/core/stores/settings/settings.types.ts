@@ -27,7 +27,6 @@ export interface SettingsState {
   privacy: PrivacyPreferences;
   muted: string[];
   language: string;
-  hasHydrated: boolean;
   updatedAt: number;
   version: number;
 }
@@ -53,7 +52,6 @@ export interface SettingsActions {
   // Language actions
   setLanguage: (language: string) => void;
   // General actions
-  setHydrated: (hasHydrated: boolean) => void;
   reset: () => void;
 }
 
@@ -88,7 +86,6 @@ export const settingsInitialState: SettingsState = {
   privacy: defaultPrivacyPreferences,
   muted: [],
   language: 'en',
-  hasHydrated: false,
   updatedAt: Date.now(),
   version: 1,
 };
@@ -109,6 +106,5 @@ export enum SettingsActionTypes {
   SET_MUTED_USERS = 'SET_MUTED_USERS',
   CLEAR_MUTED_USERS = 'CLEAR_MUTED_USERS',
   SET_LANGUAGE = 'SET_LANGUAGE',
-  SET_HYDRATED = 'SET_HYDRATED',
   RESET = 'RESET',
 }

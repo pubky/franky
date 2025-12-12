@@ -177,15 +177,10 @@ export const createSettingsActions = (set: ZustandSet<SettingsStore>): SettingsA
   },
 
   // General actions
-  setHydrated: (hasHydrated) => {
-    set({ hasHydrated }, false, SettingsActionTypes.SET_HYDRATED);
-  },
-
   reset: () => {
     set(
       (state) => ({
         ...settingsInitialState,
-        hasHydrated: state.hasHydrated, // Preserve hydration state during reset
         version: state.version, // Preserve version during reset
         updatedAt: Date.now(), // Update timestamp on reset
       }),

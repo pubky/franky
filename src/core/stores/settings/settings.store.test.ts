@@ -29,7 +29,6 @@ describe('SettingsStore', () => {
       privacy: defaultPrivacyPreferences,
       muted: [],
       language: 'en',
-      hasHydrated: false,
       updatedAt: Date.now(),
       version: 1,
     });
@@ -48,7 +47,6 @@ describe('SettingsStore', () => {
         privacy: defaultPrivacyPreferences,
         muted: [],
         language: 'en',
-        hasHydrated: false,
         updatedAt: initialTimestamp,
         version: 1,
       });
@@ -59,7 +57,6 @@ describe('SettingsStore', () => {
       expect(state.privacy).toEqual(defaultPrivacyPreferences);
       expect(state.muted).toEqual([]);
       expect(state.language).toBe('en');
-      expect(state.hasHydrated).toBe(false);
       expect(state.version).toBe(1);
       expect(state.updatedAt).toBeGreaterThanOrEqual(initialTimestamp);
     });
@@ -251,34 +248,6 @@ describe('SettingsStore', () => {
     });
   });
 
-  describe('Hydration', () => {
-    it('should set hydrated state', () => {
-      const store = useSettingsStore.getState();
-
-      store.setHydrated(true);
-      expect(useSettingsStore.getState().hasHydrated).toBe(true);
-
-      store.setHydrated(false);
-      expect(useSettingsStore.getState().hasHydrated).toBe(false);
-    });
-
-    it('should preserve hydration state during reset', () => {
-      const store = useSettingsStore.getState();
-
-      // Set some state and hydrate
-      store.setLanguage('es');
-      store.setHydrated(true);
-
-      // Reset
-      store.reset();
-
-      // Hydration state should be preserved
-      expect(useSettingsStore.getState().hasHydrated).toBe(true);
-      // Other state should be reset
-      expect(useSettingsStore.getState().language).toBe('en');
-    });
-  });
-
   describe('Store Reset', () => {
     it('should reset store to default state', () => {
       const store = useSettingsStore.getState();
@@ -288,14 +257,12 @@ describe('SettingsStore', () => {
       store.setShowConfirm(false);
       store.addMutedUser('user-123');
       store.setLanguage('es');
-      store.setHydrated(true);
 
       // Verify state is set
       expect(useSettingsStore.getState().notifications.follow).toBe(false);
       expect(useSettingsStore.getState().privacy.showConfirm).toBe(false);
       expect(useSettingsStore.getState().muted).toContain('user-123');
       expect(useSettingsStore.getState().language).toBe('es');
-      expect(useSettingsStore.getState().hasHydrated).toBe(true);
 
       const beforeReset = useSettingsStore.getState();
       const beforeResetVersion = beforeReset.version;
@@ -306,12 +273,11 @@ describe('SettingsStore', () => {
 
       const afterReset = useSettingsStore.getState();
 
-      // Verify state is reset (except hydration and version)
+      // Verify state is reset (except version)
       expect(afterReset.notifications).toEqual(defaultNotificationPreferences);
       expect(afterReset.privacy).toEqual(defaultPrivacyPreferences);
       expect(afterReset.muted).toEqual([]);
       expect(afterReset.language).toBe('en');
-      expect(afterReset.hasHydrated).toBe(true); // Preserved
       expect(afterReset.version).toBe(beforeResetVersion); // Preserved
       expect(afterReset.updatedAt).toBeGreaterThanOrEqual(beforeResetTimestamp); // Updated
     });

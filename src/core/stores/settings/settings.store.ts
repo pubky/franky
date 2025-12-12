@@ -23,13 +23,6 @@ export const useSettingsStore = create<SettingsStore>()(
           updatedAt: state.updatedAt,
           version: state.version,
         }),
-
-        // Set hasHydrated to true after rehydration
-        onRehydrateStorage: () => (state) => {
-          if (state) {
-            state.setHydrated(true);
-          }
-        },
       },
     ),
     {
