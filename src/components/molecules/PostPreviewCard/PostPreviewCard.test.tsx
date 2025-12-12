@@ -21,8 +21,8 @@ vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    RepostHeader: vi.fn(({ isCurrentUserRepost, isUndoing }: { isCurrentUserRepost: boolean; isUndoing?: boolean }) => (
-      <div data-testid="repost-header" data-is-current-user={isCurrentUserRepost} data-is-undoing={isUndoing}>
+    RepostHeader: vi.fn(({ isUndoing }: { isUndoing?: boolean }) => (
+      <div data-testid="repost-header" data-is-undoing={isUndoing}>
         RepostHeader
       </div>
     )),
@@ -59,7 +59,10 @@ describe('PostPreviewCard', () => {
   it('renders with required props', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
+      repostAuthorId: null,
       isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -75,7 +78,10 @@ describe('PostPreviewCard', () => {
   it('applies CardContent classes', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
+      repostAuthorId: null,
       isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -90,7 +96,10 @@ describe('PostPreviewCard', () => {
   it('renders children when provided', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
+      repostAuthorId: null,
       isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -109,7 +118,10 @@ describe('PostPreviewCard', () => {
   it('does not render children when not provided', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
+      repostAuthorId: null,
       isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -125,7 +137,10 @@ describe('PostPreviewCard - Snapshots', () => {
   it('matches snapshot with default props', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
+      repostAuthorId: null,
       isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -138,7 +153,10 @@ describe('PostPreviewCard - Snapshots', () => {
   it('matches snapshot with children', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: false,
+      repostAuthorId: null,
       isCurrentUserRepost: false,
+      originalPostId: null,
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),
@@ -156,7 +174,10 @@ describe('PostPreviewCard - Snapshots', () => {
     const deletePost = vi.fn();
     mockUseRepostInfo.mockReturnValue({
       isRepost: true,
+      repostAuthorId: 'current-user',
       isCurrentUserRepost: true,
+      originalPostId: 'original:post',
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost,
@@ -172,7 +193,10 @@ describe('PostPreviewCard - Snapshots', () => {
   it('does not render repost header when reposted by someone else', () => {
     mockUseRepostInfo.mockReturnValue({
       isRepost: true,
+      repostAuthorId: 'other-user',
       isCurrentUserRepost: false,
+      originalPostId: 'original:post',
+      isLoading: false,
     });
     mockUseDeletePost.mockReturnValue({
       deletePost: vi.fn(),

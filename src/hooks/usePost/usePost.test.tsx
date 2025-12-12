@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { usePost } from './usePost';
+import * as Libs from '@/libs';
 
 // Hoist mock data and functions
 const { mockCurrentUserId, setMockCurrentUserId, mockPostControllerCreate, mockToast } = vi.hoisted(() => {
@@ -54,8 +55,7 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock console.error to avoid noise in test output
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+const mockLoggerError = vi.spyOn(Libs.Logger, 'error');
 
 describe('usePost', () => {
   beforeEach(() => {
@@ -65,7 +65,7 @@ describe('usePost', () => {
   });
 
   afterEach(() => {
-    mockConsoleError.mockClear();
+    mockLoggerError.mockClear();
   });
 
   describe('Initial State', () => {
@@ -236,7 +236,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to submit reply:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to submit reply', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Reply content'); // Content should not be cleared on error
     });
@@ -413,7 +413,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to create post:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to create post', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Post content'); // Content should not be cleared on error
     });
@@ -702,7 +702,7 @@ describe('usePost', () => {
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
-      expect(mockConsoleError).toHaveBeenCalledWith('Failed to repost:', mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to repost', mockError);
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.content).toBe('Repost content'); // Content should not be cleared on error
     });

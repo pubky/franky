@@ -33,7 +33,6 @@ export function useDeletePost(postId: string): UseDeletePostResult {
     async (targetPostId?: string) => {
       const idToDelete = targetPostId ?? postId;
       if (isDeleting) return;
-      if (!idToDelete) return;
 
       setIsDeleting(true);
 
@@ -47,19 +46,27 @@ export function useDeletePost(postId: string): UseDeletePostResult {
           description: 'Your post has been deleted',
         });
       } catch (error) {
-        console.error('Failed to delete post:', error);
+        Libs.Logger.error('[useDeletePost] Failed to delete post', error);
 
         // Check if post still exists before restoring (prevents ghost posts)
-        // If local DB deletion succeeded but homeserver sync failed, post won't exist
-        const postStillExists = await Core.PostController.getPostDetails({ compositeId: idToDelete });
+        // If local DB deletion succeeded but homeserver sync failed, post won't exist.
+        // If we cannot verify, prefer restoring to avoid silently dropping content from the UI.
+        let postStillExists: Core.PostDetailsModelSchema | null | 'unknown' = 'unknown';
+        try {
+          postStillExists = await Core.PostController.getPostDetails({ compositeId: idToDelete });
+        } catch (detailsError) {
+          Libs.Logger.warn('[useDeletePost] Failed to verify post existence after delete failure', {
+            idToDelete,
+            detailsError,
+          });
+        }
 
-        if (postStillExists) {
-          // Post still exists in DB, safe to restore to timeline
+        if (postStillExists === 'unknown' || postStillExists) {
           timelineFeed?.prependPosts(idToDelete);
         } else {
           // Post was already deleted from DB (local-first write succeeded)
           // Don't restore to avoid ghost posts - homeserver will sync eventually
-          Libs.Logger.warn('Post already deleted from DB, not restoring to timeline', { idToDelete });
+          Libs.Logger.warn('[useDeletePost] Post already deleted from DB, not restoring to timeline', { idToDelete });
         }
 
         toast({

@@ -4,48 +4,36 @@ import { useRepostInfo } from './useRepostInfo';
 import * as Core from '@/core';
 
 // Hoist mock data
-const { mockRelationships, setMockRelationships, mockOriginalPostId, setMockOriginalPostId } = vi.hoisted(() => {
+const { mockRelationships, setMockRelationships } = vi.hoisted(() => {
   const relationshipsData = { current: undefined as Core.PostRelationshipsModelSchema | null | undefined };
-  const originalPostIdData = { current: undefined as string | null | undefined };
   return {
     mockRelationships: relationshipsData,
     setMockRelationships: (value: Core.PostRelationshipsModelSchema | null | undefined) => {
       relationshipsData.current = value;
     },
-    mockOriginalPostId: originalPostIdData,
-    setMockOriginalPostId: (value: string | null | undefined) => {
-      originalPostIdData.current = value;
-    },
   };
 });
-
-// Track which query is being called
-let queryCallIndex = 0;
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn((_queryFn, _deps) => {
-    queryCallIndex++;
-    // First call is relationships, second is originalPostId
-    if (queryCallIndex === 1 || queryCallIndex % 2 === 1) {
-      return mockRelationships.current;
-    }
-    return mockOriginalPostId.current;
+    return mockRelationships.current;
   }),
 }));
 
 // Mock Core
-const { mockFindById, mockBuildCompositeIdFromPubkyUri } = vi.hoisted(() => ({
-  mockFindById: vi.fn(),
+const { mockBuildCompositeIdFromPubkyUri, mockGetPostRelationships } = vi.hoisted(() => ({
   mockBuildCompositeIdFromPubkyUri: vi.fn(),
+  mockGetPostRelationships: vi.fn(),
 }));
 
 vi.mock('@/core', async () => {
   const actual = await vi.importActual('@/core');
   return {
     ...actual,
-    PostRelationshipsModel: {
-      findById: mockFindById,
+    PostController: {
+      // Included for safety if the mocked useLiveQuery ever executes the queryFn.
+      getPostRelationships: mockGetPostRelationships,
     },
     buildCompositeIdFromPubkyUri: mockBuildCompositeIdFromPubkyUri,
   };
@@ -69,10 +57,8 @@ describe('useRepostInfo', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    queryCallIndex = 0; // Reset call index
     setMockRelationships(undefined);
-    setMockOriginalPostId(undefined);
-    mockFindById.mockResolvedValue(null);
+    mockGetPostRelationships.mockResolvedValue(null);
     mockBuildCompositeIdFromPubkyUri.mockReturnValue('original-author:original-post');
   });
 
@@ -100,7 +86,6 @@ describe('useRepostInfo', () => {
 
   it('returns isRepost true when post is a repost', () => {
     setMockRelationships({ id: mockPostId, reposted: mockRepostedUri, replied: null });
-    setMockOriginalPostId('original-author:original-post');
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 
@@ -113,7 +98,6 @@ describe('useRepostInfo', () => {
   it('returns repostAuthorId correctly from postId', () => {
     const repostPostId = 'repost-author:repost-post';
     setMockRelationships({ id: repostPostId, reposted: mockRepostedUri, replied: null });
-    setMockOriginalPostId('original-author:original-post');
 
     const { result } = renderHook(() => useRepostInfo(repostPostId));
 
@@ -123,7 +107,6 @@ describe('useRepostInfo', () => {
   it('returns isCurrentUserRepost true when current user reposted', () => {
     const currentUserPostId = `${mockCurrentUserPubky}:post-123`;
     setMockRelationships({ id: currentUserPostId, reposted: mockRepostedUri, replied: null });
-    setMockOriginalPostId('original-author:original-post');
 
     const { result } = renderHook(() => useRepostInfo(currentUserPostId));
 
@@ -134,7 +117,6 @@ describe('useRepostInfo', () => {
   it('returns isCurrentUserRepost false when different user reposted', () => {
     const otherUserPostId = 'other-user:post-123';
     setMockRelationships({ id: otherUserPostId, reposted: mockRepostedUri, replied: null });
-    setMockOriginalPostId('original-author:original-post');
 
     const { result } = renderHook(() => useRepostInfo(otherUserPostId));
 
@@ -144,7 +126,6 @@ describe('useRepostInfo', () => {
 
   it('returns originalPostId null when relationships.reposted is null', () => {
     setMockRelationships({ id: mockPostId, reposted: null, replied: null });
-    setMockOriginalPostId(null);
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 
@@ -154,7 +135,7 @@ describe('useRepostInfo', () => {
   it('returns originalPostId when relationships.reposted exists', () => {
     const originalPostId = 'original-author:original-post';
     setMockRelationships({ id: mockPostId, reposted: mockRepostedUri, replied: null });
-    setMockOriginalPostId(originalPostId);
+    mockBuildCompositeIdFromPubkyUri.mockReturnValueOnce(originalPostId);
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 
@@ -164,7 +145,6 @@ describe('useRepostInfo', () => {
   it('handles postId with multiple colons correctly', () => {
     const complexPostId = 'author:post:with:colons';
     setMockRelationships({ id: complexPostId, reposted: mockRepostedUri, replied: null });
-    setMockOriginalPostId('original-author:original-post');
 
     const { result } = renderHook(() => useRepostInfo(complexPostId));
 

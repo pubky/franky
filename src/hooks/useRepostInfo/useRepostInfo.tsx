@@ -24,22 +24,16 @@ import type { UseRepostInfoResult } from './useRepostInfo.types';
 export function useRepostInfo(postId: string): UseRepostInfoResult {
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
 
-  // Check if this is a repost
+  // Read relationships via controller (keeps UI layer from reaching into models directly)
   const relationships = useLiveQuery(async () => {
-    return await Core.PostRelationshipsModel.findById(postId);
+    return await Core.PostController.getPostRelationships({ compositeId: postId });
   }, [postId]);
 
-  // Get original post ID if this is a repost
-  const originalPostId = useLiveQuery(async () => {
-    if (!relationships?.reposted) return null;
-    return Core.buildCompositeIdFromPubkyUri({
-      uri: relationships.reposted,
-      domain: Core.CompositeIdDomain.POSTS,
-    });
-  }, [relationships?.reposted]);
-
   const isRepost = !!relationships?.reposted;
-  const repostAuthorId = isRepost ? postId.split(':')[0] : null;
+  const originalPostId = relationships?.reposted
+    ? Core.buildCompositeIdFromPubkyUri({ uri: relationships.reposted, domain: Core.CompositeIdDomain.POSTS })
+    : null;
+  const repostAuthorId = isRepost ? Core.parseCompositeId(postId).pubky : null;
   const isCurrentUserRepost = repostAuthorId !== null && currentUserPubky === repostAuthorId;
   const isLoading = relationships === undefined;
 
@@ -47,7 +41,7 @@ export function useRepostInfo(postId: string): UseRepostInfoResult {
     isRepost,
     repostAuthorId,
     isCurrentUserRepost,
-    originalPostId: originalPostId ?? null,
+    originalPostId,
     isLoading,
   };
 }

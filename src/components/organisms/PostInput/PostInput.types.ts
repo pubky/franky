@@ -1,17 +1,9 @@
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 
-export type PostInputVariant = (typeof POST_INPUT_VARIANT)[keyof typeof POST_INPUT_VARIANT];
-
-export interface PostInputProps {
-  /** Variant determines if this is a reply, repost, or a new post */
-  variant: PostInputVariant;
-  /** Optional parent post ID (required if variant is 'reply') */
-  postId?: string;
-  /** Optional original post ID (required if variant is 'repost') */
-  originalPostId?: string;
+interface PostInputBaseProps {
   /** Callback after successful post, receives the created post ID */
   onSuccess?: (createdPostId: string) => void;
-  /** Custom placeholder text (default: "What's on your mind?" for create, "Write a reply..." for reply) */
+  /** Custom placeholder text (default depends on variant) */
   placeholder?: string;
   /** Show the thread connector (for replies, default: false) */
   showThreadConnector?: boolean;
@@ -25,3 +17,25 @@ export interface PostInputProps {
   /** Hide article button in action bar (default: false) */
   hideArticle?: boolean;
 }
+
+export type PostInputProps =
+  | (PostInputBaseProps & {
+      /** Variant: reply */
+      variant: typeof POST_INPUT_VARIANT.REPLY;
+      /** Parent post ID (required for replies) */
+      postId: string;
+      originalPostId?: never;
+    })
+  | (PostInputBaseProps & {
+      /** Variant: repost */
+      variant: typeof POST_INPUT_VARIANT.REPOST;
+      /** Original post ID (required for reposts) */
+      originalPostId: string;
+      postId?: never;
+    })
+  | (PostInputBaseProps & {
+      /** Variant: new root post */
+      variant: typeof POST_INPUT_VARIANT.POST;
+      postId?: never;
+      originalPostId?: never;
+    });

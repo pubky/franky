@@ -118,16 +118,8 @@ vi.mock('@/organisms', () => ({
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
   PostDeleted: () => <div data-testid="post-deleted">PostDeleted</div>,
-  RepostHeader: ({
-    isCurrentUserRepost,
-    onUndo,
-    isUndoing,
-  }: {
-    isCurrentUserRepost: boolean;
-    onUndo?: () => void;
-    isUndoing?: boolean;
-  }) => (
-    <div data-testid="repost-header" data-is-current-user={isCurrentUserRepost} data-is-undoing={isUndoing}>
+  RepostHeader: ({ onUndo, isUndoing }: { onUndo: () => void; isUndoing?: boolean }) => (
+    <div data-testid="repost-header" data-is-undoing={isUndoing}>
       <button data-testid="repost-undo" onClick={onUndo}>
         Undo repost
       </button>
@@ -146,8 +138,10 @@ vi.mock('@/hooks', () => ({
   })),
   useRepostInfo: vi.fn(() => ({
     isRepost: false,
+    repostAuthorId: null,
     isCurrentUserRepost: false,
     originalPostId: null,
+    isLoading: false,
   })),
   useDeletePost: vi.fn(() => ({
     deletePost: vi.fn(),
@@ -226,9 +220,11 @@ describe('PostMain', () => {
     const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
     mockUseRepostInfo.mockReturnValue({
       isRepost: true,
+      repostAuthorId: 'me',
       isCurrentUserRepost: true,
       originalPostId: 'orig',
-    } as never);
+      isLoading: false,
+    });
 
     render(<PostMain postId="me:repost-1" />);
 

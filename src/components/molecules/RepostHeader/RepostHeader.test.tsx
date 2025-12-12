@@ -68,29 +68,29 @@ vi.mock('@/libs', async (importOriginal) => {
 
 describe('RepostHeader', () => {
   it('renders text and icon', () => {
-    render(<RepostHeader isCurrentUserRepost={false} />);
+    render(<RepostHeader onUndo={vi.fn()} />);
 
     expect(screen.getByTestId('repost-header')).toBeInTheDocument();
     expect(screen.getByTestId('repeat-icon')).toBeInTheDocument();
     expect(screen.getByText('You reposted')).toBeInTheDocument();
   });
 
-  it('shows undo button when current user reposted', () => {
-    render(<RepostHeader isCurrentUserRepost={true} />);
+  it('shows undo button', () => {
+    render(<RepostHeader onUndo={vi.fn()} />);
 
     expect(screen.getByRole('button', { name: 'Undo repost' })).toBeInTheDocument();
   });
 
   it('calls onUndo when undo button clicked', () => {
     const onUndo = vi.fn();
-    render(<RepostHeader isCurrentUserRepost={true} onUndo={onUndo} />);
+    render(<RepostHeader onUndo={onUndo} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Undo repost' }));
     expect(onUndo).toHaveBeenCalledTimes(1);
   });
 
   it('disables undo button when undoing', () => {
-    render(<RepostHeader isCurrentUserRepost={true} isUndoing={true} />);
+    render(<RepostHeader onUndo={vi.fn()} isUndoing={true} />);
 
     const button = screen.getByRole('button', { name: 'Undoing repost...' });
     expect(button).toBeDisabled();

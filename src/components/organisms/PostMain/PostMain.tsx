@@ -58,13 +58,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
             <Molecules.PostDeleted />
           ) : (
             <>
-              {showRepostHeader && (
-                <Molecules.RepostHeader
-                  isCurrentUserRepost={isCurrentUserRepost}
-                  onUndo={() => deletePost()}
-                  isUndoing={isDeleting}
-                />
-              )}
+              {showRepostHeader && <Molecules.RepostHeader onUndo={() => deletePost()} isUndoing={isDeleting} />}
               <Atoms.CardContent className="flex flex-col gap-4 p-6">
                 <Organisms.PostHeader postId={postId} />
                 <Organisms.PostContent postId={postId} />

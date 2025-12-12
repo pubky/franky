@@ -30,7 +30,6 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
     data-testid="card"
   >
     <div
-      data-is-current-user="true"
       data-is-undoing="false"
       data-testid="repost-header"
     >
@@ -109,7 +108,6 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     data-testid="card"
   >
     <div
-      data-is-current-user="true"
       data-is-undoing="false"
       data-testid="repost-header"
     >
@@ -175,7 +173,6 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
     data-testid="card"
   >
     <div
-      data-is-current-user="true"
       data-is-undoing="false"
       data-testid="repost-header"
     >
@@ -241,7 +238,6 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
     data-testid="card"
   >
     <div
-      data-is-current-user="true"
       data-is-undoing="false"
       data-testid="repost-header"
     >

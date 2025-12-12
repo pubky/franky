@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
+import * as Libs from '@/libs';
 
 interface UsePostReplyOptions {
   postId: string;
@@ -83,7 +84,7 @@ export function usePost() {
         showSuccessToast('Reply posted!', 'Your reply has been created.');
         onSuccess?.(createdPostId);
       } catch (err) {
-        console.error('Failed to submit reply:', err);
+        Libs.Logger.error('[usePost] Failed to submit reply', err);
         showErrorToast('Failed to post reply. Please try again.');
       } finally {
         setIsSubmitting(false);
@@ -109,7 +110,7 @@ export function usePost() {
         showSuccessToast('Post created!', 'Your post has been created.');
         onSuccess?.(createdPostId);
       } catch (err) {
-        console.error('Failed to create post:', err);
+        Libs.Logger.error('[usePost] Failed to create post', err);
         showErrorToast('Failed to create post. Please try again.');
       } finally {
         setIsSubmitting(false);
@@ -136,7 +137,7 @@ export function usePost() {
         showSuccessToast('Repost successful!', 'Your repost has been created.');
         onSuccess?.(createdPostId);
       } catch (err) {
-        console.error('Failed to repost:', err);
+        Libs.Logger.error('[usePost] Failed to repost', err);
         showErrorToast('Failed to repost. Please try again.');
       } finally {
         setIsSubmitting(false);

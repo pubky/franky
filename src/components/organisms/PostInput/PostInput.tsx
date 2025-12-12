@@ -73,18 +73,21 @@ export function PostInput({
 
     // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
-      // Prepend to timeline if inside TimelineFeed context
-      timelineFeed?.prependPosts(createdPostId);
+      // Prepend to timeline only when this feed explicitly allows it
+      // (prevents injecting posts into unrelated streams like other users' profiles, bookmarks, hot, search)
+      if (timelineFeed?.canOptimisticallyPrepend) {
+        timelineFeed.prependPosts(createdPostId);
+      }
       // Call original onSuccess callback if provided
       onSuccess?.(createdPostId);
     };
 
     switch (variant) {
       case POST_INPUT_VARIANT.REPLY:
-        await reply({ postId: postId!, onSuccess: handleSuccess });
+        await reply({ postId, onSuccess: handleSuccess });
         break;
       case POST_INPUT_VARIANT.REPOST:
-        await repost({ originalPostId: originalPostId!, onSuccess: handleSuccess });
+        await repost({ originalPostId, onSuccess: handleSuccess });
         break;
       case POST_INPUT_VARIANT.POST:
       default:

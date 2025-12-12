@@ -14,13 +14,7 @@ export function PostPreviewCard({ postId, children, isRepostPreview = false }: P
 
   return (
     <>
-      {showRepostHeader && (
-        <Molecules.RepostHeader
-          isCurrentUserRepost={isCurrentUserRepost}
-          onUndo={() => deletePost()}
-          isUndoing={isDeleting}
-        />
-      )}
+      {showRepostHeader && <Molecules.RepostHeader onUndo={() => deletePost()} isUndoing={isDeleting} />}
       <Atoms.CardContent className="flex flex-col gap-4 p-6">
         <Organisms.PostHeader postId={postId} />
         <Organisms.PostContent postId={postId} isRepostPreview={isRepostPreview} />
