@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # https://github.com/pubky/pubky-stack
-      PUBKY_STACK_REF: ce44db8342d7e0673eba8f6862ba11e163a1ff9b
+      PUBKY_STACK_REF: fc32a86b072715c2261a553e50509acf68b19091
     strategy:
       fail-fast: false
       matrix:
@@ -135,7 +135,8 @@ jobs:
           NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD=admin
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
-          SUPPORT_ACCOUNT_ID=1" > .env
+          SUPPORT_ACCOUNT_ID=${{ secrets.SUPPORT_ACCOUNT_ID }}
+          SUPPORT_FEEDBACK_INBOX_ID=${{ secrets.SUPPORT_FEEDBACK_INBOX_ID }}" > .env
           npm ci
           npm run build
 
