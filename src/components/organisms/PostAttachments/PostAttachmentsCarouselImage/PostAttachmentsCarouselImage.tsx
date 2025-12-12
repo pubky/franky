@@ -2,7 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import { useState } from 'react';
-import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
+import type { AttachmentConstructed } from '../PostAttachments.types';
 
 type PostAttachmentsCarouselImageProps = {
   image: AttachmentConstructed;

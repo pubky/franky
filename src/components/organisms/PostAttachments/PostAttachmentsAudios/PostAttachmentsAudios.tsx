@@ -1,5 +1,5 @@
 import * as Atoms from '@/atoms';
-import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
+import type { AttachmentConstructed } from '../PostAttachments.types';
 
 type PostAttachmentsAudiosProps = {
   audios: AttachmentConstructed[];

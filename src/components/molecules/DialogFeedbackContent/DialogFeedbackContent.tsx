@@ -1,7 +1,6 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
 import type { DialogFeedbackContentProps } from './DialogFeedbackContent.types';
@@ -12,7 +11,7 @@ export function DialogFeedbackContent({
   submit,
   isSubmitting,
   hasContent,
-  currentUserPubky,
+  children,
 }: DialogFeedbackContentProps) {
   return (
     <>
@@ -23,12 +22,7 @@ export function DialogFeedbackContent({
       <Atoms.Container className="gap-3">
         <Atoms.Container overrideDefaults className="rounded-md border border-dashed border-input p-6">
           <Atoms.Container className="gap-4" overrideDefaults>
-            <Organisms.PostHeader
-              postId={currentUserPubky}
-              isReplyInput={true}
-              characterCount={feedback.length > 0 ? feedback.length : undefined}
-              maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}
-            />
+            {children}
 
             <Atoms.Textarea
               placeholder="What do you think about Pubky? Any suggestions?"

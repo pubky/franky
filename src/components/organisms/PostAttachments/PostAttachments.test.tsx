@@ -7,16 +7,26 @@ import * as Core from '@/core';
 const mockToast = vi.fn();
 vi.mock('@/molecules', () => ({
   useToast: () => ({ toast: mockToast }),
+}));
+
+// Mock local sub-components
+vi.mock('./PostAttachmentsImagesAndVideos', () => ({
   PostAttachmentsImagesAndVideos: vi.fn(({ imagesAndVideos }) => (
     <div data-testid="post-attachments-images-and-videos" data-count={imagesAndVideos.length}>
       ImagesAndVideos
     </div>
   )),
+}));
+
+vi.mock('./PostAttachmentsAudios', () => ({
   PostAttachmentsAudios: vi.fn(({ audios }) => (
     <div data-testid="post-attachments-audios" data-count={audios.length}>
       Audios
     </div>
   )),
+}));
+
+vi.mock('./PostAttachmentsGenericFiles', () => ({
   PostAttachmentsGenericFiles: vi.fn(({ genericFiles }) => (
     <div data-testid="post-attachments-generic-files" data-count={genericFiles.length}>
       GenericFiles

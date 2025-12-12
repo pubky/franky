@@ -1,10 +1,11 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import { useToast, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from '@/molecules';
+import type { CarouselApi } from '@/molecules';
 import * as Icons from '@/libs/icons';
-import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
-import type { CarouselApi } from '@/components/atoms/Carousel';
+import type { AttachmentConstructed } from '../PostAttachments.types';
+import { PostAttachmentsCarouselImage } from '../PostAttachmentsCarouselImage';
 import { useEffect, useState } from 'react';
 
 type PostAttachmentsImagesAndVideosProps = {
@@ -17,7 +18,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
   const [api, setApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { toast } = Molecules.useToast();
+  const { toast } = useToast();
 
   const handleFullscreen = () => {
     const currentMedia = document.getElementById(`media-item-${currentIndex}`);
@@ -87,7 +88,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
           <Icons.X className="size-4" />
         </Atoms.DialogClose>
 
-        <Atoms.Carousel
+        <Carousel
           opts={{
             startIndex: currentIndex,
             loop: true,
@@ -95,11 +96,11 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
           setApi={setApi}
           className="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
         >
-          <Atoms.CarouselContent className="-ml-3 items-center">
+          <CarouselContent className="-ml-3 items-center">
             {imagesAndVideos.map((media, i) => (
-              <Atoms.CarouselItem key={i} className="basis-full pl-3">
+              <CarouselItem key={i} className="basis-full pl-3">
                 {media.type.startsWith('image') ? (
-                  <Molecules.PostAttachmentsCarouselImage id={`media-item-${i}`} image={media} />
+                  <PostAttachmentsCarouselImage id={`media-item-${i}`} image={media} />
                 ) : (
                   <Atoms.Video
                     id={`media-item-${i}`}
@@ -108,17 +109,17 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
                     className="max-h-[75dvh] w-full"
                   />
                 )}
-              </Atoms.CarouselItem>
+              </CarouselItem>
             ))}
-          </Atoms.CarouselContent>
+          </CarouselContent>
 
           {total > 1 && (
             <>
-              <Atoms.CarouselPrevious className="hidden hover:bg-secondary sm:inline-flex" />
-              <Atoms.CarouselNext className="hidden hover:bg-secondary sm:inline-flex" />
+              <CarouselPrevious className="hidden hover:bg-secondary sm:inline-flex" />
+              <CarouselNext className="hidden hover:bg-secondary sm:inline-flex" />
             </>
           )}
-        </Atoms.Carousel>
+        </Carousel>
 
         <Atoms.Container className="mt-8 flex-row items-center justify-center gap-x-5.5">
           <Atoms.Button

@@ -2,16 +2,19 @@
 
 import * as Core from '@/core';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import { useToast } from '@/molecules';
 import { useEffect, useState } from 'react';
 import type { AttachmentConstructed, PostAttachmentsProps } from './PostAttachments.types';
+import { PostAttachmentsImagesAndVideos } from './PostAttachmentsImagesAndVideos';
+import { PostAttachmentsAudios } from './PostAttachmentsAudios';
+import { PostAttachmentsGenericFiles } from './PostAttachmentsGenericFiles';
 
 export const PostAttachments = ({ attachments }: PostAttachmentsProps) => {
   const [imagesAndVideos, setImagesAndVideos] = useState<AttachmentConstructed[]>([]);
   const [audios, setAudios] = useState<AttachmentConstructed[]>([]);
   const [genericFiles, setGenericFiles] = useState<AttachmentConstructed[]>([]);
 
-  const { toast } = Molecules.useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     const constructAttachments = async () => {
@@ -75,9 +78,9 @@ export const PostAttachments = ({ attachments }: PostAttachmentsProps) => {
 
   return (
     <Atoms.Container className="gap-3">
-      {imagesAndVideos.length ? <Molecules.PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} /> : null}
-      {audios.length ? <Molecules.PostAttachmentsAudios audios={audios} /> : null}
-      {genericFiles.length ? <Molecules.PostAttachmentsGenericFiles genericFiles={genericFiles} /> : null}
+      {imagesAndVideos.length ? <PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} /> : null}
+      {audios.length ? <PostAttachmentsAudios audios={audios} /> : null}
+      {genericFiles.length ? <PostAttachmentsGenericFiles genericFiles={genericFiles} /> : null}
     </Atoms.Container>
   );
 };
