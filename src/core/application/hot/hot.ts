@@ -32,10 +32,8 @@ export class HotApplication {
         Libs.Logger.debug('Fetching hot tags from Nexus (pagination)', { id, skip: params.skip });
         const tags = await Core.NexusHotService.fetch(params);
 
-        // Fetch missing tagger users in background (fire and forget)
-        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
-          Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
-        });
+        // Fetch missing tagger users
+        await this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id);
 
         return tags;
       }
@@ -52,10 +50,8 @@ export class HotApplication {
         // Optionally refresh cache in background (fire and forget)
         this.refreshCacheInBackground(id, params);
 
-        // Fetch missing tagger users in background (fire and forget)
-        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id).catch((error) => {
-          Libs.Logger.warn('Background tagger fetch failed (non-critical)', { error });
-        });
+        // Fetch missing tagger users
+        await this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id);
 
         return tags;
       }
@@ -65,13 +61,10 @@ export class HotApplication {
       const tags = await Core.NexusHotService.fetch(params);
 
       if (tags.length > 0) {
-        // Fetch and persist users first, then persist hot tags (fire and forget)
-        // This prevents race conditions where liveQuery triggers before users are cached
-        // Not using await to prevent blocking the UI, tags are returned immediately
-        this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id)
-          .catch((error) => Libs.Logger.warn('Background tagger fetch failed', { error }))
-          .then(() => Core.LocalHotService.upsert(id, tags))
-          .catch((error) => Libs.Logger.error('Failed to cache hot tags', { id, error }));
+        // Fetch and persist users first, then persist hot tags.
+        // This prevents excessive rerender where liveQuery triggers before users are cached
+        await this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id);
+        await Core.LocalHotService.upsert(id, tags);
       }
 
       return tags;
@@ -90,26 +83,18 @@ export class HotApplication {
    * @param id - Composite ID (timeframe:reach)
    * @param params - Parameters for fetching hot tags
    */
-  private static refreshCacheInBackground(id: string, params: Core.TTagHotParams): void {
-    // Fetch and persist users first, then persist hot tags
-    // This prevents race conditions where liveQuery triggers before users are cached
-    // Not using await to prevent blocking the UI, cached tags are returned immediately
-    let fetchedTags: Core.NexusHotTag[] = [];
-
-    Core.NexusHotService.fetch(params)
-      .then((tags) => {
-        fetchedTags = tags;
-        if (tags.length > 0) {
-          return this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id);
-        }
-      })
-      .catch((error) => Libs.Logger.warn('Background tagger fetch failed', { error }))
-      .then(() => {
-        if (fetchedTags.length > 0) {
-          return Core.LocalHotService.upsert(id, fetchedTags);
-        }
-      })
-      .catch((error) => Libs.Logger.error('Failed to cache hot tags', { id, error }));
+  private static async refreshCacheInBackground(id: string, params: Core.TTagHotParams): Promise<void> {
+    try {
+      // Fetch and persist users first, then persist hot tags (blocking within this background task)
+      // This prevents excessive rerender where liveQuery triggers before users are cached
+      const tags = await Core.NexusHotService.fetch(params);
+      if (tags.length > 0) {
+        await this.fetchUsersForTags(tags.slice(0, TOP_TAGS_TO_FETCH_USERS), params.user_id);
+        await Core.LocalHotService.upsert(id, tags);
+      }
+    } catch (error) {
+      Libs.Logger.error('Failed to refresh cache in background', { id, error });
+    }
   }
 
   /**
