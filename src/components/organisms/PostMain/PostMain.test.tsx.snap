@@ -1,5 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
+<div
+  data-class-name="relative flex cursor-pointer"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-class-name="flex-1 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-testid="post-deleted"
+    >
+      PostDeleted
+    </div>
+  </div>
+</div>
+`;
+
 exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
 <div
   data-class-name="relative flex cursor-pointer"

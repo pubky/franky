@@ -54,7 +54,7 @@ describe('Onboarding', () => {
 
   // todo: reenable once bug is fixed, https://github.com/pubky/franky/issues/496
   // fails at invite code stage due to last_read 401
-  it.skip('can sign up, sign out, then sign up again as a new user', () => {
+  it('can sign up, sign out, then sign up again as a new user', () => {
     const firstProfileName = 'First User';
     const secondProfileName = 'Second User';
 

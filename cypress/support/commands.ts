@@ -100,7 +100,9 @@ Cypress.Commands.add(
     cy.location('pathname').should('eq', '/onboarding/profile');
 
     cy.get('#profile-name-input').type(profileName);
-    cy.get('#profile-bio-input').type(profileBio);
+    if (profileBio) {
+      cy.get('#profile-bio-input').type(profileBio);
+    }
     //cy.get('#profile-links-input').type(profileLinks);
 
     cy.get('#profile-finish-btn').click(extendedTimeout());

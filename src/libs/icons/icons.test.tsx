@@ -6,6 +6,7 @@ import {
   Telegram,
   UsersRound2,
   LineHorizontal,
+  RoundedCorner,
   Synonym,
   Blocktank,
   Bitkit,
@@ -247,6 +248,52 @@ describe('Custom Icons', () => {
       expect(path).toHaveAttribute('fill-rule', 'evenodd');
       expect(path).toHaveAttribute('clip-rule', 'evenodd');
       // Note: fill is handled via CSS classes, not as an attribute
+    });
+  });
+
+  describe('RoundedCorner', () => {
+    it('should render correctly with default props', () => {
+      const { container } = render(<RoundedCorner />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('width', '12');
+      expect(svg).toHaveAttribute('height', '12');
+      expect(svg).toHaveAttribute('viewBox', '0 0 12 12');
+      expect(svg).toHaveAttribute('fill', 'none');
+      expect(svg).toHaveAttribute('preserveAspectRatio', 'none');
+    });
+
+    it('should apply custom size', () => {
+      const { container } = render(<RoundedCorner size={16} />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('width', '16');
+      expect(svg).toHaveAttribute('height', '16');
+    });
+
+    it('should have hardcoded classes', () => {
+      const { container } = render(<RoundedCorner />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveClass('block');
+      expect(svg).toHaveClass('size-full');
+      expect(svg).toHaveClass('fill-secondary');
+    });
+
+    it('should apply additional props', () => {
+      const { container } = render(<RoundedCorner data-testid="rounded-corner-icon" />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('data-testid', 'rounded-corner-icon');
+    });
+
+    it('should render the correct SVG content', () => {
+      const { container } = render(<RoundedCorner />);
+      const path = container.querySelector('path');
+
+      expect(path).toBeInTheDocument();
+      expect(path).toHaveAttribute('d', 'M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z');
     });
   });
 

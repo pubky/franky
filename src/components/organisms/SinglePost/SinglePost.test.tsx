@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SinglePost } from './SinglePost';
 
 // Mock the atoms
@@ -9,8 +9,8 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   )),
-  Container: vi.fn(({ children, className }) => (
-    <div data-testid="container" className={className}>
+  Container: vi.fn(({ children, className, onClick }) => (
+    <div data-testid="container" className={className} onClick={onClick}>
       {children}
     </div>
   )),
@@ -19,6 +19,11 @@ vi.mock('@/atoms', () => ({
       ReplyLine
     </div>
   )),
+}));
+
+// Mock the molecules
+vi.mock('@/molecules', () => ({
+  PostDeleted: vi.fn(() => <div data-testid="post-deleted">Post Deleted</div>),
 }));
 
 // Mock the organisms
@@ -43,6 +48,22 @@ vi.mock('@/organisms', () => ({
       Post Counts
     </div>
   )),
+}));
+
+// Mock usePostDetails hook
+const mockUsePostDetails = vi.fn();
+vi.mock('@/hooks', async () => {
+  const actual = await vi.importActual('@/hooks');
+  return {
+    ...actual,
+    usePostDetails: () => mockUsePostDetails(),
+  };
+});
+
+// Mock isPostDeleted function
+const mockIsPostDeleted = vi.fn();
+vi.mock('@/libs', () => ({
+  isPostDeleted: (content: string | undefined) => mockIsPostDeleted(content),
 }));
 
 // Mock ResizeObserver for useElementHeight
@@ -81,6 +102,13 @@ Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
 });
 
 describe('SinglePost', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Default: post is not deleted
+    mockUsePostDetails.mockReturnValue({ postDetails: { content: 'Test content' } });
+    mockIsPostDeleted.mockReturnValue(false);
+  });
+
   it('renders with required postId prop', () => {
     render(<SinglePost postId="test-post-123" />);
 
@@ -155,9 +183,65 @@ describe('SinglePost', () => {
     // ResizeObserver should have been instantiated and observe called
     expect(mockResizeObserverInstance.observe).toHaveBeenCalled();
   });
+
+  describe('deleted post state', () => {
+    beforeEach(() => {
+      mockIsPostDeleted.mockReturnValue(true);
+    });
+
+    it('renders PostDeleted component when post is deleted', () => {
+      render(<SinglePost postId="test-post-123" />);
+
+      expect(screen.getByTestId('post-deleted')).toBeInTheDocument();
+      expect(screen.queryByTestId('single-post-user-details')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('single-post-content')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('single-post-tags')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('single-post-counts')).not.toBeInTheDocument();
+    });
+
+    it('renders PostDeleted with ReplyLine when isReply is true', () => {
+      render(<SinglePost postId="test-post-123" isReply={true} />);
+
+      expect(screen.getByTestId('post-deleted')).toBeInTheDocument();
+      expect(screen.getByTestId('reply-line')).toBeInTheDocument();
+    });
+
+    it('still handles onClick when clickable is true and post is deleted', () => {
+      const handleClick = vi.fn();
+      render(<SinglePost postId="test-post-123" clickable={true} onClick={handleClick} />);
+
+      const card = screen.getByTestId('card');
+      fireEvent.click(card);
+
+      expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls isPostDeleted with post content', () => {
+      mockUsePostDetails.mockReturnValue({ postDetails: { content: 'deleted-content' } });
+
+      render(<SinglePost postId="test-post-123" />);
+
+      expect(mockIsPostDeleted).toHaveBeenCalledWith('deleted-content');
+    });
+
+    it('handles undefined postDetails gracefully', () => {
+      mockUsePostDetails.mockReturnValue({ postDetails: undefined });
+      mockIsPostDeleted.mockReturnValue(false);
+
+      render(<SinglePost postId="test-post-123" />);
+
+      expect(mockIsPostDeleted).toHaveBeenCalledWith(undefined);
+    });
+  });
 });
 
 describe('SinglePost - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUsePostDetails.mockReturnValue({ postDetails: { content: 'Test content' } });
+    mockIsPostDeleted.mockReturnValue(false);
+  });
+
   it('matches snapshot with default props', () => {
     const { container } = render(<SinglePost postId="test-post-123" />);
     expect(container.firstChild).toMatchSnapshot();
@@ -193,6 +277,24 @@ describe('SinglePost - Snapshots', () => {
 
   it('matches snapshot with different postId', () => {
     const { container } = render(<SinglePost postId="different-post-id" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when post is deleted', () => {
+    mockIsPostDeleted.mockReturnValue(true);
+    const { container } = render(<SinglePost postId="test-post-123" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when post is deleted with isReply true', () => {
+    mockIsPostDeleted.mockReturnValue(true);
+    const { container } = render(<SinglePost postId="test-post-123" isReply={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when post is deleted with clickable true', () => {
+    mockIsPostDeleted.mockReturnValue(true);
+    const { container } = render(<SinglePost postId="test-post-123" clickable={true} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

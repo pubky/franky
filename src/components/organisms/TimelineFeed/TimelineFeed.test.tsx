@@ -89,22 +89,21 @@ const mockUseStreamIdFromFilters = vi.mocked(Hooks.useStreamIdFromFilters);
 const mockUseBookmarksStreamId = vi.mocked(Hooks.useBookmarksStreamId);
 const mockUseStreamPagination = vi.mocked(Hooks.useStreamPagination);
 
+const mockPrependPosts = vi.fn();
+const mockLoadMore = vi.fn();
+const mockRefresh = vi.fn();
+const defaultPaginationResult = {
+  postIds: ['post1', 'post2', 'post3'],
+  loading: false,
+  loadingMore: false,
+  error: null,
+  hasMore: true,
+  loadMore: mockLoadMore,
+  refresh: mockRefresh,
+  prependPosts: mockPrependPosts,
+};
+
 describe('TimelineFeed', () => {
-  const mockPrependPosts = vi.fn();
-  const mockLoadMore = vi.fn();
-  const mockRefresh = vi.fn();
-
-  const defaultPaginationResult = {
-    postIds: ['post1', 'post2', 'post3'],
-    loading: false,
-    loadingMore: false,
-    error: null,
-    hasMore: true,
-    loadMore: mockLoadMore,
-    refresh: mockRefresh,
-    prependPosts: mockPrependPosts,
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -121,6 +120,16 @@ describe('TimelineFeed', () => {
       expect(screen.getByTestId('timeline-posts')).toBeInTheDocument();
       expect(mockUseStreamPagination).toHaveBeenCalledWith({
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+      });
+    });
+
+    it('should render timeline with other steam type', () => {
+      mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.TIMELINE_FRIENDS_VIDEO);
+      render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+
+      expect(screen.getByTestId('timeline-posts')).toBeInTheDocument();
+      expect(mockUseStreamPagination).toHaveBeenCalledWith({
+        streamId: Core.PostStreamTypes.TIMELINE_FRIENDS_VIDEO,
       });
     });
 
@@ -204,6 +213,18 @@ describe('TimelineFeed', () => {
 
       expect(screen.getByTestId('loading-more')).toHaveTextContent('true');
     });
+
+    it('should not pass loading and loadingMore state to TimelinePosts when loading is false', () => {
+      mockUseStreamPagination.mockReturnValue({
+        ...defaultPaginationResult,
+        loading: false,
+      });
+
+      render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+
+      expect(screen.getByTestId('loading-more')).not.toHaveTextContent('true');
+      expect(screen.getByTestId('loading')).toHaveTextContent('false');
+    });
   });
 
   describe('Error States', () => {
@@ -256,32 +277,52 @@ describe('TimelineFeed', () => {
       expect(contextValues[contextValues.length - 1]).toBeNull();
     });
   });
+});
 
-  describe('Snapshots', () => {
-    it('should match snapshot for home variant', () => {
-      const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
-      expect(container).toMatchSnapshot();
+describe('TimelineFeed - Snapshots', () => {
+  it('should match snapshot for home variant', () => {
+    const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot for bookmarks variant', () => {
+    const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.BOOKMARKS} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot with children', () => {
+    const { container } = render(
+      <TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME}>
+        <div>Child Component</div>
+      </TimelineFeed>,
+    );
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot for loading state', () => {
+    mockUseStreamIdFromFilters.mockReturnValue(undefined as unknown as Core.PostStreamTypes);
+
+    const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot for error state', () => {
+    mockUseStreamPagination.mockReturnValue({
+      ...defaultPaginationResult,
+      error: 'Network error',
     });
 
-    it('should match snapshot for bookmarks variant', () => {
-      const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.BOOKMARKS} />);
-      expect(container).toMatchSnapshot();
+    const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('should match snapshot for empty state', () => {
+    mockUseStreamPagination.mockReturnValue({
+      ...defaultPaginationResult,
+      postIds: [],
     });
 
-    it('should match snapshot with children', () => {
-      const { container } = render(
-        <TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME}>
-          <div>Child Component</div>
-        </TimelineFeed>,
-      );
-      expect(container).toMatchSnapshot();
-    });
-
-    it('should match snapshot for loading state', () => {
-      mockUseStreamIdFromFilters.mockReturnValue(undefined as unknown as Core.PostStreamTypes);
-
-      const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
-      expect(container).toMatchSnapshot();
-    });
+    const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+    expect(container).toMatchSnapshot();
   });
 });

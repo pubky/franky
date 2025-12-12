@@ -11,3 +11,4 @@ export * from './bookmark';
 export * from './feed';
 export * from './notification';
 export * from './search';
+export * from './feedback';

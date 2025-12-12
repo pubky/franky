@@ -111,6 +111,12 @@ process.env.NEXT_PUBLIC_TESTNET = 'true';
 process.env.NEXT_PUBLIC_PKARR_RELAYS = 'http://localhost:8080';
 process.env.NEXT_PUBLIC_HOMESERVER = 'test-homeserver-key';
 
+// Chatwoot configuration (required for feedback feature)
+process.env.BASE_URL_SUPPORT = 'https://chatwoot.example.com';
+process.env.SUPPORT_API_ACCESS_TOKEN = 'test-token';
+process.env.SUPPORT_ACCOUNT_ID = '123';
+process.env.SUPPORT_FEEDBACK_INBOX_ID = '26';
+
 const { db } = await import('@/core');
 
 afterEach(() => {

@@ -2,69 +2,61 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
-
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-  }),
-}));
 
 vi.mock('@/config', () => ({
   POST_MAX_CHARACTER_LENGTH: 2000,
   POST_MAX_TAGS: 5,
 }));
 
-vi.mock('@/atoms', () => ({
-  Container: ({
-    children,
-    className,
-    overrideDefaults,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    overrideDefaults?: boolean;
-  }) => (
-    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
-      {children}
-    </div>
-  ),
-  Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
-    <textarea
-      ref={ref}
-      data-testid="textarea"
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      disabled={disabled}
-    />
-  )),
-  DialogPostReplyThreadConnector: vi.fn(() => <div data-testid="thread-connector" />),
-  Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
-    <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
-      {children}
-    </button>
-  )),
-  Typography: vi.fn(({ children, as, size, className }) => {
-    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+vi.mock('@/atoms', async () => {
+  const { POST_THREAD_CONNECTOR_VARIANTS } =
+    await import('@/components/atoms/PostThreadConnector/PostThreadConnector.constants');
+  return {
+    Container: ({
+      children,
+      className,
+      overrideDefaults,
+    }: {
+      children: React.ReactNode;
+      className?: string;
+      overrideDefaults?: boolean;
+    }) => (
+      <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
         {children}
-      </Tag>
-    );
-  }),
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>
-      {children}
-    </div>
-  ),
-  CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card-content" className={className}>
-      {children}
-    </div>
-  ),
-}));
+      </div>
+    ),
+    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
+      <textarea
+        ref={ref}
+        data-testid="textarea"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        disabled={disabled}
+      />
+    )),
+    PostThreadConnector: vi.fn(({ height, variant }) => (
+      <div data-testid="thread-connector" data-height={height} data-variant={variant} />
+    )),
+    POST_THREAD_CONNECTOR_VARIANTS,
+    Button: vi.fn(({ children, onClick, disabled, className, 'aria-label': ariaLabel }) => (
+      <button onClick={onClick} disabled={disabled} className={className} aria-label={ariaLabel}>
+        {children}
+      </button>
+    )),
+    Typography: vi.fn(({ children, as, size, className }) => {
+      const Tag = (as || 'p') as React.ElementType;
+      return (
+        <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+          {children}
+        </Tag>
+      );
+    }),
+  };
+});
 
 vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(({ postId, isReplyInput, characterCount, maxLength }) => (
@@ -76,11 +68,10 @@ vi.mock('@/organisms', () => ({
       data-max={maxLength}
     />
   )),
-  PostContent: vi.fn(({ postId }: { postId: string }) => (
-    <div data-testid="post-content" data-post-id={postId}>
-      PostContent {postId}
-    </div>
-  )),
+}));
+
+vi.mock('../TimelineFeed/TimelineFeed', () => ({
+  useTimelineFeedContext: vi.fn(() => null),
 }));
 
 vi.mock('../PostInputTags', () => ({
@@ -121,13 +112,6 @@ vi.mock('@/molecules', () => ({
   )),
   TagInput: vi.fn(() => <div data-testid="tag-input" />),
   PostTag: vi.fn(({ label }) => <div data-testid={`post-tag-${label}`}>{label}</div>),
-  PostPreviewCard: vi.fn(({ postId, children, isRepostPreview }) => (
-    <div data-testid="post-preview-card" data-post-id={postId} data-is-repost-preview={isRepostPreview}>
-      <div data-testid="post-preview-card-header">PostHeader {postId}</div>
-      <div data-testid="post-preview-card-content">PostContent {postId}</div>
-      {children}
-    </div>
-  )),
   PostLinkEmbeds: vi.fn(({ content }: { content: string }) => {
     // Only render if content contains a URL-like pattern
     if (content.includes('http') || content.includes('youtube') || content.includes('youtu.be')) {
@@ -157,11 +141,6 @@ vi.mock('@/molecules', () => ({
       ) : null,
   ),
   useToast: vi.fn(() => ({ toast: vi.fn() })),
-  toast: vi.fn(() => ({
-    id: 'mock-toast-id',
-    dismiss: vi.fn(),
-    update: vi.fn(),
-  })),
 }));
 
 vi.mock('@/hooks', () => ({
@@ -188,14 +167,12 @@ describe('PostInput', () => {
   const mockSetTags = vi.fn();
   const mockReply = vi.fn();
   const mockPost = vi.fn();
-  const mockRepost = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPostControllerCreate.mockResolvedValue(undefined);
+    mockPostControllerCreate.mockResolvedValue('test-post-id');
     mockReply.mockReturnValue(async () => {});
     mockPost.mockReturnValue(async () => {});
-    mockRepost.mockReturnValue(async () => {});
 
     mockUsePost.mockReturnValue({
       content: '',
@@ -204,9 +181,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
-      repost: mockRepost,
       isSubmitting: false,
-      error: null,
     });
   });
 
@@ -229,7 +204,9 @@ describe('PostInput', () => {
   it('shows thread connector when showThreadConnector is true', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" showThreadConnector={true} />);
 
-    expect(screen.getByTestId('thread-connector')).toBeInTheDocument();
+    const connector = screen.getByTestId('thread-connector');
+    expect(connector).toBeInTheDocument();
+    expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY);
   });
 
   it('does not show thread connector when showThreadConnector is false', () => {
@@ -268,9 +245,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
-      repost: mockRepost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} onSuccess={mockOnSuccess} />);
@@ -295,9 +270,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
-      repost: mockRepost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" onSuccess={mockOnSuccess} />);
@@ -315,6 +288,7 @@ describe('PostInput', () => {
     });
   });
 
+  // todo: extend test to include attachments
   it('disables post button when content is empty', () => {
     mockUsePost.mockReturnValue({
       content: '',
@@ -323,9 +297,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
-      repost: mockRepost,
       isSubmitting: false,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
@@ -343,9 +315,7 @@ describe('PostInput', () => {
       setTags: mockSetTags,
       reply: mockReply,
       post: mockPost,
-      repost: mockRepost,
       isSubmitting: true,
-      error: null,
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
@@ -360,100 +330,6 @@ describe('PostInput', () => {
 
     expect(screen.getByPlaceholderText('Custom placeholder')).toBeInTheDocument();
   });
-
-  it('renders with repost variant', () => {
-    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
-
-    // Should have user header and repost preview header
-    const headers = screen.getAllByTestId('post-header');
-    expect(headers.length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByTestId('textarea')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Optional comment')).toBeInTheDocument();
-    // Should have repost preview card
-    expect(screen.getByTestId('card')).toBeInTheDocument();
-    expect(screen.getByTestId('post-preview-card-content')).toBeInTheDocument();
-  });
-
-  it('handles repost submission with content', async () => {
-    const mockSubmitHandler = vi.fn().mockResolvedValue(undefined);
-    const mockRepost = vi.fn().mockReturnValue(mockSubmitHandler);
-
-    mockUsePost.mockReturnValue({
-      content: 'Quote repost comment',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      repost: mockRepost,
-      isSubmitting: false,
-      error: null,
-    });
-
-    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" onSuccess={mockOnSuccess} />);
-
-    const postButton = screen.getByLabelText('Post reply');
-    fireEvent.click(postButton);
-
-    await waitFor(() => {
-      expect(mockRepost).toHaveBeenCalledWith(
-        expect.objectContaining({
-          originalPostId: 'test-post-123',
-        }),
-      );
-    });
-  });
-
-  it('handles repost submission without content', async () => {
-    const mockSubmitHandler = vi.fn().mockResolvedValue(undefined);
-    const mockRepost = vi.fn().mockReturnValue(mockSubmitHandler);
-
-    mockUsePost.mockReturnValue({
-      content: '',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      repost: mockRepost,
-      isSubmitting: false,
-      error: null,
-    });
-
-    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" onSuccess={mockOnSuccess} />);
-
-    const postButton = screen.getByLabelText('Post reply');
-    fireEvent.click(postButton);
-
-    await waitFor(() => {
-      expect(mockRepost).toHaveBeenCalledWith(
-        expect.objectContaining({
-          originalPostId: 'test-post-123',
-        }),
-      );
-    });
-  });
-
-  it('enables post button for repost even with empty content', () => {
-    const mockRepost = vi.fn();
-    mockUsePost.mockReturnValue({
-      content: '',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      repost: mockRepost,
-      isSubmitting: false,
-      error: null,
-    });
-
-    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
-
-    // Check that post button is enabled for repost even with empty content
-    const postButton = screen.getByLabelText('Post reply');
-    expect(postButton).not.toBeDisabled();
-  });
 });
 
 describe('PostInput - Snapshots', () => {
@@ -466,9 +342,7 @@ describe('PostInput - Snapshots', () => {
       setTags: vi.fn(),
       reply: vi.fn(),
       post: vi.fn(),
-      repost: vi.fn(),
       isSubmitting: false,
-      error: null,
     });
   });
 
@@ -479,11 +353,6 @@ describe('PostInput - Snapshots', () => {
 
   it('matches snapshot for reply variant', () => {
     const { container } = render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for repost variant', () => {
-    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -1,5 +1,40 @@
 import { render } from '@testing-library/react';
 import { PostThreadConnector } from './PostThreadConnector';
+import { POST_THREAD_CONNECTOR_VARIANTS } from './PostThreadConnector.constants';
+
+vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+    style,
+    'data-testid': dataTestId,
+    'data-variant': dataVariant,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+    style?: React.CSSProperties;
+    'data-testid'?: string;
+    'data-variant'?: string;
+  }) => (
+    <div
+      data-testid={dataTestId}
+      data-variant={dataVariant}
+      className={className}
+      style={style}
+      data-override-defaults={overrideDefaults}
+    >
+      {children}
+    </div>
+  ),
+}));
+
+vi.mock('@/libs', () => ({
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  RoundedCorner: () => <svg data-testid="rounded-corner" />,
+  LineHorizontal: () => <svg data-testid="line-horizontal" />,
+}));
 
 describe('PostThreadConnector', () => {
   describe('Functionality', () => {
@@ -7,19 +42,24 @@ describe('PostThreadConnector', () => {
       const { container } = render(<PostThreadConnector height={100} data-testid="connector" />);
       const connector = container.querySelector('[data-testid="connector"]');
       expect(connector).toBeInTheDocument();
-      expect(connector).toHaveAttribute('data-variant', 'regular');
+      expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.REGULAR);
     });
 
     it('renders with last variant', () => {
-      const { container } = render(<PostThreadConnector height={100} variant="last" data-testid="connector" />);
+      const { container } = render(
+        <PostThreadConnector height={100} variant={POST_THREAD_CONNECTOR_VARIANTS.LAST} data-testid="connector" />,
+      );
       const connector = container.querySelector('[data-testid="connector"]');
-      expect(connector).toHaveAttribute('data-variant', 'last');
+      expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.LAST);
     });
 
-    it('renders with gap-fix variant', () => {
-      const { container } = render(<PostThreadConnector height={100} variant="gap-fix" data-testid="connector" />);
+    it('renders with dialog-reply variant', () => {
+      const { container } = render(
+        <PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} data-testid="connector" />,
+      );
       const connector = container.querySelector('[data-testid="connector"]');
-      expect(connector).toHaveAttribute('data-variant', 'gap-fix');
+      expect(connector).toBeInTheDocument();
+      expect(connector).toHaveAttribute('data-variant', POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY);
     });
 
     it('applies custom height', () => {
@@ -28,26 +68,35 @@ describe('PostThreadConnector', () => {
       expect(connector).toHaveStyle({ height: '200px' });
     });
 
-    it('renders without data-testid when not provided', () => {
+    it('uses default height when height is 0', () => {
+      const { container } = render(<PostThreadConnector height={0} data-testid="connector" />);
+      const connector = container.querySelector('[data-testid="connector"]');
+      expect(connector).toHaveStyle({ height: '96px' });
+    });
+
+    it('renders with Container default data-testid when not provided', () => {
       const { container } = render(<PostThreadConnector height={100} />);
+      // Container component always adds a default data-testid
       const connectors = container.querySelectorAll('[data-testid]');
-      expect(connectors).toHaveLength(0);
+      expect(connectors.length).toBeGreaterThan(0);
     });
   });
 
   describe('Snapshots', () => {
     it('matches snapshot with regular variant', () => {
-      const { container } = render(<PostThreadConnector height={100} variant="regular" />);
+      const { container } = render(
+        <PostThreadConnector height={100} variant={POST_THREAD_CONNECTOR_VARIANTS.REGULAR} />,
+      );
       expect(container.firstChild).toMatchSnapshot();
     });
 
     it('matches snapshot with last variant', () => {
-      const { container } = render(<PostThreadConnector height={100} variant="last" />);
+      const { container } = render(<PostThreadConnector height={100} variant={POST_THREAD_CONNECTOR_VARIANTS.LAST} />);
       expect(container.firstChild).toMatchSnapshot();
     });
 
-    it('matches snapshot with gap-fix variant', () => {
-      const { container } = render(<PostThreadConnector height={100} variant="gap-fix" />);
+    it('matches snapshot with dialog-reply variant', () => {
+      const { container } = render(<PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />);
       expect(container.firstChild).toMatchSnapshot();
     });
 

@@ -60,6 +60,9 @@ export class AuthApplication {
   static async logout({ pubky, secretKey }: Core.TLogoutParams) {
     const homeserverService = Core.HomeserverService.getInstance(secretKey);
     await homeserverService.logout(pubky);
+
+    // Reset the PubkySpecsSingleton to ensure clean state for subsequent sign-ins
+    Core.PubkySpecsSingleton.reset();
   }
 
   /**

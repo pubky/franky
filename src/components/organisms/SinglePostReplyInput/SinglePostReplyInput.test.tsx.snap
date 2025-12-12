@@ -20,32 +20,9 @@ exports[`SinglePostReplyInput - Snapshots > matches snapshot with default props 
       class="min-h-20"
       data-testid="textarea"
       placeholder="Write a reply..."
-    />
-  </div>
-</div>
-`;
-
-exports[`SinglePostReplyInput - Snapshots > matches snapshot with different postId 1`] = `
-<div
-  class="flex gap-4"
->
-  <div
-    class="w-8 shrink-0"
-  >
-    <div
-      data-height="100"
-      data-is-last="true"
-      data-testid="reply-line"
-    />
-  </div>
-  <div
-    class="flex-1"
-  >
-    <textarea
-      class="min-h-20"
-      data-testid="textarea"
-      placeholder="Write a reply..."
-    />
+    >
+      Test reply content
+    </textarea>
   </div>
 </div>
 `;
@@ -70,7 +47,9 @@ exports[`SinglePostReplyInput - Snapshots > matches snapshot with empty postId 1
       class="min-h-20"
       data-testid="textarea"
       placeholder="Write a reply..."
-    />
+    >
+      Test reply content
+    </textarea>
   </div>
 </div>
 `;

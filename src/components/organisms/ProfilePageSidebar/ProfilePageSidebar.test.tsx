@@ -45,21 +45,26 @@ vi.mock('@/providers', () => ({
 }));
 
 // Mock @/hooks
-vi.mock('@/hooks', () => ({
-  useCurrentUserProfile: vi.fn(() => ({
-    userDetails: null,
-    currentUserPubky: 'test-pubky-123',
-  })),
-  useTagged: vi.fn(() => ({
-    tags: [],
-    isLoading: false,
-    handleTagToggle: vi.fn(),
-  })),
-  useUserProfile: vi.fn(() => ({
-    profile: { links: null },
-    isLoading: false,
-  })),
-}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCurrentUserProfile: vi.fn(() => ({
+      userDetails: null,
+      currentUserPubky: 'test-pubky-123',
+    })),
+    useTagged: vi.fn(() => ({
+      tags: [],
+      isLoading: false,
+      handleTagToggle: vi.fn(),
+    })),
+    useUserProfile: vi.fn(() => ({
+      profile: { links: null },
+      isLoading: false,
+    })),
+    useAvatarUrl: vi.fn(() => undefined),
+  };
+});
 
 describe('ProfilePageSidebar', () => {
   beforeEach(() => {

@@ -44,3 +44,4 @@ export * from './useRepostInfo';
 export * from './useDeletePost';
 export * from './useBulkUserAvatars';
 export * from './useSearchStreamId';
+export * from './useFeedback';

@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
@@ -9,9 +10,10 @@ export interface PostContentOrganismProps {
   postId: string;
   /** Rendering inside a repost preview (prevents further nesting) */
   isRepostPreview?: boolean;
+  className?: string;
 }
 
-export function PostContent({ postId, isRepostPreview = false }: PostContentOrganismProps) {
+export function PostContent({ postId, isRepostPreview = false, className }: PostContentOrganismProps) {
   // Fetch post details for content
   const { postDetails } = Hooks.usePostDetails(postId);
 
@@ -26,19 +28,22 @@ export function PostContent({ postId, isRepostPreview = false }: PostContentOrga
     return <div className="text-muted-foreground">Loading content...</div>;
   }
 
-  const hasRepostComment = postDetails.content.trim().length > 0;
+  const hasContent = postDetails.content.trim().length > 0;
 
   return (
-    <Atoms.Container className="gap-3" overrideDefaults>
-      {/* Repost comment (if any) */}
-      {hasRepostComment && <Molecules.PostText content={postDetails.content} />}
+    <Atoms.Container className={Libs.cn('gap-3', className)}>
+      {/* Post text (or repost comment) */}
+      {hasContent && <Molecules.PostText content={postDetails.content} />}
 
-      {/* Link previews from repost comment */}
-      {hasRepostComment && <Molecules.PostLinkEmbeds content={postDetails.content} />}
+      {/* Link previews from text */}
+      {hasContent && <Molecules.PostLinkEmbeds content={postDetails.content} />}
+
+      {/* Attachments on this post */}
+      <Organisms.PostAttachments attachments={postDetails.attachments ?? null} />
 
       {/* Original post being reposted */}
       {canRenderRepostPreview && (
-        <Atoms.Container className={Libs.cn('rounded-md bg-muted p-0', hasRepostComment && 'mt-4')} overrideDefaults>
+        <Atoms.Container className={Libs.cn('rounded-md bg-muted p-0', hasContent && 'mt-4')}>
           <Molecules.PostPreviewCard postId={originalPostId} isRepostPreview={true} />
         </Atoms.Container>
       )}

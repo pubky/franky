@@ -139,29 +139,33 @@ describe('AuthApplication', () => {
   });
 
   describe('logout', () => {
-    it('should successfully logout', async () => {
+    it('should successfully logout and reset PubkySpecsSingleton', async () => {
       const params = { pubky: 'test-pubky' as Core.Pubky, secretKey: 'test-secret-key' };
       const mockInstance = createMockInstance();
       vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
         mockInstance as unknown as Core.HomeserverService,
       );
       mockInstance.logout.mockResolvedValue(undefined);
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await Core.AuthApplication.logout(params);
 
       expect(mockInstance.logout).toHaveBeenCalledWith(params.pubky);
+      expect(resetSpy).toHaveBeenCalledOnce();
     });
 
-    it('should propagate error when logout fails', async () => {
+    it('should propagate error when logout fails and not reset PubkySpecsSingleton', async () => {
       const params = { pubky: 'test-pubky' as Core.Pubky, secretKey: 'test-secret-key' };
       const mockInstance = createMockInstance();
       vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
         mockInstance as unknown as Core.HomeserverService,
       );
       mockInstance.logout.mockRejectedValue(new Error('Logout failed'));
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await expect(Core.AuthApplication.logout(params)).rejects.toThrow('Logout failed');
       expect(mockInstance.logout).toHaveBeenCalledOnce();
+      expect(resetSpy).not.toHaveBeenCalled();
     });
   });
 

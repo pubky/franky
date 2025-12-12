@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostDeleted - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="py-2"
+  data-testid="card-content"
+>
+  <p
+    class="text-center font-normal text-muted-foreground"
+    data-size="sm"
+    data-testid="typography"
+  >
+    This post has been deleted by its author.
+  </p>
+</div>
+`;

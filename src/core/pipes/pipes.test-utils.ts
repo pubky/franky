@@ -44,10 +44,11 @@ export const setupIntegrationTestMocks = () => {
 };
 
 /**
- * Restore all mocks after tests.
+ * Restore all mocks after tests and reset singleton state.
  */
 export const restoreMocks = () => {
   vi.restoreAllMocks();
+  Core.PubkySpecsSingleton.reset();
 };
 
 /**

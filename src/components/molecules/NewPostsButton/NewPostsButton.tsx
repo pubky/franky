@@ -32,7 +32,7 @@ export function NewPostsButton({ count, onClick, visible, isScrolled = false }: 
       className={Libs.cn(
         'animate-in fade-in slide-in-from-left-2',
         // When scrolled: fixed position floating below main header (uses --header-offset-main CSS variable)
-        isScrolled && 'fixed top-(--header-offset-main) left-1/2 z-50 -translate-x-1/2 shadow-lg',
+        isScrolled && 'fixed top-(--header-offset-main) left-1/2 z-30 -translate-x-1/2 shadow-lg',
         // When at top: full width below input
         !isScrolled && 'w-full',
       )}

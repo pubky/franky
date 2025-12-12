@@ -31,6 +31,9 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
       className={Libs.cn(
         'fixed inset-0 z-40 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
         className,
@@ -45,10 +48,12 @@ function DialogContent({
   children,
   showCloseButton = true,
   hiddenTitle,
+  overrideDefaults = false,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean;
   hiddenTitle?: string;
+  overrideDefaults?: boolean;
 }) {
   return (
     <DialogPortal data-slot="dialog-portal">
@@ -59,9 +64,10 @@ function DialogContent({
           data-testid="dialog-content"
           className={Libs.cn(
             'relative z-50 grid',
-            'rounded-lg border bg-background shadow-lg duration-200 sm:rounded-xl',
+            'duration-200',
             'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-            'm-4 gap-6 p-6 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:p-8',
+            'm-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+            overrideDefaults ? '' : 'gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8',
             className,
           )}
           {...props}

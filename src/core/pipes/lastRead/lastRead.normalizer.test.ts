@@ -146,7 +146,8 @@ describe('LastReadNormalizer', () => {
     describe('validation behavior (singleton caching)', () => {
       /**
        * Note: createLastRead() takes no parameters, so validation only happens
-       * at singleton initialization. Once initialized, invalid pubkys don't throw.
+       * at singleton initialization. Once initialized, invalid pubkys don't throw
+       * because the singleton reuses the existing builder.
        */
       it.each([
         ['empty', INVALID_INPUTS.EMPTY],

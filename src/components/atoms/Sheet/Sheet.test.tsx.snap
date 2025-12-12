@@ -1,33 +1,50 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Sheet - Snapshots > matches snapshot for Sheet with default props 1`] = `
-<div
-  data-testid="sheet-root"
->
-  <div>
-    Sheet Content
-  </div>
+<div>
+  Sheet Content
 </div>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetContent with bottom side 1`] = `
-<div
-  data-testid="sheet-portal"
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
 >
-  <div
-    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
-    data-testid="sheet-overlay"
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
   />
   <div
+    aria-hidden="true"
+    data-aria-hidden="true"
+  />
+  <div
+    aria-hidden="true"
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-aria-hidden="true"
+    data-state="open"
+    style="pointer-events: auto;"
+  />
+  <div
+    aria-describedby="radix-_r_1f_"
+    aria-labelledby="radix-_r_0_"
     class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom"
-    data-testid="sheet-content"
+    data-state="open"
+    id="radix-_r_0_"
+    role="dialog"
+    style="pointer-events: auto;"
+    tabindex="-1"
   >
     <div>
       Bottom Sheet
     </div>
     <button
       class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
-      data-testid="sheet-close"
+      type="button"
     >
       <svg
         aria-hidden="true"
@@ -56,27 +73,55 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with bottom side 
       </span>
     </button>
   </div>
-</div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetContent with default side 1`] = `
-<div
-  data-testid="sheet-portal"
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
 >
-  <div
-    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
-    data-testid="sheet-overlay"
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
   />
   <div
+    aria-hidden="true"
+    data-aria-hidden="true"
+  />
+  <div
+    aria-hidden="true"
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-aria-hidden="true"
+    data-state="open"
+    style="pointer-events: auto;"
+  />
+  <div
+    aria-describedby="radix-_r_19_"
+    aria-labelledby="radix-_r_0_"
     class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
-    data-testid="sheet-content"
+    data-state="open"
+    id="radix-_r_0_"
+    role="dialog"
+    style="pointer-events: auto;"
+    tabindex="-1"
   >
     <div>
       Sheet Content
     </div>
     <button
       class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
-      data-testid="sheet-close"
+      type="button"
     >
       <svg
         aria-hidden="true"
@@ -105,27 +150,55 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with default side
       </span>
     </button>
   </div>
-</div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetContent with left side 1`] = `
-<div
-  data-testid="sheet-portal"
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
 >
-  <div
-    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
-    data-testid="sheet-overlay"
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
   />
   <div
+    aria-hidden="true"
+    data-aria-hidden="true"
+  />
+  <div
+    aria-hidden="true"
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-aria-hidden="true"
+    data-state="open"
+    style="pointer-events: auto;"
+  />
+  <div
+    aria-describedby="radix-_r_1i_"
+    aria-labelledby="radix-_r_0_"
     class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm"
-    data-testid="sheet-content"
+    data-state="open"
+    id="radix-_r_0_"
+    role="dialog"
+    style="pointer-events: auto;"
+    tabindex="-1"
   >
     <div>
       Left Sheet
     </div>
     <button
       class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
-      data-testid="sheet-close"
+      type="button"
     >
       <svg
         aria-hidden="true"
@@ -154,27 +227,55 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with left side 1`
       </span>
     </button>
   </div>
-</div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetContent with right side 1`] = `
-<div
-  data-testid="sheet-portal"
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
 >
-  <div
-    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
-    data-testid="sheet-overlay"
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
   />
   <div
+    aria-hidden="true"
+    data-aria-hidden="true"
+  />
+  <div
+    aria-hidden="true"
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-aria-hidden="true"
+    data-state="open"
+    style="pointer-events: auto;"
+  />
+  <div
+    aria-describedby="radix-_r_1l_"
+    aria-labelledby="radix-_r_0_"
     class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
-    data-testid="sheet-content"
+    data-state="open"
+    id="radix-_r_0_"
+    role="dialog"
+    style="pointer-events: auto;"
+    tabindex="-1"
   >
     <div>
       Right Sheet
     </div>
     <button
       class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
-      data-testid="sheet-close"
+      type="button"
     >
       <svg
         aria-hidden="true"
@@ -203,27 +304,55 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with right side 1
       </span>
     </button>
   </div>
-</div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetContent with top side 1`] = `
-<div
-  data-testid="sheet-portal"
+<body
+  data-scroll-locked="1"
+  style="pointer-events: none;"
 >
-  <div
-    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
-    data-testid="sheet-overlay"
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
   />
   <div
+    aria-hidden="true"
+    data-aria-hidden="true"
+  />
+  <div
+    aria-hidden="true"
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-aria-hidden="true"
+    data-state="open"
+    style="pointer-events: auto;"
+  />
+  <div
+    aria-describedby="radix-_r_1c_"
+    aria-labelledby="radix-_r_0_"
     class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top"
-    data-testid="sheet-content"
+    data-state="open"
+    id="radix-_r_0_"
+    role="dialog"
+    style="pointer-events: auto;"
+    tabindex="-1"
   >
     <div>
       Top Sheet
     </div>
     <button
       class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
-      data-testid="sheet-close"
+      type="button"
     >
       <svg
         aria-hidden="true"
@@ -252,13 +381,20 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with top side 1`]
       </span>
     </button>
   </div>
-</div>
+  <span
+    aria-hidden="true"
+    data-aria-hidden="true"
+    data-radix-focus-guard=""
+    style="outline: none; opacity: 0; position: fixed; pointer-events: none;"
+    tabindex="0"
+  />
+</body>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetDescription 1`] = `
 <p
   class="text-sm text-muted-foreground"
-  data-testid="sheet-description"
+  id="radix-_r_1u_"
 >
   My Sheet Description
 </p>
@@ -270,7 +406,7 @@ exports[`Sheet - Snapshots > matches snapshot for SheetHeader 1`] = `
 >
   <h2
     class="text-lg font-semibold text-foreground"
-    data-testid="sheet-title"
+    id="radix-_r_0_"
   >
     Sheet Title
   </h2>
@@ -283,13 +419,13 @@ exports[`Sheet - Snapshots > matches snapshot for SheetHeader with Title and Des
 >
   <h2
     class="text-lg font-semibold text-foreground"
-    data-testid="sheet-title"
+    id="radix-_r_0_"
   >
     Sheet Title
   </h2>
   <p
     class="text-sm text-muted-foreground"
-    data-testid="sheet-description"
+    id="radix-_r_0_"
   >
     Sheet Description
   </p>
@@ -299,30 +435,32 @@ exports[`Sheet - Snapshots > matches snapshot for SheetHeader with Title and Des
 exports[`Sheet - Snapshots > matches snapshot for SheetTitle 1`] = `
 <h2
   class="text-lg font-semibold text-foreground"
-  data-testid="sheet-title"
+  id="radix-_r_1q_"
 >
   My Sheet Title
 </h2>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetTrigger with asChild 1`] = `
-<div
-  data-as-child="true"
-  data-testid="sheet-trigger"
+<button
+  aria-controls="radix-_r_0_"
+  aria-expanded="false"
+  aria-haspopup="dialog"
+  data-state="closed"
+  type="button"
 >
-  <button>
-    Open Sheet
-  </button>
-</div>
+  Open Sheet
+</button>
 `;
 
 exports[`Sheet - Snapshots > matches snapshot for SheetTrigger with default props 1`] = `
-<div
-  data-as-child="false"
-  data-testid="sheet-trigger"
+<button
+  aria-controls="radix-_r_0_"
+  aria-expanded="false"
+  aria-haspopup="dialog"
+  data-state="closed"
+  type="button"
 >
-  <button>
-    Open Sheet
-  </button>
-</div>
+  Open Sheet
+</button>
 `;

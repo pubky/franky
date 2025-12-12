@@ -21,15 +21,6 @@ vi.mock('next/image', () => ({
   }) => <img data-testid="next-image" src={src} alt={alt} width={width} height={height} className={className} />,
 }));
 
-// Mock Radix UI DialogClose
-vi.mock('@radix-ui/react-dialog', () => ({
-  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="radix-dialog-close" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-}));
-
 // Mock stores
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();

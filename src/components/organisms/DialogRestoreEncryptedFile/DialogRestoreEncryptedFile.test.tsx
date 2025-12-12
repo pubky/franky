@@ -27,15 +27,6 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-// Mock @radix-ui/react-dialog
-vi.mock('@radix-ui/react-dialog', () => ({
-  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-close" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-}));
-
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
@@ -55,8 +46,21 @@ vi.mock('@/components/atoms', () => ({
       {children}
     </div>
   ),
-  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-content" className={className}>
+  DialogContent: ({
+    children,
+    className,
+    hiddenTitle,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    hiddenTitle?: string;
+  }) => (
+    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
+      {hiddenTitle && (
+        <h2 className="sr-only" data-testid="dialog-hidden-title">
+          {hiddenTitle}
+        </h2>
+      )}
       {children}
     </div>
   ),
@@ -74,6 +78,11 @@ vi.mock('@/components/atoms', () => ({
     <p data-testid="dialog-description" className={className}>
       {children}
     </p>
+  ),
+  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+    <div data-testid="dialog-close" data-as-child={asChild}>
+      {children}
+    </div>
   ),
   Button: ({
     children,

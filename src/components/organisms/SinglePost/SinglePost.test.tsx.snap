@@ -1,5 +1,66 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`SinglePost - Snapshots > matches snapshot when post is deleted 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="rounded-lg py-0 "
+    data-testid="card"
+  >
+    <div
+      data-testid="post-deleted"
+    >
+      Post Deleted
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot when post is deleted with clickable true 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="rounded-lg py-0 cursor-pointer"
+    data-testid="card"
+  >
+    <div
+      data-testid="post-deleted"
+    >
+      Post Deleted
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot when post is deleted with isReply true 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="absolute top-0 -left-12"
+  >
+    <div
+      data-height="0"
+      data-testid="reply-line"
+    >
+      ReplyLine
+    </div>
+  </div>
+  <div
+    class="rounded-lg py-0 "
+    data-testid="card"
+  >
+    <div
+      data-testid="post-deleted"
+    >
+      Post Deleted
+    </div>
+  </div>
+</div>
+`;
+
 exports[`SinglePost - Snapshots > matches snapshot with all props provided 1`] = `
 <div
   class="relative"
@@ -15,11 +76,11 @@ exports[`SinglePost - Snapshots > matches snapshot with all props provided 1`] =
     </div>
   </div>
   <div
-    class="rounded-lg p-6 cursor-pointer"
+    class="rounded-lg py-0 cursor-pointer"
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
@@ -86,11 +147,11 @@ exports[`SinglePost - Snapshots > matches snapshot with clickable false explicit
   class="relative"
 >
   <div
-    class="rounded-lg p-6 "
+    class="rounded-lg py-0 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
@@ -157,11 +218,11 @@ exports[`SinglePost - Snapshots > matches snapshot with clickable true 1`] = `
   class="relative"
 >
   <div
-    class="rounded-lg p-6 cursor-pointer"
+    class="rounded-lg py-0 cursor-pointer"
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
@@ -228,11 +289,11 @@ exports[`SinglePost - Snapshots > matches snapshot with default props 1`] = `
   class="relative"
 >
   <div
-    class="rounded-lg p-6 "
+    class="rounded-lg py-0 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
@@ -299,11 +360,11 @@ exports[`SinglePost - Snapshots > matches snapshot with different postId 1`] = `
   class="relative"
 >
   <div
-    class="rounded-lg p-6 "
+    class="rounded-lg py-0 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
@@ -370,11 +431,11 @@ exports[`SinglePost - Snapshots > matches snapshot with isReply false explicitly
   class="relative"
 >
   <div
-    class="rounded-lg p-6 "
+    class="rounded-lg py-0 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
@@ -451,11 +512,11 @@ exports[`SinglePost - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    class="rounded-lg p-6 "
+    class="rounded-lg py-0 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
+      class="grid grid-cols-1 gap-4 p-6 lg:grid-cols-3"
       data-testid="container"
     >
       <div
