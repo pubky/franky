@@ -52,6 +52,28 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
+// Mock molecules
+vi.mock('@/molecules', () => ({
+  DialogConfirmDiscard: ({
+    open,
+    onOpenChange,
+    onConfirm,
+  }: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onConfirm: () => void;
+  }) => (
+    <div data-testid="dialog-confirm-discard" data-open={open}>
+      <button data-testid="mock-confirm-btn" onClick={onConfirm}>
+        Confirm
+      </button>
+      <button data-testid="mock-cancel-btn" onClick={() => onOpenChange(false)}>
+        Cancel
+      </button>
+    </div>
+  ),
+}));
+
 // Mock organisms
 vi.mock('@/organisms', () => ({
   PostInput: vi.fn(
@@ -75,24 +97,6 @@ vi.mock('@/organisms', () => ({
         </button>
       </div>
     ),
-  ),
-  DialogConfirmDiscard: ({
-    open,
-    onOpenChange,
-    onConfirm,
-  }: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onConfirm: () => void;
-  }) => (
-    <div data-testid="dialog-confirm-discard" data-open={open}>
-      <button data-testid="mock-confirm-btn" onClick={onConfirm}>
-        Confirm
-      </button>
-      <button data-testid="mock-cancel-btn" onClick={() => onOpenChange(false)}>
-        Cancel
-      </button>
-    </div>
   ),
 }));
 

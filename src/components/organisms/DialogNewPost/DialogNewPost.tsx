@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import type { DialogNewPostProps } from './DialogNewPost.types';
@@ -14,7 +15,7 @@ export function DialogNewPost({ open, onOpenChangeAction }: DialogNewPostProps) 
 
   return (
     <>
-      <Organisms.DialogConfirmDiscard
+      <Molecules.DialogConfirmDiscard
         open={showConfirmDialog}
         onOpenChange={() => setShowConfirmDialog(false)}
         onConfirm={handleDiscard}
