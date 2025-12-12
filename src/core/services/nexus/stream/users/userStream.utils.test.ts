@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as Core from '@/core';
-import { createUserStreamParams } from './userStream.utils';
+import { createUserStreamParams, streamRequiresUserId } from './userStream.utils';
 
 describe('createUserStreamParams', () => {
   const baseParams: Core.TUserStreamBase = {
@@ -184,13 +184,48 @@ describe('createUserStreamParams', () => {
       });
     });
 
-    it('should handle 3-part non-influencers format', () => {
+    it('should handle 3-part non-influencers format without viewer_id', () => {
       const streamId = 'recommended:all:all' as Core.UserStreamId;
 
       const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('recommended');
       expect(result.apiParams).toEqual(baseParams);
+    });
+
+    it('should add user_id from viewer_id for recommended streams', () => {
+      const streamId = 'recommended:all:all' as Core.UserStreamId;
+      const paramsWithViewer: Core.TUserStreamBase = {
+        skip: 0,
+        limit: 20,
+        viewer_id: 'viewer-abc' as Core.Pubky,
+      };
+
+      const result = createUserStreamParams(streamId, paramsWithViewer);
+
+      expect(result.reach).toBe('recommended');
+      expect(result.apiParams).toEqual({
+        skip: 0,
+        limit: 20,
+        viewer_id: 'viewer-abc',
+        user_id: 'viewer-abc', // ← Added from viewer_id
+      });
+    });
+
+    it('should add user_id from viewer_id for all sources requiring user_id', () => {
+      const sources = ['followers', 'following', 'friends', 'muted'];
+      const paramsWithViewer: Core.TUserStreamBase = {
+        skip: 0,
+        limit: 20,
+        viewer_id: 'viewer-xyz' as Core.Pubky,
+      };
+
+      sources.forEach((source) => {
+        const streamId = `${source}:all:all` as Core.UserStreamId;
+        const result = createUserStreamParams(streamId, paramsWithViewer);
+
+        expect(result.apiParams).toHaveProperty('user_id', 'viewer-xyz');
+      });
     });
   });
 
@@ -368,5 +403,51 @@ describe('createUserStreamParams', () => {
       expect(url).toContain('skip=0');
       expect(url).toContain('limit=20');
     });
+  });
+});
+
+describe('streamRequiresUserId', () => {
+  it('should return true for followers source', () => {
+    expect(streamRequiresUserId('followers:all:all' as Core.UserStreamId)).toBe(true);
+  });
+
+  it('should return true for following source', () => {
+    expect(streamRequiresUserId('following:all:all' as Core.UserStreamId)).toBe(true);
+  });
+
+  it('should return true for friends source', () => {
+    expect(streamRequiresUserId('friends:all:all' as Core.UserStreamId)).toBe(true);
+  });
+
+  it('should return true for muted source', () => {
+    expect(streamRequiresUserId('muted:all:all' as Core.UserStreamId)).toBe(true);
+  });
+
+  it('should return true for recommended source', () => {
+    expect(streamRequiresUserId('recommended:all:all' as Core.UserStreamId)).toBe(true);
+    expect(streamRequiresUserId(Core.UserStreamTypes.RECOMMENDED)).toBe(true);
+  });
+
+  it('should return false for influencers source', () => {
+    expect(streamRequiresUserId('influencers:today:all' as Core.UserStreamId)).toBe(false);
+    expect(streamRequiresUserId(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL)).toBe(false);
+  });
+
+  it('should return false for most_followed source', () => {
+    expect(streamRequiresUserId('most_followed:all:all' as Core.UserStreamId)).toBe(false);
+    expect(streamRequiresUserId(Core.UserStreamTypes.MOST_FOLLOWED)).toBe(false);
+  });
+
+  it('should return false for post_replies source', () => {
+    expect(streamRequiresUserId('post_replies:all:all' as Core.UserStreamId)).toBe(false);
+  });
+
+  it('should return false for composite IDs (userId:reach format) - user_id already in streamId', () => {
+    // For 2-part format userId:reach, the userId is already part of the streamId
+    // So these don't need user_id to be added from viewer_id
+    expect(streamRequiresUserId('user-123:followers' as Core.UserStreamId)).toBe(false);
+    expect(streamRequiresUserId('user-123:following' as Core.UserStreamId)).toBe(false);
+    expect(streamRequiresUserId('user-123:friends' as Core.UserStreamId)).toBe(false);
+    expect(streamRequiresUserId('user-123:muted' as Core.UserStreamId)).toBe(false);
   });
 });

@@ -1,9 +1,19 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { Generic } from './ProviderGeneric';
+import { GenericPreview } from './GenericPreview';
+
+// Mock the hooks module
+vi.mock('@/hooks', () => ({
+  useOgMetadata: vi.fn(),
+}));
+
+// Import the mocked hook
+import * as Hooks from '@/hooks';
 
 describe('ProviderGeneric', () => {
   beforeEach(() => {
-    // No mocks needed - parseEmbed is now synchronous
+    vi.clearAllMocks();
   });
 
   describe('domains', () => {
@@ -138,5 +148,302 @@ describe('ProviderGeneric', () => {
       expect(result).toBeTruthy();
       expect(typeof result).toBe('object');
     });
+  });
+});
+
+describe('GenericPreview', () => {
+  const mockUseOgMetadata = vi.mocked(Hooks.useOgMetadata);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('loading state', () => {
+    it('renders loading text when fetching metadata', () => {
+      mockUseOgMetadata.mockReturnValue({
+        metadata: null,
+        isLoading: true,
+        error: null,
+      });
+
+      render(<GenericPreview url="https://example.com" />);
+
+      expect(screen.getByText('Loading preview...')).toBeInTheDocument();
+    });
+  });
+
+  describe('error state', () => {
+    it('returns null when there is an error', () => {
+      mockUseOgMetadata.mockReturnValue({
+        metadata: null,
+        isLoading: false,
+        error: new Error('Failed to fetch'),
+      });
+
+      const { container } = render(<GenericPreview url="https://example.com" />);
+
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('returns null when metadata is null', () => {
+      mockUseOgMetadata.mockReturnValue({
+        metadata: null,
+        isLoading: false,
+        error: null,
+      });
+
+      const { container } = render(<GenericPreview url="https://example.com" />);
+
+      expect(container.firstChild).toBeNull();
+    });
+  });
+
+  describe('website type rendering', () => {
+    it('renders website preview with title and url', () => {
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: 'example.com',
+          title: 'Example Website',
+          image: null,
+          type: 'website',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url="https://example.com" />);
+
+      expect(screen.getByTestId('generic-website-preview')).toBeInTheDocument();
+      expect(screen.getByText('Example Website')).toBeInTheDocument();
+      expect(screen.getByText('example.com')).toBeInTheDocument();
+    });
+
+    it('renders website preview with image when available', () => {
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: 'example.com',
+          title: 'Example Website',
+          image: 'https://example.com/og-image.jpg',
+          type: 'website',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url="https://example.com" />);
+
+      expect(screen.getByAltText('Website social image')).toBeInTheDocument();
+    });
+
+    it('renders website preview without title when not available', () => {
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: 'example.com',
+          title: null,
+          image: null,
+          type: 'website',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url="https://example.com" />);
+
+      expect(screen.getByTestId('generic-website-preview')).toBeInTheDocument();
+      expect(screen.getByText('example.com')).toBeInTheDocument();
+    });
+  });
+
+  describe('image type rendering', () => {
+    it('renders image preview for image type', () => {
+      const imageUrl = 'https://example.com/photo.jpg';
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: imageUrl,
+          title: null,
+          image: null,
+          type: 'image',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url={imageUrl} />);
+
+      const image = screen.getByAltText('Image preview');
+      expect(image).toBeInTheDocument();
+      expect(image).toHaveAttribute('src', imageUrl);
+    });
+
+    it('wraps image in a link to the original URL', () => {
+      const imageUrl = 'https://example.com/photo.png';
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: imageUrl,
+          title: null,
+          image: null,
+          type: 'image',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url={imageUrl} />);
+
+      const link = screen.getByRole('link');
+      expect(link).toHaveAttribute('href', imageUrl);
+    });
+  });
+
+  describe('video type rendering', () => {
+    it('renders video element for video type', () => {
+      const videoUrl = 'https://example.com/video.mp4';
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: videoUrl,
+          title: null,
+          image: null,
+          type: 'video',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url={videoUrl} />);
+
+      const video = document.querySelector('video');
+      expect(video).toBeInTheDocument();
+      expect(video).toHaveAttribute('src', videoUrl);
+    });
+  });
+
+  describe('audio type rendering', () => {
+    it('renders audio element for audio type', () => {
+      const audioUrl = 'https://example.com/audio.mp3';
+      mockUseOgMetadata.mockReturnValue({
+        metadata: {
+          url: audioUrl,
+          title: null,
+          image: null,
+          type: 'audio',
+        },
+        isLoading: false,
+        error: null,
+      });
+
+      render(<GenericPreview url={audioUrl} />);
+
+      const audio = document.querySelector('audio');
+      expect(audio).toBeInTheDocument();
+      expect(audio).toHaveAttribute('src', audioUrl);
+    });
+  });
+});
+
+describe('GenericPreview - Snapshots', () => {
+  const mockUseOgMetadata = vi.mocked(Hooks.useOgMetadata);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('matches snapshot for loading state', () => {
+    mockUseOgMetadata.mockReturnValue({
+      metadata: null,
+      isLoading: true,
+      error: null,
+    });
+
+    const { container } = render(<GenericPreview url="https://example.com" />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot for website type with all fields', () => {
+    mockUseOgMetadata.mockReturnValue({
+      metadata: {
+        url: 'example.com',
+        title: 'Example Website Title',
+        image: 'https://example.com/og-image.jpg',
+        type: 'website',
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    const { container } = render(<GenericPreview url="https://example.com" />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot for website type without image', () => {
+    mockUseOgMetadata.mockReturnValue({
+      metadata: {
+        url: 'example.com',
+        title: 'Example Website Title',
+        image: null,
+        type: 'website',
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    const { container } = render(<GenericPreview url="https://example.com" />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot for image type', () => {
+    const imageUrl = 'https://example.com/photo.jpg';
+    mockUseOgMetadata.mockReturnValue({
+      metadata: {
+        url: imageUrl,
+        title: null,
+        image: null,
+        type: 'image',
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    const { container } = render(<GenericPreview url={imageUrl} />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot for video type', () => {
+    const videoUrl = 'https://example.com/video.mp4';
+    mockUseOgMetadata.mockReturnValue({
+      metadata: {
+        url: videoUrl,
+        title: null,
+        image: null,
+        type: 'video',
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    const { container } = render(<GenericPreview url={videoUrl} />);
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot for audio type', () => {
+    const audioUrl = 'https://example.com/audio.mp3';
+    mockUseOgMetadata.mockReturnValue({
+      metadata: {
+        url: audioUrl,
+        title: null,
+        image: null,
+        type: 'audio',
+      },
+      isLoading: false,
+      error: null,
+    });
+
+    const { container } = render(<GenericPreview url={audioUrl} />);
+
+    expect(container).toMatchSnapshot();
   });
 });

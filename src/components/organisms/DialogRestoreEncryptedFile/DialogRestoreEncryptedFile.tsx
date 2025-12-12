@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { DialogClose } from '@radix-ui/react-dialog';
 
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -191,7 +190,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
 
         {/* Action Buttons */}
         <Atoms.Container className="justify-between gap-4 sm:gap-3 md:flex-row">
-          <DialogClose asChild>
+          <Atoms.DialogClose asChild>
             <Atoms.Button
               variant="outline"
               className="order-2 h-10 flex-1 rounded-full px-4 py-2.5 md:order-0 md:px-12 md:py-6"
@@ -200,7 +199,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             >
               Cancel
             </Atoms.Button>
-          </DialogClose>
+          </Atoms.DialogClose>
           <Atoms.Button
             id="encrypted-file-restore-btn"
             className="order-1 h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6"

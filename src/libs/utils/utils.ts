@@ -442,3 +442,5 @@ export const convertHmsToSeconds = (
 
   return h * 3600 + m * 60 + s;
 };
+
+export const isPostDeleted = (content: string | undefined) => content === '[DELETED]';
