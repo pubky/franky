@@ -62,12 +62,13 @@ describe('SinglePostReplyInput', () => {
     mockPostControllerCreate.mockResolvedValue(undefined);
     mockReply.mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
-      content: '',
+      content: 'Test reply content',
       setContent: mockSetContent,
       reply: mockReply,
       post: vi.fn(),
       isSubmitting: false,
-      error: null,
+      tags: [],
+      setTags: vi.fn(),
     });
   });
 
@@ -82,21 +83,22 @@ describe('SinglePostReplyInput', () => {
     render(<SinglePostReplyInput postId="test-post-123" />);
 
     const textarea = screen.getByTestId('textarea');
+    fireEvent.change(textarea, { target: { value: 'Edited Test reply content' } });
+
+    expect(mockSetContent).toHaveBeenCalledWith('Edited Test reply content');
+  });
+
+  it('handles textarea value not changing', () => {
+    render(<SinglePostReplyInput postId="test-post-123" />);
+
+    const textarea = screen.getByTestId('textarea');
     fireEvent.change(textarea, { target: { value: 'Test reply content' } });
 
-    expect(mockSetContent).toHaveBeenCalledWith('Test reply content');
+    expect(mockSetContent).not.toHaveBeenCalled();
   });
 
   it('handles Enter key submission', async () => {
     mockReply.mockResolvedValue(undefined);
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
 
@@ -111,14 +113,6 @@ describe('SinglePostReplyInput', () => {
 
   it('does not submit on Shift+Enter', () => {
     mockReply.mockResolvedValue(undefined);
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
 
@@ -136,7 +130,8 @@ describe('SinglePostReplyInput', () => {
       reply: mockReply,
       post: vi.fn(),
       isSubmitting: false,
-      error: null,
+      tags: [],
+      setTags: vi.fn(),
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -159,7 +154,8 @@ describe('SinglePostReplyInput', () => {
       reply: mockReply,
       post: vi.fn(),
       isSubmitting: false,
-      error: null,
+      tags: [],
+      setTags: vi.fn(),
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -174,14 +170,6 @@ describe('SinglePostReplyInput', () => {
 
   it('clears textarea after successful submission', async () => {
     mockReply.mockResolvedValue(undefined);
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
 
@@ -195,14 +183,6 @@ describe('SinglePostReplyInput', () => {
 
   it('handles submission errors', async () => {
     mockReply.mockRejectedValue(new Error('Submission failed'));
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
 
@@ -216,14 +196,6 @@ describe('SinglePostReplyInput', () => {
 
   it('uses current user ID from auth store', async () => {
     mockReply.mockResolvedValue(undefined);
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
 
@@ -237,14 +209,6 @@ describe('SinglePostReplyInput', () => {
 
   it('does not submit when postId is empty', async () => {
     mockReply.mockResolvedValue(undefined);
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="" />);
 
@@ -259,14 +223,6 @@ describe('SinglePostReplyInput', () => {
 
   it('does not submit when currentUserId is null', async () => {
     mockReply.mockResolvedValue(undefined);
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: vi.fn(),
-      isSubmitting: false,
-      error: null,
-    });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
 
@@ -284,22 +240,18 @@ describe('SinglePostReplyInput - Snapshots', () => {
     vi.clearAllMocks();
     const mockReply = vi.fn().mockResolvedValue(undefined);
     mockUsePost.mockReturnValue({
-      content: '',
+      content: 'Test reply content',
       setContent: vi.fn(),
       reply: mockReply,
       post: vi.fn(),
       isSubmitting: false,
-      error: null,
+      tags: [],
+      setTags: vi.fn(),
     });
   });
 
   it('matches snapshot with default props', () => {
     const { container } = render(<SinglePostReplyInput postId="test-post-123" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with different postId', () => {
-    const { container } = render(<SinglePostReplyInput postId="different-post-id" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

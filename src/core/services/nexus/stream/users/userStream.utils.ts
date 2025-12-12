@@ -52,6 +52,18 @@ export function createUserStreamParams(
       } as NexusParamsResult<'influencers'>;
     }
 
+    // For sources that require user_id (followers, following, friends, muted, recommended),
+    // add user_id from viewer_id when available
+    if (streamRequiresUserId(streamId) && baseParams.viewer_id) {
+      return {
+        reach: source as ReachType,
+        apiParams: {
+          ...baseParams,
+          user_id: baseParams.viewer_id,
+        } as UserStreamApiParamsMap[ReachType],
+      };
+    }
+
     // Other 3-part formats use base params only
     return {
       reach: source as ReachType,
@@ -60,6 +72,22 @@ export function createUserStreamParams(
   }
 
   throw new Error(`Invalid stream ID: "${streamId}". Expected 2 or 3 parts separated by "${DELIMITER}"`);
+}
+
+/**
+ * Sources that require user_id parameter according to Nexus API documentation
+ * https://nexus.staging.pubky.app/swagger-ui/#/Stream/stream_user_ids_handler
+ */
+const SOURCES_REQUIRING_USER_ID = ['followers', 'following', 'friends', 'muted', 'recommended'] as const;
+
+/**
+ * Check if a stream ID corresponds to a source that requires user_id
+ *
+ * @param streamId - Stream identifier
+ * @returns true if the source requires user_id parameter
+ */
+export function streamRequiresUserId(streamId: Core.UserStreamId): boolean {
+  return SOURCES_REQUIRING_USER_ID.some((source) => streamId.startsWith(source));
 }
 
 type UserStreamApiParamsMap = {

@@ -1,37 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-
-// Mock Radix UI Dialog components (Sheet uses Dialog primitives)
-vi.mock('@radix-ui/react-dialog', () => ({
-  Root: ({ children }: { children: React.ReactNode }) => <div data-testid="sheet-root">{children}</div>,
-  Trigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="sheet-trigger" data-as-child={asChild ? 'true' : 'false'}>
-      {children}
-    </div>
-  ),
-  Content: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="sheet-content" className={className}>
-      {children}
-    </div>
-  ),
-  Title: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <h2 data-testid="sheet-title" className={className}>
-      {children}
-    </h2>
-  ),
-  Description: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <p data-testid="sheet-description" className={className}>
-      {children}
-    </p>
-  ),
-  Portal: ({ children }: { children: React.ReactNode }) => <div data-testid="sheet-portal">{children}</div>,
-  Overlay: ({ className }: { className?: string }) => <div data-testid="sheet-overlay" className={className} />,
-  Close: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <button data-testid="sheet-close" className={className}>
-      {children}
-    </button>
-  ),
-}));
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock @/libs
 vi.mock('@/libs', async (importOriginal) => {
@@ -51,117 +20,144 @@ describe('Sheet', () => {
         <div>Sheet Content</div>
       </Sheet>,
     );
-    expect(screen.getByTestId('sheet-root')).toBeInTheDocument();
     expect(screen.getByText('Sheet Content')).toBeInTheDocument();
   });
 
   it('renders SheetTrigger correctly', () => {
     render(
-      <SheetTrigger>
-        <button>Open Sheet</button>
-      </SheetTrigger>,
+      <Sheet>
+        <SheetTrigger>Open Sheet</SheetTrigger>
+      </Sheet>,
     );
-    expect(screen.getByTestId('sheet-trigger')).toBeInTheDocument();
     expect(screen.getByText('Open Sheet')).toBeInTheDocument();
   });
 
   it('renders SheetTrigger with asChild', () => {
     render(
-      <SheetTrigger asChild>
-        <button>Open Sheet</button>
-      </SheetTrigger>,
+      <Sheet>
+        <SheetTrigger asChild>
+          <button>Open Sheet</button>
+        </SheetTrigger>
+      </Sheet>,
     );
-    const trigger = screen.getByTestId('sheet-trigger');
-    expect(trigger).toHaveAttribute('data-as-child', 'true');
+    expect(screen.getByText('Open Sheet')).toBeInTheDocument();
   });
 
   it('renders SheetContent with default side', () => {
     render(
-      <SheetContent>
-        <div>Sheet Content</div>
-      </SheetContent>,
+      <Sheet open={true}>
+        <SheetContent>
+          <div>Sheet Content</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(screen.getByTestId('sheet-portal')).toBeInTheDocument();
-    expect(screen.getByTestId('sheet-overlay')).toBeInTheDocument();
-    expect(screen.getByTestId('sheet-content')).toBeInTheDocument();
     expect(screen.getByText('Sheet Content')).toBeInTheDocument();
   });
 
   it('renders SheetContent with different sides', () => {
     const { rerender } = render(
-      <SheetContent side="top">
-        <div>Top Sheet</div>
-      </SheetContent>,
+      <Sheet open={true}>
+        <SheetContent side="top">
+          <div>Top Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
     expect(screen.getByText('Top Sheet')).toBeInTheDocument();
 
     rerender(
-      <SheetContent side="bottom">
-        <div>Bottom Sheet</div>
-      </SheetContent>,
+      <Sheet open={true}>
+        <SheetContent side="bottom">
+          <div>Bottom Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
     expect(screen.getByText('Bottom Sheet')).toBeInTheDocument();
 
     rerender(
-      <SheetContent side="left">
-        <div>Left Sheet</div>
-      </SheetContent>,
+      <Sheet open={true}>
+        <SheetContent side="left">
+          <div>Left Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
     expect(screen.getByText('Left Sheet')).toBeInTheDocument();
 
     rerender(
-      <SheetContent side="right">
-        <div>Right Sheet</div>
-      </SheetContent>,
+      <Sheet open={true}>
+        <SheetContent side="right">
+          <div>Right Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
     expect(screen.getByText('Right Sheet')).toBeInTheDocument();
   });
 
   it('renders SheetHeader correctly', () => {
     render(
-      <SheetHeader>
-        <SheetTitle>Sheet Title</SheetTitle>
-      </SheetHeader>,
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Sheet Title</SheetTitle>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(screen.getByTestId('sheet-title')).toBeInTheDocument();
     expect(screen.getByText('Sheet Title')).toBeInTheDocument();
   });
 
   it('renders SheetTitle correctly', () => {
-    render(<SheetTitle>My Sheet Title</SheetTitle>);
-    const title = screen.getByTestId('sheet-title');
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetTitle>My Sheet Title</SheetTitle>
+        </SheetContent>
+      </Sheet>,
+    );
+    const title = screen.getByText('My Sheet Title');
     expect(title).toBeInTheDocument();
-    expect(title).toHaveTextContent('My Sheet Title');
   });
 
   it('renders SheetDescription correctly', () => {
-    render(<SheetDescription>My Sheet Description</SheetDescription>);
-    const description = screen.getByTestId('sheet-description');
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetDescription>My Sheet Description</SheetDescription>
+        </SheetContent>
+      </Sheet>,
+    );
+    const description = screen.getByText('My Sheet Description');
     expect(description).toBeInTheDocument();
-    expect(description).toHaveTextContent('My Sheet Description');
   });
 
   it('renders SheetHeader with Title and Description', () => {
     render(
-      <SheetHeader>
-        <SheetTitle>Sheet Title</SheetTitle>
-        <SheetDescription>Sheet Description</SheetDescription>
-      </SheetHeader>,
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Sheet Title</SheetTitle>
+            <SheetDescription>Sheet Description</SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(screen.getByTestId('sheet-title')).toBeInTheDocument();
-    expect(screen.getByTestId('sheet-description')).toBeInTheDocument();
+    expect(screen.getByText('Sheet Title')).toBeInTheDocument();
+    expect(screen.getByText('Sheet Description')).toBeInTheDocument();
   });
 
   it('renders close button in SheetContent', () => {
     render(
-      <SheetContent>
-        <div>Sheet Content</div>
-      </SheetContent>,
+      <Sheet open={true}>
+        <SheetContent>
+          <div>Sheet Content</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(screen.getByTestId('sheet-close')).toBeInTheDocument();
+    expect(screen.getByText('Sheet Content')).toBeInTheDocument();
+    expect(screen.getByText('Close')).toBeInTheDocument();
   });
 });
 
+// Use normaliseRadixIds to ensure the snapshots are consistent.
 describe('Sheet - Snapshots', () => {
   it('matches snapshot for Sheet with default props', () => {
     const { container } = render(
@@ -169,98 +165,156 @@ describe('Sheet - Snapshots', () => {
         <div>Sheet Content</div>
       </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetTrigger with default props', () => {
     const { container } = render(
-      <SheetTrigger>
-        <button>Open Sheet</button>
-      </SheetTrigger>,
+      <Sheet>
+        <SheetTrigger>Open Sheet</SheetTrigger>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetTrigger with asChild', () => {
     const { container } = render(
-      <SheetTrigger asChild>
-        <button>Open Sheet</button>
-      </SheetTrigger>,
+      <Sheet>
+        <SheetTrigger asChild>
+          <button>Open Sheet</button>
+        </SheetTrigger>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetContent with default side', () => {
-    const { container } = render(
-      <SheetContent>
-        <div>Sheet Content</div>
-      </SheetContent>,
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <div>Sheet Content</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetContent = document.querySelector('[role="dialog"]') as HTMLElement;
+    const wrapper = sheetContent?.parentElement as HTMLElement;
+    const normalizedContainer = normaliseRadixIds(wrapper);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetContent with top side', () => {
-    const { container } = render(
-      <SheetContent side="top">
-        <div>Top Sheet</div>
-      </SheetContent>,
+    render(
+      <Sheet open={true}>
+        <SheetContent side="top">
+          <div>Top Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetContent = document.querySelector('[role="dialog"]') as HTMLElement;
+    const wrapper = sheetContent?.parentElement as HTMLElement;
+    const normalizedContainer = normaliseRadixIds(wrapper);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetContent with bottom side', () => {
-    const { container } = render(
-      <SheetContent side="bottom">
-        <div>Bottom Sheet</div>
-      </SheetContent>,
+    render(
+      <Sheet open={true}>
+        <SheetContent side="bottom">
+          <div>Bottom Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetContent = document.querySelector('[role="dialog"]') as HTMLElement;
+    const wrapper = sheetContent?.parentElement as HTMLElement;
+    const normalizedContainer = normaliseRadixIds(wrapper);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetContent with left side', () => {
-    const { container } = render(
-      <SheetContent side="left">
-        <div>Left Sheet</div>
-      </SheetContent>,
+    render(
+      <Sheet open={true}>
+        <SheetContent side="left">
+          <div>Left Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetContent = document.querySelector('[role="dialog"]') as HTMLElement;
+    const wrapper = sheetContent?.parentElement as HTMLElement;
+    const normalizedContainer = normaliseRadixIds(wrapper);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetContent with right side', () => {
-    const { container } = render(
-      <SheetContent side="right">
-        <div>Right Sheet</div>
-      </SheetContent>,
+    render(
+      <Sheet open={true}>
+        <SheetContent side="right">
+          <div>Right Sheet</div>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetContent = document.querySelector('[role="dialog"]') as HTMLElement;
+    const wrapper = sheetContent?.parentElement as HTMLElement;
+    const normalizedContainer = normaliseRadixIds(wrapper);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetHeader', () => {
-    const { container } = render(
-      <SheetHeader>
-        <SheetTitle>Sheet Title</SheetTitle>
-      </SheetHeader>,
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Sheet Title</SheetTitle>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetHeader = document.querySelector('[class*="flex flex-col space-y-2"]');
+    const normalizedContainer = normaliseRadixIds(sheetHeader as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetTitle', () => {
-    const { container } = render(<SheetTitle>My Sheet Title</SheetTitle>);
-    expect(container.firstChild).toMatchSnapshot();
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetTitle>My Sheet Title</SheetTitle>
+        </SheetContent>
+      </Sheet>,
+    );
+    const sheetTitle = document.querySelector('h2');
+    const normalizedContainer = normaliseRadixIds(sheetTitle as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetDescription', () => {
-    const { container } = render(<SheetDescription>My Sheet Description</SheetDescription>);
-    expect(container.firstChild).toMatchSnapshot();
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetDescription>My Sheet Description</SheetDescription>
+        </SheetContent>
+      </Sheet>,
+    );
+    const sheetDescription = document.querySelector('p');
+    const normalizedContainer = normaliseRadixIds(sheetDescription as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for SheetHeader with Title and Description', () => {
-    const { container } = render(
-      <SheetHeader>
-        <SheetTitle>Sheet Title</SheetTitle>
-        <SheetDescription>Sheet Description</SheetDescription>
-      </SheetHeader>,
+    render(
+      <Sheet open={true}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Sheet Title</SheetTitle>
+            <SheetDescription>Sheet Description</SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const sheetHeader = document.querySelector('[class*="flex flex-col space-y-2"]');
+    const normalizedContainer = normaliseRadixIds(sheetHeader as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 });

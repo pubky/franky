@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
+import { POST_THREAD_CONNECTOR_VARIANTS } from './PostThreadConnector.constants';
 import { PostThreadConnector } from './PostThreadConnector';
 
 const meta = {
@@ -15,7 +16,7 @@ const meta = {
     },
     variant: {
       control: { type: 'select' },
-      options: ['regular', 'last', 'gap-fix'],
+      options: Object.values(POST_THREAD_CONNECTOR_VARIANTS),
       description: 'Visual variant of the thread connector',
     },
   },
@@ -27,35 +28,34 @@ type Story = StoryObj<typeof meta>;
 export const Regular: Story = {
   args: {
     height: 150,
-    variant: 'regular',
+    variant: POST_THREAD_CONNECTOR_VARIANTS.REGULAR,
   },
 };
 
 export const Last: Story = {
   args: {
     height: 150,
-    variant: 'last',
+    variant: POST_THREAD_CONNECTOR_VARIANTS.LAST,
   },
 };
 
-export const GapFix: Story = {
+export const DialogReply: Story = {
   args: {
-    height: 12,
-    variant: 'gap-fix',
+    variant: POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY,
   },
 };
 
 export const SmallHeight: Story = {
   args: {
     height: 50,
-    variant: 'regular',
+    variant: POST_THREAD_CONNECTOR_VARIANTS.REGULAR,
   },
 };
 
 export const LargeHeight: Story = {
   args: {
     height: 300,
-    variant: 'regular',
+    variant: POST_THREAD_CONNECTOR_VARIANTS.REGULAR,
   },
 };
 
@@ -63,16 +63,16 @@ export const AllVariants: Story = {
   render: () => (
     <div className="flex items-start gap-8">
       <div className="flex flex-col items-center gap-2">
-        <PostThreadConnector height={150} variant="regular" />
+        <PostThreadConnector height={150} variant={POST_THREAD_CONNECTOR_VARIANTS.REGULAR} />
         <span className="text-xs text-muted-foreground">Regular</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <PostThreadConnector height={150} variant="last" />
+        <PostThreadConnector height={150} variant={POST_THREAD_CONNECTOR_VARIANTS.LAST} />
         <span className="text-xs text-muted-foreground">Last</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <PostThreadConnector height={12} variant="gap-fix" />
-        <span className="text-xs text-muted-foreground">Gap Fix</span>
+        <PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />
+        <span className="text-xs text-muted-foreground">Dialog Reply</span>
       </div>
     </div>
   ),

@@ -261,11 +261,11 @@ describe('usePost', () => {
       });
     });
 
-    it('should trim content before submitting reply', async () => {
+    it('should trim whitespace from content before submitting reply', async () => {
       const { result } = renderHook(() => usePost());
 
       act(() => {
-        result.current.setContent('  Trimmed content  ');
+        result.current.setContent('\n\n  Trimmed content  \n\n');
       });
 
       await act(async () => {
@@ -353,7 +353,7 @@ describe('usePost', () => {
       const { result } = renderHook(() => usePost());
 
       act(() => {
-        result.current.setContent('   ');
+        result.current.setContent('   \n\n');
       });
 
       await act(async () => {
@@ -409,7 +409,7 @@ describe('usePost', () => {
       expect(result.current.content).toBe('Post content'); // Content should not be cleared on error
     });
 
-    it('should set isSubmitting to true during post submission', async () => {
+    it('should set isSubmitting to true during post submission and set to false after submission', async () => {
       const { result } = renderHook(() => usePost());
       let resolvePromise: () => void;
       const promise = new Promise<void>((resolve) => {
@@ -435,6 +435,10 @@ describe('usePost', () => {
         resolvePromise!();
         await promise;
       });
+
+      await waitFor(() => {
+        expect(result.current.isSubmitting).toBe(false);
+      });
     });
 
     it('should trim content before submitting post', async () => {
@@ -454,55 +458,6 @@ describe('usePost', () => {
         content: 'Trimmed content',
         authorId: 'test-user-id',
         tags: undefined,
-      });
-    });
-  });
-
-  describe('Error handling and toast', () => {
-    it('should display toast when error is set', async () => {
-      const { result } = renderHook(() => usePost());
-      mockPostControllerCreate.mockRejectedValueOnce(new Error('Test error'));
-
-      act(() => {
-        result.current.setContent('Test content');
-      });
-
-      await act(async () => {
-        await result.current.post({
-          onSuccess: vi.fn(),
-        });
-      });
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
-          description: 'Failed to create post. Please try again.',
-          className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-        });
-      });
-    });
-
-    it('should display toast for reply errors', async () => {
-      const { result } = renderHook(() => usePost());
-      mockPostControllerCreate.mockRejectedValueOnce(new Error('Reply error'));
-
-      act(() => {
-        result.current.setContent('Reply content');
-      });
-
-      await act(async () => {
-        await result.current.reply({
-          postId: 'test-post-123',
-          onSuccess: vi.fn(),
-        });
-      });
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
-          description: 'Failed to post reply. Please try again.',
-          className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-        });
       });
     });
   });

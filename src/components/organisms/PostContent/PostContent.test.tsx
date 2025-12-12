@@ -4,6 +4,7 @@ import { PostContent } from './PostContent';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
@@ -37,10 +38,16 @@ vi.mock('@/molecules', () => ({
   PostLinkEmbeds: vi.fn(() => null),
 }));
 
+// Mock organisms - PostAttachments
+vi.mock('@/organisms', () => ({
+  PostAttachments: vi.fn(() => <div data-testid="post-attachments" />),
+}));
+
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockFindById = vi.mocked(Core.PostDetailsModel.findById);
 const mockPostText = vi.mocked(Molecules.PostText);
 const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
+const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
 
 describe('PostContent', () => {
   beforeEach(() => {
@@ -109,16 +116,46 @@ describe('PostContent', () => {
 
     expect(mockUseLiveQuery).toHaveBeenCalledWith(expect.any(Function), expect.arrayContaining(['post-2']));
   });
+
+  it('calls PostAttachments with attachments from postDetails', () => {
+    const mockAttachments = ['file-id-1', 'file-id-2'];
+    const mockPostDetails = { content: 'Test content', attachments: mockAttachments };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    render(<PostContent postId="post-123" />);
+
+    expect(mockPostAttachments).toHaveBeenCalledWith({ attachments: mockAttachments }, undefined);
+  });
+
+  it('calls PostAttachments with null when no attachments', () => {
+    const mockPostDetails = { content: 'Test content', attachments: null };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    render(<PostContent postId="post-123" />);
+
+    expect(mockPostAttachments).toHaveBeenCalledWith({ attachments: null }, undefined);
+  });
+
+  it('calls PostAttachments with empty array', () => {
+    const mockPostDetails = { content: 'Test content', attachments: [] };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    render(<PostContent postId="post-123" />);
+
+    expect(mockPostAttachments).toHaveBeenCalledWith({ attachments: [] }, undefined);
+  });
 });
 
 describe('PostContent - Snapshots', () => {
   // Use real PostText and PostLinkEmbeds for snapshot tests
+  // PostAttachments remains mocked to avoid useToast dependency chain
   beforeEach(async () => {
     vi.clearAllMocks();
-    const actual = await vi.importActual<typeof import('@/molecules')>('@/molecules');
+    const actualMolecules = await vi.importActual<typeof import('@/molecules')>('@/molecules');
     // Replace the mock implementations with real ones for snapshots
-    vi.mocked(Molecules.PostText).mockImplementation(actual.PostText);
-    vi.mocked(Molecules.PostLinkEmbeds).mockImplementation(actual.PostLinkEmbeds);
+    vi.mocked(Molecules.PostText).mockImplementation(actualMolecules.PostText);
+    vi.mocked(Molecules.PostLinkEmbeds).mockImplementation(actualMolecules.PostLinkEmbeds);
+    // PostAttachments stays mocked - it has its own test file
   }, 30000); // Increase timeout to 30 seconds
 
   it('matches snapshot with single-line content', () => {

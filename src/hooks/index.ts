@@ -43,3 +43,4 @@ export * from './useIsScrolledFromTop';
 export * from './useBulkUserAvatars';
 export * from './useSearchStreamId';
 export * from './useConfirmableDialog';
+export * from './useFeedback';
