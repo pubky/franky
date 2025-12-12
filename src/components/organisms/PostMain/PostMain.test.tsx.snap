@@ -26,21 +26,21 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 gap-0 rounded-md py-0"
+    data-class-name="flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-post-id="post-no-reply-456"
-      data-testid="post-preview-card"
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
     >
       <div
-        data-testid="post-preview-card-header"
+        data-testid="post-header"
       >
         PostHeader 
         post-no-reply-456
       </div>
       <div
-        data-testid="post-preview-card-content"
+        data-testid="post-content"
       >
         PostContent 
         post-no-reply-456
@@ -94,21 +94,21 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    data-class-name="flex-1 gap-0 rounded-md py-0"
+    data-class-name="flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-post-id="post-reply-123"
-      data-testid="post-preview-card"
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
     >
       <div
-        data-testid="post-preview-card-header"
+        data-testid="post-header"
       >
         PostHeader 
         post-reply-123
       </div>
       <div
-        data-testid="post-preview-card-content"
+        data-testid="post-content"
       >
         PostContent 
         post-reply-123
@@ -149,21 +149,21 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 gap-0 rounded-md py-0"
+    data-class-name="flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-post-id="post-123"
-      data-testid="post-preview-card"
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
     >
       <div
-        data-testid="post-preview-card-header"
+        data-testid="post-header"
       >
         PostHeader 
         post-123
       </div>
       <div
-        data-testid="post-preview-card-content"
+        data-testid="post-content"
       >
         PostContent 
         post-123
@@ -204,21 +204,21 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 gap-0 rounded-md py-0"
+    data-class-name="flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-post-id="post-789"
-      data-testid="post-preview-card"
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
     >
       <div
-        data-testid="post-preview-card-header"
+        data-testid="post-header"
       >
         PostHeader 
         post-789
       </div>
       <div
-        data-testid="post-preview-card-content"
+        data-testid="post-content"
       >
         PostContent 
         post-789

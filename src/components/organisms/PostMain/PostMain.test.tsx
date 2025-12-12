@@ -72,14 +72,17 @@ vi.mock('@/organisms', () => ({
     postId,
     className,
     onReplyClick,
+    onRepostClick,
   }: {
     postId: string;
     className?: string;
     onReplyClick?: () => void;
+    onRepostClick?: () => void;
   }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
       {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+      {onRepostClick && <button onClick={onRepostClick}>Repost</button>}
     </div>
   ),
   DialogReply: ({
@@ -93,6 +96,19 @@ vi.mock('@/organisms', () => ({
   }) => (
     <div data-testid="dialog-reply" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
       DialogReply
+    </div>
+  ),
+  DialogRepost: ({
+    postId,
+    open,
+    onOpenChangeAction,
+  }: {
+    postId: string;
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog-repost" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
+      DialogRepost
     </div>
   ),
 }));

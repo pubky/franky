@@ -6,12 +6,16 @@ exports[`PostContent - Snapshots > matches snapshot with empty content 1`] = `
   data-testid="container"
 >
   <div
-    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
-    data-testid="container"
-  />
-  <div
     data-testid="post-attachments"
   />
+  <div
+    class="rounded-md bg-muted p-0"
+    data-testid="container"
+  >
+    <div
+      data-testid="post-preview-card"
+    />
+  </div>
 </div>
 `;
 
@@ -45,6 +49,14 @@ Line 2
   <div
     data-testid="post-attachments"
   />
+  <div
+    class="rounded-md bg-muted p-0 mt-4"
+    data-testid="container"
+  >
+    <div
+      data-testid="post-preview-card"
+    />
+  </div>
 </div>
 `;
 
@@ -64,6 +76,14 @@ exports[`PostContent - Snapshots > matches snapshot with single-line content 1`]
   <div
     data-testid="post-attachments"
   />
+  <div
+    class="rounded-md bg-muted p-0 mt-4"
+    data-testid="container"
+  >
+    <div
+      data-testid="post-preview-card"
+    />
+  </div>
 </div>
 `;
 
@@ -85,6 +105,14 @@ exports[`PostContent - Snapshots > matches snapshot with special characters in c
   <div
     data-testid="post-attachments"
   />
+  <div
+    class="rounded-md bg-muted p-0 mt-4"
+    data-testid="container"
+  >
+    <div
+      data-testid="post-preview-card"
+    />
+  </div>
 </div>
 `;
 
@@ -104,5 +132,13 @@ exports[`PostContent - Snapshots > matches snapshot with very long content 1`] =
   <div
     data-testid="post-attachments"
   />
+  <div
+    class="rounded-md bg-muted p-0 mt-4"
+    data-testid="container"
+  >
+    <div
+      data-testid="post-preview-card"
+    />
+  </div>
 </div>
 `;
