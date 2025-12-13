@@ -4,7 +4,6 @@ import * as Core from '@/core';
 
 import * as Libs from '@/libs';
 import type {
-  TKeypairWithMnemonic,
   TMnemonicWords,
   TCreateRecoveryFileParams,
   TDecryptRecoveryFileParams,
@@ -17,7 +16,7 @@ export class Identity {
    * @param passphrase - The passphrase to use to create the recovery file
    * @returns void
    */
-  static async createRecoveryFile({ keypair, passphrase }: TCreateRecoveryFileParams): Promise<void> {
+  static createRecoveryFile({ keypair, passphrase }: TCreateRecoveryFileParams) {  
     try {
       const recoveryFile = keypair.createRecoveryFile(passphrase);
       this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
@@ -42,7 +41,7 @@ export class Identity {
    * @param filename - The filename to use for the download
    * @returns void
    */
-  private static async handleDownloadRecoveryFile({
+  private static handleDownloadRecoveryFile({
     recoveryFile,
     filename,
   }: {
@@ -97,6 +96,17 @@ export class Identity {
   }
 
   /**
+   * Converts a secret key to a pubky string
+   * @param secretKey - The secret key to convert
+   * @returns The z-base32 encoding of this public key
+   */
+  static pubkyFromSecret(secretKey: string): string {
+    const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
+    const keypair = Keypair.fromSecretKey(secretKeyUint8Array);
+    return keypair.publicKey.z32();
+  }
+
+  /**
    * Generates a 12-word mnemonic recovery phrase
    * @returns The mnemonic recovery phrase
    */
@@ -129,11 +139,11 @@ export class Identity {
   }
 
   /**
-   * Generates a keypair from a mnemonic
-   * @param mnemonic - The mnemonic to generate the keypair from
-   * @returns The keypair
+   * Generates a secret key from a mnemonic and returns it in hex format
+   * @param mnemonic - The mnemonic to generate the secret key from
+   * @returns The secret key as a hexadecimal string (64 characters representing 32 bytes)
    */
-  private static generateKeypairFromMnemonic(mnemonic: string): Keypair {
+  private static generateSecretKeyFromMnemonic(mnemonic: string): string {
     if (!bip39.validateMnemonic(mnemonic)) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid mnemonic', 400);
     }
@@ -142,37 +152,24 @@ export class Identity {
       // Convert mnemonic to seed using BIP39 standard
       const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
       // Use first 32 bytes as secret key
-      // TODO: This is not secure, we need to create a copy of the secret key
-      // const secretKey = new Uint8Array(seedMnemonic.subarray(0, 32));
-      const secretKey = seedMnemonic.slice(0, 32);
-      // Create keypair from secret key
-      return Keypair.fromSecretKey(secretKey);
+      const secretKey = new Uint8Array(seedMnemonic.subarray(0, 32));
+      // Convert secret key to hex string format
+      return this.secretKeyToHex(secretKey);
     } catch (error) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
-        'Failed to generate keypair from mnemonic',
+        'Failed to generate secret key from mnemonic',
         400,
         { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
   }
 
-  // TODO: Might be deleted
-  static keypairDataFromSecretKey(secretKey: string) {
-    try {
-      const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      const keypair = Keypair.fromSecretKey(secretKeyUint8Array);
-
-      return {
-        secretKey: this.secretKeyToHex(keypair.secretKey()),
-        pubky: keypair.publicKey.toString(),
-      };
-    } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
-    }
-  }
-
-  // TODO: Use in homeserver.ts
+  /**
+   * Converts a secret key to a keypair
+   * @param secretKey - The secret key to convert
+   * @returns The keypair
+   */
   static keypairFromSecretKey(secretKey: string): Keypair {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
@@ -182,12 +179,16 @@ export class Identity {
     }
   }
 
-  static generateKeypair(): TKeypairWithMnemonic {
-    // Generate mnemonic first, then create keypair from it
+  /**
+   * Generates a new pair of secret key and mnemonic
+   * @returns The secret key and mnemonic
+   */
+  static generateSecrets(): Core.TOnboardingSecrets {
+    // Generate mnemonic first, then create secret key from it
     const mnemonic = this.generateMnemonic();
-    const keypair = this.generateKeypairFromMnemonic(mnemonic);
+    const secretKey = this.generateSecretKeyFromMnemonic(mnemonic);
 
-    return { keypair, mnemonic };
+    return { secretKey, mnemonic };
   }
 
   /**

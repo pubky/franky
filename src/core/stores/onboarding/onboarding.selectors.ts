@@ -1,6 +1,5 @@
 import { OnboardingStore } from './onboarding.types';
 import { ZustandGet } from '../stores.types';
-import * as Libs from '@/libs';
 
 export const createOnboardingSelectors = (get: ZustandGet<OnboardingStore>) => ({
   /**
@@ -9,26 +8,12 @@ export const createOnboardingSelectors = (get: ZustandGet<OnboardingStore>) => (
    * @throws Error if keypair is not available
    */
   selectSecretKey: () => {
-    const keypair = get().keypair;
-    if (!keypair) {
+    const secretKey = get().secretKey;
+    if (!secretKey) {
       // TODO: Specific error type
-      throw new Error('Keypair is not available. Please generate a keypair first.');
+      throw new Error('Secret key is not available. Please generate first.');
     }
-    return Libs.Identity.secretKeyToHex(keypair.secretKey());
-  },
-
-  /**
-   * Gets the public key (pubky) from the keypair
-   * @returns The public key as a string
-   * @throws Error if keypair is not available
-   */
-  selectPublicKey: () => {
-    const keypair = get().keypair;
-    if (!keypair) {
-      // TODO: Specific error type
-      throw new Error('Keypair is not available. Please generate a keypair first.');
-    }
-    return keypair.publicKey.z32();
+    return secretKey;
   },
 
   /**

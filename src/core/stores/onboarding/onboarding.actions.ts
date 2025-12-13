@@ -3,9 +3,9 @@ import {
   type OnboardingActions,
   onboardingInitialState,
   OnboardingActionTypes,
+  TOnboardingSecrets,
 } from './onboarding.types';
 import { type ZustandSet } from '../stores.types';
-import { Keypair } from '@synonymdev/pubky';
 
 export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): OnboardingActions => ({
   reset: () => {
@@ -19,16 +19,12 @@ export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): Onboa
     );
   },
 
-  setKeypair: (keypair: Keypair) => {
-    set({ keypair }, false, OnboardingActionTypes.SET_KEYPAIR);
-  },
-
-  setMnemonic: (mnemonic: string) => {
-    set({ mnemonic }, false, OnboardingActionTypes.SET_MNEMONIC);
+  setSecrets: (secrets: TOnboardingSecrets) => {
+    set({ ...secrets }, false, OnboardingActionTypes.SET_SECRETS);
   },
 
   clearSecrets: () => {
-    set({ keypair: null, mnemonic: null }, false, OnboardingActionTypes.CLEAR_SECRETS);
+    set({ secretKey: null, mnemonic: null }, false, OnboardingActionTypes.CLEAR_SECRETS);
   },
 
   setHydrated: (hasHydrated: boolean) => {

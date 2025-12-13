@@ -21,16 +21,17 @@ export function HomeserverCard() {
   const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
 
-  const keypair = Core.useOnboardingStore.getState().keypair;
-
   // generate an invite code and put it in console log if you are in development mode
   useEffect(() => {
+    if (!Core.useOnboardingStore.getState().secretKey) {
+      router.push(App.ONBOARDING_ROUTES.PUBKY);
+    }
     if (process.env.NODE_ENV === 'development') {
       Core.AuthController.generateSignupToken().then((token) => {
         Libs.Logger.info(token, token);
       });
     }
-  }, []);
+  }, [router]);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = Libs.formatInviteCode(e.target.value);
@@ -61,10 +62,11 @@ export function HomeserverCard() {
       setIsLoading(true);
       setButtonContinueText('Validating');
       const signupToken = inviteCode;
-      if (!keypair) {
-        throw new Error('Keypair not found');
+      const secretKey = Core.useOnboardingStore.getState().secretKey;
+      if (!secretKey) {
+        throw new Error('SecretKey not found');
       }
-      await Core.AuthController.signUp({ keypair, signupToken });
+      await Core.AuthController.signUp({ secretKey, signupToken });
       setButtonContinueText('Signing up');
       router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch {

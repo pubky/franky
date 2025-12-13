@@ -6,8 +6,8 @@ import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import Image from 'next/image';
-import { Identity, calculatePasswordStrength, getStrengthText, getStrengthColor } from '@/libs';
-import { useOnboardingStore } from '@/core';
+import { calculatePasswordStrength, getStrengthText, getStrengthColor } from '@/libs';
+import * as Core from '@/core';
 
 interface DialogBackupEncryptedProps {
   children?: React.ReactNode;
@@ -16,21 +16,12 @@ interface DialogBackupEncryptedProps {
 function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   const [passphrase, setPassphrase] = useState('');
   const [confirmPassphrase, setConfirmPassphrase] = useState('');
-  const { keypair } = useOnboardingStore();
 
   const passphraseStrength = calculatePasswordStrength(passphrase);
   const passphraseMatch = passphrase === confirmPassphrase && passphrase !== '';
 
   const handleDownload = () => {
-    if (!keypair) {
-      Libs.Logger.error('Keypair is not available. Please generate a keypair first.');
-      return;
-    }
-    // TODO: Error handling if the file creation fails
-    void Identity.createRecoveryFile({
-      keypair,
-      passphrase,
-    });
+    Core.ProfileController.createRecoveryFile(passphrase);
     setStep(2);
   };
 

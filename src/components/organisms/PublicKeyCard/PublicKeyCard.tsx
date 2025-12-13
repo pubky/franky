@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -9,23 +9,17 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
-  const { setKeypair, setMnemonic, selectPublicKey } = Core.useOnboardingStore();
+  const secretKey = Core.useOnboardingStore((state) => state.secretKey);
+  const pubky = Core.useAuthStore((state) => state.currentUserPubky);
   const { copyToClipboard } = Hooks.useCopyToClipboard();
-  const [pubky, setPubky] = useState<string>('');
+  const { toast } = Molecules.useToast();
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
-    try {
-      const publicKey = selectPublicKey();
-      setPubky(publicKey);
-    } catch (error) {
-      Libs.Logger.info('Generating new keypair persisted in the global store', { error });
-      const { keypair, mnemonic } = Libs.Identity.generateKeypair();
-      setKeypair(keypair);
-      setMnemonic(mnemonic);
-      setPubky(Libs.Identity.pubkyFromKeypair(keypair));
+    if (!secretKey) {
+      Core.ProfileController.generateSecrets();
     }
-  }, [selectPublicKey, setKeypair, setMnemonic]);
+  }, [secretKey]);
 
   const handleCopyToClipboard = () => {
     if (pubky) {
@@ -52,14 +46,14 @@ export function PublicKeyCard() {
           },
           onSuccess: (result) => {
             if (result.method === 'fallback') {
-              Molecules.toast({
+              toast({
                 title: 'Sharing unavailable',
                 description: 'We copied your pubky so you can paste it into your favorite app.',
               });
             }
           },
           onError: () => {
-            Molecules.toast({
+            toast({
               title: 'Share failed',
               description: 'Unable to share right now. Please try again.',
             });
@@ -113,7 +107,7 @@ export function PublicKeyCard() {
       </Atoms.Container>
       <Molecules.ActionSection actions={actions} className="w-full flex-col items-start justify-start gap-3">
         <Molecules.InputField
-          value={pubky}
+          value={pubky ?? ''}
           variant="dashed"
           readOnly
           onClick={handleCopyToClipboard}

@@ -44,9 +44,9 @@ describe('Identity', () => {
     vi.restoreAllMocks();
   });
 
-  describe('generateKeypair mnemonic generation', () => {
-    it('should generate valid BIP39 mnemonic in keypair result', () => {
-      const result = Identity.generateKeypair();
+  describe('generateSecrets mnemonic generation', () => {
+    it('should generate valid BIP39 mnemonic in secrets result', () => {
+      const result = Identity.generateSecrets();
 
       const words = result.mnemonic.split(' ');
       expect(words).toHaveLength(12);
@@ -57,17 +57,26 @@ describe('Identity', () => {
     });
 
     it('should generate different mnemonics on each call', () => {
-      const result1 = Identity.generateKeypair();
-      const result2 = Identity.generateKeypair();
+      const result1 = Identity.generateSecrets();
+      const result2 = Identity.generateSecrets();
 
       // Should generate different mnemonics (very unlikely to be the same)
       expect(result1.mnemonic).not.toBe(result2.mnemonic);
     });
 
     it('should generate exactly 12 words in mnemonic', () => {
-      const result = Identity.generateKeypair();
+      const result = Identity.generateSecrets();
       const words = result.mnemonic.split(' ');
       expect(words).toHaveLength(12);
+    });
+
+    it('should generate a secretKey as a hex string', () => {
+      const result = Identity.generateSecrets();
+      expect(typeof result.secretKey).toBe('string');
+      // Hex string should be 64 characters (32 bytes * 2)
+      expect(result.secretKey.length).toBe(64);
+      // Should only contain hex characters
+      expect(/^[0-9a-f]+$/.test(result.secretKey)).toBe(true);
     });
 
     it('should throw CommonError if BIP39 generation fails', () => {
@@ -76,7 +85,7 @@ describe('Identity', () => {
         throw new Error('BIP39 generation failed');
       });
 
-      expect(() => Identity.generateKeypair()).toThrow();
+      expect(() => Identity.generateSecrets()).toThrow();
 
       mockGenerateMnemonic.mockRestore();
     });
@@ -138,16 +147,16 @@ describe('Identity', () => {
       });
     });
 
-    it('should create recovery file successfully with valid keypair', async () => {
+    it('should create recovery file successfully with valid keypair', () => {
       // Use a mock keypair object with createRecoveryFile method
       const keypairWithMethod = {
         ...mockKeypair,
         createRecoveryFile: mockCreateRecoveryFile,
       };
 
-      await expect(
-        Identity.createRecoveryFile({ keypair: keypairWithMethod as never, passphrase: 'password123' }),
-      ).resolves.not.toThrow();
+      expect(() => {
+        Identity.createRecoveryFile({ keypair: keypairWithMethod as never, passphrase: 'password123' });
+      }).not.toThrow();
 
       // Verify that createRecoveryFile was called on the keypair
       expect(mockCreateRecoveryFile).toHaveBeenCalledWith('password123');
@@ -156,7 +165,7 @@ describe('Identity', () => {
       expect(document.body.appendChild).toHaveBeenCalled();
     });
 
-    it('should throw error when keypair.createRecoveryFile throws', async () => {
+    it('should throw error when keypair.createRecoveryFile throws', () => {
       const keypairWithFailingMethod = {
         ...mockKeypair,
         createRecoveryFile: vi.fn(() => {
@@ -164,12 +173,12 @@ describe('Identity', () => {
         }),
       };
 
-      await expect(
-        Identity.createRecoveryFile({ keypair: keypairWithFailingMethod as never, passphrase: 'password123' }),
-      ).rejects.toThrow();
+      expect(() => {
+        Identity.createRecoveryFile({ keypair: keypairWithFailingMethod as never, passphrase: 'password123' });
+      }).toThrow();
     });
 
-    it('should handle createRecoveryFile errors and throw CommonError', async () => {
+    it('should handle createRecoveryFile errors and throw CommonError', () => {
       const keypairWithFailingMethod = {
         ...mockKeypair,
         createRecoveryFile: vi.fn(() => {
@@ -178,7 +187,7 @@ describe('Identity', () => {
       };
 
       try {
-        await Identity.createRecoveryFile({ keypair: keypairWithFailingMethod as never, passphrase: 'password123' });
+        Identity.createRecoveryFile({ keypair: keypairWithFailingMethod as never, passphrase: 'password123' });
       } catch (error) {
         expect(error).toHaveProperty('type', CommonErrorType.UNEXPECTED_ERROR);
         expect(error).toHaveProperty('statusCode', 500);
@@ -186,28 +195,28 @@ describe('Identity', () => {
     });
   });
 
-  describe('keypairDataFromSecretKey', () => {
+  describe('keypairFromSecretKey', () => {
     it('should create keypair from valid secret key', () => {
       const secretKey = new Uint8Array(32).fill(1); // valid 32-byte array
+      const secretKeyHex = Buffer.from(secretKey).toString('hex');
 
-      const result = Identity.keypairDataFromSecretKey(Buffer.from(secretKey).toString('hex'));
+      const result = Identity.keypairFromSecretKey(secretKeyHex);
 
       expect(result).toBeDefined();
-      expect(result.pubky).toBeDefined();
-      expect(result.secretKey).toBeDefined();
+      expect(result.publicKey).toBeDefined();
     });
 
-    it('should throw error for invalid secret key length', () => {
-      const invalidSecretKey = new Uint8Array(16); // Invalid length
+    it('should throw error for invalid secret key format', () => {
+      const invalidSecretKey = 'invalid-hex-string';
 
-      expect(() => Identity.keypairDataFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'))).toThrow();
+      expect(() => Identity.keypairFromSecretKey(invalidSecretKey)).toThrow();
     });
 
     it('should throw CommonError with proper error type for invalid secret key', () => {
-      const invalidSecretKey = new Uint8Array(16); // Invalid length
+      const invalidSecretKey = 'invalid-hex-string';
 
       try {
-        Identity.keypairDataFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'));
+        Identity.keypairFromSecretKey(invalidSecretKey);
       } catch (error) {
         expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
         expect(error).toHaveProperty('statusCode', 400);
@@ -215,14 +224,15 @@ describe('Identity', () => {
     });
   });
 
-  describe('generateKeypair', () => {
-    it('should generate a keypair with mnemonic using BIP39 strategy', () => {
-      const result = Identity.generateKeypair();
+  describe('generateSecrets', () => {
+    it('should generate secrets with mnemonic using BIP39 strategy', () => {
+      const result = Identity.generateSecrets();
 
       expect(result).toBeDefined();
-      expect(result.keypair).toBeDefined();
+      expect(result.secretKey).toBeDefined();
       expect(result.mnemonic).toBeDefined();
       expect(typeof result.mnemonic).toBe('string');
+      expect(typeof result.secretKey).toBe('string');
 
       // Verify mnemonic is valid BIP39
       expect(bip39.validateMnemonic(result.mnemonic)).toBe(true);
@@ -230,30 +240,39 @@ describe('Identity', () => {
       // Verify mnemonic has 12 words
       const words = result.mnemonic.split(' ');
       expect(words).toHaveLength(12);
+
+      // Verify secretKey is a valid hex string (64 chars for 32 bytes)
+      expect(result.secretKey.length).toBe(64);
+      expect(/^[0-9a-f]+$/.test(result.secretKey)).toBe(true);
     });
 
-    it('should generate different keypairs on each call', () => {
-      const result1 = Identity.generateKeypair();
-      const result2 = Identity.generateKeypair();
+    it('should generate different secrets on each call', () => {
+      const result1 = Identity.generateSecrets();
+      const result2 = Identity.generateSecrets();
 
       expect(result1.mnemonic).not.toBe(result2.mnemonic);
+      expect(result1.secretKey).not.toBe(result2.secretKey);
     });
 
-    it('should generate keypair that is consistent with mnemonic', () => {
-      const result = Identity.generateKeypair();
+    it('should generate secretKey that is consistent with mnemonic', () => {
+      const result = Identity.generateSecrets();
 
       // Generate keypair from the mnemonic using the public API
       const keypairFromMnemonic = Identity.keypairFromMnemonic(result.mnemonic);
 
-      // Both should produce valid keypairs (the mock returns the same keypair)
+      // Generate keypair from the secretKey
+      const keypairFromSecret = Identity.keypairFromSecretKey(result.secretKey);
+
+      // Both should produce valid keypairs
       expect(keypairFromMnemonic).toBeDefined();
+      expect(keypairFromSecret).toBeDefined();
     });
   });
 
   describe('keypairFromMnemonic', () => {
     it('should generate a valid keypair from mnemonic', () => {
-      // Generate a mnemonic using generateKeypair
-      const { mnemonic } = Identity.generateKeypair();
+      // Generate a mnemonic using generateSecrets
+      const { mnemonic } = Identity.generateSecrets();
 
       const keypair = Identity.keypairFromMnemonic(mnemonic);
 
@@ -269,8 +288,8 @@ describe('Identity', () => {
     });
 
     it('should generate consistent keypairs for same mnemonic', () => {
-      // Generate a mnemonic using generateKeypair
-      const { mnemonic } = Identity.generateKeypair();
+      // Generate a mnemonic using generateSecrets
+      const { mnemonic } = Identity.generateSecrets();
 
       const keypair1 = Identity.keypairFromMnemonic(mnemonic);
       const keypair2 = Identity.keypairFromMnemonic(mnemonic);
@@ -283,8 +302,8 @@ describe('Identity', () => {
 
   describe('seed phrase consistency', () => {
     it('should restore a valid keypair from generated mnemonic', () => {
-      // Generate keypair with mnemonic
-      const { mnemonic } = Identity.generateKeypair();
+      // Generate secrets with mnemonic
+      const { mnemonic } = Identity.generateSecrets();
 
       // Restore keypair using keypairFromMnemonic
       const restoredKeypair = Identity.keypairFromMnemonic(mnemonic);
@@ -295,8 +314,8 @@ describe('Identity', () => {
     });
 
     it('should have consistent restore process', () => {
-      // Generate keypair with mnemonic
-      const { mnemonic } = Identity.generateKeypair();
+      // Generate secrets with mnemonic
+      const { mnemonic } = Identity.generateSecrets();
 
       // Restore keypair multiple times
       const restoredKeypair1 = Identity.keypairFromMnemonic(mnemonic);

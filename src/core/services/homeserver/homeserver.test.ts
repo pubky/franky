@@ -126,7 +126,7 @@ describe('HomeserverService', () => {
     mockState.publishHomeserverForce.mockResolvedValue(undefined);
     mockState.clientFetch.mockResolvedValue(new Response('{}', { status: 200 }));
     mockState.clientList.mockResolvedValue([]);
-    mockState.publicStorageGetJson.mockResolvedValue(new Response('{}', { status: 200 }));
+    mockState.publicStorageGetJson.mockResolvedValue({});
     mockState.getHomeserverOf.mockResolvedValue('https://test-homeserver.com');
     mockState.startAuthFlow.mockReturnValue({
       authorizationUrl: 'https://auth.example.com/authorize',
@@ -592,15 +592,19 @@ describe('HomeserverService', () => {
     });
 
     describe('get', () => {
-      it('should use publicStorage.getJson for fetching', async () => {
+      it('should use publicStorage.getJson for fetching and wrap JSON in Response', async () => {
         const testUrl = 'pubky://user/pub/public.json';
-        const mockResponse = new Response('{"data": "public"}', { status: 200 });
-        mockState.publicStorageGetJson.mockResolvedValue(mockResponse);
+        const mockJsonData = { data: 'public' };
+        mockState.publicStorageGetJson.mockResolvedValue(mockJsonData);
 
         const result = await HomeserverService.get(testUrl);
 
         expect(mockState.publicStorageGetJson).toHaveBeenCalledWith(testUrl);
         expect(result).toBeInstanceOf(Response);
+        expect(result.status).toBe(200);
+        expect(result.headers.get('Content-Type')).toBe('application/json');
+        const jsonData = await result.json();
+        expect(jsonData).toEqual(mockJsonData);
       });
 
       it('should propagate errors from publicStorage.getJson', async () => {
@@ -609,19 +613,6 @@ describe('HomeserverService', () => {
         mockState.publicStorageGetJson.mockRejectedValue(networkError);
 
         await expect(HomeserverService.get(testUrl)).rejects.toThrow('Network request failed');
-      });
-
-      it('should return non-OK responses without throwing', async () => {
-        // NOTE: Unlike request() and putBlob(), get() does not check response.ok
-        // The caller is responsible for handling non-OK responses
-        const testUrl = 'pubky://user/pub/missing.json';
-        const notFoundResponse = new Response('Not Found', { status: 404 });
-        mockState.publicStorageGetJson.mockResolvedValue(notFoundResponse);
-
-        const result = await HomeserverService.get(testUrl);
-
-        expect(result.status).toBe(404);
-        expect(result).toBeInstanceOf(Response);
       });
     });
   });

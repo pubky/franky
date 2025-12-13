@@ -186,15 +186,17 @@ describe('AuthController', () => {
       const signUpSpy = vi.spyOn(Core.AuthApplication, 'signUp').mockResolvedValue({
         session: mockSession,
       });
+      const keypairFromSecretKeySpy = vi.spyOn(Libs.Identity, 'keypairFromSecretKey').mockReturnValue(keypair);
       const pubkyFromSessionSpy = vi.spyOn(Libs.Identity, 'pubkyFromSession').mockReturnValue(mockPubky);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
 
       const authStore = storeMocks.getAuthState();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
 
-      const result = await AuthController.signUp({ keypair, signupToken });
+      const result = await AuthController.signUp({ secretKey: TEST_SECRET_KEY, signupToken });
 
       expect(clearDatabaseSpy).toHaveBeenCalled();
+      expect(keypairFromSecretKeySpy).toHaveBeenCalledWith(TEST_SECRET_KEY);
       expect(signUpSpy).toHaveBeenCalledWith({
         keypair,
         signupToken,
@@ -213,10 +215,12 @@ describe('AuthController', () => {
       const signupToken = 'invalid-token';
 
       const signUpSpy = vi.spyOn(Core.AuthApplication, 'signUp').mockRejectedValue(new Error('Signup failed'));
+      const keypairFromSecretKeySpy = vi.spyOn(Libs.Identity, 'keypairFromSecretKey').mockReturnValue(keypair);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
 
-      await expect(AuthController.signUp({ keypair, signupToken })).rejects.toThrow('Signup failed');
+      await expect(AuthController.signUp({ secretKey: TEST_SECRET_KEY, signupToken })).rejects.toThrow('Signup failed');
       expect(clearDatabaseSpy).toHaveBeenCalled();
+      expect(keypairFromSecretKeySpy).toHaveBeenCalledWith(TEST_SECRET_KEY);
       expect(signUpSpy).toHaveBeenCalledWith({
         keypair,
         signupToken,

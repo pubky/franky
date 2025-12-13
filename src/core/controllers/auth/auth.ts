@@ -55,14 +55,15 @@ export class AuthController {
   }
 
   /**
-   * Signs up a new user with the homeserver using the provided keypair and signup token.
-   * @param params - Object containing keypair and signup token for registration
-   * @param params.keypair - The cryptographic keypair for the user
+   * Signs up a new user with the homeserver using the provided secret key and signup token.
+   * @param params - Object containing secret key and signup token for registration
+   * @param params.secretKey - The secret key for the user
    * @param params.signupToken - Invitation code for user registration
    */
-  static async signUp({ keypair, signupToken }: Core.THomeserverSignUpParams) {
+  static async signUp({ secretKey, signupToken }: Core.TSignUpParams) {
     // Clear database before sign up to ensure clean state
     await Core.clearDatabase();
+    const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
     const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };

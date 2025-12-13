@@ -10,20 +10,30 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
-// Mock keypair for testing
-const mockKeypair = { mockKeypairData: 'mock-keypair' };
+// Mock secretKey for testing
+const mockSecretKey = 'test-secret-key-value';
+
+const { mockGetState } = vi.hoisted(() => ({
+  mockGetState: vi.fn(() => ({
+    secretKey: mockSecretKey,
+  })),
+}));
 
 // Mock the onboarding store
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    useOnboardingStore: Object.assign(vi.fn(), {
-      getState: vi.fn(() => ({
-        keypair: mockKeypair,
-      })),
-    }),
+    useOnboardingStore: Object.assign(
+      () => ({
+        secretKey: mockSecretKey,
+      }),
+      {
+        getState: mockGetState,
+      },
+    ),
     AuthController: {
+      ...actual.AuthController,
       signUp: vi.fn(),
       generateSignupToken: vi.fn().mockResolvedValue('mock-token'),
     },
@@ -175,8 +185,8 @@ describe('HomeserverCard', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalledWith({
+        secretKey: mockSecretKey,
         signupToken: 'ABCD-EFGH-IJKL',
-        keypair: mockKeypair,
       });
     });
 
@@ -198,8 +208,8 @@ describe('HomeserverCard', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalledWith({
+        secretKey: mockSecretKey,
         signupToken: 'ABCD-EFGH-IJKL',
-        keypair: mockKeypair,
       });
     });
   });

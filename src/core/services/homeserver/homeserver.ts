@@ -136,11 +136,6 @@ export class HomeserverService {
   static async signUp({ keypair, signupToken }: Core.THomeserverSignUpParams): Promise<Core.THomeserverSessionResult> {
     try {
       const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
-      Libs.Logger.debug('Signing up', {
-        keypair,
-        signupToken,
-        homeserverPublicKey: homeserverPublicKey,
-      });
       const signer = this.getSigner(keypair);
       const session = await signer.signup(homeserverPublicKey, signupToken);
 
@@ -163,7 +158,6 @@ export class HomeserverService {
       // get homeserver from pkarr records
       await this.checkHomeserver({ publicKey: keypair.publicKey });
       const session = await signer.signin();
-
       return { session };
     } catch (error) {
       try {
@@ -171,6 +165,8 @@ export class HomeserverService {
         const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
         await signer.pkdns.publishHomeserverForce(homeserverPublicKey);
         Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.pubkyFromKeypair(keypair) });
+        // Return undefined to signal caller should retry signin after republish
+        return undefined;
       } catch {
         this.handleError(
           error,
@@ -361,7 +357,14 @@ export class HomeserverService {
    */
   static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
     const { publicStorage } = this.getClient();
-    return await publicStorage.getJson(url as Address);
+    const jsonData = await publicStorage.getJson(url as Address);
+    // Wrap JSON data in a Response object to match the expected return type
+    return new Response(JSON.stringify(jsonData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file

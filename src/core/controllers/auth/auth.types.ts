@@ -1,4 +1,4 @@
-import { PublicKey, Keypair } from '@synonymdev/pubky';
+import { PublicKey } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 
@@ -11,7 +11,7 @@ export interface TPublicKeyParams {
 }
 
 export interface TSignUpParams {
-  keypair: Keypair;
+  secretKey: string;
   signupToken: string;
 }
 

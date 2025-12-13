@@ -140,14 +140,20 @@ vi.mock('@/atoms', () => ({
 // Mock core
 const mockSetKeypair = vi.fn();
 const mockSetMnemonic = vi.fn();
-const { mockUseOnboardingStore } = vi.hoisted(() => ({
+const { mockUseOnboardingStore, mockUseAuthStore, mockProfileController } = vi.hoisted(() => ({
   mockUseOnboardingStore: vi.fn(),
+  mockUseAuthStore: vi.fn(),
+  mockProfileController: {
+    generateSecrets: vi.fn(),
+  },
 }));
 
 const mockPubky = 'pubky1234567890abcdef';
 
 vi.mock('@/core', () => ({
   useOnboardingStore: mockUseOnboardingStore,
+  useAuthStore: mockUseAuthStore,
+  ProfileController: mockProfileController,
 }));
 
 // Mock hooks
@@ -212,9 +218,17 @@ describe('PublicKeyCard', () => {
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
     mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
+      secretKey: 'test-secret-key',
       setKeypair: mockSetKeypair,
       setMnemonic: mockSetMnemonic,
       selectPublicKey: vi.fn(() => mockPubky),
+    });
+    // Mock useAuthStore to return a function that accepts a selector
+    mockUseAuthStore.mockImplementation((selector: (state: { currentUserPubky: string | null }) => unknown) => {
+      const mockState = {
+        currentUserPubky: mockPubky,
+      };
+      return selector(mockState);
     });
   });
 
@@ -428,23 +442,27 @@ describe('PublicKeyCard', () => {
     // Note: copyToClipboard is called because pubky is generated from the mock
   });
 
-  it('generates keypair when selectPublicKey throws', () => {
-    // Mock selectPublicKey to throw (triggers keypair generation)
+  it('shows loading state when secretKey is missing', () => {
+    // Override the default mock to return null for secretKey
     mockUseOnboardingStore.mockReturnValueOnce({
+      secretKey: null,
       setKeypair: mockSetKeypair,
       setMnemonic: mockSetMnemonic,
-      selectPublicKey: vi.fn(() => {
-        throw new Error('No keypair');
-      }),
+      selectPublicKey: vi.fn(() => mockPubky),
+    });
+    // Mock pubky to be null to show loading state
+    mockUseAuthStore.mockImplementationOnce((selector: (state: { currentUserPubky: string | null }) => unknown) => {
+      const mockState = {
+        currentUserPubky: null,
+      };
+      return selector(mockState);
     });
 
     render(<PublicKeyCard />);
 
-    // The component should generate a keypair when selectPublicKey throws
-    expect(mockSetKeypair).toHaveBeenCalledWith('test-keypair');
-    expect(mockSetMnemonic).toHaveBeenCalledWith(
-      'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
-    );
+    // The component should render and show loading state when secretKey is missing
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+    expect(screen.getByText('Generating pubky...')).toBeInTheDocument();
   });
 
   it('uses existing pubky for share action', async () => {
@@ -495,9 +513,17 @@ describe('PublicKeyCard - Key Generation', () => {
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
     mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
+      secretKey: 'test-secret-key',
       setKeypair: mockSetKeypair,
       setMnemonic: mockSetMnemonic,
       selectPublicKey: vi.fn(() => mockPubky),
+    });
+    // Mock useAuthStore to return a function that accepts a selector
+    mockUseAuthStore.mockImplementation((selector: (state: { currentUserPubky: string | null }) => unknown) => {
+      const mockState = {
+        currentUserPubky: mockPubky,
+      };
+      return selector(mockState);
     });
   });
 
