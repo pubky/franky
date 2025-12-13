@@ -1,4 +1,3 @@
-
 export interface OnboardingState {
   secretKey: string | null;
   mnemonic: string | null;

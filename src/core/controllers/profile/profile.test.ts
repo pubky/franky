@@ -268,9 +268,7 @@ describe('ProfileController', () => {
         selectSecretKey: mockSelectSecretKey,
       });
 
-      expect(() => ProfileController.createRecoveryFile('test-passphrase')).toThrow(
-        'Secret key is not available',
-      );
+      expect(() => ProfileController.createRecoveryFile('test-passphrase')).toThrow('Secret key is not available');
       expect(mockIdentity.createRecoveryFile).not.toHaveBeenCalled();
     });
   });
@@ -322,9 +320,7 @@ describe('ProfileController', () => {
 
       mockProfileApplication.deleteAccount.mockRejectedValue(error);
 
-      await expect(ProfileController.deleteAccount({ pubky: testPubky, setProgress })).rejects.toThrow(
-        'delete failed',
-      );
+      await expect(ProfileController.deleteAccount({ pubky: testPubky, setProgress })).rejects.toThrow('delete failed');
     });
   });
 
@@ -387,7 +383,11 @@ describe('ProfileController', () => {
 
       mockProfileApplication.updateProfile.mockResolvedValue(undefined);
 
-      await ProfileController.updateProfile(profile as { name: string; bio?: string; links?: { label: string; url: string }[] }, 'updated-image-url', testPubky);
+      await ProfileController.updateProfile(
+        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        'updated-image-url',
+        testPubky,
+      );
 
       expect(mockUserNormalizer.linksFromUi).toHaveBeenCalledWith(profile.links);
       expect(mockProfileApplication.updateProfile).toHaveBeenCalledWith({
@@ -406,7 +406,11 @@ describe('ProfileController', () => {
 
       mockProfileApplication.updateProfile.mockResolvedValue(undefined);
 
-      await ProfileController.updateProfile(profile as { name: string; bio?: string; links?: { label: string; url: string }[] }, null, testPubky);
+      await ProfileController.updateProfile(
+        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        null,
+        testPubky,
+      );
 
       expect(mockProfileApplication.updateProfile).toHaveBeenCalledWith({
         pubky: testPubky,
@@ -425,7 +429,11 @@ describe('ProfileController', () => {
 
       mockProfileApplication.updateProfile.mockResolvedValue(undefined);
 
-      await ProfileController.updateProfile(profile as { name: string; bio?: string; links?: { label: string; url: string }[] }, null, testPubky);
+      await ProfileController.updateProfile(
+        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        null,
+        testPubky,
+      );
 
       expect(mockProfileApplication.updateProfile).toHaveBeenCalledWith({
         pubky: testPubky,
@@ -446,7 +454,11 @@ describe('ProfileController', () => {
       mockProfileApplication.updateProfile.mockRejectedValue(error);
 
       await expect(
-        ProfileController.updateProfile(profile as { name: string; bio?: string; links?: { label: string; url: string }[] }, null, testPubky),
+        ProfileController.updateProfile(
+          profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+          null,
+          testPubky,
+        ),
       ).rejects.toThrow('update failed');
     });
   });

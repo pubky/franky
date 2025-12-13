@@ -3,11 +3,7 @@ import * as bip39 from 'bip39';
 import * as Core from '@/core';
 
 import * as Libs from '@/libs';
-import type {
-  TMnemonicWords,
-  TCreateRecoveryFileParams,
-  TDecryptRecoveryFileParams,
-} from './identity.types';
+import type { TMnemonicWords, TCreateRecoveryFileParams, TDecryptRecoveryFileParams } from './identity.types';
 
 export class Identity {
   /**
@@ -16,7 +12,7 @@ export class Identity {
    * @param passphrase - The passphrase to use to create the recovery file
    * @returns void
    */
-  static createRecoveryFile({ keypair, passphrase }: TCreateRecoveryFileParams) {  
+  static createRecoveryFile({ keypair, passphrase }: TCreateRecoveryFileParams) {
     try {
       const recoveryFile = keypair.createRecoveryFile(passphrase);
       this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
