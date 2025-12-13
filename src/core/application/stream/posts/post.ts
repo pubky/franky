@@ -1,12 +1,10 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { postStreamQueue } from './post-stream-queue';
+import { muteFilter } from './mute-filter';
 
 export class PostStreamApplication {
   private constructor() {}
-
-  // ============================================================================
-  // Public API
-  // ============================================================================
 
   static async getCachedLastPostTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
     try {
@@ -27,7 +25,7 @@ export class PostStreamApplication {
         }
       }
 
-      // No posts in the stream have details - cache is not useful
+      // No posts in the stream have details, cache is not useful
       Libs.Logger.warn('No post details found in cached stream', { streamId, streamLength: postStream.stream.length });
       return Core.NOT_FOUND_CACHED_STREAM;
     } catch (error) {
@@ -48,7 +46,63 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.clearUnreadStream(params);
   }
 
+  /**
+   * Fetches a page of posts for a stream, filtering out muted users.
+   */
   static async getOrFetchStreamSlice({
+    streamId,
+    streamHead,
+    streamTail,
+    lastPostId,
+    limit,
+    viewerId,
+  }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
+    const mutedUserIds = await muteFilter.getMutedUserIds(viewerId);
+
+    let isFirstFetch = true;
+    const result = await postStreamQueue.collect(streamId, {
+      limit,
+      cursor: streamTail,
+      filter: (posts) => muteFilter.filterPosts(posts, mutedUserIds),
+      fetch: async (cursor) => {
+        // First fetch checks cache because we might be able to reuse leftover posts from previous fetch, subsequent fetches go directly to Nexus
+        const result = isFirstFetch
+          ? await this.fetchStreamSliceInternal({
+              streamId,
+              streamHead,
+              streamTail: cursor,
+              lastPostId,
+              limit,
+              viewerId,
+            })
+          : await this.fetchStreamFromNexus({
+              streamId,
+              limit,
+              streamTail: cursor,
+              streamHead: Core.SKIP_FETCH_NEW_POSTS,
+              viewerId,
+            });
+        isFirstFetch = false;
+        return result;
+      },
+    });
+
+    return {
+      nextPageIds: result.posts,
+      cacheMissPostIds: result.cacheMissIds,
+      timestamp: result.timestamp,
+    };
+  }
+
+  // ============================================================================
+  // Internal Helpers
+  // ============================================================================
+
+  /**
+   * Internal method that performs the actual fetch without mute filtering.
+   * This is the original getOrFetchStreamSlice logic, now used as a building block.
+   */
+  private static async fetchStreamSliceInternal({
     streamId,
     streamHead,
     streamTail,
@@ -63,12 +117,12 @@ export class PostStreamApplication {
       if (cachedStream) {
         const cachedStreamChunk = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
 
-        // Full cache hit - return immediately
+        // Full cache hit, return immediately
         if (cachedStreamChunk.length === limit) {
           return { nextPageIds: cachedStreamChunk, cacheMissPostIds: [], timestamp: undefined };
         }
 
-        // Partial cache hit - fetch missing posts from Nexus and combine
+        // Partial cache hit, fetch missing posts from Nexus and combine
         if (cachedStreamChunk.length > 0 && cachedStreamChunk.length < limit) {
           return await this.partialCacheHit({ cachedStreamChunk, limit, streamTail, streamId, viewerId });
         }
@@ -217,10 +271,9 @@ export class PostStreamApplication {
     return { nextPageIds: compositePostIds, cacheMissPostIds, timestamp };
   }
 
-  // Return the posts that are not persisted in cache
+  // Delegate to service for cache miss detection
   private static async getNotPersistedPostsInCache(postIds: string[]): Promise<string[]> {
-    const existingPostIds = await Core.PostDetailsModel.findByIdsPreserveOrder(postIds);
-    return postIds.filter((_postId, index) => existingPostIds[index] === undefined);
+    return Core.LocalStreamPostsService.getNotPersistedPostsInCache(postIds);
   }
 
   /**
@@ -265,9 +318,9 @@ export class PostStreamApplication {
     }
   }
 
+  // Delegate to service for cache miss detection
   private static async getNotPersistedUsersInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
-    const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
-    return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+    return Core.LocalStreamUsersService.getNotPersistedUsersInCache(userIds);
   }
 
   private static async getStreamFromCache({
@@ -275,7 +328,7 @@ export class PostStreamApplication {
     limit,
     cachedStream,
   }: Core.TCacheStreamParams): Promise<string[]> {
-    // Handle limit 0 case: return empty array immediately without fetching from Nexus
+    // Handle limit 0 case, return empty array immediately
     if (limit === 0) {
       return [];
     }
@@ -287,7 +340,7 @@ export class PostStreamApplication {
       return cachedStream.stream.slice(0, Math.min(limit, cachedStream.stream.length));
     }
 
-    // lastPostId is provided - find the position in cache
+    // lastPostId is provided, find the position in cache
     const postIndex = cachedStream.stream.indexOf(lastPostId);
     if (postIndex === -1) {
       // lastPostId not found in cache, cannot serve from cache

@@ -25,6 +25,10 @@ export class BootstrapApplication {
     if (!data.indexed) {
       Libs.Logger.error('User is not indexed in Nexus. Adding user to TTL', { pubky: params.pubky });
     }
+    const mutedStreamId = Core.buildUserCompositeId({
+      userId: params.pubky,
+      reach: Core.UserStreamSource.MUTED,
+    });
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts({ posts: data.posts }),
@@ -39,6 +43,10 @@ export class BootstrapApplication {
       Core.LocalStreamUsersService.upsert({
         streamId: Core.UserStreamTypes.RECOMMENDED,
         stream: data.ids.recommended,
+      }),
+      Core.LocalStreamUsersService.upsert({
+        streamId: mutedStreamId,
+        stream: data.ids.muted,
       }),
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
