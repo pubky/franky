@@ -1,10 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatDistanceToNow } from 'date-fns';
-
-type ExtractInitialsProps = { name: string; maxLength?: number };
-type CopyToClipboardProps = { text: string };
-type FormatPublicKeyProps = { key: string; length: number };
+import type {
+  ExtractInitialsProps,
+  CopyToClipboardProps,
+  FormatPublicKeyProps,
+  GetDisplayTagsOptions,
+} from './utils.types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -444,18 +446,6 @@ export const convertHmsToSeconds = (
 };
 
 export const isPostDeleted = (content: string | undefined) => content === '[DELETED]';
-
-/**
- * Options for getDisplayTags function
- */
-export interface GetDisplayTagsOptions {
-  /** Maximum characters per tag before truncation (default: 10) */
-  maxTagLength?: number;
-  /** Maximum total characters across all displayed tags (default: 24) */
-  maxTotalChars?: number;
-  /** Maximum number of tags to display (default: 3) */
-  maxCount?: number;
-}
 
 /**
  * Get tags that fit within the character budget.
