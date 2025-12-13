@@ -37,6 +37,7 @@ export * from './HotActiveUsers';
 export * from './HomeserverCard';
 export * from './LanguageSelector';
 export * from './LeftSidebar';
+export * from './MutedUsersList';
 export * from './PostActionsBar';
 export * from './PostAttachments';
 export * from './PostContent';
