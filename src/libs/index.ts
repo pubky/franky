@@ -8,6 +8,7 @@ export * from './image';
 export * from './logger';
 export * from './network';
 export * from './password';
+export * from './query-client';
 export * from './share';
 export * from './status';
 export * from './svg';
