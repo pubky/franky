@@ -14,6 +14,7 @@ export * from './Content';
 export * from './DialogConfirmDiscard';
 export * from './FAQAccordion';
 export * from './Header';
+export * from './HelpContent';
 export * from './Home';
 export * from './HotTagCard';
 export * from './InputField';

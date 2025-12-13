@@ -13,21 +13,11 @@ describe('MutedUsers', () => {
     render(<MutedUsers />);
     expect(screen.getByText('No muted users yet')).toBeInTheDocument();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<MutedUsers className="custom-muted" />);
-    expect(container.firstChild).toBeInTheDocument();
-  });
 });
 
 describe('MutedUsers - Snapshots', () => {
   it('matches snapshot with no muted users', () => {
     const { container } = render(<MutedUsers />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<MutedUsers className="custom-muted" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

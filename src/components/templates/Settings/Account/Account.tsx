@@ -7,11 +7,7 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as App from '@/app';
 
-export interface AccountProps {
-  className?: string;
-}
-
-export function Account({ className }: AccountProps) {
+export function Account() {
   const router = useRouter();
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
@@ -38,7 +34,7 @@ export function Account({ className }: AccountProps) {
 
   return (
     <>
-      <Molecules.SettingsSectionCard className={className}>
+      <Molecules.SettingsSectionCard>
         <Molecules.SettingsSection
           icon={Libs.Pencil}
           title="Edit your profile"

@@ -14,11 +14,6 @@ describe('Language', () => {
     expect(screen.getByText('Display language')).toBeInTheDocument();
     expect(screen.getByText('English')).toBeInTheDocument();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<Language className="custom-language" />);
-    expect(container.firstChild).toBeInTheDocument();
-  });
 });
 
 describe('Language - Snapshots', () => {
