@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import type {
   UsePostParticipantsResult,
   UsePostParticipantsOptions,
@@ -15,6 +15,10 @@ const DEFAULT_LIMIT = 10;
 /**
  * Hook for fetching post participants (author + reply authors).
  * Returns unique participants with their user details.
+ *
+ * Reuses:
+ * - usePostCounts: for reactive post counts
+ * - useBulkUserAvatars: for user details and avatar URLs
  */
 export function usePostParticipants(
   postId: string | null | undefined,
@@ -23,7 +27,7 @@ export function usePostParticipants(
   const { limit = DEFAULT_LIMIT } = options;
 
   const [replyAuthorIds, setReplyAuthorIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingReplies, setIsFetchingReplies] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   // Parse post author from composite ID
@@ -37,22 +41,19 @@ export function usePostParticipants(
     }
   }, [postId]);
 
-  // Watch for changes in post_counts to know when replies change
-  const postCounts = useLiveQuery(
-    () => (postId ? Core.PostController.getPostCounts({ compositeId: postId }) : null),
-    [postId],
-  );
+  // Use existing hook for post counts (reactive)
+  const { postCounts } = Hooks.usePostCounts(postId);
 
   // Fetch reply IDs to extract author IDs
   const fetchReplyAuthors = useCallback(async () => {
     if (!postId || !postCounts?.replies || postCounts.replies < 1) {
       setReplyAuthorIds([]);
-      setIsLoading(false);
+      setIsFetchingReplies(false);
       return;
     }
 
     try {
-      setIsLoading(true);
+      setIsFetchingReplies(true);
       const response = await Core.StreamPostsController.getOrFetchStreamSlice({
         streamId: `${Core.StreamSource.REPLIES}:${postId}`,
         streamTail: 0,
@@ -81,7 +82,7 @@ export function usePostParticipants(
       setError(err instanceof Error ? err : new Error('Failed to fetch participants'));
       setReplyAuthorIds([]);
     } finally {
-      setIsLoading(false);
+      setIsFetchingReplies(false);
     }
   }, [postId, postCounts?.replies, authorId, limit]);
 
@@ -103,41 +104,25 @@ export function usePostParticipants(
     return ids.slice(0, limit);
   }, [authorId, replyAuthorIds, limit]);
 
-  // Fetch user details for all participants
-  const userDetailsMap = useLiveQuery(
-    async () => {
-      if (participantIds.length === 0) return new Map<string, Core.UserDetailsModelSchema>();
-
-      const details = await Promise.all(
-        participantIds.map(async (id) => {
-          const userDetails = await Core.UserDetailsModel.findById(id as Core.Pubky);
-          return [id, userDetails] as const;
-        }),
-      );
-
-      return new Map(details.filter(([, d]) => d !== null) as [string, Core.UserDetailsModelSchema][]);
-    },
-    [participantIds],
-    new Map<string, Core.UserDetailsModelSchema>(),
-  );
+  // Use existing hook for bulk user avatars and details
+  const { usersMap, isLoading: isLoadingUsers } = Hooks.useBulkUserAvatars(participantIds as Core.Pubky[]);
 
   // Transform to PostParticipant format
   const participants: PostParticipant[] = useMemo(() => {
     return participantIds.map((id) => {
-      const details = userDetailsMap.get(id);
+      const userWithAvatar = usersMap.get(id as Core.Pubky);
       return {
         id,
-        name: details?.name ?? undefined,
-        image: details?.image ?? undefined,
-        avatarUrl: Core.FileController.getAvatarUrl(id as Core.Pubky),
-        isFollowing: false, // TODO: Add relationship data if needed
+        name: userWithAvatar?.name,
+        avatarUrl: userWithAvatar?.avatarUrl,
+        isFollowing: false, // Relationship handled by SinglePostParticipants via useIsFollowing
         counts: {
           tags: 0,
           posts: 0,
         },
       };
     });
-  }, [participantIds, userDetailsMap]);
+  }, [participantIds, usersMap]);
 
   // Extract author from participants
   const author = useMemo(() => {
@@ -145,10 +130,12 @@ export function usePostParticipants(
     return participants.find((p) => p.id === authorId) ?? null;
   }, [participants, authorId]);
 
+  const isLoading = isFetchingReplies || isLoadingUsers;
+
   return {
     participants,
     author,
-    isLoading: isLoading || userDetailsMap.size === 0,
+    isLoading,
     error,
   };
 }
