@@ -36,4 +36,3 @@ export interface GetDisplayTagsOptions {
   /** Maximum number of tags to display (default: 3) */
   maxCount?: number;
 }
-
