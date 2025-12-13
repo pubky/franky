@@ -7,14 +7,7 @@ import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
-import type { SinglePostParticipantsProps } from './SinglePostParticipants.types';
-
-interface ParticipantItemProps {
-  participant: Hooks.PostParticipant;
-  onUserClick: (pubky: string) => void;
-  onFollowClick: (userId: string, isFollowing: boolean) => Promise<void>;
-  isUserLoading: (userId: string) => boolean;
-}
+import type { SinglePostParticipantsProps, ParticipantItemProps } from './SinglePostParticipants.types';
 
 /**
  * Individual participant item with reactive follow status
