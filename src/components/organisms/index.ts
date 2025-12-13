@@ -45,6 +45,7 @@ export * from './PostHeader';
 export * from './PostInput';
 export * from './PostInputActionBar';
 export * from './PostInputTags';
+export * from './PrivacySettings';
 export * from './ProfilePageSidebar';
 export * from './CoordinatorsManager';
 export * from './PostMain';
