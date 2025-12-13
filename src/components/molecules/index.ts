@@ -51,7 +51,6 @@ export * from './PostLinkEmbeds';
 export * from './PostTag';
 export * from './PostTagAddButton';
 export * from './PostTagInput';
-export * from './PostTagsList';
 export * from './PostText';
 export * from './ProgressSteps';
 export * from './PublicKey';
