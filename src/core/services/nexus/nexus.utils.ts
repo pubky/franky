@@ -141,7 +141,5 @@ export async function queryNexus<T>(url: string, method: HttpMethod = 'GET', bod
   return nexusQueryClient.fetchQuery({
     queryKey: ['nexus', url, method, body],
     queryFn: () => fetchNexus<T>(url, method, body),
-    // Disable stale time for imperative fetches - always fetch fresh
-    staleTime: 0,
   });
 }
