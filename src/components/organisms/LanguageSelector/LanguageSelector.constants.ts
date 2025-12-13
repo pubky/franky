@@ -1,13 +1,4 @@
-/**
- * Language configuration constants
- */
-
-export interface LanguageOption {
-  code: string;
-  name: string;
-  flag: string;
-  disabled?: boolean;
-}
+import type { LanguageOption } from './LanguageSelector.types';
 
 /** Available languages for the application */
 export const LANGUAGES: LanguageOption[] = [

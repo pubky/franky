@@ -35,6 +35,7 @@ export * from './HotTagsCardsSection';
 export * from './HotTagsOverview';
 export * from './HotActiveUsers';
 export * from './HomeserverCard';
+export * from './LanguageSelector';
 export * from './LeftSidebar';
 export * from './PostActionsBar';
 export * from './PostAttachments';
