@@ -6,4 +6,5 @@ import { AuthStatus, type RouteAccessMap } from '@/hooks/useAuthStatus/useAuthSt
 export const ROUTE_ACCESS_MAP: RouteAccessMap = {
   [AuthStatus.UNAUTHENTICATED]: App.UNAUTHENTICATED_ROUTES,
   [AuthStatus.AUTHENTICATED]: App.AUTHENTICATED_ROUTES,
+  [AuthStatus.NEEDS_PROFILE_CREATION]: App.NEEDS_PROFILE_CREATION_ROUTES,
 };
