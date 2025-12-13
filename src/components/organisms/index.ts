@@ -71,6 +71,7 @@ export * from './ProfileProfile';
 export * from './ProfileReplies';
 export * from './ProfileTagged';
 export * from './NotificationItem';
+export * from './NotificationSettings';
 export * from './NotificationsContainer';
 export * from './NotificationsList';
 export * from './WhoToFollow';
