@@ -96,11 +96,11 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
       <Atoms.Button
         variant="secondary"
         size="icon"
-        className={Libs.cn('size-10 shrink-0 rounded-full', className)}
+        className={Libs.cn('size-10 shrink-0 cursor-not-allowed rounded-full opacity-50', className)}
         disabled
         aria-label="This is you"
       >
-        <Libs.User className="size-5" />
+        <Libs.CircleUserRound className="size-5 text-muted-foreground" />
       </Atoms.Button>
     );
   }
@@ -109,7 +109,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
     <Atoms.Button
       variant="secondary"
       size="sm"
-      className={Libs.cn('w-[110px] justify-center', className)}
+      className={Libs.cn('w-[110px] cursor-not-allowed justify-center text-muted-foreground opacity-50', className)}
       disabled
       aria-label="This is you"
     >

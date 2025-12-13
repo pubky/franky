@@ -54,7 +54,7 @@ function ParticipantItem({
  */
 export function SinglePostParticipants({ postId, className }: SinglePostParticipantsProps) {
   const router = useRouter();
-  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+  const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const { participants, isLoading } = Hooks.usePostParticipants(postId, { limit: 10 });
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
