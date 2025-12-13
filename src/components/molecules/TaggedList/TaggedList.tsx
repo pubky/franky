@@ -16,8 +16,8 @@ export function TaggedList({ tags, hasMore = false, isLoadingMore = false, onLoa
 
   return (
     <Atoms.Container className="gap-2">
-      {tags.map((tag, index) => (
-        <Molecules.TaggedItem key={`${tag.label}_${index}`} tag={tag} onTagClick={onTagToggle} />
+      {tags.map((tag) => (
+        <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagToggle} />
       ))}
       {hasMore && (
         <Atoms.Container overrideDefaults ref={sentinelRef} className="h-4 w-full">

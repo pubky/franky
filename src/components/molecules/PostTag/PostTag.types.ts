@@ -1,3 +1,5 @@
+import type { MouseEvent } from 'react';
+
 export interface PostTagProps {
   /** Tag label text */
   label: string;
@@ -8,9 +10,9 @@ export interface PostTagProps {
   /** Selected state */
   selected?: boolean;
   /** Callback when tag is clicked */
-  onClick?: (e: React.MouseEvent) => void;
+  onClick?: (e: MouseEvent) => void;
   /** Callback when close button is clicked */
-  onClose?: (e: React.MouseEvent) => void;
+  onClose?: (e: MouseEvent) => void;
   /** Custom color (hex) for the tag - if not provided, generates from label */
   color?: string;
   /** Additional className */
