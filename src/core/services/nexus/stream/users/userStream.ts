@@ -15,6 +15,7 @@ export class NexusUserStreamService {
    * @returns Array of user IDs
    */
   static async fetch({ streamId, params }: Core.TFetchUserStreamParams): Promise<Core.Pubky[]> {
+    // TODO: Handle the error in application layer
     const { reach, apiParams } = Core.createUserStreamParams(streamId, params);
 
     let url: string;
@@ -49,14 +50,11 @@ export class NexusUserStreamService {
    * @returns Array of full user objects with details, counts, tags, and relationships
    */
   static async fetchByIds(params: Core.TUserStreamUsersByIdsParams): Promise<Core.NexusUser[]> {
+    // TODO: Handle the error in application layer
     if (params.user_ids.length === 0) {
       return [];
     }
     const url = Core.userStreamApi.usersByIds(params);
-    let response = await Core.queryNexus<Core.NexusUser[]>(url.url, 'POST', JSON.stringify(url.body));
-    if (!response) response = [];
-    Libs.Logger.debug('Users fetched successfully', { response });
-
-    return response;
+    return await Core.queryNexus<Core.NexusUser[]>(url.url, 'POST', JSON.stringify(url.body));
   }
 }

@@ -10,6 +10,7 @@ export class UserController {
    */
   static async getDetails({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null | undefined> {
     return await Core.ProfileApplication.read({ userId });
+    // return await Core.LocalProfileService.details({ userId });
   }
 
   /**
