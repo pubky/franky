@@ -6,7 +6,11 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import type { ClickableTagsListProps } from './ClickableTagsList.types';
-import { TAG_MAX_LENGTH, TAGS_MAX_TOTAL_CHARS, DEFAULT_MAX_TAGS } from './ClickableTagsList.constants';
+import {
+  CLICKABLE_TAGS_DEFAULT_MAX_LENGTH,
+  CLICKABLE_TAGS_DEFAULT_MAX_TOTAL_CHARS,
+  CLICKABLE_TAGS_DEFAULT_MAX_TAGS,
+} from '@/config';
 
 /**
  * ClickableTagsList
@@ -27,9 +31,9 @@ export function ClickableTagsList({
   taggedId,
   taggedKind,
   tags: providedTags,
-  maxTags = DEFAULT_MAX_TAGS,
-  maxTagLength = TAG_MAX_LENGTH,
-  maxTotalChars = TAGS_MAX_TOTAL_CHARS,
+  maxTags = CLICKABLE_TAGS_DEFAULT_MAX_TAGS,
+  maxTagLength = CLICKABLE_TAGS_DEFAULT_MAX_LENGTH,
+  maxTotalChars = CLICKABLE_TAGS_DEFAULT_MAX_TOTAL_CHARS,
   showCount = true,
   showInput = false,
   showAddButton = false,
