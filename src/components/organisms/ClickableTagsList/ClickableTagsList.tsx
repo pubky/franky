@@ -89,14 +89,16 @@ export function ClickableTagsList({
     [onTagClick, handleTagToggle],
   );
 
-  // Apply smart limiting based on character budget
-  const tagLabels = fetchedTags.map((tag) => tag.label);
-  const displayLabels = Libs.getDisplayTags(tagLabels, {
-    maxTagLength,
-    maxTotalChars,
-    maxCount: maxTags,
-  });
-  const visibleTags = fetchedTags.filter((tag) => displayLabels.includes(tag.label));
+  // Apply smart limiting based on character budget (memoized for performance)
+  const visibleTags = React.useMemo(() => {
+    const tagLabels = fetchedTags.map((tag) => tag.label);
+    const displayLabels = Libs.getDisplayTags(tagLabels, {
+      maxTagLength,
+      maxTotalChars,
+      maxCount: maxTags,
+    });
+    return fetchedTags.filter((tag) => displayLabels.includes(tag.label));
+  }, [fetchedTags, maxTagLength, maxTotalChars, maxTags]);
 
   // Check if we should render anything
   const hasVisibleTags = visibleTags.length > 0;

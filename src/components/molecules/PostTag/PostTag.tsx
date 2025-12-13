@@ -62,8 +62,7 @@ export function PostTag({
       )}
 
       {/* Hover shadow overlay - exactly as Figma */}
-      <Atoms.Container
-        overrideDefaults
+      <span
         className="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
         style={{
           boxShadow: `inset 0px 0px 8px 0px ${tagColor}`,
@@ -73,8 +72,7 @@ export function PostTag({
 
       {/* Selected border overlay */}
       {selected && (
-        <Atoms.Container
-          overrideDefaults
+        <span
           className="pointer-events-none absolute inset-0 rounded-md border border-solid"
           style={{ borderColor: tagColor }}
           aria-hidden="true"

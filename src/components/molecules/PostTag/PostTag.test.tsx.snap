@@ -18,16 +18,14 @@ exports[`PostTag - Snapshots > matches snapshot when selected 1`] = `
       bitcoin
     </span>
   </span>
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-    data-testid="container"
     style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
   />
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md border border-solid"
-    data-testid="container"
     style="border-color: rgb(255, 153, 0);"
   />
 </button>
@@ -69,16 +67,14 @@ exports[`PostTag - Snapshots > matches snapshot with all features 1`] = `
       X
     </div>
   </span>
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-    data-testid="container"
     style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
   />
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md border border-solid"
-    data-testid="container"
     style="border-color: rgb(255, 153, 0);"
   />
 </button>
@@ -115,10 +111,9 @@ exports[`PostTag - Snapshots > matches snapshot with close button 1`] = `
       X
     </div>
   </span>
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-    data-testid="container"
     style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
   />
 </button>
@@ -147,10 +142,9 @@ exports[`PostTag - Snapshots > matches snapshot with counter 1`] = `
       16
     </span>
   </span>
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-    data-testid="container"
     style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
   />
 </button>
@@ -174,10 +168,9 @@ exports[`PostTag - Snapshots > matches snapshot with custom color 1`] = `
       bitcoin
     </span>
   </span>
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-    data-testid="container"
     style="box-shadow: inset 0px 0px 8px 0px #FF0000;"
   />
 </button>
@@ -201,10 +194,9 @@ exports[`PostTag - Snapshots > matches snapshot with default state 1`] = `
       bitcoin
     </span>
   </span>
-  <div
+  <span
     aria-hidden="true"
     class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
-    data-testid="container"
     style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
   />
 </button>
