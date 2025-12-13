@@ -21,6 +21,10 @@ vi.mock('@/hooks', () => ({
     toggleFollow: mockToggleFollow,
     isUserLoading: mockIsUserLoading,
   }),
+  useIsFollowing: () => ({
+    isFollowing: false,
+    isLoading: false,
+  }),
 }));
 
 // Mock app routes
@@ -48,6 +52,10 @@ vi.mock('@/molecules', () => ({
       {children}
     </div>
   ),
+}));
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
   UserListItem: ({
     user,
     onUserClick,

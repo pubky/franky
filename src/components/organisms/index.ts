@@ -75,4 +75,5 @@ export * from './NotificationItem';
 export * from './NotificationSettings';
 export * from './NotificationsContainer';
 export * from './NotificationsList';
+export * from './UserListItem';
 export * from './WhoToFollow';

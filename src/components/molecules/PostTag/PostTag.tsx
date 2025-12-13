@@ -1,25 +1,6 @@
-import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-export interface PostTagProps {
-  /** Tag label text */
-  label: string;
-  /** Number of posts with this tag (optional) */
-  count?: number;
-  /** Show the close/remove button */
-  showClose?: boolean;
-  /** Selected state */
-  selected?: boolean;
-  /** Callback when tag is clicked */
-  onClick?: (e: React.MouseEvent) => void;
-  /** Callback when close button is clicked */
-  onClose?: (e: React.MouseEvent) => void;
-  /** Custom color (hex) for the tag - if not provided, generates from label */
-  color?: string;
-  /** Additional className */
-  className?: string;
-}
+import type { PostTagProps } from './PostTag.types';
 
 export function PostTag({
   label,

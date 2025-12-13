@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
@@ -22,7 +23,7 @@ function ParticipantItem({ participant, onUserClick, onFollowClick, isUserLoadin
   const { isFollowing, isLoading: isFollowStatusLoading } = Hooks.useIsFollowing(participant.id);
 
   return (
-    <Molecules.UserListItem
+    <Organisms.UserListItem
       user={{
         id: participant.id,
         name: participant.name,
