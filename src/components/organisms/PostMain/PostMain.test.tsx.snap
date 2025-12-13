@@ -50,9 +50,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-no-reply-456
         </div>
         <div
@@ -115,9 +115,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-reply-123
         </div>
         <div
@@ -167,9 +167,9 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-123
         </div>
         <div
@@ -219,9 +219,9 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-789
         </div>
         <div

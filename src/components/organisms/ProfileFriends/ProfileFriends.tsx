@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Providers from '@/providers';
@@ -62,7 +63,7 @@ export function ProfileFriends() {
       </Atoms.Heading>
       <Atoms.Container className="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6">
         {connections.map((connection) => (
-          <Molecules.UserListItem
+          <Organisms.UserListItem
             key={connection.id}
             user={connection}
             variant="full"

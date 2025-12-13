@@ -30,13 +30,24 @@ export class NexusPostService {
   /**
    * Fetches tags for a post from Nexus API
    * @param compositeId - Composite post ID in format "authorId:postId"
+   * @param skip - Number of tags to skip (for pagination)
+   * @param limit - Maximum number of tags to return
    * @returns An array of tags (empty array if post has no tags or is not found)
    */
-  static async getPostTags({ compositeId }: Core.TCompositeId): Promise<Core.NexusTag[]> {
+  static async getPostTags({
+    compositeId,
+    skip,
+    limit,
+  }: Core.TCompositeId & { skip?: number; limit?: number }): Promise<Core.NexusTag[]> {
     try {
       const { pubky: author_id, id: post_id } = Core.parseCompositeId(compositeId);
 
-      const url = Core.postApi.tags({ author_id, post_id });
+      const url = Core.postApi.tags({
+        author_id,
+        post_id,
+        skip_tags: skip,
+        limit_tags: limit,
+      });
       return (await Core.queryNexus<Core.NexusTag[]>(url)) ?? [];
     } catch (error) {
       // 404 means the post has no tags, which is a valid state

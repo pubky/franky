@@ -6,7 +6,7 @@ import * as Core from '@/core';
 import { useProfileStats } from '@/hooks/useProfileStats';
 import { toast } from '@/molecules/Toaster/use-toast';
 import type { UseTaggedResult, UseTaggedOptions } from './useTagged.types';
-import { transformTagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.utils';
+import { transformTagsForViewer } from '@/molecules/TaggedItem/TaggedItem.utils';
 import { TAGS_PER_PAGE } from './useTagged.constants';
 
 /**
@@ -35,8 +35,8 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
   // Fetch tags directly from IndexedDB - this will react to any changes made by TagController
   const localTags = useLiveQuery(async () => {
     if (!userId) return undefined;
-    const userTagsData = await Core.UserTagsModel.table.get(userId);
-    return userTagsData?.tags ?? null;
+    const tags = await Core.UserController.getUserTags(userId);
+    return tags.length > 0 ? tags : null;
   }, [userId]);
 
   // Update tag order map when localTags change (only for new tags)
@@ -85,10 +85,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
         });
 
         // Save to IndexedDB so useLiveQuery reacts
-        await Core.UserTagsModel.upsert({
-          id: userId as Core.Pubky,
-          tags: fetchedTags,
-        });
+        await Core.UserController.saveUserTags(userId, fetchedTags);
 
         setHasFetched(true);
       } catch {
@@ -177,12 +174,15 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
   );
 
   const handleTagToggle = useCallback(
-    async (tag: { label: string }): Promise<void> => {
+    async (tag: { label: string; relationship?: boolean }): Promise<void> => {
       if (!userId || !viewerId) return;
 
       const currentTagIndex = allTags.findIndex((t) => t.label === tag.label);
       const currentTag = currentTagIndex >= 0 ? allTags[currentTagIndex] : undefined;
-      const userIsTagger = currentTag?.taggers?.includes(viewerId) ?? false;
+      // Use relationship from tag (from transformTagsForViewer) which is more reliable
+      // than checking the taggers array which may be truncated
+      const userIsTagger =
+        tag.relationship ?? currentTag?.relationship ?? currentTag?.taggers?.includes(viewerId) ?? false;
       const labelLower = tag.label.toLowerCase();
 
       try {
@@ -264,10 +264,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
         const newTags = moreTags.filter((t) => !existingLabels.has(t.label.toLowerCase()));
         const mergedTags = [...allTags, ...newTags];
 
-        await Core.UserTagsModel.upsert({
-          id: userId as Core.Pubky,
-          tags: mergedTags,
-        });
+        await Core.UserController.saveUserTags(userId, mergedTags);
       }
     } catch {
       // Ignore pagination errors
@@ -276,16 +273,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
 
   const isLoading = localTags === undefined || (enableStats && isLoadingStats);
 
-  const tagsWithAvatars = useMemo(() => {
-    return allTags.map((tag) => {
-      // Add relationship based on current viewer
-      const tagWithRelationship = {
-        ...tag,
-        relationship: viewerId ? (tag.taggers?.includes(viewerId) ?? false) : false,
-      };
-      return transformTagWithAvatars(tagWithRelationship);
-    });
-  }, [allTags, viewerId]);
+  const tagsWithAvatars = useMemo(() => transformTagsForViewer(allTags, viewerId), [allTags, viewerId]);
 
   return {
     tags: tagsWithAvatars,

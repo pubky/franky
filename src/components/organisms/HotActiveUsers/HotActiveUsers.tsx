@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -96,7 +96,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
       ) : (
         <Atoms.Container className="gap-3.5 rounded-md py-2 lg:gap-3">
           {users.map((user) => (
-            <Molecules.UserListItem
+            <Organisms.UserListItem
               key={user.id}
               user={{
                 id: user.id,

@@ -7,6 +7,8 @@ export type TReadPostStreamChunkParams = {
   lastPostId?: string;
   tags?: string[];
   limit?: number;
+  /** Order of results: 'ascending' (oldest first) or 'descending' (newest first, default) */
+  order?: Core.StreamOrder;
 };
 
 export type TStreamIdParams = {

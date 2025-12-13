@@ -83,6 +83,16 @@ export class LocalProfileService {
   }
 
   /**
+   * Retrieves tags for a single user from local database.
+   * @param userId - User ID to fetch tags for
+   * @returns Promise resolving to array of tags or empty array if not found
+   */
+  static async getUserTags(userId: string): Promise<Core.NexusTag[]> {
+    const userTags = await Core.UserTagsModel.table.get(userId);
+    return userTags?.tags ?? [];
+  }
+
+  /**
    * Bulk retrieves multiple user tags from local database.
    * @param userIds - Array of user IDs to fetch tags for
    * @returns Promise resolving to Map of user ID to user tags

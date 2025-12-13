@@ -49,6 +49,7 @@ export class StreamPostsController {
     streamTail = Core.NOT_FOUND_CACHED_STREAM,
     lastPostId,
     limit = Config.NEXUS_POSTS_PER_PAGE,
+    order,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
     const { nextPageIds, cacheMissPostIds, timestamp } = await Core.PostStreamApplication.getOrFetchStreamSlice({
@@ -58,6 +59,7 @@ export class StreamPostsController {
       streamTail,
       lastPostId,
       viewerId,
+      order,
     });
     // Query nexus to get the cacheMissPostIds
     if (cacheMissPostIds.length > 0) {
@@ -90,6 +92,15 @@ export class StreamPostsController {
    */
   static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
     return await Core.PostStreamApplication.getStreamHead(params);
+  }
+
+  /**
+   * Get local stream data from cache without fetching from Nexus
+   * @param streamId - The ID of the stream
+   * @returns The cached stream or null if not found
+   */
+  static async getLocalStream(params: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
+    return await Core.PostStreamApplication.getLocalStream(params);
   }
 
   /**
