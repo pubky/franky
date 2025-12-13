@@ -2,7 +2,7 @@
 
 exports[`ProfilePageLinks - Snapshots > matches snapshot with custom links 1`] = `
 <div
-  class="flex flex-col"
+  class="mx-auto w-full flex-col flex"
   data-testid="container"
 >
   <h2
@@ -12,14 +12,12 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with custom links 1`] =
     Links
   </h2>
   <div
-    class="flex flex-col"
+    class="mx-auto w-full flex-col flex"
     data-testid="container"
   >
     <a
-      class="flex items-center gap-2.5 py-1"
+      class="flex cursor-pointer items-center gap-2.5 py-1"
       href="https://example.com"
-      rel="noopener noreferrer"
-      target="_blank"
     >
       <svg
         aria-hidden="true"
@@ -54,7 +52,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with custom links 1`] =
 
 exports[`ProfilePageLinks - Snapshots > matches snapshot with empty links 1`] = `
 <div
-  class="flex flex-col"
+  class="mx-auto w-full flex-col flex"
   data-testid="container"
 >
   <h2
@@ -64,7 +62,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with empty links 1`] = 
     Links
   </h2>
   <div
-    class="flex flex-col"
+    class="mx-auto w-full flex-col flex"
     data-testid="container"
   >
     <div
@@ -84,7 +82,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with empty links 1`] = 
 
 exports[`ProfilePageLinks - Snapshots > matches snapshot with links 1`] = `
 <div
-  class="flex flex-col"
+  class="mx-auto w-full flex-col flex"
   data-testid="container"
 >
   <h2
@@ -94,14 +92,12 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with links 1`] = `
     Links
   </h2>
   <div
-    class="flex flex-col"
+    class="mx-auto w-full flex-col flex"
     data-testid="container"
   >
     <a
-      class="flex items-center gap-2.5 py-1"
+      class="flex cursor-pointer items-center gap-2.5 py-1"
       href="https://bitcoin.org"
-      rel="noopener noreferrer"
-      target="_blank"
     >
       <svg
         aria-hidden="true"
@@ -131,10 +127,8 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with links 1`] = `
       </span>
     </a>
     <a
-      class="flex items-center gap-2.5 py-1"
+      class="flex cursor-pointer items-center gap-2.5 py-1"
       href="https://twitter.com/test"
-      rel="noopener noreferrer"
-      target="_blank"
     >
       <svg
         class="lucide-x-twitter shrink-0 text-foreground"
@@ -173,10 +167,8 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with links 1`] = `
       </span>
     </a>
     <a
-      class="flex items-center gap-2.5 py-1"
+      class="flex cursor-pointer items-center gap-2.5 py-1"
       href="https://github.com/test"
-      rel="noopener noreferrer"
-      target="_blank"
     >
       <svg
         aria-hidden="true"
@@ -203,6 +195,107 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with links 1`] = `
         data-testid="typography"
       >
         github.com/test
+      </span>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`ProfilePageLinks - Snapshots > matches snapshot with mailto link 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+    data-testid="heading-2"
+  >
+    Links
+  </h2>
+  <div
+    class="mx-auto w-full flex-col flex"
+    data-testid="container"
+  >
+    <a
+      class="flex cursor-pointer items-center gap-2.5 py-1"
+      href="mailto:hello@example.com"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-mail shrink-0 text-foreground"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"
+        />
+        <rect
+          height="16"
+          rx="2"
+          width="20"
+          x="2"
+          y="4"
+        />
+      </svg>
+      <span
+        class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
+      >
+        Contact
+      </span>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`ProfilePageLinks - Snapshots > matches snapshot with tel link 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+    data-testid="heading-2"
+  >
+    Links
+  </h2>
+  <div
+    class="mx-auto w-full flex-col flex"
+    data-testid="container"
+  >
+    <a
+      class="flex cursor-pointer items-center gap-2.5 py-1"
+      href="tel:+1234567890"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-phone shrink-0 text-foreground"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+        />
+      </svg>
+      <span
+        class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
+      >
+        Call Us
       </span>
     </a>
   </div>
