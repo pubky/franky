@@ -90,7 +90,21 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
  * MeButton
  * Disabled button shown when viewing own profile
  */
-function MeButton({ className }: { className?: string }) {
+function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; className?: string }) {
+  if (variant === 'icon') {
+    return (
+      <Atoms.Button
+        variant="secondary"
+        size="icon"
+        className={Libs.cn('size-10 shrink-0 rounded-full', className)}
+        disabled
+        aria-label="This is you"
+      >
+        <Libs.User className="size-5" />
+      </Atoms.Button>
+    );
+  }
+
   return (
     <Atoms.Button
       variant="secondary"
@@ -225,8 +239,10 @@ function CompactVariant({
         </Atoms.Container>
       </Atoms.Button>
 
-      {/* Follow button */}
-      {!isCurrentUser && (
+      {/* Follow button or Me button */}
+      {isCurrentUser ? (
+        <MeButton variant="icon" />
+      ) : (
         <FollowButton
           isFollowing={isFollowing}
           isLoading={isLoading}

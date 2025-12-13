@@ -6,14 +6,22 @@ import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 import { APP_ROUTES } from '@/app/routes';
 import type { SinglePostParticipantsProps, ParticipantItemProps } from './SinglePostParticipants.types';
 
 /**
  * Individual participant item with reactive follow status
  */
-function ParticipantItem({ participant, onUserClick, onFollowClick, isUserLoading }: ParticipantItemProps) {
+function ParticipantItem({
+  participant,
+  currentUserId,
+  onUserClick,
+  onFollowClick,
+  isUserLoading,
+}: ParticipantItemProps) {
   const { isFollowing, isLoading: isFollowStatusLoading } = Hooks.useIsFollowing(participant.id);
+  const isCurrentUser = participant.id === currentUserId;
 
   return (
     <Organisms.UserListItem
@@ -28,6 +36,7 @@ function ParticipantItem({ participant, onUserClick, onFollowClick, isUserLoadin
       variant="compact"
       isLoading={isUserLoading(participant.id)}
       isStatusLoading={isFollowStatusLoading}
+      isCurrentUser={isCurrentUser}
       onUserClick={onUserClick}
       onFollowClick={onFollowClick}
     />
@@ -45,6 +54,7 @@ function ParticipantItem({ participant, onUserClick, onFollowClick, isUserLoadin
  */
 export function SinglePostParticipants({ postId, className }: SinglePostParticipantsProps) {
   const router = useRouter();
+  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
   const { participants, isLoading } = Hooks.usePostParticipants(postId, { limit: 10 });
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
@@ -79,6 +89,7 @@ export function SinglePostParticipants({ postId, className }: SinglePostParticip
         <ParticipantItem
           key={participant.id}
           participant={participant}
+          currentUserId={currentUserId}
           onUserClick={handleUserClick}
           onFollowClick={handleFollowClick}
           isUserLoading={isUserLoading}

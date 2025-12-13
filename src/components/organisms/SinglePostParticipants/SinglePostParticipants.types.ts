@@ -10,6 +10,8 @@ export interface SinglePostParticipantsProps {
 export interface ParticipantItemProps {
   /** Participant data */
   participant: Hooks.PostParticipant;
+  /** Current user ID to check if participant is self */
+  currentUserId: string | null;
   /** Callback when user is clicked */
   onUserClick: (pubky: string) => void;
   /** Callback when follow button is clicked */

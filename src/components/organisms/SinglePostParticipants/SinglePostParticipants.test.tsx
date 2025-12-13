@@ -90,6 +90,17 @@ vi.mock('@/libs', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
 }));
 
+// Mock core
+vi.mock('@/core', () => ({
+  useAuthStore: vi.fn((selector) => {
+    const mockState = {
+      currentUserPubky: 'mock-current-user',
+      selectCurrentUserPubky: () => 'mock-current-user',
+    };
+    return selector ? selector(mockState) : mockState;
+  }),
+}));
+
 describe('SinglePostParticipants', () => {
   const mockPostId = 'author:post123';
 
