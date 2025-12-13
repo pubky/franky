@@ -42,4 +42,6 @@ export * from './useUnreadPosts';
 export * from './useIsScrolledFromTop';
 export * from './useBulkUserAvatars';
 export * from './useSearchStreamId';
+export * from './useConfirmableDialog';
 export * from './useFeedback';
+export * from './usePostInput';
