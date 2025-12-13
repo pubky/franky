@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vites
 import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { SignInContent, SignInFooter } from './SignIn';
-import * as Core from '@/core';
-import * as Molecules from '@/molecules';
 import type { PublicKey } from '@synonymdev/pubky';
 
 // Mock Next.js router
@@ -33,9 +31,10 @@ vi.mock('qrcode.react', () => ({
 vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: vi.fn().mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.resolve({} as unknown as PublicKey),
+      authorizationUrl: 'mock-auth-url',
+      awaitApproval: Promise.resolve({} as unknown as PublicKey),
     }),
+    initializeAuthenticatedSession: vi.fn().mockResolvedValue({}),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
   BootstrapController: {
@@ -51,6 +50,18 @@ vi.mock('@/core', () => ({
       reset: vi.fn(),
     }),
   },
+}));
+
+// Mock useAuthUrl hook
+const mockFetchUrl = vi.fn();
+vi.mock('@/hooks', () => ({
+  useAuthUrl: vi.fn(() => ({
+    url: 'mock-auth-url',
+    isLoading: false,
+    isGenerating: false,
+    fetchUrl: mockFetchUrl,
+    retryCount: 0,
+  })),
 }));
 
 // Mock molecules
@@ -257,144 +268,28 @@ describe('SignInContent', () => {
     expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
   });
 
-  it('retries getAuthUrl with bounded backoff on failures', async () => {
-    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
+  // Note: Retry logic and error handling for auth URL generation are now tested
+  // in useAuthUrl.test.tsx since that logic was extracted to the hook
 
-    let callCount = 0;
-    getAuthUrl.mockImplementation(async () => {
-      callCount += 1;
-      if (callCount < 3) {
-        throw new Error('transient');
-      }
-      return {
-        url: 'mock-auth-url',
-        promise: Promise.resolve({} as unknown as PublicKey),
-      };
+  // Note: Unmount cleanup and request deduplication are tested in useAuthUrl.test.tsx
+
+  it('button disabled when loading', async () => {
+    // Mock loading state
+    const Hooks = await import('@/hooks');
+    vi.mocked(Hooks.useAuthUrl).mockReturnValue({
+      url: '',
+      isLoading: true,
+      isGenerating: true,
+      fetchUrl: mockFetchUrl,
+      retryCount: 0,
     });
-
-    await act(async () => {
-      render(<SignInContent />);
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId('button')).not.toBeDisabled();
-    });
-
-    expect(getAuthUrl).toHaveBeenCalledTimes(3);
-    getAuthUrl.mockReset();
-    getAuthUrl.mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.resolve({} as unknown as PublicKey),
-    });
-  });
-
-  it('shows a toast and regenerates QR when authorization promise rejects', async () => {
-    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
-    const toastSpy = vi.mocked(Molecules.toast);
-
-    getAuthUrl
-      .mockResolvedValueOnce({
-        url: 'mock-auth-url',
-        promise: Promise.reject(new Error('user declined')),
-      })
-      .mockResolvedValueOnce({
-        url: 'mock-auth-url-2',
-        promise: Promise.resolve({} as unknown as PublicKey),
-      });
-
-    await act(async () => {
-      render(<SignInContent />);
-    });
-
-    await waitFor(() => {
-      expect(toastSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ title: expect.stringMatching(/authorization was not completed/i) }),
-      );
-    });
-
-    await waitFor(() => {
-      expect(getAuthUrl).toHaveBeenCalledTimes(2);
-    });
-
-    getAuthUrl.mockReset();
-    getAuthUrl.mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.resolve({} as unknown as PublicKey),
-    });
-  });
-
-  it('does not update or toast after unmount when promise settles', async () => {
-    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
-    const toastSpy = vi.mocked(Molecules.toast);
-
-    let rejectFn: (e: unknown) => void = () => {};
-    const latePromise: Promise<PublicKey> = new Promise((_, reject) => {
-      rejectFn = reject;
-    });
-
-    getAuthUrl.mockResolvedValue({ url: 'mock-auth-url', promise: latePromise });
-
-    let unmountFn: () => void = () => {};
-    await act(async () => {
-      const result = render(<SignInContent />);
-      unmountFn = result.unmount;
-    });
-
-    // Allow fetchUrl to await getAuthUrl and attach handlers
-    await new Promise((r) => setTimeout(r, 0));
-
-    // Now unmount the original component
-    await act(async () => {
-      unmountFn();
-    });
-
-    // Settle promise after unmount
-    await act(async () => {
-      rejectFn(new Error('late reject'));
-    });
-
-    // Give microtask queue time
-    await new Promise((r) => setTimeout(r, 0));
-    expect(toastSpy).not.toHaveBeenCalled();
-
-    getAuthUrl.mockReset();
-    getAuthUrl.mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.resolve({} as unknown as PublicKey),
-    });
-  });
-
-  it('prevents duplicate fetch when tapping while generating', async () => {
-    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
-
-    // Defer getAuthUrl resolution so that the click happens while loading
-    let resolveAuthUrl: (v: { url: string; promise: Promise<PublicKey> }) => void = () => {};
-    const deferredAuthUrl = new Promise<{ url: string; promise: Promise<PublicKey> }>((resolve) => {
-      resolveAuthUrl = resolve;
-    });
-    getAuthUrl.mockImplementationOnce(
-      () => deferredAuthUrl as unknown as ReturnType<typeof Core.AuthController.getAuthUrl>,
-    );
 
     await act(async () => {
       render(<SignInContent />);
     });
 
     const button = screen.getByTestId('button');
-    // First click while loading - should be ignored by guard
-    fireEvent.click(button);
-    // Now resolve the deferred getAuthUrl and its promise
-    await act(async () => {
-      resolveAuthUrl({ url: 'mock-auth-url', promise: Promise.resolve({} as unknown as PublicKey) });
-    });
-
-    // Ensure getAuthUrl only called once (no duplicate due to double-click)
-    expect(getAuthUrl).toHaveBeenCalledTimes(1);
-    getAuthUrl.mockReset();
-    getAuthUrl.mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.resolve({} as unknown as PublicKey),
-    });
+    expect(button).toBeDisabled();
   });
 
   it('renders content cards with column layout', async () => {

@@ -32,11 +32,24 @@ vi.mock('qrcode.react', () => ({
 vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: vi.fn().mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.resolve({ mockKeypair: true }),
+      authorizationUrl: 'mock-auth-url',
+      awaitApproval: Promise.resolve({ mockKeypair: true }),
     }),
+    initializeAuthenticatedSession: vi.fn().mockResolvedValue({}),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
+}));
+
+// Mock useAuthUrl hook
+const mockFetchUrl = vi.fn();
+vi.mock('@/hooks', () => ({
+  useAuthUrl: vi.fn(() => ({
+    url: 'mock-auth-url',
+    isLoading: false,
+    isGenerating: false,
+    fetchUrl: mockFetchUrl,
+    retryCount: 0,
+  })),
 }));
 
 // Mock molecules

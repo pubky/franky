@@ -1,9 +1,29 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { z } from 'zod';
 
 // Operations related with the profile.json file in the homeserver
 export class ProfileController {
   private constructor() {} // Prevent instantiation
+
+  /**
+   * Generates a new pair of secret key and mnemonic and sets them in the onboarding and auth stores.
+   */
+  static generateSecrets() {
+    const secrets = Libs.Identity.generateSecrets();
+    Core.useOnboardingStore.getState().setSecrets(secrets);
+    Core.useAuthStore.getState().setCurrentUserPubky(Libs.Identity.pubkyFromSecret(secrets.secretKey));
+  }
+
+  /**
+   * Creates a recovery file for the keypair
+   * @param passphrase - The passphrase to use to create the recovery file
+   */
+  static createRecoveryFile(passphrase: string) {
+    const secretKey = Core.useOnboardingStore.getState().selectSecretKey();
+    const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
+    Libs.Identity.createRecoveryFile({ keypair, passphrase });
+  }
 
   static async read({ userId }: Core.TReadProfileParams) {
     return await Core.ProfileApplication.read({ userId });

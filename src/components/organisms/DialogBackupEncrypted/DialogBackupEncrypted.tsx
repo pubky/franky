@@ -6,34 +6,27 @@ import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import Image from 'next/image';
-import { Identity, calculatePasswordStrength, getStrengthText, getStrengthColor } from '@/libs';
-import { useOnboardingStore } from '@/core';
+import { calculatePasswordStrength, getStrengthText, getStrengthColor } from '@/libs';
+import * as Core from '@/core';
 
 interface DialogBackupEncryptedProps {
   children?: React.ReactNode;
 }
 
 function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const { secretKey, pubky } = useOnboardingStore();
+  const [passphrase, setPassphrase] = useState('');
+  const [confirmPassphrase, setConfirmPassphrase] = useState('');
 
-  const passwordStrength = calculatePasswordStrength(password);
-  const passwordsMatch = password === confirmPassword && password !== '';
+  const passphraseStrength = calculatePasswordStrength(passphrase);
+  const passphraseMatch = passphrase === confirmPassphrase && passphrase !== '';
 
   const handleDownload = () => {
-    void Identity.createRecoveryFile(
-      {
-        pubky,
-        secretKey: secretKey,
-      },
-      password,
-    );
+    Core.ProfileController.createRecoveryFile(passphrase);
     setStep(2);
   };
 
   const isFormValid = () => {
-    return Boolean(password && passwordsMatch);
+    return Boolean(passphrase && passphraseMatch);
   };
 
   const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleDownload);
@@ -62,8 +55,8 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
               <Atoms.Input
                 id="password"
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={passphrase}
+                onChange={(e) => setPassphrase(e.target.value)}
                 onKeyDown={handleKeyDown}
                 className="bg-opacity-90 h-14 rounded-md border border-dashed px-5 py-4 shadow-sm"
                 placeholder="Enter a strong password"
@@ -82,20 +75,20 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         </Atoms.Container>
 
         <Atoms.Container className="items-start">
-          {password && (
+          {passphrase && (
             <Atoms.Container className="flex-row items-center justify-start gap-3">
               {[1, 2, 3, 4, 5].map((index) => (
                 <div
                   key={index}
-                  className={`h-3 w-6 rounded-lg ${index <= passwordStrength.strength ? 'bg-brand' : 'bg-muted'}`}
+                  className={`h-3 w-6 rounded-lg ${index <= passphraseStrength.strength ? 'bg-brand' : 'bg-muted'}`}
                 ></div>
               ))}
               <span
-                className={`text-xs font-medium ${getStrengthColor(passwordStrength.strength)}`}
+                className={`text-xs font-medium ${getStrengthColor(passphraseStrength.strength)}`}
                 role="status"
                 aria-live="polite"
               >
-                {getStrengthText(passwordStrength.strength)}
+                {getStrengthText(passphraseStrength.strength)}
               </span>
             </Atoms.Container>
           )}
@@ -112,18 +105,18 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
             <Atoms.Input
               id="confirmPassword"
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassphrase}
+              onChange={(e) => setConfirmPassphrase(e.target.value)}
               onKeyDown={handleKeyDown}
               className={`bg-opacity-90 h-14 rounded-md border border-dashed px-5 py-4 shadow-sm ${
-                confirmPassword && !passwordsMatch ? 'border-destructive' : ''
+                confirmPassphrase && !passphraseMatch ? 'border-destructive' : ''
               }`}
               placeholder="Repeat your password"
               autoComplete="new-password"
-              aria-invalid={Boolean(confirmPassword && !passwordsMatch)}
-              aria-describedby={confirmPassword && !passwordsMatch ? 'confirm-password-error' : undefined}
+              aria-invalid={Boolean(confirmPassphrase && !passphraseMatch)}
+              aria-describedby={confirmPassphrase && !passphraseMatch ? 'confirm-password-error' : undefined}
             />
-            {confirmPassword && !passwordsMatch && (
+            {confirmPassphrase && !passphraseMatch && (
               <Atoms.Typography
                 id="confirm-password-error"
                 size="sm"
