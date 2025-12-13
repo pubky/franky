@@ -18,6 +18,7 @@ export * from './EditProfileHeader';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogFeedback';
 export * from './DialogPrivacy';
+export * from './DialogNewPost';
 export * from './DialogReply';
 export * from './DialogRestoreEncryptedFile';
 export * from './DialogRestoreRecoveryPhrase';
