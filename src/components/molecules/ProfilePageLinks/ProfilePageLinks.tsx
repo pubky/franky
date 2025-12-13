@@ -7,6 +7,9 @@ import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 import type { ProfilePageLinksProps } from './ProfilePageLinks.types';
 
+// Protocol schemes that bypass the confirmation dialog
+const BYPASS_PROTOCOLS = ['mailto:', 'tel:'];
+
 export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
   const { privacy } = Core.useSettingsStore();
   const checkLinkEnabled = privacy.showConfirm;
@@ -28,8 +31,8 @@ export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
     (url: string, e: React.MouseEvent) => {
       e.preventDefault();
 
-      // mailto: links bypass check
-      if (url.startsWith('mailto:')) {
+      // Protocol schemes that bypass the confirmation dialog (mailto, tel, etc.)
+      if (BYPASS_PROTOCOLS.some((protocol) => url.startsWith(protocol))) {
         window.open(url, '_blank', 'noopener,noreferrer');
         return;
       }

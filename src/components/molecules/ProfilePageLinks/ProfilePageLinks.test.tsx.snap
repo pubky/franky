@@ -254,3 +254,50 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with mailto link 1`] = 
   </div>
 </div>
 `;
+
+exports[`ProfilePageLinks - Snapshots > matches snapshot with tel link 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+    data-testid="heading-2"
+  >
+    Links
+  </h2>
+  <div
+    class="mx-auto w-full flex-col flex"
+    data-testid="container"
+  >
+    <a
+      class="flex cursor-pointer items-center gap-2.5 py-1"
+      href="tel:+1234567890"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-phone shrink-0 text-foreground"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"
+        />
+      </svg>
+      <span
+        class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
+      >
+        Call Us
+      </span>
+    </a>
+  </div>
+</div>
+`;

@@ -171,6 +171,24 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
     const dialog = screen.getByTestId('dialog-check-link');
     expect(dialog).toHaveAttribute('data-open', 'false');
   });
+
+  it('opens tel links directly without dialog', () => {
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const linksWithPhone: Core.NexusUserDetails['links'] = [{ title: 'Phone', url: 'tel:+1234567890' }];
+    render(<ProfilePageLinks links={linksWithPhone} />);
+
+    const linkElement = screen.getByText('Phone').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('tel:+1234567890', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
 });
 
 describe('ProfilePageLinks - Snapshots', () => {
@@ -203,6 +221,12 @@ describe('ProfilePageLinks - Snapshots', () => {
   it('matches snapshot with mailto link', () => {
     const linksWithEmail: Core.NexusUserDetails['links'] = [{ title: 'Contact', url: 'mailto:hello@example.com' }];
     const { container } = render(<ProfilePageLinks links={linksWithEmail} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with tel link', () => {
+    const linksWithPhone: Core.NexusUserDetails['links'] = [{ title: 'Call Us', url: 'tel:+1234567890' }];
+    const { container } = render(<ProfilePageLinks links={linksWithPhone} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
