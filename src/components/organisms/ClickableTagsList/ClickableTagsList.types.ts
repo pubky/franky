@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import type { TagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.types';
 
 export interface ClickableTagsListProps {
   /** The ID of the tagged entity (userId or postId) */
@@ -28,9 +29,9 @@ export interface ClickableTagsListProps {
   /** Custom className */
   className?: string;
   /** Callback when a tag is clicked (optional, defaults to toggle) */
-  onTagClick?: (tag: Core.NexusTag, index: number, event: React.MouseEvent) => void;
+  onTagClick?: (tag: TagWithAvatars, index: number, event: React.MouseEvent) => void;
   /** Callback when a tag close button is clicked */
-  onTagClose?: (tag: Core.NexusTag, index: number, event: React.MouseEvent) => void;
+  onTagClose?: (tag: TagWithAvatars, index: number, event: React.MouseEvent) => void;
   /** Callback when a new tag is added */
   onTagAdd?: (label: string) => void;
   /** Callback when add button is clicked */

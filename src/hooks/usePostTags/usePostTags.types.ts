@@ -21,5 +21,5 @@ export interface UsePostTagsResult {
   /** Function to add a new tag */
   handleTagAdd: (tagString: string) => Promise<{ success: boolean; error?: string }>;
   /** Function to toggle tag (add/remove as tagger) */
-  handleTagToggle: (tag: { label: string }) => Promise<void>;
+  handleTagToggle: (tag: { label: string; relationship?: boolean }) => Promise<void>;
 }

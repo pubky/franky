@@ -4,7 +4,6 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import type { ClickableTagsListProps } from './ClickableTagsList.types';
 import { TAG_MAX_LENGTH, TAGS_MAX_TOTAL_CHARS, DEFAULT_MAX_TAGS } from './ClickableTagsList.constants';
@@ -80,7 +79,7 @@ export function ClickableTagsList({
 
   // Handle tag click (toggle or custom handler)
   const handleTagClick = React.useCallback(
-    (tag: Core.NexusTag, index: number, e: React.MouseEvent) => {
+    (tag: (typeof fetchedTags)[number], index: number, e: React.MouseEvent) => {
       if (onTagClick) {
         onTagClick(tag, index, e);
       } else {

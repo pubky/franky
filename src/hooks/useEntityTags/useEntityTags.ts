@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 import * as Core from '@/core';
 import { useTagged } from '../useTagged';
 import { usePostTags } from '../usePostTags';
+import type { TagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.types';
 import type { UseEntityTagsOptions, UseEntityTagsResult } from './useEntityTags.types';
 
 /**
@@ -48,24 +49,35 @@ export function useEntityTags(
   // Select the active result based on kind
   const activeResult = taggedKind === Core.TagKind.USER ? userTagsResult : postTagsResult;
 
+  // Transform provided NexusTag[] to TagWithAvatars[] if needed
+  const transformedProvidedTags = useMemo((): TagWithAvatars[] | null => {
+    if (!providedTags) return null;
+    return providedTags.map((tag) => ({
+      ...tag,
+      taggers: (tag.taggers ?? []).map((id) => ({ id, avatarUrl: '' })),
+    }));
+  }, [providedTags]);
+
   // Use provided tags if available, otherwise use fetched tags
   const tags = useMemo(() => {
-    if (providedTags) return providedTags;
+    if (transformedProvidedTags) return transformedProvidedTags;
     return activeResult.tags;
-  }, [providedTags, activeResult.tags]);
+  }, [transformedProvidedTags, activeResult.tags]);
 
   // Helper to check if viewer is a tagger
   const isViewerTagger = useCallback(
-    (tag: Core.NexusTag): boolean => {
+    (tag: TagWithAvatars): boolean => {
       if (!viewerId) return false;
-      return tag.relationship ?? tag.taggers?.includes(viewerId) ?? false;
+      // Check relationship first, then check taggers array
+      if (tag.relationship !== undefined) return tag.relationship;
+      return tag.taggers?.some((tagger) => tagger.id === viewerId) ?? false;
     },
     [viewerId],
   );
 
-  // Wrap handleTagToggle to work with NexusTag directly
+  // Wrap handleTagToggle to work with TagWithAvatars directly
   const handleTagToggle = useCallback(
-    async (tag: Core.NexusTag): Promise<void> => {
+    async (tag: TagWithAvatars): Promise<void> => {
       await activeResult.handleTagToggle({
         label: tag.label,
         relationship: isViewerTagger(tag),

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useEntityTags } from './useEntityTags';
 import * as Core from '@/core';
+import type { TagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.types';
 
 // Mock the underlying hooks
 const mockUseTaggedResult = {
@@ -162,7 +163,7 @@ describe('useEntityTags', () => {
   it('isViewerTagger returns true when tag has relationship=true', () => {
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER));
 
-    const tag: Core.NexusTag = {
+    const tag: TagWithAvatars = {
       label: 'test',
       taggers_count: 1,
       taggers: [],
@@ -175,7 +176,7 @@ describe('useEntityTags', () => {
   it('isViewerTagger returns false when tag has relationship=false', () => {
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER));
 
-    const tag: Core.NexusTag = {
+    const tag: TagWithAvatars = {
       label: 'test',
       taggers_count: 1,
       taggers: [],
@@ -188,10 +189,10 @@ describe('useEntityTags', () => {
   it('isViewerTagger returns true when viewer is in taggers array', () => {
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER));
 
-    const tag: Core.NexusTag = {
+    const tag: TagWithAvatars = {
       label: 'test',
       taggers_count: 1,
-      taggers: ['mock-viewer-id'],
+      taggers: [{ id: 'mock-viewer-id', avatarUrl: '' }],
     };
 
     expect(result.current.isViewerTagger(tag)).toBe(true);
@@ -200,10 +201,10 @@ describe('useEntityTags', () => {
   it('isViewerTagger returns false when viewer is not in taggers array', () => {
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER));
 
-    const tag: Core.NexusTag = {
+    const tag: TagWithAvatars = {
       label: 'test',
       taggers_count: 1,
-      taggers: ['other-user'],
+      taggers: [{ id: 'other-user', avatarUrl: '' }],
     };
 
     expect(result.current.isViewerTagger(tag)).toBe(false);
@@ -216,10 +217,10 @@ describe('useEntityTags', () => {
   it('handleTagToggle calls underlying hook with correct params', async () => {
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER));
 
-    const tag: Core.NexusTag = {
+    const tag: TagWithAvatars = {
       label: 'bitcoin',
       taggers_count: 5,
-      taggers: ['mock-viewer-id'],
+      taggers: [{ id: 'mock-viewer-id', avatarUrl: '' }],
       relationship: true,
     };
 
@@ -236,7 +237,7 @@ describe('useEntityTags', () => {
   it('handleTagToggle uses POST hook for POST kind', async () => {
     const { result } = renderHook(() => useEntityTags('post-123', Core.TagKind.POST));
 
-    const tag: Core.NexusTag = {
+    const tag: TagWithAvatars = {
       label: 'ethereum',
       taggers_count: 3,
       taggers: [],
