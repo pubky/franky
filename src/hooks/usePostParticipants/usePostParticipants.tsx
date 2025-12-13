@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import type {
   UsePostParticipantsResult,
@@ -14,21 +14,18 @@ const DEFAULT_LIMIT = 10;
 
 /**
  * Hook for fetching post participants (author + reply authors).
- * Returns unique participants with their user details.
+ * Uses liveQuery to reactively get participants from local cache.
  *
- * Reuses:
- * - usePostCounts: for reactive post counts
- * - useBulkUserAvatars: for user details and avatar URLs
+ * Flow:
+ * 1. Query post_relationships table for posts where replied === postId
+ * 2. Extract unique author IDs from those reply composite IDs
+ * 3. Use useBulkUserAvatars for user details (cache-first with Nexus fallback)
  */
 export function usePostParticipants(
   postId: string | null | undefined,
   options: UsePostParticipantsOptions = {},
 ): UsePostParticipantsResult {
   const { limit = DEFAULT_LIMIT } = options;
-
-  const [replyAuthorIds, setReplyAuthorIds] = useState<string[]>([]);
-  const [isFetchingReplies, setIsFetchingReplies] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
   // Parse post author from composite ID
   const authorId = useMemo(() => {
@@ -41,70 +38,39 @@ export function usePostParticipants(
     }
   }, [postId]);
 
-  // Use existing hook for post counts (reactive)
-  const { postCounts } = Hooks.usePostCounts(postId);
+  // Use liveQuery to get replies from local cache (reactive)
+  const replyRelationships = useLiveQuery(
+    async () => {
+      if (!postId) return [];
+      return await Core.PostController.getPostReplies({ compositeId: postId });
+    },
+    [postId],
+    [],
+  );
 
-  // Fetch reply IDs to extract author IDs
-  const fetchReplyAuthors = useCallback(async () => {
-    if (!postId || !postCounts?.replies || postCounts.replies < 1) {
-      setReplyAuthorIds([]);
-      setIsFetchingReplies(false);
-      return;
-    }
-
-    try {
-      setIsFetchingReplies(true);
-      const response = await Core.StreamPostsController.getOrFetchStreamSlice({
-        streamId: `${Core.StreamSource.REPLIES}:${postId}`,
-        streamTail: 0,
-        lastPostId: undefined,
-        limit: Math.min(postCounts.replies, limit * 2), // Fetch more to account for duplicates
-      });
-
-      // Extract unique author IDs from reply composite IDs
-      const authorIds = new Set<string>();
-      for (const replyId of response.nextPageIds) {
-        try {
-          const { pubky } = Core.parseCompositeId(replyId);
-          if (pubky !== authorId) {
-            // Don't include post author in reply authors
-            authorIds.add(pubky);
-          }
-        } catch {
-          // Skip invalid IDs
-        }
-      }
-
-      setReplyAuthorIds(Array.from(authorIds).slice(0, limit - 1)); // Leave room for author
-      setError(null);
-    } catch (err) {
-      Libs.Logger.error('Failed to fetch reply authors:', err);
-      setError(err instanceof Error ? err : new Error('Failed to fetch participants'));
-      setReplyAuthorIds([]);
-    } finally {
-      setIsFetchingReplies(false);
-    }
-  }, [postId, postCounts?.replies, authorId, limit]);
-
-  useEffect(() => {
-    fetchReplyAuthors();
-  }, [fetchReplyAuthors]);
-
-  // Combine author + reply authors (unique)
+  // Extract unique author IDs from reply composite IDs
   const participantIds = useMemo(() => {
-    const ids: string[] = [];
+    const ids = new Set<string>();
+
+    // Add post author first
     if (authorId) {
-      ids.push(authorId);
+      ids.add(authorId);
     }
-    for (const id of replyAuthorIds) {
-      if (!ids.includes(id)) {
-        ids.push(id);
+
+    // Extract authors from replies
+    for (const reply of replyRelationships) {
+      try {
+        const { pubky } = Core.parseCompositeId(reply.id);
+        ids.add(pubky);
+      } catch {
+        // Skip invalid IDs
       }
     }
-    return ids.slice(0, limit);
-  }, [authorId, replyAuthorIds, limit]);
 
-  // Use existing hook for bulk user avatars and details
+    return Array.from(ids).slice(0, limit);
+  }, [authorId, replyRelationships, limit]);
+
+  // Use existing hook for bulk user avatars and details (cache-first)
   const { usersMap, isLoading: isLoadingUsers } = Hooks.useBulkUserAvatars(participantIds as Core.Pubky[]);
 
   // Transform to PostParticipant format
@@ -130,12 +96,10 @@ export function usePostParticipants(
     return participants.find((p) => p.id === authorId) ?? null;
   }, [participants, authorId]);
 
-  const isLoading = isFetchingReplies || isLoadingUsers;
-
   return {
     participants,
     author,
-    isLoading,
-    error,
+    isLoading: isLoadingUsers,
+    error: null,
   };
 }

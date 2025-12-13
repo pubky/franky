@@ -8,7 +8,6 @@ export interface TFetchStreamParams {
   viewerId: Core.Pubky;
   lastPostId?: string;
   tags?: string[];
-  /** Order of results: 'ascending' (oldest first) or 'descending' (newest first, default) */
   order?: Core.StreamOrder;
 }
 

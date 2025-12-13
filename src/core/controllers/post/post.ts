@@ -60,7 +60,7 @@ export class PostController {
     compositeId,
     skip,
     limit,
-  }: Core.TCompositeId & { skip?: number; limit?: number }): Promise<Core.NexusTag[]> {
+  }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
     return await Core.PostApplication.fetchMorePostTags({ compositeId, skip, limit });
   }
 
@@ -74,6 +74,16 @@ export class PostController {
     compositeId,
   }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
     return await Core.PostApplication.getPostRelationships({ compositeId });
+  }
+
+  /**
+   * Get all posts that are replies to a specific post
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID to get replies for
+   * @returns Array of post relationships that replied to this post
+   */
+  static async getPostReplies({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema[]> {
+    return await Core.PostApplication.getPostReplies({ compositeId });
   }
 
   /**

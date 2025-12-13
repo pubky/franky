@@ -68,6 +68,7 @@ export class PostStreamApplication {
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
     // Skip cache for ascending order (chronological) - always fetch from Nexus
     // This is because cache is stored in descending order
+    // TODO: Might be a better way to handle this.
     if (order === Core.StreamOrder.ASCENDING) {
       return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
     }

@@ -86,7 +86,7 @@ export class PostApplication {
     compositeId,
     skip,
     limit,
-  }: Core.TCompositeId & { skip?: number; limit?: number }): Promise<Core.NexusTag[]> {
+  }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
     const nexusTags = await Core.NexusPostService.getPostTags({ compositeId, skip, limit });
 
     // Persist new tags to local DB (merge with existing)
@@ -115,5 +115,14 @@ export class PostApplication {
    */
   static async getPostDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
     return await Core.LocalPostService.readPostDetails({ postId: compositeId });
+  }
+
+  /**
+   * Get all posts that are replies to a specific post
+   * @param compositeId - Composite post ID to get replies for
+   * @returns Array of post relationships that replied to this post
+   */
+  static async getPostReplies({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema[]> {
+    return await Core.LocalPostService.readPostReplies(compositeId);
   }
 }

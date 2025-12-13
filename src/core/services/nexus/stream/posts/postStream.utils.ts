@@ -26,10 +26,7 @@ export function createPostStreamParams({
     params.kind = parseContent(content);
   }
   params.limit = limit;
-  // Set order if provided (ascending = oldest first, descending = newest first)
-  if (order) {
-    params.order = order;
-  }
+  params.order = order;
   let extraParams = handleNotCommonStreamParams({ authorId: sorting, postId: content });
   setStreamPagination({ params, streamTail, streamHead });
   return { params, invokeEndpoint, extraParams };
