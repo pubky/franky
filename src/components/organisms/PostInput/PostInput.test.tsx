@@ -4,7 +4,6 @@ import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 import * as Core from '@/core';
-import * as Hooks from '@/hooks';
 
 vi.mock('@/config', () => ({
   POST_MAX_CHARACTER_LENGTH: 2000,
@@ -143,12 +142,50 @@ vi.mock('@/molecules', () => ({
   useToast: vi.fn(() => ({ toast: vi.fn() })),
 }));
 
+// Mock the underlying hooks that usePostInput uses
+const mockUsePostReturn = {
+  content: '',
+  setContent: vi.fn(),
+  tags: [] as string[],
+  setTags: vi.fn(),
+  reply: vi.fn(),
+  post: vi.fn(),
+  isSubmitting: false,
+};
+
 vi.mock('@/hooks', () => ({
-  usePost: vi.fn(),
+  usePost: vi.fn(() => mockUsePostReturn),
   useCurrentUserProfile: vi.fn(() => ({
     currentUserPubky: 'test-user-id:pubkey',
   })),
   useEmojiInsert: vi.fn(() => vi.fn()),
+  usePostInput: vi.fn((options: { variant: string; placeholder?: string }) => ({
+    textareaRef: { current: null },
+    containerRef: { current: null },
+    content: mockUsePostReturn.content,
+    tags: mockUsePostReturn.tags,
+    isExpanded: true,
+    isSubmitting: mockUsePostReturn.isSubmitting,
+    showEmojiPicker: false,
+    setShowEmojiPicker: vi.fn(),
+    hasContent: mockUsePostReturn.content.trim().length > 0,
+    displayPlaceholder:
+      options.placeholder ?? (options.variant === 'reply' ? 'Write a reply...' : "What's on your mind?"),
+    currentUserPubky: 'test-user-id:pubkey',
+    handleExpand: vi.fn(),
+    handleSubmit: vi.fn(async () => {
+      if (options.variant === 'reply') {
+        await mockUsePostReturn.reply({ postId: 'test-post-123', onSuccess: vi.fn() });
+      } else {
+        await mockUsePostReturn.post({ onSuccess: vi.fn() });
+      }
+    }),
+    handleChange: vi.fn((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      mockUsePostReturn.setContent(e.target.value);
+    }),
+    handleEmojiSelect: vi.fn(),
+    setTags: mockUsePostReturn.setTags,
+  })),
 }));
 
 vi.mock('@/core', () => ({
@@ -158,7 +195,6 @@ vi.mock('@/core', () => ({
   useAuthStore: vi.fn(() => (state: { selectCurrentUserPubky: () => string | null }) => state.selectCurrentUserPubky()),
 }));
 
-const mockUsePost = vi.mocked(Hooks.usePost);
 const mockPostControllerCreate = vi.mocked(Core.PostController.create);
 
 describe('PostInput', () => {
@@ -174,15 +210,14 @@ describe('PostInput', () => {
     mockReply.mockReturnValue(async () => {});
     mockPost.mockReturnValue(async () => {});
 
-    mockUsePost.mockReturnValue({
-      content: '',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      isSubmitting: false,
-    });
+    // Update the shared mock state
+    mockUsePostReturn.content = '';
+    mockUsePostReturn.tags = [];
+    mockUsePostReturn.isSubmitting = false;
+    mockUsePostReturn.setContent = mockSetContent;
+    mockUsePostReturn.setTags = mockSetTags;
+    mockUsePostReturn.reply = mockReply;
+    mockUsePostReturn.post = mockPost;
   });
 
   it('renders with reply variant', () => {
@@ -235,18 +270,7 @@ describe('PostInput', () => {
   });
 
   it('handles post submission for post variant', async () => {
-    const mockSubmitHandler = vi.fn().mockResolvedValue(undefined);
-    mockPost.mockReturnValue(mockSubmitHandler);
-
-    mockUsePost.mockReturnValue({
-      content: 'Test post content',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      isSubmitting: false,
-    });
+    mockUsePostReturn.content = 'Test post content';
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} onSuccess={mockOnSuccess} />);
 
@@ -260,18 +284,7 @@ describe('PostInput', () => {
   });
 
   it('handles reply submission for reply variant', async () => {
-    const mockSubmitHandler = vi.fn().mockResolvedValue(undefined);
-    mockReply.mockReturnValue(mockSubmitHandler);
-
-    mockUsePost.mockReturnValue({
-      content: 'Test reply content',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      isSubmitting: false,
-    });
+    mockUsePostReturn.content = 'Test reply content';
 
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" onSuccess={mockOnSuccess} />);
 
@@ -290,15 +303,7 @@ describe('PostInput', () => {
 
   // todo: extend test to include attachments
   it('disables post button when content is empty', () => {
-    mockUsePost.mockReturnValue({
-      content: '',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      isSubmitting: false,
-    });
+    mockUsePostReturn.content = '';
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
@@ -308,15 +313,8 @@ describe('PostInput', () => {
   });
 
   it('disables post button when submitting', () => {
-    mockUsePost.mockReturnValue({
-      content: 'Test content',
-      setContent: mockSetContent,
-      tags: [],
-      setTags: mockSetTags,
-      reply: mockReply,
-      post: mockPost,
-      isSubmitting: true,
-    });
+    mockUsePostReturn.content = 'Test content';
+    mockUsePostReturn.isSubmitting = true;
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
@@ -335,15 +333,9 @@ describe('PostInput', () => {
 describe('PostInput - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUsePost.mockReturnValue({
-      content: '',
-      setContent: vi.fn(),
-      tags: [],
-      setTags: vi.fn(),
-      reply: vi.fn(),
-      post: vi.fn(),
-      isSubmitting: false,
-    });
+    mockUsePostReturn.content = '';
+    mockUsePostReturn.tags = [];
+    mockUsePostReturn.isSubmitting = false;
   });
 
   it('matches snapshot for post variant', () => {

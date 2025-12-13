@@ -34,6 +34,7 @@ When working on this codebase, prioritize reading these files in order:
 │   ├── component-guidelines.md     # Component development standards
 │   ├── figma-context.md            # Design system integration
 │   ├── error-handling.md           # Error handling conventions
+│   ├── z-index-conventions.md      # Z-index layering system
 │   ├── mcp-setup.md                # MCP server configuration guide
 │   ├── mcp.json                    # MCP server definitions
 │   └── rules/                      # Cursor-specific automation rules
