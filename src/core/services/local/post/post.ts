@@ -12,7 +12,7 @@ export class LocalPostService {
    */
   static async readPostDetails({ postId }: { postId: string }) {
     try {
-      return await Core.PostDetailsModel.findById(postId);
+      return await Core.PostController.getPostDetails({ compositeId: postId });
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post', 500, {
         error,

@@ -99,3 +99,23 @@ setTimeout(() => {
 
 - [Dexie PSD Best Practices](https://dexie.org/docs/Tutorial/Best-Practices) — Official Dexie documentation
 - [TanStack Query Retry Docs](https://tanstack.com/query/latest/docs/framework/react/guides/query-retries) — Retry mechanism details
+
+## Good implemented read
+- Core.PostController.getPostTags
+- Core.PostController.getPostCounts
+- Core.PostController.getPostRelationships({ compositeId: replyPostId });
+- Core.PostController.getPostDetails({ compositeId: parentPostId });
+- Core.UserController.bulkGetDetails
+- Core.UserController.bulkGetCounts
+- Core.UserController.bulkGetRelationships
+- Core.UserController.bulkGetTags
+
+## Bad implemented reads
+- Core.ProfileController.read -> get - NEXUS
+- await Core.UserController.bulkGetDetails(uniqueUserIds); useLiveQuery, wrong place to do it
+- Core.UserRelationshipsModel.findById(targetUserId as Core.Pubky);
+- useProfileConnections -> useLiveQuery, wrong place to do it
+- await Core.UserController.getCounts - NEXUS
+- await Core.UserTagsModel.table.get(userId); Need controller, application, service
+- Core.UnreadPostStreamModel.findById(streamId); Need controller, application, service
+- Core.UserController.getDetails - NEXUS, throw Core.ProfileController.read

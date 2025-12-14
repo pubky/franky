@@ -15,7 +15,7 @@ export interface PostContentOrganismProps {
 export function PostContent({ postId, className }: PostContentOrganismProps) {
   // Fetch post details for content
   const postDetails = useLiveQuery(async () => {
-    return await Core.PostDetailsModel.findById(postId);
+    return await Core.PostController.getPostDetails({ compositeId: postId });
   }, [postId]);
 
   if (!postDetails) {
