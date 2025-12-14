@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Types from './PostReplies.types';
 
@@ -21,6 +22,9 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
 
   // Watch for changes in post_counts to trigger refetch when replies count changes
   const postCounts = useLiveQuery(() => Core.PostController.getCounts({ compositeId: postId }), [postId]);
+
+  // Check if parent post is deleted to determine replyability
+  const { isParentDeleted } = Hooks.useParentPostDeleted(postId);
 
   const fetchReplies = useCallback(
     async (repliesCount: number) => {
@@ -57,6 +61,8 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
     return null;
   }
 
+  const shouldShowQuickReply = !isParentDeleted;
+
   return (
     <Atoms.Container overrideDefaults className="ml-3">
       {replyIds.map((replyId, index) => (
@@ -66,10 +72,17 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
             postId={replyId}
             isReply={true}
             onClick={() => onPostClick(replyId)}
-            isLastReply={index === replyIds.length - 1}
+            isLastReply={index === replyIds.length - 1 && !shouldShowQuickReply}
           />
         </React.Fragment>
       ))}
+
+      {shouldShowQuickReply && (
+        <>
+          <Atoms.PostThreadSpacer />
+          <Organisms.QuickReply parentPostId={postId} />
+        </>
+      )}
     </Atoms.Container>
   );
 }
