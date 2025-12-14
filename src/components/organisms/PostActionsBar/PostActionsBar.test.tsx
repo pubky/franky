@@ -63,6 +63,15 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
+// Mock PostMenuActions
+vi.mock('@/organisms', () => ({
+  PostMenuActions: ({ postId, trigger }: { postId: string; trigger: React.ReactNode }) => (
+    <div data-testid="post-menu-actions" data-post-id={postId}>
+      {trigger}
+    </div>
+  ),
+}));
+
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 
 describe('PostActionsBar', () => {
@@ -95,7 +104,6 @@ describe('PostActionsBar', () => {
     const onTagClick = vi.fn();
     const onReplyClick = vi.fn();
     const onRepostClick = vi.fn();
-    const onMoreClick = vi.fn();
 
     render(
       <PostActionsBar
@@ -103,19 +111,16 @@ describe('PostActionsBar', () => {
         onTagClick={onTagClick}
         onReplyClick={onReplyClick}
         onRepostClick={onRepostClick}
-        onMoreClick={onMoreClick}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Tag post (1)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reply to post (1)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Repost (1)' }));
-    fireEvent.click(screen.getByRole('button', { name: 'More options' }));
 
     expect(onTagClick).toHaveBeenCalledTimes(1);
     expect(onReplyClick).toHaveBeenCalledTimes(1);
     expect(onRepostClick).toHaveBeenCalledTimes(1);
-    expect(onMoreClick).toHaveBeenCalledTimes(1);
   });
 
   it('calls toggle when bookmark button is clicked', async () => {

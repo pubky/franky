@@ -5,16 +5,10 @@ import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import * as Organisms from '@/organisms';
 import type { PostActionsBarProps, ActionButtonConfig } from './PostActionsBar.types';
 
-export function PostActionsBar({
-  postId,
-  onTagClick,
-  onReplyClick,
-  onRepostClick,
-  onMoreClick,
-  className,
-}: PostActionsBarProps) {
+export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick, className }: PostActionsBarProps) {
   // Fetch post counts
   const postCounts = useLiveQuery(async () => {
     return await Core.PostController.getPostCounts({ compositeId: postId });
@@ -74,12 +68,13 @@ export function PostActionsBar({
       },
       disabled: isBookmarkBusy,
     },
-    {
-      icon: Libs.Ellipsis,
-      onClick: onMoreClick,
-      ariaLabel: 'More options',
-    },
   ];
+
+  const moreButtonTrigger = (
+    <Atoms.Button {...commonButtonProps} aria-label="More options" className={Libs.cn(commonButtonProps.className)}>
+      <Libs.Ellipsis />
+    </Atoms.Button>
+  );
 
   return (
     <Atoms.Container overrideDefaults className={Libs.cn('flex gap-2', className)}>
@@ -98,6 +93,7 @@ export function PostActionsBar({
           </Atoms.Button>
         ),
       )}
+      <Organisms.PostMenuActions postId={postId} trigger={moreButtonTrigger} />
     </Atoms.Container>
   );
 }

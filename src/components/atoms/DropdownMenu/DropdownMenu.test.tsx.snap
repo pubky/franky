@@ -1,0 +1,63 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DropdownMenu - Snapshots > matches snapshot for DropdownMenuTrigger with asChild 1`] = `
+<button
+  aria-expanded="false"
+  aria-haspopup="menu"
+  data-state="closed"
+  id="radix-_r_0_"
+  type="button"
+>
+  Open Menu
+</button>
+`;
+
+exports[`DropdownMenu - Snapshots > matches snapshot for DropdownMenuTrigger with default props 1`] = `
+<button
+  aria-expanded="false"
+  aria-haspopup="menu"
+  data-state="closed"
+  id="radix-_r_0_"
+  type="button"
+>
+  Open Menu
+</button>
+`;
+
+exports[`DropdownMenu - Snapshots > matches snapshot for dropdown menu in closed state 1`] = `
+<button
+  aria-expanded="false"
+  aria-haspopup="menu"
+  data-state="closed"
+  id="radix-_r_0_"
+  type="button"
+>
+  Open Menu
+</button>
+`;
+
+exports[`DropdownMenu - Snapshots > matches snapshot for dropdown menu in open state 1`] = `
+<button
+  aria-controls="radix-_r_0_"
+  aria-expanded="true"
+  aria-haspopup="menu"
+  data-state="open"
+  id="radix-_r_0_"
+  type="button"
+>
+  Open Menu
+</button>
+`;
+
+exports[`DropdownMenu - Snapshots > matches snapshot for menu items rendering 1`] = `
+<button
+  aria-controls="radix-_r_0_"
+  aria-expanded="true"
+  aria-haspopup="menu"
+  data-state="open"
+  id="radix-_r_0_"
+  type="button"
+>
+  Open Menu
+</button>
+`;

@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostMenuActions - Snapshots > matches snapshot for desktop dropdown state 1`] = `
+<div
+  data-on-open-change="true"
+  data-open="false"
+  data-testid="dropdown-menu"
+>
+  <div
+    data-as-child="true"
+    data-testid="dropdown-menu-trigger"
+  >
+    <button>
+      More
+    </button>
+  </div>
+  <div
+    data-testid="dropdown-menu-content"
+  >
+    <div
+      data-post-id="pk:test123:post456"
+      data-testid="post-menu-actions-content"
+      data-variant="dropdown"
+    >
+      Menu Content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMenuActions - Snapshots > matches snapshot for mobile sheet state 1`] = `
+<div
+  data-on-open-change="true"
+  data-open="false"
+  data-testid="sheet"
+>
+  <div
+    data-as-child="true"
+    data-testid="sheet-trigger"
+  >
+    <button>
+      More
+    </button>
+  </div>
+  <div
+    data-side="bottom"
+    data-testid="sheet-content"
+  >
+    <div
+      data-testid="sheet-header"
+    >
+      <div
+        data-class-name="sr-only"
+        data-testid="sheet-title"
+      >
+        Post Actions
+      </div>
+      <div
+        data-class-name="sr-only"
+        data-testid="sheet-description"
+      >
+        Choose an action for this post
+      </div>
+    </div>
+    <div
+      data-class-name="mt-4"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        data-post-id="pk:test123:post456"
+        data-testid="post-menu-actions-content"
+        data-variant="sheet"
+      >
+        Menu Content
+      </div>
+    </div>
+  </div>
+</div>
+`;

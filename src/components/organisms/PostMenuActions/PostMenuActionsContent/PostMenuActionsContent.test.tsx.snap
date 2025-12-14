@@ -1,0 +1,157 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostMenuActionsContent - Snapshots > matches snapshot for dropdown variant (other user post) 1`] = `
+<div
+  class="gap-2 text-base leading-6 font-medium text-foreground"
+  data-testid="dropdown-menu-item"
+>
+  <span>
+    Icon
+  </span>
+  <span
+    class="text-base leading-6 font-medium"
+  >
+    Follow Test User
+  </span>
+</div>
+`;
+
+exports[`PostMenuActionsContent - Snapshots > matches snapshot for dropdown variant (own post) 1`] = `
+<div
+  class="gap-2 text-base leading-6 font-medium text-foreground opacity-50 cursor-not-allowed"
+  data-disabled="true"
+  data-testid="dropdown-menu-item"
+>
+  <span>
+    Icon
+  </span>
+  <span
+    class="text-base leading-6 font-medium"
+  >
+    Edit post
+  </span>
+</div>
+`;
+
+exports[`PostMenuActionsContent - Snapshots > matches snapshot for sheet variant 1`] = `
+<div
+  class="flex flex-col gap-1"
+  data-testid="container"
+>
+  <button
+    class="w-full justify-start gap-2 px-0 py-1.5 text-base leading-6 font-medium text-foreground hover:bg-accent"
+    data-testid="menu-button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        Icon
+      </span>
+      <span
+        class="text-base leading-6 font-medium text-foreground"
+        data-testid="typography"
+      >
+        Follow Test User
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-start gap-2 px-0 py-1.5 text-base leading-6 font-medium text-foreground hover:bg-accent"
+    data-testid="menu-button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        Icon
+      </span>
+      <span
+        class="text-base leading-6 font-medium text-foreground"
+        data-testid="typography"
+      >
+        Copy user pubky
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-start gap-2 px-0 py-1.5 text-base leading-6 font-medium text-foreground hover:bg-accent"
+    data-testid="menu-button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        Icon
+      </span>
+      <span
+        class="text-base leading-6 font-medium text-foreground"
+        data-testid="typography"
+      >
+        Copy link to post
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-start gap-2 px-0 py-1.5 text-base leading-6 font-medium text-foreground hover:bg-accent"
+    data-testid="menu-button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        Icon
+      </span>
+      <span
+        class="text-base leading-6 font-medium text-foreground"
+        data-testid="typography"
+      >
+        Copy text of post
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-start gap-2 px-0 py-1.5 text-base leading-6 font-medium text-foreground hover:bg-accent"
+    data-testid="menu-button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        Icon
+      </span>
+      <span
+        class="text-base leading-6 font-medium text-foreground"
+        data-testid="typography"
+      >
+        Mute user
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-start gap-2 px-0 py-1.5 text-base leading-6 font-medium text-foreground hover:bg-accent opacity-50 cursor-not-allowed"
+    data-testid="menu-button"
+    disabled=""
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        Icon
+      </span>
+      <span
+        class="text-base leading-6 font-medium text-foreground"
+        data-testid="typography"
+      >
+        Report post
+      </span>
+    </div>
+  </button>
+</div>
+`;

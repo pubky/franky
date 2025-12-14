@@ -49,6 +49,7 @@ export * from './PrivacySettings';
 export * from './ProfilePageSidebar';
 export * from './CoordinatorsManager';
 export * from './PostMain';
+export * from './PostMenuActions';
 export * from './PostMentions';
 export * from './PublicKeyCard';
 export * from './SinglePost';
