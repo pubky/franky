@@ -4,6 +4,7 @@ import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import { NexusUserDetails } from '@/core/services/nexus/nexus.types';
 
 export interface PostHeaderProps {
   postId: string;
@@ -20,27 +21,36 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
   const { postDetails } = Hooks.usePostDetails(isReplyInput ? null : postId);
 
   // Fetch user details for avatar and name
-  const { userDetails } = Hooks.useUserDetails(userId);
+  // const { userDetails } = Hooks.useUserDetails(userId);
 
+  const userDetails: NexusUserDetails = {
+    name: 'John Big name doe in the world even bigger name that overflows',
+    bio: 'I am a software engineer',
+    id: userId,
+    links: [],
+    status: 'active',
+    image: 'https://via.placeholder.com/150',
+    indexed_at: new Date().getTime(),
+  };
   // Compute avatar URL from user details (only if the user has an image)
   const avatarUrl = Hooks.useAvatarUrl(userDetails);
 
-  if (!userDetails || (!isReplyInput && !postDetails)) {
-    return (
-      <Atoms.Container className="text-muted-foreground" overrideDefaults>
-        Loading header...
-      </Atoms.Container>
-    );
-  }
+  // if (!userDetails || (!isReplyInput && !postDetails)) {
+  //   return (
+  //     <Atoms.Container className="text-muted-foreground" overrideDefaults>
+  //       Loading header...
+  //     </Atoms.Container>
+  //   );
+  // }
 
   const timeAgo = !isReplyInput && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
     <Atoms.Container className="flex justify-between" overrideDefaults>
-      <Atoms.Container className="flex gap-3" overrideDefaults>
+      <Atoms.Container className="flex min-w-0 gap-3" overrideDefaults>
         <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails.name || ''} size="default" />
-        <Atoms.Container>
-          <Atoms.Typography as="span" className="text-base font-bold text-foreground" overrideDefaults>
+        <Atoms.Container className="min-w-0">
+          <Atoms.Typography className="min-w-0 truncate text-base font-bold text-foreground" overrideDefaults>
             {userDetails.name}
           </Atoms.Typography>
           <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
