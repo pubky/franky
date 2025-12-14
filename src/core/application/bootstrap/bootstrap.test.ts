@@ -78,6 +78,13 @@ const createMockNotification = (): Core.NexusNotification => ({
   body: { type: 'like', user_id: 'user-2', post_id: 'post-1' },
 });
 
+const createFlatNotification = (timestamp: number): Core.FlatNotification =>
+  ({
+    type: Core.NotificationType.Follow,
+    timestamp,
+    followed_by: `user-${timestamp}`,
+  }) as Core.FlatNotification;
+
 const getBootstrapParams = (pubky: string): Core.TBootstrapParams => {
   const {
     meta: { url },
@@ -216,7 +223,9 @@ const assertCommonCalls = (
     bootstrapData.ids.hot_tags,
   );
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.ids.hot_tags);
-  expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
+  // persistAndGetUnreadCount is called with a single object parameter
+  const flatNotifications = notifications.map((n) => createFlatNotification(n.timestamp));
+  expect(mocks.persistNotifications).toHaveBeenCalledWith({ flatNotifications, lastRead: MOCK_LAST_READ });
 };
 
 describe('BootstrapApplication', () => {
@@ -226,6 +235,10 @@ describe('BootstrapApplication', () => {
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
     } as LastReadResult);
+    // Mock toFlatNotification to convert NexusNotification to FlatNotification
+    vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) =>
+      createFlatNotification(n.timestamp),
+    );
   });
 
   afterEach(() => {
@@ -477,7 +490,7 @@ describe('BootstrapApplication', () => {
         'Notification persistence error',
       );
 
-      expect(mocks.persistNotifications).toHaveBeenCalledWith([], MOCK_LAST_READ);
+      expect(mocks.persistNotifications).toHaveBeenCalledWith({ flatNotifications: [], lastRead: MOCK_LAST_READ });
     });
 
     it('should throw error when upsert influencers stream fails', async () => {

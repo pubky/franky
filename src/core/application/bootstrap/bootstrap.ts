@@ -14,7 +14,7 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    const [data, { notificationList, lastRead }] = await Promise.all([
+    const [data, { flatNotifications, lastRead }] = await Promise.all([
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
     ]);
@@ -43,7 +43,7 @@ export class BootstrapApplication {
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
-      Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead),
+      Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead }),
     ]);
 
     // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
@@ -89,6 +89,8 @@ export class BootstrapApplication {
       user_id: pubky,
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
-    return { notificationList, lastRead: userLastRead };
+
+    const flatNotifications = notificationList.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+    return { flatNotifications, lastRead: userLastRead };
   }
 }
