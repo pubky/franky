@@ -5,6 +5,12 @@ export type TNotificationApplicationNotificationsParams = {
   lastRead: number;
 };
 
+export type TNotificationsPartialCacheHitParams = {
+  userId: Core.Pubky;
+  limit: number;
+  flatNotifications: Core.TFlatNotificationList;
+};
+
 /**
  * Parameters for timestamp-based notification pagination.
  *
@@ -14,10 +20,14 @@ export type TNotificationApplicationNotificationsParams = {
  *                       Use the timestamp of the last notification for pagination.
  * @property limit - Maximum number of notifications to return
  */
-export type TGetOrFetchNotificationsParams = {
+export type TGetOrFetchNotificationsParams = Core.TOlderThanQueryParams & {
   userId: Core.Pubky;
-  olderThan: number;
-  limit: number;
+};
+
+export type TFlatNotificationList = Core.FlatNotification[];
+
+export type TFlatNotifications = {
+  flatNotifications: Core.TFlatNotificationList;
 };
 
 /**
@@ -26,12 +36,16 @@ export type TGetOrFetchNotificationsParams = {
  * @property notifications - Array of notifications ordered by timestamp descending
  * @property olderThan - Timestamp to use for next page, undefined if no more results
  */
-export type TGetOrFetchNotificationsResponse = {
-  notifications: Core.FlatNotification[];
+export type TGetOrFetchNotificationsResponse = TFlatNotifications & {
   olderThan: number | undefined;
 };
 
-export type TLoopAndParseNotificationsResult = {
+export type TFetchMissingEntitiesParams = {
+  notifications: Core.NexusNotification[];
+  viewerId: Core.Pubky;
+};
+
+export type TParseNotificationsResult = {
   relatedPostIds: string[];
   relatedUserIds: Core.Pubky[];
 };

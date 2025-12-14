@@ -69,6 +69,10 @@ vi.mock('@/atoms', () => ({
 // Mock Molecules
 vi.mock('@/molecules', () => ({
   FollowersEmpty: () => <div data-testid="followers-empty">No followers</div>,
+}));
+
+// Mock Organisms
+vi.mock('@/organisms', () => ({
   UserListItem: ({ user }: { user: { id: string } }) => (
     <div data-testid="user-list-item" data-user-id={user.id}>
       User item

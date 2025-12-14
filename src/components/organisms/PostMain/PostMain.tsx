@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -52,7 +53,13 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
               <Organisms.PostHeader postId={postId} />
               <Organisms.PostContent postId={postId} />
               <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
-                <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
+                <Organisms.ClickableTagsList
+                  taggedId={postId}
+                  taggedKind={Core.TagKind.POST}
+                  showCount={true}
+                  showInput={false}
+                  addMode={true}
+                />
                 <Organisms.PostActionsBar
                   postId={postId}
                   onReplyClick={handleReplyClick}
