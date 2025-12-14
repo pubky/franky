@@ -95,11 +95,13 @@ vi.mock('@/organisms', () => ({
       DialogReply
     </div>
   ),
+  ClickableTagsList: ({ taggedId }: { taggedId: string }) => (
+    <div data-testid="clickable-tags-list">ClickableTagsList {taggedId}</div>
+  ),
 }));
 
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
-  PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
   PostDeleted: () => <div data-testid="post-deleted">PostDeleted</div>,
 }));
 
@@ -125,7 +127,7 @@ describe('PostMain', () => {
 
     expect(screen.getByTestId('post-header')).toHaveTextContent('PostHeader post-123');
     expect(screen.getByTestId('post-content')).toHaveTextContent('PostContent post-123');
-    expect(screen.getByTestId('post-tags-list')).toHaveTextContent('PostTagsList post-123');
+    expect(screen.getByTestId('clickable-tags-list')).toHaveTextContent('ClickableTagsList post-123');
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 
@@ -165,7 +167,7 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-deleted')).toBeInTheDocument();
     expect(screen.queryByTestId('post-header')).not.toBeInTheDocument();
     expect(screen.queryByTestId('post-content')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('post-tags-list')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('clickable-tags-list')).not.toBeInTheDocument();
     expect(screen.queryByTestId('post-actions')).not.toBeInTheDocument();
   });
 
@@ -177,7 +179,7 @@ describe('PostMain', () => {
     expect(screen.queryByTestId('post-deleted')).not.toBeInTheDocument();
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
-    expect(screen.getByTestId('post-tags-list')).toBeInTheDocument();
+    expect(screen.getByTestId('clickable-tags-list')).toBeInTheDocument();
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 });
