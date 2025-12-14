@@ -20,7 +20,14 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { postDetails } = Hooks.usePostDetails(postId);
   const isDeleted = Libs.isPostDeleted(postDetails?.content);
 
+  // Get repost information (uses isRepost and isCurrentUserRepost for header display)
+  const { isRepost, isCurrentUserRepost } = Hooks.useRepostInfo(postId);
+  const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
+
+  const showRepostHeader = isRepost && isCurrentUserRepost;
+
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
+  const [repostDialogOpen, setRepostDialogOpen] = useState(false);
 
   // Get post height for thread connector
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
@@ -30,6 +37,10 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
 
   const handleReplyClick = () => {
     setReplyDialogOpen(true);
+  };
+
+  const handleRepostClick = () => {
+    setRepostDialogOpen(true);
   };
 
   const handleFooterClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -44,26 +55,31 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
             <Atoms.PostThreadConnector height={postHeight} variant={connectorVariant} />
           </Atoms.Container>
         )}
-        <Atoms.Card ref={cardRef} className={Libs.cn('flex-1 rounded-md py-0', className)}>
+        <Atoms.Card ref={cardRef} className={Libs.cn('flex-1 gap-0 rounded-md py-0', className)}>
           {isDeleted ? (
             <Molecules.PostDeleted />
           ) : (
-            <Atoms.CardContent className="flex flex-col gap-4 p-6">
-              <Organisms.PostHeader postId={postId} />
-              <Organisms.PostContent postId={postId} />
-              <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
-                <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
-                <Organisms.PostActionsBar
-                  postId={postId}
-                  onReplyClick={handleReplyClick}
-                  className="w-full flex-1 justify-start md:justify-end"
-                />
-              </Atoms.Container>
-            </Atoms.CardContent>
+            <>
+              {showRepostHeader && <Molecules.RepostHeader onUndo={deletePost} isUndoing={isDeleting} />}
+              <Atoms.CardContent className="flex flex-col gap-4 p-6">
+                <Organisms.PostHeader postId={postId} />
+                <Organisms.PostContent postId={postId} />
+                <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
+                  <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
+                  <Organisms.PostActionsBar
+                    postId={postId}
+                    onReplyClick={handleReplyClick}
+                    onRepostClick={handleRepostClick}
+                    className="w-full flex-1 justify-start md:justify-end"
+                  />
+                </Atoms.Container>
+              </Atoms.CardContent>
+            </>
           )}
         </Atoms.Card>
       </Atoms.Container>
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />
+      <Organisms.DialogRepost postId={postId} open={repostDialogOpen} onOpenChangeAction={setRepostDialogOpen} />
     </>
   );
 }

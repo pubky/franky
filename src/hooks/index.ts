@@ -40,6 +40,8 @@ export * from './useBookmarksStreamId';
 export * from './useBookmark';
 export * from './useUnreadPosts';
 export * from './useIsScrolledFromTop';
+export * from './useRepostInfo';
+export * from './useDeletePost';
 export * from './useBulkUserAvatars';
 export * from './useSearchStreamId';
 export * from './useConfirmableDialog';

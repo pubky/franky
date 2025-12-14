@@ -3,20 +3,24 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Libs from '@/libs';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { usePostInput } from '@/hooks';
 import { PostInputTags } from '../PostInputTags';
 import { PostInputActionBar } from '../PostInputActionBar';
+import { POST_INPUT_VARIANT, POST_INPUT_BUTTON_LABEL, POST_INPUT_BUTTON_ARIA_LABEL } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 
 export function PostInput({
   variant,
   postId,
+  originalPostId,
   onSuccess,
   placeholder,
   showThreadConnector = false,
   expanded = false,
+  hideArticle = false,
   onContentChange,
 }: PostInputProps) {
   const {
@@ -39,12 +43,17 @@ export function PostInput({
   } = usePostInput({
     variant,
     postId,
+    originalPostId,
     onSuccess,
     placeholder,
     expanded,
     onContentChange,
   });
 
+  // Determine if post button should be disabled
+  // Reposts allow empty content, replies and posts require content
+  const requiresContent = variant !== POST_INPUT_VARIANT.REPOST;
+  const isPostDisabled = isSubmitting || (requiresContent && !content.trim());
   return (
     <Atoms.Container
       ref={containerRef}
@@ -73,6 +82,11 @@ export function PostInput({
           rows={1}
           disabled={isSubmitting}
         />
+
+        {/* Repost preview - shown inside the dashed border for repost variant */}
+        {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
+          <Molecules.PostPreviewCard postId={originalPostId} />
+        )}
 
         {/* Expandable section with animation */}
         <Atoms.Container
@@ -107,8 +121,12 @@ export function PostInput({
                 <PostInputActionBar
                   onPostClick={handleSubmit}
                   onEmojiClick={() => setShowEmojiPicker(true)}
-                  isPostDisabled={!content.trim() || isSubmitting}
+                  isPostDisabled={isPostDisabled}
                   isSubmitting={isSubmitting}
+                  postButtonLabel={POST_INPUT_BUTTON_LABEL[variant]}
+                  postButtonAriaLabel={POST_INPUT_BUTTON_ARIA_LABEL[variant]}
+                  postButtonIcon={variant === POST_INPUT_VARIANT.REPOST ? Libs.Repeat : undefined}
+                  hideArticle={hideArticle}
                 />
               </Atoms.Container>
             </Atoms.Container>
