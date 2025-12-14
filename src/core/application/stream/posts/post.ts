@@ -40,6 +40,15 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.getStreamHead(params);
   }
 
+  /**
+   * Get local stream data from cache
+   * @param streamId - The ID of the stream
+   * @returns The cached stream or null if not found
+   */
+  static async getLocalStream({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
+    return await Core.LocalStreamPostsService.findById({ streamId });
+  }
+
   static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams): Promise<void> {
     return await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream(params);
   }
@@ -55,7 +64,15 @@ export class PostStreamApplication {
     lastPostId,
     limit,
     viewerId,
+    order,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
+    // Skip cache for ascending order (chronological) - always fetch from Nexus
+    // This is because cache is stored in descending order
+    // TODO: Might be a better way to handle this.
+    if (order === Core.StreamOrder.ASCENDING) {
+      return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
+    }
+
     // Avoid the indexdb query for engagement streams even we do not persist
     if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT && !streamHead) {
       const cachedStream = await Core.LocalStreamPostsService.findById({ streamId });
@@ -81,7 +98,7 @@ export class PostStreamApplication {
         streamTail = Core.NOT_FOUND_CACHED_STREAM;
       }
     }
-    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId });
+    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
   }
 
   /**
@@ -181,6 +198,7 @@ export class PostStreamApplication {
     streamHead,
     streamTail,
     viewerId,
+    order,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
     const { params, invokeEndpoint, extraParams } = Core.createPostStreamParams({
       streamId,
@@ -188,6 +206,7 @@ export class PostStreamApplication {
       limit,
       streamHead,
       viewerId,
+      order,
     });
     const postStreamChunk = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
