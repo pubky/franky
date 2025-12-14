@@ -286,7 +286,8 @@ export class PostStreamApplication {
 
   private static async getNotPersistedUsersInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
     const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
-    return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+    const missingUserIds = userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+    return Array.from(new Set(missingUserIds));
   }
 
   private static async getStreamFromCache({

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { LastReadResult } from 'pubky-app-specs';
 import { NotificationApplication } from './notification';
 
 const userId = 'pubky_user' as Core.Pubky;
@@ -24,18 +25,32 @@ const createNexus = (timestamp: number): Core.NexusNotification => ({
 const mockNormalizer = () =>
   vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) => createFlat(n.timestamp));
 
+const mockFetchMissingEntities = () => {
+  vi.spyOn(Core.LocalNotificationService, 'parseNotifications').mockReturnValue({
+    relatedPostIds: [],
+    relatedUserIds: [],
+  });
+  vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValue([]);
+  vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([]);
+  vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus').mockResolvedValue(undefined);
+  vi.spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus').mockResolvedValue(undefined);
+};
+
 describe('NotificationApplication.notifications', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('should fetch, persist, and return unread count', async () => {
     const notifications = [createNexus(2000), createNexus(1000)];
+    const flatNotifications = [createFlat(2000), createFlat(1000)];
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(notifications);
     const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount').mockResolvedValue(1);
+    mockNormalizer();
+    mockFetchMissingEntities();
 
     const unread = await NotificationApplication.notifications({ userId, lastRead: 1234 });
 
     expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: 1234 });
-    expect(persistSpy).toHaveBeenCalledWith(notifications, 1234);
+    expect(persistSpy).toHaveBeenCalledWith({ flatNotifications, lastRead: 1234 });
     expect(unread).toBe(1);
   });
 
@@ -50,6 +65,8 @@ describe('NotificationApplication.notifications', () => {
   it('should bubble persist errors', async () => {
     vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
     vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount').mockRejectedValue(new Error('persist-fail'));
+    mockNormalizer();
+    mockFetchMissingEntities();
 
     await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('persist-fail');
   });
@@ -68,7 +85,7 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
-      expect(result.notifications).toEqual(cached);
+      expect(result.flatNotifications).toEqual(cached);
       expect(result.olderThan).toBe(cached[cached.length - 1].timestamp);
       expect(nexusSpy).not.toHaveBeenCalled();
     });
@@ -83,16 +100,19 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
       const nexusData = [createNexus(500), createNexus(400)];
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(nexusData);
       mockNormalizer();
-      const bulkSaveSpy = vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
+      mockFetchMissingEntities();
+      const bulkSaveSpy = vi.spyOn(Core.LocalNotificationService, 'bulkSave').mockResolvedValue(undefined);
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
-      expect(result.notifications).toHaveLength(2);
+      expect(result.flatNotifications).toHaveLength(2);
       expect(bulkSaveSpy).toHaveBeenCalledOnce();
     });
 
     it('should call Nexus with user_id and limit', async () => {
       const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
+      mockNormalizer();
+      mockFetchMissingEntities();
 
       await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
@@ -104,10 +124,12 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
       { nexusResponse: null as unknown as Core.NexusNotification[], desc: 'null' },
     ])('should return empty response when Nexus returns $desc', async ({ nexusResponse }) => {
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(nexusResponse);
+      mockNormalizer();
+      mockFetchMissingEntities();
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
-      expect(result.notifications).toHaveLength(0);
+      expect(result.flatNotifications).toHaveLength(0);
       expect(result.olderThan).toBeUndefined();
     });
   });
@@ -120,35 +142,39 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
       vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue(cached);
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(nexusData);
       mockNormalizer();
-      vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
+      mockFetchMissingEntities();
+      vi.spyOn(Core.LocalNotificationService, 'bulkSave').mockResolvedValue(undefined);
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit: 10 });
 
-      expect(result.notifications.map((n) => n.timestamp)).toEqual([1000, 900, 800, 700]);
+      expect(result.flatNotifications.map((n) => n.timestamp)).toEqual([1000, 900, 800, 700]);
     });
 
     it('should fetch remaining with correct limit using last cached timestamp', async () => {
       const cached = [createFlat(1000), createFlat(900)];
       vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue(cached);
       const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
+      mockNormalizer();
+      mockFetchMissingEntities();
 
       await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit: 10 });
 
       expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, limit: 8, start: 900 });
     });
 
-    it('should deduplicate by timestamp', async () => {
+    it('should deduplicate by id', async () => {
       const cached = [createFlat(1000), createFlat(900)];
       const nexusData = [createNexus(900), createNexus(800)]; // 900 is duplicate
 
       vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue(cached);
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(nexusData);
       mockNormalizer();
-      vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
+      mockFetchMissingEntities();
+      vi.spyOn(Core.LocalNotificationService, 'bulkSave').mockResolvedValue(undefined);
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit: 10 });
 
-      expect(result.notifications.map((n) => n.timestamp)).toEqual([1000, 900, 800]);
+      expect(result.flatNotifications.map((n) => n.timestamp)).toEqual([1000, 900, 800]);
     });
   });
 
@@ -160,7 +186,7 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
-      expect(result).toEqual({ notifications: [], olderThan: undefined });
+      expect(result).toEqual({ flatNotifications: [], olderThan: undefined });
       expect(loggerSpy).toHaveBeenCalledWith('Failed to fetch notifications from Nexus', expect.any(Object));
     });
 
@@ -168,11 +194,12 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
       vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue([]);
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([createNexus(1000)]);
       mockNormalizer();
-      vi.spyOn(Core.NotificationModel, 'bulkSave').mockRejectedValue(new Error('db-error'));
+      mockFetchMissingEntities();
+      vi.spyOn(Core.LocalNotificationService, 'bulkSave').mockRejectedValue(new Error('db-error'));
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
-      expect(result.notifications).toHaveLength(1);
+      expect(result.flatNotifications).toHaveLength(1);
     });
   });
 });
@@ -190,11 +217,12 @@ describe('NotificationApplication.markAllAsRead', () => {
         toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
       },
       meta: { url: mockLastReadUrl },
-    };
+      free: vi.fn(),
+    } as unknown as LastReadResult;
 
     const homeserverSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
 
-    NotificationApplication.markAllAsRead(mockLastReadResult as ReturnType<typeof Core.LastReadNormalizer.to>);
+    NotificationApplication.markAllAsRead(mockLastReadResult);
 
     expect(homeserverSpy).toHaveBeenCalledWith(
       Core.HomeserverAction.PUT,
@@ -210,12 +238,13 @@ describe('NotificationApplication.markAllAsRead', () => {
         toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
       },
       meta: { url: mockLastReadUrl },
-    };
+      free: vi.fn(),
+    } as unknown as LastReadResult;
 
     vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
     const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
 
-    NotificationApplication.markAllAsRead(mockLastReadResult as ReturnType<typeof Core.LastReadNormalizer.to>);
+    NotificationApplication.markAllAsRead(mockLastReadResult);
 
     // Wait for the catch to execute
     await new Promise((resolve) => setTimeout(resolve, 10));
