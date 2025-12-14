@@ -40,11 +40,13 @@ export function useNotifications(): UseNotificationsResult {
     setError(null);
 
     try {
-      const result = await Core.NotificationController.getOrFetchNotifications({});
+      const { flatNotifications: notifications, olderThan } = await Core.NotificationController.getOrFetchNotifications(
+        {},
+      );
 
-      setNotifications(result.notifications);
-      olderThanRef.current = result.olderThan;
-      setHasMore(result.olderThan !== undefined);
+      setNotifications(notifications);
+      olderThanRef.current = olderThan;
+      setHasMore(olderThan !== undefined);
     } catch {
       setError('Failed to load notifications');
     } finally {
@@ -68,18 +70,20 @@ export function useNotifications(): UseNotificationsResult {
     setError(null);
 
     try {
-      const result = await Core.NotificationController.getOrFetchNotifications({
-        olderThan: olderThanRef.current,
-      });
+      const { flatNotifications: notifications, olderThan } = await Core.NotificationController.getOrFetchNotifications(
+        {
+          olderThan: olderThanRef.current,
+        },
+      );
 
       setNotifications((prev) => {
         // Deduplicate using id (business key). Defensive code for edge cases.
         const existingIds = new Set(prev.map((n) => n.id));
-        const newNotifications = result.notifications.filter((n) => !existingIds.has(n.id));
+        const newNotifications = notifications.filter((n) => !existingIds.has(n.id));
         return [...prev, ...newNotifications];
       });
-      olderThanRef.current = result.olderThan;
-      setHasMore(result.olderThan !== undefined);
+      olderThanRef.current = olderThan;
+      setHasMore(olderThan !== undefined);
     } catch {
       setError('Failed to load more notifications');
     } finally {
@@ -101,11 +105,13 @@ export function useNotifications(): UseNotificationsResult {
     setHasMore(true);
 
     try {
-      const result = await Core.NotificationController.getOrFetchNotifications({});
+      const { flatNotifications: notifications, olderThan } = await Core.NotificationController.getOrFetchNotifications(
+        {},
+      );
 
-      setNotifications(result.notifications);
-      olderThanRef.current = result.olderThan;
-      setHasMore(result.olderThan !== undefined);
+      setNotifications(notifications);
+      olderThanRef.current = olderThan;
+      setHasMore(olderThan !== undefined);
     } catch {
       setError('Failed to refresh notifications');
     } finally {
