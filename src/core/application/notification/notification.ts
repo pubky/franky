@@ -157,7 +157,7 @@ export class NotificationApplication {
    *
    * @param notifications - Array of flat notifications to extract post and user references from
    */
-  private static async fetchMissingEntities({
+  static async fetchMissingEntities({
     notifications,
     viewerId,
   }: Core.TFetchMissingEntitiesParams): Promise<Core.TFlatNotificationList> {
