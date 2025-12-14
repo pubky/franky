@@ -37,10 +37,10 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
 
   return (
     <Atoms.Container className="flex justify-between" overrideDefaults>
-      <Atoms.Container className="flex min-w-0 gap-3" overrideDefaults>
+      <Atoms.Container className="flex gap-3" overrideDefaults>
         <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails.name || ''} size="default" />
-        <Atoms.Container className="min-w-0">
-          <Atoms.Typography className="min-w-0 truncate text-base font-bold text-foreground" overrideDefaults>
+        <Atoms.Container>
+          <Atoms.Typography className="max-w-xs truncate text-base font-bold text-foreground" overrideDefaults>
             {userDetails.name}
           </Atoms.Typography>
           <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
