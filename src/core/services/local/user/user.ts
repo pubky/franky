@@ -17,7 +17,7 @@ export class LocalUserService {
    * @param userIds - Array of user IDs to fetch details for
    * @returns Promise resolving to Map of user ID to user details
    */
-  static async getManyDetails(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+  static async getManyDetails({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
@@ -61,7 +61,7 @@ export class LocalUserService {
    * @param userIds - Array of user IDs to fetch counts for
    * @returns Promise resolving to Map of user ID to user counts
    */
-  static async getManyCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+  static async getManyCounts({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserCountsModel.findByIdsPreserveOrder(userIds);
@@ -85,9 +85,9 @@ export class LocalUserService {
    * @param userIds - Array of user IDs to fetch relationships for
    * @returns Promise resolving to Map of user ID to user relationships
    */
-  static async getManyRelationships(
-    userIds: Core.Pubky[],
-  ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+  static async getManyRelationships({
+    userIds,
+  }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserRelationshipsModel.findByIds(userIds);
@@ -117,7 +117,7 @@ export class LocalUserService {
    * @param userIds - Array of user IDs to fetch tags for
    * @returns Promise resolving to Map of user ID to user tags
    */
-  static async getManyTags(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+  static async getManyTags({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserTagsModel.findByIdsPreserveOrder(userIds);

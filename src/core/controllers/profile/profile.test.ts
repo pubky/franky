@@ -103,11 +103,11 @@ describe('ProfileController', () => {
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.commitSetDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitSetDetails(
-        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-        'image-url',
-        testPubky,
-      );
+      await ProfileController.commitSetDetails({
+        profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        image: 'image-url',
+        pubky: testPubky,
+      });
 
       expect(mockUserNormalizer.to).toHaveBeenCalledTimes(1);
       expect(mockUserNormalizer.to).toHaveBeenCalledWith(
@@ -140,11 +140,11 @@ describe('ProfileController', () => {
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.commitSetDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitSetDetails(
-        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-        null,
-        testPubky,
-      );
+      await ProfileController.commitSetDetails({
+        profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        image: null,
+        pubky: testPubky,
+      });
 
       expect(mockUserNormalizer.to).toHaveBeenCalledWith(
         {
@@ -176,11 +176,11 @@ describe('ProfileController', () => {
       });
 
       await expect(
-        ProfileController.commitSetDetails(
-          profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-          null,
-          testPubky,
-        ),
+        ProfileController.commitSetDetails({
+          profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+          image: null,
+          pubky: testPubky,
+        }),
       ).rejects.toThrow('validation failed');
       expect(mockProfileApplication.commitSetDetails).not.toHaveBeenCalled();
     });
@@ -199,11 +199,11 @@ describe('ProfileController', () => {
       mockProfileApplication.commitSetDetails.mockRejectedValue(new Error('create failed'));
 
       await expect(
-        ProfileController.commitSetDetails(
-          profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-          null,
-          testPubky,
-        ),
+        ProfileController.commitSetDetails({
+          profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+          image: null,
+          pubky: testPubky,
+        }),
       ).rejects.toThrow('create failed');
     });
   });
@@ -354,11 +354,13 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetails(
-        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-        'updated-image-url',
-        testPubky,
-      );
+      await ProfileController.commitUpdateDetails({
+        name: profile.name,
+        bio: profile.bio,
+        links: profile.links,
+        image: 'updated-image-url',
+        pubky: testPubky,
+      });
 
       expect(mockUserNormalizer.linksFromUi).toHaveBeenCalledWith(profile.links);
       expect(mockProfileApplication.commitUpdateDetails).toHaveBeenCalledWith({
@@ -377,11 +379,13 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetails(
-        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-        null,
-        testPubky,
-      );
+      await ProfileController.commitUpdateDetails({
+        name: profile.name,
+        bio: undefined,
+        links: undefined,
+        image: null,
+        pubky: testPubky,
+      });
 
       expect(mockProfileApplication.commitUpdateDetails).toHaveBeenCalledWith({
         pubky: testPubky,
@@ -400,11 +404,13 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetails(
-        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-        null,
-        testPubky,
-      );
+      await ProfileController.commitUpdateDetails({
+        name: profile.name,
+        bio: profile.bio,
+        links: undefined,
+        image: null,
+        pubky: testPubky,
+      });
 
       expect(mockProfileApplication.commitUpdateDetails).toHaveBeenCalledWith({
         pubky: testPubky,
@@ -425,11 +431,13 @@ describe('ProfileController', () => {
       mockProfileApplication.commitUpdateDetails.mockRejectedValue(error);
 
       await expect(
-        ProfileController.commitUpdateDetails(
-          profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
-          null,
-          testPubky,
-        ),
+        ProfileController.commitUpdateDetails({
+          name: profile.name,
+          bio: profile.bio,
+          links: undefined,
+          image: null,
+          pubky: testPubky,
+        }),
       ).rejects.toThrow('update failed');
     });
   });

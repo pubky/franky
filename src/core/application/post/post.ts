@@ -43,7 +43,7 @@ export class PostApplication {
   static async getOrFetchPost({
     compositeId,
     viewerId,
-  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
+  }: Core.TGetOrFetchPostParams): Promise<Core.PostDetailsModelSchema | null> {
     const localPost = await Core.LocalPostService.readPostDetails({ postId: compositeId });
     if (localPost) return localPost;
 

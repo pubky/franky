@@ -62,19 +62,19 @@ describe('UserController', () => {
 
       const getManyDetailsSpy = vi.spyOn(Core.UserApplication, 'getManyDetails').mockResolvedValue(mockMap);
 
-      const result = await UserController.getManyDetails(userIds);
+      const result = await UserController.getManyDetails({ userIds });
 
       expect(result).toEqual(mockMap);
-      expect(getManyDetailsSpy).toHaveBeenCalledWith(userIds);
+      expect(getManyDetailsSpy).toHaveBeenCalledWith({ userIds });
     });
 
     it('should return empty map for empty array', async () => {
       const getManyDetailsSpy = vi.spyOn(Core.UserApplication, 'getManyDetails').mockResolvedValue(new Map());
 
-      const result = await UserController.getManyDetails([]);
+      const result = await UserController.getManyDetails({ userIds: [] });
 
       expect(result.size).toBe(0);
-      expect(getManyDetailsSpy).toHaveBeenCalledWith([]);
+      expect(getManyDetailsSpy).toHaveBeenCalledWith({ userIds: [] });
     });
   });
 
@@ -156,19 +156,19 @@ describe('UserController', () => {
 
       const getManyCountsSpy = vi.spyOn(Core.UserApplication, 'getManyCounts').mockResolvedValue(mockMap);
 
-      const result = await UserController.getManyCounts(userIds);
+      const result = await UserController.getManyCounts({ userIds });
 
       expect(result).toEqual(mockMap);
-      expect(getManyCountsSpy).toHaveBeenCalledWith(userIds);
+      expect(getManyCountsSpy).toHaveBeenCalledWith({ userIds });
     });
 
     it('should return empty map for empty array', async () => {
       const getManyCountsSpy = vi.spyOn(Core.UserApplication, 'getManyCounts').mockResolvedValue(new Map());
 
-      const result = await UserController.getManyCounts([]);
+      const result = await UserController.getManyCounts({ userIds: [] });
 
       expect(result.size).toBe(0);
-      expect(getManyCountsSpy).toHaveBeenCalledWith([]);
+      expect(getManyCountsSpy).toHaveBeenCalledWith({ userIds: [] });
     });
   });
 

@@ -16,8 +16,8 @@ export class UserController {
    * Get multiple user details from local database (bulk operation)
    * This is a read-only operation that queries the local cache
    */
-  static async getManyDetails(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
-    return await Core.UserApplication.getManyDetails(userIds);
+  static async getManyDetails({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    return await Core.UserApplication.getManyDetails({ userIds });
   }
 
   /**
@@ -32,8 +32,8 @@ export class UserController {
    * Get multiple user counts from local database (bulk operation)
    * This is a read-only operation that queries the local cache
    */
-  static async getManyCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
-    return await Core.UserApplication.getManyCounts(userIds);
+  static async getManyCounts({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.UserApplication.getManyCounts({ userIds });
   }
 
   /**
@@ -84,10 +84,10 @@ export class UserController {
    * Get multiple user relationships from local database (bulk operation)
    * This is a read-only operation that queries the local cache
    */
-  static async getManyRelationships(
-    userIds: Core.Pubky[],
-  ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
-    return await Core.UserApplication.getManyRelationships(userIds);
+  static async getManyRelationships({
+    userIds,
+  }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+    return await Core.UserApplication.getManyRelationships({ userIds });
   }
 
   /**
@@ -102,8 +102,8 @@ export class UserController {
    * Get multiple user tags with local-first strategy (bulk operation)
    * Reads from cache first, fetches from API only for missing users
    */
-  static async getManyTagsOrFetch(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
-    return await Core.UserApplication.getManyTagsOrFetch(userIds);
+  static async getManyTagsOrFetch({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+    return await Core.UserApplication.getManyTagsOrFetch({ userIds });
   }
 
   /**

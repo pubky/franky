@@ -14,8 +14,8 @@ export class UserApplication {
    * Bulk read multiple user details from local database.
    * Returns a Map for efficient lookup by user ID.
    */
-  static async getManyDetails(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
-    return await Core.LocalUserService.getManyDetails(userIds);
+  static async getManyDetails(param: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    return await Core.LocalUserService.getManyDetails(param);
   }
 
   /**
@@ -48,8 +48,8 @@ export class UserApplication {
    * Bulk read multiple user counts from local database.
    * Returns a Map for efficient lookup by user ID.
    */
-  static async getManyCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
-    return await Core.LocalUserService.getManyCounts(userIds);
+  static async getManyCounts(param: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.LocalUserService.getManyCounts(param);
   }
 
   /**
@@ -67,9 +67,9 @@ export class UserApplication {
    * @returns Promise resolving to a Map of user ID to relationship data
    */
   static async getManyRelationships(
-    userIds: Core.Pubky[],
+    param: Core.TPubkyListParams,
   ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
-    return await Core.LocalUserService.getManyRelationships(userIds);
+    return await Core.LocalUserService.getManyRelationships(param);
   }
 
   /**
@@ -153,7 +153,7 @@ export class UserApplication {
    * @param userIds - Array of user IDs to fetch tags for
    * @returns Promise resolving to a Map of user ID to tags array
    */
-  static async getManyTagsOrFetch(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+  static async getManyTagsOrFetch({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
     if (userIds.length === 0) return new Map();
 
     // 1. Find users without cached tags
@@ -165,7 +165,7 @@ export class UserApplication {
     }
 
     // 3. Return all tags from cache (now populated with fetched data)
-    return await Core.LocalUserService.getManyTags(userIds);
+    return await Core.LocalUserService.getManyTags({ userIds });
   }
 
   /**

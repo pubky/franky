@@ -32,19 +32,7 @@ export class ProfileApplication {
    *
    * @param params - Parameters containing user's public key and profile data
    */
-  static async commitUpdateDetails({
-    pubky,
-    name,
-    bio,
-    image,
-    links,
-  }: {
-    pubky: Core.Pubky;
-    name: string;
-    bio: string | undefined;
-    image: string | null;
-    links: Core.NexusUserLink[];
-  }) {
+  static async commitUpdateDetails({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
     try {
       const userDetails = await Core.LocalUserService.getDetails({ userId: pubky });
       if (!userDetails) {

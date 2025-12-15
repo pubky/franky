@@ -274,12 +274,18 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       setSubmitText('Saving profile...');
 
       if (mode === 'create') {
-        await Core.ProfileController.commitSetDetails(user, image, pubky);
+        await Core.ProfileController.commitSetDetails({ profile: user, image, pubky });
         await Core.AuthController.bootstrapWithDelay();
         setShowWelcomeDialog?.(true);
         router.push(App.HOME_ROUTES.HOME);
       } else {
-        await Core.ProfileController.commitUpdateDetails(user, image, pubky);
+        await Core.ProfileController.commitUpdateDetails({
+          name: user.name,
+          bio: user.bio,
+          links: user.links,
+          image,
+          pubky,
+        });
         toast({
           title: 'Profile updated',
           description: 'Your profile has been updated successfully.',

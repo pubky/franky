@@ -1,12 +1,11 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import { z } from 'zod';
 
 // Operations related with the profile.json file in the homeserver
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
-  static async commitSetDetails(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
+  static async commitSetDetails({ profile, image, pubky }: Core.TCommitSetDetailsParams) {
     const { user, meta } = Core.UserNormalizer.to(
       {
         name: profile.name,
@@ -25,11 +24,7 @@ export class ProfileController {
     return await Core.ProfileApplication.commitUpdateDetailsStatus({ pubky, status });
   }
 
-  static async commitUpdateDetails(
-    { name, bio, links }: z.infer<typeof Core.UiUserSchema>,
-    image: string | null,
-    pubky: Core.Pubky,
-  ) {
+  static async commitUpdateDetails({ name, bio, links, image, pubky }: Core.TCommitUpdateDetailsParams) {
     await Core.ProfileApplication.commitUpdateDetails({
       pubky,
       name,
