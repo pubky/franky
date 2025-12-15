@@ -112,6 +112,24 @@ vi.mock('@/organisms', () => ({
       DialogRepost
     </div>
   ),
+  ClickableTagsList: ({
+    taggedId,
+    taggedKind,
+    showCount: _showCount,
+    showInput: _showInput,
+    addMode: _addMode,
+  }: {
+    taggedId: string;
+    taggedKind: unknown;
+    showCount?: boolean;
+    showInput?: boolean;
+    addMode?: boolean;
+    [key: string]: unknown;
+  }) => (
+    <div data-testid="clickable-tags-list" data-tagged-id={taggedId} data-tagged-kind={String(taggedKind)}>
+      ClickableTagsList {taggedId}
+    </div>
+  ),
 }));
 
 // Stub molecules used by PostMain
@@ -161,7 +179,7 @@ describe('PostMain', () => {
 
     expect(screen.getByTestId('post-header')).toHaveTextContent('PostHeader post-123');
     expect(screen.getByTestId('post-content')).toHaveTextContent('PostContent post-123');
-    expect(screen.getByTestId('post-tags-list')).toHaveTextContent('PostTagsList post-123');
+    expect(screen.getByTestId('clickable-tags-list')).toHaveTextContent('ClickableTagsList post-123');
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 
@@ -201,7 +219,7 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-deleted')).toBeInTheDocument();
     expect(screen.queryByTestId('post-header')).not.toBeInTheDocument();
     expect(screen.queryByTestId('post-content')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('post-tags-list')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('clickable-tags-list')).not.toBeInTheDocument();
     expect(screen.queryByTestId('post-actions')).not.toBeInTheDocument();
   });
 
@@ -213,7 +231,7 @@ describe('PostMain', () => {
     expect(screen.queryByTestId('post-deleted')).not.toBeInTheDocument();
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
-    expect(screen.getByTestId('post-tags-list')).toBeInTheDocument();
+    expect(screen.getByTestId('clickable-tags-list')).toBeInTheDocument();
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 
