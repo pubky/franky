@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import { Homegate } from '@/core/application/homegate';
+import { Homegate } from '@/core/services/homegate';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import parsePhoneNumberFromString, { PhoneNumber } from 'libphonenumber-js/mobile';
@@ -58,7 +58,10 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
 
     try {
       setIsSendingCode(true);
-      await Homegate.sendSmsCode(phoneNumber);
+      const result = await Homegate.sendSmsCode(phoneNumber);
+      if (!result.success) {
+        throw new Error('Failed to send sms code');
+      }
       onCodeSent(phoneNumber);
     } catch (e) {
       console.error('Failed to send sms code', e);

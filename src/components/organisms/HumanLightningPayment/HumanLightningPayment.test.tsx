@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, waitFor, fireEvent } from '@testing-library/react';
 
-import { Homegate } from '@/core/application/homegate';
+import { Homegate } from '@/core/services/homegate';
 import { HumanLightningPayment } from './HumanLightningPayment';
 
 vi.mock('@/core/application/homegate', () => ({

@@ -111,6 +111,7 @@ process.env.NEXT_PUBLIC_TESTNET = 'true';
 process.env.NEXT_PUBLIC_PKARR_RELAYS = 'http://localhost:8080';
 process.env.NEXT_PUBLIC_HOMESERVER = 'test-homeserver-key';
 process.env.NEXT_PUBLIC_EXCHANGE_RATE_API = 'https://api1.blocktank.to/api/fx/rates/btc';
+process.env.NEXT_PUBLIC_HOMEGATE_URL = 'https://localhost:5000/';
 
 const { db } = await import('@/core');
 

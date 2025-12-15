@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import { Homegate } from '@/core/application/homegate';
+import { Homegate } from '@/core/services/homegate';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
@@ -17,6 +17,21 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
   const { toast } = Molecules.useToast();
 
+  const [resendTimer, setResendTimer] = useState<number>(60);
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setResendTimer((previous) => {
+        let newResendTimer = previous - 1;
+        if (newResendTimer < 0) {
+          newResendTimer = 0;
+        }
+        return newResendTimer;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   // Verify the code
   async function onVerifyCode() {
     const codeValue = code.join('');
@@ -31,7 +46,6 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
       } else {
         toast({
           title: 'Verification Code Invalid. Try again.',
-          description: result.error,
         });
       }
     } catch (e) {
@@ -97,10 +111,11 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="secondary"
+          disabled={resendTimer > 0}
           onClick={onBack}
         >
           <Libs.RefreshCcw className="mr-2 h-4 w-4" />
-          Resend Code
+          Resend Code {resendTimer > 0 && `(${resendTimer}s)`}
         </Atoms.Button>
         <Atoms.Button
           data-testid="human-phone-send-code-btn"

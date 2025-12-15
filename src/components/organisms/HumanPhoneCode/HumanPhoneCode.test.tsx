@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, waitFor } from '@testing-library/react';
-import { Homegate } from '@/core/application/homegate';
+import { Homegate } from '@/core/services/homegate';
 
 import { HumanPhoneCode } from './HumanPhoneCode';
 
