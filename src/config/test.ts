@@ -110,6 +110,8 @@ process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD = 'admin';
 process.env.NEXT_PUBLIC_TESTNET = 'true';
 process.env.NEXT_PUBLIC_PKARR_RELAYS = 'http://localhost:8080';
 process.env.NEXT_PUBLIC_HOMESERVER = 'test-homeserver-key';
+process.env.NEXT_PUBLIC_MODERATION_ID = 'euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro';
+process.env.NEXT_PUBLIC_MODERATED_TAGS = '["nudity"]';
 
 // Chatwoot configuration (required for feedback feature)
 process.env.BASE_URL_SUPPORT = 'https://chatwoot.example.com';

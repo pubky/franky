@@ -6,4 +6,5 @@ export * from './posts';
 export * from './sync';
 export * from './logs';
 export * from './metadata';
+export * from './moderation';
 export * from './theme';
