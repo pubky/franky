@@ -5,6 +5,7 @@ import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Types from '@/app/profile/types';
+import * as Config from '@/config';
 
 export interface ProfilePageFilterBarItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -121,10 +122,9 @@ export function ProfilePageFilterBar({
   }, [items, stats, isOwnProfile]);
 
   // Only apply sticky when content fits in viewport
-  // Profile page header height is 146px (--header-height in globals.css)
   const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
-    topOffset: 146, // Account for profile page header (--header-height: 146px)
-    bottomOffset: 48, // Account for bottom padding
+    topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
 
   return (

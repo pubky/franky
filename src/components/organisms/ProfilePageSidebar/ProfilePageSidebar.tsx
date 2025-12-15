@@ -8,6 +8,7 @@ import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Providers from '@/providers';
+import * as Config from '@/config';
 import { MAX_SIDEBAR_TAGS } from './ProfilePageSidebar.constants';
 
 export function ProfilePageSidebar() {
@@ -36,10 +37,9 @@ export function ProfilePageSidebar() {
   const isTaggedPage = pathname?.endsWith('/tagged');
 
   // Only apply sticky when content fits in viewport
-  // Profile page header height is 146px (--header-height in globals.css)
   const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
-    topOffset: 146, // Account for profile page header (--header-height: 146px)
-    bottomOffset: 48, // Account for bottom padding
+    topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
 
   return (

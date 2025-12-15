@@ -7,10 +7,8 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 import * as Types from './ContentLayout.types';
-
-// Header offset for main content areas (matches --header-offset-main in globals.css)
-const HEADER_OFFSET_MAIN = 150;
 
 /**
  * Reusable sticky sidebar component for left and right sidebars
@@ -19,8 +17,8 @@ const HEADER_OFFSET_MAIN = 150;
  */
 function StickySidebar({ children }: Types.StickySidebarProps) {
   const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
-    topOffset: HEADER_OFFSET_MAIN, // Account for main header
-    bottomOffset: 48, // Account for bottom padding
+    topOffset: Config.LAYOUT.HEADER_OFFSET_MAIN,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
 
   return (

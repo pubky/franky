@@ -1,19 +1,20 @@
 'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
+import { LAYOUT } from '@/config';
 
 interface UseStickyWhenFitsOptions {
   /**
    * Offset from top of viewport (e.g., header height)
    * Should match the CSS variable for header height:
-   * - Profile pages: 146px (--header-height)
-   * - Main content areas: 150px (--header-offset-main)
-   * Default: 150px
+   * - Profile pages: LAYOUT.HEADER_HEIGHT_PROFILE (146px, --header-height)
+   * - Main content areas: LAYOUT.HEADER_OFFSET_MAIN (150px, --header-offset-main)
+   * Default: LAYOUT.HEADER_OFFSET_MAIN (150px)
    */
   topOffset?: number;
   /**
    * Extra padding/margin to account for at bottom
-   * Default: 48px (pb-12 = 3rem = 48px)
+   * Default: LAYOUT.SIDEBAR_BOTTOM_OFFSET (48px, pb-12 = 3rem)
    */
   bottomOffset?: number;
   /**
@@ -50,7 +51,11 @@ interface UseStickyWhenFitsOptions {
  * ```
  */
 export function useStickyWhenFits(options: UseStickyWhenFitsOptions = {}) {
-  const { topOffset = 150, bottomOffset = 48, debounceMs = 100 } = options;
+  const {
+    topOffset = LAYOUT.HEADER_OFFSET_MAIN,
+    bottomOffset = LAYOUT.SIDEBAR_BOTTOM_OFFSET,
+    debounceMs = 100,
+  } = options;
 
   const ref = useRef<HTMLDivElement>(null);
   const [shouldBeSticky, setShouldBeSticky] = useState(true);
