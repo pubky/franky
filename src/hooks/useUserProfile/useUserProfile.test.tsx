@@ -229,7 +229,7 @@ describe('useUserProfile', () => {
   });
 
   describe('Controller integration', () => {
-    it('triggers ProfileController.read to fetch from Nexus', () => {
+    it('triggers UserController.getDetails to fetch from Nexus', () => {
       setMockUserDetails({
         id: 'test-user-id',
         name: 'Test',
@@ -237,8 +237,8 @@ describe('useUserProfile', () => {
 
       renderHook(() => useUserProfile('test-user-id'));
 
-      // ProfileController.read should be called in the background
-      expect(Core.ProfileController.read).toHaveBeenCalledWith({ userId: 'test-user-id' });
+      // UserController.getDetails should be called in the background
+      expect(Core.UserController.getDetails).toHaveBeenCalledWith({ userId: 'test-user-id' });
     });
   });
 });

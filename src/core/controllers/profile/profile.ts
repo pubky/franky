@@ -25,10 +25,6 @@ export class ProfileController {
     Libs.Identity.createRecoveryFile({ keypair, passphrase });
   }
 
-  static async read({ userId }: Core.TReadProfileParams) {
-    return await Core.ProfileApplication.read({ userId });
-  }
-
   static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
     const { user, meta } = Core.UserNormalizer.to(
       {

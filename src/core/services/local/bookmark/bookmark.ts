@@ -41,7 +41,7 @@ export class LocalBookmarkService {
         }
 
         // Fetch post details to determine which streams to update
-        const postDetails = await Core.PostController.getPostDetails({ compositeId: postId });
+        const postDetails = await Core.PostDetailsModel.findById(postId);
         const kind = postDetails?.kind;
 
         if (isCreate) {

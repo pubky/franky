@@ -7,33 +7,9 @@ import * as Libs from '@/libs';
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
-  static async read({ userId }: Core.TReadProfileParams) {
+  static async getDetails(param: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
     // Try to get from local database first
-    const localUserDetails = await Core.UserDetailsModel.findById(userId);
-
-    // If found locally, return it
-    if (localUserDetails) {
-      return localUserDetails;
-    }
-
-    // If not found locally, fetch from Nexus API
-    try {
-      const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
-
-      // If found from Nexus, persist it to local database
-      if (nexusUserDetails) {
-        await Core.UserDetailsModel.upsert(nexusUserDetails);
-        return await Core.UserDetailsModel.findById(userId);
-      }
-    } catch (error) {
-      // Handle 404 (user not found) gracefully - profile.json was not created yet
-      if (error instanceof Libs.AppError && error.statusCode === 404) {
-        // User doesn't exist in Nexus yet, return null
-        return null;
-      }
-      // Re-throw other errors (network issues, server errors, etc.)
-      throw error;
-    }
+    return await Core.LocalUserService.getDetails(param);
   }
 
   /**

@@ -186,6 +186,12 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
       const labelLower = tag.label.toLowerCase();
 
       try {
+        const params = {
+          taggedId: userId as Core.Pubky,
+          label: tag.label,
+          taggerId: viewerId,
+          taggedKind: Core.TagKind.USER,
+        }
         if (userIsTagger) {
           // Track zero-tagger tag BEFORE delete to preserve order
           if (currentTag && (currentTag.taggers_count ?? 0) <= 1) {
@@ -204,20 +210,10 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
           }
 
           // TagController.delete updates IndexedDB first (local-first), then syncs to server
-          await Core.TagController.delete({
-            taggedId: userId as Core.Pubky,
-            label: tag.label,
-            taggerId: viewerId,
-            taggedKind: Core.TagKind.USER,
-          });
+          await Core.TagController.delete(params);
         } else {
           // TagController.create updates IndexedDB first (local-first), then syncs to server
-          await Core.TagController.create({
-            taggedId: userId as Core.Pubky,
-            label: tag.label,
-            taggerId: viewerId,
-            taggedKind: Core.TagKind.USER,
-          });
+          await Core.TagController.create(params);
 
           // Remove from zero-tagger list
           setZeroTaggerTags((prev) => {

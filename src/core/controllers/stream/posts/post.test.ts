@@ -236,7 +236,7 @@ describe('StreamPostsController', () => {
       expect(fetchMissingPostsSpy).not.toHaveBeenCalled();
     });
 
-    it('should fetch missing posts in background without blocking response', async () => {
+    it('should fetch missing posts and propagate errors if fetch fails', async () => {
       const nextPageIds = ['user-1:post-1', 'user-1:post-2'];
       const cacheMissPostIds = ['user-1:post-3', 'user-1:post-4'];
       const timestamp = 1000000;
@@ -248,21 +248,22 @@ describe('StreamPostsController', () => {
         timestamp,
       });
 
-      // Mock fetchMissingPostsFromNexus - even if it throws, should not block
+      // Mock fetchMissingPostsFromNexus to throw error
       const fetchError = new Error('Failed to fetch missing posts');
-      vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus').mockRejectedValue(fetchError);
+      const fetchMissingPostsSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+        .mockRejectedValue(fetchError);
 
-      // Should return immediately without waiting for background fetch
-      const result = await StreamPostsController.getOrFetchStreamSlice({
-        streamId,
-        streamTail: 0,
-      });
+      // Should propagate the error since fetchMissingPostsFromNexus is awaited
+      await expect(
+        StreamPostsController.getOrFetchStreamSlice({
+          streamId,
+          streamTail: 0,
+        }),
+      ).rejects.toThrow('Failed to fetch missing posts');
 
-      // Should return the nextPageIds and timestamp immediately
-      expect(result).toEqual({ nextPageIds, timestamp });
-
-      // Verify fetchMissingPostsFromNexus was called (fire-and-forget)
-      expect(Core.PostStreamApplication.fetchMissingPostsFromNexus).toHaveBeenCalledWith({
+      // Verify fetchMissingPostsFromNexus was called
+      expect(fetchMissingPostsSpy).toHaveBeenCalledWith({
         cacheMissPostIds,
         viewerId,
       });
@@ -436,6 +437,145 @@ describe('StreamPostsController', () => {
       await expect(StreamPostsController.mergeUnreadStreamWithPostStream({ streamId })).rejects.toThrow(
         'Database error',
       );
+    });
+  });
+
+  describe('getLocalStream', () => {
+    it('should delegate to PostStreamApplication.getLocalStream with correct params', async () => {
+      const mockStream = { stream: ['post-1', 'post-2'] };
+      const getLocalStreamSpy = vi
+        .spyOn(Core.PostStreamApplication, 'getLocalStream')
+        .mockResolvedValue(mockStream);
+
+      const result = await StreamPostsController.getLocalStream({ streamId });
+
+      expect(getLocalStreamSpy).toHaveBeenCalledWith({ streamId });
+      expect(result).toEqual(mockStream);
+    });
+
+    it('should return null when stream does not exist', async () => {
+      vi.spyOn(Core.PostStreamApplication, 'getLocalStream').mockResolvedValue(null);
+
+      const result = await StreamPostsController.getLocalStream({ streamId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const applicationError = new Error('Database error');
+      vi.spyOn(Core.PostStreamApplication, 'getLocalStream').mockRejectedValue(applicationError);
+
+      await expect(StreamPostsController.getLocalStream({ streamId })).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('clearUnreadStream', () => {
+    it('should delegate to PostStreamApplication.clearUnreadStream with correct params', async () => {
+      const mockPostIds = ['post-1', 'post-2', 'post-3'];
+      const clearUnreadStreamSpy = vi
+        .spyOn(Core.PostStreamApplication, 'clearUnreadStream')
+        .mockResolvedValue(mockPostIds);
+
+      const result = await StreamPostsController.clearUnreadStream({ streamId });
+
+      expect(clearUnreadStreamSpy).toHaveBeenCalledWith({ streamId });
+      expect(result).toEqual(mockPostIds);
+    });
+
+    it('should return empty array when unread stream does not exist', async () => {
+      vi.spyOn(Core.PostStreamApplication, 'clearUnreadStream').mockResolvedValue([]);
+
+      const result = await StreamPostsController.clearUnreadStream({ streamId });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const applicationError = new Error('Database error');
+      vi.spyOn(Core.PostStreamApplication, 'clearUnreadStream').mockRejectedValue(applicationError);
+
+      await expect(StreamPostsController.clearUnreadStream({ streamId })).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('getUnreadStreamById', () => {
+    it('should delegate to PostStreamApplication.getUnreadStreamById with correct params', async () => {
+      const mockUnreadStream = { stream: ['post-1', 'post-2'] };
+      const getUnreadStreamByIdSpy = vi
+        .spyOn(Core.PostStreamApplication, 'getUnreadStreamById')
+        .mockResolvedValue(mockUnreadStream);
+
+      const result = await StreamPostsController.getUnreadStreamById({ streamId });
+
+      expect(getUnreadStreamByIdSpy).toHaveBeenCalledWith({ streamId });
+      expect(result).toEqual(mockUnreadStream);
+    });
+
+    it('should return null when unread stream does not exist', async () => {
+      vi.spyOn(Core.PostStreamApplication, 'getUnreadStreamById').mockResolvedValue(null);
+
+      const result = await StreamPostsController.getUnreadStreamById({ streamId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const applicationError = new Error('Database error');
+      vi.spyOn(Core.PostStreamApplication, 'getUnreadStreamById').mockRejectedValue(applicationError);
+
+      await expect(StreamPostsController.getUnreadStreamById({ streamId })).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('getOrFetchStreamSlice with order parameter', () => {
+    it('should pass order parameter to application layer', async () => {
+      const nextPageIds = ['user-1:post-1', 'user-1:post-2'];
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp: undefined,
+      });
+
+      await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        streamTail: 0,
+        order: Core.StreamOrder.ASCENDING,
+      });
+
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
+        streamTail: 0,
+        lastPostId: undefined,
+        viewerId,
+        order: Core.StreamOrder.ASCENDING,
+      });
+    });
+
+    it('should handle DESCENDING order', async () => {
+      const nextPageIds = ['user-1:post-1'];
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp: undefined,
+      });
+
+      await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        streamTail: 0,
+        order: Core.StreamOrder.DESCENDING,
+      });
+
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
+        streamTail: 0,
+        lastPostId: undefined,
+        viewerId,
+        order: Core.StreamOrder.DESCENDING,
+      });
     });
   });
 });

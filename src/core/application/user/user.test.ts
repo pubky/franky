@@ -23,6 +23,7 @@ describe('UserApplication.follow', () => {
       followJson,
       follower,
       followee,
+      activeStreamId: undefined,
     });
 
     expect(createSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
@@ -41,6 +42,7 @@ describe('UserApplication.follow', () => {
       followJson,
       follower,
       followee,
+      activeStreamId: undefined,
     });
 
     expect(deleteSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
@@ -59,6 +61,7 @@ describe('UserApplication.follow', () => {
       followJson,
       follower,
       followee,
+      activeStreamId: undefined,
     });
 
     expect(createSpy).not.toHaveBeenCalled();
@@ -77,6 +80,7 @@ describe('UserApplication.follow', () => {
         followJson,
         follower,
         followee,
+        activeStreamId: undefined,
       }),
     ).rejects.toThrow('local-fail');
 
@@ -95,6 +99,7 @@ describe('UserApplication.follow', () => {
         followJson,
         follower,
         followee,
+        activeStreamId: undefined,
       }),
     ).rejects.toThrow('local-delete-fail');
 
@@ -113,6 +118,7 @@ describe('UserApplication.follow', () => {
         followJson,
         follower,
         followee,
+        activeStreamId: undefined,
       }),
     ).rejects.toThrow('homeserver-fail');
 
@@ -249,7 +255,7 @@ describe('UserApplication.details', () => {
 
   it('should return null when user not found in local cache or Nexus', async () => {
     const localSpy = vi.spyOn(Core.LocalProfileService, 'details').mockResolvedValue(null);
-    const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(null);
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
     const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsert').mockResolvedValue(undefined as unknown as void);
 
     const result = await UserApplication.details({ userId });
@@ -288,7 +294,7 @@ describe('UserApplication.details', () => {
   });
 });
 
-describe('UserApplication.counts', () => {
+describe('UserApplication.getCounts', () => {
   const userId = 'pubky_user' as Core.Pubky;
   const mockUserCounts: Core.NexusUserCounts = {
     posts: 42,
@@ -306,80 +312,27 @@ describe('UserApplication.counts', () => {
     vi.clearAllMocks();
   });
 
-  it('should return user counts from local cache when available (local-first)', async () => {
-    const localSpy = vi.spyOn(Core.LocalProfileService, 'counts').mockResolvedValue(mockUserCounts);
-    const nexusSpy = vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
-    const upsertSpy = vi
-      .spyOn(Core.LocalProfileService, 'upsertCounts')
-      .mockResolvedValue(undefined as unknown as void);
+  it('should return user counts from local cache', async () => {
+    const localSpy = vi.spyOn(Core.LocalProfileService, 'getCounts').mockResolvedValue(mockUserCounts);
 
-    const result = await UserApplication.counts({ userId });
+    const result = await UserApplication.getCounts({ userId });
 
     expect(result).toEqual(mockUserCounts);
     expect(localSpy).toHaveBeenCalledWith({ userId });
-    expect(nexusSpy).not.toHaveBeenCalled();
-    expect(upsertSpy).not.toHaveBeenCalled();
   });
 
-  it('should fetch from Nexus and cache locally when not in local cache', async () => {
-    const localSpy = vi
-      .spyOn(Core.LocalProfileService, 'counts')
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(mockUserCounts);
-    const nexusSpy = vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
-    const upsertSpy = vi
-      .spyOn(Core.LocalProfileService, 'upsertCounts')
-      .mockResolvedValue(undefined as unknown as void);
+  it('should return null when user counts not found in local cache', async () => {
+    const localSpy = vi.spyOn(Core.LocalProfileService, 'getCounts').mockResolvedValue(null);
 
-    const result = await UserApplication.counts({ userId });
-
-    expect(result).toEqual(mockUserCounts);
-    expect(localSpy).toHaveBeenCalledTimes(2);
-    expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-    expect(upsertSpy).toHaveBeenCalledWith({ userId }, mockUserCounts);
-  });
-
-  it('should return null when user counts not found in local cache or Nexus', async () => {
-    const localSpy = vi.spyOn(Core.LocalProfileService, 'counts').mockResolvedValue(null);
-    const nexusSpy = vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(null);
-    const upsertSpy = vi
-      .spyOn(Core.LocalProfileService, 'upsertCounts')
-      .mockResolvedValue(undefined as unknown as void);
-
-    const result = await UserApplication.counts({ userId });
+    const result = await UserApplication.getCounts({ userId });
 
     expect(result).toBeNull();
-    expect(localSpy).toHaveBeenCalled();
-    expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-    expect(upsertSpy).not.toHaveBeenCalled();
+    expect(localSpy).toHaveBeenCalledWith({ userId });
   });
 
   it('should propagate errors from local service', async () => {
-    vi.spyOn(Core.LocalProfileService, 'counts').mockRejectedValue(new Error('Local database error'));
-    const nexusSpy = vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
+    vi.spyOn(Core.LocalProfileService, 'getCounts').mockRejectedValue(new Error('Local database error'));
 
-    await expect(UserApplication.counts({ userId })).rejects.toThrow('Local database error');
-
-    expect(nexusSpy).not.toHaveBeenCalled();
-  });
-
-  it('should propagate errors from Nexus service when local cache is empty', async () => {
-    vi.spyOn(Core.LocalProfileService, 'counts').mockResolvedValue(null);
-    vi.spyOn(Core.NexusUserService, 'counts').mockRejectedValue(new Error('Network error'));
-    const upsertSpy = vi
-      .spyOn(Core.LocalProfileService, 'upsertCounts')
-      .mockResolvedValue(undefined as unknown as void);
-
-    await expect(UserApplication.counts({ userId })).rejects.toThrow('Network error');
-
-    expect(upsertSpy).not.toHaveBeenCalled();
-  });
-
-  it('should propagate errors from upsert when caching Nexus data', async () => {
-    vi.spyOn(Core.LocalProfileService, 'counts').mockResolvedValue(null);
-    vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
-    vi.spyOn(Core.LocalProfileService, 'upsertCounts').mockRejectedValue(new Error('Cache write error'));
-
-    await expect(UserApplication.counts({ userId })).rejects.toThrow('Cache write error');
+    await expect(UserApplication.getCounts({ userId })).rejects.toThrow('Local database error');
   });
 });

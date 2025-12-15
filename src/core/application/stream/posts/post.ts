@@ -8,6 +8,10 @@ export class PostStreamApplication {
   // Public API
   // ============================================================================
 
+  static async getUnreadStreamById({ streamId }: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+    return await Core.LocalStreamPostsService.getUnreadStreamById({ streamId });
+  }
+
   static async getCachedLastPostTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
     try {
       const postStream = await Core.PostStreamModel.findById(streamId);
@@ -45,7 +49,7 @@ export class PostStreamApplication {
    * @param streamId - The ID of the stream
    * @returns The cached stream or null if not found
    */
-  static async getLocalStream({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
+  static async getLocalStream({ streamId }: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
     return await Core.LocalStreamPostsService.findById({ streamId });
   }
 

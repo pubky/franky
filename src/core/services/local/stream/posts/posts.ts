@@ -10,6 +10,10 @@ import { Logger } from '@/libs/logger';
 export class LocalStreamPostsService {
   private constructor() {}
 
+  static async getUnreadStreamById({ streamId }: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+    return await Core.UnreadPostStreamModel.findById(streamId);
+  }
+
   /**
    * Save or update a stream of post IDs
    */

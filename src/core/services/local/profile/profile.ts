@@ -38,7 +38,7 @@ export class LocalProfileService {
    * @param userId - The user ID to fetch counts for
    * @returns Promise resolving to user counts or null if not found
    */
-  static async counts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+  static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     return await Core.UserCountsModel.findById(userId);
   }
 
@@ -88,7 +88,7 @@ export class LocalProfileService {
    * @returns Promise resolving to array of tags or empty array if not found
    */
   static async getUserTags(userId: string): Promise<Core.NexusTag[]> {
-    const userTags = await Core.UserTagsModel.table.get(userId);
+    const userTags = await Core.UserTagsModel.findById(userId);
     return userTags?.tags ?? [];
   }
 

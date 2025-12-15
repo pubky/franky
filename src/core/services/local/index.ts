@@ -9,3 +9,4 @@ export * from './hot';
 export * from './file';
 export * from './bookmark';
 export * from './feed';
+export * from './user';
