@@ -53,7 +53,7 @@ beforeEach(async () => {
 });
 
 describe('ProfileApplication', () => {
-  describe('commitSetDetails', () => {
+  describe('commitCreate', () => {
     it('creates profile and sets auth state on success', async () => {
       const profileJson = { name: 'Alice' };
       const profile = { toJson: vi.fn(() => profileJson) } as unknown as PubkyAppUser;
@@ -62,7 +62,7 @@ describe('ProfileApplication', () => {
 
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.commitSetDetails({ profile, url, pubky });
+      await ProfileApplication.commitCreate({ profile, url, pubky });
 
       expect(profile.toJson).toHaveBeenCalledTimes(1);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, url, profileJson);
@@ -78,7 +78,7 @@ describe('ProfileApplication', () => {
 
       vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('create failed'));
 
-      await expect(ProfileApplication.commitSetDetails({ profile, url, pubky })).rejects.toThrow('create failed');
+      await expect(ProfileApplication.commitCreate({ profile, url, pubky })).rejects.toThrow('create failed');
 
       // Auth state should not be modified on error (see TODO in profile.ts)
       expect(mockAuthState.setHasProfile).not.toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe('ProfileApplication', () => {
     });
   });
 
-  describe('commitUpdateDetailsStatus', () => {
+  describe('commitUpdateStatus', () => {
     const testPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Pubky;
 
     beforeEach(async () => {
@@ -127,7 +127,7 @@ describe('ProfileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       // Execute
-      await ProfileApplication.commitUpdateDetailsStatus({ pubky: testPubky, status: 'vacationing' });
+      await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' });
 
       // Verify UserNormalizer called with complete profile data
       expect(normalizerSpy).toHaveBeenCalledWith(
@@ -173,16 +173,16 @@ describe('ProfileApplication', () => {
       vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.commitUpdateDetailsStatus({ pubky: testPubky, status: '' });
+      await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: '' });
 
       const updatedUser = await Core.UserDetailsModel.findById(testPubky);
       expect(updatedUser!.status).toBeNull();
     });
 
     it('throws error when user not found', async () => {
-      await expect(
-        ProfileApplication.commitUpdateDetailsStatus({ pubky: testPubky, status: 'available' }),
-      ).rejects.toThrow('User profile not found');
+      await expect(ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'available' })).rejects.toThrow(
+        'User profile not found',
+      );
     });
 
     it('rollback: does not update local DB if homeserver request fails', async () => {
@@ -204,9 +204,9 @@ describe('ProfileApplication', () => {
       vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('Network error'));
 
-      await expect(
-        ProfileApplication.commitUpdateDetailsStatus({ pubky: testPubky, status: 'vacationing' }),
-      ).rejects.toThrow('Network error');
+      await expect(ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
+        'Network error',
+      );
 
       // Verify local DB was NOT updated
       const unchangedUser = await Core.UserDetailsModel.findById(testPubky);
@@ -234,7 +234,7 @@ describe('ProfileApplication', () => {
         .mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.commitUpdateDetailsStatus({ pubky: testPubky, status: 'busy' });
+      await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'busy' });
 
       // Verify normalizer called with empty strings/arrays for null values
       expect(normalizerSpy).toHaveBeenCalledWith(

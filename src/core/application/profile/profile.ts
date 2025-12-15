@@ -13,7 +13,7 @@ export class ProfileApplication {
    * @param url - The URL of the profile
    * @param pubky - The public key of the user
    */
-  static async commitSetDetails({ profile, url, pubky }: Core.TCreateProfileInput) {
+  static async commitCreate({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
       const authStore = Core.useAuthStore.getState();
@@ -32,7 +32,7 @@ export class ProfileApplication {
    *
    * @param params - Parameters containing user's public key and profile data
    */
-  static async commitUpdateDetails({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
+  static async commitUpdate({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
     try {
       const userDetails = await Core.LocalUserService.readDetails({ userId: pubky });
       if (!userDetails) {
@@ -62,7 +62,7 @@ export class ProfileApplication {
   /**
    * Updates user status in both homeserver and local database.
    */
-  static async commitUpdateDetailsStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+  static async commitUpdateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
     try {
       // Get current user details from local DB
       const currentUser = await Core.UserDetailsModel.findById(pubky);
@@ -97,9 +97,14 @@ export class ProfileApplication {
     }
   }
 
-  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountParams) {
+  /**
+   * Commits the delete profile operation to the homeserver and local database.
+   * @param pubky - The public key of the user
+   * @param setProgress - The function to set the progress
+   */
+  static async commitDelete({ pubky, setProgress }: Core.TDeleteAccountParams) {
     // Clear local IndexedDB data first
-    await Core.LocalProfileService.deleteAccount();
+    await Core.LocalProfileService.deleteAll();
 
     const baseDirectory = Specs.baseUriBuilder(pubky);
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since

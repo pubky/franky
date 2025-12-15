@@ -3,11 +3,11 @@ import { UserResult } from 'pubky-app-specs';
 import type { Pubky } from '@/core/models/models.types';
 
 const mockProfileApplication = {
-  commitSetDetails: vi.fn(),
-  deleteAccount: vi.fn(),
+  commitCreate: vi.fn(),
+  commitDelete: vi.fn(),
   downloadData: vi.fn(),
-  commitUpdateDetailsStatus: vi.fn(),
-  commitUpdateDetails: vi.fn(),
+  commitUpdateStatus: vi.fn(),
+  commitUpdate: vi.fn(),
 };
 
 const mockUserNormalizer = {
@@ -67,11 +67,11 @@ describe('ProfileController', () => {
     vi.resetModules();
     vi.clearAllMocks();
 
-    mockProfileApplication.commitSetDetails.mockReset();
-    mockProfileApplication.deleteAccount.mockReset();
+    mockProfileApplication.commitCreate.mockReset();
+    mockProfileApplication.commitDelete.mockReset();
     mockProfileApplication.downloadData.mockReset();
-    mockProfileApplication.commitUpdateDetailsStatus.mockReset();
-    mockProfileApplication.commitUpdateDetails.mockReset();
+    mockProfileApplication.commitUpdateStatus.mockReset();
+    mockProfileApplication.commitUpdate.mockReset();
     mockUserNormalizer.to.mockReset();
     mockIdentity.generateSecrets.mockReset();
     mockIdentity.pubkyFromSecret.mockReset();
@@ -101,7 +101,7 @@ describe('ProfileController', () => {
       };
 
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
-      mockProfileApplication.commitSetDetails.mockResolvedValue(undefined);
+      mockProfileApplication.commitCreate.mockResolvedValue(undefined);
 
       await ProfileController.commitCreate({
         profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
@@ -121,7 +121,7 @@ describe('ProfileController', () => {
         testPubky,
       );
 
-      expect(mockProfileApplication.commitSetDetails).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitCreate).toHaveBeenCalledWith({
         profile: userResult.user,
         url: userResult.meta.url,
         pubky: testPubky,
@@ -138,7 +138,7 @@ describe('ProfileController', () => {
       };
 
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
-      mockProfileApplication.commitSetDetails.mockResolvedValue(undefined);
+      mockProfileApplication.commitCreate.mockResolvedValue(undefined);
 
       await ProfileController.commitCreate({
         profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
@@ -157,7 +157,7 @@ describe('ProfileController', () => {
         testPubky,
       );
 
-      expect(mockProfileApplication.commitSetDetails).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitCreate).toHaveBeenCalledWith({
         profile: userResult.user,
         url: userResult.meta.url,
         pubky: testPubky,
@@ -182,7 +182,7 @@ describe('ProfileController', () => {
           pubky: testPubky,
         }),
       ).rejects.toThrow('validation failed');
-      expect(mockProfileApplication.commitSetDetails).not.toHaveBeenCalled();
+      expect(mockProfileApplication.commitCreate).not.toHaveBeenCalled();
     });
 
     it('propagates errors from the application layer', async () => {
@@ -196,7 +196,7 @@ describe('ProfileController', () => {
       };
 
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
-      mockProfileApplication.commitSetDetails.mockRejectedValue(new Error('create failed'));
+      mockProfileApplication.commitCreate.mockRejectedValue(new Error('create failed'));
 
       await expect(
         ProfileController.commitCreate({
@@ -271,27 +271,27 @@ describe('ProfileController', () => {
     });
   });
 
-  describe('deleteAccount', () => {
-    it('delegates to ProfileApplication.deleteAccount', async () => {
+  describe('commitDelete', () => {
+    it('delegates to ProfileApplication.commitDelete', async () => {
       const setProgress = vi.fn();
 
-      mockProfileApplication.deleteAccount.mockResolvedValue(undefined);
+      mockProfileApplication.commitDelete.mockResolvedValue(undefined);
 
-      await ProfileController.deleteAccount({ pubky: testPubky, setProgress });
+      await ProfileController.commitDelete({ pubky: testPubky, setProgress });
 
-      expect(mockProfileApplication.deleteAccount).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitDelete).toHaveBeenCalledWith({
         pubky: testPubky,
         setProgress,
       });
     });
 
-    it('propagates errors from ProfileApplication.deleteAccount', async () => {
+    it('propagates errors from ProfileApplication.commitDelete', async () => {
       const setProgress = vi.fn();
       const error = new Error('delete failed');
 
-      mockProfileApplication.deleteAccount.mockRejectedValue(error);
+      mockProfileApplication.commitDelete.mockRejectedValue(error);
 
-      await expect(ProfileController.deleteAccount({ pubky: testPubky, setProgress })).rejects.toThrow('delete failed');
+      await expect(ProfileController.commitDelete({ pubky: testPubky, setProgress })).rejects.toThrow('delete failed');
     });
   });
 
@@ -322,21 +322,21 @@ describe('ProfileController', () => {
   });
 
   describe('commitUpdateStatus', () => {
-    it('delegates to ProfileApplication.commitUpdateDetailsStatus', async () => {
-      mockProfileApplication.commitUpdateDetailsStatus.mockResolvedValue(undefined);
+    it('delegates to ProfileApplication.commitUpdateStatus', async () => {
+      mockProfileApplication.commitUpdateStatus.mockResolvedValue(undefined);
 
       await ProfileController.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' });
 
-      expect(mockProfileApplication.commitUpdateDetailsStatus).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitUpdateStatus).toHaveBeenCalledWith({
         pubky: testPubky,
         status: 'vacationing',
       });
     });
 
-    it('propagates errors from ProfileApplication.commitUpdateDetailsStatus', async () => {
+    it('propagates errors from ProfileApplication.commitUpdateStatus', async () => {
       const error = new Error('update status failed');
 
-      mockProfileApplication.commitUpdateDetailsStatus.mockRejectedValue(error);
+      mockProfileApplication.commitUpdateStatus.mockRejectedValue(error);
 
       await expect(ProfileController.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
         'update status failed',
@@ -352,7 +352,7 @@ describe('ProfileController', () => {
         links: [{ label: 'GitHub', url: 'https://github.com' }],
       };
 
-      mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
+      mockProfileApplication.commitUpdate.mockResolvedValue(undefined);
 
       await ProfileController.commitUpdate({
         name: profile.name,
@@ -363,7 +363,7 @@ describe('ProfileController', () => {
       });
 
       expect(mockUserNormalizer.linksFromUi).toHaveBeenCalledWith(profile.links);
-      expect(mockProfileApplication.commitUpdateDetails).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitUpdate).toHaveBeenCalledWith({
         pubky: testPubky,
         name: 'Updated User',
         bio: 'Updated bio',
@@ -377,7 +377,7 @@ describe('ProfileController', () => {
         name: 'Updated User',
       };
 
-      mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
+      mockProfileApplication.commitUpdate.mockResolvedValue(undefined);
 
       await ProfileController.commitUpdate({
         name: profile.name,
@@ -387,7 +387,7 @@ describe('ProfileController', () => {
         pubky: testPubky,
       });
 
-      expect(mockProfileApplication.commitUpdateDetails).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitUpdate).toHaveBeenCalledWith({
         pubky: testPubky,
         name: 'Updated User',
         bio: undefined,
@@ -402,7 +402,7 @@ describe('ProfileController', () => {
         bio: 'Updated bio',
       };
 
-      mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
+      mockProfileApplication.commitUpdate.mockResolvedValue(undefined);
 
       await ProfileController.commitUpdate({
         name: profile.name,
@@ -412,7 +412,7 @@ describe('ProfileController', () => {
         pubky: testPubky,
       });
 
-      expect(mockProfileApplication.commitUpdateDetails).toHaveBeenCalledWith({
+      expect(mockProfileApplication.commitUpdate).toHaveBeenCalledWith({
         pubky: testPubky,
         name: 'Updated User',
         bio: 'Updated bio',
@@ -428,7 +428,7 @@ describe('ProfileController', () => {
       };
       const error = new Error('update failed');
 
-      mockProfileApplication.commitUpdateDetails.mockRejectedValue(error);
+      mockProfileApplication.commitUpdate.mockRejectedValue(error);
 
       await expect(
         ProfileController.commitUpdate({

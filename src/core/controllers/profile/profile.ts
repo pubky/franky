@@ -5,6 +5,12 @@ import * as Libs from '@/libs';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
+  /**
+   * Commits the create profile operation to the homeserver.
+   * @param profile - The profile to create
+   * @param image - The image to create
+   * @param pubky - The public key of the user
+   */
   static async commitCreate({ profile, image, pubky }: Core.TCommitSetDetailsParams) {
     const { user, meta } = Core.UserNormalizer.to(
       {
@@ -17,15 +23,28 @@ export class ProfileController {
       pubky,
     );
 
-    await Core.ProfileApplication.commitSetDetails({ profile: user, url: meta.url, pubky });
+    await Core.ProfileApplication.commitCreate({ profile: user, url: meta.url, pubky });
   }
 
+  /**
+   * Commits the update status operation to the homeserver and local database.
+   * @param pubky - The public key of the user
+   * @param status - The status to update
+   */
   static async commitUpdateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
-    return await Core.ProfileApplication.commitUpdateDetailsStatus({ pubky, status });
+    return await Core.ProfileApplication.commitUpdateStatus({ pubky, status });
   }
 
+  /**
+   * Commits the update profile operation to the homeserver and local database.
+   * @param name - The name to update
+   * @param bio - The bio to update
+   * @param links - The links to update
+   * @param image - The image to update
+   * @param pubky - The public key of the user
+   */
   static async commitUpdate({ name, bio, links, image, pubky }: Core.TCommitUpdateDetailsParams) {
-    await Core.ProfileApplication.commitUpdateDetails({
+    await Core.ProfileApplication.commitUpdate({
       pubky,
       name,
       bio,
@@ -53,10 +72,20 @@ export class ProfileController {
     Libs.Identity.createRecoveryFile({ keypair, passphrase });
   }
 
-  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
-    await Core.ProfileApplication.deleteAccount({ pubky, setProgress });
+  /**
+   * Commits the delete profile operation to the homeserver and local database.
+   * @param pubky - The public key of the user
+   * @param setProgress - The function to set the progress
+   */
+  static async commitDelete({ pubky, setProgress }: Core.TDeleteAccountInput) {
+    await Core.ProfileApplication.commitDelete({ pubky, setProgress });
   }
 
+  /**
+   * Downloads all user data from the homeserver and packages it into a ZIP file.
+   * @param pubky - The public key of the user
+   * @param setProgress - The function to set the progress
+   */
   static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
     await Core.ProfileApplication.downloadData({ pubky, setProgress });
   }

@@ -15,15 +15,6 @@ export class LocalProfileService {
   }
 
   /**
-   * Checks if a profile exists in the local database.
-   * @param pubky - The public key of the user
-   * @returns Promise resolving to boolean
-   */
-  static async existsProfile(pubky: Core.Pubky): Promise<boolean> {
-    return await Core.UserDetailsModel.exists(pubky);
-  }
-
-  /**
    * Updates user details into local database.
    * @param userDetails - The user details to update
    * @returns Promise resolving to void
@@ -41,7 +32,7 @@ export class LocalProfileService {
    * Deletes the user account from the local database.
    * @returns Promise resolving to void
    */
-  static async deleteAccount() {
+  static async deleteAll() {
     try {
       await Core.db.transaction(
         'rw',
