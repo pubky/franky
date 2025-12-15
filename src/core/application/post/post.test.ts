@@ -30,8 +30,8 @@ vi.mock('@/core/application/file', () => ({
 // Mock the TagApplication
 vi.mock('@/core/application/tag', () => ({
   TagApplication: {
-    create: vi.fn(),
-    delete: vi.fn(),
+    commitCreate: vi.fn(),
+    commitDelete: vi.fn(),
   },
 }));
 
@@ -91,7 +91,7 @@ describe('Post Application', () => {
     uploadSpy: vi.spyOn(Core.FileApplication, 'upload').mockResolvedValue(undefined),
     saveSpy: vi.spyOn(Core.LocalPostService, 'create').mockResolvedValue(undefined),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined),
-    tagCreateSpy: vi.spyOn(Core.TagApplication, 'create').mockResolvedValue(undefined),
+    tagCreateSpy: vi.spyOn(Core.TagApplication, 'commitCreate').mockResolvedValue(undefined),
   });
 
   const setupDeleteSpies = () => ({

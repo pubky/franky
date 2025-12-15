@@ -33,8 +33,8 @@ vi.mock('@/core', async () => {
       getCounts: mockMocks.mockGetCounts,
     },
     TagController: {
-      create: mockMocks.mockTagCreate,
-      delete: mockMocks.mockTagDelete,
+      commitCreate: mockMocks.mockTagCreate,
+      commitDelete: mockMocks.mockTagDelete,
     },
     useAuthStore: vi.fn(
       (selector?: (state: { currentUserPubky: string; selectCurrentUserPubky: () => string }) => unknown) => {

@@ -9,8 +9,8 @@ vi.mock('@/core', () => ({
     getPostTags: vi.fn().mockResolvedValue([]),
   },
   TagController: {
-    create: vi.fn().mockResolvedValue(undefined),
-    delete: vi.fn().mockResolvedValue(undefined),
+    commitCreate: vi.fn().mockResolvedValue(undefined),
+    commitDelete: vi.fn().mockResolvedValue(undefined),
   },
   TagKind: {
     POST: 'post',

@@ -25,7 +25,7 @@ Controller method names encode IO behavior and delivery guarantees:
   - **`getManyOrFetch*`** — Bulk IndexedDB first, fetch missing from Nexus
 
 - **Write operations**
-  - **`commit[Set|Update|Delete]*`** — Local-first writes with homeserver sync
+  - **`commit[Create|Update|Delete]*`** — Local-first writes with homeserver sync
 
 The `commit*` prefix indicates:
 
@@ -35,7 +35,7 @@ The `commit*` prefix indicates:
 
 The suffix indicates the mutation shape:
 
-- `Set` — Create new entity
+- `Create` — Create new entity
 - `Update` — Modify existing entity
 - `Delete` — Remove entity
 

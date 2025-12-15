@@ -96,7 +96,7 @@ export class PostApplication {
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
 
     if (tags && tags.length > 0) {
-      await Core.TagApplication.create({ tagList: tags });
+      await Core.TagApplication.commitCreate({ tagList: tags });
     }
   }
 

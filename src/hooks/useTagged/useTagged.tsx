@@ -13,7 +13,7 @@ import { TAGS_PER_PAGE } from './useTagged.constants';
  * Unified hook for fetching and managing user tags.
  * Uses useLiveQuery on IndexedDB for automatic reactivity across all instances.
  *
- * The TagController.create/delete methods follow local-first pattern:
+ * The TagController.commitCreate/commitDelete methods follow local-first pattern:
  * they update IndexedDB first, then sync to server.
  * This means useLiveQuery will react immediately to changes.
  */
@@ -144,9 +144,9 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
       }
 
       try {
-        // TagController.create updates IndexedDB first (local-first), then syncs to server
+        // TagController.commitCreate updates IndexedDB first (local-first), then syncs to server
         // useLiveQuery will automatically react to the IndexedDB change
-        await Core.TagController.create({
+        await Core.TagController.commitCreate({
           taggedId: userId as Core.Pubky,
           label,
           taggerId: viewerId,
@@ -209,11 +209,11 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
             });
           }
 
-          // TagController.delete updates IndexedDB first (local-first), then syncs to server
-          await Core.TagController.delete(params);
+          // TagController.commitDelete updates IndexedDB first (local-first), then syncs to server
+          await Core.TagController.commitDelete(params);
         } else {
-          // TagController.create updates IndexedDB first (local-first), then syncs to server
-          await Core.TagController.create(params);
+          // TagController.commitCreate updates IndexedDB first (local-first), then syncs to server
+          await Core.TagController.commitCreate(params);
 
           // Remove from zero-tagger list
           setZeroTaggerTags((prev) => {

@@ -12,7 +12,7 @@ import { TAGS_PER_PAGE } from './usePostTags.constants';
  * Hook for fetching and managing post tags with pagination.
  * Uses useLiveQuery with PostController for automatic reactivity.
  *
- * The TagController.create/delete methods follow local-first pattern:
+ * The TagController.commitCreate/commitDelete methods follow local-first pattern:
  * they update IndexedDB first, then sync to server.
  * This means useLiveQuery will react immediately to changes.
  */
@@ -107,7 +107,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
       }
 
       try {
-        await Core.TagController.create({
+        await Core.TagController.commitCreate({
           taggedId: postId,
           label,
           taggerId: viewerId,
@@ -138,14 +138,14 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
 
       try {
         if (userIsTagger) {
-          await Core.TagController.delete({
+          await Core.TagController.commitDelete({
             taggedId: postId,
             label: tag.label,
             taggerId: viewerId,
             taggedKind: Core.TagKind.POST,
           });
         } else {
-          await Core.TagController.create({
+          await Core.TagController.commitCreate({
             taggedId: postId,
             label: tag.label,
             taggerId: viewerId,
