@@ -30,7 +30,7 @@ vi.mock('@/core', async (importOriginal) => {
   return {
     ...actual,
     StreamPostsController: {
-      getUnreadStreamById: vi.fn(() => Promise.resolve(mockUnreadStream.current)),
+      getUnreadStream: vi.fn(() => Promise.resolve(mockUnreadStream.current)),
     },
   };
 });

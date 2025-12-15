@@ -54,13 +54,13 @@ describe('LocalStreamPostsService', () => {
   };
 
   const verifyStream = async (expectedPostIds: string[]) => {
-    const result = await Core.LocalStreamPostsService.findById({ streamId });
+    const result = await Core.LocalStreamPostsService.read({ streamId });
     expect(result).toBeTruthy();
     expect(result!.stream).toEqual(expectedPostIds);
   };
 
   const verifyStreamDoesNotExist = async () => {
-    const result = await Core.LocalStreamPostsService.findById({ streamId });
+    const result = await Core.LocalStreamPostsService.read({ streamId });
     expect(result).toBeNull();
   };
 
@@ -168,14 +168,14 @@ describe('LocalStreamPostsService', () => {
       ];
       await createStream(postIds);
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
 
       expect(result).toBeTruthy();
       expect(result!.stream).toEqual(postIds);
     });
 
     it('should return null when stream does not exist', async () => {
-      const result = await Core.LocalStreamPostsService.findById({ streamId: NON_EXISTENT_STREAM_ID });
+      const result = await Core.LocalStreamPostsService.read({ streamId: NON_EXISTENT_STREAM_ID });
 
       expect(result).toBeNull();
     });
@@ -190,7 +190,7 @@ describe('LocalStreamPostsService', () => {
       );
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
 
-      await expect(Core.LocalStreamPostsService.findById({ streamId })).rejects.toThrow('Database query failed');
+      await expect(Core.LocalStreamPostsService.read({ streamId })).rejects.toThrow('Database query failed');
     });
   });
 
@@ -424,14 +424,14 @@ describe('LocalStreamPostsService', () => {
     it('should create stream when it does not exist', async () => {
       const newChunk = [postId('post-1'), postId('post-2')];
 
-      expect(await Core.LocalStreamPostsService.findById({ streamId: NON_EXISTENT_STREAM_ID })).toBeNull();
+      expect(await Core.LocalStreamPostsService.read({ streamId: NON_EXISTENT_STREAM_ID })).toBeNull();
 
       await Core.LocalStreamPostsService.persistNewStreamChunk({
         streamId: NON_EXISTENT_STREAM_ID,
         stream: newChunk,
       });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId: NON_EXISTENT_STREAM_ID });
+      const result = await Core.LocalStreamPostsService.read({ streamId: NON_EXISTENT_STREAM_ID });
       expect(result?.stream).toEqual(newChunk);
     });
 
@@ -471,7 +471,7 @@ describe('LocalStreamPostsService', () => {
         stream: newChunk,
       });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream).toHaveLength(3);
       expect(result?.stream).toContain(postId('post-1'));
       expect(result?.stream).toContain(postId('post-2'));
@@ -493,7 +493,7 @@ describe('LocalStreamPostsService', () => {
       await createStream(initialStream);
       await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream).toEqual([postId('post-3'), postId('post-2'), postId('post-1')]);
     });
 
@@ -513,7 +513,7 @@ describe('LocalStreamPostsService', () => {
 
       await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream).toEqual([postId('post-1'), postId('post-2')]);
     });
 
@@ -533,7 +533,7 @@ describe('LocalStreamPostsService', () => {
 
       await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream).toEqual([postId('post-1'), postId('post-2'), postId('post-3'), postId('post-4')]);
     });
 
@@ -553,7 +553,7 @@ describe('LocalStreamPostsService', () => {
       await createStream(initialStream);
       await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream).toEqual([postId('post-3'), postId('post-2'), postId('post-1'), postId('post-4')]);
     });
 
@@ -572,7 +572,7 @@ describe('LocalStreamPostsService', () => {
       await createStream(initialStream);
       await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream.filter((id) => id === postId('post-2')).length).toBe(2);
       expect(result?.stream).toHaveLength(4);
     });
@@ -891,7 +891,7 @@ describe('LocalStreamPostsService', () => {
 
       await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result?.stream).toEqual([...unreadStream, ...postStream]);
     });
 
@@ -910,7 +910,7 @@ describe('LocalStreamPostsService', () => {
       await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
 
       // Post stream should not be created
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       expect(result).toBeNull();
     });
 
@@ -938,7 +938,7 @@ describe('LocalStreamPostsService', () => {
 
       await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
 
-      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      const result = await Core.LocalStreamPostsService.read({ streamId });
       // Shared post should only appear once, from the unread stream
       expect(result?.stream).toEqual([postId('unread-1'), sharedPostId, postId('post-1')]);
     });
@@ -1031,8 +1031,8 @@ describe('LocalStreamPostsService', () => {
         ],
       });
 
-      const result1 = await Core.LocalStreamPostsService.findById({ streamId: streamId1 });
-      const result2 = await Core.LocalStreamPostsService.findById({ streamId: streamId2 });
+      const result1 = await Core.LocalStreamPostsService.read({ streamId: streamId1 });
+      const result2 = await Core.LocalStreamPostsService.read({ streamId: streamId2 });
 
       expect(result1?.stream).toEqual(stream1);
       expect(result2?.stream).toEqual(stream2);
@@ -1055,19 +1055,19 @@ describe('LocalStreamPostsService', () => {
     });
   });
 
-  describe('getUnreadStreamById', () => {
+  describe('readUnreadStream', () => {
     it('should return unread stream when it exists', async () => {
       const unreadPostIds = [postId('unread-1'), postId('unread-2')];
       await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, unreadPostIds);
 
-      const result = await Core.LocalStreamPostsService.getUnreadStreamById({ streamId });
+      const result = await Core.LocalStreamPostsService.readUnreadStream({ streamId });
 
       expect(result).toBeTruthy();
       expect(result!.stream).toEqual(unreadPostIds);
     });
 
     it('should return null when unread stream does not exist', async () => {
-      const result = await Core.LocalStreamPostsService.getUnreadStreamById({
+      const result = await Core.LocalStreamPostsService.readUnreadStream({
         streamId: NON_EXISTENT_STREAM_ID,
       });
 
@@ -1083,7 +1083,7 @@ describe('LocalStreamPostsService', () => {
       );
       vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
 
-      await expect(Core.LocalStreamPostsService.getUnreadStreamById({ streamId })).rejects.toThrow(
+      await expect(Core.LocalStreamPostsService.readUnreadStream({ streamId })).rejects.toThrow(
         'Database query failed',
       );
     });

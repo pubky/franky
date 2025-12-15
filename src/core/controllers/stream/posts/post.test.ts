@@ -496,32 +496,32 @@ describe('StreamPostsController', () => {
     });
   });
 
-  describe('getUnreadStreamById', () => {
-    it('should delegate to PostStreamApplication.getUnreadStreamById with correct params', async () => {
+  describe('getUnreadStream', () => {
+    it('should delegate to PostStreamApplication.getUnreadStream with correct params', async () => {
       const mockUnreadStream = { stream: ['post-1', 'post-2'] };
-      const getUnreadStreamByIdSpy = vi
-        .spyOn(Core.PostStreamApplication, 'getUnreadStreamById')
+      const getUnreadStreamSpy = vi
+        .spyOn(Core.PostStreamApplication, 'getUnreadStream')
         .mockResolvedValue(mockUnreadStream);
 
-      const result = await StreamPostsController.getUnreadStreamById({ streamId });
+      const result = await StreamPostsController.getUnreadStream({ streamId });
 
-      expect(getUnreadStreamByIdSpy).toHaveBeenCalledWith({ streamId });
+      expect(getUnreadStreamSpy).toHaveBeenCalledWith({ streamId });
       expect(result).toEqual(mockUnreadStream);
     });
 
     it('should return null when unread stream does not exist', async () => {
-      vi.spyOn(Core.PostStreamApplication, 'getUnreadStreamById').mockResolvedValue(null);
+      vi.spyOn(Core.PostStreamApplication, 'getUnreadStream').mockResolvedValue(null);
 
-      const result = await StreamPostsController.getUnreadStreamById({ streamId });
+      const result = await StreamPostsController.getUnreadStream({ streamId });
 
       expect(result).toBeNull();
     });
 
     it('should propagate errors from application layer', async () => {
       const applicationError = new Error('Database error');
-      vi.spyOn(Core.PostStreamApplication, 'getUnreadStreamById').mockRejectedValue(applicationError);
+      vi.spyOn(Core.PostStreamApplication, 'getUnreadStream').mockRejectedValue(applicationError);
 
-      await expect(StreamPostsController.getUnreadStreamById({ streamId })).rejects.toThrow('Database error');
+      await expect(StreamPostsController.getUnreadStream({ streamId })).rejects.toThrow('Database error');
     });
   });
 

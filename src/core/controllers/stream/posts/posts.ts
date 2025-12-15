@@ -109,8 +109,8 @@ export class StreamPostsController {
    * @param streamId - The ID of the stream
    * @returns The unread stream or null if not found
    */
-  static async getUnreadStreamById(params: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
-    return await Core.PostStreamApplication.getUnreadStreamById(params);
+  static async getUnreadStream(params: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+    return await Core.PostStreamApplication.getUnreadStream(params);
   }
 
   /**

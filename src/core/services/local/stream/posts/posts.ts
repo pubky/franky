@@ -10,7 +10,7 @@ import { Logger } from '@/libs/logger';
 export class LocalStreamPostsService {
   private constructor() {}
 
-  static async getUnreadStreamById({ streamId }: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+  static async readUnreadStream({ streamId }: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
     return await Core.UnreadPostStreamModel.findById(streamId);
   }
 
@@ -32,7 +32,7 @@ export class LocalStreamPostsService {
   /**
    * Get a stream of post IDs by stream ID
    */
-  static async findById({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
+  static async read({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
     return await Core.PostStreamModel.findById(streamId);
   }
 
@@ -88,7 +88,7 @@ export class LocalStreamPostsService {
    * @param compositePostId - The composite post ID to prepend
    */
   static async prependToStream({ streamId, compositePostId }: Core.TPrependToStreamParams): Promise<void> {
-    const existing = await this.findById({ streamId });
+    const existing = await this.read({ streamId });
     const currentStream = existing?.stream || [];
 
     if (currentStream.includes(compositePostId)) return;
@@ -104,7 +104,7 @@ export class LocalStreamPostsService {
    * @param compositePostId - The composite post ID to remove
    */
   static async removeFromStream({ streamId, compositePostId }: Core.TPrependToStreamParams): Promise<void> {
-    const existing = await this.findById({ streamId });
+    const existing = await this.read({ streamId });
     if (!existing) return;
 
     const updatedStream = existing.stream.filter((id) => id !== compositePostId);
