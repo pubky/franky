@@ -67,7 +67,7 @@ export function useProfileActions({ publicKey, link }: UseProfileActionsProps): 
       }
 
       try {
-        await Core.ProfileController.commitUpdateDetailsStatus({ pubky: currentUserPubky, status });
+        await Core.ProfileController.commitUpdateStatus({ pubky: currentUserPubky, status });
       } catch (error) {
         console.error('Failed to update status:', error);
       }

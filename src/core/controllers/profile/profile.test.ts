@@ -88,7 +88,7 @@ describe('ProfileController', () => {
     ({ ProfileController } = await import('./profile'));
   });
 
-  describe('create', () => {
+  describe('commitCreate', () => {
     it('normalizes profile data and delegates to application layer', async () => {
       const profile = {
         name: 'Test User',
@@ -103,7 +103,7 @@ describe('ProfileController', () => {
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.commitSetDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitSetDetails({
+      await ProfileController.commitCreate({
         profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
         image: 'image-url',
         pubky: testPubky,
@@ -140,7 +140,7 @@ describe('ProfileController', () => {
       mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.commitSetDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitSetDetails({
+      await ProfileController.commitCreate({
         profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
         image: null,
         pubky: testPubky,
@@ -176,7 +176,7 @@ describe('ProfileController', () => {
       });
 
       await expect(
-        ProfileController.commitSetDetails({
+        ProfileController.commitCreate({
           profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
           image: null,
           pubky: testPubky,
@@ -199,7 +199,7 @@ describe('ProfileController', () => {
       mockProfileApplication.commitSetDetails.mockRejectedValue(new Error('create failed'));
 
       await expect(
-        ProfileController.commitSetDetails({
+        ProfileController.commitCreate({
           profile: profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
           image: null,
           pubky: testPubky,
@@ -321,11 +321,11 @@ describe('ProfileController', () => {
     });
   });
 
-  describe('commitUpdateDetailsStatus', () => {
+  describe('commitUpdateStatus', () => {
     it('delegates to ProfileApplication.commitUpdateDetailsStatus', async () => {
       mockProfileApplication.commitUpdateDetailsStatus.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetailsStatus({ pubky: testPubky, status: 'vacationing' });
+      await ProfileController.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' });
 
       expect(mockProfileApplication.commitUpdateDetailsStatus).toHaveBeenCalledWith({
         pubky: testPubky,
@@ -338,13 +338,13 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetailsStatus.mockRejectedValue(error);
 
-      await expect(
-        ProfileController.commitUpdateDetailsStatus({ pubky: testPubky, status: 'vacationing' }),
-      ).rejects.toThrow('update status failed');
+      await expect(ProfileController.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
+        'update status failed',
+      );
     });
   });
 
-  describe('commitUpdateDetails', () => {
+  describe('commitUpdate', () => {
     it('normalizes profile data and delegates to application layer', async () => {
       const profile = {
         name: 'Updated User',
@@ -354,7 +354,7 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetails({
+      await ProfileController.commitUpdate({
         name: profile.name,
         bio: profile.bio,
         links: profile.links,
@@ -379,7 +379,7 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetails({
+      await ProfileController.commitUpdate({
         name: profile.name,
         bio: undefined,
         links: undefined,
@@ -404,7 +404,7 @@ describe('ProfileController', () => {
 
       mockProfileApplication.commitUpdateDetails.mockResolvedValue(undefined);
 
-      await ProfileController.commitUpdateDetails({
+      await ProfileController.commitUpdate({
         name: profile.name,
         bio: profile.bio,
         links: undefined,
@@ -431,7 +431,7 @@ describe('ProfileController', () => {
       mockProfileApplication.commitUpdateDetails.mockRejectedValue(error);
 
       await expect(
-        ProfileController.commitUpdateDetails({
+        ProfileController.commitUpdate({
           name: profile.name,
           bio: profile.bio,
           links: undefined,

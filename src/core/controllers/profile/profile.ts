@@ -5,7 +5,7 @@ import * as Libs from '@/libs';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
-  static async commitSetDetails({ profile, image, pubky }: Core.TCommitSetDetailsParams) {
+  static async commitCreate({ profile, image, pubky }: Core.TCommitSetDetailsParams) {
     const { user, meta } = Core.UserNormalizer.to(
       {
         name: profile.name,
@@ -20,11 +20,11 @@ export class ProfileController {
     await Core.ProfileApplication.commitSetDetails({ profile: user, url: meta.url, pubky });
   }
 
-  static async commitUpdateDetailsStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+  static async commitUpdateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
     return await Core.ProfileApplication.commitUpdateDetailsStatus({ pubky, status });
   }
 
-  static async commitUpdateDetails({ name, bio, links, image, pubky }: Core.TCommitUpdateDetailsParams) {
+  static async commitUpdate({ name, bio, links, image, pubky }: Core.TCommitUpdateDetailsParams) {
     await Core.ProfileApplication.commitUpdateDetails({
       pubky,
       name,

@@ -18,7 +18,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     PostController: {
       ...actual.PostController,
-      getPostDetails: vi.fn().mockResolvedValue({ content: 'Mock content', attachments: null }),
+      getDetails: vi.fn().mockResolvedValue({ content: 'Mock content', attachments: null }),
     },
   };
 });
@@ -45,7 +45,7 @@ vi.mock('@/organisms', () => ({
 }));
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
-const mockGetPostDetails = vi.mocked(Core.PostController.getPostDetails);
+const mockReadPostDetails = vi.mocked(Core.PostController.getDetails);
 const mockPostText = vi.mocked(Molecules.PostText);
 const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
 const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
@@ -54,7 +54,7 @@ describe('PostContent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset mock to return a default value
-    mockGetPostDetails.mockResolvedValue({ content: 'Mock content', attachments: null });
+    mockReadPostDetails.mockResolvedValue({ content: 'Mock content', attachments: null });
   });
 
   it('renders content when postDetails are available', () => {
@@ -74,10 +74,10 @@ describe('PostContent', () => {
     expect(container.firstChild).toHaveTextContent('Loading content...');
   });
 
-  it('calls PostController.getPostDetails with correct compositeId', async () => {
+  it('calls PostController.getDetails with correct compositeId', async () => {
     const mockPostDetails = { content: 'Hello', attachments: null };
     mockUseLiveQuery.mockReturnValue(mockPostDetails);
-    mockGetPostDetails.mockResolvedValue(mockPostDetails);
+    mockReadPostDetails.mockResolvedValue(mockPostDetails);
 
     render(<PostContent postId="post-abc" />);
 
@@ -85,7 +85,7 @@ describe('PostContent', () => {
     const callback = mockUseLiveQuery.mock.calls[0][0] as () => Promise<unknown>;
     await callback();
 
-    expect(mockGetPostDetails).toHaveBeenCalledWith({ compositeId: 'post-abc' });
+    expect(mockReadPostDetails).toHaveBeenCalledWith({ compositeId: 'post-abc' });
   });
 
   it('calls PostText with correct content prop', () => {

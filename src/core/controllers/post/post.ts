@@ -6,46 +6,66 @@ export class PostController {
   private constructor() {} // Prevent instantiation
 
   /**
-   * Get post details from local database
+   * Read post details from local database
    * @param params - Parameters object
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getPostDetails({ compositeId }: Core.TCompositeId) {
-    return await Core.PostApplication.getPostDetails({ compositeId });
+  static async getDetails({ compositeId }: Core.TCompositeId) {
+    return await Core.PostApplication.getDetails({ compositeId });
   }
 
   /**
-   * Get post counts for a specific post
+   * Read post counts for a specific post
    * @param params - Parameters object
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post counts (with default values if not found)
    */
-  static async getPostCounts({ compositeId }: Core.TCompositeId) {
-    return await Core.PostApplication.getPostCounts({ compositeId });
+  static async getCounts({ compositeId }: Core.TCompositeId) {
+    return await Core.PostApplication.getCounts({ compositeId });
   }
 
   /**
-   * Get or fetch a post - reads from local DB first, fetches from Nexus if not found
-   * @param params - Parameters object
-   * @param params.compositeId - Composite post ID in format "authorId:postId"
-   * @returns Post details or null if not found
-   */
-  static async getOrFetchPost({
-    compositeId,
-    viewerId,
-  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
-    return await Core.PostApplication.getOrFetchPost({ compositeId, viewerId });
-  }
-
-  /**
-   * Get post tags for a specific post from local database
+   * Read post tags for a specific post from local database
    * @param params - Parameters object
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post tags
    */
-  static async getPostTags({ compositeId }: Core.TCompositeId): Promise<Core.TagCollectionModelSchema<string>[]> {
-    return await Core.PostApplication.getPostTags({ compositeId });
+  static async getTags({ compositeId }: Core.TCompositeId): Promise<Core.TagCollectionModelSchema<string>[]> {
+    return await Core.PostApplication.getTags({ compositeId });
+  }
+
+  /**
+   * Read post relationships for a specific post
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @returns Post relationships or null if not found
+   */
+  static async getRelationships({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
+    return await Core.PostApplication.getRelationships({ compositeId });
+  }
+
+  /**
+   * Read all posts that are replies to a specific post
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID to read replies for
+   * @returns Array of post relationships that replied to this post
+   */
+  static async getReplies({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema[]> {
+    return await Core.PostApplication.getReplies({ compositeId });
+  }
+
+  /**
+   * Read or fetch a post - reads from local DB first, fetches from Nexus if not found
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @returns Post details or null if not found
+   */
+  static async getOrFetchDetails({
+    compositeId,
+    viewerId,
+  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
+    return await Core.PostApplication.getOrFetchDetails({ compositeId, viewerId });
   }
 
   /**
@@ -56,34 +76,8 @@ export class PostController {
    * @param params.limit - Maximum number of tags to return
    * @returns Array of tags from Nexus
    */
-  static async fetchMorePostTags({
-    compositeId,
-    skip,
-    limit,
-  }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
-    return await Core.PostApplication.fetchMorePostTags({ compositeId, skip, limit });
-  }
-
-  /**
-   * Get post relationships for a specific post
-   * @param params - Parameters object
-   * @param params.compositeId - Composite post ID in format "authorId:postId"
-   * @returns Post relationships or null if not found
-   */
-  static async getPostRelationships({
-    compositeId,
-  }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
-    return await Core.PostApplication.getPostRelationships({ compositeId });
-  }
-
-  /**
-   * Get all posts that are replies to a specific post
-   * @param params - Parameters object
-   * @param params.compositeId - Composite post ID to get replies for
-   * @returns Array of post relationships that replied to this post
-   */
-  static async getPostReplies({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema[]> {
-    return await Core.PostApplication.getPostReplies({ compositeId });
+  static async fetchTags({ compositeId, skip, limit }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
+    return await Core.PostApplication.fetchTags({ compositeId, skip, limit });
   }
 
   /**
@@ -98,7 +92,7 @@ export class PostController {
    * @param params.originalPostId - ID of the post being reposted (optional for reposts)
    * @returns The composite post ID of the created post
    */
-  static async create({
+  static async commitCreate({
     authorId,
     content,
     kind = PubkyAppPostKind.Short,
@@ -149,7 +143,7 @@ export class PostController {
 
     const compositePostId = Core.buildCompositeId({ pubky: authorId, id: postId });
 
-    await Core.PostApplication.create({
+    await Core.PostApplication.commitCreate({
       compositePostId,
       post,
       postUrl: meta.url,
@@ -165,7 +159,7 @@ export class PostController {
    * @param params - Parameters object
    * @param params.postId - ID of the post to delete
    */
-  static async delete({ compositePostId }: Core.TDeletePostParams) {
+  static async commitDelete({ compositePostId }: Core.TDeletePostParams) {
     const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
@@ -181,7 +175,7 @@ export class PostController {
       );
     }
 
-    await Core.PostApplication.delete({ compositePostId });
+    await Core.PostApplication.commitDelete({ compositePostId });
   }
 
   /**

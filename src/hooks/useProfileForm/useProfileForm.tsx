@@ -274,12 +274,12 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       setSubmitText('Saving profile...');
 
       if (mode === 'create') {
-        await Core.ProfileController.commitSetDetails({ profile: user, image, pubky });
+        await Core.ProfileController.commitCreate({ profile: user, image, pubky });
         await Core.AuthController.bootstrapWithDelay();
         setShowWelcomeDialog?.(true);
         router.push(App.HOME_ROUTES.HOME);
       } else {
-        await Core.ProfileController.commitUpdateDetails({
+        await Core.ProfileController.commitUpdate({
           name: user.name,
           bio: user.bio,
           links: user.links,

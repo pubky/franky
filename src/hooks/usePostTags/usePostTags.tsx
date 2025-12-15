@@ -40,7 +40,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
   const tagsCollection = useLiveQuery(
     async () => {
       if (!postId) return null;
-      return await Core.PostController.getPostTags({ compositeId: postId });
+      return await Core.PostController.getTags({ compositeId: postId });
     },
     [postId],
     undefined,
@@ -71,7 +71,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
     setIsLoadingMore(true);
     try {
       const skip = loadedCountRef.current;
-      const newTags = await Core.PostController.fetchMorePostTags({
+      const newTags = await Core.PostController.fetchTags({
         compositeId: postId,
         skip,
         limit: TAGS_PER_PAGE,

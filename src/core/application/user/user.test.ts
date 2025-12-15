@@ -225,7 +225,7 @@ describe('UserApplication.getOrFetchDetails', () => {
   });
 
   it('should return user details from local cache when available (local-first)', async () => {
-    const localSpy = vi.spyOn(Core.LocalUserService, 'getDetails').mockResolvedValue(mockUserDetails);
+    const localSpy = vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(mockUserDetails);
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
     const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockResolvedValue(undefined);
 
@@ -239,7 +239,7 @@ describe('UserApplication.getOrFetchDetails', () => {
 
   it('should fetch from Nexus and cache locally when not in local cache', async () => {
     const localSpy = vi
-      .spyOn(Core.LocalUserService, 'getDetails')
+      .spyOn(Core.LocalUserService, 'readDetails')
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(mockUserDetails);
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
@@ -254,7 +254,7 @@ describe('UserApplication.getOrFetchDetails', () => {
   });
 
   it('should return null when user not found in local cache or Nexus', async () => {
-    const localSpy = vi.spyOn(Core.LocalUserService, 'getDetails').mockResolvedValue(null);
+    const localSpy = vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(null);
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
     const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockResolvedValue(undefined);
 
@@ -267,7 +267,7 @@ describe('UserApplication.getOrFetchDetails', () => {
   });
 
   it('should propagate errors from local service', async () => {
-    vi.spyOn(Core.LocalUserService, 'getDetails').mockRejectedValue(new Error('Local database error'));
+    vi.spyOn(Core.LocalUserService, 'readDetails').mockRejectedValue(new Error('Local database error'));
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
 
     await expect(UserApplication.getOrFetchDetails({ userId })).rejects.toThrow('Local database error');
@@ -276,7 +276,7 @@ describe('UserApplication.getOrFetchDetails', () => {
   });
 
   it('should propagate errors from Nexus service when local cache is empty', async () => {
-    vi.spyOn(Core.LocalUserService, 'getDetails').mockResolvedValue(null);
+    vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(null);
     vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(new Error('Network error'));
     const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockResolvedValue(undefined);
 
@@ -286,7 +286,7 @@ describe('UserApplication.getOrFetchDetails', () => {
   });
 
   it('should propagate errors from upsert when caching Nexus data', async () => {
-    vi.spyOn(Core.LocalUserService, 'getDetails').mockResolvedValue(null);
+    vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(null);
     vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
     vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockRejectedValue(new Error('Cache write error'));
 
@@ -313,7 +313,7 @@ describe('UserApplication.getCounts', () => {
   });
 
   it('should return user counts from local cache', async () => {
-    const localSpy = vi.spyOn(Core.LocalUserService, 'getCounts').mockResolvedValue(mockUserCounts);
+    const localSpy = vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(mockUserCounts);
 
     const result = await UserApplication.getCounts({ userId });
 
@@ -322,7 +322,7 @@ describe('UserApplication.getCounts', () => {
   });
 
   it('should return null when user counts not found in local cache', async () => {
-    const localSpy = vi.spyOn(Core.LocalUserService, 'getCounts').mockResolvedValue(null);
+    const localSpy = vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(null);
 
     const result = await UserApplication.getCounts({ userId });
 
@@ -331,7 +331,7 @@ describe('UserApplication.getCounts', () => {
   });
 
   it('should propagate errors from local service', async () => {
-    vi.spyOn(Core.LocalUserService, 'getCounts').mockRejectedValue(new Error('Local database error'));
+    vi.spyOn(Core.LocalUserService, 'readCounts').mockRejectedValue(new Error('Local database error'));
 
     await expect(UserApplication.getCounts({ userId })).rejects.toThrow('Local database error');
   });
