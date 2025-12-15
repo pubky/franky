@@ -18,7 +18,7 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       overrideDefaults
       className={Libs.cn(
         'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
-        'top-[147px]', // 144px + 3px for the header
+        'top-[-230px]', // negative value stops sidebar scrolling up too far
         'w-full max-w-(--filter-bar-width)',
       )}
     >
