@@ -48,7 +48,8 @@ export function ProfilePageSidebar() {
       overrideDefaults={true}
       className={Libs.cn(
         'hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex',
-        shouldBeSticky && 'sticky top-(--header-height)',
+        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
+        shouldBeSticky !== false && 'sticky top-(--header-height)',
       )}
     >
       {!isTaggedPage && (

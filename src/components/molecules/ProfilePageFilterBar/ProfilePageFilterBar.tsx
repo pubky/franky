@@ -133,7 +133,8 @@ export function ProfilePageFilterBar({
       overrideDefaults={true}
       className={Libs.cn(
         'hidden h-fit w-(--filter-bar-width) flex-col self-start lg:flex',
-        shouldBeSticky && 'sticky top-(--header-height)',
+        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
+        shouldBeSticky !== false && 'sticky top-(--header-height)',
       )}
     >
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-0">

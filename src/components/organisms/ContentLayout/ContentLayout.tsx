@@ -28,7 +28,8 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       className={Libs.cn(
         'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'w-full max-w-(--filter-bar-width)',
-        (shouldBeSticky && 'sticky top-(--header-offset-main)') || 'sticky top-(--sidebar-non-sticky-offset)',
+        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
+        shouldBeSticky !== false ? 'sticky top-(--header-offset-main)' : 'sticky top-(--sidebar-non-sticky-offset)',
       )}
     >
       {children}
