@@ -34,11 +34,11 @@ describe('LocalFileService', () => {
     await Core.resetDatabase();
   });
 
-  describe('persistFiles', () => {
+  describe('createMany', () => {
     it('saves multiple files', async () => {
       const file1 = createMockFile(testFileId1);
       const file2 = createMockFile(testFileId2);
-      await LocalFileService.persistFiles({ files: [file1, file2] });
+      await LocalFileService.createMany({ files: [file1, file2] });
 
       const [saved1, saved2] = await Promise.all([
         Core.FileDetailsModel.findById(compositeId1),
@@ -51,7 +51,7 @@ describe('LocalFileService', () => {
 
     it('saves single file', async () => {
       const file = createMockFile(testFileId1);
-      await LocalFileService.persistFiles({ files: [file] });
+      await LocalFileService.createMany({ files: [file] });
 
       const saved = await Core.FileDetailsModel.findById(compositeId1);
       expect(saved?.name).toBe(file.name);
@@ -59,13 +59,13 @@ describe('LocalFileService', () => {
     });
 
     it('handles empty array', async () => {
-      await expect(LocalFileService.persistFiles({ files: [] })).resolves.not.toThrow();
+      await expect(LocalFileService.createMany({ files: [] })).resolves.not.toThrow();
       expect(await Core.FileDetailsModel.table.toArray()).toHaveLength(0);
     });
 
     it('updates existing files', async () => {
-      await LocalFileService.persistFiles({ files: [createMockFile(testFileId1, { name: 'original.jpg' })] });
-      await LocalFileService.persistFiles({
+      await LocalFileService.createMany({ files: [createMockFile(testFileId1, { name: 'original.jpg' })] });
+      await LocalFileService.createMany({
         files: [createMockFile(testFileId1, { name: 'updated.jpg', size: 204800 })],
       });
 
@@ -80,7 +80,7 @@ describe('LocalFileService', () => {
         size: 204800,
         metadata: { width: '1920', height: '1080' },
       });
-      await LocalFileService.persistFiles({ files: [file] });
+      await LocalFileService.createMany({ files: [file] });
 
       const saved = await Core.FileDetailsModel.findById(compositeId1);
       expect(saved?.content_type).toBe('image/png');
@@ -99,7 +99,7 @@ describe('LocalFileService', () => {
 
       vi.spyOn(Core.FileDetailsModel, 'bulkSave').mockRejectedValueOnce(databaseError);
 
-      await expect(LocalFileService.persistFiles({ files: [file] })).rejects.toMatchObject({
+      await expect(LocalFileService.createMany({ files: [file] })).rejects.toMatchObject({
         type: 'BULK_OPERATION_FAILED',
         message: 'Failed to bulk save records in file_details',
         statusCode: 500,
@@ -112,14 +112,14 @@ describe('LocalFileService', () => {
 
       vi.spyOn(Core.FileDetailsModel, 'bulkSave').mockRejectedValueOnce(error);
 
-      await expect(LocalFileService.persistFiles({ files: [file] })).rejects.toThrow('Unexpected database error');
+      await expect(LocalFileService.createMany({ files: [file] })).rejects.toThrow('Unexpected database error');
     });
   });
 
   describe('findByIds', () => {
     it('returns files for valid IDs', async () => {
       const [file1, file2] = [createMockFile(testFileId1), createMockFile(testFileId2)];
-      await LocalFileService.persistFiles({ files: [file1, file2] });
+      await LocalFileService.createMany({ files: [file1, file2] });
 
       const result = await LocalFileService.findByIds([compositeId1, compositeId2]);
 
@@ -131,7 +131,7 @@ describe('LocalFileService', () => {
 
     it('returns single file', async () => {
       const file = createMockFile(testFileId1);
-      await LocalFileService.persistFiles({ files: [file] });
+      await LocalFileService.createMany({ files: [file] });
 
       const result = await LocalFileService.findByIds([compositeId1]);
 
@@ -146,7 +146,7 @@ describe('LocalFileService', () => {
     });
 
     it('returns only existing files when some IDs are missing', async () => {
-      await LocalFileService.persistFiles({ files: [createMockFile(testFileId1)] });
+      await LocalFileService.createMany({ files: [createMockFile(testFileId1)] });
 
       const nonExistentId = Core.buildCompositeId({ pubky: testPubky, id: 'non-existent' });
       const result = await LocalFileService.findByIds([compositeId1, nonExistentId]);
@@ -160,7 +160,7 @@ describe('LocalFileService', () => {
     });
 
     it('does not preserve order', async () => {
-      await LocalFileService.persistFiles({ files: [createMockFile(testFileId1), createMockFile(testFileId2)] });
+      await LocalFileService.createMany({ files: [createMockFile(testFileId1), createMockFile(testFileId2)] });
 
       const result = await LocalFileService.findByIds([compositeId2, compositeId1]);
 
@@ -175,7 +175,7 @@ describe('LocalFileService', () => {
         size: 512000,
         metadata: { custom: 'value' },
       });
-      await LocalFileService.persistFiles({ files: [file] });
+      await LocalFileService.createMany({ files: [file] });
 
       const [found] = await LocalFileService.findByIds([compositeId1]);
 

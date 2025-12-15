@@ -90,7 +90,7 @@ export class PostApplication {
 
   static async commitCreate({ postUrl, compositePostId, post, fileAttachments, tags }: Core.TCreatePostInput) {
     if (fileAttachments && fileAttachments.length > 0) {
-      await Core.FileApplication.upload({ fileAttachments });
+      await Core.FileApplication.commitCreate({ fileAttachments });
     }
     await Core.LocalPostService.create({ compositePostId, post });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
@@ -116,7 +116,7 @@ export class PostApplication {
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);
 
     if (!hadConnections && post.attachments && post.attachments.length > 0) {
-      await Core.FileApplication.delete(post.attachments);
+      await Core.FileApplication.commitDelete(post.attachments);
     }
   }
 }

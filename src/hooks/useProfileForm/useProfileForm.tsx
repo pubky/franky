@@ -246,7 +246,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       if (mode === 'create') {
         if (avatarFile) {
           setSubmitText('Uploading avatar...');
-          image = await Core.FileController.upload({ file: avatarFile, pubky });
+          image = await Core.FileController.commitCreate({ file: avatarFile, pubky });
           if (!image) {
             setSubmitText('Try again!');
             return;
@@ -259,7 +259,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         if (avatarChanged) {
           if (avatarFile) {
             setSubmitText('Uploading avatar...');
-            const uploadedImage = await Core.FileController.upload({ file: avatarFile, pubky });
+            const uploadedImage = await Core.FileController.commitCreate({ file: avatarFile, pubky });
             if (!uploadedImage) {
               setSubmitText('Try again!');
               return;

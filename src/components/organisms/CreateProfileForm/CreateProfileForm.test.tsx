@@ -16,7 +16,7 @@ vi.mock('@/core', async (importOriginal) => {
       commitCreate: vi.fn(),
     },
     FileController: {
-      upload: vi.fn(),
+      commitCreate: vi.fn(),
     },
     UserValidator: {
       check: vi.fn(),
@@ -425,7 +425,7 @@ describe('CreateProfileForm', () => {
     // Reset all mock functions
     mockPush.mockReset();
     mockToast.mockReset();
-    vi.mocked(Core.FileController.upload).mockReset();
+    vi.mocked(Core.FileController.commitCreate).mockReset();
     vi.mocked(Core.ProfileController.commitCreate).mockReset();
     vi.mocked(Core.UserValidator.check).mockReset();
     vi.mocked(Core.AuthController.bootstrapWithDelay).mockReset();
@@ -779,7 +779,7 @@ describe('CreateProfileForm', () => {
 
       // Verify that the mocked functions exist
       expect(typeof Core.ProfileController.commitCreate).toBe('function');
-      expect(typeof Core.FileController.upload).toBe('function');
+      expect(typeof Core.FileController.commitCreate).toBe('function');
       expect(typeof Core.UserValidator.check).toBe('function');
       expect(typeof Core.AuthController.bootstrapWithDelay).toBe('function');
     });

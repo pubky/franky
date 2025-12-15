@@ -137,7 +137,7 @@ describe('PostStreamApplication', () => {
 
   const setupDefaultMocks = () => ({
     persistPosts: vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({ postAttachments: [] }),
-    persistFiles: vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined),
+    fetchFiles: vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined),
     getUserDetails: vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder'),
   });
 
@@ -779,7 +779,7 @@ describe('PostStreamApplication', () => {
         expect.stringContaining(JSON.stringify({ post_ids: cacheMissPostIds, viewer_id: viewerId })),
       );
       expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: mockNexusPosts });
-      expect(mocks.persistFiles).toHaveBeenCalledWith([]);
+      expect(mocks.fetchFiles).toHaveBeenCalledWith([]);
     });
 
     it('should handle when postBatch is null/undefined', async () => {
@@ -941,8 +941,8 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
         postAttachments: mockAttachments,
       });
-      const persistFilesSpy = vi
-        .spyOn(Core.FileApplication, 'persistFiles')
+      const fetchFilesSpy = vi
+        .spyOn(Core.FileApplication, 'fetchFiles')
         .mockRejectedValue(new Error('Failed to persist files'));
 
       const getUserDetailsSpy = vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder');
@@ -953,7 +953,7 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      expect(persistFilesSpy).toHaveBeenCalledWith(mockAttachments);
+      expect(fetchFilesSpy).toHaveBeenCalledWith(mockAttachments);
       expect(queryNexusSpy).toHaveBeenCalledTimes(1);
       expect(getUserDetailsSpy).not.toHaveBeenCalled();
       expect(persistUsersSpy).not.toHaveBeenCalled();

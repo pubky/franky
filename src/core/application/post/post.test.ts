@@ -22,8 +22,8 @@ vi.mock('@/core/services/homeserver', () => ({
 // Mock the FileApplication
 vi.mock('@/core/application/file', () => ({
   FileApplication: {
-    upload: vi.fn(),
-    delete: vi.fn(),
+    commitCreate: vi.fn(),
+    commitDelete: vi.fn(),
   },
 }));
 
@@ -88,7 +88,7 @@ describe('Post Application', () => {
   });
 
   const setupCreateSpies = () => ({
-    uploadSpy: vi.spyOn(Core.FileApplication, 'upload').mockResolvedValue(undefined),
+    commitCreateSpy: vi.spyOn(Core.FileApplication, 'commitCreate').mockResolvedValue(undefined),
     saveSpy: vi.spyOn(Core.LocalPostService, 'create').mockResolvedValue(undefined),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined),
     tagCreateSpy: vi.spyOn(Core.TagApplication, 'commitCreate').mockResolvedValue(undefined),
@@ -98,7 +98,7 @@ describe('Post Application', () => {
     findByIdSpy: vi.spyOn(Core.PostDetailsModel, 'findById'),
     deleteSpy: vi.spyOn(Core.LocalPostService, 'delete'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined),
-    fileDeleteSpy: vi.spyOn(Core.FileApplication, 'delete').mockResolvedValue(undefined),
+    fileCommitDeleteSpy: vi.spyOn(Core.FileApplication, 'commitDelete').mockResolvedValue(undefined),
   });
 
   beforeEach(() => {
@@ -215,12 +215,12 @@ describe('Post Application', () => {
           fileAttachments: mockFileAttachments,
         };
 
-        const { uploadSpy, saveSpy, requestSpy } = setupCreateSpies();
+        const { commitCreateSpy, saveSpy, requestSpy } = setupCreateSpies();
 
         await Core.PostApplication.commitCreate(mockData);
 
-        expect(uploadSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
-        expect(uploadSpy).toHaveBeenCalledBefore(saveSpy);
+        expect(commitCreateSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
+        expect(commitCreateSpy).toHaveBeenCalledBefore(saveSpy);
         expect(saveSpy).toHaveBeenCalledWith({
           compositePostId: mockData.compositePostId,
           post: mockData.post,
@@ -246,12 +246,12 @@ describe('Post Application', () => {
           fileAttachments: mockFileAttachments,
         };
 
-        const { uploadSpy, saveSpy, requestSpy } = setupCreateSpies();
-        uploadSpy.mockRejectedValue(new Error('File upload failed: quota exceeded'));
+        const { commitCreateSpy, saveSpy, requestSpy } = setupCreateSpies();
+        commitCreateSpy.mockRejectedValue(new Error('File upload failed: quota exceeded'));
 
         await expect(Core.PostApplication.commitCreate(mockData)).rejects.toThrow('File upload failed: quota exceeded');
 
-        expect(uploadSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
+        expect(commitCreateSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
         expect(saveSpy).not.toHaveBeenCalled();
         expect(requestSpy).not.toHaveBeenCalled();
       });
@@ -351,11 +351,11 @@ describe('Post Application', () => {
           tags: mockTags,
         };
 
-        const { uploadSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
+        const { commitCreateSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
 
         await Core.PostApplication.commitCreate(mockData);
 
-        expect(uploadSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
+        expect(commitCreateSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
         expect(saveSpy).toHaveBeenCalledWith({
           compositePostId: mockData.compositePostId,
           post: mockData.post,
@@ -369,7 +369,7 @@ describe('Post Application', () => {
           }),
         );
         expect(tagCreateSpy).toHaveBeenCalledWith({ tagList: mockTags });
-        expect(uploadSpy).toHaveBeenCalledBefore(saveSpy);
+        expect(commitCreateSpy).toHaveBeenCalledBefore(saveSpy);
         expect(saveSpy).toHaveBeenCalledBefore(requestSpy);
         expect(requestSpy).toHaveBeenCalledBefore(tagCreateSpy);
       });
@@ -393,14 +393,14 @@ describe('Post Application', () => {
           tags: mockTags,
         };
 
-        const { uploadSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
+        const { commitCreateSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
         requestSpy.mockRejectedValue(new Error('Homeserver sync failed: 503 Service Unavailable'));
 
         await expect(Core.PostApplication.commitCreate(mockData)).rejects.toThrow(
           'Homeserver sync failed: 503 Service Unavailable',
         );
 
-        expect(uploadSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
+        expect(commitCreateSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
         expect(saveSpy).toHaveBeenCalledWith({
           compositePostId: mockData.compositePostId,
           post: mockData.post,
@@ -517,7 +517,7 @@ describe('Post Application', () => {
     describe('when post has connections (hadConnections = true)', () => {
       it('should call homeserver DELETE but skip file deletion', async () => {
         const mockData = createMockDeleteData();
-        const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
+        const { findByIdSpy, deleteSpy, requestSpy, fileCommitDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(mockPostDetailsWithAttachments);
         deleteSpy.mockResolvedValue(true);
 
@@ -530,7 +530,7 @@ describe('Post Application', () => {
         // Homeserver DELETE is always called, even for soft deletes
         expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockPostDetailsWithAttachments.uri);
         // File cleanup is skipped when post has connections
-        expect(fileDeleteSpy).not.toHaveBeenCalled();
+        expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
 
       it('should delete from homeserver but skip file cleanup when post has connections', async () => {
@@ -544,7 +544,7 @@ describe('Post Application', () => {
           ],
         };
 
-        const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
+        const { findByIdSpy, deleteSpy, requestSpy, fileCommitDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(postWithAttachments);
         deleteSpy.mockResolvedValue(true);
 
@@ -555,7 +555,7 @@ describe('Post Application', () => {
         // Always sync deletion to homeserver (Nexus determines definitive state)
         expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithAttachments.uri);
         // Files are preserved when post has connections (soft delete)
-        expect(fileDeleteSpy).not.toHaveBeenCalled();
+        expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
     });
 
@@ -572,7 +572,7 @@ describe('Post Application', () => {
           attachments: ['pubky://author/pub/pubky.app/files/file1', 'pubky://author/pub/pubky.app/files/file2'],
         };
 
-        const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
+        const { findByIdSpy, deleteSpy, requestSpy, fileCommitDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(postWithFiles);
         deleteSpy.mockResolvedValue(false);
 
@@ -581,8 +581,8 @@ describe('Post Application', () => {
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
         expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithFiles.uri);
-        expect(fileDeleteSpy).toHaveBeenCalledWith(postWithFiles.attachments);
-        expect(requestSpy).toHaveBeenCalledBefore(fileDeleteSpy);
+        expect(fileCommitDeleteSpy).toHaveBeenCalledWith(postWithFiles.attachments);
+        expect(requestSpy).toHaveBeenCalledBefore(fileCommitDeleteSpy);
       });
 
       it('should skip file cleanup when no attachments', async () => {
@@ -596,7 +596,7 @@ describe('Post Application', () => {
           attachments: null,
         };
 
-        const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
+        const { findByIdSpy, deleteSpy, requestSpy, fileCommitDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(postWithoutFiles);
         deleteSpy.mockResolvedValue(false);
 
@@ -605,7 +605,7 @@ describe('Post Application', () => {
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
         expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithoutFiles.uri);
-        expect(fileDeleteSpy).not.toHaveBeenCalled();
+        expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
 
       it('should propagate file deletion error', async () => {
@@ -619,10 +619,10 @@ describe('Post Application', () => {
           attachments: ['pubky://author/pub/pubky.app/files/stubborn-file'],
         };
 
-        const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
+        const { findByIdSpy, deleteSpy, requestSpy, fileCommitDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(postWithFiles);
         deleteSpy.mockResolvedValue(false);
-        fileDeleteSpy.mockRejectedValue(new Error('File deletion failed: permission denied'));
+        fileCommitDeleteSpy.mockRejectedValue(new Error('File deletion failed: permission denied'));
 
         await expect(Core.PostApplication.commitDelete(mockData)).rejects.toThrow(
           'File deletion failed: permission denied',
@@ -631,7 +631,7 @@ describe('Post Application', () => {
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
         expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithFiles.uri);
-        expect(fileDeleteSpy).toHaveBeenCalledWith(postWithFiles.attachments);
+        expect(fileCommitDeleteSpy).toHaveBeenCalledWith(postWithFiles.attachments);
       });
     });
 
@@ -686,11 +686,11 @@ describe('Post Application', () => {
           fileAttachments: [],
         };
 
-        const { uploadSpy, saveSpy, requestSpy } = setupCreateSpies();
+        const { commitCreateSpy, saveSpy, requestSpy } = setupCreateSpies();
 
         await Core.PostApplication.commitCreate(mockData);
 
-        expect(uploadSpy).not.toHaveBeenCalled();
+        expect(commitCreateSpy).not.toHaveBeenCalled();
         expect(saveSpy).toHaveBeenCalledWith({
           compositePostId: mockData.compositePostId,
           post: mockData.post,
@@ -721,11 +721,11 @@ describe('Post Application', () => {
           tags: [],
         };
 
-        const { uploadSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
+        const { commitCreateSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
 
         await Core.PostApplication.commitCreate(mockData);
 
-        expect(uploadSpy).not.toHaveBeenCalled();
+        expect(commitCreateSpy).not.toHaveBeenCalled();
         expect(tagCreateSpy).not.toHaveBeenCalled();
         expect(saveSpy).toHaveBeenCalledWith({
           compositePostId: mockData.compositePostId,
@@ -752,7 +752,7 @@ describe('Post Application', () => {
           attachments: [],
         };
 
-        const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
+        const { findByIdSpy, deleteSpy, requestSpy, fileCommitDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(postWithEmptyAttachments);
         deleteSpy.mockResolvedValue(false);
 
@@ -761,7 +761,7 @@ describe('Post Application', () => {
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
         expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithEmptyAttachments.uri);
-        expect(fileDeleteSpy).not.toHaveBeenCalled();
+        expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
     });
   });
