@@ -34,7 +34,7 @@ export class ProfileApplication {
    */
   static async commitUpdateDetails({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
     try {
-      const userDetails = await Core.LocalUserService.getDetails({ userId: pubky });
+      const userDetails = await Core.LocalUserService.readDetails({ userId: pubky });
       if (!userDetails) {
         throw new Error('User profile not found');
       }

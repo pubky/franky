@@ -4,20 +4,20 @@ export class LocalUserService {
   private constructor() {} // Prevent instantiation
 
   /**
-   * Retrieves user details from local database.
-   * @param userId - User ID to fetch details for
+   * Reads user details from local database.
+   * @param userId - User ID to read details for
    * @returns Promise resolving to user details or null if not found
    */
-  static async getDetails({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+  static async readDetails({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
     return await Core.UserDetailsModel.findById(userId);
   }
 
   /**
-   * Bulk retrieves multiple user details from local database.
-   * @param userIds - Array of user IDs to fetch details for
+   * Bulk reads multiple user details from local database.
+   * @param userIds - Array of user IDs to read details for
    * @returns Promise resolving to Map of user ID to user details
    */
-  static async getManyDetails({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+  static async readBulkDetails({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
@@ -33,11 +33,11 @@ export class LocalUserService {
   }
 
   /**
-   * Retrieves user counts from local database.
-   * @param userId - The user ID to fetch counts for
+   * Reads user counts from local database.
+   * @param userId - The user ID to read counts for
    * @returns Promise resolving to user counts or null if not found
    */
-  static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+  static async readCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     return await Core.UserCountsModel.findById(userId);
   }
 
@@ -57,11 +57,11 @@ export class LocalUserService {
   }
 
   /**
-   * Bulk retrieves multiple user counts from local database.
-   * @param userIds - Array of user IDs to fetch counts for
+   * Bulk reads multiple user counts from local database.
+   * @param userIds - Array of user IDs to read counts for
    * @returns Promise resolving to Map of user ID to user counts
    */
-  static async getManyCounts({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+  static async readBulkCounts({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserCountsModel.findByIdsPreserveOrder(userIds);
@@ -76,16 +76,21 @@ export class LocalUserService {
     return map;
   }
 
-  static async getRelationships({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserRelationship | null> {
+  /**
+   * Reads user relationships from local database.
+   * @param userId - User ID to read relationships for
+   * @returns Promise resolving to user relationships or null if not found
+   */
+  static async readRelationships({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserRelationship | null> {
     return await Core.UserRelationshipsModel.findById(userId);
   }
 
   /**
-   * Bulk retrieves multiple user relationships from local database.
-   * @param userIds - Array of user IDs to fetch relationships for
+   * Bulk reads multiple user relationships from local database.
+   * @param userIds - Array of user IDs to read relationships for
    * @returns Promise resolving to Map of user ID to user relationships
    */
-  static async getManyRelationships({
+  static async readBulkRelationships({
     userIds,
   }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
     if (userIds.length === 0) return new Map();
@@ -103,21 +108,21 @@ export class LocalUserService {
   }
 
   /**
-   * Retrieves tags for a single user from local database.
-   * @param userId - User ID to fetch tags for
+   * Reads tags for a single user from local database.
+   * @param userId - User ID to read tags for
    * @returns Promise resolving to array of tags or empty array if not found
    */
-  static async getTags({ userId }: Core.TReadProfileParams): Promise<Core.NexusTag[]> {
+  static async readTags({ userId }: Core.TReadProfileParams): Promise<Core.NexusTag[]> {
     const userTags = await Core.UserTagsModel.findById(userId);
     return userTags?.tags ?? [];
   }
 
   /**
-   * Bulk retrieves multiple user tags from local database.
-   * @param userIds - Array of user IDs to fetch tags for
+   * Bulk reads multiple user tags from local database.
+   * @param userIds - Array of user IDs to read tags for
    * @returns Promise resolving to Map of user ID to user tags
    */
-  static async getManyTags({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+  static async readBulkTags({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
     if (userIds.length === 0) return new Map();
 
     const results = await Core.UserTagsModel.findByIdsPreserveOrder(userIds);

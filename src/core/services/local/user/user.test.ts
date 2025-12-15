@@ -9,7 +9,7 @@ describe('LocalUserService', () => {
     await Core.UserRelationshipsModel.table.clear();
   });
 
-  describe('getDetails', () => {
+  describe('readDetails', () => {
     const userId = 'test-user-id' as Core.Pubky;
 
     it('should return user details from local database when found', async () => {
@@ -25,7 +25,7 @@ describe('LocalUserService', () => {
 
       await Core.UserDetailsModel.create(mockUserDetails);
 
-      const result = await LocalUserService.getDetails({ userId });
+      const result = await LocalUserService.readDetails({ userId });
 
       expect(result).not.toBeNull();
       expect(result!.id).toBe(userId);
@@ -37,7 +37,7 @@ describe('LocalUserService', () => {
     });
 
     it('should return null when user not found in local database', async () => {
-      const result = await LocalUserService.getDetails({ userId });
+      const result = await LocalUserService.readDetails({ userId });
 
       expect(result).toBeNull();
     });
@@ -55,7 +55,7 @@ describe('LocalUserService', () => {
 
       await Core.UserDetailsModel.create(minimalUserDetails);
 
-      const result = await LocalUserService.getDetails({ userId });
+      const result = await LocalUserService.readDetails({ userId });
 
       expect(result).not.toBeNull();
       expect(result!.id).toBe(userId);
@@ -67,7 +67,7 @@ describe('LocalUserService', () => {
     });
   });
 
-  describe('getRelationships', () => {
+  describe('readRelationships', () => {
     const userId = 'test-user-id' as Core.Pubky;
 
     it('should return user relationships from local database when found', async () => {
@@ -80,7 +80,7 @@ describe('LocalUserService', () => {
 
       await Core.UserRelationshipsModel.create(mockRelationships);
 
-      const result = await LocalUserService.getRelationships({ userId });
+      const result = await LocalUserService.readRelationships({ userId });
 
       expect(result).not.toBeNull();
       expect(result!.following).toBe(true);
@@ -89,7 +89,7 @@ describe('LocalUserService', () => {
     });
 
     it('should return null when user relationships not found in local database', async () => {
-      const result = await LocalUserService.getRelationships({ userId });
+      const result = await LocalUserService.readRelationships({ userId });
 
       expect(result).toBeNull();
     });
@@ -104,7 +104,7 @@ describe('LocalUserService', () => {
 
       await Core.UserRelationshipsModel.create(emptyRelationships);
 
-      const result = await LocalUserService.getRelationships({ userId });
+      const result = await LocalUserService.readRelationships({ userId });
 
       expect(result).not.toBeNull();
       expect(result!.following).toBe(false);

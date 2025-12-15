@@ -7,7 +7,7 @@ export class UserApplication {
    */
   static async getDetails(param: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
     // Try to get from local database first
-    return await Core.LocalUserService.getDetails(param);
+    return await Core.LocalUserService.readDetails(param);
   }
 
   /**
@@ -15,7 +15,7 @@ export class UserApplication {
    * Returns a Map for efficient lookup by user ID.
    */
   static async getManyDetails(param: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
-    return await Core.LocalUserService.getManyDetails(param);
+    return await Core.LocalUserService.readBulkDetails(param);
   }
 
   /**
@@ -24,7 +24,7 @@ export class UserApplication {
    * @returns Promise resolving to user details or null if not found
    */
   static async getOrFetchDetails({ userId }: Core.TReadProfileParams) {
-    const userDetails = await Core.LocalUserService.getDetails({ userId });
+    const userDetails = await Core.LocalUserService.readDetails({ userId });
     if (userDetails) {
       return userDetails;
     }
@@ -32,7 +32,7 @@ export class UserApplication {
     if (nexusUserDetails) {
       await Core.LocalProfileService.upsertDetails(nexusUserDetails);
     }
-    return await Core.LocalUserService.getDetails({ userId });
+    return await Core.LocalUserService.readDetails({ userId });
   }
 
   /**
@@ -41,7 +41,7 @@ export class UserApplication {
    * @returns Promise resolving to user counts or null if not found
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
-    return await Core.LocalUserService.getCounts({ userId });
+    return await Core.LocalUserService.readCounts({ userId });
   }
 
   /**
@@ -49,7 +49,7 @@ export class UserApplication {
    * Returns a Map for efficient lookup by user ID.
    */
   static async getManyCounts(param: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
-    return await Core.LocalUserService.getManyCounts(param);
+    return await Core.LocalUserService.readBulkCounts(param);
   }
 
   /**
@@ -57,7 +57,7 @@ export class UserApplication {
    * This is a read-only operation that queries the local cache
    */
   static async getRelationships(params: Core.TReadProfileParams): Promise<Core.NexusUserRelationship | null> {
-    return await Core.LocalUserService.getRelationships(params);
+    return await Core.LocalUserService.readRelationships(params);
   }
 
   /**
@@ -69,7 +69,7 @@ export class UserApplication {
   static async getManyRelationships(
     param: Core.TPubkyListParams,
   ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
-    return await Core.LocalUserService.getManyRelationships(param);
+    return await Core.LocalUserService.readBulkRelationships(param);
   }
 
   /**
@@ -77,7 +77,7 @@ export class UserApplication {
    * This is a read-only operation that queries the local cache
    */
   static async getTags(params: Core.TReadProfileParams): Promise<Core.NexusTag[]> {
-    return await Core.LocalUserService.getTags(params);
+    return await Core.LocalUserService.readTags(params);
   }
 
   /**
@@ -165,7 +165,7 @@ export class UserApplication {
     }
 
     // 3. Return all tags from cache (now populated with fetched data)
-    return await Core.LocalUserService.getManyTags({ userIds });
+    return await Core.LocalUserService.readBulkTags({ userIds });
   }
 
   /**
