@@ -9,17 +9,28 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Types from './ContentLayout.types';
 
+// Header offset for main content areas (matches --header-offset-main in globals.css)
+const HEADER_OFFSET_MAIN = 150;
+
 /**
  * Reusable sticky sidebar component for left and right sidebars
+ * Uses useStickyWhenFits to only apply sticky positioning when
+ * the sidebar content fits within the available viewport height.
  */
 function StickySidebar({ children }: Types.StickySidebarProps) {
+  const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
+    topOffset: HEADER_OFFSET_MAIN, // Account for main header (--header-offset-main: 120px)
+    bottomOffset: 48, // Account for bottom padding
+  });
+
   return (
     <Atoms.Container
+      ref={ref}
       overrideDefaults
       className={Libs.cn(
-        'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
-        'top-[-230px]', // negative value stops sidebar scrolling up too far
+        'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'w-full max-w-(--filter-bar-width)',
+        shouldBeSticky && 'sticky top-(--header-offset-main)', // 120px - aligns with main header
       )}
     >
       {children}

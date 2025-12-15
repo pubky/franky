@@ -120,10 +120,21 @@ export function ProfilePageFilterBar({
     return getDefaultItems(stats, isOwnProfile);
   }, [items, stats, isOwnProfile]);
 
+  // Only apply sticky when content fits in viewport
+  // Profile page header height is 146px (--header-height in globals.css)
+  const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
+    topOffset: 146, // Account for profile page header (--header-height: 146px)
+    bottomOffset: 48, // Account for bottom padding
+  });
+
   return (
     <Atoms.Container
+      ref={ref}
       overrideDefaults={true}
-      className="sticky top-(--header-height) hidden h-fit w-(--filter-bar-width) flex-col self-start lg:flex"
+      className={Libs.cn(
+        'hidden h-fit w-(--filter-bar-width) flex-col self-start lg:flex',
+        shouldBeSticky && 'sticky top-(--header-height)',
+      )}
     >
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-0">
         {filterItems.map((item, index) => {
