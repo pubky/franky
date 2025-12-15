@@ -74,7 +74,9 @@ export class PostStreamApplication {
       return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
     }
 
-    const mutedUserIds = await MuteFilter.getMutedUserIds();
+    // Fetch muted user IDs from Service layer at Application layer entry point
+    const mutedStream = await Core.LocalStreamUsersService.findById(Core.UserStreamTypes.MUTED);
+    const mutedUserIds = new Set(mutedStream?.stream ?? []);
 
     let isFirstFetch = true;
     const result = await postStreamQueue.collect(streamId, {

@@ -1213,26 +1213,6 @@ describe('PostStreamApplication', () => {
   // Mute Filtering Tests
   // ============================================================================
 
-  describe('getMutedUserIds', () => {
-    it('should return empty set when no muted users exist', async () => {
-      const result = await MuteFilter.getMutedUserIds();
-      expect(result).toBeInstanceOf(Set);
-      expect(result.size).toBe(0);
-    });
-
-    it('should return set of muted user IDs', async () => {
-      const mutedUsers: Core.Pubky[] = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
-      await Core.UserStreamModel.upsert(Core.UserStreamTypes.MUTED, mutedUsers);
-
-      const result = await MuteFilter.getMutedUserIds();
-
-      expect(result.size).toBe(3);
-      expect(result.has('muted-user-1' as Core.Pubky)).toBe(true);
-      expect(result.has('muted-user-2' as Core.Pubky)).toBe(true);
-      expect(result.has('muted-user-3' as Core.Pubky)).toBe(true);
-    });
-  });
-
   describe('filterMutedPosts', () => {
     it('should return all posts when no muted users', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
@@ -1684,8 +1664,8 @@ describe('PostStreamApplication', () => {
       const queue1After = postStreamQueue.get(stream1);
       const queue2After = postStreamQueue.get(stream2);
 
-      // stream1 queue should now be empty (consumed all 5)
-      expect(queue1After?.posts).toHaveLength(0);
+      // stream1 queue should be deleted (consumed all 5, empty queues are deleted)
+      expect(queue1After).toBeUndefined();
       // stream2 queue should be unaffected
       expect(queue2After?.posts).toHaveLength(5);
     });
@@ -1757,11 +1737,9 @@ describe('PostStreamApplication', () => {
       // Since queue had enough, no Nexus fetch should have been made
       expect(Core.NexusPostStreamService.fetch).not.toHaveBeenCalled();
 
-      // Queue should now be empty
+      // Queue should be deleted when empty (optimization)
       const queueAfter = postStreamQueue.get(streamId);
-      expect(queueAfter?.posts).toHaveLength(0);
-      // cursor should still be preserved
-      expect(queueAfter?.cursor).toBe(BASE_TIMESTAMP + 14);
+      expect(queueAfter).toBeUndefined();
     });
 
     it('should handle concurrent calls to the same stream', async () => {
