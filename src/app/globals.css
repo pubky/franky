@@ -143,6 +143,19 @@ body {
   --header-offset-main: 150px;
 
   /**
+   * Sidebar non-sticky fallback offset
+   * - Negative top offset for sidebars when they shouldn't be sticky
+   * - Used when sidebar content doesn't fit within viewport (useStickyWhenFits returns false)
+   * - Value: -230px positions sidebar above viewport when not sticky
+   * 
+   * Rationale:
+   * - Non-specific value that roughly prevents sidebar from scrolling up too far when content is too tall
+   * - When shouldBeSticky is false, sidebar uses this negative offset instead of header offset
+   * - Works in conjunction with useStickyWhenFits hook logic
+   */
+  --sidebar-non-sticky-offset: -230px;
+
+  /**
    * Sidebar and filter bar width
    * - Standard width for left/right sidebars and filter components
    * - Ensures consistent layout across different sidebar types

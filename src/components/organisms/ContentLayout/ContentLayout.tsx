@@ -19,7 +19,7 @@ const HEADER_OFFSET_MAIN = 150;
  */
 function StickySidebar({ children }: Types.StickySidebarProps) {
   const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
-    topOffset: HEADER_OFFSET_MAIN, // Account for main header (--header-offset-main: 120px)
+    topOffset: HEADER_OFFSET_MAIN, // Account for main header
     bottomOffset: 48, // Account for bottom padding
   });
 
@@ -30,7 +30,7 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       className={Libs.cn(
         'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'w-full max-w-(--filter-bar-width)',
-        shouldBeSticky && 'sticky top-(--header-offset-main)', // 120px - aligns with main header
+        (shouldBeSticky && 'sticky top-(--header-offset-main)') || 'sticky top-(--sidebar-non-sticky-offset)',
       )}
     >
       {children}
