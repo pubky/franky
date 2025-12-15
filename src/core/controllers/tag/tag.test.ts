@@ -3,10 +3,12 @@ import { TagResult } from 'pubky-app-specs';
 import * as Core from '@/core';
 import type { TTagEventParams } from './tag.types';
 
-// Mock homeserver
-const mockHomeserver = {
-  fetch: vi.fn().mockResolvedValue({ ok: true }),
-};
+// Mock HomeserverService
+vi.mock('@/core/services/homeserver', () => ({
+  HomeserverService: {
+    request: vi.fn(),
+  },
+}));
 
 // Mock pubky-app-specs
 vi.mock('pubky-app-specs', () => ({
@@ -71,9 +73,10 @@ describe('TagController', () => {
   let TagController: typeof import('./tag').TagController;
 
   beforeEach(async () => {
-    vi.resetModules();
     vi.clearAllMocks();
-    mockHomeserver.fetch.mockClear().mockResolvedValue({ ok: true });
+
+    // Mock HomeserverService.request to resolve successfully
+    vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
 
     vi.spyOn(Core.TagNormalizer, 'to').mockImplementation((uri: string, label: string, pubky: Core.Pubky) => {
       return {
@@ -81,18 +84,6 @@ describe('TagController', () => {
         meta: { url: `pubky://${pubky}/pub/pubky.app/tags/${label}` },
         free: vi.fn(),
       } as unknown as TagResult;
-    });
-
-    // Mock Core module
-    vi.doMock('@/core', async () => {
-      const actual = await vi.importActual('@/core');
-      return {
-        ...actual,
-        HomeserverService: {
-          getInstance: vi.fn(() => mockHomeserver),
-          request: vi.fn(async () => undefined),
-        },
-      };
     });
 
     // Initialize database and clear tables
@@ -123,6 +114,13 @@ describe('TagController', () => {
         expect(savedTags!.tags[0].label).toBe('javascript');
         expect(savedTags!.tags[0].taggers_count).toBe(1);
         expect(savedTags!.tags[0].relationship).toBe(true);
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.PUT,
+          expect.stringContaining('pubky://'),
+          expect.any(Object),
+        );
       });
 
       it('should normalize post tag label (trim and lowercase)', async () => {
@@ -130,6 +128,13 @@ describe('TagController', () => {
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags!.tags[0].label).toBe('javascript');
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.PUT,
+          expect.stringContaining('pubky://'),
+          expect.any(Object),
+        );
       });
     });
 
@@ -166,6 +171,12 @@ describe('TagController', () => {
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags!.tags).toHaveLength(0);
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.DELETE,
+          expect.stringContaining('pubky://'),
+        );
       });
 
       it('should normalize post tag label (trim and lowercase)', async () => {
@@ -173,6 +184,12 @@ describe('TagController', () => {
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags!.tags).toHaveLength(0);
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.DELETE,
+          expect.stringContaining('pubky://'),
+        );
       });
     });
 

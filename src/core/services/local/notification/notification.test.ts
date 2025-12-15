@@ -2,16 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 import { LocalNotificationService } from './notification';
 
-const createNexus = (timestamp: number): Core.NexusNotification => ({
-  timestamp,
-  body: { type: Core.NotificationType.Follow, followed_by: `user-${timestamp}` },
-});
-
 const createFlat = (timestamp: number): Core.FlatNotification =>
   ({ type: Core.NotificationType.Follow, timestamp, followed_by: `user-${timestamp}` }) as Core.FlatNotification;
-
-const mockNormalizer = () =>
-  vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) => createFlat(n.timestamp));
 
 describe('LocalNotificationService', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -19,12 +11,11 @@ describe('LocalNotificationService', () => {
   describe('persistAndGetUnreadCount', () => {
     const lastRead = 1000;
 
-    it('should transform, persist, and return unread count', async () => {
-      const notifications = [createNexus(2000), createNexus(1500), createNexus(500)];
-      mockNormalizer();
+    it('should persist and return unread count', async () => {
+      const flatNotifications = [createFlat(2000), createFlat(1500), createFlat(500)];
       const bulkSaveSpy = vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
 
-      const unreadCount = await LocalNotificationService.persistAndGetUnreadCount(notifications, lastRead);
+      const unreadCount = await LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead });
 
       expect(unreadCount).toBe(2); // 2000 and 1500 are newer than 1000
       expect(bulkSaveSpy).toHaveBeenCalledWith(
@@ -42,24 +33,20 @@ describe('LocalNotificationService', () => {
       { timestamps: [1000], lastRead: 1000, expected: 0, desc: 'equal to lastRead' },
       { timestamps: [], lastRead: 1000, expected: 0, desc: 'empty list' },
     ])('should return $expected when $desc', async ({ timestamps, lastRead, expected }) => {
-      mockNormalizer();
       vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
 
-      const unreadCount = await LocalNotificationService.persistAndGetUnreadCount(
-        timestamps.map(createNexus),
-        lastRead,
-      );
+      const flatNotifications = timestamps.map(createFlat);
+      const unreadCount = await LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead });
 
       expect(unreadCount).toBe(expected);
     });
 
     it('should bubble bulkSave errors', async () => {
-      mockNormalizer();
       vi.spyOn(Core.NotificationModel, 'bulkSave').mockRejectedValue(new Error('db-error'));
 
-      await expect(LocalNotificationService.persistAndGetUnreadCount([createNexus(2000)], lastRead)).rejects.toThrow(
-        'db-error',
-      );
+      await expect(
+        LocalNotificationService.persistAndGetUnreadCount({ flatNotifications: [createFlat(2000)], lastRead }),
+      ).rejects.toThrow('db-error');
     });
   });
 
@@ -68,7 +55,7 @@ describe('LocalNotificationService', () => {
       const expected = [createFlat(4000), createFlat(3000)];
       const modelSpy = vi.spyOn(Core.NotificationModel, 'getOlderThan').mockResolvedValue(expected);
 
-      const result = await LocalNotificationService.getOlderThan(5000, 10);
+      const result = await LocalNotificationService.getOlderThan({ olderThan: 5000, limit: 10 });
 
       expect(modelSpy).toHaveBeenCalledWith(5000, 10);
       expect(result).toEqual(expected);
@@ -77,7 +64,7 @@ describe('LocalNotificationService', () => {
     it('should return empty array when no notifications found', async () => {
       vi.spyOn(Core.NotificationModel, 'getOlderThan').mockResolvedValue([]);
 
-      const result = await LocalNotificationService.getOlderThan(1000, 10);
+      const result = await LocalNotificationService.getOlderThan({ olderThan: 1000, limit: 10 });
 
       expect(result).toEqual([]);
     });
@@ -85,7 +72,9 @@ describe('LocalNotificationService', () => {
     it('should bubble model errors', async () => {
       vi.spyOn(Core.NotificationModel, 'getOlderThan').mockRejectedValue(new Error('query-failed'));
 
-      await expect(LocalNotificationService.getOlderThan(1000, 10)).rejects.toThrow('query-failed');
+      await expect(LocalNotificationService.getOlderThan({ olderThan: 1000, limit: 10 })).rejects.toThrow(
+        'query-failed',
+      );
     });
   });
 

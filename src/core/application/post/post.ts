@@ -67,12 +67,34 @@ export class PostApplication {
   }
 
   /**
-   * Get post tags for a specific post
+   * Get post tags for a specific post from local database
    * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post tags
    */
   static async getPostTags({ compositeId }: Core.TCompositeId): Promise<Core.TagCollectionModelSchema<string>[]> {
     return await Core.LocalPostService.readPostTags(compositeId);
+  }
+
+  /**
+   * Fetch more post tags from Nexus with pagination and persist to local DB
+   * @param compositeId - Composite post ID in format "authorId:postId"
+   * @param skip - Number of tags to skip
+   * @param limit - Maximum number of tags to return
+   * @returns Array of tags from Nexus
+   */
+  static async fetchMorePostTags({
+    compositeId,
+    skip,
+    limit,
+  }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
+    const nexusTags = await Core.NexusPostService.getPostTags({ compositeId, skip, limit });
+
+    // Persist new tags to local DB (merge with existing)
+    if (nexusTags.length > 0) {
+      await Core.LocalPostTagService.mergeTags({ postId: compositeId, tags: nexusTags });
+    }
+
+    return nexusTags;
   }
 
   /**
@@ -93,5 +115,14 @@ export class PostApplication {
    */
   static async getPostDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
     return await Core.LocalPostService.readPostDetails({ postId: compositeId });
+  }
+
+  /**
+   * Get all posts that are replies to a specific post
+   * @param compositeId - Composite post ID to get replies for
+   * @returns Array of post relationships that replied to this post
+   */
+  static async getPostReplies({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema[]> {
+    return await Core.LocalPostService.readPostReplies(compositeId);
   }
 }

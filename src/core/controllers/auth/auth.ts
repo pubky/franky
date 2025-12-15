@@ -10,66 +10,64 @@ export class AuthController {
    * @param params.keypair - The cryptographic keypair for the user
    * @returns Configured homeserver service instance
    */
-  private static async signIn({ keypair }: Core.TKeypairParams) {
+  private static async signIn({ keypair }: Core.TKeypairParams): Promise<boolean> {
     // Clear database before sign in to ensure clean state
     await Core.clearDatabase();
-    const { secretKey } = Core.useOnboardingStore.getState();
-    return await Core.AuthApplication.signIn({ keypair, secretKey });
+    const session = await Core.AuthApplication.signIn({ keypair });
+    if (!session) {
+      Libs.Logger.error('Failed to sign in. Please try again.', { keypair });
+      return false;
+    }
+    await this.initializeAuthenticatedSession(session);
+    return true;
   }
 
   /**
-   * Saves authenticated user data to the auth store and initializes the application bootstrap.
+   * Bootstrap data to initialize the application snapshot.
    * @param params - Object containing session and pubky data from authentication
    * @param params.session - The user session data
    * @param params.pubky - The user's public key identifier
    */
-  private static async saveAuthenticatedDataAndBootstrap({ session, pubky }: Core.TAuthenticatedData) {
-    const authStore = Core.useAuthStore.getState();
-    authStore.setSession(session);
-    authStore.setCurrentUserPubky(pubky);
+  private static async hydrateMeImAlive({ pubky }: Core.TPubkyParams) {
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
     const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notification);
-    authStore.setAuthenticated(true);
   }
 
   /**
-   * Authorizes the current user and initializes the application bootstrap with retry logic.
-   * Uses the current user's pubky from the auth store to set up notifications and mark as authenticated.
+   * Initializes the authenticated session and checks if the user is signed up (profile.json in homeserver).
+   * @param params - Object containing session data from authentication
+   * @param params.session - The user session data
    */
-  static async authorizeAndBootstrap() {
+  static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
+    const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
-    const pubky = authStore.selectCurrentUserPubky();
-    const {
-      meta: { url },
-    } = Core.NotificationNormalizer.to(pubky);
-
-    // Wait 5 seconds before bootstrap to let Nexus index the user
-    Libs.Logger.info(`Waiting 5 seconds before bootstrap...`);
-    await Libs.sleep(5000);
-
-    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
-    Core.useNotificationStore.getState().setState(notification);
-    authStore.setAuthenticated(true);
+    const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
+    if (isSignedUp) {
+      // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
+      // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
+      await this.hydrateMeImAlive({ pubky });
+    }
+    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
+    authStore.init(initialState);
   }
 
   /**
-   * Signs up a new us`er with the homeserver using the provided keypair and signup token.
-   * @param params - Object containing keypair and signup token for registration
-   * @param params.keypair - The cryptographic keypair for the user
+   * Signs up a new user with the homeserver using the provided secret key and signup token.
+   * @param params - Object containing secret key and signup token for registration
+   * @param params.secretKey - The secret key for the user
    * @param params.signupToken - Invitation code for user registration
    */
-  static async signUp({ keypair, signupToken }: Core.TSignUpParams) {
+  static async signUp({ secretKey, signupToken }: Core.TSignUpParams) {
     // Clear database before sign up to ensure clean state
     await Core.clearDatabase();
-    const { secretKey } = Core.useOnboardingStore.getState();
-    const { session, pubky } = await Core.AuthApplication.signUp({ keypair, signupToken, secretKey });
+    const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
+    const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    authStore.setSession(session);
-    authStore.setCurrentUserPubky(pubky);
-    authStore.setAuthenticated(true);
+    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };
+    authStore.init(initialState);
   }
 
   /**
@@ -79,13 +77,8 @@ export class AuthController {
    * @returns Promise resolving to true if authentication succeeded, false otherwise
    */
   static async loginWithMnemonic({ mnemonic }: Core.TLoginWithMnemonicParams): Promise<boolean> {
-    const keypair = Libs.Identity.pubkyKeypairFromMnemonic(mnemonic);
-    const data = await this.signIn({ keypair });
-    if (data) {
-      await this.saveAuthenticatedDataAndBootstrap(data);
-      return true;
-    }
-    return false;
+    const keypair = Libs.Identity.keypairFromMnemonic(mnemonic);
+    return await this.signIn({ keypair });
   }
 
   /**
@@ -99,43 +92,17 @@ export class AuthController {
     encryptedFile,
     password,
   }: Core.TLoginWithEncryptedFileParams): Promise<boolean> {
-    const keypair = await Libs.Identity.decryptRecoveryFile(encryptedFile, password);
-    const data = await this.signIn({ keypair });
-    if (data) {
-      await this.saveAuthenticatedDataAndBootstrap(data);
-      return true;
-    }
-    return false;
+    const keypair = await Libs.Identity.decryptRecoveryFile({ encryptedFile, passphrase: password });
+    return await this.signIn({ keypair });
   }
 
   /**
    * Generates an authentication URL for external authentication flows.
    * @returns Promise resolving to the generated authentication URL
    */
-  static async getAuthUrl() {
-    const { secretKey } = Core.useOnboardingStore.getState();
-    return await Core.AuthApplication.generateAuthUrl({ secretKey });
-  }
-
-  /**
-   * Logs in a user using a public key from an authentication URL.
-   * @param params - Object containing the public key for authentication
-   * @param params.publicKey - The public key for authentication
-   */
-  static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams) {
-    // Clear database before auth URL login to ensure clean state
+  static async getAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
     await Core.clearDatabase();
-    const authStore = Core.useAuthStore.getState();
-    const onboardingStore = Core.useOnboardingStore.getState();
-    onboardingStore.reset();
-    const pubky = publicKey.z32();
-    authStore.setCurrentUserPubky(pubky);
-    const {
-      meta: { url },
-    } = Core.NotificationNormalizer.to(pubky);
-    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
-    Core.useNotificationStore.getState().setState(notification);
-    authStore.setAuthenticated(true);
+    return await Core.AuthApplication.generateAuthUrl();
   }
 
   /**
@@ -144,9 +111,12 @@ export class AuthController {
   static async logout() {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
-    const { secretKey } = onboardingStore;
+
     const pubky = authStore.selectCurrentUserPubky();
-    await Core.AuthApplication.logout({ pubky, secretKey });
+
+    if (authStore.session) {
+      await Core.AuthApplication.logout({ pubky });
+    }
     // Always clear local state, even if homeserver logout fails
     onboardingStore.reset();
     authStore.reset();
@@ -155,7 +125,21 @@ export class AuthController {
   }
 
   /**
-   * Generates a signup token for user registration.
+   * Initializes the application bootstrap after profile creation.
+   * Waits for Nexus to index the user's profile.json, then bootstraps notifications and data.
+   */
+  static async bootstrapWithDelay() {
+    const authStore = Core.useAuthStore.getState();
+    const pubky = authStore.selectCurrentUserPubky();
+    // Wait 5 seconds before bootstrap to let Nexus index the user
+    Libs.Logger.info(`Waiting 5 seconds to index ${pubky} profile.json in Nexus before bootstrap...`);
+    await Libs.sleep(5000);
+    await this.hydrateMeImAlive({ pubky });
+    authStore.setHasProfile(true);
+  }
+
+  /**
+   * Generates a signup token for user registration. This is just for testing environments
    * @returns Promise resolving to the generated signup token
    */
   static async generateSignupToken() {

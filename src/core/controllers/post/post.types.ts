@@ -23,3 +23,8 @@ export interface TFileAttachmentsParams {
 export interface TNormalizeTagsParams {
   tags: Core.TTagEventParams[];
 }
+
+export interface TFetchMorePostTagsParams extends Core.TCompositeId {
+  skip?: number;
+  limit?: number;
+}

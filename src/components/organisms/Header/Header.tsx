@@ -22,7 +22,8 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
 
 export function Header() {
   const pathname = usePathname();
-  const { isAuthenticated } = Core.useAuthStore();
+  const authStore = Core.useAuthStore();
+  const isAuthenticated = authStore.selectIsAuthenticated();
 
   const isOnboarding = pathname?.startsWith('/onboarding') ?? false;
   const { step: currentStep, title: currentTitle } = pathToStepConfig[pathname] ?? { step: 1, title: 'Sign in' };

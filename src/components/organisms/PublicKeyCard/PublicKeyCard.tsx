@@ -9,21 +9,17 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
-  const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
+  const secretKey = Core.useOnboardingStore((state) => state.secretKey);
+  const pubky = Core.useAuthStore((state) => state.currentUserPubky);
   const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const { toast } = Molecules.useToast();
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
-    if (pubky === '') {
-      const generatePubky = () => {
-        const keypair = Libs.Identity.generateKeypair();
-        setKeypair(keypair.pubky, keypair.secretKey);
-        setMnemonic(keypair.mnemonic);
-      };
-
-      generatePubky();
+    if (!secretKey) {
+      Core.ProfileController.generateSecrets();
     }
-  }, [pubky, setKeypair, setMnemonic]);
+  }, [secretKey]);
 
   const handleCopyToClipboard = () => {
     if (pubky) {
@@ -50,14 +46,14 @@ export function PublicKeyCard() {
           },
           onSuccess: (result) => {
             if (result.method === 'fallback') {
-              Molecules.toast({
+              toast({
                 title: 'Sharing unavailable',
                 description: 'We copied your pubky so you can paste it into your favorite app.',
               });
             }
           },
           onError: () => {
-            Molecules.toast({
+            toast({
               title: 'Share failed',
               description: 'Unable to share right now. Please try again.',
             });
@@ -111,14 +107,14 @@ export function PublicKeyCard() {
       </Atoms.Container>
       <Molecules.ActionSection actions={actions} className="w-full flex-col items-start justify-start gap-3">
         <Molecules.InputField
-          value={pubky}
+          value={pubky ?? ''}
           variant="dashed"
           readOnly
           onClick={handleCopyToClipboard}
-          loading={pubky === ''}
+          loading={!pubky}
           loadingText="Generating pubky..."
           icon={<Libs.Key className="h-4 w-4 text-brand" />}
-          status={pubky === '' ? 'default' : 'success'}
+          status={pubky ? 'success' : 'default'}
           className="w-full max-w-[576px]"
         />
       </Molecules.ActionSection>

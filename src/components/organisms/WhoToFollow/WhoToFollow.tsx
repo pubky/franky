@@ -5,6 +5,7 @@ import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import { APP_ROUTES } from '@/app/routes';
 import type { WhoToFollowProps } from './WhoToFollow.types';
 
@@ -48,7 +49,7 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
       data-testid="who-to-follow"
     >
       {users.map((user) => (
-        <Molecules.UserListItem
+        <Organisms.UserListItem
           key={user.id}
           user={user}
           variant="compact"

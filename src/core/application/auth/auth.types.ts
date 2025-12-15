@@ -1,4 +1,9 @@
 import * as Core from '@/core';
+import { Keypair } from '@synonymdev/pubky';
+
+export type TKeypairParams = {
+  keypair: Keypair;
+};
 
 export type TSecretKey = {
   secretKey: string;

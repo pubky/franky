@@ -347,6 +347,23 @@ export class LocalPostService {
   }
 
   /**
+   * Get all posts that are replies to a specific post
+   * @param postId - Composite post ID to get replies for
+   * @returns Array of post relationships that replied to this post
+   */
+  static async readPostReplies(postId: string): Promise<Core.PostRelationshipsModelSchema[]> {
+    try {
+      return await Core.PostRelationshipsModel.getReplies(postId);
+    } catch (error) {
+      Libs.Logger.error('Failed to get post replies', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post replies', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
    * Persists complete post data from Nexus to local database
    * Uses LocalStreamPostsService.persistPosts for consistency
    *

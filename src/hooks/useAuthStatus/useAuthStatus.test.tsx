@@ -11,15 +11,20 @@ const mockOnboardingStore = {
   setHydrated: vi.fn(),
 };
 
-const mockProfileStore = {
-  isAuthenticated: false,
+const mockAuthStore = {
+  session: null,
+  hasProfile: false,
+  hasHydrated: true,
+  selectIsAuthenticated: vi.fn(() => false),
   reset: vi.fn(),
-  setAuthenticated: vi.fn(),
+  setHasProfile: vi.fn(),
+  setSession: vi.fn(),
+  setHasHydrated: vi.fn(),
 };
 
 vi.mock('@/core', () => ({
   useOnboardingStore: () => mockOnboardingStore,
-  useAuthStore: () => mockProfileStore,
+  useAuthStore: () => mockAuthStore,
 }));
 
 describe('useAuthStatus', () => {
@@ -29,11 +34,15 @@ describe('useAuthStatus', () => {
     mockOnboardingStore.hasHydrated = true;
     mockOnboardingStore.pubky = '';
     mockOnboardingStore.secretKey = '';
-    mockProfileStore.isAuthenticated = false;
+    mockAuthStore.session = null;
+    mockAuthStore.hasProfile = false;
+    mockAuthStore.hasHydrated = true;
+    mockAuthStore.selectIsAuthenticated = vi.fn(() => false);
   });
 
-  it('should return loading state when not hydrated', () => {
+  it('should return loading state when onboarding store not hydrated', () => {
     mockOnboardingStore.hasHydrated = false;
+    mockAuthStore.hasHydrated = true;
 
     const { result } = renderHook(() => useAuthStatus());
 
@@ -41,48 +50,92 @@ describe('useAuthStatus', () => {
     expect(result.current.status).toBe('UNAUTHENTICATED');
   });
 
-  it('should return not loading when hydrated', () => {
+  it('should return loading state when auth store not hydrated', () => {
     mockOnboardingStore.hasHydrated = true;
+    mockAuthStore.hasHydrated = false;
+
+    const { result } = renderHook(() => useAuthStatus());
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.status).toBe('UNAUTHENTICATED');
+  });
+
+  it('should return loading state when both stores not hydrated', () => {
+    mockOnboardingStore.hasHydrated = false;
+    mockAuthStore.hasHydrated = false;
+
+    const { result } = renderHook(() => useAuthStatus());
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.status).toBe('UNAUTHENTICATED');
+  });
+
+  it('should return not loading when both stores hydrated', () => {
+    mockOnboardingStore.hasHydrated = true;
+    mockAuthStore.hasHydrated = true;
 
     const { result } = renderHook(() => useAuthStatus());
 
     expect(result.current.isLoading).toBe(false);
   });
 
-  it('should return UNAUTHENTICATED status when not authenticated', () => {
+  it('should return UNAUTHENTICATED status when no session and no profile', () => {
     mockOnboardingStore.hasHydrated = true;
-    mockProfileStore.isAuthenticated = false;
+    mockAuthStore.session = null;
+    mockAuthStore.hasProfile = false;
 
     const { result } = renderHook(() => useAuthStatus());
 
     expect(result.current.status).toBe('UNAUTHENTICATED');
     expect(result.current.isFullyAuthenticated).toBe(false);
+    expect(result.current.hasKeypair).toBe(false);
+    expect(result.current.hasProfile).toBe(false);
   });
 
-  it('should return AUTHENTICATED status when authenticated', () => {
+  it('should return NEEDS_PROFILE_CREATION status when has session but no profile', () => {
     mockOnboardingStore.hasHydrated = true;
-    mockProfileStore.isAuthenticated = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockAuthStore.session = { token: 'test-token' } as any;
+    mockAuthStore.hasProfile = false;
+    mockAuthStore.selectIsAuthenticated = vi.fn(() => true); // Has session, so authenticated
+
+    const { result } = renderHook(() => useAuthStatus());
+
+    expect(result.current.status).toBe('NEEDS_PROFILE_CREATION');
+    expect(result.current.isFullyAuthenticated).toBe(false);
+    expect(result.current.hasKeypair).toBe(true);
+    expect(result.current.hasProfile).toBe(false);
+  });
+
+  it('should return AUTHENTICATED status when has profile', () => {
+    mockOnboardingStore.hasHydrated = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockAuthStore.session = { token: 'test-token' } as any;
+    mockAuthStore.hasProfile = true;
+    mockAuthStore.selectIsAuthenticated = vi.fn(() => true); // Has session, so authenticated
 
     const { result } = renderHook(() => useAuthStatus());
 
     expect(result.current.status).toBe('AUTHENTICATED');
     expect(result.current.isFullyAuthenticated).toBe(true);
+    expect(result.current.hasKeypair).toBe(true);
+    expect(result.current.hasProfile).toBe(true);
   });
 
-  it('should check keypair existence correctly', () => {
+  it('should check keypair existence correctly based on session', () => {
     mockOnboardingStore.hasHydrated = true;
-    mockOnboardingStore.pubky = 'test-public-key';
-    mockOnboardingStore.secretKey = 'test-secret-key';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockAuthStore.session = { token: 'test-token' } as any;
+    mockAuthStore.selectIsAuthenticated = vi.fn(() => true); // Has session, so authenticated
 
     const { result } = renderHook(() => useAuthStatus());
 
     expect(result.current.hasKeypair).toBe(true);
   });
 
-  it('should handle missing keypair correctly', () => {
+  it('should handle missing keypair correctly when session is null', () => {
     mockOnboardingStore.hasHydrated = true;
-    mockOnboardingStore.pubky = '';
-    mockOnboardingStore.secretKey = '';
+    mockAuthStore.session = null;
 
     const { result } = renderHook(() => useAuthStatus());
 
@@ -93,9 +146,9 @@ describe('useAuthStatus', () => {
     it('should remain not loading after store reset if hydration is preserved', () => {
       // Simulate authenticated state
       mockOnboardingStore.hasHydrated = true;
-      mockOnboardingStore.pubky = 'test-public-key';
-      mockOnboardingStore.secretKey = 'test-secret-key';
-      mockProfileStore.isAuthenticated = true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockAuthStore.session = { token: 'test-token' } as any;
+      mockAuthStore.hasProfile = true;
 
       const { result, rerender } = renderHook(() => useAuthStatus());
 
@@ -104,9 +157,9 @@ describe('useAuthStatus', () => {
       expect(result.current.status).toBe('AUTHENTICATED');
 
       // Simulate logout: reset stores but preserve hydration
-      mockOnboardingStore.pubky = '';
-      mockOnboardingStore.secretKey = '';
-      mockProfileStore.isAuthenticated = false;
+      mockAuthStore.session = null;
+      mockAuthStore.hasProfile = false;
+      mockAuthStore.selectIsAuthenticated = vi.fn(() => false); // No session, not authenticated
       // hasHydrated should remain true (this is the fix)
       mockOnboardingStore.hasHydrated = true;
 
@@ -121,9 +174,9 @@ describe('useAuthStatus', () => {
     it('would be stuck loading if hydration was not preserved (demonstrating the bug)', () => {
       // Simulate the old buggy behavior
       mockOnboardingStore.hasHydrated = true;
-      mockOnboardingStore.pubky = 'test-public-key';
-      mockOnboardingStore.secretKey = 'test-secret-key';
-      mockProfileStore.isAuthenticated = true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockAuthStore.session = { token: 'test-token' } as any;
+      mockAuthStore.hasProfile = true;
 
       const { result, rerender } = renderHook(() => useAuthStatus());
 
@@ -132,9 +185,9 @@ describe('useAuthStatus', () => {
       expect(result.current.status).toBe('AUTHENTICATED');
 
       // Simulate the old buggy logout: reset stores including hydration
-      mockOnboardingStore.pubky = '';
-      mockOnboardingStore.secretKey = '';
-      mockProfileStore.isAuthenticated = false;
+      mockAuthStore.session = null;
+      mockAuthStore.hasProfile = false;
+      mockAuthStore.selectIsAuthenticated = vi.fn(() => false); // No session, not authenticated
       mockOnboardingStore.hasHydrated = false; // This was the bug
 
       rerender();

@@ -9,11 +9,14 @@ vi.mock('@/core', async () => {
   return {
     ...actual,
     UserController: {
-      tags: vi.fn(),
-      getCounts: vi.fn(),
+      tags: vi.fn().mockResolvedValue([]),
+      getCounts: vi.fn().mockResolvedValue({ uniqueTags: 0, posts: 0 }),
+      getUserTags: vi.fn().mockResolvedValue([]),
+      saveUserTags: vi.fn().mockResolvedValue(undefined),
     },
     TagController: {
       create: vi.fn(),
+      delete: vi.fn(),
     },
     useAuthStore: vi.fn((selector) => {
       const mockState = {

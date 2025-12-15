@@ -5,6 +5,11 @@ exports[`Metadata - Snapshots > matches snapshot for default metadata configurat
   "alternates": {
     "canonical": "https://pubky.app",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Pubky Team",
@@ -13,11 +18,28 @@ exports[`Metadata - Snapshots > matches snapshot for default metadata configurat
   "creator": "Pubky Team",
   "description": "Test Description",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Test Description",
@@ -58,6 +80,11 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with custom parame
   "alternates": {
     "canonical": "https://custom-url.com",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Custom Author",
@@ -66,11 +93,28 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with custom parame
   "creator": "Custom Author",
   "description": "Custom Description",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "custom, keywords",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Custom Description",
@@ -111,6 +155,11 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with image 1`] = `
   "alternates": {
     "canonical": "https://pubky.app",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Pubky Team",
@@ -119,11 +168,28 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with image 1`] = `
   "creator": "Pubky Team",
   "description": "Testing custom image",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Testing custom image",
@@ -164,6 +230,11 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with minimal confi
   "alternates": {
     "canonical": "https://pubky.app",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Pubky Team",
@@ -172,11 +243,28 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with minimal confi
   "creator": "Pubky Team",
   "description": "Minimal description",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Minimal description",
@@ -217,6 +305,11 @@ exports[`Metadata - Snapshots > matches snapshot with empty strings 1`] = `
   "alternates": {
     "canonical": "https://pubky.app",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Pubky Team",
@@ -225,11 +318,28 @@ exports[`Metadata - Snapshots > matches snapshot with empty strings 1`] = `
   "creator": "Pubky Team",
   "description": "",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "",
@@ -270,6 +380,11 @@ exports[`Metadata - Snapshots > matches snapshot with long title and description
   "alternates": {
     "canonical": "https://pubky.app",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Pubky Team",
@@ -278,11 +393,28 @@ exports[`Metadata - Snapshots > matches snapshot with long title and description
   "creator": "Pubky Team",
   "description": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
@@ -323,6 +455,11 @@ exports[`Metadata - Snapshots > matches snapshot with special characters 1`] = `
   "alternates": {
     "canonical": "https://pubky.app",
   },
+  "appleWebApp": {
+    "capable": true,
+    "statusBarStyle": "black",
+    "title": "Pubky App",
+  },
   "authors": [
     {
       "name": "Pubky Team",
@@ -331,11 +468,28 @@ exports[`Metadata - Snapshots > matches snapshot with special characters 1`] = `
   "creator": "Pubky Team",
   "description": "More special: ©®™€£¥",
   "icons": {
-    "apple": "/pubky-favicon.svg",
+    "apple": [
+      {
+        "sizes": "180x180",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-180x180.png",
+      },
+      {
+        "sizes": "152x152",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-152x152.png",
+      },
+      {
+        "sizes": "144x144",
+        "type": "image/png",
+        "url": "/images/manifest/web-app-manifest-144x144.png",
+      },
+    ],
     "icon": "/pubky-favicon.svg",
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "manifest": "/manifest.json",
   "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "More special: ©®™€£¥",
