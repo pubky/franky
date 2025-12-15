@@ -6,9 +6,9 @@ import * as Core from '@/core';
 // Mock the LocalFeedService
 vi.mock('@/core/services/local/feed', () => ({
   LocalFeedService: {
-    persist: vi.fn(),
+    createOrUpdate: vi.fn(),
     delete: vi.fn(),
-    findById: vi.fn(),
+    read: vi.fn(),
   },
 }));
 
@@ -66,9 +66,9 @@ describe('FeedApplication', () => {
   // Helper functions
   const setupMocks = () => {
     return {
-      persistSpy: vi.spyOn(Core.LocalFeedService, 'persist'),
+      createOrUpdateSpy: vi.spyOn(Core.LocalFeedService, 'createOrUpdate'),
       deleteSpy: vi.spyOn(Core.LocalFeedService, 'delete'),
-      findByIdSpy: vi.spyOn(Core.LocalFeedService, 'findById'),
+      readSpy: vi.spyOn(Core.LocalFeedService, 'read'),
       requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
     };
   };
@@ -80,7 +80,7 @@ describe('FeedApplication', () => {
   describe('persist with PUT action (create)', () => {
     it('should save locally and sync to homeserver successfully', async () => {
       const mockParams = createMockCreateParams();
-      const { persistSpy, requestSpy } = setupMocks();
+      const { createOrUpdateSpy, requestSpy } = setupMocks();
 
       const mockPersistedFeed: Core.FeedModelSchema = {
         id: 1,
@@ -93,12 +93,12 @@ describe('FeedApplication', () => {
         created_at: Date.now(),
         updated_at: Date.now(),
       };
-      persistSpy.mockResolvedValue(mockPersistedFeed);
+      createOrUpdateSpy.mockResolvedValue(mockPersistedFeed);
       requestSpy.mockResolvedValue(undefined);
 
       const result = await FeedApplication.persist({ userId: testUserId, params: mockParams });
 
-      expect(persistSpy).toHaveBeenCalledWith(
+      expect(createOrUpdateSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 0,
           name: 'Bitcoin News',
@@ -119,7 +119,7 @@ describe('FeedApplication', () => {
         feed: createMockFeedResult(),
         existingId: 42,
       };
-      const { persistSpy, findByIdSpy, requestSpy } = setupMocks();
+      const { createOrUpdateSpy, readSpy, requestSpy } = setupMocks();
 
       const existingFeed: Core.FeedModelSchema = {
         id: 42,
@@ -132,8 +132,8 @@ describe('FeedApplication', () => {
         created_at: 1000000,
         updated_at: 1000000,
       };
-      findByIdSpy.mockResolvedValue(existingFeed);
-      persistSpy.mockResolvedValue(existingFeed);
+      readSpy.mockResolvedValue(existingFeed);
+      createOrUpdateSpy.mockResolvedValue(existingFeed);
       requestSpy.mockResolvedValue(undefined);
 
       const result = await FeedApplication.persist({ userId: testUserId, params: mockParams });
@@ -144,9 +144,9 @@ describe('FeedApplication', () => {
 
     it('should throw when local save fails', async () => {
       const mockParams = createMockCreateParams();
-      const { persistSpy } = setupMocks();
+      const { createOrUpdateSpy } = setupMocks();
 
-      persistSpy.mockRejectedValue(new Error('Database error'));
+      createOrUpdateSpy.mockRejectedValue(new Error('Database error'));
 
       await expect(FeedApplication.persist({ userId: testUserId, params: mockParams })).rejects.toThrow(
         'Database error',
@@ -155,7 +155,7 @@ describe('FeedApplication', () => {
 
     it('should throw when homeserver sync fails', async () => {
       const mockParams = createMockCreateParams();
-      const { persistSpy, requestSpy } = setupMocks();
+      const { createOrUpdateSpy, requestSpy } = setupMocks();
 
       const mockPersistedFeed: Core.FeedModelSchema = {
         id: 1,
@@ -168,7 +168,7 @@ describe('FeedApplication', () => {
         created_at: Date.now(),
         updated_at: Date.now(),
       };
-      persistSpy.mockResolvedValue(mockPersistedFeed);
+      createOrUpdateSpy.mockResolvedValue(mockPersistedFeed);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
       await expect(FeedApplication.persist({ userId: testUserId, params: mockParams })).rejects.toThrow(
@@ -185,7 +185,7 @@ describe('FeedApplication', () => {
       deleteSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.delete({ userId: testUserId, params: mockParams });
+      const result = await FeedApplication.commitDelete({ userId: testUserId, params: mockParams });
 
       expect(deleteSpy).toHaveBeenCalledWith(123);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, expect.stringContaining('pubky://'));
@@ -198,7 +198,7 @@ describe('FeedApplication', () => {
 
       deleteSpy.mockRejectedValue(new Error('Feed not found'));
 
-      await expect(FeedApplication.delete({ userId: testUserId, params: mockParams })).rejects.toThrow(
+      await expect(FeedApplication.commitDelete({ userId: testUserId, params: mockParams })).rejects.toThrow(
         'Feed not found',
       );
     });
@@ -210,7 +210,7 @@ describe('FeedApplication', () => {
       deleteSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(FeedApplication.delete({ userId: testUserId, params: mockParams })).rejects.toThrow(
+      await expect(FeedApplication.commitDelete({ userId: testUserId, params: mockParams })).rejects.toThrow(
         'Failed to DELETE from homeserver: 404',
       );
     });

@@ -3,7 +3,30 @@ import * as Core from '@/core';
 export class FeedController {
   private constructor() {}
 
-  static async create(params: Core.TFeedCreateParams): Promise<Core.FeedModelSchema> {
+  /**
+   * Get the list of feeds
+   * @returns The list of feeds
+   */
+  static async getList(): Promise<Core.FeedModelSchema[]> {
+    return Core.FeedApplication.getList();
+  }
+
+  /**
+   * Get a feed by ID
+   * @param feedId - The ID of the feed
+   * @returns The feed or undefined if not found
+   */
+  static async get(feedId: number): Promise<Core.FeedModelSchema | undefined> {
+    return Core.FeedApplication.get(feedId);
+  }
+
+  /**
+   * Commit the create feed operation, this will persist the feed to the local database and sync to the homeserver.
+   * @param params - The parameters object
+   * @param params.tags - The tags for the feed
+   * @returns The created feed
+   */
+  static async commitCreate(params: Core.TFeedCreateParams): Promise<Core.FeedModelSchema> {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
     // Validate tags early to fail fast before normalization and persistence
@@ -18,7 +41,14 @@ export class FeedController {
     return feed!;
   }
 
-  static async update(params: Core.TFeedUpdateParams): Promise<Core.FeedModelSchema> {
+  /**
+   * Commit the update feed operation, this will persist the feed to the local database and sync to the homeserver.
+   * @param params - The parameters object
+   * @param params.feedId - The ID of the feed
+   * @param params.changes - The changes to the feed
+   * @returns The updated feed
+   */
+  static async commitUpdate(params: Core.TFeedUpdateParams): Promise<Core.FeedModelSchema> {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
     if (params.changes.tags) {
@@ -42,19 +72,15 @@ export class FeedController {
     return feed!;
   }
 
-  static async delete(params: Core.TFeedDeleteParams): Promise<void> {
+  /**
+   * Commit the delete feed operation, this will delete the feed from the local database and sync to the homeserver.
+   * @param params - The parameters object
+   * @param params.feedId - The ID of the feed
+   * @returns void
+   */
+  static async commitDelete(params: Core.TFeedDeleteParams): Promise<void> {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
-
     Core.FeedValidators.validateDeleteParams({ feedId: params.feedId });
-
-    await Core.FeedApplication.delete({ userId, params: { feedId: params.feedId } });
-  }
-
-  static async list(): Promise<Core.FeedModelSchema[]> {
-    return Core.FeedApplication.list();
-  }
-
-  static async get(feedId: number): Promise<Core.FeedModelSchema | undefined> {
-    return Core.FeedApplication.get(feedId);
+    await Core.FeedApplication.commitDelete({ userId, params: { feedId: params.feedId } });
   }
 }
