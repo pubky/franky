@@ -54,7 +54,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   const userDetailsMap = useLiveQuery(
     async () => {
       if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.bulkGetDetails(userIds);
+      return await Core.UserController.getManyDetails(userIds);
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),
@@ -64,7 +64,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   const userCountsMap = useLiveQuery(
     async () => {
       if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
-      return await Core.UserController.bulkGetCounts(userIds);
+      return await Core.UserController.getManyCounts(userIds);
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserCounts>(),
@@ -75,7 +75,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   const userRelationshipsMap = useLiveQuery(
     async () => {
       if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      return await Core.UserController.bulkGetRelationships(userIds);
+      return await Core.UserController.getManyRelationships(userIds);
     },
     [userIds],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
@@ -93,7 +93,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
 
     const fetchTags = async () => {
       try {
-        const tagsMap = await Core.UserController.bulkGetTags(userIds);
+        const tagsMap = await Core.UserController.getManyTagsOrFetch(userIds);
         setUserTagsMap(tagsMap);
       } catch (err) {
         Libs.Logger.error('[useProfileConnections] Failed to fetch user tags:', err);

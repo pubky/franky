@@ -118,12 +118,9 @@ describe('useUnreadPosts', () => {
     setMockUnreadStream({ stream: ['post-1', 'post-2'] });
 
     type HookProps = { streamId: Core.PostStreamId | null };
-    const { result, rerender } = renderHook(
-      (props: HookProps) => useUnreadPosts(props),
-      {
-        initialProps: { streamId: 'timeline:all:all' as Core.PostStreamId } as HookProps,
-      },
-    );
+    const { result, rerender } = renderHook((props: HookProps) => useUnreadPosts(props), {
+      initialProps: { streamId: 'timeline:all:all' as Core.PostStreamId } as HookProps,
+    });
 
     expect(result.current.unreadPostIds).toEqual(['post-1', 'post-2']);
 

@@ -216,8 +216,10 @@ describe('useProfileActions', () => {
   });
 
   describe('onStatusChange', () => {
-    it('calls ProfileController.updateStatus with status', async () => {
-      const mockUpdateStatus = vi.spyOn(Core.ProfileController, 'updateStatus').mockResolvedValue(undefined);
+    it('calls ProfileController.commitUpdateDetailsStatus with status', async () => {
+      const mockUpdateStatus = vi
+        .spyOn(Core.ProfileController, 'commitUpdateDetailsStatus')
+        .mockResolvedValue(undefined);
       const mockAuthStore = {
         currentUserPubky: 'pk:test-user',
         setCurrentUserPubky: vi.fn(),

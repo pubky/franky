@@ -282,7 +282,7 @@ export class PostStreamApplication {
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
           countChanges.replies = 1;
         }
-        return Core.LocalProfileService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
+        return Core.LocalUserService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
       });
       await Promise.all(countUpdates);
     }

@@ -28,7 +28,7 @@ export function useBulkUserAvatars(userIds: Core.Pubky[]): UseBulkUserAvatarsRes
   const userDetailsMap = useLiveQuery(
     async () => {
       if (uniqueUserIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.bulkGetDetails(uniqueUserIds);
+      return await Core.UserController.getManyDetails(uniqueUserIds);
     },
     [uniqueUserIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),

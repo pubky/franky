@@ -51,7 +51,7 @@ export function useFollowUser(): UseFollowUserResult {
       try {
         const action = isCurrentlyFollowing ? Core.HomeserverAction.DELETE : Core.HomeserverAction.PUT;
 
-        await Core.UserController.follow(action, {
+        await Core.UserController.commitFollow(action, {
           follower: currentUserPubky,
           followee: userId,
         });

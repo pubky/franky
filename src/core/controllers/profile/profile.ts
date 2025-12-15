@@ -6,6 +6,39 @@ import { z } from 'zod';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
+  static async commitSetDetails(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
+    const { user, meta } = Core.UserNormalizer.to(
+      {
+        name: profile.name,
+        bio: profile.bio ?? '',
+        image: image ?? '',
+        links: Core.UserNormalizer.linksFromUi(profile.links),
+        status: '', // default is blank
+      },
+      pubky,
+    );
+
+    await Core.ProfileApplication.commitSetDetails({ profile: user, url: meta.url, pubky });
+  }
+
+  static async commitUpdateDetailsStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+    return await Core.ProfileApplication.commitUpdateDetailsStatus({ pubky, status });
+  }
+
+  static async commitUpdateDetails(
+    { name, bio, links }: z.infer<typeof Core.UiUserSchema>,
+    image: string | null,
+    pubky: Core.Pubky,
+  ) {
+    await Core.ProfileApplication.commitUpdateDetails({
+      pubky,
+      name,
+      bio,
+      image,
+      links: Core.UserNormalizer.linksFromUi(links),
+    });
+  }
+
   /**
    * Generates a new pair of secret key and mnemonic and sets them in the onboarding and auth stores.
    */
@@ -25,40 +58,11 @@ export class ProfileController {
     Libs.Identity.createRecoveryFile({ keypair, passphrase });
   }
 
-  static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
-    const { user, meta } = Core.UserNormalizer.to(
-      {
-        name: profile.name,
-        bio: profile.bio ?? '',
-        image: image ?? '',
-        links: Core.UserNormalizer.linksFromUi(profile.links),
-        status: '', // default is blank
-      },
-      pubky,
-    );
-
-    await Core.ProfileApplication.create({ profile: user, url: meta.url, pubky });
-  }
-
   static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
     await Core.ProfileApplication.deleteAccount({ pubky, setProgress });
   }
 
   static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
     await Core.ProfileApplication.downloadData({ pubky, setProgress });
-  }
-
-  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
-    return await Core.ProfileApplication.updateStatus({ pubky, status });
-  }
-
-  static async updateProfile(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
-    await Core.ProfileApplication.updateProfile({
-      pubky,
-      name: profile.name,
-      bio: profile.bio ?? '',
-      image,
-      links: Core.UserNormalizer.linksFromUi(profile.links),
-    });
   }
 }

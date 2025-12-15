@@ -30,7 +30,7 @@ export function useIsFollowing(targetUserId: string): UseIsFollowingResult {
       // Don't check if targeting yourself
       if (targetUserId === currentUserPubky) return null;
 
-      return await Core.UserController.getUserRelationships({ userId: targetUserId });
+      return await Core.UserController.getRelationships({ userId: targetUserId });
     },
     [targetUserId, currentUserPubky],
     null,

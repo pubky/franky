@@ -24,7 +24,7 @@ We will:
 2. **Never call TanStack Query, other network code, or any retry/timer-based workflows from within `useLiveQuery` callbacks.**
 3. Make `useLiveQuery` the **only place in React components and custom hooks that may access local services directly**, and only in a read-only manner. All other UI code must go through controllers.
 4. Perform all fetching via **controllers + TanStack Query + `useEffect` (or equivalent)**, and persist results into Dexie.
-5. Enforce a **persistence order**: entities that are *depended on* (e.g. authors, tags) are written to IndexedDB **before** entities that reference them (e.g. posts, notifications).
+5. Enforce a **persistence order**: entities that are _depended on_ (e.g. authors, tags) are written to IndexedDB **before** entities that reference them (e.g. posts, notifications).
 
 **Goal**
 
@@ -60,9 +60,9 @@ Dexie tracks transaction context (PSD) as long as code stays within the same pro
 ```typescript
 db.transaction('rw', table, async () => {
   // PSD context starts
-  const row = await table.get(id);    // OK
-  await someAsyncWork();              // OK, same chain
-  await table.put(updatedRow);        // OK, still in transaction
+  const row = await table.get(id); // OK
+  await someAsyncWork(); // OK, same chain
+  await table.put(updatedRow); // OK, still in transaction
 });
 ```
 
@@ -71,7 +71,7 @@ But when TanStack Query's retry mechanism fires, it uses `setTimeout`, which mov
 ```typescript
 // Inside TanStack Query internals
 setTimeout(() => {
-  retryFetch();  // New promise chain, PSD context LOST
+  retryFetch(); // New promise chain, PSD context LOST
 }, retryDelay);
 ```
 

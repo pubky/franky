@@ -443,9 +443,7 @@ describe('StreamPostsController', () => {
   describe('getLocalStream', () => {
     it('should delegate to PostStreamApplication.getLocalStream with correct params', async () => {
       const mockStream = { stream: ['post-1', 'post-2'] };
-      const getLocalStreamSpy = vi
-        .spyOn(Core.PostStreamApplication, 'getLocalStream')
-        .mockResolvedValue(mockStream);
+      const getLocalStreamSpy = vi.spyOn(Core.PostStreamApplication, 'getLocalStream').mockResolvedValue(mockStream);
 
       const result = await StreamPostsController.getLocalStream({ streamId });
 

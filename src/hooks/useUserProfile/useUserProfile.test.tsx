@@ -5,24 +5,27 @@ import * as Core from '@/core';
 
 // Hoist mock data using vi.hoisted
 // Note: undefined = query not executed yet (loading), null = query executed but no data found
-const { mockUserDetails, setMockUserDetails } = vi.hoisted(() => {
-  const data = { current: undefined as Core.UserDetailsModelSchema | null | undefined };
+const mockMocks = vi.hoisted(() => {
+  const mockUserDetails = { current: undefined as Core.NexusUserDetails | null | undefined };
+  const mockGetDetails = vi.fn();
+  const mockGetOrFetchDetails = vi.fn();
+  const mockGetAvatarUrl = vi.fn((userId: string) => `https://example.com/avatar/${userId}`);
   return {
-    mockUserDetails: data,
-    setMockUserDetails: (value: Core.UserDetailsModelSchema | null | undefined) => {
-      data.current = value;
-    },
+    mockUserDetails,
+    mockGetDetails,
+    mockGetOrFetchDetails,
+    mockGetAvatarUrl,
   };
 });
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn((queryFn) => {
+  useLiveQuery: vi.fn((queryFn, _deps, _defaultValue) => {
     // Execute the query function to return mock data
     if (queryFn) {
       void queryFn();
     }
-    return mockUserDetails.current;
+    return mockMocks.mockUserDetails.current;
   }),
 }));
 
@@ -31,14 +34,12 @@ vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    ProfileController: {
-      read: vi.fn().mockResolvedValue(undefined),
-    },
     UserController: {
-      getDetails: vi.fn().mockImplementation(() => Promise.resolve(mockUserDetails.current)),
+      getDetails: mockMocks.mockGetDetails,
+      getOrFetchDetails: mockMocks.mockGetOrFetchDetails,
     },
     FileController: {
-      getAvatarUrl: vi.fn((userId: string) => `https://example.com/avatar/${userId}`),
+      getAvatarUrl: mockMocks.mockGetAvatarUrl,
     },
   };
 });
@@ -56,13 +57,16 @@ describe('useUserProfile', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default to undefined (simulating query not yet executed)
-    setMockUserDetails(undefined);
+    mockMocks.mockUserDetails.current = undefined;
+    mockMocks.mockGetDetails.mockImplementation(() => Promise.resolve(mockMocks.mockUserDetails.current));
+    mockMocks.mockGetOrFetchDetails.mockResolvedValue(undefined);
   });
 
   describe('Profile data fetching', () => {
     it('returns null profile and isLoading true when query has not executed yet (undefined)', () => {
       // undefined = query not executed yet
-      setMockUserDetails(undefined);
+      mockMocks.mockUserDetails.current = undefined;
+      mockMocks.mockGetDetails.mockResolvedValue(undefined);
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.profile).toBeNull();
@@ -71,7 +75,8 @@ describe('useUserProfile', () => {
 
     it('returns null profile and isLoading false when user not found (null)', () => {
       // null = query executed but user not found
-      setMockUserDetails(null);
+      mockMocks.mockUserDetails.current = null;
+      mockMocks.mockGetDetails.mockResolvedValue(null);
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.profile).toBeNull();
@@ -79,15 +84,17 @@ describe('useUserProfile', () => {
     });
 
     it('returns profile data when user exists', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test User',
         bio: 'Test bio',
         image: 'avatar.jpg',
         status: 'Active',
         links: [],
         indexed_at: Date.now(),
-      } as Core.UserDetailsModelSchema);
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -99,13 +106,17 @@ describe('useUserProfile', () => {
     });
 
     it('handles missing optional fields gracefully', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test User',
-        // Missing bio, image, status
+        bio: '',
+        image: null,
+        status: null,
         links: [],
         indexed_at: Date.now(),
-      } as Core.UserDetailsModelSchema);
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -118,10 +129,17 @@ describe('useUserProfile', () => {
 
   describe('Public key formatting', () => {
     it('builds correct public key format', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
-      } as Core.UserDetailsModelSchema);
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -129,6 +147,8 @@ describe('useUserProfile', () => {
     });
 
     it('handles empty userId', () => {
+      mockMocks.mockUserDetails.current = null;
+      mockMocks.mockGetDetails.mockResolvedValue(null);
       const { result } = renderHook(() => useUserProfile(''));
 
       expect(result.current.profile).toBeNull();
@@ -137,10 +157,17 @@ describe('useUserProfile', () => {
 
   describe('Profile link generation', () => {
     it('builds correct profile link using config', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
-      } as Core.UserDetailsModelSchema);
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -151,24 +178,36 @@ describe('useUserProfile', () => {
 
   describe('Avatar URL generation', () => {
     it('builds avatar URL when user has image', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
+        bio: '',
         image: 'avatar.jpg',
-      } as Core.UserDetailsModelSchema);
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.profile?.avatarUrl).toBe('https://example.com/avatar/test-user-id');
-      expect(Core.FileController.getAvatarUrl).toHaveBeenCalledWith('test-user-id');
+      expect(mockMocks.mockGetAvatarUrl).toHaveBeenCalledWith('test-user-id');
     });
 
     it('returns undefined avatar URL when user has no image', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
+        bio: '',
         image: '',
-      } as Core.UserDetailsModelSchema);
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -176,11 +215,17 @@ describe('useUserProfile', () => {
     });
 
     it('returns undefined avatar URL when image is null', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
+        bio: '',
         image: null,
-      } as Core.UserDetailsModelSchema);
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -190,10 +235,17 @@ describe('useUserProfile', () => {
 
   describe('Default values', () => {
     it('includes default emoji', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
-      } as Core.UserDetailsModelSchema);
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -203,24 +255,33 @@ describe('useUserProfile', () => {
 
   describe('Loading state', () => {
     it('isLoading is true when query has not executed yet (undefined)', () => {
-      setMockUserDetails(undefined);
+      mockMocks.mockUserDetails.current = undefined;
+      mockMocks.mockGetDetails.mockResolvedValue(undefined);
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.isLoading).toBe(true);
     });
 
     it('isLoading is false when user not found (null)', () => {
-      setMockUserDetails(null);
+      mockMocks.mockUserDetails.current = null;
+      mockMocks.mockGetDetails.mockResolvedValue(null);
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.isLoading).toBe(false);
     });
 
     it('isLoading is false when user details are available', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
-      } as Core.UserDetailsModelSchema);
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
@@ -229,16 +290,23 @@ describe('useUserProfile', () => {
   });
 
   describe('Controller integration', () => {
-    it('triggers UserController.getDetails to fetch from Nexus', () => {
-      setMockUserDetails({
-        id: 'test-user-id',
+    it('triggers UserController.getOrFetchDetails to fetch from Nexus', () => {
+      const mockUser: Core.NexusUserDetails = {
+        id: 'test-user-id' as Core.Pubky,
         name: 'Test',
-      } as Core.UserDetailsModelSchema);
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      mockMocks.mockUserDetails.current = mockUser;
+      mockMocks.mockGetDetails.mockResolvedValue(mockUser);
 
       renderHook(() => useUserProfile('test-user-id'));
 
-      // UserController.getDetails should be called in the background
-      expect(Core.UserController.getDetails).toHaveBeenCalledWith({ userId: 'test-user-id' });
+      // UserController.getOrFetchDetails should be called in useEffect
+      expect(mockMocks.mockGetOrFetchDetails).toHaveBeenCalledWith({ userId: 'test-user-id' });
     });
   });
 });

@@ -35,7 +35,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
   // Fetch tags directly from IndexedDB - this will react to any changes made by TagController
   const localTags = useLiveQuery(async () => {
     if (!userId) return undefined;
-    const tags = await Core.UserController.getUserTags(userId);
+    const tags = await Core.UserController.getTags({ userId });
     return tags.length > 0 ? tags : null;
   }, [userId]);
 
@@ -78,14 +78,14 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
     const fetchTags = async () => {
       try {
         // Fetch from server
-        const fetchedTags = await Core.UserController.tags({
+        const fetchedTags = await Core.UserController.fetchTags({
           user_id: userId,
           viewer_id: viewerId ?? undefined,
           ...(enablePagination && { limit_tags: TAGS_PER_PAGE, skip_tags: 0 }),
         });
 
         // Save to IndexedDB so useLiveQuery reacts
-        await Core.UserController.saveUserTags(userId, fetchedTags);
+        await Core.UserController.upsertTags(userId, fetchedTags);
 
         setHasFetched(true);
       } catch {
@@ -191,7 +191,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
           label: tag.label,
           taggerId: viewerId,
           taggedKind: Core.TagKind.USER,
-        }
+        };
         if (userIsTagger) {
           // Track zero-tagger tag BEFORE delete to preserve order
           if (currentTag && (currentTag.taggers_count ?? 0) <= 1) {
@@ -247,7 +247,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
     if (!enablePagination || !userId || !hasMore) return;
 
     try {
-      const moreTags = await Core.UserController.tags({
+      const moreTags = await Core.UserController.fetchTags({
         user_id: userId,
         viewer_id: viewerId ?? undefined,
         limit_tags: TAGS_PER_PAGE,
@@ -260,7 +260,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
         const newTags = moreTags.filter((t) => !existingLabels.has(t.label.toLowerCase()));
         const mergedTags = [...allTags, ...newTags];
 
-        await Core.UserController.saveUserTags(userId, mergedTags);
+        await Core.UserController.upsertTags(userId, mergedTags);
       }
     } catch {
       // Ignore pagination errors

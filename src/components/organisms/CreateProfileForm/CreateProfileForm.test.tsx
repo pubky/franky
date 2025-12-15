@@ -13,6 +13,7 @@ vi.mock('@/core', async (importOriginal) => {
     ProfileController: {
       upload: vi.fn(),
       create: vi.fn(),
+      commitSetDetails: vi.fn(),
     },
     FileController: {
       upload: vi.fn(),
@@ -425,7 +426,7 @@ describe('CreateProfileForm', () => {
     mockPush.mockReset();
     mockToast.mockReset();
     vi.mocked(Core.FileController.upload).mockReset();
-    vi.mocked(Core.ProfileController.create).mockReset();
+    vi.mocked(Core.ProfileController.commitSetDetails).mockReset();
     vi.mocked(Core.UserValidator.check).mockReset();
     vi.mocked(Core.AuthController.bootstrapWithDelay).mockReset();
   });
@@ -777,7 +778,7 @@ describe('CreateProfileForm', () => {
       const Core = await import('@/core');
 
       // Verify that the mocked functions exist
-      expect(typeof Core.ProfileController.create).toBe('function');
+      expect(typeof Core.ProfileController.commitSetDetails).toBe('function');
       expect(typeof Core.FileController.upload).toBe('function');
       expect(typeof Core.UserValidator.check).toBe('function');
       expect(typeof Core.AuthController.bootstrapWithDelay).toBe('function');
@@ -796,7 +797,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue(undefined);
+      vi.mocked(Core.ProfileController.commitSetDetails).mockResolvedValue(undefined);
 
       // Mock bootstrapWithDelay to throw an error
       const bootstrapError = new Error('Failed to fetch user data');
@@ -825,7 +826,7 @@ describe('CreateProfileForm', () => {
 
       // Verify the mocks were called in the correct order
       expect(Core.UserValidator.check).toHaveBeenCalled();
-      expect(Core.ProfileController.create).toHaveBeenCalled();
+      expect(Core.ProfileController.commitSetDetails).toHaveBeenCalled();
       expect(Core.AuthController.bootstrapWithDelay).toHaveBeenCalled();
     });
   });
@@ -853,7 +854,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue(undefined);
+      vi.mocked(Core.ProfileController.commitSetDetails).mockResolvedValue(undefined);
 
       // Mock successful bootstrap
       vi.mocked(Core.AuthController.bootstrapWithDelay).mockResolvedValue(undefined);
@@ -879,7 +880,7 @@ describe('CreateProfileForm', () => {
 
       // Verify the flow was completed successfully
       expect(Core.UserValidator.check).toHaveBeenCalled();
-      expect(Core.ProfileController.create).toHaveBeenCalled();
+      expect(Core.ProfileController.commitSetDetails).toHaveBeenCalled();
       expect(Core.AuthController.bootstrapWithDelay).toHaveBeenCalled();
     });
 
@@ -906,9 +907,9 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      // Mock ProfileController.create to throw a HomeserverError
+      // Mock ProfileController.commitSetDetails to throw a HomeserverError
       const profileError = new Libs.AppError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to create profile', 500);
-      vi.mocked(Core.ProfileController.create).mockRejectedValue(profileError);
+      vi.mocked(Core.ProfileController.commitSetDetails).mockRejectedValue(profileError);
 
       render(<CreateProfileForm />);
 
@@ -955,7 +956,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue(undefined);
+      vi.mocked(Core.ProfileController.commitSetDetails).mockResolvedValue(undefined);
 
       // Mock bootstrap failure
       vi.mocked(Core.AuthController.bootstrapWithDelay).mockRejectedValue(new Error('Bootstrap failed'));
