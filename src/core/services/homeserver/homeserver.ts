@@ -1,49 +1,46 @@
-import * as Pubky from '@synonymdev/pubky';
+import { Pubky, PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
+const _PKARR_RELAYS = Config.PKARR_RELAYS.split(',');
+const TESTNET = Config.TESTNET.toString() === 'true';
+const CAPABILITIES = '/pub/pubky.app/:rw';
+
 export class HomeserverService {
-  private defaultKeypair = {
-    pubky: '' as Core.Pubky,
-    secretKey: '',
-  };
-  private static instance: HomeserverService;
-  private client: Pubky.Client;
-  private currentKeypair: Core.TKeyPair = this.defaultKeypair;
-  private testnet = Config.TESTNET.toString() === 'true';
-  private pkarrRelays = Config.PKARR_RELAYS.split(',');
+  private constructor() {}
 
-  private constructor(secretKey: string = '') {
-    this.client = this.testnet
-      ? Pubky.Client.testnet()
-      : new Pubky.Client({
-          pkarr: { relays: this.pkarrRelays, requestTimeout: null },
-          userMaxRecordAge: null,
-        });
-
-    // Initialize session from store
-    try {
-      this.currentKeypair = Libs.Identity.keypairFromSecretKey(secretKey);
-    } catch {
-      // If secretKey is invalid, use default empty keypair
-      this.currentKeypair = this.defaultKeypair;
-    }
+  /**
+   * Gets a client for the homeserver
+   * @returns The client
+   */
+  private static getClient(): Pubky {
+    return TESTNET ? Pubky.testnet() : new Pubky();
   }
 
-  public static getInstance(secretKey: string = ''): HomeserverService {
-    try {
-      if (!HomeserverService.instance) {
-        HomeserverService.instance = new HomeserverService(secretKey);
-      }
-      return HomeserverService.instance;
-    } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
-    }
+  /**
+   * Gets a signer for the homeserver
+   * @param keypair - The keypair to get a signer for
+   * @returns The signer
+   */
+  private static getSigner(keypair: Keypair): Signer {
+    const client = this.getClient();
+    return client.signer(keypair);
   }
 
-  private handleError(
+  /**
+   * Handles errors from the homeserver
+   * @param error - The error to handle
+   * @param homeserverErrorType - The type of error
+   * @param message - The message to use
+   * @param statusCode - The status code to use
+   * @param additionalContext - Additional context to add to the error
+   * @param alwaysUseHomeserverError - Whether to always use the homeserver error
+   * @returns Never
+   */
+  // TODO: Follow the new patterns from the error handling doc
+  private static handleError(
     error: unknown,
     homeserverErrorType: Libs.HomeserverErrorType,
     message: string,
@@ -85,28 +82,14 @@ export class HomeserverService {
   }
 
   /**
-   * Checks if the response indicates a session expiration (401 Unauthorized).
-   * If so, throws a SESSION_EXPIRED error with the response message.
+   * Checks if the keypair has a homeserver
+   * @param publicKey - The public key to check
+   * @returns The homeserver
    */
-  private static async checkSessionExpiration(response: Response, url: string): Promise<void> {
-    if (response.status === 401) {
-      let errorMessage = 'Session expired';
-      try {
-        const text = await response.text();
-        if (text) {
-          errorMessage = text;
-        }
-      } catch {
-        // Ignore error reading response body
-      }
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, errorMessage, 401, { url });
-    }
-  }
-
-  private async checkHomeserver(pubky: Core.Pubky) {
+  private static async checkHomeserver({ publicKey }: Core.TPublicKeyParams) {
     try {
-      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
-      const homeserver = await this.client.getHomeserver(pubkyPublicKey);
+      const pubkyClient = this.getClient();
+      const homeserver = await pubkyClient.getHomeserverOf(publicKey);
 
       if (!homeserver) {
         throw Libs.createHomeserverError(
@@ -125,58 +108,129 @@ export class HomeserverService {
     }
   }
 
-  private async checkSession(pubky: Core.Pubky) {
-    try {
-      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
-      const session = await this.client.session(pubkyPublicKey);
-      if (!session) {
-        throw Libs.createHomeserverError(
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Failed to get session. Try again.',
-          401,
-        );
+  /**
+   * Checks if the response indicates a session expiration (401 Unauthorized).
+   * If so, throws a SESSION_EXPIRED error with the response message.
+   */
+  private static async checkSessionExpiration(response: Response, url: string): Promise<void> {
+    if (response.status === 401) {
+      let errorMessage = 'Session expired';
+      try {
+        const text = await response.text();
+        if (text) {
+          errorMessage = text;
+        }
+      } catch {
+        // Ignore error reading response body
       }
-      Libs.Logger.debug('Session successful', { session });
-      return session;
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get session. Try again.', 401, {
-        error,
-      });
+      throw Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, errorMessage, 401, { url });
     }
   }
 
-  private async signin(keypair: Pubky.Keypair) {
+  /**
+   * Signs up a new user in the homeserver
+   * @param keypair - The keypair to sign up with
+   * @param signupToken - The signup token to use
+   * @returns The session
+   */
+  static async signUp({ keypair, signupToken }: Core.THomeserverSignUpParams): Promise<Core.THomeserverSessionResult> {
     try {
-      await this.client.signin(keypair);
-      Libs.Logger.debug('Signin successful', { keypair });
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.SIGNIN_FAILED, 'Failed to sign in. Try again.', 401, { error });
-    }
-  }
-
-  async signup(keypair: Core.TKeyPair, signupToken: string): Promise<Core.TAuthenticateKeypairResult> {
-    try {
-      const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
-      Libs.Logger.debug('Signing up', {
-        keypair,
-        signupToken,
-        homeserverPublicKey: homeserverPublicKey,
-      });
-      const pubkyKeypair = Libs.Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
-      const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
-      this.currentKeypair = keypair;
+      const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
+      const signer = this.getSigner(keypair);
+      const session = await signer.signup(homeserverPublicKey, signupToken);
 
       Libs.Logger.debug('Signup successful', { session });
 
-      return { pubky: keypair.pubky, session };
+      return { session };
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {}, true);
     }
   }
 
-  async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+  /**
+   * Signs in a user to the homeserver
+   * @param keypair - The keypair to sign in with
+   * @returns The session
+   */
+  static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
+    const signer = this.getSigner(keypair);
     try {
-      const response = await this.client.fetch(url, { ...options, credentials: 'include' });
+      // get homeserver from pkarr records
+      await this.checkHomeserver({ publicKey: keypair.publicKey });
+      const session = await signer.signin();
+      return { session };
+    } catch (error) {
+      try {
+        // Republish keypair's homeserver
+        const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
+        await signer.pkdns.publishHomeserverForce(homeserverPublicKey);
+        Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.pubkyFromKeypair(keypair) });
+        // Return undefined to signal caller should retry signin after republish
+        return undefined;
+      } catch {
+        this.handleError(
+          error,
+          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+          'Not authenticated. Please sign up first.',
+          401,
+          { error },
+        );
+      }
+    }
+  }
+
+  /**
+   * Generates an authentication URL for the homeserver
+   * @param caps - The capabilities to use
+   * @returns The authentication URL and approval promise
+   */
+  static async generateAuthUrl(caps?: Capabilities): Promise<Core.TGenerateAuthUrlResult> {
+    const capabilities: Capabilities = caps || CAPABILITIES;
+
+    try {
+      const client = this.getClient();
+      const flow = client.startAuthFlow(capabilities, Config.DEFAULT_HTTP_RELAY);
+
+      return {
+        authorizationUrl: flow.authorizationUrl,
+        awaitApproval: flow.awaitApproval(),
+      };
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
+        capabilities,
+        relay: Config.DEFAULT_HTTP_RELAY,
+      });
+    }
+  }
+
+  /**
+   * Logs out a user from the homeserver
+   * @param pubky - The pubky to logout
+   * @returns Void
+   */
+  static async logout({ pubky }: Core.TPubkyParams) {
+    // TODO: Until we get 'reconstruct' function to recreate the Session object from the JSON.
+    try {
+      const url = `pubky://${pubky}/session`;
+      const response = await this.fetch(url, { method: Core.HomeserverAction.DELETE });
+
+      Libs.Logger.debug('Response from homeserver', { response });
+      return response;
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url: 'signout' });
+    }
+  }
+
+  private static async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+    try {
+      const { client } = this.getClient();
+      // Resolve pubky:// URLs to HTTPS URLs before fetching
+      const resolvedUrl = url.startsWith('pubky://') ? resolvePubky(url) : url;
+      const response = await client.fetch(resolvedUrl, {
+        method: options?.method,
+        body: options?.body as BodyInit | undefined,
+        credentials: 'include',
+      });
 
       Libs.Logger.debug('Response from homeserver', { response });
 
@@ -197,8 +251,7 @@ export class HomeserverService {
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
   static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
-    const homeserver = this.getInstance();
-    const response = await homeserver.fetch(url, {
+    const response = await this.fetch(url, {
       method,
       body: bodyJson ? JSON.stringify(bodyJson) : undefined,
     });
@@ -236,8 +289,7 @@ export class HomeserverService {
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
   static async putBlob(url: string, blob: Uint8Array) {
-    const homeserver = this.getInstance();
-    const response = await homeserver.fetch(url, {
+    const response = await this.fetch(url, {
       method: Core.HomeserverAction.PUT,
       body: blob,
     });
@@ -273,13 +325,14 @@ export class HomeserverService {
     reverse: boolean = false,
     limit: number = 500,
   ): Promise<string[]> {
-    const homeserver = this.getInstance();
+    const client = this.getClient();
     try {
-      const files = await homeserver.client.list(baseDirectory, cursor, reverse, limit);
+      // @ts-expect-error - Pubky client.list API type may not be fully defined in TypeScript definitions
+      const files = await client.client.list(baseDirectory, cursor, reverse, limit);
       Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
       return files;
     } catch (error) {
-      return homeserver.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to list files', 500, {
+      return this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to list files', 500, {
         baseDirectory,
       });
     }
@@ -302,78 +355,16 @@ export class HomeserverService {
    * @param {Core.FetchOptions} [options] - Optional fetch options.
    * @returns {Promise<Response>} The fetch response.
    */
-  static async get(url: string, options?: Core.FetchOptions): Promise<Response> {
-    const homeserver = this.getInstance();
-    return await homeserver.fetch(url, options);
-  }
-
-  async logout(pubky: Core.Pubky) {
-    try {
-      const pubKey = Pubky.PublicKey.from(pubky);
-      await this.client.signout(pubKey);
-
-      this.currentKeypair = this.defaultKeypair;
-
-      Libs.Logger.debug('Logout successful');
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500);
-    }
-  }
-
-  async generateAuthUrl(caps?: string) {
-    const capabilities = caps || '/pub/pubky.app/:rw';
-
-    try {
-      const authRequest = this.client.authRequest(Config.DEFAULT_HTTP_RELAY, capabilities);
-
-      return {
-        url: String(authRequest.url()),
-        promise: authRequest.response(),
-      };
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
-        capabilities,
-        relay: Config.DEFAULT_HTTP_RELAY,
-      });
-    }
-  }
-
-  async authenticateKeypair(keypair: Pubky.Keypair): Promise<Core.TAuthenticateKeypairResult | undefined> {
-    try {
-      const pubky = keypair.publicKey().z32();
-      const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());
-
-      // get homeserver from pkarr records
-      await this.checkHomeserver(pubky);
-
-      // sign in with keypair
-      await this.signin(keypair);
-
-      // Retrieve the session
-      const session = await this.checkSession(pubky);
-
-      // update current keypair
-      this.currentKeypair = {
-        pubky,
-        secretKey,
-      };
-
-      return { pubky, session };
-    } catch (error) {
-      try {
-        // try to republish homeserver
-        await this.client.republishHomeserver(keypair, Pubky.PublicKey.from(Config.HOMESERVER));
-        Libs.Logger.debug('Republish homeserver successful', { keypair });
-      } catch {
-        this.handleError(
-          error,
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Not authenticated. Please sign up first.',
-          401,
-          { error },
-        );
-      }
-    }
+  static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
+    const { publicStorage } = this.getClient();
+    const jsonData = await publicStorage.getJson(url as Address);
+    // Wrap JSON data in a Response object to match the expected return type
+    return new Response(JSON.stringify(jsonData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file

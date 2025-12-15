@@ -7,6 +7,7 @@ import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import * as App from '@/app';
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 
 interface RouteGuardProviderProps {
   children: React.ReactNode;
@@ -24,6 +25,7 @@ interface RouteGuardProviderProps {
  * Route access is configured via ROUTE_ACCESS_MAP which maps:
  * - UNAUTHENTICATED users → onboarding/auth routes
  * - AUTHENTICATED users → app routes (feed, profile, etc.)
+ * - NEEDS_PROFILE_CREATION users → profile creation route
  */
 export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const router = useRouter();
@@ -32,11 +34,11 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
 
   // Determine if the current route is accessible based on authentication status
   const isRouteAccessible = useMemo(() => {
-    // Wait for authentication status to be determined before allowing access
-    if (isLoading) return false;
-
-    // Public routes are always accessible regardless of authentication status
+    // Public routes are ALWAYS accessible, even during loading
     if (App.PUBLIC_ROUTES.includes(pathname)) return true;
+
+    // Wait for authentication status to be determined before allowing access to protected routes
+    if (isLoading) return false;
 
     // Get the allowed routes for the current authentication status
     const routeAccess = Providers.ROUTE_ACCESS_MAP[status];
@@ -49,7 +51,10 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
 
   // Handle automatic redirects when user tries to access unauthorized routes
   useEffect(() => {
-    // Wait for authentication status to be determined
+    // Public routes never redirect
+    if (App.PUBLIC_ROUTES.includes(pathname)) return;
+
+    // Wait for authentication status to be determined for protected routes
     if (isLoading) return;
 
     // No redirect needed if user has access to current route
@@ -59,19 +64,29 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
     const routeAccess = Providers.ROUTE_ACCESS_MAP[status];
     const redirectTo = routeAccess.redirectTo;
 
+    // Runtime validation: ensure redirect target is actually in allowed routes
+    if (redirectTo && !routeAccess.allowedRoutes.includes(redirectTo)) {
+      Libs.Logger.error(
+        `RouteGuard configuration error: redirectTo "${redirectTo}" is not in allowedRoutes for status "${status}"`,
+      );
+      return;
+    }
+
     // Only redirect if we have a target and we're not already there
     if (redirectTo && pathname !== redirectTo) {
       router.push(redirectTo);
     }
   }, [status, pathname, router, isLoading, isRouteAccessible]);
 
-  // Show loading spinner while determining authentication status or route access
-  if (isLoading || !isRouteAccessible) {
+  // Show loading spinner while:
+  // 1. Authentication status is being determined (isLoading = true)
+  // 2. Route access check has completed but user doesn't have access (will trigger redirect)
+  if (!isRouteAccessible) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <Atoms.Spinner className="mx-auto" />
-          <p className="mt-2 text-muted-foreground">{isLoading ? 'Loading...' : 'Checking access...'}</p>
+          <p className="mt-2 text-muted-foreground">{isLoading ? 'Loading...' : 'Redirecting...'}</p>
         </div>
       </div>
     );

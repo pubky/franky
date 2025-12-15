@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { AuthStore, authInitialState } from './auth.types';
-import { createAuthActions } from './auth';
+import { createAuthActions } from './auth.actions';
 import { createAuthSelectors } from './auth.selectors';
 
 // Store creation
@@ -19,8 +19,16 @@ export const useAuthStore = create<AuthStore>()(
         partialize: (state) => ({
           currentUserPubky: state.currentUserPubky,
           session: state.session,
-          isAuthenticated: state.isAuthenticated,
+          hasProfile: state.hasProfile,
+          hasHydrated: false, // Will be set by rehydration handler
         }),
+
+        // Set hasHydrated to true after rehydration
+        onRehydrateStorage: () => (state) => {
+          if (state) {
+            state.setHasHydrated(true);
+          }
+        },
       },
     ),
     {

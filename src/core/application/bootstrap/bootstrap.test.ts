@@ -79,6 +79,13 @@ const createMockNotification = (): Core.NexusNotification => ({
   body: { type: 'like', user_id: 'user-2', post_id: 'post-1' },
 });
 
+const createFlatNotification = (timestamp: number): Core.FlatNotification =>
+  ({
+    type: Core.NotificationType.Follow,
+    timestamp,
+    followed_by: `user-${timestamp}`,
+  }) as Core.FlatNotification;
+
 const getBootstrapParams = (pubky: string): Core.TBootstrapParams => {
   const {
     meta: { url },
@@ -99,6 +106,7 @@ type MockConfig = {
   upsertInfluencersError?: Error;
   upsertTagsError?: Error;
   persistFilesError?: Error;
+  fetchMissingEntitiesError?: Error;
   persistNotificationsError?: Error;
 };
 
@@ -113,6 +121,7 @@ type ServiceMocks = {
   upsertInfluencersStream: unknown;
   upsertHotTags: unknown;
   upsertTagsStream: unknown;
+  fetchMissingEntities: unknown;
   persistNotifications: unknown;
 };
 
@@ -130,10 +139,13 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     upsertInfluencersError,
     upsertTagsError,
     persistFilesError,
+    fetchMissingEntitiesError,
     persistNotificationsError,
   } = config;
 
   vi.clearAllMocks();
+
+  const flatNotifications = notifications.map((n) => createFlatNotification(n.timestamp));
 
   return {
     nexusFetch: vi
@@ -178,6 +190,13 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     upsertTagsStream: vi
       .spyOn(Core.LocalStreamTagsService, 'upsert')
       .mockImplementation(upsertTagsError ? () => Promise.reject(upsertTagsError) : () => Promise.resolve(undefined)),
+    fetchMissingEntities: vi
+      .spyOn(Core.NotificationApplication, 'fetchMissingEntities')
+      .mockImplementation(
+        fetchMissingEntitiesError
+          ? () => Promise.reject(fetchMissingEntitiesError)
+          : () => Promise.resolve(flatNotifications),
+      ),
     persistNotifications: vi
       .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
       .mockImplementation(
@@ -226,7 +245,11 @@ const assertCommonCalls = (
     bootstrapData.ids.hot_tags,
   );
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.ids.hot_tags);
-  expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
+  // fetchMissingEntities is called with notifications and viewerId
+  expect(mocks.fetchMissingEntities).toHaveBeenCalledWith({ notifications, viewerId: TEST_PUBKY });
+  // persistAndGetUnreadCount is called with a single object parameter
+  const flatNotifications = notifications.map((n) => createFlatNotification(n.timestamp));
+  expect(mocks.persistNotifications).toHaveBeenCalledWith({ flatNotifications, lastRead: MOCK_LAST_READ });
 };
 
 describe('BootstrapApplication', () => {
@@ -236,6 +259,10 @@ describe('BootstrapApplication', () => {
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
     } as LastReadResult);
+    // Mock toFlatNotification to convert NexusNotification to FlatNotification
+    vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) =>
+      createFlatNotification(n.timestamp),
+    );
   });
 
   afterEach(() => {
@@ -393,8 +420,8 @@ describe('BootstrapApplication', () => {
         expect.any(Object),
       );
 
-      // Verify bootstrap process stopped (persist should not be called)
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
+      // Bootstrap data is persisted before notifications are fetched, so it will be persisted even if notifications fail
+      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
     });
 
     it('should throw error when homeserver returns network error', async () => {
@@ -427,8 +454,8 @@ describe('BootstrapApplication', () => {
         expect.any(Object),
       );
 
-      // Verify bootstrap process stopped
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
+      // Bootstrap data is persisted before notifications are fetched, so it will be persisted even if notifications fail
+      expect(mocks.persistUsers).toHaveBeenCalled();
     });
 
     it('should throw error when NexusUserService.notifications fails', async () => {
@@ -448,7 +475,31 @@ describe('BootstrapApplication', () => {
         expect.any(Object),
       );
 
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
+      // Bootstrap data is persisted before notifications are fetched, so it will be persisted even if notifications fail
+      expect(mocks.persistUsers).toHaveBeenCalled();
+    });
+
+    it('should throw error when NotificationApplication.fetchMissingEntities fails', async () => {
+      const bootstrapData = emptyBootstrap();
+      const notifications = [createMockNotification()];
+      const mocks = setupMocks({
+        bootstrapData,
+        notifications,
+        fetchMissingEntitiesError: new Error('Fetch missing entities error'),
+      });
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow(
+        'Fetch missing entities error',
+      );
+
+      // Verify notifications were fetched
+      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
+
+      // Verify fetchMissingEntities was called
+      expect(mocks.fetchMissingEntities).toHaveBeenCalledWith({ notifications, viewerId: TEST_PUBKY });
+
+      // Verify persistNotifications was NOT called (error occurred before)
+      expect(mocks.persistNotifications).not.toHaveBeenCalled();
     });
 
     it('should throw error when persistPosts fails', async () => {
@@ -487,7 +538,9 @@ describe('BootstrapApplication', () => {
         'Notification persistence error',
       );
 
-      expect(mocks.persistNotifications).toHaveBeenCalledWith([], MOCK_LAST_READ);
+      // Verify fetchMissingEntities was called first
+      expect(mocks.fetchMissingEntities).toHaveBeenCalledWith({ notifications: [], viewerId: TEST_PUBKY });
+      expect(mocks.persistNotifications).toHaveBeenCalledWith({ flatNotifications: [], lastRead: MOCK_LAST_READ });
     });
 
     it('should throw error when upsert influencers stream fails', async () => {

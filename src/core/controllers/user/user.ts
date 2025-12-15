@@ -85,6 +85,24 @@ export class UserController {
     return await Core.UserApplication.tags(params);
   }
 
+  /**
+   * Retrieves tags for a user from local IndexedDB.
+   * @param userId - User ID to get tags for
+   * @returns Promise resolving to an array of tags or empty array if not found
+   */
+  static async getUserTags(userId: string): Promise<Core.NexusTag[]> {
+    return await Core.UserApplication.getUserTags(userId);
+  }
+
+  /**
+   * Saves tags for a user to local IndexedDB.
+   * @param userId - User ID to save tags for
+   * @param tags - Array of tags to save
+   */
+  static async saveUserTags(userId: string, tags: Core.NexusTag[]): Promise<void> {
+    await Core.UserApplication.saveUserTags(userId, tags);
+  }
+
   static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
     return await Core.UserApplication.taggers(params);
   }

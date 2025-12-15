@@ -14,10 +14,7 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    const [data, { notificationList, lastRead }] = await Promise.all([
-      Core.NexusBootstrapService.fetch(params.pubky),
-      this.fetchNotifications(params),
-    ]);
+    const data = await Core.NexusBootstrapService.fetch(params.pubky);
     // TODO: With the new Nexus API, data is never undefined
     if (!data) {
       throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
@@ -51,19 +48,21 @@ export class BootstrapApplication {
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
-      Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead),
+      // Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead }),
     ]);
 
-    // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
-    await Core.FileApplication.persistFiles(results[1].postAttachments);
-    const unread = results[results.length - 1] as number;
+    const [_, notification] = await Promise.all([
+      // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
+      Core.FileApplication.persistFiles(results[1].postAttachments),
+      this.fetchNotifications(params),
+    ]);
 
-    return { notification: { unread, lastRead } };
+    return { notification };
   }
 
   /**
-   * Retrieves user's last read timestamp from homeserver and fetches notification data from Nexus and .
-   * Used internally by initialize() to get notification state.
+   * Retrieves user's last read timestamp from homeserver, fetches notification data from Nexus
+   * and persists the notifications to the cache.
    *
    * @private
    * @param params - Bootstrap parameters
@@ -71,7 +70,10 @@ export class BootstrapApplication {
    * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification list and last read timestamp
    */
-  private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
+  private static async fetchNotifications({
+    pubky,
+    lastReadUrl,
+  }: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let userLastRead: number;
     try {
       const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
@@ -89,6 +91,7 @@ export class BootstrapApplication {
       } else {
         // Network errors, timeouts, server errors, etc. should bubble up
         Libs.Logger.error('Failed to fetch last read timestamp', error);
+        // TODO: TO harsh, we should handle this error better
         throw error;
       }
     }
@@ -97,6 +100,17 @@ export class BootstrapApplication {
       user_id: pubky,
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
-    return { notificationList, lastRead: userLastRead };
+
+    // TODO: Temporal fix.This is an anti-pattern, we should fetch notifications also from nexus, like this we just need to persist and get the unread count.
+    // Nexus will manage which parts of notifications are missings like Users and Posts.
+    const flatNotifications = await Core.NotificationApplication.fetchMissingEntities({
+      notifications: notificationList,
+      viewerId: pubky,
+    });
+    const unread = await Core.LocalNotificationService.persistAndGetUnreadCount({
+      flatNotifications,
+      lastRead: userLastRead,
+    });
+    return { unread, lastRead: userLastRead };
   }
 }

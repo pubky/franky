@@ -1,0 +1,194 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`LanguageSelector - Snapshots > matches snapshot - closed 1`] = `
+<div
+  class="inline-flex w-full flex-col items-start justify-start gap-2 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
+>
+  <p
+    class="text-xs font-bold text-muted-foreground uppercase"
+  >
+    Display language
+  </p>
+  <div
+    class="relative w-full"
+  >
+    <button
+      class="flex w-full cursor-pointer items-center justify-between px-4 py-2 text-lg leading-7 font-light tracking-wide transition-opacity hover:opacity-80"
+    >
+      <span
+        class="flex items-center gap-2"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇺🇸
+        </span>
+        <span>
+          English
+        </span>
+      </span>
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-chevron-down transition-transform duration-300"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m6 9 6 6 6-6"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
+<div
+  class="inline-flex w-full flex-col items-start justify-start gap-2 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
+>
+  <p
+    class="text-xs font-bold text-muted-foreground uppercase"
+  >
+    Display language
+  </p>
+  <div
+    class="relative w-full"
+  >
+    <button
+      class="flex w-full cursor-pointer items-center justify-between px-4 py-2 text-lg leading-7 font-light tracking-wide transition-opacity hover:opacity-80"
+    >
+      <span
+        class="flex items-center gap-2"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇺🇸
+        </span>
+        <span>
+          English
+        </span>
+      </span>
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-chevron-down transition-transform duration-300 rotate-180"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m6 9 6 6 6-6"
+        />
+      </svg>
+    </button>
+    <div
+      class="absolute top-full right-0 left-0 z-50 mt-2 rounded-lg border border-border bg-popover shadow-lg animate-in py-2 duration-200 fade-in-0 zoom-in-95"
+    >
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent bg-accent/50"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇺🇸
+        </span>
+        <span
+          class="font-light"
+        >
+          English
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-check ml-auto"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M20 6 9 17l-5-5"
+          />
+        </svg>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
+        disabled=""
+      >
+        <span
+          class="text-2xl"
+        >
+          🇪🇸
+        </span>
+        <span
+          class="font-light"
+        >
+          Spanish
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
+        disabled=""
+      >
+        <span
+          class="text-2xl"
+        >
+          🇩🇪
+        </span>
+        <span
+          class="font-light"
+        >
+          German
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
+        disabled=""
+      >
+        <span
+          class="text-2xl"
+        >
+          🇫🇷
+        </span>
+        <span
+          class="font-light"
+        >
+          French
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
+        disabled=""
+      >
+        <span
+          class="text-2xl"
+        >
+          🇮🇹
+        </span>
+        <span
+          class="font-light"
+        >
+          Italian
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+`;

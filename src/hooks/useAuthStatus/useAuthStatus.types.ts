@@ -1,6 +1,7 @@
 export enum AuthStatus {
   UNAUTHENTICATED = 'UNAUTHENTICATED',
   AUTHENTICATED = 'AUTHENTICATED',
+  NEEDS_PROFILE_CREATION = 'NEEDS_PROFILE_CREATION',
 }
 
 export interface AuthStatusResult {

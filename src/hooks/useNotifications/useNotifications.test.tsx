@@ -37,7 +37,7 @@ vi.mock('@/core', async (importOriginal) => {
     NotificationController: {
       getOrFetchNotifications: vi.fn(() =>
         Promise.resolve({
-          notifications: [],
+          flatNotifications: [],
           olderThan: undefined,
         }),
       ),
@@ -48,7 +48,7 @@ vi.mock('@/core', async (importOriginal) => {
     })),
     useNotificationStore: vi.fn((selector) => {
       const state = { lastRead: 0, setLastRead: vi.fn() };
-      return selector ? selector(state) : state;
+      return selector ? selector(state) : state.lastRead;
     }),
   };
 });
@@ -165,7 +165,7 @@ describe('useNotifications', () => {
     ] as Core.FlatNotification[];
 
     vi.mocked(Core.NotificationController.getOrFetchNotifications).mockResolvedValueOnce({
-      notifications: mockNotifications,
+      flatNotifications: mockNotifications,
       olderThan: mockNotifications[0].timestamp - 1,
     });
 
@@ -186,11 +186,11 @@ describe('useNotifications', () => {
 
     vi.mocked(Core.NotificationController.getOrFetchNotifications)
       .mockResolvedValueOnce({
-        notifications: mockNotifications,
+        flatNotifications: mockNotifications,
         olderThan: 999,
       })
       .mockResolvedValueOnce({
-        notifications: [],
+        flatNotifications: [],
         olderThan: undefined,
       });
 

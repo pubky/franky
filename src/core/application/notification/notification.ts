@@ -12,17 +12,10 @@ export class NotificationApplication {
    * @returns Promise resolving to the number of unread notifications
    */
   static async notifications({ userId, lastRead }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
-    const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
-
-    // Transform to flat notifications for entity fetching
-    const flatNotifications = notificationList.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
-
-    // Fetch missing users/posts referenced in notifications
-    await this.fetchMissingEntities(flatNotifications, userId);
-
-    return await Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead);
+    const notifications = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
+    const flatNotifications = await this.fetchMissingEntities({ notifications, viewerId: userId });
+    return await Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead });
   }
-
   /**
    * Updates the lastRead timestamp on the homeserver to mark all notifications as read.
    * This is a fire-and-forget operation - homeserver errors are logged but don't block.
@@ -64,17 +57,17 @@ export class NotificationApplication {
     limit,
   }: Core.TGetOrFetchNotificationsParams): Promise<Core.TGetOrFetchNotificationsResponse> {
     // Try to get notifications from cache
-    const cachedNotifications = await Core.LocalNotificationService.getOlderThan(olderThan, limit);
+    const flatNotifications = await Core.LocalNotificationService.getOlderThan({ olderThan, limit });
 
     // Full cache hit - return cached results
-    if (cachedNotifications.length === limit) {
-      const nextOlderThan = cachedNotifications[cachedNotifications.length - 1]?.timestamp;
-      return { notifications: cachedNotifications, olderThan: nextOlderThan };
+    if (flatNotifications.length === limit) {
+      const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;
+      return { flatNotifications, olderThan: nextOlderThan };
     }
 
     // Partial cache hit - fetch remaining from Nexus
-    if (cachedNotifications.length > 0 && cachedNotifications.length < limit) {
-      return await this.partialCacheHit({ userId, limit, cachedNotifications });
+    if (flatNotifications.length > 0 && flatNotifications.length < limit) {
+      return await this.partialCacheHit({ userId, limit, flatNotifications });
     }
 
     // Cache miss - fetch all from Nexus
@@ -91,28 +84,24 @@ export class NotificationApplication {
   private static async partialCacheHit({
     userId,
     limit,
-    cachedNotifications,
-  }: {
-    userId: Core.Pubky;
-    limit: number;
-    cachedNotifications: Core.FlatNotification[];
-  }): Promise<Core.TGetOrFetchNotificationsResponse> {
-    const lastCachedTimestamp = cachedNotifications[cachedNotifications.length - 1]?.timestamp;
-    const remainingLimit = limit - cachedNotifications.length;
+    flatNotifications,
+  }: Core.TNotificationsPartialCacheHitParams): Promise<Core.TGetOrFetchNotificationsResponse> {
+    const lastCachedTimestamp = flatNotifications[flatNotifications.length - 1]?.timestamp;
+    const remainingLimit = limit - flatNotifications.length;
 
     // Fetch remaining from Nexus
-    const { notifications: nexusNotifications, olderThan: nextOlderThan } = await this.fetchFromNexus({
+    const { flatNotifications: nexusFlatNotifications, olderThan: nextOlderThan } = await this.fetchFromNexus({
       userId,
       olderThan: lastCachedTimestamp,
       limit: remainingLimit,
     });
 
     // Combine cached and fetched, ensuring no duplicates by id (business key)
-    const seenIds = new Set(cachedNotifications.map((n) => n.id));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenIds.has(n.id));
-    const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
+    const seenIds = new Set(flatNotifications.map((n) => n.id));
+    const uniqueNexusNotifications = nexusFlatNotifications.filter((n) => !seenIds.has(n.id));
+    const combinedNotifications = [...flatNotifications, ...uniqueNexusNotifications];
 
-    return { notifications: combinedNotifications, olderThan: nextOlderThan };
+    return { flatNotifications: combinedNotifications, olderThan: nextOlderThan };
   }
 
   /**
@@ -129,29 +118,24 @@ export class NotificationApplication {
   }): Promise<Core.TGetOrFetchNotificationsResponse> {
     try {
       // Fetch from Nexus using skip/limit pagination
-      const nexusNotifications = await Core.NexusUserService.notifications({
+      const notifications = await Core.NexusUserService.notifications({
         user_id: userId,
         limit,
         start: olderThan === Infinity ? undefined : olderThan,
       });
 
-      if (!nexusNotifications || nexusNotifications.length === 0) {
-        return { notifications: [], olderThan: undefined };
+      if (!notifications || notifications.length === 0) {
+        return { flatNotifications: [], olderThan: undefined };
       }
 
-      // Transforms Nexus notifications to flat notification format for persistence
-      const flatNotifications = nexusNotifications.map((notification) =>
-        Core.NotificationNormalizer.toFlatNotification(notification),
-      );
-
-      await this.fetchMissingEntities(flatNotifications, userId);
+      const flatNotifications = await this.fetchMissingEntities({ notifications, viewerId: userId });
 
       // IMPORTANT: Save notifications AFTER fetching related entities. If we save notifications first,
       // useLiveQuery will trigger re-renders in components, but referenced posts/users won't be
-      // available yet, causing incomplete UI states. By fetching entities first, everything is
+      // available yet, causing incomplete UI states. By persisting related entities first, everything is
       // ready when the re-render happens.
       try {
-        await Core.LocalNotificationService.bulkSave(flatNotifications);
+        await Core.LocalNotificationService.bulkSave({ flatNotifications });
       } catch (error) {
         Libs.Logger.warn('Failed to persist notifications to cache', { error });
         // Continue - we still return the fetched notifications for display
@@ -161,10 +145,10 @@ export class NotificationApplication {
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;
 
       // Decrement the timestamp. If not we will get duplicated notification. Infinity is used for initial load.
-      return { notifications: flatNotifications, olderThan: nextOlderThan - 1 };
+      return { flatNotifications, olderThan: nextOlderThan - 1 };
     } catch (error) {
       Libs.Logger.warn('Failed to fetch notifications from Nexus', { userId, olderThan, limit, error });
-      return { notifications: [], olderThan: undefined };
+      return { flatNotifications: [], olderThan: undefined };
     }
   }
 
@@ -173,8 +157,13 @@ export class NotificationApplication {
    *
    * @param notifications - Array of flat notifications to extract post and user references from
    */
-  private static async fetchMissingEntities(notifications: Core.FlatNotification[], viewerId: Core.Pubky) {
-    const { relatedPostIds, relatedUserIds } = this.loopAndParseNotifications(notifications);
+  static async fetchMissingEntities({
+    notifications,
+    viewerId,
+  }: Core.TFetchMissingEntitiesParams): Promise<Core.TFlatNotificationList> {
+    // Transforms Nexus notifications to flat notification format for persistence
+    const flatNotifications = notifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+    const { relatedPostIds, relatedUserIds } = Core.LocalNotificationService.parseNotifications({ flatNotifications });
 
     const notPersistedPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(relatedPostIds);
     const notPersistedUserIds = await Core.LocalStreamUsersService.getNotPersistedUsersInCache(relatedUserIds);
@@ -186,63 +175,6 @@ export class NotificationApplication {
     if (notPersistedUserIds.length > 0) {
       await Core.UserStreamApplication.fetchMissingUsersFromNexus({ cacheMissUserIds: notPersistedUserIds });
     }
-  }
-
-  private static loopAndParseNotifications(
-    notifications: Core.FlatNotification[],
-  ): Core.TLoopAndParseNotificationsResult {
-    // Handle duplicates
-    const relatedPostIds = new Set<string>();
-    const relatedUserIds = new Set<Core.Pubky>();
-
-    const addPostUri = (uri: string | undefined) => {
-      if (!uri) return;
-      const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });
-      if (compositeId) {
-        relatedPostIds.add(compositeId);
-      }
-    };
-
-    for (const notification of notifications) {
-      switch (notification.type) {
-        case Core.NotificationType.Follow:
-        case Core.NotificationType.NewFriend:
-          relatedUserIds.add(notification.followed_by);
-          break;
-        case Core.NotificationType.TagPost:
-          addPostUri(notification.post_uri);
-          relatedUserIds.add(notification.tagged_by);
-          break;
-        case Core.NotificationType.TagProfile:
-          relatedUserIds.add(notification.tagged_by);
-          break;
-        case Core.NotificationType.Reply:
-          addPostUri(notification.reply_uri);
-          relatedUserIds.add(notification.replied_by);
-          break;
-        case Core.NotificationType.Repost:
-          addPostUri(notification.repost_uri);
-          relatedUserIds.add(notification.reposted_by);
-          break;
-        case Core.NotificationType.Mention:
-          addPostUri(notification.post_uri);
-          relatedUserIds.add(notification.mentioned_by);
-          break;
-        case Core.NotificationType.PostDeleted:
-          addPostUri(notification.deleted_uri);
-          relatedUserIds.add(notification.deleted_by);
-          break;
-        case Core.NotificationType.PostEdited:
-          addPostUri(notification.edited_uri);
-          relatedUserIds.add(notification.edited_by);
-          break;
-        default:
-          break;
-      }
-    }
-    return {
-      relatedPostIds: Array.from(relatedPostIds),
-      relatedUserIds: Array.from(relatedUserIds),
-    };
+    return flatNotifications;
   }
 }

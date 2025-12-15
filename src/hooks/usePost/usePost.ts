@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 
 interface UsePostReplyOptions {
@@ -47,6 +48,16 @@ export function usePost() {
     [toast],
   );
 
+  const showSuccessToast = useCallback(
+    (title: string, description: string) => {
+      toast({
+        title,
+        description,
+      });
+    },
+    [toast],
+  );
+
   const reply = useCallback(
     async ({ postId, onSuccess }: UsePostReplyOptions) => {
       if (!content.trim() || !postId || !currentUserId) return;
@@ -62,15 +73,16 @@ export function usePost() {
         });
         setContent('');
         setTags([]);
+        showSuccessToast('Reply posted', 'Your reply has been posted successfully.');
         onSuccess?.(createdPostId);
       } catch (err) {
-        console.error('Failed to submit reply:', err);
+        Libs.Logger.error('[usePost] Failed to submit reply:', err);
         showErrorToast('Failed to post reply. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast],
+    [content, tags, currentUserId, showErrorToast, showSuccessToast],
   );
 
   const post = useCallback(
@@ -87,15 +99,16 @@ export function usePost() {
         });
         setContent('');
         setTags([]);
+        showSuccessToast('Post created', 'Your post has been created successfully.');
         onSuccess?.(createdPostId);
       } catch (err) {
-        console.error('Failed to create post:', err);
+        Libs.Logger.error('[usePost] Failed to create post:', err);
         showErrorToast('Failed to create post. Please try again.');
       } finally {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast],
+    [content, tags, currentUserId, showErrorToast, showSuccessToast],
   );
 
   return {

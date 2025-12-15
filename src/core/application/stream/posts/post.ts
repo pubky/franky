@@ -38,6 +38,15 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.getStreamHead(params);
   }
 
+  /**
+   * Get local stream data from cache
+   * @param streamId - The ID of the stream
+   * @returns The cached stream or null if not found
+   */
+  static async getLocalStream({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
+    return await Core.LocalStreamPostsService.findById({ streamId });
+  }
+
   static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams): Promise<void> {
     return await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream(params);
   }
@@ -56,7 +65,15 @@ export class PostStreamApplication {
     lastPostId,
     limit,
     viewerId,
+    order,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
+    // Skip cache for ascending order (chronological) - always fetch from Nexus
+    // This is because cache is stored in descending order
+    // TODO: Might be a better way to handle this.
+    if (order === Core.StreamOrder.ASCENDING) {
+      return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
+    }
+
     const mutedUserIds = await muteFilter.getMutedUserIds();
 
     let isFirstFetch = true;
@@ -74,6 +91,7 @@ export class PostStreamApplication {
               lastPostId,
               limit,
               viewerId,
+              order,
             })
           : await this.fetchStreamFromNexus({
               streamId,
@@ -81,6 +99,7 @@ export class PostStreamApplication {
               streamTail: cursor,
               streamHead: Core.SKIP_FETCH_NEW_POSTS,
               viewerId,
+              order,
             });
         isFirstFetch = false;
         return result;
@@ -109,6 +128,7 @@ export class PostStreamApplication {
     lastPostId,
     limit,
     viewerId,
+    order,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
     // Avoid the indexdb query for engagement streams even we do not persist
     if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT && !streamHead) {
@@ -135,7 +155,7 @@ export class PostStreamApplication {
         streamTail = Core.NOT_FOUND_CACHED_STREAM;
       }
     }
-    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId });
+    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
   }
 
   /**
@@ -235,6 +255,7 @@ export class PostStreamApplication {
     streamHead,
     streamTail,
     viewerId,
+    order,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
     const { params, invokeEndpoint, extraParams } = Core.createPostStreamParams({
       streamId,
@@ -242,6 +263,7 @@ export class PostStreamApplication {
       limit,
       streamHead,
       viewerId,
+      order,
     });
     const postStreamChunk = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
@@ -320,7 +342,9 @@ export class PostStreamApplication {
 
   // Delegate to service for cache miss detection
   private static async getNotPersistedUsersInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
-    return Core.LocalStreamUsersService.getNotPersistedUsersInCache(userIds);
+    const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
+    const missingUserIds = userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+    return Array.from(new Set(missingUserIds));
   }
 
   private static async getStreamFromCache({

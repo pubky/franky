@@ -7,12 +7,22 @@ const localStorageMock = {
   setItem: vi.fn(),
   removeItem: vi.fn(),
   clear: vi.fn(),
-  secretKey: '1234567890123456789012345678901234567890123456789012345678901234',
 };
 
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
+
+// Helper to create mock secrets
+const createMockSecrets = () => {
+  const mockSecretKey = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+  const mockMnemonic = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+
+  return {
+    secretKey: mockSecretKey,
+    mnemonic: mockMnemonic,
+  };
+};
 
 describe('OnboardingStore', () => {
   beforeEach(() => {
@@ -25,9 +35,8 @@ describe('OnboardingStore', () => {
 
     // Reset store state to initial state
     useOnboardingStore.setState({
-      secretKey: '',
-      pubky: '',
-      mnemonic: '',
+      secretKey: null,
+      mnemonic: null,
       hasHydrated: false,
       showWelcomeDialog: false,
     });
@@ -41,9 +50,8 @@ describe('OnboardingStore', () => {
     it('should have correct initial state', () => {
       const state = useOnboardingStore.getState();
 
-      expect(state.secretKey).toEqual('');
-      expect(state.pubky).toEqual('');
-      expect(state.mnemonic).toEqual('');
+      expect(state.secretKey).toBeNull();
+      expect(state.mnemonic).toBeNull();
       expect(state.hasHydrated).toBe(false);
       expect(state.showWelcomeDialog).toBe(false);
     });
@@ -51,11 +59,10 @@ describe('OnboardingStore', () => {
 
   describe('State Management', () => {
     it('should clear keys correctly while preserving hydration state', () => {
+      const mockSecrets = createMockSecrets();
       // Set some state
+      useOnboardingStore.getState().setSecrets(mockSecrets);
       useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-        pubky: 'test-public-key',
-        mnemonic: 'test mnemonic phrase',
         hasHydrated: true,
       });
 
@@ -63,18 +70,16 @@ describe('OnboardingStore', () => {
       useOnboardingStore.getState().reset();
 
       const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual('');
-      expect(state.pubky).toEqual('');
-      expect(state.mnemonic).toEqual('');
+      expect(state.secretKey).toBeNull();
+      expect(state.mnemonic).toBeNull();
       expect(state.hasHydrated).toBe(true); // Should preserve hydration state
     });
 
     it('should preserve false hydration state during reset', () => {
+      const mockSecrets = createMockSecrets();
       // Set some state with hasHydrated false
+      useOnboardingStore.getState().setSecrets(mockSecrets);
       useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-        pubky: 'test-public-key',
-        mnemonic: 'test mnemonic phrase',
         hasHydrated: false,
       });
 
@@ -82,9 +87,8 @@ describe('OnboardingStore', () => {
       useOnboardingStore.getState().reset();
 
       const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual('');
-      expect(state.pubky).toEqual('');
-      expect(state.mnemonic).toEqual('');
+      expect(state.secretKey).toBeNull();
+      expect(state.mnemonic).toBeNull();
       expect(state.hasHydrated).toBe(false); // Should preserve hydration state even when false
     });
 
@@ -98,100 +102,94 @@ describe('OnboardingStore', () => {
       expect(useOnboardingStore.getState().hasHydrated).toBe(false);
     });
 
-    it('should set both keys with setKeypair action', () => {
-      const testPubky = 'test-public-key-123';
-      const testSecretKey = 'test-secret-key-456';
-
+    it('should set secrets with setSecrets action', () => {
+      const mockSecrets = createMockSecrets();
       const state = useOnboardingStore.getState();
 
-      // Initially keys should be empty
-      expect(state.pubky).toEqual('');
-      expect(state.secretKey).toEqual('');
+      // Initially secretKey should be null
+      expect(state.secretKey).toBeNull();
 
-      // Set both keys at once
-      state.setKeypair(testPubky, testSecretKey);
+      // Set secrets
+      state.setSecrets(mockSecrets);
 
       const updatedState = useOnboardingStore.getState();
-      expect(updatedState.pubky).toEqual(testPubky);
-      expect(updatedState.secretKey).toEqual(testSecretKey);
+      expect(updatedState.secretKey).toBe(mockSecrets.secretKey);
+      expect(updatedState.mnemonic).toBe(mockSecrets.mnemonic);
     });
   });
 
   describe('Key Validation Logic', () => {
-    it('should not generate keys if valid keys exist and force is false', () => {
+    it('should clear keys when reset is called', () => {
+      const mockSecrets = createMockSecrets();
       // Set valid keys manually
-      useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-      });
+      useOnboardingStore.getState().setSecrets(mockSecrets);
 
       const initialState = useOnboardingStore.getState();
 
-      // Try to generate keys without force
+      // Reset keys
       initialState.reset();
 
-      // Keys should remain unchanged (since the logic checks for valid keys first)
+      // Keys should be cleared
       const finalState = useOnboardingStore.getState();
-      expect(finalState.secretKey).toEqual('');
+      expect(finalState.secretKey).toBeNull();
     });
 
-    it('should not generate keys if already generating', () => {
+    it('should clear keys when reset is called with empty state', () => {
       const state = useOnboardingStore.getState();
 
-      // Try to generate keys
+      // Reset keys
       state.reset();
 
-      // Should remain in generating state without change
-      expect(useOnboardingStore.getState().secretKey).toBe('');
+      // Should be null after reset
+      expect(useOnboardingStore.getState().secretKey).toBeNull();
     });
   });
 
-  describe('Integration with Real HomeserverService', () => {
-    it('should generate real keys when no valid keys exist', async () => {
+  describe('Reset Functionality', () => {
+    it('should clear keys when reset is called', () => {
+      const mockSecrets = createMockSecrets();
       const state = useOnboardingStore.getState();
 
-      // Start key generation
+      // Set secrets
+      state.setSecrets(mockSecrets);
+
+      // Reset
       state.reset();
 
-      // Key generation is synchronous, so keys should be generated immediately
+      // Keys should be cleared
       const finalState = useOnboardingStore.getState();
-
-      // Check that real keys were generated
-      expect(finalState.secretKey).toBe('');
+      expect(finalState.secretKey).toBeNull();
     });
 
-    it('should force regenerate keys when force is true', async () => {
+    it('should clear keys when reset is called with existing keys', () => {
+      const mockSecrets = createMockSecrets();
       // Set existing valid keys
-      useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-      });
+      useOnboardingStore.getState().setSecrets(mockSecrets);
 
-      // Force regenerate keys
+      // Reset keys
       useOnboardingStore.getState().reset();
 
-      // Wait for the setTimeout to complete
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
       const finalState = useOnboardingStore.getState();
-      // Keys should be different from the initial ones
-      expect(finalState.secretKey).not.toEqual(localStorageMock.secretKey);
+      // Keys should be cleared
+      expect(finalState.secretKey).toBeNull();
     });
   });
 
   describe('Persistence', () => {
     it('should serialize and store keys correctly', () => {
-      const testState = {
-        secretKey: localStorageMock.secretKey,
-      };
+      const mockSecrets = createMockSecrets();
 
       // Simulate setting state that would trigger persistence
-      useOnboardingStore.setState(testState);
+      useOnboardingStore.getState().setSecrets(mockSecrets);
 
       // The state should be set correctly
       const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual(testState.secretKey);
+      expect(state.secretKey).toBe(mockSecrets.secretKey);
+      expect(state.mnemonic).toBe(mockSecrets.mnemonic);
     });
 
     it('should handle localStorage errors gracefully', () => {
+      const mockSecrets = createMockSecrets();
       // Mock localStorage to throw error
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('Storage quota exceeded');
@@ -199,42 +197,39 @@ describe('OnboardingStore', () => {
 
       // This should not throw an error
       expect(() => {
-        useOnboardingStore.setState({
-          secretKey: localStorageMock.secretKey,
-        });
+        useOnboardingStore.getState().setSecrets(mockSecrets);
       }).not.toThrow();
     });
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty secretKey correctly', () => {
-      // Set empty secretKey
-      useOnboardingStore.setState({
-        secretKey: '',
-      });
-
-      const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual('');
-    });
-
-    it('should handle short secretKey correctly', () => {
-      // Set short secretKey (less than 32 bytes)
-      useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-      });
-
-      const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual(localStorageMock.secretKey);
-    });
-
     it('should handle null secretKey correctly', () => {
       // Set null secretKey
       useOnboardingStore.setState({
-        secretKey: '',
+        secretKey: null,
       });
 
       const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual('');
+      expect(state.secretKey).toBeNull();
+    });
+
+    it('should handle secretKey correctly', () => {
+      const mockSecrets = createMockSecrets();
+      // Set secrets
+      useOnboardingStore.getState().setSecrets(mockSecrets);
+
+      const state = useOnboardingStore.getState();
+      expect(state.secretKey).toBe(mockSecrets.secretKey);
+    });
+
+    it('should handle null mnemonic correctly', () => {
+      // Set null mnemonic
+      useOnboardingStore.setState({
+        mnemonic: null,
+      });
+
+      const state = useOnboardingStore.getState();
+      expect(state.mnemonic).toBeNull();
     });
   });
 
@@ -265,6 +260,7 @@ describe('OnboardingStore', () => {
 
   describe('Storage Error Handling', () => {
     it('should handle localStorage errors during storage operations', () => {
+      const mockSecrets = createMockSecrets();
       // Mock localStorage to throw error
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('Storage quota exceeded');
@@ -272,13 +268,12 @@ describe('OnboardingStore', () => {
 
       // This should not throw an error
       expect(() => {
-        useOnboardingStore.setState({
-          secretKey: localStorageMock.secretKey,
-        });
+        useOnboardingStore.getState().setSecrets(mockSecrets);
       }).not.toThrow();
     });
 
     it('should handle localStorage quota exceeded during setItem', () => {
+      const mockSecrets = createMockSecrets();
       // Mock localStorage to throw QuotaExceededError
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('QuotaExceededError');
@@ -286,9 +281,7 @@ describe('OnboardingStore', () => {
 
       // This should not throw an error
       expect(() => {
-        useOnboardingStore.setState({
-          secretKey: localStorageMock.secretKey,
-        });
+        useOnboardingStore.getState().setSecrets(mockSecrets);
       }).not.toThrow();
     });
   });
@@ -323,6 +316,7 @@ describe('OnboardingStore', () => {
     });
 
     it('should handle successful rehydration with existing data', async () => {
+      const mockSecrets = createMockSecrets();
       // Manually test the hydration logic since the automatic callback is hard to test
       const state = useOnboardingStore.getState();
 
@@ -330,9 +324,7 @@ describe('OnboardingStore', () => {
       expect(state.hasHydrated).toBe(false);
 
       // Set some existing data
-      useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-      });
+      state.setSecrets(mockSecrets);
 
       // Simulate what the rehydration callback does when there's existing data
       state.setHydrated(true);
@@ -340,47 +332,47 @@ describe('OnboardingStore', () => {
       // Should now be hydrated with the existing data
       const finalState = useOnboardingStore.getState();
       expect(finalState.hasHydrated).toBe(true);
-      expect(finalState.secretKey).toEqual(localStorageMock.secretKey);
+      expect(finalState.secretKey).toBe(mockSecrets.secretKey);
     });
   });
 
   describe('Mnemonic Management', () => {
-    it('should set mnemonic correctly', () => {
-      const testMnemonic =
-        'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+    it('should set secrets correctly', () => {
+      const mockSecrets = createMockSecrets();
       const state = useOnboardingStore.getState();
 
-      state.setMnemonic(testMnemonic);
+      state.setSecrets(mockSecrets);
 
       const updatedState = useOnboardingStore.getState();
-      expect(updatedState.mnemonic).toEqual(testMnemonic);
+      expect(updatedState.mnemonic).toEqual(mockSecrets.mnemonic);
+      expect(updatedState.secretKey).toEqual(mockSecrets.secretKey);
     });
 
-    it('should set keypair from mnemonic correctly', () => {
-      // For this test, we'll just verify that the action exists and can be called
-      // The actual implementation is tested in the Identity module tests
-      expect(() => {
-        const state = useOnboardingStore.getState();
-        // Just verify the function exists - the actual mocking is complex for this test
-        expect(state.setKeypairFromMnemonic).toBeDefined();
-        expect(typeof state.setKeypairFromMnemonic).toBe('function');
-      }).not.toThrow();
-    });
-
-    it('should handle setKeypairFromMnemonic errors', () => {
-      const invalidMnemonic = 'invalid mnemonic phrase';
+    it('should set secrets correctly with setSecrets action', () => {
+      const mockSecrets = createMockSecrets();
       const state = useOnboardingStore.getState();
 
-      // For this test, we'll just verify that calling with invalid mnemonic
-      // doesn't crash the application (error handling is in the Identity module)
-      expect(() => {
-        try {
-          state.setKeypairFromMnemonic(invalidMnemonic);
-        } catch (error) {
-          // Expected to throw for invalid mnemonic
-          expect(error).toBeDefined();
-        }
-      }).not.toThrow();
+      // Set secrets
+      state.setSecrets(mockSecrets);
+
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.secretKey).toBe(mockSecrets.secretKey);
+      expect(updatedState.mnemonic).toBe(mockSecrets.mnemonic);
+    });
+
+    it('should handle secret operations', () => {
+      const mockSecrets = createMockSecrets();
+      const state = useOnboardingStore.getState();
+
+      // Set secrets
+      state.setSecrets(mockSecrets);
+      expect(useOnboardingStore.getState().secretKey).toBe(mockSecrets.secretKey);
+      expect(useOnboardingStore.getState().mnemonic).toBe(mockSecrets.mnemonic);
+
+      // Clear secrets
+      state.clearSecrets();
+      expect(useOnboardingStore.getState().secretKey).toBeNull();
+      expect(useOnboardingStore.getState().mnemonic).toBeNull();
     });
   });
 
@@ -389,83 +381,83 @@ describe('OnboardingStore', () => {
       const store = useOnboardingStore.getState();
 
       // 1. Initial state should be empty
-      expect(store.secretKey).toEqual('');
+      expect(store.secretKey).toBeNull();
 
-      // 2. Generate keys
-      store.reset();
+      // 2. Set secrets
+      const mockSecrets = createMockSecrets();
+      store.setSecrets(mockSecrets);
 
-      // 3. Keys should be generated immediately (synchronous)
+      // 3. Verify secrets are set
       const finalState = useOnboardingStore.getState();
-      expect(finalState.secretKey).toEqual('');
+      expect(finalState.secretKey).toBe(mockSecrets.secretKey);
+      expect(finalState.mnemonic).toBe(mockSecrets.mnemonic);
     });
   });
 
-  describe('localStorage Repopulation', () => {
-    it('should detect when keys exist in memory but not in localStorage ', async () => {
+  describe('localStorage Persistence', () => {
+    it('should persist secrets in memory', async () => {
+      const mockSecrets = createMockSecrets();
       // Set keys in memory
-      useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-      });
+      useOnboardingStore.getState().setSecrets(mockSecrets);
 
       // Mock localStorage to be empty
       localStorageMock.getItem.mockReturnValue(null);
 
-      // Wait for potential repopulation logic
-      await new Promise((resolve) => setTimeout(resolve, 400));
+      // Wait for potential persistence logic
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       const state = useOnboardingStore.getState();
-      expect(state.secretKey).toEqual(localStorageMock.secretKey);
+      expect(state.secretKey).toBe(mockSecrets.secretKey);
+      expect(state.mnemonic).toBe(mockSecrets.mnemonic);
     });
   });
 
   describe('Persistence Configuration', () => {
     it('should persist all required state properties', () => {
-      const testData = {
-        pubky: 'test-public-key-123',
-        secretKey: 'test-secret-key-456',
-        mnemonic: 'test mnemonic phrase with twelve words for key generation',
-      };
+      const mockSecrets = createMockSecrets();
 
-      // Set all data using setState (which would trigger persistence)
-      useOnboardingStore.setState(testData);
+      // Set all data using setSecrets (which would trigger persistence)
+      useOnboardingStore.getState().setSecrets(mockSecrets);
 
       // Verify all persisted data is accessible
       const state = useOnboardingStore.getState();
-      expect(state.pubky).toBe(testData.pubky);
-      expect(state.secretKey).toBe(testData.secretKey);
-      expect(state.mnemonic).toBe(testData.mnemonic);
+      expect(state.secretKey).toBe(mockSecrets.secretKey);
+      expect(state.mnemonic).toBe(mockSecrets.mnemonic);
     });
 
     it('should exclude action functions from persistence', () => {
       const state = useOnboardingStore.getState();
 
       // Verify that action functions exist in the store
-      expect(typeof state.setPubky).toBe('function');
-      expect(typeof state.setSecretKey).toBe('function');
-      expect(typeof state.setMnemonic).toBe('function');
-      expect(typeof state.setKeypair).toBe('function');
-      expect(typeof state.setKeypairFromMnemonic).toBe('function');
+      expect(typeof state.setSecrets).toBe('function');
+      expect(typeof state.clearSecrets).toBe('function');
       expect(typeof state.setHydrated).toBe('function');
+      expect(typeof state.setShowWelcomeDialog).toBe('function');
       expect(typeof state.reset).toBe('function');
+
+      // Verify that selector functions exist
+      expect(typeof state.selectSecretKey).toBe('function');
+      expect(typeof state.selectMnemonic).toBe('function');
 
       // Actions should not be persisted (this is tested implicitly by the partialize function)
       // The partialize function only includes data properties, not function properties
     });
 
-    it('should handle mnemonic storage through actions', () => {
-      const testMnemonic =
-        'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+    it('should handle secrets storage through actions', () => {
+      const mockSecrets = createMockSecrets();
 
-      // Initially mnemonic should be empty
-      expect(useOnboardingStore.getState().mnemonic).toBe('');
+      // Initially secrets should be null
+      expect(useOnboardingStore.getState().secretKey).toBeNull();
+      expect(useOnboardingStore.getState().mnemonic).toBeNull();
 
-      // Set mnemonic using the action (following same pattern as existing working tests)
+      // Set secrets using the action (following same pattern as existing working tests)
       const state = useOnboardingStore.getState();
-      state.setMnemonic(testMnemonic);
+      state.setSecrets(mockSecrets);
 
-      // Verify mnemonic is stored in state (and would be persisted)
+      // Verify secrets are stored in state (and would be persisted)
       const updatedState = useOnboardingStore.getState();
-      expect(updatedState.mnemonic).toBe(testMnemonic);
+      expect(updatedState.secretKey).toBe(mockSecrets.secretKey);
+      expect(updatedState.mnemonic).toBe(mockSecrets.mnemonic);
     });
   });
 
@@ -498,27 +490,21 @@ describe('OnboardingStore', () => {
 
   describe('Complete Persistence Lifecycle', () => {
     it('should handle store operations with mnemonic and keys', () => {
-      const testMnemonic =
-        'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
-      const testPublicKey = 'test-public-key-full-cycle';
-      const testSecretKey = 'test-secret-key-full-cycle';
+      const mockSecrets = createMockSecrets();
 
       const state = useOnboardingStore.getState();
 
-      // Set mnemonic using action (same pattern as existing working tests)
-      state.setMnemonic(testMnemonic);
-
-      // Set keypair using action (same pattern as existing working tests)
-      state.setKeypair(testPublicKey, testSecretKey);
+      // Set secrets using action (same pattern as existing working tests)
+      state.setSecrets(mockSecrets);
 
       // Verify state is consistent
       const updatedState = useOnboardingStore.getState();
-      expect(updatedState.mnemonic).toBe(testMnemonic);
-      expect(updatedState.pubky).toBe(testPublicKey);
-      expect(updatedState.secretKey).toBe(testSecretKey);
+      expect(updatedState.mnemonic).toBe(mockSecrets.mnemonic);
+      expect(updatedState.secretKey).toBe(mockSecrets.secretKey);
     });
 
     it('should handle localStorage persistence simulation', () => {
+      const mockSecrets = createMockSecrets();
       // Mock successful localStorage operations
       localStorageMock.setItem.mockImplementation((key, value) => {
         // Simulate successful storage
@@ -531,19 +517,12 @@ describe('OnboardingStore', () => {
       });
 
       // Set data that should trigger persistence
-      const testData = {
-        pubky: 'persistence-test-public',
-        secretKey: 'persistence-test-secret',
-        mnemonic: 'test mnemonic for persistence verification',
-      };
-
-      useOnboardingStore.setState(testData);
+      useOnboardingStore.getState().setSecrets(mockSecrets);
 
       // Verify the data is in the store
       const state = useOnboardingStore.getState();
-      expect(state.pubky).toBe(testData.pubky);
-      expect(state.secretKey).toBe(testData.secretKey);
-      expect(state.mnemonic).toBe(testData.mnemonic);
+      expect(state.secretKey).toBe(mockSecrets.secretKey);
+      expect(state.mnemonic).toBe(mockSecrets.mnemonic);
     });
   });
 
@@ -605,32 +584,28 @@ describe('OnboardingStore', () => {
     });
 
     it('should persist showWelcomeDialog state', () => {
-      const testData = {
-        pubky: 'test-public-key-123',
-        secretKey: 'test-secret-key-456',
-        mnemonic: 'test mnemonic phrase with twelve words for key generation',
-        showWelcomeDialog: true,
-      };
+      const mockSecrets = createMockSecrets();
 
       // Set all data including showWelcomeDialog
-      useOnboardingStore.setState(testData);
+      useOnboardingStore.getState().setSecrets(mockSecrets);
+      useOnboardingStore.setState({
+        showWelcomeDialog: true,
+      });
 
       // Verify showWelcomeDialog is persisted along with other data
       const state = useOnboardingStore.getState();
-      expect(state.pubky).toBe(testData.pubky);
-      expect(state.secretKey).toBe(testData.secretKey);
-      expect(state.mnemonic).toBe(testData.mnemonic);
-      expect(state.showWelcomeDialog).toBe(testData.showWelcomeDialog);
+      expect(state.secretKey).toBe(mockSecrets.secretKey);
+      expect(state.mnemonic).toBe(mockSecrets.mnemonic);
+      expect(state.showWelcomeDialog).toBe(true);
     });
 
     it('should preserve showWelcomeDialog during reset', () => {
+      const mockSecrets = createMockSecrets();
       const state = useOnboardingStore.getState();
 
       // Set some data including showWelcomeDialog
+      state.setSecrets(mockSecrets);
       useOnboardingStore.setState({
-        secretKey: localStorageMock.secretKey,
-        pubky: 'test-public-key',
-        mnemonic: 'test mnemonic phrase',
         hasHydrated: true,
         showWelcomeDialog: true,
       });
@@ -639,9 +614,8 @@ describe('OnboardingStore', () => {
       state.reset();
 
       const resetState = useOnboardingStore.getState();
-      expect(resetState.secretKey).toEqual('');
-      expect(resetState.pubky).toEqual('');
-      expect(resetState.mnemonic).toEqual('');
+      expect(resetState.secretKey).toBeNull();
+      expect(resetState.mnemonic).toBeNull();
       expect(resetState.hasHydrated).toBe(true); // Preserved
       expect(resetState.showWelcomeDialog).toBe(false); // Reset to initial state
     });

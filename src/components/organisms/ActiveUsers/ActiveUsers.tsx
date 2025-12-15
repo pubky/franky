@@ -6,6 +6,7 @@ import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import { APP_ROUTES } from '@/app/routes';
 import type { ActiveUsersProps } from './ActiveUsers.types';
 
@@ -53,7 +54,7 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
         <Atoms.Typography className="font-light text-muted-foreground">No users to show</Atoms.Typography>
       ) : (
         users.map((user) => (
-          <Molecules.UserListItem
+          <Organisms.UserListItem
             key={user.id}
             user={user}
             variant="compact"

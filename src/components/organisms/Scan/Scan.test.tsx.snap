@@ -1,0 +1,135 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Scan Components - Snapshots > ScanContent - Snapshots > matches snapshot for default ScanContent 1`] = `
+<div
+  class="hidden md:flex"
+  data-testid="container"
+>
+  <div
+    data-testid="page-header"
+  >
+    <div
+      data-size="large"
+      data-testid="page-title"
+    >
+      Scan 
+      <span
+        class="text-brand"
+      >
+        QR Code.
+      </span>
+    </div>
+    <div
+      data-testid="page-subtitle"
+    >
+      Open Pubky Ring, create a pubky, and scan the QR.
+    </div>
+  </div>
+  <div
+    data-layout="column"
+    data-testid="content-card"
+  >
+    <div
+      class="items-center justify-center"
+      data-testid="container"
+    >
+      <div
+        class="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4"
+      >
+        <img
+          alt="Pubky Ring"
+          data-testid="next-image"
+          height="220"
+          src="/images/pubky-ring-qr-example.png"
+          width="220"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Scan Components - Snapshots > ScanFooter - Snapshots > matches snapshot for default ScanFooter 1`] = `
+<div
+  data-testid="footer-links"
+>
+  Use
+   
+  <a
+    data-testid="link"
+    href="https://pubkyring.app/"
+    target="_blank"
+  >
+    Pubky Ring
+  </a>
+   
+  or any other
+   
+  <a
+    data-testid="link"
+    href="https://pubky.org"
+    target="_blank"
+  >
+    Pubky Core
+  </a>
+  –powered keychain.
+</div>
+`;
+
+exports[`Scan Components - Snapshots > ScanHeader - Snapshots > matches snapshot for desktop ScanHeader 1`] = `
+<div
+  data-testid="page-header"
+>
+  <div
+    data-size="large"
+    data-testid="page-title"
+  >
+    Scan 
+    <span
+      class="text-brand"
+    >
+      QR Code.
+    </span>
+  </div>
+  <div
+    data-testid="page-subtitle"
+  >
+    Open Pubky Ring, create a pubky, and scan the QR.
+  </div>
+</div>
+`;
+
+exports[`Scan Components - Snapshots > ScanHeader - Snapshots > matches snapshot for mobile ScanHeader 1`] = `
+<div
+  data-testid="page-header"
+>
+  <div
+    data-size="large"
+    data-testid="page-title"
+  >
+    Tap to 
+    <span
+      class="text-brand"
+    >
+      Authorize.
+    </span>
+  </div>
+  <div
+    data-testid="page-subtitle"
+  >
+    Open Pubky Ring, create a pubky, and scan the QR.
+  </div>
+</div>
+`;
+
+exports[`Scan Components - Snapshots > ScanNavigation - Snapshots > matches snapshot for default ScanNavigation 1`] = `
+<div
+  data-testid="buttons-navigation"
+>
+  <button
+    data-testid="back-button"
+  >
+    Back
+  </button>
+</div>
+`;

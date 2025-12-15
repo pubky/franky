@@ -275,7 +275,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
       if (mode === 'create') {
         await Core.ProfileController.create(user, image, pubky);
-        await Core.AuthController.authorizeAndBootstrap();
+        await Core.AuthController.bootstrapWithDelay();
         setShowWelcomeDialog?.(true);
         router.push(App.HOME_ROUTES.HOME);
       } else {

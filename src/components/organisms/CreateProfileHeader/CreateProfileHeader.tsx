@@ -7,7 +7,8 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export const CreateProfileHeader = () => {
-  const { pubky } = Core.useOnboardingStore();
+  const authStore = Core.useAuthStore();
+  const pubky = authStore.selectCurrentUserPubky();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
   const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });

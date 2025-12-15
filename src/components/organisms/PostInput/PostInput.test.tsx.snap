@@ -21,7 +21,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
       placeholder="What's on your mind?"
     />
     <div
-      class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0"
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100"
       data-override-defaults="true"
       data-testid="container"
     >
@@ -88,7 +88,7 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
       placeholder="Write a reply..."
     />
     <div
-      class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0"
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100"
       data-override-defaults="true"
       data-testid="container"
     >

@@ -10,14 +10,32 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
 }));
 
+// Mock secretKey for testing
+const mockSecretKey = 'test-secret-key-value';
+
+const { mockGetState } = vi.hoisted(() => ({
+  mockGetState: vi.fn(() => ({
+    secretKey: mockSecretKey,
+  })),
+}));
+
 // Mock the onboarding store
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    useOnboardingStore: vi.fn(),
+    useOnboardingStore: Object.assign(
+      () => ({
+        secretKey: mockSecretKey,
+      }),
+      {
+        getState: mockGetState,
+      },
+    ),
     AuthController: {
+      ...actual.AuthController,
       signUp: vi.fn(),
+      generateSignupToken: vi.fn().mockResolvedValue('mock-token'),
     },
   };
 });
@@ -112,7 +130,6 @@ vi.mock('@/atoms', async () => {
 describe('HomeserverCard', () => {
   const mockPush = vi.fn();
   const mockSignUp = vi.fn();
-  const mockSetInviteCode = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -120,12 +137,6 @@ describe('HomeserverCard', () => {
     // Setup router mock
     (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({
       push: mockPush,
-    });
-
-    // Setup onboarding store mock
-    (Core.useOnboardingStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      inviteCode: '',
-      setInviteCode: mockSetInviteCode,
     });
 
     // Setup AuthController mock
@@ -174,8 +185,8 @@ describe('HomeserverCard', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalledWith({
+        secretKey: mockSecretKey,
         signupToken: 'ABCD-EFGH-IJKL',
-        keypair: { pubky: undefined, secretKey: undefined },
       });
     });
 
@@ -197,8 +208,8 @@ describe('HomeserverCard', () => {
 
     await waitFor(() => {
       expect(mockSignUp).toHaveBeenCalledWith({
+        secretKey: mockSecretKey,
         signupToken: 'ABCD-EFGH-IJKL',
-        keypair: { pubky: undefined, secretKey: undefined },
       });
     });
   });
