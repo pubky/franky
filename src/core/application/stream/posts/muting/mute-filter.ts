@@ -4,12 +4,8 @@ import * as Core from '@/core';
  * Handles mute filtering for post streams.
  */
 export class MuteFilter {
-  async getMutedUserIds(viewerId: Core.Pubky): Promise<Set<Core.Pubky>> {
-    const mutedStreamId = Core.buildUserCompositeId({
-      userId: viewerId,
-      reach: Core.UserStreamSource.MUTED,
-    });
-    const mutedStream = await Core.LocalStreamUsersService.findById(mutedStreamId);
+  async getMutedUserIds(): Promise<Set<Core.Pubky>> {
+    const mutedStream = await Core.LocalStreamUsersService.findById(Core.UserStreamTypes.MUTED);
     return new Set(mutedStream?.stream ?? []);
   }
 

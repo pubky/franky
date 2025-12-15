@@ -1214,52 +1214,22 @@ describe('PostStreamApplication', () => {
   // ============================================================================
 
   describe('getMutedUserIds', () => {
-    const viewerId = 'viewer-user' as Core.Pubky;
-
     it('should return empty set when no muted users exist', async () => {
-      const result = await muteFilter.getMutedUserIds(viewerId);
+      const result = await muteFilter.getMutedUserIds();
       expect(result).toBeInstanceOf(Set);
       expect(result.size).toBe(0);
     });
 
     it('should return set of muted user IDs', async () => {
       const mutedUsers: Core.Pubky[] = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
-      const mutedStreamId = Core.buildUserCompositeId({
-        userId: viewerId,
-        reach: Core.UserStreamSource.MUTED,
-      });
-      await Core.UserStreamModel.upsert(mutedStreamId, mutedUsers);
+      await Core.UserStreamModel.upsert(Core.UserStreamTypes.MUTED, mutedUsers);
 
-      const result = await muteFilter.getMutedUserIds(viewerId);
+      const result = await muteFilter.getMutedUserIds();
 
       expect(result.size).toBe(3);
       expect(result.has('muted-user-1' as Core.Pubky)).toBe(true);
       expect(result.has('muted-user-2' as Core.Pubky)).toBe(true);
       expect(result.has('muted-user-3' as Core.Pubky)).toBe(true);
-    });
-
-    it('should return different muted lists for different viewers', async () => {
-      const viewer1 = 'viewer-1' as Core.Pubky;
-      const viewer2 = 'viewer-2' as Core.Pubky;
-
-      await Core.UserStreamModel.upsert(
-        Core.buildUserCompositeId({ userId: viewer1, reach: Core.UserStreamSource.MUTED }),
-        ['muted-by-1'],
-      );
-      await Core.UserStreamModel.upsert(
-        Core.buildUserCompositeId({ userId: viewer2, reach: Core.UserStreamSource.MUTED }),
-        ['muted-by-2-a', 'muted-by-2-b'],
-      );
-
-      const result1 = await muteFilter.getMutedUserIds(viewer1);
-      const result2 = await muteFilter.getMutedUserIds(viewer2);
-
-      expect(result1.size).toBe(1);
-      expect(result1.has('muted-by-1' as Core.Pubky)).toBe(true);
-
-      expect(result2.size).toBe(2);
-      expect(result2.has('muted-by-2-a' as Core.Pubky)).toBe(true);
-      expect(result2.has('muted-by-2-b' as Core.Pubky)).toBe(true);
     });
   });
 

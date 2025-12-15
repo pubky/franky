@@ -57,7 +57,7 @@ export class PostStreamApplication {
     limit,
     viewerId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
-    const mutedUserIds = await muteFilter.getMutedUserIds(viewerId);
+    const mutedUserIds = await muteFilter.getMutedUserIds();
 
     let isFirstFetch = true;
     const result = await postStreamQueue.collect(streamId, {

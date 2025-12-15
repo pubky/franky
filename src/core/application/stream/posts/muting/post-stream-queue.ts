@@ -24,6 +24,14 @@ export class PostStreamQueue {
   }
 
   /**
+   * Remove a specific stream's queue entry.
+   * Called when navigating away from a stream or when streamId changes.
+   */
+  remove(streamId: Core.PostStreamId): void {
+    this.entries.delete(streamId);
+  }
+
+  /**
    * Collects enough posts to satisfy the limit, fetching more if needed.
    * Handles deduplication, filtering, and saves overflow back to queue.
    */
