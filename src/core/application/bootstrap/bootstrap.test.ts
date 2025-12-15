@@ -231,12 +231,8 @@ const assertCommonCalls = (
     stream: bootstrapData.ids.recommended,
   });
   // Check muted users stream is stored from bootstrap response
-  const expectedMutedStreamId = Core.buildUserCompositeId({
-    userId: TEST_PUBKY,
-    reach: Core.UserStreamSource.MUTED,
-  });
   expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
-    streamId: expectedMutedStreamId,
+    streamId: Core.UserStreamTypes.MUTED,
     stream: bootstrapData.ids.muted,
   });
   // Check both hot tags features are called
@@ -618,12 +614,8 @@ describe('BootstrapApplication', () => {
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       // Verify empty muted stream is still persisted
-      const expectedMutedStreamId = Core.buildUserCompositeId({
-        userId: TEST_PUBKY,
-        reach: Core.UserStreamSource.MUTED,
-      });
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
-        streamId: expectedMutedStreamId,
+        streamId: Core.UserStreamTypes.MUTED,
         stream: [],
       });
       expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });

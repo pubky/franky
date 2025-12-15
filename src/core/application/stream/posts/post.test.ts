@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as Core from '@/core';
 import { postStreamQueue } from './muting/post-stream-queue';
-import { muteFilter } from './muting/mute-filter';
+import { MuteFilter } from './muting/mute-filter';
 
 describe('PostStreamApplication', () => {
   const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId;
@@ -1215,7 +1215,7 @@ describe('PostStreamApplication', () => {
 
   describe('getMutedUserIds', () => {
     it('should return empty set when no muted users exist', async () => {
-      const result = await muteFilter.getMutedUserIds();
+      const result = await MuteFilter.getMutedUserIds();
       expect(result).toBeInstanceOf(Set);
       expect(result.size).toBe(0);
     });
@@ -1224,7 +1224,7 @@ describe('PostStreamApplication', () => {
       const mutedUsers: Core.Pubky[] = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
       await Core.UserStreamModel.upsert(Core.UserStreamTypes.MUTED, mutedUsers);
 
-      const result = await muteFilter.getMutedUserIds();
+      const result = await MuteFilter.getMutedUserIds();
 
       expect(result.size).toBe(3);
       expect(result.has('muted-user-1' as Core.Pubky)).toBe(true);
@@ -1238,7 +1238,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
       const mutedUserIds = new Set<Core.Pubky>();
 
-      const result = muteFilter.filterPosts(postIds, mutedUserIds);
+      const result = MuteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual(postIds);
     });
@@ -1247,7 +1247,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
       const mutedUserIds = new Set(['author-2'] as Core.Pubky[]);
 
-      const result = muteFilter.filterPosts(postIds, mutedUserIds);
+      const result = MuteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual(['author-1:post-1', 'author-3:post-3']);
     });
@@ -1256,7 +1256,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-1:post-2', 'author-1:post-3'];
       const mutedUserIds = new Set(['author-1'] as Core.Pubky[]);
 
-      const result = muteFilter.filterPosts(postIds, mutedUserIds);
+      const result = MuteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual([]);
     });
@@ -1265,7 +1265,7 @@ describe('PostStreamApplication', () => {
       const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3', 'author-4:post-4', 'author-2:post-5'];
       const mutedUserIds = new Set(['author-2', 'author-4'] as Core.Pubky[]);
 
-      const result = muteFilter.filterPosts(postIds, mutedUserIds);
+      const result = MuteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual(['author-1:post-1', 'author-3:post-3']);
     });
@@ -1274,7 +1274,7 @@ describe('PostStreamApplication', () => {
       const postIds: string[] = [];
       const mutedUserIds = new Set(['author-1'] as Core.Pubky[]);
 
-      const result = muteFilter.filterPosts(postIds, mutedUserIds);
+      const result = MuteFilter.filterPosts(postIds, mutedUserIds);
 
       expect(result).toEqual([]);
     });
@@ -1284,11 +1284,7 @@ describe('PostStreamApplication', () => {
     const viewerId = 'viewer-user' as Core.Pubky;
 
     const setupMutedUsers = async (mutedUsers: Core.Pubky[]) => {
-      const mutedStreamId = Core.buildUserCompositeId({
-        userId: viewerId,
-        reach: Core.UserStreamSource.MUTED,
-      });
-      await Core.UserStreamModel.upsert(mutedStreamId, mutedUsers);
+      await Core.UserStreamModel.upsert(Core.UserStreamTypes.MUTED, mutedUsers);
     };
 
     it('should filter out posts from muted users', async () => {

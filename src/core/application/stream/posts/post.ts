@@ -1,7 +1,7 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { postStreamQueue } from './muting/post-stream-queue';
-import { muteFilter } from './muting/mute-filter';
+import { MuteFilter } from './muting/mute-filter';
 
 export class PostStreamApplication {
   private constructor() {}
@@ -74,13 +74,13 @@ export class PostStreamApplication {
       return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
     }
 
-    const mutedUserIds = await muteFilter.getMutedUserIds();
+    const mutedUserIds = await MuteFilter.getMutedUserIds();
 
     let isFirstFetch = true;
     const result = await postStreamQueue.collect(streamId, {
       limit,
       cursor: streamTail,
-      filter: (posts) => muteFilter.filterPosts(posts, mutedUserIds),
+      filter: (posts) => MuteFilter.filterPosts(posts, mutedUserIds),
       fetch: async (cursor) => {
         // First fetch checks cache because we might be able to reuse leftover posts from previous fetch, subsequent fetches go directly to Nexus
         const result = isFirstFetch
