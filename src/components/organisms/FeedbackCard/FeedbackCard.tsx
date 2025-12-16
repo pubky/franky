@@ -5,7 +5,6 @@ import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function FeedbackCard() {
@@ -17,20 +16,24 @@ export function FeedbackCard() {
 
   return (
     <>
-      <Atoms.Container overrideDefaults={true} data-testid="feedback-card" className="flex flex-col gap-2">
+      <Atoms.Container
+        overrideDefaults={true}
+        data-testid="feedback-card"
+        className="flex w-full min-w-0 flex-col gap-2"
+      >
         <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
           Feedback
         </Atoms.Heading>
 
         <Atoms.Container
           overrideDefaults={true}
-          className="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+          className="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
           onClick={() => setIsDialogOpen(true)}
         >
-          <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
+          <Atoms.Container overrideDefaults={true} className="flex w-full min-w-0 items-center gap-2">
             <Atoms.Container
               overrideDefaults={true}
-              className="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+              className="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
             >
               <Molecules.AvatarWithFallback
                 avatarUrl={avatarUrl}
@@ -39,8 +42,11 @@ export function FeedbackCard() {
                 fallbackClassName="text-sm"
               />
             </Atoms.Container>
-            <Atoms.Container overrideDefaults={true} className="text-base font-bold text-foreground">
-              {Libs.truncateString(name, 10)}
+            <Atoms.Container
+              overrideDefaults={true}
+              className="min-w-0 flex-1 truncate text-base font-bold text-foreground"
+            >
+              {name}
             </Atoms.Container>
           </Atoms.Container>
 
