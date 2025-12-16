@@ -72,9 +72,14 @@ export const postInFeedContentEq = (postContent: string, idx: number) => {
     .should('have.length.gte', 1)
     .eq(idx)
     .within(() => {
-      cy.get('[data-cy="post-text"]').innerTextShouldEq(postContent);
-      // This approach is necessary for due to additional space inserted before final word.
-      //cy.get('#post-content-text').innerTextShouldEq(postContent);
+      // If browser is webkit, expect a trailing \n in post text value
+      cy.get('[data-cy="post-text"]')
+        .invoke('text')
+        .then((actualText) => {
+          Cypress.browser.name === 'webkit'
+            ? expect(actualText).to.eq(postContent + '\n')
+            : expect(actualText).to.eq(postContent);
+        });
     });
 };
 
