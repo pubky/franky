@@ -21,7 +21,7 @@ import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.sc
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
 import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
 import { feedTableSchema } from '@/core/models/feed/feed.schema';
-import { moderationTableSchema } from '@/core/models/moderation/moderation/moderation.schema';
+import { moderationTableSchema } from '@/core/models/moderation/moderation.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
