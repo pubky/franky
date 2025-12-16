@@ -44,7 +44,6 @@ describe('posts', () => {
 
     // reload and check post is still displayed correctly
     cy.reload();
-    //waitForFeedToLoad();
     latestPostInFeedContentEq(postContent);
   });
 });
