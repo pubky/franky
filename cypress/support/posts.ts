@@ -66,21 +66,21 @@ export const MAX_POST_LENGTH = 2000;
 // };
 
 // // verify that a post in the feed has the expected content, post is located by index
-// export const postInFeedContentEq = (postContent: string, idx: number) => {
-//   cy.get('#posts-feed')
-//     .find('#timeline')
-//     .children()
-//     .should('have.length.gte', 1)
-//     .eq(idx)
-//     .within(() => {
-//       // This approach is necessary for due to additional space inserted before final word.
-//       cy.get('#post-content-text').innerTextShouldEq(postContent);
-//     });
-// };
+export const postInFeedContentEq = (postContent: string, idx: number) => {
+  cy.get('[data-cy="timeline-posts"]')
+    .children()
+    .should('have.length.gte', 1)
+    .eq(idx)
+    .within(() => {
+      cy.get('[data-cy="post-text"]').innerTextShouldEq(postContent);
+      // This approach is necessary for due to additional space inserted before final word.
+      //cy.get('#post-content-text').innerTextShouldEq(postContent);
+    });
+};
 
-// export const latestPostInFeedContentEq = (postContent: string) => {
-//   postInFeedContentEq(postContent, 0);
-// };
+export const latestPostInFeedContentEq = (postContent: string) => {
+  postInFeedContentEq(postContent, 0);
+};
 
 // // check how many images are in a post
 // export const checkNumberOfImagesInPost = (expectedNumberOfImages: number, idx: number) => {
@@ -102,24 +102,32 @@ export const MAX_POST_LENGTH = 2000;
 //   checkNumberOfImagesInPost(expectedNumberOfImages, 0);
 // };
 
-// export const createQuickPost = (postContent: string, expectedPostLength?: number) => {
-//   cy.get('#quick-post-create-content')
-//     .should('be.visible')
-//     .within(() => {
-//       // input post content within quick post area
-//       cy.get('textarea').should('have.value', '').get('textarea').type(postContent);
-//       // verify displayed content length
-//       cy.log('postContent.length: ', postContent.length);
-//       expectedPostLength
-//         ? cy.get('#content-length').innerTextShouldEq(`${expectedPostLength} / ${MAX_POST_LENGTH}`)
-//         : cy.get('#content-length').innerTextShouldEq(`${postContent.length} / ${MAX_POST_LENGTH}`);
-//       // submit
-//       cy.get('#post-btn').click();
-//     });
-// };
+export const createQuickPost = (postContent: string, expectedPostLength?: number) => {
+  cy.get('[data-cy="home-post-input"]')
+    .should('be.visible')
+    .within(() => {
+      // input post content within quick post area
+      cy.get('textarea').should('have.value', '').get('textarea').type(postContent);
+      // verify displayed content length
+      cy.log('postContent.length: ', postContent.length);
+      expectedPostLength
+        ? cy
+            .get('[data-cy="post-header-character-count"]')
+            .innerTextShouldEq(`${expectedPostLength}/${MAX_POST_LENGTH}`)
+        : cy
+            .get('[data-cy="post-header-character-count"]')
+            .innerTextShouldEq(`${postContent.length}/${MAX_POST_LENGTH}`);
+      // submit
+      cy.get('[data-cy="post-input-action-bar-post"]').click();
+      // verify textarea is empty
+      cy.get('textarea').should('have.value', '');
+      // verify displayed content length
+      cy.get('[data-cy="post-header-character-count"]').innerTextShouldEq(`0/${MAX_POST_LENGTH}`);
+    });
+};
 
 // export const createQuickPostWithTags = (postContent: string, tags: string[], expectedPostLength?: number) => {
-//   cy.get('#quick-post-create-content').within(() => {
+//   cy.get('[data-cy="home-post-input"]').within(() => {
 //     cy.get('textarea').should('have.value', '');
 //     // type the post
 //     cy.get('textarea').type(postContent);

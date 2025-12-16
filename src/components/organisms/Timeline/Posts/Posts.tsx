@@ -27,7 +27,7 @@ export function TimelinePosts({ postIds, loading, loadingMore, error, hasMore, l
   return (
     <Molecules.TimelineStateWrapper loading={loading} error={error} hasItems={postIds.length > 0}>
       <Atoms.Container>
-        <Atoms.Container overrideDefaults className="space-y-4">
+        <Atoms.Container data-cy="timeline-posts" overrideDefaults className="space-y-4">
           {postIds.map((postId) => (
             <Atoms.Container key={`main_${postId}`}>
               <Organisms.PostMain postId={postId} onClick={() => navigateToPost(postId)} isReply={false} />

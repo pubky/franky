@@ -91,6 +91,7 @@ export function PostInputActionBar({
           labelText,
         }) => (
           <Atoms.Button
+            data-cy={`post-input-action-bar-${ariaLabel.toLowerCase().replace(' ', '-')}`}
             key={ariaLabel}
             {...commonButtonProps}
             onClick={onClick}
