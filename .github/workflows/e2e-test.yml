@@ -166,6 +166,7 @@ jobs:
           echo "Service is ready."
 
       - name: Run e2e tests - Desktop (${{ matrix.browser }})
+        id: test-desktop
         uses: cypress-io/github-action@v6
         env:
           DEBUG: '@cypress/github-action'
@@ -187,9 +188,10 @@ jobs:
         with:
           name: screenshots-${{ matrix.browser }}-desktop
           path: franky/cypress/screenshots
+          if-no-files-found: ignore
 
       - name: Upload video for onboarding test - ${{ matrix.browser }} - Desktop
-        if: ${{ always() }}
+        if: steps.test-desktop.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -198,7 +200,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for contacts test - ${{ matrix.browser }} - Desktop
-        if: ${{ always() }}
+        if: steps.test-desktop.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -207,7 +209,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for posts test - ${{ matrix.browser }} - Desktop
-        if: ${{ always() }}
+        if: steps.test-desktop.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -217,6 +219,7 @@ jobs:
 
       # TODO: Skipped due to bug https://github.com/pubky/franky/issues/372
       # - name: Run e2e tests - Mobile (${{ matrix.browser }})
+      #   id: test-mobile
       #   uses: cypress-io/github-action@v6
       #   env:
       #     DEBUG: '@cypress/github-action'
@@ -238,9 +241,10 @@ jobs:
         with:
           name: screenshots-${{ matrix.browser }}-mobile
           path: franky/cypress/screenshots/mobile
+          if-no-files-found: ignore
 
       - name: Upload video for onboarding test - ${{ matrix.browser }} - Mobile
-        if: ${{ always() }}
+        if: steps.test-mobile.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -249,7 +253,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for contacts test - ${{ matrix.browser }} - Mobile
-        if: ${{ always() }}
+        if: steps.test-mobile.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -258,7 +262,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for posts test - ${{ matrix.browser }} - Mobile
-        if: ${{ always() }}
+        if: steps.test-mobile.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
