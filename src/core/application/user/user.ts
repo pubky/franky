@@ -30,9 +30,7 @@ export class UserApplication {
       return userDetails;
     }
     const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
-    if (nexusUserDetails) {
-      await Core.LocalProfileService.upsertDetails(nexusUserDetails);
-    }
+    await Core.LocalProfileService.upsertDetails(nexusUserDetails);
     return await Core.LocalUserService.readDetails({ userId });
   }
 
