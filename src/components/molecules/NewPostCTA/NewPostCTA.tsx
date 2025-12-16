@@ -32,6 +32,7 @@ export function NewPostCTA() {
           - TODO: The footer navbar should be refactored; revisit positioning then.
         */}
         <Atoms.Button
+          data-cy="new-post-btn"
           overrideDefaults
           data-testid="new-post-cta"
           className={Libs.cn(

@@ -191,7 +191,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for onboarding test - ${{ matrix.browser }} - Desktop
-        if: steps.test-desktop.outcome == 'failure'
+        if: always() && steps.test-desktop.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -200,7 +200,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for contacts test - ${{ matrix.browser }} - Desktop
-        if: steps.test-desktop.outcome == 'failure'
+        if: always() && steps.test-desktop.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -209,7 +209,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for posts test - ${{ matrix.browser }} - Desktop
-        if: steps.test-desktop.outcome == 'failure'
+        if: always() && steps.test-desktop.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -244,7 +244,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for onboarding test - ${{ matrix.browser }} - Mobile
-        if: steps.test-mobile.outcome == 'failure'
+        if: always() && steps.test-mobile.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -253,7 +253,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for contacts test - ${{ matrix.browser }} - Mobile
-        if: steps.test-mobile.outcome == 'failure'
+        if: always() && steps.test-mobile.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
@@ -262,7 +262,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload video for posts test - ${{ matrix.browser }} - Mobile
-        if: steps.test-mobile.outcome == 'failure'
+        if: always() && steps.test-mobile.outcome == 'failure'
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:

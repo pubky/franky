@@ -72,15 +72,7 @@ export const postInFeedContentEq = (postContent: string, idx: number) => {
     .should('have.length.gte', 1)
     .eq(idx)
     .within(() => {
-      cy.get('[data-cy="post-text"]').innerTextShouldEq(postContent);
-      // If browser is webkit, expect a trailing \n in post text value
-      // cy.get('[data-cy="post-text"]')
-      //   .invoke('text')
-      //   .then((actualText) => {
-      //     Cypress.browser.name === 'webkit'
-      //       ? expect(actualText).to.eq(postContent + '\n')
-      //       : expect(actualText).to.eq(postContent);
-      //   });
+      cy.get('[data-cy="post-text"]').should('have.text', postContent);
     });
 };
 
@@ -116,13 +108,11 @@ export const createQuickPost = (postContent: string, expectedPostLength?: number
       cy.get('textarea').should('have.value', '').get('textarea').type(postContent);
       // verify displayed content length
       cy.log('postContent.length: ', postContent.length);
-      expectedPostLength
-        ? cy
-            .get('[data-cy="post-header-character-count"]')
-            .innerTextShouldEq(`${expectedPostLength}/${MAX_POST_LENGTH}`)
-        : cy
-            .get('[data-cy="post-header-character-count"]')
-            .innerTextShouldEq(`${postContent.length}/${MAX_POST_LENGTH}`);
+      cy.get('[data-cy="post-header-character-count"]').then((counter) => {
+        expectedPostLength
+          ? expect(counter.text()).to.eq(`${expectedPostLength}/${MAX_POST_LENGTH}`)
+          : expect(counter.text()).to.eq(`${postContent.length}/${MAX_POST_LENGTH}`);
+      });
       // submit
       cy.get('[data-cy="post-input-action-bar-post"]').click();
       // verify textarea is empty
@@ -150,6 +140,34 @@ export const createQuickPost = (postContent: string, expectedPostLength?: number
 //     cy.get('#post-btn').click();
 //   });
 // };
+
+export const createPostFromDialog = (postContent: string, expectedPostLength?: number) => {
+  // click button to display new post dialog
+  cy.get('[data-cy="new-post-btn"]').click();
+
+  // verify dialog is displayed
+  cy.get('[data-cy="dialog-content"]')
+    .should('be.visible')
+    .find('h2')
+    .should('contain.text', 'New Post')
+    .get('[data-cy="new-post-input"]')
+    .within(() => {
+      // input post content
+      cy.get('textarea').should('have.value', '').get('textarea').type(postContent);
+
+      // verify displayed content length
+      cy.get('[data-cy="post-header-character-count"]').then((counter) => {
+        expectedPostLength
+          ? expect(counter.text()).to.eq(`${expectedPostLength}/${MAX_POST_LENGTH}`)
+          : expect(counter.text()).to.eq(`${postContent.length}/${MAX_POST_LENGTH}`);
+      });
+
+      // submit
+      cy.get('[data-cy="post-input-action-bar-post"]').click();
+    });
+  // verify dialog is closed
+  cy.get('[data-cy="dialog-content"]').should('not.exist');
+};
 
 // // reply to any post in the feed that contains the filterText by index
 // export const replyToPost = ({
