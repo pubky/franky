@@ -620,7 +620,7 @@ describe('LocalPostService', () => {
     });
   });
 
-  describe('getPostCounts', () => {
+  describe('readCounts', () => {
     it('should return post counts when post exists', async () => {
       const postId = testData.fullPostId1;
       await setupExistingPost(postId, 'Test post');
@@ -633,7 +633,7 @@ describe('LocalPostService', () => {
         reposts: 2,
       });
 
-      const counts = await Core.LocalPostService.readPostCounts(postId);
+      const counts = await Core.LocalPostService.readCounts(postId);
 
       expect(counts).toBeTruthy();
       expect(counts.id).toBe(postId);
@@ -646,7 +646,7 @@ describe('LocalPostService', () => {
     it('should return default counts when post does not exist', async () => {
       const nonExistentPostId = 'nonexistent:post123';
 
-      const counts = await Core.LocalPostService.readPostCounts(nonExistentPostId);
+      const counts = await Core.LocalPostService.readCounts(nonExistentPostId);
 
       expect(counts).toBeTruthy();
       expect(counts.id).toBe(nonExistentPostId);
@@ -664,9 +664,9 @@ describe('LocalPostService', () => {
         .spyOn(Core.PostCountsModel, 'findById')
         .mockRejectedValueOnce(new Error('Database connection lost'));
 
-      await expect(Core.LocalPostService.readPostCounts(postId)).rejects.toMatchObject({
+      await expect(Core.LocalPostService.readCounts(postId)).rejects.toMatchObject({
         type: 'QUERY_FAILED',
-        message: 'Failed to get post counts',
+        message: 'Failed to read post counts',
         statusCode: 500,
       });
 
@@ -679,10 +679,10 @@ describe('LocalPostService', () => {
 
       const spy = vi.spyOn(Core.PostCountsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
 
-      await expect(Core.LocalPostService.readPostCounts(postId)).rejects.toThrow();
+      await expect(Core.LocalPostService.readCounts(postId)).rejects.toThrow();
 
       expect(loggerSpy).toHaveBeenCalledWith(
-        'Failed to get post counts',
+        'Failed to read post counts',
         expect.objectContaining({
           postId,
         }),
@@ -907,13 +907,13 @@ describe('LocalPostService', () => {
     });
   });
 
-  describe('getPostRelationships', () => {
+  describe('readRelationships', () => {
     it('should return post relationships when they exist', async () => {
       const postId = testData.fullPostId1;
       const parentUri = 'pubky://parent/pub/pubky.app/posts/parent123';
       await setupExistingPost(postId, 'Test post', parentUri);
 
-      const relationships = await Core.LocalPostService.readPostRelationships(postId);
+      const relationships = await Core.LocalPostService.readRelationships(postId);
 
       expect(relationships).not.toBeNull();
       expect(relationships?.id).toBe(postId);
@@ -925,7 +925,7 @@ describe('LocalPostService', () => {
     it('should return null when post relationships do not exist', async () => {
       const nonExistentPostId = 'nonexistent:post123';
 
-      const relationships = await Core.LocalPostService.readPostRelationships(nonExistentPostId);
+      const relationships = await Core.LocalPostService.readRelationships(nonExistentPostId);
 
       expect(relationships).toBeNull();
     });
@@ -936,8 +936,8 @@ describe('LocalPostService', () => {
       // Mock findById to throw an error
       const findByIdSpy = vi.spyOn(Core.PostRelationshipsModel, 'findById').mockRejectedValue(new Error('DB error'));
 
-      await expect(Core.LocalPostService.readPostRelationships(postId)).rejects.toThrow(
-        'Failed to get post relationships',
+      await expect(Core.LocalPostService.readRelationships(postId)).rejects.toThrow(
+        'Failed to read post relationships',
       );
 
       findByIdSpy.mockRestore();

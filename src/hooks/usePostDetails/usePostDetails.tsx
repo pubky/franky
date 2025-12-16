@@ -24,7 +24,7 @@ export function usePostDetails(compositeId: string | null | undefined): Types.Us
   const postDetails = useLiveQuery(
     async () => {
       if (!compositeId) return null;
-      return await Core.PostController.getPostDetails({ compositeId });
+      return await Core.PostController.getDetails({ compositeId });
     },
     [compositeId],
     undefined,

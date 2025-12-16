@@ -3,10 +3,10 @@ import { renderHook } from '@testing-library/react';
 import { usePostDetails } from './usePostDetails';
 
 // Mock @/core
-const mockGetPostDetails = vi.fn();
+const mockReadPostDetails = vi.fn();
 vi.mock('@/core', () => ({
   PostController: {
-    getPostDetails: (params: { compositeId: string }) => mockGetPostDetails(params),
+    getDetails: (params: { compositeId: string }) => mockReadPostDetails(params),
   },
 }));
 
@@ -15,8 +15,8 @@ vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: (queryFn: () => Promise<unknown>, _deps: unknown[], defaultValue: unknown) => {
     // Execute the query function to trigger it
     queryFn();
-    // Return the mock value based on what mockGetPostDetails returns
-    const result = mockGetPostDetails.mock.results[mockGetPostDetails.mock.results.length - 1];
+    // Return the mock value based on what mockReadPostDetails returns
+    const result = mockReadPostDetails.mock.results[mockReadPostDetails.mock.results.length - 1];
     return result?.value ?? defaultValue;
   },
 }));
@@ -24,7 +24,7 @@ vi.mock('dexie-react-hooks', () => ({
 describe('usePostDetails', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetPostDetails.mockReturnValue(null);
+    mockReadPostDetails.mockReturnValue(null);
   });
 
   it('returns loading state initially when compositeId is null', () => {
@@ -42,7 +42,7 @@ describe('usePostDetails', () => {
       content: 'Test post content',
       indexed_at: '2024-01-01T00:00:00.000Z',
     };
-    mockGetPostDetails.mockReturnValue(mockPost);
+    mockReadPostDetails.mockReturnValue(mockPost);
 
     const { result } = renderHook(() => usePostDetails('user-123:post-123'));
 
@@ -50,24 +50,24 @@ describe('usePostDetails', () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it('calls PostController.getPostDetails with correct compositeId', () => {
+  it('calls PostController.getDetails with correct compositeId', () => {
     const mockPost = {
       id: 'post-456',
       author_id: 'user-456',
       content: 'Another test post',
       indexed_at: '2024-01-02T00:00:00.000Z',
     };
-    mockGetPostDetails.mockReturnValue(mockPost);
+    mockReadPostDetails.mockReturnValue(mockPost);
 
     renderHook(() => usePostDetails('user-456:post-456'));
 
-    expect(mockGetPostDetails).toHaveBeenCalledWith({ compositeId: 'user-456:post-456' });
+    expect(mockReadPostDetails).toHaveBeenCalledWith({ compositeId: 'user-456:post-456' });
   });
 
   it('returns loading state when post is not found (null from DB)', () => {
     // When DB returns null, the mock's ?? operator falls back to defaultValue (undefined)
     // This represents the "loading" state in the hook's perspective
-    mockGetPostDetails.mockReturnValue(null);
+    mockReadPostDetails.mockReturnValue(null);
 
     const { result } = renderHook(() => usePostDetails('user-999:post-999'));
 
@@ -80,21 +80,21 @@ describe('usePostDetails', () => {
     renderHook(() => usePostDetails(null));
 
     // The query function returns early with null, so getPostDetails is never called
-    expect(mockGetPostDetails).not.toHaveBeenCalled();
+    expect(mockReadPostDetails).not.toHaveBeenCalled();
   });
 
   it('does not call getPostDetails when compositeId is undefined', () => {
     renderHook(() => usePostDetails(undefined));
 
     // The query function returns early with null, so getPostDetails is never called
-    expect(mockGetPostDetails).not.toHaveBeenCalled();
+    expect(mockReadPostDetails).not.toHaveBeenCalled();
   });
 });
 
 describe('usePostDetails - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetPostDetails.mockReturnValue(null);
+    mockReadPostDetails.mockReturnValue(null);
   });
 
   it('matches snapshot for valid post', () => {
@@ -106,7 +106,7 @@ describe('usePostDetails - Snapshots', () => {
       tags: [],
       attachments: [],
     };
-    mockGetPostDetails.mockReturnValue(mockPost);
+    mockReadPostDetails.mockReturnValue(mockPost);
 
     const { result } = renderHook(() => usePostDetails('snapshot-user:snapshot-post'));
 
@@ -120,7 +120,7 @@ describe('usePostDetails - Snapshots', () => {
   });
 
   it('matches snapshot for not found post', () => {
-    mockGetPostDetails.mockReturnValue(null);
+    mockReadPostDetails.mockReturnValue(null);
 
     const { result } = renderHook(() => usePostDetails('user-999:post-999'));
 

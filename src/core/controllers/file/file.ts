@@ -18,12 +18,11 @@ export class FileController {
    * @param params.pubky - User's public key
    * @returns Promise resolving to the file URL
    */
-  static async upload({ file, pubky }: Core.TUploadFileParams): Promise<string> {
+  static async commitCreate({ file, pubky }: Core.TUploadFileParams): Promise<string> {
     // 1. Normalize File Attachment
     const fileAttachment = await Core.FileNormalizer.toFileAttachment({ file, pubky });
     // 2. Upload to homeserver
-    await Core.FileApplication.upload({ fileAttachments: [fileAttachment] });
-
+    await Core.FileApplication.commitCreate({ fileAttachments: [fileAttachment] });
     return fileAttachment.fileResult.meta.url;
   }
 

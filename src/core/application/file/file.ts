@@ -17,7 +17,7 @@ export class FileApplication {
    * @param params.blobResult - Normalized blob result
    * @param params.fileResult - Normalized file result
    */
-  static async upload({ fileAttachments }: Core.FilesListParams) {
+  static async commitCreate({ fileAttachments }: Core.FilesListParams) {
     await Promise.all(
       fileAttachments.map(async (fileAttachment) => {
         const { blobResult, fileResult } = fileAttachment;
@@ -31,7 +31,11 @@ export class FileApplication {
     );
   }
 
-  static async delete(fileAttachments: string[]) {
+  /**
+   * Commit the delete file operation, this will delete the file from the local database and sync to the homeserver.
+   * @param fileAttachments - The file attachments to delete
+   */
+  static async commitDelete(fileAttachments: string[]) {
     await Promise.all(
       fileAttachments.map(async (fileUri) => {
         // Delete the file metadata
@@ -41,7 +45,7 @@ export class FileApplication {
           domain: Core.CompositeIdDomain.FILES,
         });
         if (fileCompositeId) {
-          const file = await Core.FileDetailsModel.findById(fileCompositeId);
+          const file = await Core.LocalFileService.read(fileCompositeId);
           if (file) {
             // Delete the file blob
             await Core.HomeserverService.delete(file.src);
@@ -81,7 +85,7 @@ export class FileApplication {
    * @param fileUris - Array of file URIs to fetch and persist
    * @returns Promise that resolves when files are persisted
    */
-  static async persistFiles(fileUris: string[]) {
+  static async fetchFiles(fileUris: string[]) {
     if (fileUris.length === 0) {
       return;
     }
@@ -99,6 +103,6 @@ export class FileApplication {
       };
     });
 
-    await Core.LocalFileService.persistFiles({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
+    await Core.LocalFileService.createMany({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
   }
 }

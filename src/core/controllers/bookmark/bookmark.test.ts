@@ -47,11 +47,11 @@ describe('BookmarkController', () => {
     BookmarkController = bookmarkModule.BookmarkController;
   });
 
-  describe('create', () => {
+  describe('commitCreate', () => {
     it('should call BookmarkApplication.persist with correct parameters', async () => {
       const persistSpy = vi.spyOn(Core.BookmarkApplication, 'persist');
 
-      await BookmarkController.create(createBookmarkParams());
+      await BookmarkController.commitCreate(createBookmarkParams());
 
       expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, {
         postId: testData.compositePostId,
@@ -61,11 +61,11 @@ describe('BookmarkController', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('commitDelete', () => {
     it('should call BookmarkApplication.persist with correct parameters', async () => {
       const persistSpy = vi.spyOn(Core.BookmarkApplication, 'persist');
 
-      await BookmarkController.delete(createBookmarkParams());
+      await BookmarkController.commitDelete(createBookmarkParams());
 
       expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
         postId: testData.compositePostId,

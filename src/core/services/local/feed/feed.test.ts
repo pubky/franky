@@ -25,7 +25,7 @@ describe('LocalFeedService', () => {
     it('should create a new feed with auto-incrementing ID', async () => {
       const feed = createFeedSchema({ id: 0 }); // 0 triggers auto-increment
 
-      const persistedFeed = await Core.LocalFeedService.persist(feed);
+      const persistedFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
       expect(persistedFeed).toBeTruthy();
       expect(persistedFeed.id).toBeGreaterThan(0); // Auto-generated ID
@@ -40,11 +40,11 @@ describe('LocalFeedService', () => {
     it('should update an existing feed', async () => {
       // Create feed first (auto-increment)
       const feed = createFeedSchema({ id: 0 });
-      const createdFeed = await Core.LocalFeedService.persist(feed);
+      const createdFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
       // Update with existing ID
       const updated = { ...createdFeed, name: 'Updated Name', tags: ['newTag'] };
-      const updatedFeed = await Core.LocalFeedService.persist(updated);
+      const updatedFeed = await Core.LocalFeedService.createOrUpdate(updated);
 
       expect(updatedFeed.id).toBe(createdFeed.id); // Same ID
       expect(updatedFeed.name).toBe('Updated Name');
@@ -54,10 +54,10 @@ describe('LocalFeedService', () => {
     it('should preserve created_at on update', async () => {
       const originalCreatedAt = Date.now() - 10000;
       const feed = createFeedSchema({ id: 0, created_at: originalCreatedAt });
-      const createdFeed = await Core.LocalFeedService.persist(feed);
+      const createdFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
       const updated = { ...createdFeed, name: 'Updated', updated_at: Date.now() };
-      const updatedFeed = await Core.LocalFeedService.persist(updated);
+      const updatedFeed = await Core.LocalFeedService.createOrUpdate(updated);
 
       expect(updatedFeed.created_at).toBe(originalCreatedAt);
       expect(updatedFeed.updated_at).toBeGreaterThan(originalCreatedAt);
@@ -68,9 +68,9 @@ describe('LocalFeedService', () => {
       const feed2 = createFeedSchema({ id: 0, name: 'Feed 2' });
       const feed3 = createFeedSchema({ id: 0, name: 'Feed 3' });
 
-      const persisted1 = await Core.LocalFeedService.persist(feed1);
-      const persisted2 = await Core.LocalFeedService.persist(feed2);
-      const persisted3 = await Core.LocalFeedService.persist(feed3);
+      const persisted1 = await Core.LocalFeedService.createOrUpdate(feed1);
+      const persisted2 = await Core.LocalFeedService.createOrUpdate(feed2);
+      const persisted3 = await Core.LocalFeedService.createOrUpdate(feed3);
 
       // All should have unique auto-generated IDs
       expect(persisted1.id).toBeGreaterThan(0);
@@ -84,9 +84,9 @@ describe('LocalFeedService', () => {
   describe('delete', () => {
     it('should delete a feed by ID', async () => {
       const feed = createFeedSchema({ id: 0 });
-      const persistedFeed = await Core.LocalFeedService.persist(feed);
+      const persistedFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
-      await Core.LocalFeedService.delete(persistedFeed.id);
+      await Core.LocalFeedService.delete({ feedId: persistedFeed.id });
 
       const saved = await Core.FeedModel.table.get(persistedFeed.id);
       expect(saved).toBeUndefined();
@@ -94,16 +94,16 @@ describe('LocalFeedService', () => {
 
     it('should not throw when deleting non-existent feed', async () => {
       // Should not throw
-      await expect(Core.LocalFeedService.delete(99999)).resolves.not.toThrow();
+      await expect(Core.LocalFeedService.delete({ feedId: 99999 })).resolves.not.toThrow();
     });
   });
 
-  describe('findById', () => {
+  describe('read', () => {
     it('should find feed by ID', async () => {
       const feed = createFeedSchema({ id: 0 });
-      const persistedFeed = await Core.LocalFeedService.persist(feed);
+      const persistedFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
-      const found = await Core.LocalFeedService.findById(persistedFeed.id);
+      const found = await Core.LocalFeedService.read({ feedId: persistedFeed.id });
 
       expect(found).toBeTruthy();
       expect(found!.id).toBe(persistedFeed.id);
@@ -111,7 +111,7 @@ describe('LocalFeedService', () => {
     });
 
     it('should return undefined when not found', async () => {
-      const found = await Core.LocalFeedService.findById(99999);
+      const found = await Core.LocalFeedService.read({ feedId: 99999 });
 
       expect(found).toBeUndefined();
     });
@@ -124,11 +124,11 @@ describe('LocalFeedService', () => {
       const feed2 = createFeedSchema({ id: 0, name: 'Middle', created_at: now - 1000 });
       const feed3 = createFeedSchema({ id: 0, name: 'Newest', created_at: now });
 
-      await Core.LocalFeedService.persist(feed2);
-      await Core.LocalFeedService.persist(feed1);
-      await Core.LocalFeedService.persist(feed3);
+      await Core.LocalFeedService.createOrUpdate(feed2);
+      await Core.LocalFeedService.createOrUpdate(feed1);
+      await Core.LocalFeedService.createOrUpdate(feed3);
 
-      const feeds = await Core.LocalFeedService.findAll();
+      const feeds = await Core.LocalFeedService.readAll();
 
       expect(feeds).toHaveLength(3);
       expect(feeds[0].name).toBe('Newest');
@@ -137,7 +137,7 @@ describe('LocalFeedService', () => {
     });
 
     it('should return empty array when no feeds exist', async () => {
-      const feeds = await Core.LocalFeedService.findAll();
+      const feeds = await Core.LocalFeedService.readAll();
 
       expect(feeds).toEqual([]);
     });
@@ -147,14 +147,14 @@ describe('LocalFeedService', () => {
     it('should handle multiple concurrent persists', async () => {
       const feeds = Array.from({ length: 5 }, (_, i) => createFeedSchema({ id: 0, name: `Feed ${i}` }));
 
-      const persistedFeeds = await Promise.all(feeds.map((feed) => Core.LocalFeedService.persist(feed)));
+      const persistedFeeds = await Promise.all(feeds.map((feed) => Core.LocalFeedService.createOrUpdate(feed)));
 
       // All should have unique auto-generated IDs
       const ids = persistedFeeds.map((f) => f.id);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(5);
 
-      const saved = await Core.LocalFeedService.findAll();
+      const saved = await Core.LocalFeedService.readAll();
       expect(saved).toHaveLength(5);
     });
   });

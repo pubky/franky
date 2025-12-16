@@ -136,12 +136,12 @@ describe('PostController', () => {
     );
   });
 
-  describe('read', () => {
+  describe('getDetails', () => {
     it('should return post details when post exists', async () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      const result = await PostController.getPostDetails({ compositeId: testData.fullPostId });
+      const result = await PostController.getDetails({ compositeId: testData.fullPostId });
 
       expect(result).toBeDefined();
       expect(result?.id).toBe(testData.fullPostId);
@@ -153,18 +153,18 @@ describe('PostController', () => {
     it('should return null when post not found', async () => {
       const { PostController } = await import('./post');
 
-      const result = await PostController.getPostDetails({ compositeId: 'nonexistent:post' });
+      const result = await PostController.getDetails({ compositeId: 'nonexistent:post' });
 
       expect(result).toBeNull();
     });
   });
 
-  describe('getPostCounts', () => {
+  describe('getCounts', () => {
     it('should return post counts when they exist', async () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      const result = await PostController.getPostCounts({ compositeId: testData.fullPostId });
+      const result = await PostController.getCounts({ compositeId: testData.fullPostId });
 
       expect(result).toBeDefined();
       expect(result.id).toBe(testData.fullPostId);
@@ -177,7 +177,7 @@ describe('PostController', () => {
     it('should return default counts when post not found', async () => {
       const { PostController } = await import('./post');
 
-      const result = await PostController.getPostCounts({ compositeId: 'nonexistent:post' });
+      const result = await PostController.getCounts({ compositeId: 'nonexistent:post' });
 
       expect(result).toBeDefined();
       expect(result.id).toBe('nonexistent:post');
@@ -199,7 +199,7 @@ describe('PostController', () => {
       });
 
       const { PostController } = await import('./post');
-      const result = await PostController.getPostCounts({ compositeId: testData.fullPostId });
+      const result = await PostController.getCounts({ compositeId: testData.fullPostId });
 
       expect(result.tags).toBe(5);
       expect(result.unique_tags).toBe(3);
@@ -208,11 +208,11 @@ describe('PostController', () => {
     });
   });
 
-  describe('create', () => {
+  describe('commitCreate', () => {
     it('should create a post and sync to homeserver', async () => {
       const { PostController } = await import('./post');
 
-      await PostController.create(createPostParams('Hello, world!'));
+      await PostController.commitCreate(createPostParams('Hello, world!'));
 
       const allPosts = await Core.PostDetailsModel.table.toArray();
       expect(allPosts.length).toBeGreaterThan(0);
@@ -233,7 +233,7 @@ describe('PostController', () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      await PostController.create(createPostParams('This is a reply', testData.fullPostId));
+      await PostController.commitCreate(createPostParams('This is a reply', testData.fullPostId));
 
       const allPosts = await Core.PostDetailsModel.table.toArray();
       const replyPost = allPosts.find((p) => p.content === 'This is a reply');
@@ -252,7 +252,7 @@ describe('PostController', () => {
     it('should throw error when parent post not found', async () => {
       const { PostController } = await import('./post');
 
-      await expect(PostController.create(createPostParams('Reply', 'nonexistent:post'))).rejects.toThrow(
+      await expect(PostController.commitCreate(createPostParams('Reply', 'nonexistent:post'))).rejects.toThrow(
         'Parent post not found',
       );
     });
@@ -262,11 +262,11 @@ describe('PostController', () => {
       const ApplicationModule = await import('@/core/application');
 
       const createSpy = vi
-        .spyOn(ApplicationModule.PostApplication, 'create')
+        .spyOn(ApplicationModule.PostApplication, 'commitCreate')
         .mockRejectedValueOnce(new Error('Database transaction failed'));
 
       try {
-        await expect(PostController.create(createPostParams('Will fail'))).rejects.toThrow(
+        await expect(PostController.commitCreate(createPostParams('Will fail'))).rejects.toThrow(
           'Database transaction failed',
         );
       } finally {
@@ -278,7 +278,7 @@ describe('PostController', () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      await PostController.create({
+      await PostController.commitCreate({
         content: 'Reposting this!',
         authorId: testData.authorPubky,
         originalPostId: testData.fullPostId,
@@ -302,7 +302,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
 
       await expect(
-        PostController.create({
+        PostController.commitCreate({
           content: 'Reposting this!',
           authorId: testData.authorPubky,
           originalPostId: 'nonexistent:post',
@@ -314,7 +314,7 @@ describe('PostController', () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      await PostController.create({
+      await PostController.commitCreate({
         content: '',
         authorId: testData.authorPubky,
         originalPostId: testData.fullPostId,
@@ -334,7 +334,7 @@ describe('PostController', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('commitDelete', () => {
     it('should call application layer when user is author', async () => {
       await setupExistingPost();
       setupAuthUser(testData.authorPubky);
@@ -342,10 +342,10 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const deleteSpy = vi.spyOn(ApplicationModule.PostApplication, 'delete').mockResolvedValue(undefined);
+      const deleteSpy = vi.spyOn(ApplicationModule.PostApplication, 'commitDelete').mockResolvedValue(undefined);
 
       try {
-        await PostController.delete({ compositePostId: testData.fullPostId });
+        await PostController.commitDelete({ compositePostId: testData.fullPostId });
 
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: testData.fullPostId });
       } finally {
@@ -361,7 +361,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
 
       try {
-        await expect(PostController.delete({ compositePostId: testData.fullPostId })).rejects.toThrow(
+        await expect(PostController.commitDelete({ compositePostId: testData.fullPostId })).rejects.toThrow(
           'User is not the author of this post',
         );
       } finally {
@@ -377,11 +377,11 @@ describe('PostController', () => {
       const ApplicationModule = await import('@/core/application');
 
       const deleteSpy = vi
-        .spyOn(ApplicationModule.PostApplication, 'delete')
+        .spyOn(ApplicationModule.PostApplication, 'commitDelete')
         .mockRejectedValueOnce(new Error('Database transaction failed'));
 
       try {
-        await expect(PostController.delete({ compositePostId: testData.fullPostId })).rejects.toThrow(
+        await expect(PostController.commitDelete({ compositePostId: testData.fullPostId })).rejects.toThrow(
           'Database transaction failed',
         );
       } finally {
@@ -391,28 +391,31 @@ describe('PostController', () => {
     });
   });
 
-  describe('getOrFetchPost', () => {
+  describe('getOrFetchDetails', () => {
     const mockViewerId = 'test-viewer-id' as Core.Pubky;
 
     it('should return post from local database if exists', async () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      const post = await PostController.getOrFetchPost({ compositeId: testData.fullPostId, viewerId: mockViewerId });
+      const post = await PostController.getOrFetchDetails({ compositeId: testData.fullPostId, viewerId: mockViewerId });
 
       expect(post).toBeTruthy();
       expect(post?.id).toBe(testData.fullPostId);
       expect(post?.content).toBe('Test post content');
     });
 
-    it('should return null when PostApplication.getOrFetchPost returns null', async () => {
+    it('should return null when PostApplication.getOrFetchDetails returns null', async () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
+      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchDetails').mockResolvedValue(null);
 
       try {
-        const post = await PostController.getOrFetchPost({ compositeId: 'nonexistent:post', viewerId: mockViewerId });
+        const post = await PostController.getOrFetchDetails({
+          compositeId: 'nonexistent:post',
+          viewerId: mockViewerId,
+        });
         expect(post).toBeNull();
       } finally {
         getOrFetchSpy.mockRestore();
@@ -424,26 +427,26 @@ describe('PostController', () => {
       const ApplicationModule = await import('@/core/application');
 
       const getOrFetchSpy = vi
-        .spyOn(ApplicationModule.PostApplication, 'getOrFetchPost')
+        .spyOn(ApplicationModule.PostApplication, 'getOrFetchDetails')
         .mockRejectedValueOnce(new Error('Nexus error'));
 
       try {
         await expect(
-          PostController.getOrFetchPost({ compositeId: 'error:post', viewerId: mockViewerId }),
+          PostController.getOrFetchDetails({ compositeId: 'error:post', viewerId: mockViewerId }),
         ).rejects.toThrow('Nexus error');
       } finally {
         getOrFetchSpy.mockRestore();
       }
     });
 
-    it('should call PostApplication.getOrFetchPost with correct postId', async () => {
+    it('should call PostApplication.getOrFetchDetails with correct postId', async () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
+      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchDetails').mockResolvedValue(null);
 
       try {
-        await PostController.getOrFetchPost({ compositeId: 'author:post123', viewerId: mockViewerId });
+        await PostController.getOrFetchDetails({ compositeId: 'author:post123', viewerId: mockViewerId });
         expect(getOrFetchSpy).toHaveBeenCalledWith({ compositeId: 'author:post123', viewerId: mockViewerId });
       } finally {
         getOrFetchSpy.mockRestore();
@@ -451,12 +454,12 @@ describe('PostController', () => {
     });
   });
 
-  describe('getPostRelationships', () => {
+  describe('getRelationships', () => {
     it('should return post relationships when they exist', async () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      const relationships = await PostController.getPostRelationships({ compositeId: testData.fullPostId });
+      const relationships = await PostController.getRelationships({ compositeId: testData.fullPostId });
 
       expect(relationships).not.toBeNull();
       expect(relationships?.id).toBe(testData.fullPostId);
@@ -468,7 +471,7 @@ describe('PostController', () => {
     it('should return null when post relationships do not exist', async () => {
       const { PostController } = await import('./post');
 
-      const relationships = await PostController.getPostRelationships({ compositeId: 'nonexistent:post' });
+      const relationships = await PostController.getRelationships({ compositeId: 'nonexistent:post' });
 
       expect(relationships).toBeNull();
     });
@@ -493,22 +496,22 @@ describe('PostController', () => {
       });
 
       const { PostController } = await import('./post');
-      const relationships = await PostController.getPostRelationships({ compositeId: testData.fullPostId });
+      const relationships = await PostController.getRelationships({ compositeId: testData.fullPostId });
 
       expect(relationships).not.toBeNull();
       expect(relationships?.replied).toBe(parentUri);
     });
 
-    it('should call PostApplication.getPostRelationships with correct postId', async () => {
+    it('should call PostApplication.getRelationships with correct postId', async () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
       const getRelationshipsSpy = vi
-        .spyOn(ApplicationModule.PostApplication, 'getPostRelationships')
+        .spyOn(ApplicationModule.PostApplication, 'getRelationships')
         .mockResolvedValue(null);
 
       try {
-        await PostController.getPostRelationships({ compositeId: 'author:post123' });
+        await PostController.getRelationships({ compositeId: 'author:post123' });
         expect(getRelationshipsSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
       } finally {
         getRelationshipsSpy.mockRestore();

@@ -231,7 +231,7 @@ describe('PostNormalizer', () => {
           [
             'buildCompositeIdFromPubkyUri',
             () =>
-              vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockImplementation(() => {
+              vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockImplementation((_params) => {
                 throw new Error('URI error');
               }),
           ],

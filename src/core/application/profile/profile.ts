@@ -7,44 +7,13 @@ import * as Libs from '@/libs';
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
-  static async read({ userId }: Core.TReadProfileParams) {
-    // Try to get from local database first
-    const localUserDetails = await Core.UserDetailsModel.findById(userId);
-
-    // If found locally, return it
-    if (localUserDetails) {
-      return localUserDetails;
-    }
-
-    // If not found locally, fetch from Nexus API
-    try {
-      const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
-
-      // If found from Nexus, persist it to local database
-      if (nexusUserDetails) {
-        await Core.UserDetailsModel.upsert(nexusUserDetails);
-        return await Core.UserDetailsModel.findById(userId);
-      }
-    } catch (error) {
-      // Handle 404 (user not found) gracefully - profile.json was not created yet
-      if (error instanceof Libs.AppError && error.statusCode === 404) {
-        // User doesn't exist in Nexus yet, return null
-        return null;
-      }
-      // Re-throw other errors (network issues, server errors, etc.)
-      throw error;
-    }
-  }
-
   /**
-   * Bulk read multiple user details from local database.
-   * Returns a Map for efficient lookup by user ID.
+   * Commits the set details operation to the homeserver and local database.
+   * @param profile - The profile to set
+   * @param url - The URL of the profile
+   * @param pubky - The public key of the user
    */
-  static async bulkRead(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
-    return await Core.LocalProfileService.bulkDetails(userIds);
-  }
-
-  static async create({ profile, url, pubky }: Core.TCreateProfileInput) {
+  static async commitCreate({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
       const authStore = Core.useAuthStore.getState();
@@ -57,9 +26,85 @@ export class ProfileApplication {
     }
   }
 
-  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountParams) {
+  /**
+   * Updates full user profile in both homeserver and local database.
+   * Follows local-first pattern: updates homeserver first, then local DB.
+   *
+   * @param params - Parameters containing user's public key and profile data
+   */
+  static async commitUpdate({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
+    try {
+      const userDetails = await Core.LocalUserService.readDetails({ userId: pubky });
+      if (!userDetails) {
+        throw new Error('User profile not found');
+      }
+      // Build complete user object with updated fields
+      const { user, meta } = Core.UserNormalizer.to(
+        {
+          name,
+          bio: bio ?? '',
+          image: image ?? '',
+          links,
+          status: userDetails.status ?? '',
+        },
+        pubky,
+      );
+      // Update homeserver with complete profile
+      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
+      // Update local database after successful homeserver sync
+      await Core.LocalProfileService.updateDetails(user, pubky);
+    } catch (error) {
+      console.error('Failed to update profile', { error, pubky });
+      throw error;
+    }
+  }
+
+  /**
+   * Updates user status in both homeserver and local database.
+   */
+  static async commitUpdateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+    try {
+      // Get current user details from local DB
+      const currentUser = await Core.UserDetailsModel.findById(pubky);
+      if (!currentUser) {
+        throw new Error('User profile not found');
+      }
+
+      // Build complete user object with updated status
+      // According to spec, we must send the full profile, not just the status field
+      const { user, meta } = Core.UserNormalizer.to(
+        {
+          name: currentUser.name,
+          bio: currentUser.bio,
+          image: currentUser.image ?? '',
+          links: (currentUser.links ?? []).map((link) => ({ title: link.title, url: link.url })),
+          status: status || '',
+        },
+        pubky,
+      );
+
+      // Update homeserver with complete profile
+      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
+
+      // Update local database after successful homeserver sync
+      await Core.UserDetailsModel.upsert({
+        ...currentUser,
+        status: status || null,
+      });
+    } catch (error) {
+      Libs.Logger.error('Failed to update status', { error, pubky, status });
+      throw error;
+    }
+  }
+
+  /**
+   * Commits the delete profile operation to the homeserver and local database.
+   * @param pubky - The public key of the user
+   * @param setProgress - The function to set the progress
+   */
+  static async commitDelete({ pubky, setProgress }: Core.TDeleteAccountParams) {
     // Clear local IndexedDB data first
-    await Core.LocalProfileService.deleteAccount();
+    await Core.LocalProfileService.deleteAll();
 
     const baseDirectory = Specs.baseUriBuilder(pubky);
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
@@ -92,108 +137,6 @@ export class ProfileApplication {
 
     if (setProgress) {
       setProgress(100);
-    }
-  }
-
-  /**
-   * Updates full user profile in both homeserver and local database.
-   * Follows local-first pattern: updates homeserver first, then local DB.
-   *
-   * @param params - Parameters containing user's public key and profile data
-   */
-  static async updateProfile({
-    pubky,
-    name,
-    bio,
-    image,
-    links,
-  }: {
-    pubky: Core.Pubky;
-    name: string;
-    bio: string;
-    image: string | null;
-    links: { title: string; url: string }[];
-  }) {
-    try {
-      // Get current user details from local DB
-      const currentUser = await Core.UserDetailsModel.findById(pubky);
-      if (!currentUser) {
-        throw new Error('User profile not found');
-      }
-
-      // Build complete user object with updated fields
-      const { user, meta } = Core.UserNormalizer.to(
-        {
-          name,
-          bio,
-          image: image ?? '',
-          links: links.map((link) => ({ title: link.title, url: link.url })),
-          status: currentUser.status ?? '',
-        },
-        pubky,
-      );
-
-      // Update homeserver with complete profile
-      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
-
-      // Update local database after successful homeserver sync
-      await Core.UserDetailsModel.upsert({
-        ...currentUser,
-        name,
-        bio,
-        image,
-        links: links.length > 0 ? links : null,
-      });
-    } catch (error) {
-      console.error('Failed to update profile', { error, pubky });
-      throw error;
-    }
-  }
-
-  /**
-   * Updates user status in both homeserver and local database.
-   * Follows local-first pattern: updates homeserver first, then local DB.
-   *
-   * According to PubkyAppUser spec:
-   * - URI: /pub/pubky.app/profile.json
-   * - status field: Optional, max 50 characters
-   * - Must send complete profile object (name, bio, image, links, status)
-   *
-   * @see https://github.com/pubky/pubky-app-specs#pubkyappuser
-   * @param params - Parameters containing user's public key and status
-   */
-  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
-    try {
-      // Get current user details from local DB
-      const currentUser = await Core.UserDetailsModel.findById(pubky);
-      if (!currentUser) {
-        throw new Error('User profile not found');
-      }
-
-      // Build complete user object with updated status
-      // According to spec, we must send the full profile, not just the status field
-      const { user, meta } = Core.UserNormalizer.to(
-        {
-          name: currentUser.name,
-          bio: currentUser.bio,
-          image: currentUser.image ?? '',
-          links: (currentUser.links ?? []).map((link) => ({ title: link.title, url: link.url })),
-          status: status || '',
-        },
-        pubky,
-      );
-
-      // Update homeserver with complete profile
-      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
-
-      // Update local database after successful homeserver sync
-      await Core.UserDetailsModel.upsert({
-        ...currentUser,
-        status: status || null,
-      });
-    } catch (error) {
-      Libs.Logger.error('Failed to update status', { error, pubky, status });
-      throw error;
     }
   }
 

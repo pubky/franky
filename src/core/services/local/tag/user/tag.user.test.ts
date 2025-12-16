@@ -16,7 +16,7 @@ const createTagParams = (label: string): Core.TLocalTagParams => ({
 });
 
 const getSavedUserTags = async () => {
-  return await Core.UserTagsModel.table.get(testData.taggedPubky);
+  return await Core.UserTagsModel.findById(testData.taggedPubky);
 };
 
 const getSavedUserCounts = async (userId: Core.Pubky) => {

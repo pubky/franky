@@ -1,5 +1,9 @@
 import * as Core from '@/core';
 
+export interface TStreamResult {
+  stream: string[];
+}
+
 export interface TPostStreamUpsertParams {
   streamId: Core.PostStreamId;
   stream: string[];
