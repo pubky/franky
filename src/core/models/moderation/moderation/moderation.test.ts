@@ -9,62 +9,33 @@ describe('ModerationModel', () => {
     });
   });
 
-  describe('bulkExists', () => {
-    it('should return empty set for empty input', async () => {
-      const result = await Core.ModerationModel.bulkExists([]);
+  it('should create and retrieve moderation records', async () => {
+    const postId = 'author:post1';
+    await Core.ModerationModel.upsert({ id: postId, created_at: Date.now() });
 
-      expect(result).toEqual(new Set());
-    });
+    const record = await Core.ModerationModel.table.get(postId);
+    expect(record).toBeTruthy();
+    expect(record!.id).toBe(postId);
+  });
 
-    it('should return set of existing post IDs', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3'];
-      await Core.ModerationModel.upsert({ id: 'author:post1', created_at: 123456 });
-      await Core.ModerationModel.upsert({ id: 'author:post3', created_at: 123458 });
+  it('should delete moderation records', async () => {
+    const postId = 'author:post1';
+    await Core.ModerationModel.upsert({ id: postId, created_at: Date.now() });
 
-      const result = await Core.ModerationModel.bulkExists(postIds);
+    await Core.ModerationModel.deleteById(postId);
 
-      expect(result).toEqual(new Set(['author:post1', 'author:post3']));
-    });
+    const record = await Core.ModerationModel.table.get(postId);
+    expect(record).toBeUndefined();
+  });
 
-    it('should return empty set when no records exist', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3'];
+  it('should check existence of records', async () => {
+    const postId = 'author:post1';
+    await Core.ModerationModel.upsert({ id: postId, created_at: Date.now() });
 
-      const result = await Core.ModerationModel.bulkExists(postIds);
+    const exists = await Core.ModerationModel.exists(postId);
+    expect(exists).toBe(true);
 
-      expect(result).toEqual(new Set());
-    });
-
-    it('should return all IDs when all records exist', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3'];
-      await Core.ModerationModel.upsert({ id: 'author:post1', created_at: 123456 });
-      await Core.ModerationModel.upsert({ id: 'author:post2', created_at: 123457 });
-      await Core.ModerationModel.upsert({ id: 'author:post3', created_at: 123458 });
-
-      const result = await Core.ModerationModel.bulkExists(postIds);
-
-      expect(result).toEqual(new Set(postIds));
-    });
-
-    it('should handle single post ID', async () => {
-      const postIds = ['author:post1'];
-      await Core.ModerationModel.upsert({ id: 'author:post1', created_at: 123456 });
-
-      const result = await Core.ModerationModel.bulkExists(postIds);
-
-      expect(result).toEqual(new Set(['author:post1']));
-    });
-
-    it('should handle mixed existing and non-existing records', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3', 'author:post4', 'author:post5'];
-      await Core.ModerationModel.upsert({ id: 'author:post1', created_at: Date.now() });
-      await Core.ModerationModel.upsert({ id: 'author:post3', created_at: Date.now() });
-      await Core.ModerationModel.upsert({ id: 'author:post5', created_at: Date.now() });
-
-      const result = await Core.ModerationModel.bulkExists(postIds);
-
-      expect(result).toEqual(new Set(['author:post1', 'author:post3', 'author:post5']));
-      expect(result.has('author:post2')).toBe(false);
-      expect(result.has('author:post4')).toBe(false);
-    });
+    const notExists = await Core.ModerationModel.exists('author:post2');
+    expect(notExists).toBe(false);
   });
 });

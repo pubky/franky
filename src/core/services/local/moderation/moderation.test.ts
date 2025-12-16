@@ -87,49 +87,4 @@ describe('LocalModerationService', () => {
       expect(result2).toBe(true);
     });
   });
-
-  describe('bulkCheckBlurred', () => {
-    it('should return empty set for empty input', async () => {
-      const result = await Core.LocalModerationService.bulkCheckBlurred([]);
-
-      expect(result).toEqual(new Set());
-    });
-
-    it('should return IDs that are not in unblurred set', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3', 'author:post4'];
-      await Core.ModerationModel.upsert({ id: 'author:post2', created_at: Date.now() });
-      await Core.ModerationModel.upsert({ id: 'author:post4', created_at: Date.now() });
-
-      const result = await Core.LocalModerationService.bulkCheckBlurred(postIds);
-
-      expect(result).toEqual(new Set(['author:post1', 'author:post3']));
-    });
-
-    it('should return all IDs when none are unblurred', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3'];
-
-      const result = await Core.LocalModerationService.bulkCheckBlurred(postIds);
-
-      expect(result).toEqual(new Set(postIds));
-    });
-
-    it('should return empty set when all are unblurred', async () => {
-      const postIds = ['author:post1', 'author:post2', 'author:post3'];
-      await Core.ModerationModel.upsert({ id: 'author:post1', created_at: Date.now() });
-      await Core.ModerationModel.upsert({ id: 'author:post2', created_at: Date.now() });
-      await Core.ModerationModel.upsert({ id: 'author:post3', created_at: Date.now() });
-
-      const result = await Core.LocalModerationService.bulkCheckBlurred(postIds);
-
-      expect(result).toEqual(new Set());
-    });
-
-    it('should handle single post ID', async () => {
-      const postIds = ['author:post1'];
-
-      const result = await Core.LocalModerationService.bulkCheckBlurred(postIds);
-
-      expect(result).toEqual(new Set(['author:post1']));
-    });
-  });
 });

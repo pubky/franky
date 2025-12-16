@@ -34,18 +34,4 @@ export class LocalModerationService {
       });
     }
   }
-
-  static async bulkCheckBlurred(postIds: string[]): Promise<Set<string>> {
-    if (postIds.length === 0) return new Set();
-
-    try {
-      const unblurredSet = await Core.ModerationModel.bulkExists(postIds);
-      return new Set(postIds.filter((id) => !unblurredSet.has(id)));
-    } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to bulk check blur state', 500, {
-        error,
-        count: postIds.length,
-      });
-    }
-  }
 }

@@ -14,9 +14,4 @@ export class ModerationModel
     super(data);
     this.created_at = data.created_at;
   }
-
-  static async bulkExists(postIds: string[]): Promise<Set<string>> {
-    const results = await this.table.bulkGet(postIds);
-    return new Set(results.filter(Boolean).map((r) => r!.id));
-  }
 }
