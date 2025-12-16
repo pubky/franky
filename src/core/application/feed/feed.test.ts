@@ -187,7 +187,7 @@ describe('FeedApplication', () => {
 
       const result = await FeedApplication.commitDelete({ userId: testUserId, params: mockParams });
 
-      expect(deleteSpy).toHaveBeenCalledWith(123);
+      expect(deleteSpy).toHaveBeenCalledWith({ feedId: 123 });
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, expect.stringContaining('pubky://'));
       expect(result).toBeUndefined();
     });

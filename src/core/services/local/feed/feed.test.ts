@@ -86,7 +86,7 @@ describe('LocalFeedService', () => {
       const feed = createFeedSchema({ id: 0 });
       const persistedFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
-      await Core.LocalFeedService.delete(persistedFeed.id);
+      await Core.LocalFeedService.delete({ feedId: persistedFeed.id });
 
       const saved = await Core.FeedModel.table.get(persistedFeed.id);
       expect(saved).toBeUndefined();
@@ -94,7 +94,7 @@ describe('LocalFeedService', () => {
 
     it('should not throw when deleting non-existent feed', async () => {
       // Should not throw
-      await expect(Core.LocalFeedService.delete(99999)).resolves.not.toThrow();
+      await expect(Core.LocalFeedService.delete({ feedId: 99999 })).resolves.not.toThrow();
     });
   });
 
@@ -103,7 +103,7 @@ describe('LocalFeedService', () => {
       const feed = createFeedSchema({ id: 0 });
       const persistedFeed = await Core.LocalFeedService.createOrUpdate(feed);
 
-      const found = await Core.LocalFeedService.read(persistedFeed.id);
+      const found = await Core.LocalFeedService.read({ feedId: persistedFeed.id });
 
       expect(found).toBeTruthy();
       expect(found!.id).toBe(persistedFeed.id);
@@ -111,7 +111,7 @@ describe('LocalFeedService', () => {
     });
 
     it('should return undefined when not found', async () => {
-      const found = await Core.LocalFeedService.read(99999);
+      const found = await Core.LocalFeedService.read({ feedId: 99999 });
 
       expect(found).toBeUndefined();
     });
