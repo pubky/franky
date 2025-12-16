@@ -8,8 +8,8 @@ vi.mock('@/core', () => ({
   useAuthStore: vi.fn(),
   BookmarkController: {
     exists: vi.fn(),
-    create: vi.fn(),
-    delete: vi.fn(),
+    commitCreate: vi.fn(),
+    commitDelete: vi.fn(),
   },
 }));
 
@@ -87,7 +87,7 @@ describe('useBookmark', () => {
 
   it('creates bookmark when toggle is called and not bookmarked', async () => {
     vi.mocked(Core.BookmarkController.exists).mockResolvedValue(false);
-    vi.mocked(Core.BookmarkController.create).mockResolvedValue(undefined);
+    vi.mocked(Core.BookmarkController.commitCreate).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useBookmark(mockPostId));
 
@@ -99,7 +99,7 @@ describe('useBookmark', () => {
       await result.current.toggle();
     });
 
-    expect(Core.BookmarkController.create).toHaveBeenCalledWith({
+    expect(Core.BookmarkController.commitCreate).toHaveBeenCalledWith({
       postId: mockPostId,
       userId: mockUserId,
     });
@@ -112,7 +112,7 @@ describe('useBookmark', () => {
 
   it('deletes bookmark when toggle is called and is bookmarked', async () => {
     vi.mocked(Core.BookmarkController.exists).mockResolvedValue(true);
-    vi.mocked(Core.BookmarkController.delete).mockResolvedValue(undefined);
+    vi.mocked(Core.BookmarkController.commitDelete).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useBookmark(mockPostId));
 
@@ -124,7 +124,7 @@ describe('useBookmark', () => {
       await result.current.toggle();
     });
 
-    expect(Core.BookmarkController.delete).toHaveBeenCalledWith({
+    expect(Core.BookmarkController.commitDelete).toHaveBeenCalledWith({
       postId: mockPostId,
       userId: mockUserId,
     });
@@ -155,12 +155,12 @@ describe('useBookmark', () => {
       title: 'Error',
       description: 'You must be logged in to bookmark posts',
     });
-    expect(Core.BookmarkController.create).not.toHaveBeenCalled();
+    expect(Core.BookmarkController.commitCreate).not.toHaveBeenCalled();
   });
 
   it('shows error toast when bookmark operation fails', async () => {
     vi.mocked(Core.BookmarkController.exists).mockResolvedValue(false);
-    vi.mocked(Core.BookmarkController.create).mockRejectedValue(new Error('Network error'));
+    vi.mocked(Core.BookmarkController.commitCreate).mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useBookmark(mockPostId));
 

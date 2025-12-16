@@ -49,7 +49,7 @@ export class BootstrapApplication {
 
     const [_, notification] = await Promise.all([
       // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
-      Core.FileApplication.persistFiles(results[1].postAttachments),
+      Core.FileApplication.fetchFiles(results[1].postAttachments),
       this.fetchNotifications(params),
     ]);
 

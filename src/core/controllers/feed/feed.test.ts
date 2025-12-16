@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort } from 'pubky-app-specs';
 import * as Core from '@/core';
-import type { TFeedCreateParams, TFeedUpdateParams, TFeedDeleteParams } from './feed.types';
+import type { TFeedCreateParams, TFeedUpdateParams, TFeedIdParam } from './feed.types';
 import type { AuthStore } from '@/core/stores/auth/auth.types';
 
 const testData = {
@@ -45,8 +45,8 @@ describe('FeedController', () => {
 
     // Mock FeedApplication
     vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(createMockFeedSchema());
-    vi.spyOn(Core.FeedApplication, 'delete').mockResolvedValue(undefined);
-    vi.spyOn(Core.FeedApplication, 'list').mockResolvedValue([createMockFeedSchema()]);
+    vi.spyOn(Core.FeedApplication, 'commitDelete').mockResolvedValue(undefined);
+    vi.spyOn(Core.FeedApplication, 'getList').mockResolvedValue([createMockFeedSchema()]);
     vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(createMockFeedSchema());
 
     // Import FeedController
@@ -59,7 +59,7 @@ describe('FeedController', () => {
       const params = createFeedParams();
       const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
 
-      const result = await FeedController.create(params);
+      const result = await FeedController.commitCreate(params);
 
       expect(persistSpy).toHaveBeenCalledWith({
         userId: testData.userPubky,
@@ -74,19 +74,19 @@ describe('FeedController', () => {
     it('should throw when user is not authenticated (via application layer)', async () => {
       vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('User not authenticated'));
 
-      await expect(FeedController.create(createFeedParams())).rejects.toThrow('User not authenticated');
+      await expect(FeedController.commitCreate(createFeedParams())).rejects.toThrow('User not authenticated');
     });
 
     it('should validate tags before normalizing', async () => {
       const params = createFeedParams({ tags: [] });
 
-      await expect(FeedController.create(params)).rejects.toThrow('At least one tag is required');
+      await expect(FeedController.commitCreate(params)).rejects.toThrow('At least one tag is required');
     });
 
     it('should validate tags count before normalizing', async () => {
       const params = createFeedParams({ tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6'] });
 
-      await expect(FeedController.create(params)).rejects.toThrow('Maximum 5 tags allowed');
+      await expect(FeedController.commitCreate(params)).rejects.toThrow('Maximum 5 tags allowed');
     });
   });
 
@@ -102,7 +102,7 @@ describe('FeedController', () => {
         changes: { tags: ['bitcoin', 'mining'] },
       };
 
-      const result = await FeedController.update(updateParams);
+      const result = await FeedController.commitUpdate(updateParams);
 
       expect(prepareSpy).toHaveBeenCalledWith({
         feedId: 123,
@@ -126,14 +126,14 @@ describe('FeedController', () => {
         changes: { tags: ['new'] },
       };
 
-      await expect(FeedController.update(updateParams)).rejects.toThrow('Feed not found');
+      await expect(FeedController.commitUpdate(updateParams)).rejects.toThrow('Feed not found');
     });
 
     it('should throw when user is not authenticated (via application layer)', async () => {
       vi.spyOn(Core.FeedApplication, 'prepareUpdateParams').mockResolvedValue(createFeedParams({ tags: ['new'] }));
       vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('User not authenticated'));
 
-      await expect(FeedController.update({ feedId: 123, changes: { tags: ['new'] } })).rejects.toThrow(
+      await expect(FeedController.commitUpdate({ feedId: 123, changes: { tags: ['new'] } })).rejects.toThrow(
         'User not authenticated',
       );
     });
@@ -141,30 +141,30 @@ describe('FeedController', () => {
 
   describe('delete', () => {
     it('should call delete in application layer', async () => {
-      const deleteSpy = vi.spyOn(Core.FeedApplication, 'delete');
-      const deleteParams: TFeedDeleteParams = { feedId: 123 };
+      const deleteSpy = vi.spyOn(Core.FeedApplication, 'commitDelete');
+      const deleteParams: TFeedIdParam = { feedId: 123 };
 
-      await FeedController.delete(deleteParams);
+      await FeedController.commitDelete(deleteParams);
 
       expect(deleteSpy).toHaveBeenCalledWith({ userId: testData.userPubky, params: { feedId: 123 } });
     });
 
     it('should throw when user is not authenticated (via application layer)', async () => {
-      vi.spyOn(Core.FeedApplication, 'delete').mockRejectedValue(new Error('User not authenticated'));
+      vi.spyOn(Core.FeedApplication, 'commitDelete').mockRejectedValue(new Error('User not authenticated'));
 
-      await expect(FeedController.delete({ feedId: 123 })).rejects.toThrow('User not authenticated');
+      await expect(FeedController.commitDelete({ feedId: 123 })).rejects.toThrow('User not authenticated');
     });
   });
 
   describe('list', () => {
     it('should return all feeds sorted', async () => {
       const feeds = [createMockFeedSchema({ id: 1, name: 'Feed 1' }), createMockFeedSchema({ id: 2, name: 'Feed 2' })];
-      vi.spyOn(Core.FeedApplication, 'list').mockResolvedValue(feeds);
+      vi.spyOn(Core.FeedApplication, 'getList').mockResolvedValue(feeds);
 
-      const result = await FeedController.list();
+      const result = await FeedController.getList();
 
       expect(result).toHaveLength(2);
-      expect(Core.FeedApplication.list).toHaveBeenCalled();
+      expect(Core.FeedApplication.getList).toHaveBeenCalled();
     });
   });
 
@@ -173,7 +173,7 @@ describe('FeedController', () => {
       const feed = createMockFeedSchema();
       vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(feed);
 
-      const result = await FeedController.get(123);
+      const result = await FeedController.get({ feedId: 123 });
 
       expect(result).toBeTruthy();
       expect(result!.id).toBe(123);
@@ -182,7 +182,7 @@ describe('FeedController', () => {
     it('should return undefined when not found', async () => {
       vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(undefined);
 
-      const result = await FeedController.get(999);
+      const result = await FeedController.get({ feedId: 999 });
 
       expect(result).toBeUndefined();
     });

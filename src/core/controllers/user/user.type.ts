@@ -9,3 +9,7 @@ export type TMuteParams = {
   muter: Core.Pubky;
   mutee: Core.Pubky;
 };
+
+export type TPubkyListParams = {
+  userIds: Core.Pubky[];
+};

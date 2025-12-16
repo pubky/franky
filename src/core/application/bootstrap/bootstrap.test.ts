@@ -174,7 +174,7 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
         persistPostsError ? () => Promise.reject(persistPostsError) : () => Promise.resolve({ postAttachments: [] }),
       ),
     persistFiles: vi
-      .spyOn(Core.FileApplication, 'persistFiles')
+      .spyOn(Core.FileApplication, 'fetchFiles')
       .mockImplementation(
         persistFilesError ? () => Promise.reject(persistFilesError) : () => Promise.resolve(undefined),
       ),

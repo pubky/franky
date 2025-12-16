@@ -10,7 +10,7 @@ export class PostValidators {
   constructor() {}
 
   static async validatePostId({ postId, message }: TValidatePostIdParams): Promise<string> {
-    const parentPost = await Core.PostDetailsModel.findById(postId);
+    const parentPost = await Core.PostController.getDetails({ compositeId: postId });
     if (!parentPost) {
       throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, `${message} not found`, 404, {
         postId,

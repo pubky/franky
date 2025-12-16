@@ -42,7 +42,7 @@ export function usePostParticipants(
   const replyRelationships = useLiveQuery(
     async () => {
       if (!postId) return [];
-      return await Core.PostController.getPostReplies({ compositeId: postId });
+      return await Core.PostController.getReplies({ compositeId: postId });
     },
     [postId],
     [],

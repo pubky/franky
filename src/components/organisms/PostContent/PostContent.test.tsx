@@ -11,13 +11,14 @@ vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(),
 }));
 
-// Mock core model used by PostContent
+// Mock core controller used by PostContent
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    PostDetailsModel: {
-      findById: vi.fn().mockResolvedValue({ content: 'Mock content' }),
+    PostController: {
+      ...actual.PostController,
+      getDetails: vi.fn().mockResolvedValue({ content: 'Mock content', attachments: null }),
     },
   };
 });
@@ -44,7 +45,7 @@ vi.mock('@/organisms', () => ({
 }));
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
-const mockFindById = vi.mocked(Core.PostDetailsModel.findById);
+const mockReadPostDetails = vi.mocked(Core.PostController.getDetails);
 const mockPostText = vi.mocked(Molecules.PostText);
 const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
 const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
@@ -52,6 +53,8 @@ const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
 describe('PostContent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mock to return a default value
+    mockReadPostDetails.mockResolvedValue({ content: 'Mock content', attachments: null });
   });
 
   it('renders content when postDetails are available', () => {
@@ -71,9 +74,10 @@ describe('PostContent', () => {
     expect(container.firstChild).toHaveTextContent('Loading content...');
   });
 
-  it('calls PostDetailsModel.findById with correct id', async () => {
-    const mockPostDetails = { content: 'Hello' };
+  it('calls PostController.getDetails with correct compositeId', async () => {
+    const mockPostDetails = { content: 'Hello', attachments: null };
     mockUseLiveQuery.mockReturnValue(mockPostDetails);
+    mockReadPostDetails.mockResolvedValue(mockPostDetails);
 
     render(<PostContent postId="post-abc" />);
 
@@ -81,7 +85,7 @@ describe('PostContent', () => {
     const callback = mockUseLiveQuery.mock.calls[0][0] as () => Promise<unknown>;
     await callback();
 
-    expect(mockFindById).toHaveBeenCalledWith('post-abc');
+    expect(mockReadPostDetails).toHaveBeenCalledWith({ compositeId: 'post-abc' });
   });
 
   it('calls PostText with correct content prop', () => {

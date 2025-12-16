@@ -382,8 +382,8 @@ describe('TimelineRepliesWithParent', () => {
       const mockParentId = 'author2:parent1';
 
       // Mock a pending fetch scenario
-      const mockGetOrFetchPost = vi.fn(() => new Promise(() => {})); // Never resolves
-      vi.spyOn(Core.PostController, 'getOrFetchPost').mockImplementation(mockGetOrFetchPost);
+      const mockGetOrFetchDetails = vi.fn(() => new Promise(() => {})); // Never resolves
+      vi.spyOn(Core.PostController, 'getOrFetchDetails').mockImplementation(mockGetOrFetchDetails);
 
       mockUseStreamPagination.mockReturnValue({
         postIds: [mockReplyId],
@@ -403,7 +403,7 @@ describe('TimelineRepliesWithParent', () => {
       const { unmount } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
       // Verify fetch was initiated
-      expect(mockGetOrFetchPost).toHaveBeenCalledWith({ compositeId: mockParentId, viewerId: mockViewerId });
+      expect(mockGetOrFetchDetails).toHaveBeenCalledWith({ compositeId: mockParentId, viewerId: mockViewerId });
 
       // Unmount component while fetch is pending
       unmount();
