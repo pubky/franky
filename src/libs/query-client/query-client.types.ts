@@ -17,13 +17,13 @@ export type RetryDelayConfig = {
  */
 export type RetryConfig = {
   /** Error types that should NEVER retry (permanent failures) */
-  nonRetryableErrorTypes: AppErrorType[];
+  nonRetryable: AppErrorType[];
 
   /**
    * Retry limits by status code category.
    * Set to 0 to disable retries for that category.
    */
-  retryLimits: {
+  limits: {
     /** 404 responses - e.g., Nexus uses 5 due to indexing delay */
     notFound?: number;
     /** 5xx responses */
@@ -38,7 +38,7 @@ export type RetryConfig = {
    * Retry delay configuration with exponential backoff.
    * Formula: min(initial * 2^attemptIndex, max)
    */
-  retryDelays: {
+  delays: {
     /** Delays for 404 responses */
     notFound?: RetryDelayConfig;
     /** Delays for 5xx responses */

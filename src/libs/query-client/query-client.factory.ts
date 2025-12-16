@@ -10,20 +10,6 @@ import type { QueryClientConfig } from './query-client.types';
  * - Retry limits per status code category
  * - Exponential backoff delays
  *
- * @example
- * ```typescript
- * const nexusQueryClient = createQueryClient({
- *   retry: {
- *     nonRetryableErrorTypes: [NexusErrorType.INVALID_REQUEST],
- *     retryLimits: { notFound: 5, serverError: 3, default: 3 },
- *     retryDelays: {
- *       notFound: { initial: 500, max: 10_000 },
- *       default: { initial: 1_000, max: 30_000 },
- *     },
- *   },
- * });
- * ```
- *
  * @param config - Configuration for retry behavior, stale time, and cache time
  * @returns A configured QueryClient instance
  */
@@ -35,27 +21,27 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
    */
   function shouldRetry(failureCount: number, error: unknown): boolean {
     if (!isAppError(error)) {
-      return failureCount < retry.retryLimits.default;
+      return failureCount < retry.limits.default;
     }
 
     const { statusCode, type } = error;
 
     // Permanent failures - don't retry
-    if (retry.nonRetryableErrorTypes.includes(type)) {
+    if (retry.nonRetryable.includes(type)) {
       return false;
     }
 
     // Status code based retry logic
     if (statusCode === 404) {
-      return failureCount < (retry.retryLimits.notFound ?? 0);
+      return failureCount < (retry.limits.notFound ?? retry.limits.default);
     }
 
     if (statusCode === 429) {
-      return failureCount < (retry.retryLimits.rateLimited ?? retry.retryLimits.serverError ?? 0);
+      return failureCount < (retry.limits.rateLimited ?? retry.limits.serverError ?? retry.limits.default);
     }
 
     if (statusCode >= 500) {
-      return failureCount < (retry.retryLimits.serverError ?? retry.retryLimits.default);
+      return failureCount < (retry.limits.serverError ?? retry.limits.default);
     }
 
     // Other 4xx: Client errors - don't retry
@@ -63,7 +49,7 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
       return false;
     }
 
-    return failureCount < retry.retryLimits.default;
+    return failureCount < retry.limits.default;
   }
 
   /**
@@ -71,7 +57,7 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
    * Formula: min(initial * 2^attemptIndex, max)
    */
   function retryDelay(attemptIndex: number, error: unknown): number {
-    const delays = retry.retryDelays;
+    const delays = retry.delays;
 
     if (isAppError(error)) {
       // 404: Use notFound delays if configured

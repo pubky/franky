@@ -152,12 +152,7 @@ export async function fetchNexus<T>(url: string, method: HttpMethod = 'GET', bod
 }
 
 /**
- * Queries Nexus API with automatic retry logic via TanStack Query.
- *
- * Uses queryClient.fetchQuery which applies the Nexus retry configuration:
- * - 404 errors: 5 retries (content indexing delay)
- * - 5xx errors: 3 retries (server errors)
- * - Exponential backoff between retries
+ * Queries Nexus API with automatic retry logic via TanStack Query
  *
  * @param url - Full API endpoint URL
  * @param method - HTTP method (default: 'GET')
