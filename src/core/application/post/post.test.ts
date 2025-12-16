@@ -895,7 +895,7 @@ describe('Post Application', () => {
   });
 
   describe('getPostDetails', () => {
-    it('should call LocalPostService.readPostDetails', async () => {
+    it('should call LocalPostService.readPostDetails and enrich with moderation', async () => {
       const mockPost: Core.PostDetailsModelSchema = {
         id: 'author:post123',
         content: 'Test post',
@@ -910,7 +910,11 @@ describe('Post Application', () => {
       const result = await Core.PostApplication.getPostDetails({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(result).toEqual(mockPost);
+      expect(result).toEqual({
+        ...mockPost,
+        is_moderated: false,
+        is_blurred: false,
+      });
     });
 
     it('should return null when post does not exist', async () => {
