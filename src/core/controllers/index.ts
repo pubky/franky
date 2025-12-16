@@ -11,4 +11,5 @@ export * from './feed';
 export * from './notification';
 export * from './search';
 export * from './feedback';
+export * from './moderation';
 export * from './controllers.types';

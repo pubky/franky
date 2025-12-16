@@ -21,6 +21,7 @@ import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.sc
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
 import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
 import { feedTableSchema } from '@/core/models/feed/feed.schema';
+import { moderationTableSchema } from '@/core/models/moderation/moderation/moderation.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -52,6 +53,8 @@ export class AppDatabase extends Dexie {
   hot_tags!: Dexie.Table<HotTagsModelSchema>;
   // Feeds
   feeds!: Dexie.Table<Core.FeedModelSchema>;
+  // Moderation
+  moderation!: Dexie.Table<Core.ModerationModelSchema>;
 
   constructor(databaseName: string = Config.DB_NAME) {
     super(databaseName);
@@ -85,6 +88,8 @@ export class AppDatabase extends Dexie {
         hot_tags: hotTagsTableSchema,
         // Feeds
         feeds: feedTableSchema,
+        // Moderation
+        moderation: moderationTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(

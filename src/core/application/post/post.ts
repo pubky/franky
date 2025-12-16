@@ -113,8 +113,10 @@ export class PostApplication {
    * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getPostDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
-    return await Core.LocalPostService.readPostDetails({ postId: compositeId });
+  static async getPostDetails({ compositeId }: Core.TCompositeId): Promise<Core.EnrichedPostDetails | null> {
+    const post = await Core.LocalPostService.readPostDetails({ postId: compositeId });
+    if (!post) return null;
+    return await Core.ModerationApplication.enrichPostWithModeration(post);
   }
 
   /**
