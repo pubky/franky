@@ -46,72 +46,22 @@ export class AppError extends Error {
   }
 }
 
-// Helper functions with integrated logging
-export function createNexusError(
-  type: NexusErrorType,
-  message: string,
-  statusCode?: number,
-  details?: Record<string, unknown>,
-): AppError {
-  return new AppError(type, message, statusCode, details);
-}
-
 /**
- * Maps HTTP status codes to specific Nexus error types
+ * Generic factory that creates typed error creator functions
+ * Reduces duplication while maintaining type safety for each error domain
  */
-export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
-  switch (status) {
-    case 400:
-      return NexusErrorType.INVALID_REQUEST;
-    case 404:
-      return NexusErrorType.RESOURCE_NOT_FOUND;
-    case 429:
-      return NexusErrorType.RATE_LIMIT_EXCEEDED;
-    case 500:
-      return NexusErrorType.INTERNAL_SERVER_ERROR;
-    case 503:
-      return NexusErrorType.SERVICE_UNAVAILABLE;
-    default:
-      return NexusErrorType.BOOTSTRAP_FAILED;
-  }
+function createErrorFactory<T extends AppErrorType>() {
+  return (type: T, message: string, statusCode?: number, details?: Record<string, unknown>): AppError => {
+    return new AppError(type, message, statusCode, details);
+  };
 }
 
-export function createHomeserverError(
-  type: HomeserverErrorType,
-  message: string,
-  statusCode: number,
-  data?: Record<string, unknown>,
-): AppError {
-  return new AppError(type, message, statusCode, data);
-}
-
-export function createCommonError(
-  type: CommonErrorType,
-  message: string,
-  statusCode?: number,
-  details?: Record<string, unknown>,
-): AppError {
-  return new AppError(type, message, statusCode, details);
-}
-
-// Add a helper function for database errors
-export function createDatabaseError(
-  type: DatabaseErrorType,
-  message: string,
-  statusCode?: number,
-  details?: Record<string, unknown>,
-): AppError {
-  return new AppError(type, message, statusCode, details);
-}
-
-export function createSanitizationError(
-  type: SanitizationErrorType,
-  message: string,
-  statusCode?: number,
-  details?: Record<string, unknown>,
-): AppError {
-  return new AppError(type, message, statusCode, details);
-}
+// Typed error creators for each domain
+export const createNexusError = createErrorFactory<NexusErrorType>();
+export const createHomeserverError = createErrorFactory<HomeserverErrorType>();
+export const createCommonError = createErrorFactory<CommonErrorType>();
+export const createDatabaseError = createErrorFactory<DatabaseErrorType>();
+export const createSanitizationError = createErrorFactory<SanitizationErrorType>();
 
 /**
  * Type guard to check if an error is an AppError

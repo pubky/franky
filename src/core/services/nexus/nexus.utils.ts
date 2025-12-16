@@ -1,6 +1,6 @@
 import * as Config from '@/config';
-import * as Libs from '@/libs';
 import { nexusQueryClient } from './nexus.query-client';
+import { NexusErrorType, createNexusError } from '@/libs';
 
 /**
  * Shared API utilities for all endpoints
@@ -27,6 +27,26 @@ export function buildCdnUrl(endpoint: string): string {
  */
 export function encodePathSegment(segment: string): string {
   return encodeURIComponent(segment);
+}
+
+/**
+ * Maps HTTP status codes to specific Nexus error types
+ */
+export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
+  switch (status) {
+    case 400:
+      return NexusErrorType.INVALID_REQUEST;
+    case 404:
+      return NexusErrorType.RESOURCE_NOT_FOUND;
+    case 429:
+      return NexusErrorType.RATE_LIMIT_EXCEEDED;
+    case 500:
+      return NexusErrorType.INTERNAL_SERVER_ERROR;
+    case 503:
+      return NexusErrorType.SERVICE_UNAVAILABLE;
+    default:
+      return NexusErrorType.BOOTSTRAP_FAILED;
+  }
 }
 
 /**
@@ -79,8 +99,8 @@ export function createFetchOptions(method: HttpMethod = 'GET', body?: BodyInit |
  */
 export function ensureHttpResponseOk({ ok, status, statusText }: Response) {
   if (!ok) {
-    const errorType = Libs.mapHttpStatusToNexusErrorType(status);
-    throw Libs.createNexusError(errorType, `Request failed: ${statusText}`, status, {
+    const errorType = mapHttpStatusToNexusErrorType(status);
+    throw createNexusError(errorType, `Request failed: ${statusText}`, status, {
       statusCode: status,
       statusText: statusText,
     });
@@ -99,8 +119,8 @@ export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
   // Nexus API always returns JSON for successful responses.
   // Empty body on 2xx is unexpected - treat as server error.
   if (!text || text.trim() === '') {
-    throw Libs.createNexusError(
-      Libs.NexusErrorType.INVALID_RESPONSE,
+    throw createNexusError(
+      NexusErrorType.INVALID_RESPONSE,
       'Response body is empty (expected JSON)',
       500,
     );
@@ -109,7 +129,7 @@ export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
   try {
     return JSON.parse(text) as T;
   } catch (error) {
-    throw Libs.createNexusError(Libs.NexusErrorType.INVALID_RESPONSE, 'Failed to parse JSON response', 500, {
+    throw createNexusError(NexusErrorType.INVALID_RESPONSE, 'Failed to parse JSON response', 500, {
       error,
     });
   }
