@@ -20,7 +20,7 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
   const [replyIds, setReplyIds] = useState<string[]>([]);
 
   // Watch for changes in post_counts to trigger refetch when replies count changes
-  const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ compositeId: postId }), [postId]);
+  const postCounts = useLiveQuery(() => Core.PostController.getCounts({ compositeId: postId }), [postId]);
 
   const fetchReplies = useCallback(
     async (repliesCount: number) => {

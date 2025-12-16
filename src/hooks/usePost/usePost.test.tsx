@@ -27,7 +27,7 @@ vi.mock('@/core', async (importOriginal) => {
   return {
     ...actual,
     PostController: {
-      create: mockPostControllerCreate,
+      commitCreate: mockPostControllerCreate,
     },
     useAuthStore: vi.fn((selector) => {
       const state = {

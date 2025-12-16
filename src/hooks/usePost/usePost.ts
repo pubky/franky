@@ -73,7 +73,7 @@ export function usePost() {
       setIsSubmitting(true);
 
       try {
-        const createdPostId = await Core.PostController.create({
+        const createdPostId = await Core.PostController.commitCreate({
           parentPostId: postId,
           content: content.trim(),
           authorId: currentUserId,
@@ -100,7 +100,7 @@ export function usePost() {
       setIsSubmitting(true);
 
       try {
-        const createdPostId = await Core.PostController.create({
+        const createdPostId = await Core.PostController.commitCreate({
           content: content.trim(),
           authorId: currentUserId,
           tags: tags.length > 0 ? tags : undefined,
@@ -126,7 +126,7 @@ export function usePost() {
       setIsSubmitting(true);
 
       try {
-        const createdPostId = await Core.PostController.create({
+        const createdPostId = await Core.PostController.commitCreate({
           originalPostId,
           content: content.trim(),
           authorId: currentUserId,

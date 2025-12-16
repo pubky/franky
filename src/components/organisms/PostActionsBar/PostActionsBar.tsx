@@ -17,7 +17,7 @@ export function PostActionsBar({
 }: PostActionsBarProps) {
   // Fetch post counts
   const postCounts = useLiveQuery(async () => {
-    return await Core.PostController.getPostCounts({ compositeId: postId });
+    return await Core.PostController.getCounts({ compositeId: postId });
   }, [postId]);
 
   // Bookmark state and toggle

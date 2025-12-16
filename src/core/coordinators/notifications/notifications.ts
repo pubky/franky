@@ -95,7 +95,7 @@ export class NotificationCoordinator extends Coordinator<NotificationCoordinator
       Logger.debug('Polling notifications', { userId });
 
       // Coordinator calls controller to fetch notifications
-      await Core.NotificationController.notifications({ userId });
+      await Core.NotificationController.fetchNotifications({ userId });
     } catch (error) {
       Logger.error('Error polling notifications', { error });
       // Don't stop polling on error - just log and continue

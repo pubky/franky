@@ -2,11 +2,108 @@ import * as Core from '@/core';
 
 export class UserApplication {
   /**
+   * Get user details from local database
+   * This is a read-only operation that queries the local cache
+   */
+  static async getDetails(param: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+    // Try to get from local database first
+    return await Core.LocalUserService.readDetails(param);
+  }
+
+  /**
+   * Bulk read multiple user details from local database.
+   * Returns a Map for efficient lookup by user ID.
+   */
+  static async getManyDetails(param: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    return await Core.LocalUserService.readBulkDetails(param);
+  }
+
+  /**
+   * Retrieves user details from local database. If not found, fetches from Nexus API and persists to local database.
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user details or null if not found
+   */
+  static async getOrFetchDetails({ userId }: Core.TReadProfileParams) {
+    const userDetails = await Core.LocalUserService.readDetails({ userId });
+    if (userDetails) {
+      return userDetails;
+    }
+    const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
+    if (nexusUserDetails) {
+      await Core.LocalProfileService.upsertDetails(nexusUserDetails);
+    }
+    return await Core.LocalUserService.readDetails({ userId });
+  }
+
+  /**
+   * Retrieves user counts from local database. If not found, fetches from Nexus API and persists to local database.
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user counts or null if not found
+   */
+  static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    return await Core.LocalUserService.readCounts({ userId });
+  }
+
+  /**
+   * Bulk read multiple user counts from local database.
+   * Returns a Map for efficient lookup by user ID.
+   */
+  static async getManyCounts(param: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.LocalUserService.readBulkCounts(param);
+  }
+
+  /**
+   * Get user relationships from local database
+   * This is a read-only operation that queries the local cache
+   */
+  static async getRelationships(params: Core.TReadProfileParams): Promise<Core.NexusUserRelationship | null> {
+    return await Core.LocalUserService.readRelationships(params);
+  }
+
+  /**
+   * Bulk read multiple user relationships from local database.
+   * Returns a Map for efficient lookup by user ID.
+   * @param userIds - Array of user IDs to fetch relationships for
+   * @returns Promise resolving to a Map of user ID to relationship data
+   */
+  static async getManyRelationships(
+    param: Core.TPubkyListParams,
+  ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+    return await Core.LocalUserService.readBulkRelationships(param);
+  }
+
+  /**
+   * Get user tags from local database
+   * This is a read-only operation that queries the local cache
+   */
+  static async getTags(params: Core.TReadProfileParams): Promise<Core.NexusTag[]> {
+    return await Core.LocalUserService.readTags(params);
+  }
+
+  /**
+   * Saves tags for a user to local IndexedDB.
+   * @param userId - User ID to save tags for
+   * @param tags - Array of tags to save
+   */
+  static async upsertTags(userId: Core.Pubky, tags: Core.NexusTag[]): Promise<void> {
+    await Core.LocalUserService.upsertTags(userId, tags);
+  }
+
+  /**
+   * Retrieves tags for a user from the nexus service.
+   * @param params - Parameters containing user ID and pagination options
+   * @returns Promise resolving to an array of tags
+   */
+  static async fetchTags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {
+    return await Core.NexusUserService.tags(params);
+  }
+
+  /**
    * Handles following or unfollowing a user.
    * Performs local database operations and syncs with the homeserver.
    * @param params - Parameters containing event type, URLs, JSON data, and user IDs
    */
-  static async follow({
+  static async commitFollow({
     eventType,
     followUrl,
     followJson,
@@ -27,7 +124,7 @@ export class UserApplication {
    * Performs local database operations and syncs with the homeserver.
    * @param params - Parameters containing event type, URLs, JSON data, and user IDs
    */
-  static async mute({ eventType, muteUrl, muteJson, muter, mutee }: Core.TUserApplicationMuteParams) {
+  static async commitMute({ eventType, muteUrl, muteJson, muter, mutee }: Core.TUserApplicationMuteParams) {
     if (eventType === Core.HomeserverAction.PUT) {
       await Core.LocalMuteService.create({ muter, mutee });
       await Core.HomeserverService.request(eventType, muteUrl, muteJson);
@@ -42,92 +139,12 @@ export class UserApplication {
   }
 
   /**
-   * Retrieves tags for a user from the nexus service.
-   * @param params - Parameters containing user ID and pagination options
-   * @returns Promise resolving to an array of tags
-   */
-  static async tags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {
-    return await Core.NexusUserService.tags(params);
-  }
-
-  /**
-   * Retrieves tags for a user from local IndexedDB.
-   * @param userId - User ID to get tags for
-   * @returns Promise resolving to an array of tags or empty array if not found
-   */
-  static async getUserTags(userId: string): Promise<Core.NexusTag[]> {
-    return await Core.LocalProfileService.getUserTags(userId);
-  }
-
-  /**
-   * Saves tags for a user to local IndexedDB.
-   * @param userId - User ID to save tags for
-   * @param tags - Array of tags to save
-   */
-  static async saveUserTags(userId: string, tags: Core.NexusTag[]): Promise<void> {
-    await Core.LocalProfileService.upsertTags(userId as Core.Pubky, tags);
-  }
-
-  /**
    * Retrieves taggers for a specific tag label on a user from the nexus service.
    * @param params - Parameters containing user ID, label, and pagination options
    * @returns Promise resolving to an array of users who tagged the user with the specified label
    */
-  static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
     return await Core.NexusUserService.taggers(params);
-  }
-
-  /**
-   * Retrieves user details from local database. If not found, fetches from Nexus API and persists to local database.
-   * @param params - Parameters containing user ID
-   * @returns Promise resolving to user details or null if not found
-   */
-  static async details({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
-    const userDetails = await Core.LocalProfileService.details({ userId });
-    if (userDetails) {
-      return userDetails;
-    }
-    const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
-    if (nexusUserDetails) {
-      await Core.LocalProfileService.upsert(nexusUserDetails);
-    }
-    return await Core.LocalProfileService.details({ userId });
-  }
-
-  /**
-   * Retrieves user counts from local database. If not found, fetches from Nexus API and persists to local database.
-   * @param params - Parameters containing user ID
-   * @returns Promise resolving to user counts or null if not found
-   */
-  static async counts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
-    const userCounts = await Core.LocalProfileService.counts({ userId });
-    if (userCounts) {
-      return userCounts;
-    }
-    const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
-    if (nexusUserCounts) {
-      await Core.LocalProfileService.upsertCounts({ userId }, nexusUserCounts);
-      return await Core.LocalProfileService.counts({ userId });
-    }
-    return null;
-  }
-
-  /**
-   * Bulk read multiple user counts from local database.
-   * Returns a Map for efficient lookup by user ID.
-   */
-  static async bulkCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
-    return await Core.LocalProfileService.bulkCounts(userIds);
-  }
-
-  /**
-   * Bulk read multiple user relationships from local database.
-   * Returns a Map for efficient lookup by user ID.
-   * @param userIds - Array of user IDs to fetch relationships for
-   * @returns Promise resolving to a Map of user ID to relationship data
-   */
-  static async bulkRelationships(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
-    return await Core.LocalProfileService.bulkRelationships(userIds);
   }
 
   /**
@@ -136,7 +153,7 @@ export class UserApplication {
    * @param userIds - Array of user IDs to fetch tags for
    * @returns Promise resolving to a Map of user ID to tags array
    */
-  static async bulkTagsWithFetch(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+  static async getManyTagsOrFetch({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
     if (userIds.length === 0) return new Map();
 
     // 1. Find users without cached tags
@@ -148,7 +165,7 @@ export class UserApplication {
     }
 
     // 3. Return all tags from cache (now populated with fetched data)
-    return await Core.LocalProfileService.bulkTags(userIds);
+    return await Core.LocalUserService.readBulkTags({ userIds });
   }
 
   /**
@@ -161,7 +178,7 @@ export class UserApplication {
     const fetchPromises = cacheMissUserIds.map(async (userId) => {
       try {
         const tags = await Core.NexusUserService.tags({ user_id: userId, skip_tags: 0, limit_tags: 10 });
-        await Core.LocalProfileService.upsertTags(userId, tags);
+        await Core.LocalUserService.upsertTags(userId, tags);
       } catch {
         // Silently fail for individual user - they'll just have no tags
       }

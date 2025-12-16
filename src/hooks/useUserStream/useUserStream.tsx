@@ -44,7 +44,7 @@ export function useUserStream({
   const userDetailsMap = useLiveQuery(
     async () => {
       if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.bulkGetDetails(userIds);
+      return await Core.UserController.getManyDetails({ userIds });
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),
@@ -54,7 +54,7 @@ export function useUserStream({
   const userCountsMap = useLiveQuery(
     async () => {
       if (!includeCounts || userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
-      return await Core.UserController.bulkGetCounts(userIds);
+      return await Core.UserController.getManyCounts({ userIds });
     },
     [userIds, includeCounts],
     new Map<Core.Pubky, Core.NexusUserCounts>(),
@@ -65,7 +65,7 @@ export function useUserStream({
     async () => {
       if (!includeRelationships || userIds.length === 0)
         return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      return await Core.UserController.bulkGetRelationships(userIds);
+      return await Core.UserController.getManyRelationships({ userIds });
     },
     [userIds, includeRelationships],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
@@ -80,7 +80,7 @@ export function useUserStream({
 
     const fetchTags = async () => {
       try {
-        const tagsMap = await Core.UserController.bulkGetTags(userIds);
+        const tagsMap = await Core.UserController.getManyTagsOrFetch({ userIds });
         setUserTagsMap(tagsMap);
       } catch (err) {
         Libs.Logger.error('[useUserStream] Failed to fetch user tags:', err);

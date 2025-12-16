@@ -52,7 +52,7 @@ vi.mock('@/core', async (importOriginal) => {
       readPostDetails: vi.fn(() => Promise.resolve(null)),
     },
     PostController: {
-      getOrFetchPost: vi.fn(() => Promise.resolve(null)),
+      getOrFetchDetails: vi.fn(() => Promise.resolve(null)),
     },
     FileController: {
       getAvatarUrl: vi.fn((id: string) => `https://cdn.example.com/avatar/${id}`),

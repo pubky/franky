@@ -50,19 +50,19 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
 
   return (
     <>
-      <Atoms.Container overrideDefaults onClick={onClick} className="relative flex cursor-pointer">
+      <Atoms.Container overrideDefaults onClick={onClick} className="relative flex min-w-0 cursor-pointer">
         {isReply && (
           <Atoms.Container overrideDefaults className="w-3 shrink-0">
             <Atoms.PostThreadConnector height={postHeight} variant={connectorVariant} />
           </Atoms.Container>
         )}
-        <Atoms.Card ref={cardRef} className={Libs.cn('flex-1 gap-0 rounded-md py-0', className)}>
+        <Atoms.Card ref={cardRef} className={Libs.cn('min-w-0 flex-1 rounded-md py-0', className)}>
           {isDeleted ? (
             <Molecules.PostDeleted />
           ) : (
             <>
               {showRepostHeader && <Molecules.RepostHeader onUndo={deletePost} isUndoing={isDeleting} />}
-              <Atoms.CardContent className="flex flex-col gap-4 p-6">
+              <Atoms.CardContent className="flex min-w-0 flex-col gap-4 p-6">
                 <Organisms.PostHeader postId={postId} />
                 <Organisms.PostContent postId={postId} />
                 <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">

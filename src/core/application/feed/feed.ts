@@ -2,34 +2,15 @@ import { feedUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './feed.types';
-
 export class FeedApplication {
   private constructor() {}
 
-  static async delete({ userId, params }: FeedDeleteParams): Promise<void> {
-    // Convert numeric ID to string for URI builder
-    const feedUrl = feedUriBuilder(userId, String((params as Core.TFeedPersistDeleteParams).feedId));
-
-    await Promise.all([
-      Core.LocalFeedService.delete((params as Core.TFeedPersistDeleteParams).feedId),
-      Core.HomeserverService.request(Core.HomeserverAction.DELETE, feedUrl),
-    ]);
+  static async getList(): Promise<Core.FeedModelSchema[]> {
+    return Core.LocalFeedService.readAll();
   }
 
-  static async prepareUpdateParams({ feedId, changes }: Core.TFeedUpdateParams): Promise<Core.TFeedCreateParams> {
-    const existing = await Core.LocalFeedService.findById(feedId);
-    if (!existing) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId });
-    }
-
-    return {
-      name: existing.name,
-      tags: changes.tags ?? existing.tags,
-      reach: changes.reach ?? existing.reach,
-      sort: changes.sort ?? existing.sort,
-      content: changes.content !== undefined ? changes.content : existing.content,
-      layout: changes.layout ?? existing.layout,
-    };
+  static async get({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema | undefined> {
+    return Core.LocalFeedService.read({ feedId });
   }
 
   static async persist({ userId, params }: FeedPutParams): Promise<Core.FeedModelSchema> {
@@ -38,7 +19,9 @@ export class FeedApplication {
     const feedConfig = feedData.feed;
 
     const now = Date.now();
-    const createdAt = existingId ? ((await Core.LocalFeedService.findById(existingId))?.created_at ?? now) : now;
+    const createdAt = existingId
+      ? ((await Core.LocalFeedService.read({ feedId: existingId }))?.created_at ?? now)
+      : now;
 
     // For auto-incrementing IDs: use 0 for new feeds (Dexie will auto-generate), existing ID for updates
     const feedSchema: Core.FeedModelSchema = {
@@ -53,20 +36,46 @@ export class FeedApplication {
       updated_at: now,
     };
 
-    return this.persistAndSync({ userId, feedSchema, normalizedFeed: feed });
+    return this.commit({ userId, feedSchema, normalizedFeed: feed });
+  }
+
+  static async commitDelete({ userId, params }: FeedDeleteParams): Promise<void> {
+    // Convert numeric ID to string for URI builder
+    const feedUrl = feedUriBuilder(userId, String((params as Core.TFeedPersistDeleteParams).feedId));
+
+    await Promise.all([
+      Core.LocalFeedService.delete({ feedId: (params as Core.TFeedPersistDeleteParams).feedId }),
+      Core.HomeserverService.request(Core.HomeserverAction.DELETE, feedUrl),
+    ]);
+  }
+
+  static async prepareUpdateParams({ feedId, changes }: Core.TFeedUpdateParams): Promise<Core.TFeedCreateParams> {
+    const existing = await Core.LocalFeedService.read({ feedId });
+    if (!existing) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId });
+    }
+
+    return {
+      name: existing.name,
+      tags: changes.tags ?? existing.tags,
+      reach: changes.reach ?? existing.reach,
+      sort: changes.sort ?? existing.sort,
+      content: changes.content !== undefined ? changes.content : existing.content,
+      layout: changes.layout ?? existing.layout,
+    };
   }
 
   /**
    * Persist feed locally and sync to homeserver
    * Extracted to avoid duplication between handlePut and handleUpdate
    */
-  private static async persistAndSync({
+  private static async commit({
     userId,
     feedSchema,
     normalizedFeed,
   }: PersistAndSyncParams): Promise<Core.FeedModelSchema> {
     // Dexie auto-generates ID when id is 0, returns feed with actual ID
-    const persistedFeed = await Core.LocalFeedService.persist(feedSchema);
+    const persistedFeed = await Core.LocalFeedService.createOrUpdate(feedSchema);
 
     // URI builder requires string IDs, but we store numeric IDs locally
     const feedUrl = feedUriBuilder(userId, String(persistedFeed.id));
@@ -75,13 +84,5 @@ export class FeedApplication {
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, feedUrl, feedJson);
 
     return persistedFeed;
-  }
-
-  static async list(): Promise<Core.FeedModelSchema[]> {
-    return Core.LocalFeedService.findAll();
-  }
-
-  static async get(feedId: number): Promise<Core.FeedModelSchema | undefined> {
-    return Core.LocalFeedService.findById(feedId);
   }
 }

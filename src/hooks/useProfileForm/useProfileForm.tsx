@@ -246,7 +246,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       if (mode === 'create') {
         if (avatarFile) {
           setSubmitText('Uploading avatar...');
-          image = await Core.FileController.upload({ file: avatarFile, pubky });
+          image = await Core.FileController.commitCreate({ file: avatarFile, pubky });
           if (!image) {
             setSubmitText('Try again!');
             return;
@@ -259,7 +259,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         if (avatarChanged) {
           if (avatarFile) {
             setSubmitText('Uploading avatar...');
-            const uploadedImage = await Core.FileController.upload({ file: avatarFile, pubky });
+            const uploadedImage = await Core.FileController.commitCreate({ file: avatarFile, pubky });
             if (!uploadedImage) {
               setSubmitText('Try again!');
               return;
@@ -274,12 +274,18 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       setSubmitText('Saving profile...');
 
       if (mode === 'create') {
-        await Core.ProfileController.create(user, image, pubky);
+        await Core.ProfileController.commitCreate({ profile: user, image, pubky });
         await Core.AuthController.bootstrapWithDelay();
         setShowWelcomeDialog?.(true);
         router.push(App.HOME_ROUTES.HOME);
       } else {
-        await Core.ProfileController.updateProfile(user, image, pubky);
+        await Core.ProfileController.commitUpdate({
+          name: user.name,
+          bio: user.bio,
+          links: user.links,
+          image,
+          pubky,
+        });
         toast({
           title: 'Profile updated',
           description: 'Your profile has been updated successfully.',
