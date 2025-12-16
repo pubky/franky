@@ -7,7 +7,7 @@ exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
@@ -26,7 +26,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
@@ -106,7 +106,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
@@ -173,7 +173,7 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
@@ -240,7 +240,7 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div

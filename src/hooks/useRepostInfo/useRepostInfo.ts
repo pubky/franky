@@ -41,7 +41,7 @@ export function useRepostInfo(postId: string): UseRepostInfoResult {
   // Read relationships via controller (keeps UI layer from reaching into models directly)
   const relationships = useLiveQuery(async () => {
     try {
-      return await Core.PostController.getPostRelationships({ compositeId: postId });
+      return await Core.PostController.getRelationships({ compositeId: postId });
     } catch (error) {
       Libs.Logger.error('[useRepostInfo] Failed to fetch post relationships', {
         postId,

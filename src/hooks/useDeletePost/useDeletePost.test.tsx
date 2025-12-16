@@ -9,8 +9,8 @@ const mockDelete = vi.fn();
 const mockGetPostDetails = vi.fn();
 vi.mock('@/core', () => ({
   PostController: {
-    delete: vi.fn(),
-    getPostDetails: vi.fn(),
+    commitDelete: vi.fn(),
+    getDetails: vi.fn(),
   },
 }));
 
@@ -39,8 +39,8 @@ describe('useDeletePost', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(Core.PostController.delete).mockImplementation(mockDelete);
-    vi.mocked(Core.PostController.getPostDetails).mockImplementation(mockGetPostDetails);
+    vi.mocked(Core.PostController.commitDelete).mockImplementation(mockDelete);
+    vi.mocked(Core.PostController.getDetails).mockImplementation(mockGetPostDetails);
     vi.mocked(Organisms.useTimelineFeedContext).mockReturnValue(mockTimelineFeed);
     // Default: post exists (for tests that expect restoration)
     mockGetPostDetails.mockResolvedValue({ id: mockPostId, content: 'Test post' });
@@ -69,7 +69,7 @@ describe('useDeletePost', () => {
     expect(mockRemovePosts).toHaveBeenCalledBefore(mockDelete as unknown as () => Promise<void>);
   });
 
-  it('calls PostController.delete with correct postId', async () => {
+  it('calls PostController.commitDelete with correct postId', async () => {
     mockDelete.mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useDeletePost(mockPostId));
@@ -78,7 +78,7 @@ describe('useDeletePost', () => {
       await result.current.deletePost();
     });
 
-    expect(Core.PostController.delete).toHaveBeenCalledWith({
+    expect(Core.PostController.commitDelete).toHaveBeenCalledWith({
       compositePostId: mockPostId,
     });
   });

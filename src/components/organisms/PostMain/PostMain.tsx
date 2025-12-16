@@ -21,11 +21,8 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { postDetails } = Hooks.usePostDetails(postId);
   const isDeleted = Libs.isPostDeleted(postDetails?.content);
 
-  // Get repost information (uses isRepost and isCurrentUserRepost for header display)
-  const { isRepost, isCurrentUserRepost } = Hooks.useRepostInfo(postId);
   const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
-
-  const showRepostHeader = isRepost && isCurrentUserRepost;
+  const { showRepostHeader, shouldShowPostHeader } = Hooks.usePostHeaderVisibility(postId);
 
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
   const [repostDialogOpen, setRepostDialogOpen] = useState(false);
@@ -56,14 +53,14 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
             <Atoms.PostThreadConnector height={postHeight} variant={connectorVariant} />
           </Atoms.Container>
         )}
-        <Atoms.Card ref={cardRef} className={Libs.cn('min-w-0 flex-1 rounded-md py-0', className)}>
+        <Atoms.Card ref={cardRef} className={Libs.cn('min-w-0 flex-1 gap-0 rounded-md py-0', className)}>
           {isDeleted ? (
             <Molecules.PostDeleted />
           ) : (
             <>
               {showRepostHeader && <Molecules.RepostHeader onUndo={deletePost} isUndoing={isDeleting} />}
               <Atoms.CardContent className="flex min-w-0 flex-col gap-4 p-6">
-                <Organisms.PostHeader postId={postId} />
+                {shouldShowPostHeader && <Organisms.PostHeader postId={postId} />}
                 <Organisms.PostContent postId={postId} />
                 <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
                   <Organisms.ClickableTagsList
