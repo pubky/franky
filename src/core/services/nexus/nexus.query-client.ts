@@ -24,5 +24,5 @@ export const nexusQueryClient = createQueryClient({
       default: { initial: 1_000, max: 30_000 },
     },
   },
-  staleTime: 60_000,
+  staleTime: 20_000,
 });

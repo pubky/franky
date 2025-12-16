@@ -40,6 +40,11 @@ export class PostStreamApplication {
     }
   }
 
+  /**
+   * Gets the head of the stream
+   * @param params - The parameters for the stream
+   * @returns The postId of the head of the stream
+   */
   static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
     return await Core.LocalStreamPostsService.getStreamHead(params);
   }
@@ -53,7 +58,7 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.read({ streamId });
   }
 
-  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams): Promise<void> {
+  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams) {
     return await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream(params);
   }
 

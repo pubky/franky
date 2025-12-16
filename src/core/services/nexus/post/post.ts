@@ -24,11 +24,11 @@ export class NexusPostService {
    * @param limit - Maximum number of tags to return
    * @returns An array of tags (empty array if post has no tags or is not found)
    */
-  static async getPostTags({ compositeId }: Core.TCompositeId): Promise<Core.NexusTag[]> {
+  static async getPostTags({ compositeId, skip, limit }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
     // TODO: Handle the error in application layer
     const { pubky: author_id, id: post_id } = Core.parseCompositeId(compositeId);
 
-    const url = Core.postApi.tags({ author_id, post_id });
+    const url = Core.postApi.tags({ author_id, post_id, skip_tags: skip, limit_tags: limit });
     return await Core.queryNexus<Core.NexusTag[]>(url);
   }
 }

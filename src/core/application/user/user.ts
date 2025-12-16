@@ -7,6 +7,7 @@ export class UserApplication {
    */
   static async getDetails(param: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
     // Try to get from local database first
+    // TODO: Throw an error and do not return null
     return await Core.LocalUserService.readDetails(param);
   }
 
@@ -41,6 +42,7 @@ export class UserApplication {
    * @returns Promise resolving to user counts or null if not found
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    // TODO: Throw an error and do not return null
     return await Core.LocalUserService.readCounts({ userId });
   }
 
@@ -57,6 +59,7 @@ export class UserApplication {
    * This is a read-only operation that queries the local cache
    */
   static async getRelationships(params: Core.TReadProfileParams): Promise<Core.NexusUserRelationship | null> {
+    // TODO: Throw an error and do not return null
     return await Core.LocalUserService.readRelationships(params);
   }
 
@@ -85,7 +88,7 @@ export class UserApplication {
    * @param userId - User ID to save tags for
    * @param tags - Array of tags to save
    */
-  static async upsertTags(userId: Core.Pubky, tags: Core.NexusTag[]): Promise<void> {
+  static async upsertTags(userId: Core.Pubky, tags: Core.NexusTag[]) {
     await Core.LocalUserService.upsertTags(userId, tags);
   }
 
@@ -143,7 +146,7 @@ export class UserApplication {
    * @param params - Parameters containing user ID, label, and pagination options
    * @returns Promise resolving to an array of users who tagged the user with the specified label
    */
-  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusTaggers[]> {
     return await Core.NexusUserService.taggers(params);
   }
 
@@ -172,7 +175,7 @@ export class UserApplication {
    * Fetch missing user tags from Nexus API and persist to cache.
    * @param cacheMissUserIds - Array of user IDs that need tags fetched
    */
-  private static async fetchMissingUserTagsFromNexus(cacheMissUserIds: Core.Pubky[]): Promise<void> {
+  private static async fetchMissingUserTagsFromNexus(cacheMissUserIds: Core.Pubky[]) {
     if (cacheMissUserIds.length === 0) return;
 
     const fetchPromises = cacheMissUserIds.map(async (userId) => {

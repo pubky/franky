@@ -5,9 +5,6 @@ import * as Config from '@/config';
  * Internal type for fetchStreamFromNexus parameters
  * Extends the internal fetch params type with optional cached stream data
  */
-type TFetchStreamFromNexusParams = Core.TFetchUserStreamChunkParams & {
-  cachedStream?: { stream: Core.Pubky[] } | null;
-};
 
 /**
  * User Stream Application
@@ -87,7 +84,7 @@ export class UserStreamApplication {
     limit = Config.NEXUS_USERS_PER_PAGE,
     viewerId,
     cachedStream,
-  }: TFetchStreamFromNexusParams): Promise<Core.TUserStreamChunkResponse> {
+  }: Core.TFetchStreamFromNexusParams): Promise<Core.TUserStreamChunkResponse> {
     // Fetch user IDs from Nexus
     const userIds = await Core.NexusUserStreamService.fetch({
       streamId,
