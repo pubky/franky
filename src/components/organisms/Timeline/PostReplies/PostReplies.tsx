@@ -24,7 +24,8 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
   const postCounts = useLiveQuery(() => Core.PostController.getCounts({ compositeId: postId }), [postId]);
 
   // Check if parent post is deleted to determine replyability
-  const { isParentDeleted } = Hooks.useParentPostDeleted(postId);
+  const { postDetails } = Hooks.usePostDetails(postId);
+  const isParentDeleted = Libs.isPostDeleted(postDetails?.content);
 
   const fetchReplies = useCallback(
     async (repliesCount: number) => {

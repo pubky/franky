@@ -28,7 +28,8 @@ export function SinglePost() {
   const { navigateToPost } = Hooks.usePostNavigation();
 
   // Check if parent post is deleted to determine replyability
-  const { isParentDeleted } = Hooks.useParentPostDeleted(compositeId);
+  const { postDetails } = Hooks.usePostDetails(compositeId);
+  const isParentDeleted = Libs.isPostDeleted(postDetails?.content);
 
   // Infinite scroll hook
   const { sentinelRef } = Hooks.useInfiniteScroll({
@@ -67,7 +68,7 @@ export function SinglePost() {
                 <Organisms.QuickReply
                   parentPostId={compositeId}
                   connectorVariant={
-                    replyIds.length > 0 || hasMore
+                    replyIds.length > 0 || (hasMore && !loading)
                       ? Atoms.POST_THREAD_CONNECTOR_VARIANTS.REGULAR
                       : Atoms.POST_THREAD_CONNECTOR_VARIANTS.LAST
                   }

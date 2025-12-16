@@ -16,13 +16,13 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-// Mock useParentPostDeleted hook
-const mockUseParentPostDeleted = vi.fn();
+// Mock usePostDetails hook
+const mockUsePostDetails = vi.fn();
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
     ...actual,
-    useParentPostDeleted: (postId: string) => mockUseParentPostDeleted(postId),
+    usePostDetails: (postId: string) => mockUsePostDetails(postId),
   };
 });
 
@@ -79,7 +79,7 @@ describe('TimelinePostReplies', () => {
     });
 
     // Default: post is not deleted
-    mockUseParentPostDeleted.mockReturnValue({ isParentDeleted: false, isLoading: false });
+    mockUsePostDetails.mockReturnValue({ postDetails: { content: 'Normal post' }, isLoading: false });
 
     // Post counts query uses [postId]
     mockUseLiveQuery.mockImplementation((_, deps) => {
@@ -136,7 +136,7 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should render PostThreadSpacer for each reply', async () => {
-      mockUseParentPostDeleted.mockReturnValue({ isParentDeleted: true, isLoading: false });
+      mockUsePostDetails.mockReturnValue({ postDetails: { content: '[DELETED]' }, isLoading: false });
       mockUseLiveQuery.mockImplementation((_, deps) => {
         if (Array.isArray(deps) && deps[0] === mockPostId && deps.length === 1) {
           return { id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 } as unknown as ReturnType<
@@ -226,7 +226,7 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should render QuickReply and keep last preview reply connector open when parent is not deleted', async () => {
-      mockUseParentPostDeleted.mockReturnValue({ isParentDeleted: false, isLoading: false });
+      mockUsePostDetails.mockReturnValue({ postDetails: { content: 'Normal post' }, isLoading: false });
       mockUseLiveQuery.mockImplementation((_, deps) => {
         if (Array.isArray(deps) && deps[0] === mockPostId && deps.length === 1) {
           return { id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 } as unknown as ReturnType<
@@ -252,7 +252,7 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should not render QuickReply when parent is deleted', async () => {
-      mockUseParentPostDeleted.mockReturnValue({ isParentDeleted: true, isLoading: false });
+      mockUsePostDetails.mockReturnValue({ postDetails: { content: '[DELETED]' }, isLoading: false });
       mockUseLiveQuery.mockImplementation((_, deps) => {
         if (Array.isArray(deps) && deps[0] === mockPostId && deps.length === 1) {
           return { id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 } as unknown as ReturnType<
@@ -277,7 +277,7 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should mark last reply with isLastReply=true', async () => {
-      mockUseParentPostDeleted.mockReturnValue({ isParentDeleted: true, isLoading: false });
+      mockUsePostDetails.mockReturnValue({ postDetails: { content: '[DELETED]' }, isLoading: false });
       mockUseLiveQuery.mockImplementation((_, deps) => {
         if (Array.isArray(deps) && deps[0] === mockPostId && deps.length === 1) {
           return { id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 } as unknown as ReturnType<
@@ -302,7 +302,7 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should not mark first and middle replies as last', async () => {
-      mockUseParentPostDeleted.mockReturnValue({ isParentDeleted: true, isLoading: false });
+      mockUsePostDetails.mockReturnValue({ postDetails: { content: '[DELETED]' }, isLoading: false });
       mockUseLiveQuery.mockImplementation((_, deps) => {
         if (Array.isArray(deps) && deps[0] === mockPostId && deps.length === 1) {
           return { id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 } as unknown as ReturnType<
