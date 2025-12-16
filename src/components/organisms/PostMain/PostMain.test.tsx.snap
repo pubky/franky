@@ -2,12 +2,12 @@
 
 exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
   data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
@@ -21,16 +21,16 @@ exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
   data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -73,7 +73,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -91,11 +91,11 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -138,16 +138,16 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
   data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -190,16 +190,16 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
   data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div

@@ -36,11 +36,11 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
   const timeAgo = !isReplyInput && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
-    <Atoms.Container className="flex justify-between" overrideDefaults>
-      <Atoms.Container className="flex gap-3" overrideDefaults>
+    <Atoms.Container className="flex min-w-0 items-start justify-between gap-3" overrideDefaults>
+      <Atoms.Container className="flex min-w-0 flex-1 gap-3" overrideDefaults>
         <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails.name || ''} size="default" />
-        <Atoms.Container>
-          <Atoms.Typography as="span" className="text-base font-bold text-foreground" overrideDefaults>
+        <Atoms.Container className="min-w-0 flex-1" overrideDefaults>
+          <Atoms.Typography className="block truncate text-base font-bold text-foreground" overrideDefaults>
             {userDetails.name}
           </Atoms.Typography>
           <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
@@ -64,11 +64,11 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
         </Atoms.Container>
       </Atoms.Container>
       {timeAgo && (
-        <Atoms.Container className="flex items-center gap-1" overrideDefaults>
+        <Atoms.Container className="flex flex-shrink-0 items-center gap-1" overrideDefaults>
           <Libs.Clock className="size-4 text-muted-foreground" />
           <Atoms.Typography
             as="span"
-            className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+            className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
             overrideDefaults
           >
             {timeAgo}

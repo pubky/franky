@@ -2,12 +2,12 @@
 
 exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
 <div
-  class="flex justify-between"
+  class="flex min-w-0 items-start justify-between gap-3"
   data-override-defaults="true"
   data-testid="container"
 >
   <div
-    class="flex gap-3"
+    class="flex min-w-0 flex-1 gap-3"
     data-override-defaults="true"
     data-testid="container"
   >
@@ -27,15 +27,16 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       </div>
     </div>
     <div
+      class="min-w-0 flex-1"
+      data-override-defaults="true"
       data-testid="container"
     >
-      <span
-        class="text-base font-bold text-foreground"
-        data-as="span"
+      <p
+        class="block truncate text-base font-bold text-foreground"
         data-testid="typography"
       >
         Snapshot User
-      </span>
+      </p>
       <div
         class="flex min-w-0 items-center gap-2"
         data-override-defaults="true"
@@ -53,7 +54,7 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
     </div>
   </div>
   <div
-    class="flex items-center gap-1"
+    class="flex flex-shrink-0 items-center gap-1"
     data-override-defaults="true"
     data-testid="container"
   >
@@ -62,7 +63,7 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       data-testid="clock-icon"
     />
     <span
-      class="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+      class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
       data-as="span"
       data-testid="typography"
     >

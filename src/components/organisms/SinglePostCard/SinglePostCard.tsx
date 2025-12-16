@@ -34,8 +34,8 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
 
   return (
     <>
-      <Atoms.Card className={Libs.cn('rounded-lg py-0', className)}>
-        <Atoms.CardContent className="flex flex-col gap-4 p-6">
+      <Atoms.Card className={Libs.cn('min-w-0 rounded-lg py-0', className)}>
+        <Atoms.CardContent className="flex min-w-0 flex-col gap-4 p-6">
           <Atoms.Container className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left column - Post content */}
             <Atoms.Container className="flex flex-col gap-4 lg:col-span-2">
