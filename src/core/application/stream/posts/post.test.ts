@@ -237,7 +237,10 @@ describe('PostStreamApplication', () => {
       const postIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -432,7 +435,10 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
 
-      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -784,15 +790,18 @@ describe('PostStreamApplication', () => {
 
     it('should handle when postBatch is null/undefined', async () => {
       const { cacheMissPostIds } = createTestData(1);
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
-      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined as unknown as Core.NexusPost[]);
+      const persistPostsSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'persistPosts')
+        .mockResolvedValue({ postAttachments: [] });
+      vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined);
 
       await Core.PostStreamApplication.fetchMissingPostsFromNexus({
         cacheMissPostIds,
         viewerId,
       });
 
-      expect(persistPostsSpy).not.toHaveBeenCalled();
+      expect(persistPostsSpy).toHaveBeenCalledWith({ posts: undefined });
     });
 
     it('should fetch and persist users when cacheMissUserIds exist', async () => {
@@ -828,16 +837,18 @@ describe('PostStreamApplication', () => {
       const mocks = setupDefaultMocks();
       mocks.getUserDetails.mockResolvedValue([undefined]);
 
-      vi.spyOn(Core, 'queryNexus').mockResolvedValueOnce(mockNexusPosts).mockResolvedValueOnce(undefined);
+      vi.spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce(mockNexusPosts)
+        .mockResolvedValueOnce(undefined as unknown as Core.NexusUser[]);
 
-      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       await Core.PostStreamApplication.fetchMissingPostsFromNexus({
         cacheMissPostIds,
         viewerId,
       });
 
-      expect(persistUsersSpy).not.toHaveBeenCalled();
+      expect(persistUsersSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('should not fetch users when all users are already cached', async () => {

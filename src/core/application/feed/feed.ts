@@ -1,6 +1,5 @@
 import { feedUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './feed.types';
 export class FeedApplication {
   private constructor() {}
@@ -19,9 +18,7 @@ export class FeedApplication {
     const feedConfig = feedData.feed;
 
     const now = Date.now();
-    const createdAt = existingId
-      ? (await Core.LocalFeedService.read({ feedId: existingId })).created_at
-      : now;
+    const createdAt = existingId ? (await Core.LocalFeedService.read({ feedId: existingId })).created_at : now;
 
     // For auto-incrementing IDs: use 0 for new feeds (Dexie will auto-generate), existing ID for updates
     const feedSchema: Core.FeedModelSchema = {
@@ -51,9 +48,6 @@ export class FeedApplication {
 
   static async prepareUpdateParams({ feedId, changes }: Core.TFeedUpdateParams): Promise<Core.TFeedCreateParams> {
     const existing = await Core.LocalFeedService.read({ feedId });
-    if (!existing) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId });
-    }
 
     return {
       name: existing.name,

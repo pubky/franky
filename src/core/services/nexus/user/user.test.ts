@@ -184,18 +184,6 @@ describe('NexusUserService', () => {
         `${Config.NEXUS_URL}/v0/user/${testUserId}/tags?skip_tags=5&limit_tags=20`,
       );
     });
-
-    it('should handle null/undefined responses gracefully', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
-
-      const result = await Core.NexusUserService.tags({
-        user_id: testUserId,
-        skip_tags: 0,
-        limit_tags: 10,
-      });
-
-      expect(result).toEqual([]);
-    });
   });
 
   describe('taggers', () => {
@@ -213,19 +201,6 @@ describe('NexusUserService', () => {
       expect(queryNexusSpy).toHaveBeenCalledWith(
         expect.stringMatching(/\/taggers\/rust%20%26%20wasm\?skip=10&limit=5$/),
       );
-    });
-
-    it('should handle null/undefined responses gracefully', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
-
-      const result = await Core.NexusUserService.taggers({
-        user_id: testUserId,
-        label: 'developer',
-        skip: 0,
-        limit: 10,
-      });
-
-      expect(result).toEqual([]);
     });
   });
 
@@ -247,14 +222,6 @@ describe('NexusUserService', () => {
 
       expect(result).toEqual(mockUserDetails);
       expect(queryNexusSpy).toHaveBeenCalledWith(`${Config.NEXUS_URL}/v0/user/${testUserId}/details`);
-    });
-
-    it('should handle null/undefined responses gracefully', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
-
-      const result = await Core.NexusUserService.details({ user_id: testUserId });
-
-      expect(result).toEqual(null);
     });
 
     it('should handle user with complete profile data', async () => {

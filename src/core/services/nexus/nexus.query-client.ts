@@ -2,15 +2,11 @@ import { createQueryClient, NexusErrorType } from '@/libs';
 
 /**
  * Nexus API Query Client
- * 
+ *
  */
 export const nexusQueryClient = createQueryClient({
   retry: {
-    nonRetryable: [
-      NexusErrorType.INVALID_REQUEST,
-      NexusErrorType.VALIDATION_ERROR,
-      NexusErrorType.INVALID_RESPONSE,
-    ],
+    nonRetryable: [NexusErrorType.INVALID_REQUEST, NexusErrorType.VALIDATION_ERROR, NexusErrorType.INVALID_RESPONSE],
     limits: {
       // 404 errors are transient because Nexus indexes content asynchronously,
       // so content that returns 404 may become available shortly after.

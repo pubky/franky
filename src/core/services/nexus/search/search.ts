@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 
 /**
  * Nexus Search Service

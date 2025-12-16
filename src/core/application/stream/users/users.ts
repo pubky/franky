@@ -64,9 +64,7 @@ export class UserStreamApplication {
       });
 
       const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
-      if (userBatch) {
-        await Core.LocalStreamUsersService.persistUsers(userBatch);
-      }
+      await Core.LocalStreamUsersService.persistUsers(userBatch);
     } catch (error) {
       console.error('Failed to fetch missing users from Nexus:', error);
     }

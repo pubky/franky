@@ -20,7 +20,9 @@ export class LocalFeedService {
         const persistedFeed = await Core.FeedModel.createAndGet(feedWithoutId as Core.FeedModelSchema);
 
         if (!persistedFeed) {
-          throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId: feed.id });
+          throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, {
+            feedId: feed.id,
+          });
         }
         return persistedFeed;
       }
@@ -28,7 +30,9 @@ export class LocalFeedService {
       await Core.FeedModel.upsert(feed);
       const persistedFeed = await Core.FeedModel.findById(feed.id);
       if (!persistedFeed) {
-        throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId: feed.id });
+        throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, {
+          feedId: feed.id,
+        });
       }
       return persistedFeed;
     });

@@ -119,11 +119,7 @@ export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
   // Nexus API always returns JSON for successful responses.
   // Empty body on 2xx is unexpected - treat as server error.
   if (!text || text.trim() === '') {
-    throw createNexusError(
-      NexusErrorType.INVALID_RESPONSE,
-      'Response body is empty (expected JSON)',
-      500,
-    );
+    throw createNexusError(NexusErrorType.INVALID_RESPONSE, 'Response body is empty (expected JSON)', 500);
   }
 
   try {

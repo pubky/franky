@@ -101,7 +101,7 @@ export type NexusTag = {
 export type NexusTaggers = {
   relationship: boolean;
   users: Pubky[];
-}
+};
 
 export type NexusHotTag = {
   label: string;

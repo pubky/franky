@@ -49,7 +49,6 @@ export type TMissingUsersParams = {
   viewerId?: Core.Pubky;
 };
 
-
 export type TFetchStreamFromNexusParams = TFetchUserStreamChunkParams & {
   cachedStream?: { stream: Core.Pubky[] } | null;
 };
