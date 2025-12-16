@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort } from 'pubky-app-specs';
 import * as Core from '@/core';
-import type { TFeedCreateParams, TFeedUpdateParams, TFeedDeleteParams } from './feed.types';
+import type { TFeedCreateParams, TFeedUpdateParams, TFeedIdParam } from './feed.types';
 import type { AuthStore } from '@/core/stores/auth/auth.types';
 
 const testData = {
@@ -142,7 +142,7 @@ describe('FeedController', () => {
   describe('delete', () => {
     it('should call delete in application layer', async () => {
       const deleteSpy = vi.spyOn(Core.FeedApplication, 'commitDelete');
-      const deleteParams: TFeedDeleteParams = { feedId: 123 };
+      const deleteParams: TFeedIdParam = { feedId: 123 };
 
       await FeedController.commitDelete(deleteParams);
 
@@ -173,7 +173,7 @@ describe('FeedController', () => {
       const feed = createMockFeedSchema();
       vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(feed);
 
-      const result = await FeedController.get(123);
+      const result = await FeedController.get({ feedId: 123 });
 
       expect(result).toBeTruthy();
       expect(result!.id).toBe(123);
@@ -182,7 +182,7 @@ describe('FeedController', () => {
     it('should return undefined when not found', async () => {
       vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(undefined);
 
-      const result = await FeedController.get(999);
+      const result = await FeedController.get({ feedId: 999 });
 
       expect(result).toBeUndefined();
     });

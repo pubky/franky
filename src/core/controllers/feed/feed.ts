@@ -16,8 +16,8 @@ export class FeedController {
    * @param feedId - The ID of the feed
    * @returns The feed or undefined if not found
    */
-  static async get(feedId: number): Promise<Core.FeedModelSchema | undefined> {
-    return Core.FeedApplication.get(feedId);
+  static async get(params: Core.TFeedIdParam): Promise<Core.FeedModelSchema | undefined> {
+    return Core.FeedApplication.get(params);
   }
 
   /**
@@ -78,7 +78,7 @@ export class FeedController {
    * @param params.feedId - The ID of the feed
    * @returns void
    */
-  static async commitDelete(params: Core.TFeedDeleteParams): Promise<void> {
+  static async commitDelete(params: Core.TFeedIdParam): Promise<void> {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
     Core.FeedValidators.validateDeleteParams({ feedId: params.feedId });
     await Core.FeedApplication.commitDelete({ userId, params: { feedId: params.feedId } });

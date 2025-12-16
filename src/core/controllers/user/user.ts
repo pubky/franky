@@ -8,32 +8,32 @@ export class UserController {
    * Get user details from local database
    * This is a read-only operation that queries the local cache
    */
-  static async getDetails(param: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
-    return await Core.UserApplication.getDetails(param);
+  static async getDetails(params: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+    return await Core.UserApplication.getDetails(params);
   }
 
   /**
    * Get multiple user details from local database (bulk operation)
    * This is a read-only operation that queries the local cache
    */
-  static async getManyDetails({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
-    return await Core.UserApplication.getManyDetails({ userIds });
+  static async getManyDetails(params: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    return await Core.UserApplication.getManyDetails(params);
   }
 
   /**
    * Get user counts from local database
    * This is a read-only operation that queries the local cache
    */
-  static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
-    return await Core.UserApplication.getCounts({ userId });
+  static async getCounts(params: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    return await Core.UserApplication.getCounts(params);
   }
 
   /**
    * Get multiple user counts from local database (bulk operation)
    * This is a read-only operation that queries the local cache
    */
-  static async getManyCounts({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
-    return await Core.UserApplication.getManyCounts({ userIds });
+  static async getManyCounts(params: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.UserApplication.getManyCounts(params);
   }
 
   /**
@@ -84,10 +84,10 @@ export class UserController {
    * Get multiple user relationships from local database (bulk operation)
    * This is a read-only operation that queries the local cache
    */
-  static async getManyRelationships({
-    userIds,
-  }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
-    return await Core.UserApplication.getManyRelationships({ userIds });
+  static async getManyRelationships(
+    params: Core.TPubkyListParams,
+  ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+    return await Core.UserApplication.getManyRelationships(params);
   }
 
   /**
@@ -102,8 +102,8 @@ export class UserController {
    * Get multiple user tags with local-first strategy (bulk operation)
    * Reads from cache first, fetches from API only for missing users
    */
-  static async getManyTagsOrFetch({ userIds }: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
-    return await Core.UserApplication.getManyTagsOrFetch({ userIds });
+  static async getManyTagsOrFetch(params: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusTag[]>> {
+    return await Core.UserApplication.getManyTagsOrFetch(params);
   }
 
   /**

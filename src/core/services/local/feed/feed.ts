@@ -32,13 +32,13 @@ export class LocalFeedService {
     });
   }
 
-  static async delete(feedId: number): Promise<void> {
+  static async delete({ feedId }: Core.TFeedIdParam): Promise<void> {
     await Core.db.transaction('rw', FEED_TABLES, async () => {
       await Core.FeedModel.deleteById(feedId);
     });
   }
 
-  static async read(feedId: number): Promise<Core.FeedModelSchema | undefined> {
+  static async read({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema | undefined> {
     return Core.FeedModel.table.get(feedId);
   }
 

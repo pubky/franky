@@ -2,7 +2,6 @@ import { feedUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './feed.types';
-
 export class FeedApplication {
   private constructor() {}
 
@@ -10,8 +9,8 @@ export class FeedApplication {
     return Core.LocalFeedService.readAll();
   }
 
-  static async get(feedId: number): Promise<Core.FeedModelSchema | undefined> {
-    return Core.LocalFeedService.read(feedId);
+  static async get({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema | undefined> {
+    return Core.LocalFeedService.read({ feedId });
   }
 
   static async persist({ userId, params }: FeedPutParams): Promise<Core.FeedModelSchema> {
@@ -20,7 +19,9 @@ export class FeedApplication {
     const feedConfig = feedData.feed;
 
     const now = Date.now();
-    const createdAt = existingId ? ((await Core.LocalFeedService.read(existingId))?.created_at ?? now) : now;
+    const createdAt = existingId
+      ? ((await Core.LocalFeedService.read({ feedId: existingId }))?.created_at ?? now)
+      : now;
 
     // For auto-incrementing IDs: use 0 for new feeds (Dexie will auto-generate), existing ID for updates
     const feedSchema: Core.FeedModelSchema = {
@@ -43,13 +44,13 @@ export class FeedApplication {
     const feedUrl = feedUriBuilder(userId, String((params as Core.TFeedPersistDeleteParams).feedId));
 
     await Promise.all([
-      Core.LocalFeedService.delete((params as Core.TFeedPersistDeleteParams).feedId),
+      Core.LocalFeedService.delete({ feedId: (params as Core.TFeedPersistDeleteParams).feedId }),
       Core.HomeserverService.request(Core.HomeserverAction.DELETE, feedUrl),
     ]);
   }
 
   static async prepareUpdateParams({ feedId, changes }: Core.TFeedUpdateParams): Promise<Core.TFeedCreateParams> {
-    const existing = await Core.LocalFeedService.read(feedId);
+    const existing = await Core.LocalFeedService.read({ feedId });
     if (!existing) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId });
     }
