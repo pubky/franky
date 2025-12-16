@@ -9,8 +9,8 @@ export class FeedApplication {
     return Core.LocalFeedService.readAll();
   }
 
-  static async get({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema> {
-    return Core.LocalFeedService.read({ feedId });
+  static async get(params: Core.TFeedIdParam): Promise<Core.FeedModelSchema> {
+    return Core.LocalFeedService.read(params);
   }
 
   static async persist({ userId, params }: FeedPutParams): Promise<Core.FeedModelSchema> {

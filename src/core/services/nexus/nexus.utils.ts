@@ -94,14 +94,22 @@ export function ensureHttpResponseOk({ ok, status, statusText }: Response) {
  * @throws {NexusError} When response body is not valid JSON
  */
 export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
+  const text = await response.text();
+
+  // Nexus API always returns JSON for successful responses.
+  // Empty body on 2xx is unexpected - treat as server error.
+  if (!text || text.trim() === '') {
+    throw Libs.createNexusError(
+      Libs.NexusErrorType.INVALID_RESPONSE,
+      'Response body is empty (expected JSON)',
+      500,
+    );
+  }
+
   try {
-    const text = await response.text();
-    if (!text || text.trim() === '') {
-      throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'Response has no content', 204);
-    }
     return JSON.parse(text) as T;
   } catch (error) {
-    throw Libs.createNexusError(Libs.NexusErrorType.INVALID_RESPONSE, 'Failed to parse response', 500, {
+    throw Libs.createNexusError(Libs.NexusErrorType.INVALID_RESPONSE, 'Failed to parse JSON response', 500, {
       error,
     });
   }
