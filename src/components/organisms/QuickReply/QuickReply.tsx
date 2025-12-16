@@ -11,9 +11,14 @@ import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
 
 import { pickRandomQuickReplyPrompt } from './QuickReply.utils';
+import { QUICK_REPLY_CONNECTOR_SPACER_HEIGHT } from './QuickReply.constants';
 import type { QuickReplyProps } from './QuickReply.types';
 
-export function QuickReply({ parentPostId }: QuickReplyProps) {
+export function QuickReply({
+  parentPostId,
+  connectorVariant = POST_THREAD_CONNECTOR_VARIANTS.LAST,
+  onReplySubmitted,
+}: QuickReplyProps) {
   const [prompt] = React.useState(() => pickRandomQuickReplyPrompt());
 
   const { userDetails } = Hooks.useCurrentUserProfile();
@@ -39,6 +44,7 @@ export function QuickReply({ parentPostId }: QuickReplyProps) {
     postId: parentPostId,
     placeholder: prompt,
     expanded: false,
+    onSuccess: onReplySubmitted,
   });
 
   const { ref: cardRef, height: cardHeight } = Hooks.useElementHeight();
@@ -51,12 +57,15 @@ export function QuickReply({ parentPostId }: QuickReplyProps) {
     ignoreShiftEnter: true,
   });
 
+  // Account for spacing between main post and QuickReply in connector calculation
+  const connectorHeight = cardHeight ? cardHeight + QUICK_REPLY_CONNECTOR_SPACER_HEIGHT : undefined;
+
   return (
     <Atoms.Container overrideDefaults className="relative flex" data-testid="quick-reply" aria-busy={isSubmitting}>
-      <Atoms.Container overrideDefaults className="w-3 shrink-0">
+      <Atoms.Container overrideDefaults className="-mt-4 w-3 shrink-0">
         <Atoms.PostThreadConnector
-          height={cardHeight}
-          variant={POST_THREAD_CONNECTOR_VARIANTS.LAST}
+          height={connectorHeight}
+          variant={connectorVariant}
           data-testid="quick-reply-connector"
         />
       </Atoms.Container>

@@ -30,7 +30,7 @@ export function useParentPostDeleted(compositeId: string | null | undefined): Us
   const parentPost = useLiveQuery(
     async () => {
       if (!compositeId) return null;
-      return await Core.PostController.getPostDetails({ compositeId });
+      return await Core.PostController.getDetails({ compositeId });
     },
     [compositeId, 'details'],
     undefined,

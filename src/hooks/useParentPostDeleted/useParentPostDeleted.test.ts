@@ -3,10 +3,10 @@ import { renderHook } from '@testing-library/react';
 import { useParentPostDeleted } from './useParentPostDeleted';
 
 // Mock @/core
-const mockGetPostDetails = vi.fn();
+const mockGetDetails = vi.fn();
 vi.mock('@/core', () => ({
   PostController: {
-    getPostDetails: (params: { compositeId: string }) => mockGetPostDetails(params),
+    getDetails: (params: { compositeId: string }) => mockGetDetails(params),
   },
 }));
 
@@ -21,8 +21,8 @@ vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: (queryFn: () => Promise<unknown>, _deps: unknown[], defaultValue: unknown) => {
     // Execute the query function to trigger it
     queryFn();
-    // Return the mock value based on what mockGetPostDetails returns
-    const result = mockGetPostDetails.mock.results[mockGetPostDetails.mock.results.length - 1];
+    // Return the mock value based on what mockGetDetails returns
+    const result = mockGetDetails.mock.results[mockGetDetails.mock.results.length - 1];
     return result?.value ?? defaultValue;
   },
 }));
@@ -30,7 +30,7 @@ vi.mock('dexie-react-hooks', () => ({
 describe('useParentPostDeleted', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetPostDetails.mockReturnValue(null);
+    mockGetDetails.mockReturnValue(null);
     mockIsPostDeleted.mockReturnValue(false);
   });
 
@@ -48,7 +48,7 @@ describe('useParentPostDeleted', () => {
       content: 'Test post content',
       indexed_at: '2024-01-01T00:00:00.000Z',
     };
-    mockGetPostDetails.mockReturnValue(mockPost);
+    mockGetDetails.mockReturnValue(mockPost);
     mockIsPostDeleted.mockReturnValue(false);
 
     const { result } = renderHook(() => useParentPostDeleted('user-123:post-123'));
@@ -65,7 +65,7 @@ describe('useParentPostDeleted', () => {
       content: '[DELETED]',
       indexed_at: '2024-01-01T00:00:00.000Z',
     };
-    mockGetPostDetails.mockReturnValue(mockPost);
+    mockGetDetails.mockReturnValue(mockPost);
     mockIsPostDeleted.mockReturnValue(true);
 
     const { result } = renderHook(() => useParentPostDeleted('user-123:post-123'));
@@ -75,23 +75,23 @@ describe('useParentPostDeleted', () => {
     expect(mockIsPostDeleted).toHaveBeenCalledWith('[DELETED]');
   });
 
-  it('calls PostController.getPostDetails with correct compositeId', () => {
+  it('calls PostController.getDetails with correct compositeId', () => {
     const mockPost = {
       id: 'post-456',
       author_id: 'user-456',
       content: 'Another test post',
       indexed_at: '2024-01-02T00:00:00.000Z',
     };
-    mockGetPostDetails.mockReturnValue(mockPost);
+    mockGetDetails.mockReturnValue(mockPost);
     mockIsPostDeleted.mockReturnValue(false);
 
     renderHook(() => useParentPostDeleted('user-456:post-456'));
 
-    expect(mockGetPostDetails).toHaveBeenCalledWith({ compositeId: 'user-456:post-456' });
+    expect(mockGetDetails).toHaveBeenCalledWith({ compositeId: 'user-456:post-456' });
   });
 
   it('returns false when post is not found (null from DB)', () => {
-    mockGetPostDetails.mockReturnValue(null);
+    mockGetDetails.mockReturnValue(null);
     mockIsPostDeleted.mockReturnValue(false);
 
     const { result } = renderHook(() => useParentPostDeleted('user-999:post-999'));
@@ -100,15 +100,15 @@ describe('useParentPostDeleted', () => {
     expect(mockIsPostDeleted).toHaveBeenCalledWith(undefined);
   });
 
-  it('does not call getPostDetails when compositeId is null', () => {
+  it('does not call getDetails when compositeId is null', () => {
     renderHook(() => useParentPostDeleted(null));
 
-    expect(mockGetPostDetails).not.toHaveBeenCalled();
+    expect(mockGetDetails).not.toHaveBeenCalled();
   });
 
-  it('does not call getPostDetails when compositeId is undefined', () => {
+  it('does not call getDetails when compositeId is undefined', () => {
     renderHook(() => useParentPostDeleted(undefined));
 
-    expect(mockGetPostDetails).not.toHaveBeenCalled();
+    expect(mockGetDetails).not.toHaveBeenCalled();
   });
 });

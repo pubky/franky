@@ -23,9 +23,12 @@ export function SinglePost() {
   const compositeId = Core.buildCompositeId({ pubky: userId, id: postId });
 
   // Use the dedicated hook for fetching replies
-  const { replyIds, loading, loadingMore, error, hasMore, loadMore } = Hooks.usePostReplies(compositeId);
+  const { replyIds, loading, loadingMore, error, hasMore, loadMore, refresh } = Hooks.usePostReplies(compositeId);
 
   const { navigateToPost } = Hooks.usePostNavigation();
+
+  // Check if parent post is deleted to determine replyability
+  const { isParentDeleted } = Hooks.useParentPostDeleted(compositeId);
 
   // Infinite scroll hook
   const { sentinelRef } = Hooks.useInfiniteScroll({
@@ -55,8 +58,24 @@ export function SinglePost() {
 
         {/* Two columns: Replies thread + Participants */}
         <Atoms.Container overrideDefaults className="flex gap-6">
-          {/* Left column - Replies thread connected to main post (larger) */}
+          {/* Left column - QuickReply and Replies thread connected to main post (larger) */}
           <Atoms.Container className="w-full min-w-0 flex-1 gap-0 overflow-hidden">
+            {/* QuickReply directly under main post (if parent not deleted) */}
+            {!isParentDeleted && (
+              <Atoms.Container overrideDefaults className="ml-3">
+                <Atoms.PostThreadSpacer />
+                <Organisms.QuickReply
+                  parentPostId={compositeId}
+                  connectorVariant={
+                    replyIds.length > 0 || hasMore
+                      ? Atoms.POST_THREAD_CONNECTOR_VARIANTS.REGULAR
+                      : Atoms.POST_THREAD_CONNECTOR_VARIANTS.LAST
+                  }
+                  onReplySubmitted={refresh}
+                />
+              </Atoms.Container>
+            )}
+
             {/* Initial loading state */}
             {loading && (
               <Atoms.Container className="flex items-center justify-center gap-3 py-8">
@@ -70,7 +89,7 @@ export function SinglePost() {
             {/* Error state */}
             {error && !loading && <Molecules.TimelineError message={error} />}
 
-            {/* Replies list with thread connectors */}
+            {/* Replies list with thread connectors (after QuickReply) */}
             {!loading && replyIds.length > 0 && (
               <Atoms.Container overrideDefaults className="ml-3">
                 {replyIds.map((replyId, index) => (
