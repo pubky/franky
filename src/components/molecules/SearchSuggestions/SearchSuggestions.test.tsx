@@ -1,0 +1,102 @@
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { SearchSuggestions } from './SearchSuggestions';
+
+vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    style,
+    overrideDefaults,
+    ...props
+  }: React.PropsWithChildren<{ className?: string; style?: React.CSSProperties; overrideDefaults?: boolean }>) => (
+    <div
+      data-testid="container"
+      className={className}
+      style={style}
+      data-override-defaults={overrideDefaults}
+      {...props}
+    >
+      {children}
+    </div>
+  ),
+}));
+
+vi.mock('@/molecules', () => ({
+  SearchTagSection: ({
+    title,
+    tags,
+    onTagClick,
+  }: {
+    title: string;
+    tags: Array<{ label: string }>;
+    onTagClick: (tag: string) => void;
+  }) => (
+    <div data-testid={`section-${title.toLowerCase().replace(/\s/g, '-')}`}>
+      <span>{title}</span>
+      {tags.map((tag) => (
+        <button key={tag.label} data-testid={`tag-${tag.label}`} onClick={() => onTagClick(tag.label)}>
+          {tag.label}
+        </button>
+      ))}
+    </div>
+  ),
+}));
+
+vi.mock('@/organisms', () => ({
+  SEARCH_EXPANDED_STYLE: {
+    background: 'linear-gradient(180deg, #05050A 0%, rgba(5, 5, 10, 0.50) 100%)',
+    backdropFilter: 'blur(12px)',
+  },
+}));
+
+describe('SearchSuggestions', () => {
+  const hotTags = [{ label: 'pubky' }, { label: 'keys' }];
+
+  it('renders hot tags section', () => {
+    const onTagClick = vi.fn();
+    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+
+    expect(screen.getByTestId('section-hot-tags')).toBeInTheDocument();
+  });
+
+  it('renders search-suggestions test id', () => {
+    const onTagClick = vi.fn();
+    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+
+    expect(screen.getByTestId('search-suggestions')).toBeInTheDocument();
+  });
+
+  it('calls onTagClick when a tag is clicked', () => {
+    const onTagClick = vi.fn();
+    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+
+    fireEvent.click(screen.getByTestId('tag-pubky'));
+
+    expect(onTagClick).toHaveBeenCalledWith('pubky');
+  });
+
+  it('applies dropdown styles', () => {
+    const onTagClick = vi.fn();
+    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+
+    const dropdown = screen.getByTestId('search-suggestions');
+    expect(dropdown).toHaveStyle({
+      background: 'linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%)',
+    });
+  });
+
+  describe('Snapshots', () => {
+    it('matches snapshot with hot tags', () => {
+      const onTagClick = vi.fn();
+      const { container } = render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot with empty hot tags', () => {
+      const onTagClick = vi.fn();
+      const { container } = render(<SearchSuggestions hotTags={[]} onTagClick={onTagClick} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+});
