@@ -243,8 +243,8 @@ describe('NexusUserService', () => {
       const result = await Core.NexusUserService.details({ user_id: testUserId });
 
       expect(result).toEqual(mockUserDetails);
-      expect(result?.name).toBe('Satoshi Nakamoto');
-      expect(result?.links).toHaveLength(2);
+      expect(result.name).toBe('Satoshi Nakamoto');
+      expect(result.links).toHaveLength(2);
     });
   });
 });

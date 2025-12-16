@@ -7,7 +7,8 @@ export class NexusPostService {
    * Fetches a single post with all related data from Nexus
    *
    * @param compositeId - Composite post ID in format "authorId:postId"
-   * @returns Complete post view (details, tags, counts, relationships) or null if not found
+   * @returns Complete post view (details, tags, counts, relationships)
+   * @throws {NexusError} When post is not found or request fails
    */
   static async getPost({ compositeId }: Core.TCompositeId): Promise<Core.NexusPost> {
     // TODO: Handle the error in application layer
@@ -22,7 +23,8 @@ export class NexusPostService {
    * @param compositeId - Composite post ID in format "authorId:postId"
    * @param skip - Number of tags to skip (for pagination)
    * @param limit - Maximum number of tags to return
-   * @returns An array of tags (empty array if post has no tags or is not found)
+   * @returns An array of tags (empty array if post has no tags)
+   * @throws {NexusError} When post is not found or request fails
    */
   static async getPostTags({ compositeId, skip, limit }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
     // TODO: Handle the error in application layer

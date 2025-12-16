@@ -62,30 +62,6 @@ describe('NexusHotService', () => {
       expect(queryNexusSpy).toHaveBeenCalledOnce();
     });
 
-    it('should return null when response is null', async () => {
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.ALL_TIME,
-      };
-
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null as unknown as Core.NexusHotTag[]);
-
-      const result = await NexusHotService.fetch(params);
-
-      expect(result).toBeNull();
-    });
-
-    it('should return undefined when response is undefined', async () => {
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.ALL_TIME,
-      };
-
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined as unknown as Core.NexusHotTag[]);
-
-      const result = await NexusHotService.fetch(params);
-
-      expect(result).toBeUndefined();
-    });
-
     it('should return empty array when response is empty array', async () => {
       const params: Core.TTagHotParams = {
         timeframe: Core.UserStreamTimeframe.TODAY,
