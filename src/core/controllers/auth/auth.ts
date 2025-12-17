@@ -28,6 +28,7 @@ export class AuthController {
         return true;
       } catch (error) {
         Libs.Logger.error('Failed to restore session from persisted export', error);
+        Core.HomeserverService.setSession(null);
         authStore.setSession(null);
         authStore.setCurrentUserPubky(null);
         authStore.setHasProfile(false);
@@ -79,6 +80,7 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
+    Core.HomeserverService.setSession(session);
     const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
     const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
@@ -104,6 +106,7 @@ export class AuthController {
     const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
+    Core.HomeserverService.setSession(session);
     authStore.setSession(session);
     authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session }));
     authStore.setHasProfile(false);
@@ -151,15 +154,14 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
 
-    const pubky = authStore.selectCurrentUserPubky();
-
     if (authStore.session) {
-      await Core.AuthApplication.logout({ pubky });
+      await Core.AuthApplication.logout({ session: authStore.session });
     }
     // Always clear local state, even if homeserver logout fails
     authStore.setSession(null);
     onboardingStore.reset();
     authStore.reset();
+    Core.HomeserverService.setSession(null);
     Libs.clearCookies();
     await Core.clearDatabase();
   }
