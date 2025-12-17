@@ -10,11 +10,92 @@ export class LocalPostService {
    * @param postId - ID of the post to read
    * @returns Post details
    */
-  static async readPostDetails({ postId }: { postId: string }) {
+  static async readDetails({ postId }: { postId: string }) {
     try {
       return await Core.PostDetailsModel.findById(postId);
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Reads post counts for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post counts or undefined if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+    try {
+      const counts = await Core.PostCountsModel.findById(postId);
+      return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
+    } catch (error) {
+      Libs.Logger.error('Failed to read post counts', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post counts', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Reads post relationships for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post relationships or null if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
+    try {
+      const relationships = await Core.PostRelationshipsModel.findById(postId);
+      return relationships ?? null;
+    } catch (error) {
+      Libs.Logger.error('Failed to read post relationships', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post relationships', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Reads all posts that are replies to a specific post
+   * @param postId - Composite post ID to read replies for
+   * @returns Array of post relationships that replied to this post
+   */
+  static async readReplies(postId: string): Promise<Core.PostRelationshipsModelSchema[]> {
+    try {
+      return await Core.PostRelationshipsModel.getReplies(postId);
+    } catch (error) {
+      Libs.Logger.error('Failed to read post replies', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post replies', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Reads tags for a specific post from local database
+   * @param postId - Composite post ID (author:postId)
+   * @returns Array of tag collections or empty array if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
+    try {
+      const tags = await Core.PostTagsModel.findById(postId);
+      if (!tags) return [];
+
+      return [tags] as unknown as Core.TagCollectionModelSchema<string>[];
+    } catch (error) {
+      Libs.Logger.error('Failed to read post tags', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post tags', 500, {
         error,
         postId,
       });
@@ -270,27 +351,6 @@ export class LocalPostService {
   }
 
   /**
-   * Get post counts for a specific post
-   *
-   * @param postId - Composite post ID (author:postId)
-   * @returns Post counts or undefined if not found
-   *
-   * @throws {DatabaseError} When database operations fail
-   */
-  static async readPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
-    try {
-      const counts = await Core.PostCountsModel.findById(postId);
-      return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
-    } catch (error) {
-      Libs.Logger.error('Failed to get post counts', { postId, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post counts', 500, {
-        error,
-        postId,
-      });
-    }
-  }
-
-  /**
    * Helper method to update post counts safely
    */
   private static async updatePostCount(
@@ -308,59 +368,6 @@ export class LocalPostService {
     const newCount = Math.max(0, currentCount + countChange);
 
     await Core.PostCountsModel.update(postId, { [countField]: newCount });
-  }
-
-  static async readPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
-    try {
-      const tags = await Core.PostTagsModel.findById(postId);
-      if (!tags) return [];
-
-      return [tags] as unknown as Core.TagCollectionModelSchema<string>[];
-    } catch (error) {
-      Libs.Logger.error('Failed to get post tags', { postId, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post tags', 500, {
-        error,
-        postId,
-      });
-    }
-  }
-
-  /**
-   * Get post relationships for a specific post
-   *
-   * @param postId - Composite post ID (author:postId)
-   * @returns Post relationships or null if not found
-   *
-   * @throws {DatabaseError} When database operations fail
-   */
-  static async readPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
-    try {
-      const relationships = await Core.PostRelationshipsModel.findById(postId);
-      return relationships ?? null;
-    } catch (error) {
-      Libs.Logger.error('Failed to get post relationships', { postId, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post relationships', 500, {
-        error,
-        postId,
-      });
-    }
-  }
-
-  /**
-   * Get all posts that are replies to a specific post
-   * @param postId - Composite post ID to get replies for
-   * @returns Array of post relationships that replied to this post
-   */
-  static async readPostReplies(postId: string): Promise<Core.PostRelationshipsModelSchema[]> {
-    try {
-      return await Core.PostRelationshipsModel.getReplies(postId);
-    } catch (error) {
-      Libs.Logger.error('Failed to get post replies', { postId, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post replies', 500, {
-        error,
-        postId,
-      });
-    }
   }
 
   /**

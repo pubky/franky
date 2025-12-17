@@ -45,7 +45,7 @@ export function useUserProfile(userId: string): UseUserProfileResult {
     // 2. If missing, fetch from Nexus
     // 3. Write to local DB
     // 4. Return data
-    Core.ProfileController.read({ userId }).catch((error) => {
+    Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
       console.error('Failed to fetch user profile:', error);
     });
   }, [userId]);

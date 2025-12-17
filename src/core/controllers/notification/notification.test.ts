@@ -15,7 +15,7 @@ describe('NotificationController', () => {
   beforeEach(() => vi.clearAllMocks());
   afterEach(() => vi.restoreAllMocks());
 
-  describe('notifications', () => {
+  describe('fetchNotifications', () => {
     const setupNotificationStore = (lastRead: number) => {
       const selectLastRead = vi.fn(() => lastRead);
       const setUnread = vi.fn();
@@ -28,9 +28,9 @@ describe('NotificationController', () => {
 
     it('should poll notifications and update store with unread count', async () => {
       const { selectLastRead, setUnread } = setupNotificationStore(1234);
-      const notificationsSpy = vi.spyOn(Core.NotificationApplication, 'notifications').mockResolvedValue(5);
+      const notificationsSpy = vi.spyOn(Core.NotificationApplication, 'fetchNotifications').mockResolvedValue(5);
 
-      await NotificationController.notifications({ userId: mockUserId });
+      await NotificationController.fetchNotifications({ userId: mockUserId });
 
       expect(selectLastRead).toHaveBeenCalled();
       expect(notificationsSpy).toHaveBeenCalledWith({ userId: mockUserId, lastRead: 1234 });
@@ -39,9 +39,9 @@ describe('NotificationController', () => {
 
     it('should bubble errors and not update store', async () => {
       const { setUnread } = setupNotificationStore(1234);
-      vi.spyOn(Core.NotificationApplication, 'notifications').mockRejectedValue(new Error('poll-fail'));
+      vi.spyOn(Core.NotificationApplication, 'fetchNotifications').mockRejectedValue(new Error('poll-fail'));
 
-      await expect(NotificationController.notifications({ userId: mockUserId })).rejects.toThrow('poll-fail');
+      await expect(NotificationController.fetchNotifications({ userId: mockUserId })).rejects.toThrow('poll-fail');
       expect(setUnread).not.toHaveBeenCalled();
     });
   });

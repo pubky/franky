@@ -9,7 +9,7 @@ export class LocalFeedService {
    * Persist a feed to local storage and return the persisted feed with the actual ID
    * Uses table.add() for new feeds (id = 0) to trigger Dexie auto-increment, upsert() for updates
    */
-  static async persist(feed: Core.FeedModelSchema): Promise<Core.FeedModelSchema> {
+  static async createOrUpdate(feed: Core.FeedModelSchema): Promise<Core.FeedModelSchema> {
     return await Core.db.transaction('rw', FEED_TABLES, async () => {
       if (feed.id === 0) {
         // For new records: omit id to trigger Dexie auto-increment (++id schema)
@@ -32,17 +32,17 @@ export class LocalFeedService {
     });
   }
 
-  static async delete(feedId: number): Promise<void> {
+  static async delete({ feedId }: Core.TFeedIdParam): Promise<void> {
     await Core.db.transaction('rw', FEED_TABLES, async () => {
       await Core.FeedModel.deleteById(feedId);
     });
   }
 
-  static async findById(feedId: number): Promise<Core.FeedModelSchema | undefined> {
+  static async read({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema | undefined> {
     return Core.FeedModel.table.get(feedId);
   }
 
-  static async findAll(): Promise<Core.FeedModelSchema[]> {
+  static async readAll(): Promise<Core.FeedModelSchema[]> {
     return Core.FeedModel.findAllSorted();
   }
 }

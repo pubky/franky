@@ -1,48 +1,81 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useTagged } from './useTagged';
 import * as Core from '@/core';
 
-// Mock Core modules
-vi.mock('@/core', async () => {
-  const actual = await vi.importActual('@/core');
+// Hoist mock functions before vi.mock
+const mockMocks = vi.hoisted(() => {
+  const mockGetTags = vi.fn();
+  const mockFetchTags = vi.fn();
+  const mockUpsertTags = vi.fn();
+  const mockGetCounts = vi.fn();
+  const mockTagCreate = vi.fn();
+  const mockTagDelete = vi.fn();
   return {
-    ...actual,
-    UserController: {
-      tags: vi.fn().mockResolvedValue([]),
-      getCounts: vi.fn().mockResolvedValue({ uniqueTags: 0, posts: 0 }),
-      getUserTags: vi.fn().mockResolvedValue([]),
-      saveUserTags: vi.fn().mockResolvedValue(undefined),
-    },
-    TagController: {
-      create: vi.fn(),
-      delete: vi.fn(),
-    },
-    useAuthStore: vi.fn((selector) => {
-      const mockState = {
-        currentUserPubky: 'mock-current-user',
-        selectCurrentUserPubky: () => 'mock-current-user',
-      };
-      return selector ? selector(mockState) : mockState;
-    }),
+    mockGetTags,
+    mockFetchTags,
+    mockUpsertTags,
+    mockGetCounts,
+    mockTagCreate,
+    mockTagDelete,
   };
 });
 
+// Mock Core modules
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual<typeof import('@/core')>('@/core');
+  return {
+    ...actual,
+    UserController: {
+      getTags: mockMocks.mockGetTags,
+      fetchTags: mockMocks.mockFetchTags,
+      upsertTags: mockMocks.mockUpsertTags,
+      getCounts: mockMocks.mockGetCounts,
+    },
+    TagController: {
+      commitCreate: mockMocks.mockTagCreate,
+      commitDelete: mockMocks.mockTagDelete,
+    },
+    useAuthStore: vi.fn(
+      (selector?: (state: { currentUserPubky: string; selectCurrentUserPubky: () => string }) => unknown) => {
+        const mockState = {
+          currentUserPubky: 'mock-current-user',
+          selectCurrentUserPubky: () => 'mock-current-user',
+        };
+        return selector ? selector(mockState) : mockState;
+      },
+    ),
+  };
+});
+
+// Mock useProfileStats
+vi.mock('@/hooks/useProfileStats', () => ({
+  useProfileStats: vi.fn(() => ({
+    stats: { uniqueTags: 0, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+    isLoading: false,
+  })),
+}));
+
+// Mock toast
+vi.mock('@/molecules/Toaster/use-toast', () => ({
+  toast: vi.fn(),
+}));
+
 // Mock dexie-react-hooks
+let mockLocalTags: Core.NexusTag[] | null = null;
+
+const mockUseLiveQuery = vi.fn(<T,>(queryFn: () => Promise<T> | T, deps: unknown[], defaultValue: T): T => {
+  // For getTags query
+  if (deps && deps[0] && typeof deps[0] === 'string') {
+    return (mockLocalTags !== null ? mockLocalTags : defaultValue) as T;
+  }
+  // For getCounts query (from useProfileStats)
+  return defaultValue;
+});
+
 vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn((queryFn, deps, defaultValue) => {
-    // For tests, execute the query immediately and return the result
-    // In a real implementation, this would be reactive
-    try {
-      const result = queryFn();
-      if (result instanceof Promise) {
-        return defaultValue;
-      }
-      return result;
-    } catch {
-      return defaultValue;
-    }
-  }),
+  useLiveQuery: <T,>(queryFn: () => Promise<T> | T, deps: unknown[], defaultValue: T): T =>
+    mockUseLiveQuery(queryFn, deps, defaultValue) as T,
 }));
 
 describe('useTagged', () => {
@@ -50,6 +83,23 @@ describe('useTagged', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockLocalTags = null;
+    mockMocks.mockGetTags.mockResolvedValue([]);
+    mockMocks.mockFetchTags.mockResolvedValue([]);
+    mockMocks.mockUpsertTags.mockResolvedValue(undefined);
+    mockMocks.mockGetCounts.mockResolvedValue({
+      tagged: 0,
+      tags: 0,
+      unique_tags: 0,
+      posts: 0,
+      replies: 0,
+      following: 0,
+      followers: 0,
+      friends: 0,
+      bookmarks: 0,
+    });
+    mockMocks.mockTagCreate.mockResolvedValue(undefined);
+    mockMocks.mockTagDelete.mockResolvedValue(undefined);
   });
 
   it('returns empty data when userId is null', () => {
@@ -74,16 +124,28 @@ describe('useTagged', () => {
     expect(typeof result.current.loadMore).toBe('function');
   });
 
-  it('calls UserController.tags with correct params', () => {
+  it('calls UserController.fetchTags with correct params', async () => {
     renderHook(() => useTagged(mockUserId));
-    // Note: Due to how useLiveQuery is mocked, we can't easily test async behavior
-    // In a real test with proper Dexie setup, we would verify the controller calls
-    expect(Core.UserController.tags).toBeDefined();
-    expect(Core.UserController.getCounts).toBeDefined();
+
+    await waitFor(() => {
+      expect(mockMocks.mockFetchTags).toHaveBeenCalled();
+    });
+
+    expect(mockMocks.mockFetchTags).toHaveBeenCalledWith({
+      user_id: mockUserId,
+      viewer_id: 'mock-current-user',
+      limit_tags: 20,
+      skip_tags: 0,
+    });
   });
 
   it('handleTagAdd returns error when tag label is empty', async () => {
+    mockLocalTags = [];
     const { result } = renderHook(() => useTagged(mockUserId));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     const addResult = await result.current.handleTagAdd('');
 
@@ -101,15 +163,17 @@ describe('useTagged', () => {
   });
 
   it('handleTagAdd calls TagController.create with correct params', async () => {
-    const mockCreate = vi.fn().mockResolvedValue(undefined);
-    vi.mocked(Core.TagController).create = mockCreate;
-
+    mockLocalTags = [];
     const { result } = renderHook(() => useTagged(mockUserId));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     const addResult = await result.current.handleTagAdd('ethereum');
 
     expect(addResult.success).toBe(true);
-    expect(mockCreate).toHaveBeenCalledWith({
+    expect(mockMocks.mockTagCreate).toHaveBeenCalledWith({
       taggedId: mockUserId,
       label: 'ethereum',
       taggerId: 'mock-current-user',

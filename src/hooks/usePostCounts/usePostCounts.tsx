@@ -24,7 +24,7 @@ export function usePostCounts(compositeId: string | null | undefined): UsePostCo
   const postCounts = useLiveQuery(
     async () => {
       if (!compositeId) return null;
-      return await Core.PostController.getPostCounts({ compositeId });
+      return await Core.PostController.getCounts({ compositeId });
     },
     [compositeId],
     undefined,

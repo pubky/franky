@@ -5,6 +5,7 @@ import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Types from '@/app/profile/types';
+import * as Config from '@/config';
 
 export interface ProfilePageFilterBarItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -120,10 +121,21 @@ export function ProfilePageFilterBar({
     return getDefaultItems(stats, isOwnProfile);
   }, [items, stats, isOwnProfile]);
 
+  // Only apply sticky when content fits in viewport
+  const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
+    topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
+  });
+
   return (
     <Atoms.Container
+      ref={ref}
       overrideDefaults={true}
-      className="sticky top-(--header-height) hidden h-fit w-(--filter-bar-width) flex-col self-start lg:flex"
+      className={Libs.cn(
+        'hidden h-fit w-(--filter-bar-width) flex-col self-start lg:flex',
+        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
+        shouldBeSticky !== false && 'sticky top-(--header-height)',
+      )}
     >
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-0">
         {filterItems.map((item, index) => {

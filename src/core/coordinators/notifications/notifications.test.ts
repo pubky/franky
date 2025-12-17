@@ -20,7 +20,9 @@ type CoordinatorConfigWithBase = Core.NotificationCoordinatorConfig & PollingSer
  * Reduces boilerplate for most tests
  */
 function setupAuthenticatedTest(userId = 'user123') {
-  const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+  const spy = vi
+    .spyOn(Core.NotificationController, 'fetchNotifications')
+    .mockResolvedValue(undefined as unknown as never);
   // Use init() to set up authenticated state with hasProfile: true (required for polling)
   Core.useAuthStore.getState().init({
     session: {} as any,
@@ -66,7 +68,7 @@ describe('NotificationCoordinator', () => {
 
     it('shares state across all getInstance() references', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -108,7 +110,7 @@ describe('NotificationCoordinator', () => {
 
     it('new instance after reset has fresh state', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -194,7 +196,7 @@ describe('NotificationCoordinator', () => {
 
     it('handles multiple rapid configure() calls gracefully', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -225,7 +227,7 @@ describe('NotificationCoordinator', () => {
 
     it('handles configure() during active polling without creating duplicate timers', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -260,7 +262,7 @@ describe('NotificationCoordinator', () => {
 
     it('handles start/configure/stop in rapid succession', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -292,7 +294,7 @@ describe('NotificationCoordinator', () => {
   describe('Memory Leaks & Cleanup', () => {
     it('stops polling after destroy() is called', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -340,7 +342,7 @@ describe('NotificationCoordinator', () => {
 
     it('does not respond to auth changes after destroy()', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -373,7 +375,7 @@ describe('NotificationCoordinator', () => {
 
     it('does not respond to visibility changes after destroy()', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -429,7 +431,7 @@ describe('NotificationCoordinator', () => {
 
     it('resetInstance() properly cleans up before creating new instance', () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -462,7 +464,7 @@ describe('NotificationCoordinator', () => {
   describe('UserId Edge Cases', () => {
     it('does not poll when userId is null', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Don't set userId (will be null) - just set session without pubky
@@ -491,7 +493,7 @@ describe('NotificationCoordinator', () => {
 
     it('does not poll when userId is undefined', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up state with undefined pubky (should not poll)
@@ -516,7 +518,7 @@ describe('NotificationCoordinator', () => {
 
     it('does not poll when userId is empty string', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up state with empty string pubky (should not poll)
@@ -541,7 +543,7 @@ describe('NotificationCoordinator', () => {
 
     it('stops polling when userId becomes null mid-session', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -573,7 +575,7 @@ describe('NotificationCoordinator', () => {
 
     it('resumes polling when userId is set after being null', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Authentication is now derived from session, so we need to set session
@@ -609,7 +611,7 @@ describe('NotificationCoordinator', () => {
 
     it('handles userId changing between polls', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -897,7 +899,7 @@ describe('NotificationCoordinator', () => {
 
     it('resumes polling when moving from disabled to enabled route', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -926,7 +928,7 @@ describe('NotificationCoordinator', () => {
 
     it('stops polling when moving from enabled to disabled route', async () => {
       const spy = vi
-        .spyOn(Core.NotificationController, 'notifications')
+        .spyOn(Core.NotificationController, 'fetchNotifications')
         .mockResolvedValue(undefined as unknown as never);
 
       // Use init() to set up authenticated state with hasProfile: true
@@ -955,7 +957,9 @@ describe('NotificationCoordinator', () => {
   });
 
   it('polls on interval when started (no pollOnStart)', () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -979,7 +983,9 @@ describe('NotificationCoordinator', () => {
   });
 
   it('restarts polling when interval changes via configure()', () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -1003,7 +1009,9 @@ describe('NotificationCoordinator', () => {
   });
 
   it('respects page visibility: pauses when hidden, resumes when visible', async () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -1054,7 +1062,9 @@ describe('NotificationCoordinator', () => {
   });
 
   it('ignores page visibility when respectPageVisibility is false', async () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -1085,7 +1095,9 @@ describe('NotificationCoordinator', () => {
   });
 
   it('stops when de-authenticated and resumes when authenticated again', async () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -1122,7 +1134,9 @@ describe('NotificationCoordinator', () => {
   });
 
   it('pauses on disabled route then resumes on allowed route', async () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -1148,8 +1162,10 @@ describe('NotificationCoordinator', () => {
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
-  it('forwards the correct userId to NotificationController.notifications', async () => {
-    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+  it('forwards the correct userId to NotificationController.fetchNotifications', async () => {
+    const spy = vi
+      .spyOn(Core.NotificationController, 'fetchNotifications')
+      .mockResolvedValue(undefined as unknown as never);
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
@@ -1171,7 +1187,7 @@ describe('NotificationCoordinator', () => {
 
   it('continues polling even if a poll attempt throws', async () => {
     const spy = vi
-      .spyOn(Core.NotificationController, 'notifications')
+      .spyOn(Core.NotificationController, 'fetchNotifications')
       .mockRejectedValueOnce(new Error('network'))
       .mockResolvedValue(undefined as unknown as never);
 

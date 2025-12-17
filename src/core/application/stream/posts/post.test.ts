@@ -137,7 +137,7 @@ describe('PostStreamApplication', () => {
 
   const setupDefaultMocks = () => ({
     persistPosts: vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({ postAttachments: [] }),
-    persistFiles: vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined),
+    fetchFiles: vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined),
     getUserDetails: vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder'),
   });
 
@@ -779,7 +779,7 @@ describe('PostStreamApplication', () => {
         expect.stringContaining(JSON.stringify({ post_ids: cacheMissPostIds, viewer_id: viewerId })),
       );
       expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: mockNexusPosts });
-      expect(mocks.persistFiles).toHaveBeenCalledWith([]);
+      expect(mocks.fetchFiles).toHaveBeenCalledWith([]);
     });
 
     it('should handle when postBatch is null/undefined', async () => {
@@ -941,8 +941,8 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
         postAttachments: mockAttachments,
       });
-      const persistFilesSpy = vi
-        .spyOn(Core.FileApplication, 'persistFiles')
+      const fetchFilesSpy = vi
+        .spyOn(Core.FileApplication, 'fetchFiles')
         .mockRejectedValue(new Error('Failed to persist files'));
 
       const getUserDetailsSpy = vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder');
@@ -953,7 +953,7 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      expect(persistFilesSpy).toHaveBeenCalledWith(mockAttachments);
+      expect(fetchFilesSpy).toHaveBeenCalledWith(mockAttachments);
       expect(queryNexusSpy).toHaveBeenCalledTimes(1);
       expect(getUserDetailsSpy).not.toHaveBeenCalled();
       expect(persistUsersSpy).not.toHaveBeenCalled();
@@ -1224,6 +1224,131 @@ describe('PostStreamApplication', () => {
       await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId: customStreamId });
 
       expect(mergeSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+    });
+  });
+
+  describe('getUnreadStream', () => {
+    it('should return unread stream when it exists', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      const result = await Core.PostStreamApplication.getUnreadStream({ streamId });
+
+      expect(result).toBeTruthy();
+      expect(result!.stream).toEqual(unreadPostIds);
+    });
+
+    it('should return null when unread stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.getUnreadStream({ streamId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const readUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'readUnreadStream')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.getUnreadStream({ streamId })).rejects.toThrow('Database error');
+
+      expect(readUnreadStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const mockUnreadStream = { stream: ['post-1', 'post-2'] };
+
+      const readUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'readUnreadStream')
+        .mockResolvedValue(mockUnreadStream);
+
+      const result = await Core.PostStreamApplication.getUnreadStream({ streamId: customStreamId });
+
+      expect(readUnreadStreamSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toEqual(mockUnreadStream);
+    });
+  });
+
+  describe('getLocalStream', () => {
+    it('should return local stream when it exists', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+
+      const result = await Core.PostStreamApplication.getLocalStream({ streamId });
+
+      expect(result).toBeTruthy();
+      expect(result!.stream).toEqual(postIds);
+    });
+
+    it('should return null when stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.getLocalStream({ streamId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const getLocalStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'read')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.getLocalStream({ streamId })).rejects.toThrow('Database error');
+
+      expect(getLocalStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const mockStream = { stream: ['post-1', 'post-2'] };
+
+      const getLocalStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'read').mockResolvedValue(mockStream);
+
+      const result = await Core.PostStreamApplication.getLocalStream({ streamId: customStreamId });
+
+      expect(getLocalStreamSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toEqual(mockStream);
+    });
+  });
+
+  describe('clearUnreadStream', () => {
+    it('should clear unread stream and return post IDs', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      const result = await Core.PostStreamApplication.clearUnreadStream({ streamId });
+
+      expect(result).toEqual(unreadPostIds);
+      const clearedStream = await Core.UnreadPostStreamModel.findById(streamId);
+      expect(clearedStream).toBeNull();
+    });
+
+    it('should return empty array when unread stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.clearUnreadStream({ streamId });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const clearUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'clearUnreadStream')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.clearUnreadStream({ streamId })).rejects.toThrow('Database error');
+
+      expect(clearUnreadStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const mockPostIds = ['post-1', 'post-2'];
+
+      const clearUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'clearUnreadStream')
+        .mockResolvedValue(mockPostIds);
+
+      const result = await Core.PostStreamApplication.clearUnreadStream({ streamId: customStreamId });
+
+      expect(clearUnreadStreamSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toEqual(mockPostIds);
     });
   });
 });

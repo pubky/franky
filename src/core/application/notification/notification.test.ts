@@ -36,7 +36,7 @@ const mockFetchMissingEntities = () => {
   vi.spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus').mockResolvedValue(undefined);
 };
 
-describe('NotificationApplication.notifications', () => {
+describe('NotificationApplication.fetchNotifications', () => {
   beforeEach(() => vi.clearAllMocks());
 
   it('should fetch, persist, and return unread count', async () => {
@@ -47,7 +47,7 @@ describe('NotificationApplication.notifications', () => {
     mockNormalizer();
     mockFetchMissingEntities();
 
-    const unread = await NotificationApplication.notifications({ userId, lastRead: 1234 });
+    const unread = await NotificationApplication.fetchNotifications({ userId, lastRead: 1234 });
 
     expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: 1234 });
     expect(persistSpy).toHaveBeenCalledWith({ flatNotifications, lastRead: 1234 });
@@ -58,7 +58,7 @@ describe('NotificationApplication.notifications', () => {
     vi.spyOn(Core.NexusUserService, 'notifications').mockRejectedValue(new Error('nexus-fail'));
     const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount');
 
-    await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('nexus-fail');
+    await expect(NotificationApplication.fetchNotifications({ userId, lastRead: 1234 })).rejects.toThrow('nexus-fail');
     expect(persistSpy).not.toHaveBeenCalled();
   });
 
@@ -68,7 +68,9 @@ describe('NotificationApplication.notifications', () => {
     mockNormalizer();
     mockFetchMissingEntities();
 
-    await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('persist-fail');
+    await expect(NotificationApplication.fetchNotifications({ userId, lastRead: 1234 })).rejects.toThrow(
+      'persist-fail',
+    );
   });
 });
 

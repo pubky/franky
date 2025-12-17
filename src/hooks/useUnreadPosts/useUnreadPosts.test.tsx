@@ -16,7 +16,12 @@ const { mockUnreadStream, setMockUnreadStream } = vi.hoisted(() => {
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn(() => mockUnreadStream.current),
+  useLiveQuery: vi.fn((queryFn: () => Promise<{ stream: string[] } | null>) => {
+    // Execute the query function to trigger it
+    queryFn();
+    // Return the resolved value directly (not a Promise)
+    return mockUnreadStream.current;
+  }),
 }));
 
 // Mock Core
@@ -24,8 +29,8 @@ vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    UnreadPostStreamModel: {
-      findById: vi.fn(() => Promise.resolve(mockUnreadStream.current)),
+    StreamPostsController: {
+      getUnreadStream: vi.fn(() => Promise.resolve(mockUnreadStream.current)),
     },
   };
 });
@@ -86,5 +91,88 @@ describe('useUnreadPosts', () => {
 
     expect(result.current.unreadPostIds).toEqual([]);
     expect(result.current.unreadCount).toBe(0);
+  });
+
+  it('should handle streamId change and update results', () => {
+    setMockUnreadStream({ stream: ['post-1', 'post-2'] });
+
+    const { result, rerender } = renderHook(
+      ({ streamId }: { streamId: Core.PostStreamId | null }) => useUnreadPosts({ streamId }),
+      {
+        initialProps: { streamId: 'timeline:all:all' as Core.PostStreamId },
+      },
+    );
+
+    expect(result.current.unreadPostIds).toEqual(['post-1', 'post-2']);
+    expect(result.current.unreadCount).toBe(2);
+
+    // Change streamId to a different stream
+    setMockUnreadStream({ stream: ['post-3'] });
+    rerender({ streamId: 'timeline:following:all' as Core.PostStreamId });
+
+    expect(result.current.unreadPostIds).toEqual(['post-3']);
+    expect(result.current.unreadCount).toBe(1);
+  });
+
+  it('should handle streamId changing to null', () => {
+    setMockUnreadStream({ stream: ['post-1', 'post-2'] });
+
+    type HookProps = { streamId: Core.PostStreamId | null };
+    const { result, rerender } = renderHook((props: HookProps) => useUnreadPosts(props), {
+      initialProps: { streamId: 'timeline:all:all' as Core.PostStreamId } as HookProps,
+    });
+
+    expect(result.current.unreadPostIds).toEqual(['post-1', 'post-2']);
+
+    // Change streamId to null
+    setMockUnreadStream(null);
+    rerender({ streamId: null });
+
+    expect(result.current.unreadPostIds).toEqual([]);
+    expect(result.current.unreadCount).toBe(0);
+  });
+
+  it('should handle streamId changing from null to valid stream', () => {
+    setMockUnreadStream(null);
+
+    const { result, rerender } = renderHook(
+      ({ streamId }: { streamId: Core.PostStreamId | null }) => useUnreadPosts({ streamId }),
+      {
+        initialProps: { streamId: null as Core.PostStreamId | null },
+      },
+    );
+
+    expect(result.current.unreadPostIds).toEqual([]);
+    expect(result.current.unreadCount).toBe(0);
+
+    // Change streamId to valid stream
+    setMockUnreadStream({ stream: ['post-1'] });
+    rerender({ streamId: 'timeline:all:all' as Core.PostStreamId });
+
+    expect(result.current.unreadPostIds).toEqual(['post-1']);
+    expect(result.current.unreadCount).toBe(1);
+  });
+
+  it('should handle very large stream arrays', () => {
+    const largeStream = Array.from({ length: 10000 }, (_, i) => `post-${i}`);
+    setMockUnreadStream({ stream: largeStream });
+
+    const { result } = renderHook(() => useUnreadPosts({ streamId: 'timeline:all:all' as Core.PostStreamId }));
+
+    expect(result.current.unreadPostIds).toHaveLength(10000);
+    expect(result.current.unreadCount).toBe(10000);
+    expect(result.current.unreadPostIds[0]).toBe('post-0');
+    expect(result.current.unreadPostIds[9999]).toBe('post-9999');
+  });
+
+  it('should handle stream with duplicate post IDs', () => {
+    // Note: This tests the hook's behavior, not the data model
+    // In practice, streams shouldn't have duplicates, but the hook should handle it gracefully
+    setMockUnreadStream({ stream: ['post-1', 'post-1', 'post-2'] });
+
+    const { result } = renderHook(() => useUnreadPosts({ streamId: 'timeline:all:all' as Core.PostStreamId }));
+
+    expect(result.current.unreadPostIds).toEqual(['post-1', 'post-1', 'post-2']);
+    expect(result.current.unreadCount).toBe(3);
   });
 });

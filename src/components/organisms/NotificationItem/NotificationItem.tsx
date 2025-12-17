@@ -44,11 +44,11 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
 
     let isCancelled = false;
 
-    // PostController.getOrFetchPost handles the caching strategy:
+    // PostController.getOrFetchDetails handles the caching strategy:
     // 1. Check local DB first
     // 2. If missing, fetch from Nexus
     // 3. Write to local DB
-    Core.PostController.getOrFetchPost({ compositeId: postCompositeId, viewerId })
+    Core.PostController.getOrFetchDetails({ compositeId: postCompositeId, viewerId })
       .then((post) => {
         if (!isCancelled && post?.content) {
           setPostContent(post.content);

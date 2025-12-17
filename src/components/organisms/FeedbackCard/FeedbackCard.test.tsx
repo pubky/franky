@@ -19,6 +19,9 @@ vi.mock('@/core', async (importOriginal) => {
     ProfileController: {
       read: vi.fn(),
     },
+    UserController: {
+      getDetails: vi.fn().mockResolvedValue(null),
+    },
     FileController: {
       getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
     },
@@ -146,9 +149,11 @@ describe('FeedbackCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Make useCurrentUserProfile delegate to the existing mocks
-    mockUseCurrentUserProfile.mockImplementation(() => {
-      const { currentUserPubky } = mockUseAuthStore() as { currentUserPubky: string | null };
-      const userDetails = mockUseLiveQuery(() => null, []);
+    mockUseCurrentUserProfile.mockImplementation((): Hooks.UseCurrentUserProfileResult => {
+      const currentUserPubky = mockUseAuthStore(
+        (state: { currentUserPubky: string | null }) => state.currentUserPubky,
+      ) as string | null;
+      const userDetails = mockUseLiveQuery(() => null, [], null) as Core.NexusUserDetails | null | undefined;
       return { userDetails, currentUserPubky };
     });
   });
@@ -401,15 +406,15 @@ describe('FeedbackCard', () => {
   describe('Data Flow', () => {
     it('fetches user details when currentUserPubky is available', async () => {
       mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
-      mockUseLiveQuery.mockImplementation((callback) => {
-        callback();
-        return { name: 'Miguel', image: null } as never;
-      });
+      mockUseCurrentUserProfile.mockReturnValue({
+        userDetails: { name: 'Miguel', image: null },
+        currentUserPubky: mockPubky,
+      } as never);
 
       render(<FeedbackCard />);
 
       await waitFor(() => {
-        expect(mockUseLiveQuery).toHaveBeenCalled();
+        expect(mockUseCurrentUserProfile).toHaveBeenCalled();
       });
     });
 
@@ -435,9 +440,11 @@ describe('FeedbackCard - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Make useCurrentUserProfile delegate to the existing mocks
-    mockUseCurrentUserProfile.mockImplementation(() => {
-      const { currentUserPubky } = mockUseAuthStore() as { currentUserPubky: string | null };
-      const userDetails = mockUseLiveQuery(() => null, []);
+    mockUseCurrentUserProfile.mockImplementation((): Hooks.UseCurrentUserProfileResult => {
+      const currentUserPubky = mockUseAuthStore(
+        (state: { currentUserPubky: string | null }) => state.currentUserPubky,
+      ) as string | null;
+      const userDetails = mockUseLiveQuery(() => null, [], null) as Core.NexusUserDetails | null | undefined;
       return { userDetails, currentUserPubky };
     });
   });

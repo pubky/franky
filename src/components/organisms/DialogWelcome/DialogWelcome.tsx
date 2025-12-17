@@ -19,7 +19,7 @@ export function DialogWelcome() {
   // Fetch current user details from database
   const userDetails = useLiveQuery(async () => {
     if (!currentUserPubky) return null;
-    const details = await Core.ProfileController.read({ userId: currentUserPubky });
+    const details = await Core.UserController.getDetails({ userId: currentUserPubky });
     return details || null;
   }, [currentUserPubky]);
 
