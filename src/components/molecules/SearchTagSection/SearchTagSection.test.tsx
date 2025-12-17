@@ -30,8 +30,8 @@ vi.mock('@/molecules', () => ({
 
 describe('SearchTagSection', () => {
   const mockTags = [
-    { label: 'bitcoin', color: '#FF8C00' },
-    { label: 'satoshi', color: '#FF0000' },
+    { name: 'bitcoin', count: 10 },
+    { name: 'satoshi', count: 5 },
   ];
 
   it('renders title and tags', () => {
@@ -57,13 +57,6 @@ describe('SearchTagSection', () => {
     fireEvent.click(screen.getByTestId('tag-bitcoin'));
 
     expect(onTagClick).toHaveBeenCalledWith('bitcoin');
-  });
-
-  it('passes color to PostTag', () => {
-    const onTagClick = vi.fn();
-    render(<SearchTagSection title="Test" tags={mockTags} onTagClick={onTagClick} />);
-
-    expect(screen.getByTestId('tag-bitcoin')).toHaveAttribute('data-color', '#FF8C00');
   });
 
   describe('Snapshots', () => {

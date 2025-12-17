@@ -11,8 +11,9 @@ export function SearchSuggestions({ hotTags, onTagClick }: SearchSuggestionsProp
       style={Organisms.SEARCH_EXPANDED_STYLE}
       overrideDefaults
     >
-      <Atoms.Container className="gap-6 px-6 py-6">
+      <Atoms.Container className="gap-6 p-6">
         <Molecules.SearchTagSection title="Hot tags" tags={hotTags} onTagClick={onTagClick} />
+        {/*The next section comes here*/}
       </Atoms.Container>
     </Atoms.Container>
   );

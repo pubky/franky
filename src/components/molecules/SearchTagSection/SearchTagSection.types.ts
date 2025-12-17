@@ -1,10 +1,7 @@
-export interface SearchTag {
-  label: string;
-  color?: string;
-}
+import type { HotTag } from '@/hooks/useHotTags/useHotTags.types';
 
 export interface SearchTagSectionProps {
   title: string;
-  tags: SearchTag[];
+  tags: HotTag[];
   onTagClick: (tag: string) => void;
 }

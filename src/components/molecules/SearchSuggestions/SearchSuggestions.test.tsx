@@ -29,14 +29,14 @@ vi.mock('@/molecules', () => ({
     onTagClick,
   }: {
     title: string;
-    tags: Array<{ label: string }>;
+    tags: Array<{ name: string }>;
     onTagClick: (tag: string) => void;
   }) => (
     <div data-testid={`section-${title.toLowerCase().replace(/\s/g, '-')}`}>
       <span>{title}</span>
       {tags.map((tag) => (
-        <button key={tag.label} data-testid={`tag-${tag.label}`} onClick={() => onTagClick(tag.label)}>
-          {tag.label}
+        <button key={tag.name} data-testid={`tag-${tag.name}`} onClick={() => onTagClick(tag.name)}>
+          {tag.name}
         </button>
       ))}
     </div>
@@ -51,7 +51,10 @@ vi.mock('@/organisms', () => ({
 }));
 
 describe('SearchSuggestions', () => {
-  const hotTags = [{ label: 'pubky' }, { label: 'keys' }];
+  const hotTags = [
+    { name: 'pubky', count: 5 },
+    { name: 'keys', count: 3 },
+  ];
 
   it('renders hot tags section', () => {
     const onTagClick = vi.fn();

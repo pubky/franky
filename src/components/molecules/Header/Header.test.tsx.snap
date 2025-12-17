@@ -508,7 +508,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
   data-testid="container"
 >
   <div
-    class="relative w-full"
+    class="mx-auto w-full flex-col flex relative"
     data-testid="search-input"
   >
     <div
@@ -516,7 +516,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       data-testid="container"
     >
       <input
-        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 h-full flex-1 border-none bg-transparent px-6 py-0 pr-10 text-base font-medium text-foreground placeholder:text-muted-foreground focus:ring-0 focus:outline-none"
+        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 h-full flex-1 border-none py-0 pr-10 pl-6 font-medium text-foreground"
         data-testid="input"
         placeholder="Search"
         type="text"
@@ -524,7 +524,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       />
       <svg
         aria-hidden="true"
-        class="lucide lucide-search pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted-foreground"
+        class="lucide lucide-search pointer-events-none mr-4 size-4 text-muted-foreground"
         fill="none"
         height="24"
         stroke="currentColor"

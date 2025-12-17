@@ -1,6 +1,6 @@
-import type { SearchTag } from '@/molecules/SearchTagSection/SearchTagSection.types';
+import type { HotTag } from '@/hooks/useHotTags/useHotTags.types';
 
 export interface SearchSuggestionsProps {
-  hotTags: SearchTag[];
+  hotTags: HotTag[];
   onTagClick: (tag: string) => void;
 }

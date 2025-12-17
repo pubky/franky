@@ -6,18 +6,13 @@ export function SearchTagSection({ title, tags, onTagClick }: SearchTagSectionPr
   if (tags.length === 0) return null;
 
   return (
-    <Atoms.Container className="gap-2">
-      <Atoms.Typography size="xs" className="font-medium tracking-widest text-muted-foreground uppercase">
+    <Atoms.Container overrideDefaults className="gap-2">
+      <Atoms.Typography size="xs" className="tracking-widest text-muted-foreground uppercase">
         {title}
       </Atoms.Typography>
-      <Atoms.Container className="flex flex-wrap gap-3" overrideDefaults>
+      <Atoms.Container overrideDefaults className="flex flex-wrap gap-3">
         {tags.map((tag) => (
-          <Molecules.PostTag
-            key={tag.label}
-            label={tag.label}
-            color={tag.color}
-            onClick={() => onTagClick(tag.label)}
-          />
+          <Molecules.PostTag key={tag.name} label={tag.name} onClick={() => onTagClick(tag.name)} />
         ))}
       </Atoms.Container>
     </Atoms.Container>

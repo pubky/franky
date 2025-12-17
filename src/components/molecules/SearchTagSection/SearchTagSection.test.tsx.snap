@@ -5,10 +5,11 @@ exports[`SearchTagSection > Snapshots > matches snapshot when empty 1`] = `null`
 exports[`SearchTagSection > Snapshots > matches snapshot with tags 1`] = `
 <div
   class="gap-2"
+  data-override-defaults="true"
   data-testid="container"
 >
   <span
-    class="font-medium tracking-widest text-muted-foreground uppercase"
+    class="tracking-widest text-muted-foreground uppercase"
     data-size="xs"
     data-testid="typography"
   >
@@ -20,13 +21,11 @@ exports[`SearchTagSection > Snapshots > matches snapshot with tags 1`] = `
     data-testid="container"
   >
     <button
-      data-color="#FF8C00"
       data-testid="tag-bitcoin"
     >
       bitcoin
     </button>
     <button
-      data-color="#FF0000"
       data-testid="tag-satoshi"
     >
       satoshi
