@@ -150,7 +150,7 @@ export function usePostMenuActions(postId: string, onClose?: () => void): UsePos
   const handleDelete = React.useCallback(async () => {
     if (!isOwnPost) return;
     try {
-      await Core.PostController.delete({ compositePostId: postId });
+      await Core.PostController.commitDelete({ compositePostId: postId });
       Molecules.toast({
         title: 'Post deleted',
         description: 'Your post has been deleted',

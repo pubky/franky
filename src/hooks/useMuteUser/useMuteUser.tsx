@@ -72,7 +72,7 @@ export function useMuteUser(targetUserId?: string): UseMuteUserResult {
       try {
         const action = isCurrentlyMuted ? Core.HomeserverAction.DELETE : Core.HomeserverAction.PUT;
 
-        await Core.UserController.mute(action, {
+        await Core.UserController.commitMute(action, {
           muter: currentUserPubky,
           mutee: userId,
         });
