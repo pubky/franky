@@ -14,12 +14,13 @@ const mockState = vi.hoisted(() => ({
   publishHomeserverForce: vi.fn(),
   // Client methods
   clientFetch: vi.fn(),
-  clientList: vi.fn(),
   // Public storage
-  publicStorageGetJson: vi.fn(),
+  publicStorageGet: vi.fn(),
+  publicStorageList: vi.fn(),
   // Pubky methods
   getHomeserverOf: vi.fn(),
   startAuthFlow: vi.fn(),
+  authFlowKindSignin: vi.fn(),
 }));
 
 // Mock global fetch for generateSignupToken tests
@@ -51,10 +52,10 @@ vi.mock('@synonymdev/pubky', () => {
     startAuthFlow: (...args: unknown[]) => mockState.startAuthFlow(...args),
     client: {
       fetch: (...args: unknown[]) => mockState.clientFetch(...args),
-      list: (...args: unknown[]) => mockState.clientList(...args),
     },
     publicStorage: {
-      getJson: (...args: unknown[]) => mockState.publicStorageGetJson(...args),
+      get: (...args: unknown[]) => mockState.publicStorageGet(...args),
+      list: (...args: unknown[]) => mockState.publicStorageList(...args),
     },
     signer: () => ({
       signup: (...args: unknown[]) => mockState.signup(...args),
@@ -79,6 +80,9 @@ vi.mock('@synonymdev/pubky', () => {
     Keypair: {
       random: vi.fn(),
       fromSecretKey: vi.fn(),
+    },
+    AuthFlowKind: {
+      signin: () => mockState.authFlowKindSignin(),
     },
     resolvePubky: vi.fn((url: string) => url.replace('pubky://', 'https://')),
   };
@@ -125,13 +129,14 @@ describe('HomeserverService', () => {
     mockState.signin.mockResolvedValue(createMockSession());
     mockState.publishHomeserverForce.mockResolvedValue(undefined);
     mockState.clientFetch.mockResolvedValue(new Response('{}', { status: 200 }));
-    mockState.clientList.mockResolvedValue([]);
-    mockState.publicStorageGetJson.mockResolvedValue({});
+    mockState.publicStorageGet.mockResolvedValue(new Response('{}', { status: 200 }));
+    mockState.publicStorageList.mockResolvedValue([]);
     mockState.getHomeserverOf.mockResolvedValue('https://test-homeserver.com');
     mockState.startAuthFlow.mockReturnValue({
       authorizationUrl: 'https://auth.example.com/authorize',
       awaitApproval: vi.fn().mockResolvedValue(createMockSession()),
     });
+    mockState.authFlowKindSignin.mockReturnValue('signin-kind');
 
     // Reset module cache and re-import
     vi.resetModules();
@@ -345,6 +350,7 @@ describe('HomeserverService', () => {
 
         expect(mockState.startAuthFlow).toHaveBeenCalledWith(
           '/pub/pubky.app/:rw', // Default capabilities
+          'signin-kind', // AuthFlowKind.signin()
           expect.any(String), // HTTP relay
         );
       });
@@ -354,7 +360,7 @@ describe('HomeserverService', () => {
 
         await HomeserverService.generateAuthUrl(customCaps);
 
-        expect(mockState.startAuthFlow).toHaveBeenCalledWith(customCaps, expect.any(String));
+        expect(mockState.startAuthFlow).toHaveBeenCalledWith(customCaps, 'signin-kind', expect.any(String));
       });
 
       it('should throw AUTH_REQUEST_FAILED error when flow fails', async () => {
@@ -529,7 +535,7 @@ describe('HomeserverService', () => {
     describe('list', () => {
       it('should return array of file URLs', async () => {
         const mockFiles = ['file1.json', 'file2.json', 'file3.json'];
-        mockState.clientList.mockResolvedValue(mockFiles);
+        mockState.publicStorageList.mockResolvedValue(mockFiles);
 
         const result = await HomeserverService.list('pubky://user/pub/posts/');
 
@@ -537,28 +543,29 @@ describe('HomeserverService', () => {
       });
 
       it('should call list with default parameters', async () => {
-        mockState.clientList.mockResolvedValue([]);
+        mockState.publicStorageList.mockResolvedValue([]);
 
         await HomeserverService.list('pubky://user/pub/posts/');
 
-        expect(mockState.clientList).toHaveBeenCalledWith(
+        expect(mockState.publicStorageList).toHaveBeenCalledWith(
           'pubky://user/pub/posts/',
-          undefined, // cursor
+          null, // cursor
           false, // reverse
           500, // limit
+          false, // shallow
         );
       });
 
       it('should pass pagination parameters to list', async () => {
-        mockState.clientList.mockResolvedValue([]);
+        mockState.publicStorageList.mockResolvedValue([]);
 
         await HomeserverService.list('pubky://user/pub/posts/', 'cursor123', true, 100);
 
-        expect(mockState.clientList).toHaveBeenCalledWith('pubky://user/pub/posts/', 'cursor123', true, 100);
+        expect(mockState.publicStorageList).toHaveBeenCalledWith('pubky://user/pub/posts/', 'cursor123', true, 100, false);
       });
 
       it('should throw FETCH_FAILED error on list failure', async () => {
-        mockState.clientList.mockRejectedValue(new Error('List failed'));
+        mockState.publicStorageList.mockRejectedValue(new Error('List failed'));
 
         await expect(HomeserverService.list('pubky://user/pub/posts/')).rejects.toMatchObject({
           type: Libs.HomeserverErrorType.FETCH_FAILED,
@@ -592,25 +599,26 @@ describe('HomeserverService', () => {
     });
 
     describe('get', () => {
-      it('should use publicStorage.getJson for fetching and wrap JSON in Response', async () => {
+      it('should use publicStorage.get for fetching', async () => {
         const testUrl = 'pubky://user/pub/public.json';
-        const mockJsonData = { data: 'public' };
-        mockState.publicStorageGetJson.mockResolvedValue(mockJsonData);
+        const mockResponse = new Response(JSON.stringify({ data: 'public' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+        mockState.publicStorageGet.mockResolvedValue(mockResponse);
 
         const result = await HomeserverService.get(testUrl);
 
-        expect(mockState.publicStorageGetJson).toHaveBeenCalledWith(testUrl);
+        expect(mockState.publicStorageGet).toHaveBeenCalledWith(testUrl);
         expect(result).toBeInstanceOf(Response);
-        expect(result.status).toBe(200);
-        expect(result.headers.get('Content-Type')).toBe('application/json');
         const jsonData = await result.json();
-        expect(jsonData).toEqual(mockJsonData);
+        expect(jsonData).toEqual({ data: 'public' });
       });
 
-      it('should propagate errors from publicStorage.getJson', async () => {
+      it('should propagate errors from publicStorage.get', async () => {
         const testUrl = 'pubky://user/pub/data.json';
         const networkError = new Error('Network request failed');
-        mockState.publicStorageGetJson.mockRejectedValue(networkError);
+        mockState.publicStorageGet.mockRejectedValue(networkError);
 
         await expect(HomeserverService.get(testUrl)).rejects.toThrow('Network request failed');
       });
