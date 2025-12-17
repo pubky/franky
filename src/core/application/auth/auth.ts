@@ -57,11 +57,10 @@ export class AuthApplication {
    * Logs out a user from the system.
    *
    * @param params - The logout parameters
-   * @param params.pubky - The user's public key identifier
-   * @param params.secretKey - Secret key for homeserver service
+   * @param params.session - The authenticated Session
    * @returns Void
    */
-  static async logout(data: Core.TPubkyParams) {
+  static async logout(data: Core.THomeserverSessionResult) {
     await Core.HomeserverService.logout(data);
     // Reset the PubkySpecsSingleton to ensure clean state for subsequent sign-ins
     Core.PubkySpecsSingleton.reset();

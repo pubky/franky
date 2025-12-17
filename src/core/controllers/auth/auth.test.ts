@@ -571,7 +571,7 @@ describe('AuthController', () => {
 
       await AuthController.logout();
 
-      expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky' });
+      expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
@@ -587,7 +587,7 @@ describe('AuthController', () => {
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
 
       await expect(AuthController.logout()).rejects.toThrow('Network error');
-      expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky' });
+      expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
       // Local state should not be cleared if homeserver logout fails
       expect(storeMocks.resetOnboardingStore).not.toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).not.toHaveBeenCalled();
