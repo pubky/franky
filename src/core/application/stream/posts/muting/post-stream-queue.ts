@@ -104,7 +104,7 @@ export class PostStreamQueue {
 
     try {
       const lastPostId = toReturn[toReturn.length - 1];
-      const postDetails = await Core.PostDetailsModel.findById(lastPostId);
+      const postDetails = await Core.LocalPostService.readDetails({ postId: lastPostId });
       return postDetails?.indexed_at;
     } catch (error) {
       // Log but don't fail - caller can fall back to cursor

@@ -87,7 +87,7 @@ export class PostStreamApplication {
     const mutedUserIds = new Set(mutedStream?.stream ?? []);
 
     let isFirstFetch = true;
-    const result = await postStreamQueue.collect(streamId, {
+    const { posts, cacheMissIds, timestamp } = await postStreamQueue.collect(streamId, {
       limit,
       cursor: streamTail,
       filter: (posts) => MuteFilter.filterPosts(posts, mutedUserIds),
@@ -117,9 +117,9 @@ export class PostStreamApplication {
     });
 
     return {
-      nextPageIds: result.posts,
-      cacheMissPostIds: result.cacheMissIds,
-      timestamp: result.timestamp,
+      nextPageIds: posts,
+      cacheMissPostIds: cacheMissIds,
+      timestamp,
     };
   }
 
