@@ -17,7 +17,12 @@ const DEFAULT_LINKS: ProfileLink[] = [
 ];
 
 const urlSchema = z.string().trim().url('Invalid URL');
-const nameSchema = z.string().trim().min(3, 'Name must be at least 3 characters');
+const nameSchema = z
+  .string()
+  .trim()
+  .min(3, 'Name must be at least 3 characters')
+  .max(50, 'Name must be no more than 50 characters');
+const bioSchema = z.string().trim().max(160, 'Bio must be no more than 160 characters');
 
 export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn {
   const { mode, pubky } = props;
@@ -50,6 +55,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
   // Error state
   const [nameError, setNameError] = useState<string | null>(null);
+  const [bioError, setBioError] = useState<string | null>(null);
   const [linkUrlErrors, setLinkUrlErrors] = useState<Record<number, string | null>>({});
   const [avatarError, setAvatarError] = useState<string | null>(null);
 
@@ -94,6 +100,15 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     setNameError(res.success ? null : (res.error.issues[0]?.message ?? 'Invalid name'));
   }, []);
 
+  const validateBio = useCallback((value: string) => {
+    if (value.trim().length === 0) {
+      setBioError(null);
+    } else {
+      const res = bioSchema.safeParse(value);
+      setBioError(res.success ? null : (res.error.issues[0]?.message ?? 'Invalid bio'));
+    }
+  }, []);
+
   const validateLinkUrl = useCallback((value: string, index: number) => {
     if (value.trim().length === 0) {
       setLinkUrlErrors((prev) => ({ ...prev, [index]: null }));
@@ -115,6 +130,9 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         switch (issue.type) {
           case 'name':
             setNameError(issue.message);
+            break;
+          case 'bio':
+            setBioError(issue.message);
             break;
           case 'avatar':
             setAvatarError(issue.message);
@@ -347,7 +365,12 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
   // Computed values
   const isSubmitDisabled =
-    !!nameError || name.trim().length < 3 || Object.values(linkUrlErrors).some((m) => !!m) || !!avatarError || isSaving;
+    !!nameError ||
+    name.trim().length < 3 ||
+    !!bioError ||
+    Object.values(linkUrlErrors).some((m) => !!m) ||
+    !!avatarError ||
+    isSaving;
 
   return {
     state: {
@@ -362,6 +385,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     },
     errors: {
       nameError,
+      bioError,
       linkUrlErrors,
       avatarError,
     },
@@ -370,7 +394,10 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         setName(value);
         validateName(value);
       },
-      setBio,
+      setBio: (value: string) => {
+        setBio(value);
+        validateBio(value);
+      },
       setLinks,
       handleChooseFileClick,
       handleFileChange,

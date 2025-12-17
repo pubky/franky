@@ -66,6 +66,24 @@ describe('UserValidator', () => {
       expect(result.error).toHaveLength(0);
       expect(result.data?.name).toBe('Bob');
     });
+
+    it('should accept maximum valid name (50 characters)', () => {
+      const name50 = 'A'.repeat(50);
+      const result = UserValidator.check(name50, '', [], null);
+
+      expect(result.error).toHaveLength(0);
+      expect(result.data?.name).toBe(name50);
+    });
+
+    it('should reject name exceeding 50 characters', () => {
+      const name51 = 'A'.repeat(51);
+      const result = UserValidator.check(name51, '', [], null);
+
+      expect(result.error).toContainEqual({
+        type: 'name',
+        message: 'Name must be no more than 50 characters',
+      });
+    });
   });
 
   describe('check - bio validation', () => {
@@ -81,6 +99,24 @@ describe('UserValidator', () => {
 
       expect(result.error).toHaveLength(0);
       expect(result.data?.bio).toBe('');
+    });
+
+    it('should accept maximum valid bio (160 characters)', () => {
+      const bio160 = 'A'.repeat(160);
+      const result = UserValidator.check('ValidUser', bio160, [], null);
+
+      expect(result.error).toHaveLength(0);
+      expect(result.data?.bio).toBe(bio160);
+    });
+
+    it('should reject bio exceeding 160 characters', () => {
+      const bio161 = 'A'.repeat(161);
+      const result = UserValidator.check('ValidUser', bio161, [], null);
+
+      expect(result.error).toContainEqual({
+        type: 'bio',
+        message: 'Bio must be no more than 160 characters',
+      });
     });
   });
 
@@ -229,6 +265,19 @@ describe('UserValidator', () => {
       expect(result.error).toContainEqual({ type: 'link_0', message: 'Invalid URL' });
       expect(result.error).toContainEqual({ type: 'link_2', message: 'Invalid URL' });
       expect(result.error).toContainEqual({ type: 'avatar', message: 'Avatar must be an image file' });
+    });
+
+    it('should collect max length validation errors', () => {
+      const result = UserValidator.check(
+        'A'.repeat(51), // Too long
+        'B'.repeat(161), // Too long
+        [],
+        null,
+      );
+
+      expect(result.error.length).toBe(2);
+      expect(result.error).toContainEqual({ type: 'name', message: 'Name must be no more than 50 characters' });
+      expect(result.error).toContainEqual({ type: 'bio', message: 'Bio must be no more than 160 characters' });
     });
 
     it('should return undefined data when validation fails', () => {
