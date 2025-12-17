@@ -12,11 +12,119 @@ const CAPABILITIES = '/pub/pubky.app/:rw';
 export class HomeserverService {
   private constructor() {}
 
+  private static readonly SESSION_STORAGE_PREFIX = '/pub/';
+
+  private static currentSession: Session | null = null;
+
+  /**
+   * Sets the authenticated Session used for session-scoped storage IO.
+   * Controllers should call this whenever auth state changes.
+   */
+  static setSession(session: Session | null) {
+    this.currentSession = session;
+  }
+
   /**
    * Gets the Pubky SDK singleton.
    */
   private static getPubkySdk() {
     return PubkySdk.get();
+  }
+
+  private static getSession() {
+    return this.currentSession;
+  }
+
+  private static isHttpUrl(url: string) {
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  private static extractPubkyFromAddress(url: string): string | null {
+    if (url.startsWith('pubky://')) {
+      const rest = url.slice('pubky://'.length);
+      const idx = rest.indexOf('/');
+      return (idx === -1 ? rest : rest.slice(0, idx)) || null;
+    }
+
+    if (url.startsWith('pubky') && !url.startsWith('pubkyauth://')) {
+      const rest = url.slice('pubky'.length);
+      const idx = rest.indexOf('/');
+      return (idx === -1 ? rest : rest.slice(0, idx)) || null;
+    }
+
+    if (this.isHttpUrl(url)) {
+      try {
+        const { hostname } = new URL(url);
+        if (hostname.startsWith('_pubky.')) {
+          return hostname.slice('_pubky.'.length) || null;
+        }
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  private static toAbsoluteStoragePath(url: string): string | null {
+    if (url.startsWith('/')) return url;
+
+    if (url.startsWith('pubky://')) {
+      const rest = url.slice('pubky://'.length);
+      const idx = rest.indexOf('/');
+      if (idx === -1) return null;
+      return rest.slice(idx);
+    }
+
+    if (url.startsWith('pubky') && !url.startsWith('pubkyauth://')) {
+      const idx = url.indexOf('/', 'pubky'.length);
+      if (idx === -1) return null;
+      return url.slice(idx);
+    }
+
+    if (this.isHttpUrl(url)) {
+      try {
+        const parsed = new URL(url);
+        return parsed.pathname || null;
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  private static isSessionStoragePath(path: string): path is `/pub/${string}` {
+    return path.startsWith(this.SESSION_STORAGE_PREFIX);
+  }
+
+  private static toCurrentSessionStoragePath(url: string, session: Session): `/pub/${string}` | null {
+    const path = this.toAbsoluteStoragePath(url);
+    if (!path) return null;
+    if (!this.isSessionStoragePath(path)) return null;
+
+    if (path.startsWith('/')) {
+      // Absolute paths are implicitly session-scoped
+      if (url.startsWith('/')) return path;
+
+      const addressPubky = this.extractPubkyFromAddress(url);
+      if (!addressPubky) return null;
+      const sessionPubky = session.info.publicKey.z32();
+      if (addressPubky !== sessionPubky) return null;
+      return path;
+    }
+
+    return null;
+  }
+
+  private static getErrorStatusCode(error: unknown): number | undefined {
+    if (typeof error !== 'object' || error === null) return undefined;
+    if (!('data' in error)) return undefined;
+    const data = (error as { data?: unknown }).data;
+    if (typeof data !== 'object' || data === null) return undefined;
+    if (!('statusCode' in data)) return undefined;
+    const statusCode = (data as { statusCode?: unknown }).statusCode;
+    return typeof statusCode === 'number' ? statusCode : undefined;
   }
 
   /**
@@ -206,17 +314,12 @@ export class HomeserverService {
 
   /**
    * Logs out a user from the homeserver
-   * @param pubky - The pubky to logout
+   * @param session - The authenticated Session to sign out
    * @returns Void
    */
-  static async logout({ pubky }: Core.TPubkyParams) {
-    // TODO: Until we get 'reconstruct' function to recreate the Session object from the JSON.
+  static async logout({ session }: Core.THomeserverSessionResult) {
     try {
-      const url = `pubky://${pubky}/session`;
-      const response = await this.fetch(url, { method: Core.HomeserverAction.DELETE });
-
-      Libs.Logger.debug('Response from homeserver', { response });
-      return response;
+      await session.signout();
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url: 'signout' });
     }
@@ -225,10 +328,10 @@ export class HomeserverService {
   private static async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
       const pubkySdk = this.getPubkySdk();
-      const { client: httpClient } = pubkySdk;
+      const httpBridge = pubkySdk.client;
       // Resolve pubky identifiers to transport URLs before fetching
       const resolvedUrl = url.startsWith('pubky') ? resolvePubky(url) : url;
-      const response = await httpClient.fetch(resolvedUrl, {
+      const response = await httpBridge.fetch(resolvedUrl, {
         method: options?.method,
         body: options?.body as BodyInit | undefined,
         credentials: 'include',
@@ -253,32 +356,120 @@ export class HomeserverService {
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
   static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
-    const response = await this.fetch(url, {
-      method,
-      body: bodyJson ? JSON.stringify(bodyJson) : undefined,
-    });
+    const session = this.getSession();
+
+    if (session) {
+      const sessionPath = this.toCurrentSessionStoragePath(url, session);
+      if (sessionPath) {
+        if (method === Core.HomeserverAction.GET) {
+          const response = await (async () => {
+            try {
+              return await session.storage.get(sessionPath);
+            } catch (error) {
+              return this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
+            }
+          })();
+          if (!response.ok) {
+            await this.checkSessionExpiration(response, url);
+            throw Libs.createHomeserverError(
+              Libs.HomeserverErrorType.FETCH_FAILED,
+              'Failed to fetch data',
+              response.status,
+              {
+                url,
+                statusCode: response.status,
+                statusText: response.statusText,
+              },
+            );
+          }
+
+          try {
+            const text = await response.text();
+            if (!text) return undefined as T;
+            return JSON.parse(text) as T;
+          } catch {
+            return undefined as T;
+          }
+        }
+
+        if (method === Core.HomeserverAction.PUT) {
+          try {
+            await session.storage.putJson(sessionPath, bodyJson ?? {});
+            return undefined as T;
+          } catch (error) {
+            const statusCode = this.getErrorStatusCode(error) ?? 500;
+            if (statusCode === 401) {
+              throw Libs.createHomeserverError(
+                Libs.HomeserverErrorType.SESSION_EXPIRED,
+                error instanceof Error ? error.message : 'Session expired',
+                401,
+                { url },
+              );
+            }
+            throw Libs.createHomeserverError(
+              Libs.HomeserverErrorType.FETCH_FAILED,
+              'Failed to fetch data',
+              statusCode,
+              { url, error },
+            );
+          }
+        }
+
+        if (method === Core.HomeserverAction.DELETE) {
+          try {
+            await session.storage.delete(sessionPath);
+            return undefined as T;
+          } catch (error) {
+            const statusCode = this.getErrorStatusCode(error) ?? 500;
+            if (statusCode === 401) {
+              throw Libs.createHomeserverError(
+                Libs.HomeserverErrorType.SESSION_EXPIRED,
+                error instanceof Error ? error.message : 'Session expired',
+                401,
+                { url },
+              );
+            }
+            throw Libs.createHomeserverError(
+              Libs.HomeserverErrorType.FETCH_FAILED,
+              'Failed to fetch data',
+              statusCode,
+              { url, error },
+            );
+          }
+        }
+      }
+    }
+
+    const pubkySdk = this.getPubkySdk();
+    const response = await (async () => {
+      try {
+        if (method === Core.HomeserverAction.GET) {
+          return this.isHttpUrl(url) ? await pubkySdk.client.fetch(url) : await pubkySdk.publicStorage.get(url as Address);
+        }
+        return await this.fetch(url, { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined });
+      } catch (error) {
+        return this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
+      }
+    })();
 
     if (!response.ok) {
       await this.checkSessionExpiration(response, url);
-
       throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', response.status, {
         url,
         statusCode: response.status,
         statusText: response.statusText,
       });
     }
-    if (method === Core.HomeserverAction.GET) {
-      try {
-        const text = await response.text();
-        // Handle empty body (204, 201, or anything else with an empty body)
-        if (!text) return undefined as T;
-        return JSON.parse(text) as T;
-      } catch {
-        // Return undefined on empty/invalid JSON
-        return undefined as T;
-      }
+
+    if (method !== Core.HomeserverAction.GET) return undefined as T;
+
+    try {
+      const text = await response.text();
+      if (!text) return undefined as T;
+      return JSON.parse(text) as T;
+    } catch {
+      return undefined as T;
     }
-    return undefined as T;
   }
 
   /**
@@ -291,22 +482,39 @@ export class HomeserverService {
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
   static async putBlob(url: string, blob: Uint8Array) {
-    const response = await this.fetch(url, {
-      method: Core.HomeserverAction.PUT,
-      body: blob,
-    });
+    const session = this.getSession();
+    if (session) {
+      const sessionPath = this.toCurrentSessionStoragePath(url, session);
+      if (sessionPath) {
+        try {
+          await session.storage.putBytes(sessionPath, blob);
+          return;
+        } catch (error) {
+          const statusCode = this.getErrorStatusCode(error) ?? 500;
+          if (statusCode === 401) {
+            throw Libs.createHomeserverError(
+              Libs.HomeserverErrorType.SESSION_EXPIRED,
+              error instanceof Error ? error.message : 'Session expired',
+              401,
+              { url },
+            );
+          }
+          throw Libs.createHomeserverError(
+            Libs.HomeserverErrorType.PUT_FAILED,
+            'Failed to PUT blob data',
+            statusCode,
+            { url, error },
+          );
+        }
+      }
+    }
 
+    const response = await this.fetch(url, { method: Core.HomeserverAction.PUT, body: blob });
     if (!response.ok) {
       await this.checkSessionExpiration(response, url);
-
-      throw Libs.createHomeserverError(
-        Libs.HomeserverErrorType.PUT_FAILED,
-        'Failed to PUT blob data',
-        response.status,
-        {
-          url,
-        },
-      );
+      throw Libs.createHomeserverError(Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', response.status, {
+        url,
+      });
     }
   }
 

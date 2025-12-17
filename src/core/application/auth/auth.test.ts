@@ -114,8 +114,9 @@ describe('AuthApplication', () => {
 
   describe('logout', () => {
     it('should successfully logout and reset PubkySpecsSingleton', async () => {
-      const params = { pubky: 'test-pubky' as Core.Pubky };
-      const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(new Response());
+      const mockSession = { signout: vi.fn() } as unknown as Session;
+      const params = { session: mockSession };
+      const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(undefined);
       const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await Core.AuthApplication.logout(params);
@@ -125,7 +126,8 @@ describe('AuthApplication', () => {
     });
 
     it('should propagate error when logout fails and not reset PubkySpecsSingleton', async () => {
-      const params = { pubky: 'test-pubky' as Core.Pubky };
+      const mockSession = { signout: vi.fn() } as unknown as Session;
+      const params = { session: mockSession };
       const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockRejectedValue(new Error('Logout failed'));
       const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
