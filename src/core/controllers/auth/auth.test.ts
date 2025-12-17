@@ -75,6 +75,7 @@ const storeMocks = vi.hoisted(() => {
       setSession: vi.fn(),
       setCurrentUserPubky: vi.fn(),
       setHasProfile: vi.fn(),
+      setIsRestoringSession: vi.fn(),
       setHasHydrated: vi.fn(),
       reset: resetAuthStore,
       selectCurrentUserPubky: vi.fn(() => TEST_PUBKY),
@@ -202,11 +203,9 @@ describe('AuthController', () => {
         signupToken,
       });
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBeUndefined();
     });
 
@@ -266,11 +265,9 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl('test-pubky'),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: true,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -298,11 +295,9 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -373,11 +368,9 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl('test-pubky'),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: true,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -406,11 +399,9 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -516,11 +507,9 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: true,
-      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(true);
     });
 
     it('should initialize session without bootstrap if user is not signed up', async () => {
@@ -539,11 +528,9 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
     });
   });
 

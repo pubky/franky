@@ -4,6 +4,43 @@ import * as Libs from '@/libs';
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
+  private static restoreSessionPromise: Promise<boolean> | null = null;
+
+  static async restoreSessionIfAvailable(): Promise<boolean> {
+    const authStore = Core.useAuthStore.getState();
+
+    if (!authStore.hasHydrated) return false;
+    if (authStore.session) return true;
+    if (!authStore.sessionExport) {
+      if (authStore.isRestoringSession) authStore.setIsRestoringSession(false);
+      return false;
+    }
+
+    if (this.restoreSessionPromise) {
+      return await this.restoreSessionPromise;
+    }
+
+    this.restoreSessionPromise = (async () => {
+      authStore.setIsRestoringSession(true);
+      try {
+        const { session } = await Core.AuthApplication.restoreSession(authStore.sessionExport!);
+        await this.initializeAuthenticatedSession({ session });
+        return true;
+      } catch (error) {
+        Libs.Logger.error('Failed to restore session from persisted export', error);
+        authStore.setSession(null);
+        authStore.setCurrentUserPubky(null);
+        authStore.setHasProfile(false);
+        return false;
+      } finally {
+        authStore.setIsRestoringSession(false);
+        this.restoreSessionPromise = null;
+      }
+    })();
+
+    return await this.restoreSessionPromise;
+  }
+
   /**
    * Gets a homeserver service instance using the secret key from the onboarding store.
    * @param params - The authentication parameters
@@ -50,8 +87,9 @@ export class AuthController {
       // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
       await this.hydrateMeImAlive({ pubky });
     }
-    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
-    authStore.init(initialState);
+    authStore.setSession(session);
+    authStore.setCurrentUserPubky(pubky);
+    authStore.setHasProfile(isSignedUp);
   }
 
   /**
@@ -66,8 +104,9 @@ export class AuthController {
     const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };
-    authStore.init(initialState);
+    authStore.setSession(session);
+    authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session }));
+    authStore.setHasProfile(false);
   }
 
   /**
@@ -118,6 +157,7 @@ export class AuthController {
       await Core.AuthApplication.logout({ pubky });
     }
     // Always clear local state, even if homeserver logout fails
+    authStore.setSession(null);
     onboardingStore.reset();
     authStore.reset();
     Libs.clearCookies();
