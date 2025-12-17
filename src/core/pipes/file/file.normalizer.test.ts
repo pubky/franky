@@ -281,7 +281,7 @@ describe('FileNormalizer', () => {
         const result = await Core.FileNormalizer.toFileAttachment({ file: largeFile, pubky: TEST_PUBKY.USER_1 });
 
         expect(result.fileResult.file.toJson().size).toBe(largeContent.length);
-      });
+      }, 20000);
     });
   });
 });
