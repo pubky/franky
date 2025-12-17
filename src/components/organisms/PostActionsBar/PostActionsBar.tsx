@@ -11,7 +11,7 @@ import type { PostActionsBarProps, ActionButtonConfig } from './PostActionsBar.t
 export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick, className }: PostActionsBarProps) {
   // Fetch post counts
   const postCounts = useLiveQuery(async () => {
-    return await Core.PostController.getPostCounts({ compositeId: postId });
+    return await Core.PostController.getCounts({ compositeId: postId });
   }, [postId]);
 
   // Bookmark state and toggle

@@ -74,14 +74,14 @@ export function useBookmark(postId: string): UseBookmarkResult {
     setIsToggling(true);
     try {
       if (isBookmarked) {
-        await Core.BookmarkController.delete({ postId, userId: currentUserPubky });
+        await Core.BookmarkController.commitDelete({ postId, userId: currentUserPubky });
         setIsBookmarked(false);
         toast({
           title: 'Bookmark removed',
           description: 'Post removed from your bookmarks',
         });
       } else {
-        await Core.BookmarkController.create({ postId, userId: currentUserPubky });
+        await Core.BookmarkController.commitCreate({ postId, userId: currentUserPubky });
         setIsBookmarked(true);
         toast({
           title: 'Bookmark added',

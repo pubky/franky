@@ -71,7 +71,7 @@ export function createOptimisticTag(label: string, userId: string): Core.NexusTa
  * Creates tag in backend
  */
 export async function createTagInBackend(taggedId: string, label: string, taggerId: string): Promise<void> {
-  await Core.TagController.create({
+  await Core.TagController.commitCreate({
     taggedId: taggedId as Core.Pubky,
     label,
     taggerId,
@@ -83,7 +83,7 @@ export async function createTagInBackend(taggedId: string, label: string, tagger
  * Deletes tag from backend
  */
 export async function deleteTagFromBackend(taggedId: string, label: string, taggerId: string): Promise<void> {
-  await Core.TagController.delete({
+  await Core.TagController.commitDelete({
     taggedId: taggedId as Core.Pubky,
     label,
     taggerId,

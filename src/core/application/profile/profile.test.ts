@@ -53,108 +53,7 @@ beforeEach(async () => {
 });
 
 describe('ProfileApplication', () => {
-  describe('read', () => {
-    const userId = 'test-user-id' as Pubky;
-
-    beforeEach(async () => {
-      vi.clearAllMocks();
-      await Core.UserDetailsModel.table.clear();
-    });
-
-    it('should return user details from local database when found', async () => {
-      const mockUserDetails = {
-        id: userId,
-        name: 'Test User',
-        bio: 'Test bio',
-        image: null,
-        status: 'active',
-        links: null,
-        indexed_at: Date.now(),
-      };
-      // Create user in local database
-      await Core.UserDetailsModel.create(mockUserDetails);
-
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details');
-
-      const result = await ProfileApplication.read({ userId });
-
-      expect(result).not.toBeNull();
-      expect(result!.id).toBe(userId);
-      expect(result!.name).toBe('Test User');
-      // Should not call Nexus API when found locally
-      expect(nexusSpy).not.toHaveBeenCalled();
-    });
-
-    it('should fetch from Nexus and persist when not found locally', async () => {
-      const nexusUserDetails = {
-        id: userId,
-        name: 'Nexus User',
-        bio: 'Nexus bio',
-        image: '/avatar.jpg',
-        status: 'online',
-        links: [{ title: 'Website', url: 'https://example.com' }],
-        indexed_at: Date.now(),
-      };
-
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(nexusUserDetails);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
-
-      const result = await ProfileApplication.read({ userId });
-
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-      expect(upsertSpy).toHaveBeenCalledWith(nexusUserDetails);
-      expect(result).not.toBeNull();
-      expect(result!.id).toBe(userId);
-      expect(result!.name).toBe('Nexus User');
-    });
-
-    it('should return null when Nexus returns 404 (user not found)', async () => {
-      const notFoundError = new Libs.AppError(Libs.NexusErrorType.RESOURCE_NOT_FOUND, 'User not found', 404);
-
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(notFoundError);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
-
-      const result = await ProfileApplication.read({ userId });
-
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-      expect(result).toBeNull();
-      // Should not persist anything when user not found
-      expect(upsertSpy).not.toHaveBeenCalled();
-    });
-
-    it('should re-throw non-404 errors from Nexus', async () => {
-      const networkError = new Error('Network error');
-      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(networkError);
-
-      await expect(ProfileApplication.read({ userId })).rejects.toThrow('Network error');
-
-      expect(Core.NexusUserService.details).toHaveBeenCalledWith({ user_id: userId });
-    });
-
-    it('should re-throw server errors (500) from Nexus', async () => {
-      const serverError = new Libs.AppError(Libs.NexusErrorType.NETWORK_ERROR, 'Internal server error', 500);
-
-      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(serverError);
-
-      await expect(ProfileApplication.read({ userId })).rejects.toThrow('Internal server error');
-
-      expect(Core.NexusUserService.details).toHaveBeenCalledWith({ user_id: userId });
-    });
-
-    it('should return undefined when Nexus returns null/undefined', async () => {
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
-
-      const result = await ProfileApplication.read({ userId });
-
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-      expect(result).toBeUndefined();
-      // Should not persist when Nexus returns null
-      expect(upsertSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('create', () => {
+  describe('commitCreate', () => {
     it('creates profile and sets auth state on success', async () => {
       const profileJson = { name: 'Alice' };
       const profile = { toJson: vi.fn(() => profileJson) } as unknown as PubkyAppUser;
@@ -163,7 +62,7 @@ describe('ProfileApplication', () => {
 
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.create({ profile, url, pubky });
+      await ProfileApplication.commitCreate({ profile, url, pubky });
 
       expect(profile.toJson).toHaveBeenCalledTimes(1);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, url, profileJson);
@@ -179,7 +78,7 @@ describe('ProfileApplication', () => {
 
       vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('create failed'));
 
-      await expect(ProfileApplication.create({ profile, url, pubky })).rejects.toThrow('create failed');
+      await expect(ProfileApplication.commitCreate({ profile, url, pubky })).rejects.toThrow('create failed');
 
       // Auth state should not be modified on error (see TODO in profile.ts)
       expect(mockAuthState.setHasProfile).not.toHaveBeenCalled();
@@ -187,7 +86,7 @@ describe('ProfileApplication', () => {
     });
   });
 
-  describe('updateStatus', () => {
+  describe('commitUpdateStatus', () => {
     const testPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Pubky;
 
     beforeEach(async () => {
@@ -228,7 +127,7 @@ describe('ProfileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       // Execute
-      await ProfileApplication.updateStatus({ pubky: testPubky, status: 'vacationing' });
+      await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' });
 
       // Verify UserNormalizer called with complete profile data
       expect(normalizerSpy).toHaveBeenCalledWith(
@@ -274,14 +173,14 @@ describe('ProfileApplication', () => {
       vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.updateStatus({ pubky: testPubky, status: '' });
+      await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: '' });
 
       const updatedUser = await Core.UserDetailsModel.findById(testPubky);
       expect(updatedUser!.status).toBeNull();
     });
 
     it('throws error when user not found', async () => {
-      await expect(ProfileApplication.updateStatus({ pubky: testPubky, status: 'available' })).rejects.toThrow(
+      await expect(ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'available' })).rejects.toThrow(
         'User profile not found',
       );
     });
@@ -305,7 +204,7 @@ describe('ProfileApplication', () => {
       vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('Network error'));
 
-      await expect(ProfileApplication.updateStatus({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
+      await expect(ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
         'Network error',
       );
 
@@ -335,7 +234,7 @@ describe('ProfileApplication', () => {
         .mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.updateStatus({ pubky: testPubky, status: 'busy' });
+      await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'busy' });
 
       // Verify normalizer called with empty strings/arrays for null values
       expect(normalizerSpy).toHaveBeenCalledWith(

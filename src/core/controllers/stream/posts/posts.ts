@@ -63,7 +63,8 @@ export class StreamPostsController {
     });
     // Query nexus to get the cacheMissPostIds
     if (cacheMissPostIds.length > 0) {
-      void Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }); //might be 2s to persist
+      // TODO: When TTL is implemented, we can return to void
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId });
     }
     return { nextPageIds, timestamp };
   }
@@ -95,12 +96,21 @@ export class StreamPostsController {
   }
 
   /**
-   * Get local stream data from cache without fetching from Nexus
+   * Get local stream data from cache
    * @param streamId - The ID of the stream
    * @returns The cached stream or null if not found
    */
-  static async getLocalStream(params: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
+  static async getLocalStream(params: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
     return await Core.PostStreamApplication.getLocalStream(params);
+  }
+
+  /**
+   * Get the unread stream data from cache
+   * @param streamId - The ID of the stream
+   * @returns The unread stream or null if not found
+   */
+  static async getUnreadStream(params: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+    return await Core.PostStreamApplication.getUnreadStream(params);
   }
 
   /**

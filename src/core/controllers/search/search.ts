@@ -8,8 +8,8 @@ export class SearchController {
    * Search users by ID prefix (pubky)
    * @returns Array of user IDs (pubkeys) matching the search prefix
    */
-  static async getUsersById(params: TPrefixSearchParams): Promise<TSearchResult> {
-    return await SearchApplication.usersById(params);
+  static async fetchUsersById(params: TPrefixSearchParams): Promise<TSearchResult> {
+    return await SearchApplication.fetchUsersById(params);
   }
 
   /**
@@ -17,13 +17,13 @@ export class SearchController {
    * @returns Array of user IDs (pubkeys) matching the search prefix
    */
   static async getUsersByName(params: TPrefixSearchParams): Promise<TSearchResult> {
-    return await SearchApplication.usersByName(params);
+    return await SearchApplication.fetchUsersByName(params);
   }
 
   /**
    * Search tags by prefix
    */
   static async getTagsByPrefix(params: TPrefixSearchParams): Promise<TSearchResult> {
-    return await SearchApplication.tagsByPrefix(params);
+    return await SearchApplication.fetchTagsByPrefix(params);
   }
 }
