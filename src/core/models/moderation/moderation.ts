@@ -8,10 +8,12 @@ export class ModerationModel
 {
   static table: Table<Core.ModerationModelSchema> = Core.db.table('moderation');
 
+  is_blurred: boolean;
   created_at: number;
 
   constructor(data: Core.ModerationModelSchema) {
     super(data);
+    this.is_blurred = data.is_blurred;
     this.created_at = data.created_at;
   }
 }

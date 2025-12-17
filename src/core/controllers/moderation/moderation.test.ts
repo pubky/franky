@@ -1,14 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ModerationController } from './moderation';
 import * as Core from '@/core';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 
 vi.mock('@/core/application/moderation', () => ({
   ModerationApplication: {
     setBlur: vi.fn(),
     enrichPostWithModeration: vi.fn(),
     enrichPostsWithModeration: vi.fn(),
-    getModerationState: vi.fn(),
   },
 }));
 
@@ -42,7 +40,7 @@ describe('ModerationController', () => {
       const post: Core.PostDetailsModelSchema = {
         id: 'author:post1',
         content: 'Test content',
-        kind: PubkyAppPostKind.Short,
+        kind: 'short',
         indexed_at: 123456,
         uri: 'pubky://author/pub/pubky.app/posts/post1',
         attachments: [],
@@ -71,7 +69,7 @@ describe('ModerationController', () => {
         {
           id: 'author:post1',
           content: 'Content 1',
-          kind: PubkyAppPostKind.Short,
+          kind: 'short',
           indexed_at: 123456,
           uri: 'pubky://author/pub/pubky.app/posts/post1',
           attachments: [],
@@ -79,7 +77,7 @@ describe('ModerationController', () => {
         {
           id: 'author:post2',
           content: 'Content 2',
-          kind: PubkyAppPostKind.Short,
+          kind: 'short',
           indexed_at: 123457,
           uri: 'pubky://author/pub/pubky.app/posts/post2',
           attachments: [],
@@ -108,37 +106,6 @@ describe('ModerationController', () => {
 
       expect(result).toEqual([]);
       expect(enrichSpy).toHaveBeenCalledWith([]);
-    });
-  });
-
-  describe('getModerationState', () => {
-    it('should delegate to ModerationApplication.getModerationState', async () => {
-      const postId = 'author:post1';
-      const moderationState: Core.ModerationState = {
-        is_moderated: true,
-        is_blurred: true,
-      };
-
-      const getSpy = vi.spyOn(Core.ModerationApplication, 'getModerationState').mockResolvedValue(moderationState);
-
-      const result = await ModerationController.getModerationState({ postId });
-
-      expect(result).toEqual(moderationState);
-      expect(getSpy).toHaveBeenCalledWith(postId);
-    });
-
-    it('should handle not moderated state', async () => {
-      const postId = 'author:post1';
-      const moderationState: Core.ModerationState = {
-        is_moderated: false,
-        is_blurred: false,
-      };
-
-      vi.spyOn(Core.ModerationApplication, 'getModerationState').mockResolvedValue(moderationState);
-
-      const result = await ModerationController.getModerationState({ postId });
-
-      expect(result).toEqual(moderationState);
     });
   });
 });

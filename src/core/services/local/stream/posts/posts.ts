@@ -187,6 +187,7 @@ export class LocalStreamPostsService {
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
     const postBookmarks: Core.BookmarkModelSchema[] = [];
+    const postModerations: Core.ModerationModelSchema[] = [];
 
     const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
     const postAttachments: string[] = [];
@@ -221,6 +222,16 @@ export class LocalStreamPostsService {
       }));
       postTags.push([postId, nexusTags]);
 
+      // Compute moderation and store if post is moderated
+      const isModerated = Core.detectModerationFromTags(nexusTags);
+      if (isModerated) {
+        postModerations.push({
+          id: postId,
+          is_blurred: true,
+          created_at: Date.now(),
+        });
+      }
+
       // Remove author from details as it's in the composite ID
       // eslint-disable-next-line
       const { author, ...detailsWithoutAuthor } = post.details;
@@ -237,6 +248,8 @@ export class LocalStreamPostsService {
       Core.PostRelationshipsModel.bulkSave(postRelationships),
       // Persist bookmarks from Nexus (viewer's bookmark status for each post)
       postBookmarks.length > 0 ? Core.BookmarkModel.bulkSave(postBookmarks) : Promise.resolve(),
+      // Persist moderation records for moderated posts (is_blurred defaults to true)
+      postModerations.length > 0 ? Core.ModerationModel.bulkSave(postModerations) : Promise.resolve(),
     ]);
 
     if (Object.keys(postReplies).length > 0) {

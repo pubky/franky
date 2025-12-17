@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { detectModeration, shouldBlur } from './moderation.utils';
+import { shouldBlur } from './moderation.utils';
 
 export class ModerationApplication {
   private constructor() {}
@@ -8,31 +8,31 @@ export class ModerationApplication {
     return Core.LocalModerationService.setBlur(postId, blur);
   }
 
+  /**
+   * Enriches a post with moderation state.
+   * A post is moderated if it exists in the moderation table (stored during sync).
+   * The blur state respects both the stored value and the global setting.
+   */
   static async enrichPostWithModeration(post: Core.PostDetailsModelSchema): Promise<Core.EnrichedPostDetails> {
-    const moderationState = await this.getModerationState(post.id);
+    const isBlurDisabledGlobally = !Core.useSettingsStore.getState().privacy.blurCensored;
+    const record = await Core.LocalModerationService.getModerationRecord(post.id);
+
+    if (!record) {
+      return {
+        ...post,
+        is_moderated: false,
+        is_blurred: false,
+      };
+    }
+
     return {
       ...post,
-      ...moderationState,
+      is_moderated: true,
+      is_blurred: shouldBlur(true, record.is_blurred, isBlurDisabledGlobally),
     };
   }
 
   static async enrichPostsWithModeration(posts: Core.PostDetailsModelSchema[]): Promise<Core.EnrichedPostDetails[]> {
     return Promise.all(posts.map((post) => this.enrichPostWithModeration(post)));
-  }
-
-  static async getModerationState(postId: string): Promise<Core.ModerationState> {
-    const isBlurDisabledGlobally = !Core.useSettingsStore.getState().privacy.blurCensored;
-
-    const [tags, isBlurred] = await Promise.all([
-      Core.PostTagsModel.table.get(postId),
-      Core.LocalModerationService.isBlurred(postId),
-    ]);
-
-    const isModerated = detectModeration(tags);
-
-    return {
-      is_moderated: isModerated,
-      is_blurred: shouldBlur(isModerated, isBlurred, isBlurDisabledGlobally),
-    };
   }
 }

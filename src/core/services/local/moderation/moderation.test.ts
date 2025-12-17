@@ -10,81 +10,70 @@ describe('LocalModerationService', () => {
   });
 
   describe('setBlur', () => {
-    it('should delete record when blur is true', async () => {
+    it('should update is_blurred to true when blur is true', async () => {
       const postId = 'author:post1';
-      await Core.ModerationModel.upsert({ id: postId, created_at: Date.now() });
+      await Core.ModerationModel.upsert({ id: postId, is_blurred: false, created_at: Date.now() });
 
       await Core.LocalModerationService.setBlur(postId, true);
 
       const record = await Core.ModerationModel.table.get(postId);
-      expect(record).toBeUndefined();
+      expect(record).toBeTruthy();
+      expect(record!.is_blurred).toBe(true);
     });
 
-    it('should upsert record when blur is false', async () => {
+    it('should update is_blurred to false when blur is false', async () => {
       const postId = 'author:post1';
+      await Core.ModerationModel.upsert({ id: postId, is_blurred: true, created_at: Date.now() });
 
       await Core.LocalModerationService.setBlur(postId, false);
 
       const record = await Core.ModerationModel.table.get(postId);
       expect(record).toBeTruthy();
-      expect(record!.id).toBe(postId);
-      expect(record!.created_at).toBeGreaterThan(0);
+      expect(record!.is_blurred).toBe(false);
     });
 
-    it('should remove existing record when blur is true', async () => {
-      const postId = 'author:post1';
-      await Core.ModerationModel.upsert({ id: postId, created_at: Date.now() });
-
-      const before = await Core.ModerationModel.exists(postId);
-      expect(before).toBe(true);
-
-      await Core.LocalModerationService.setBlur(postId, true);
-
-      const after = await Core.ModerationModel.exists(postId);
-      expect(after).toBe(false);
-    });
-
-    it('should create record when blur is false', async () => {
+    it('should do nothing if post is not in moderation table', async () => {
       const postId = 'author:post1';
 
-      const before = await Core.ModerationModel.exists(postId);
-      expect(before).toBe(false);
-
+      // Should not throw
       await Core.LocalModerationService.setBlur(postId, false);
 
-      const after = await Core.ModerationModel.exists(postId);
-      expect(after).toBe(true);
+      const record = await Core.ModerationModel.table.get(postId);
+      expect(record).toBeUndefined();
     });
   });
 
-  describe('isBlurred', () => {
-    it('should return true when record does not exist (blurred)', async () => {
+  describe('getModerationRecord', () => {
+    it('should return null when record does not exist', async () => {
       const postId = 'author:post1';
 
-      const result = await Core.LocalModerationService.isBlurred(postId);
+      const result = await Core.LocalModerationService.getModerationRecord(postId);
 
-      expect(result).toBe(true);
+      expect(result).toBeNull();
     });
 
-    it('should return false when record exists (unblurred by user)', async () => {
+    it('should return record when it exists', async () => {
       const postId = 'author:post1';
-      await Core.ModerationModel.upsert({ id: postId, created_at: Date.now() });
+      await Core.ModerationModel.upsert({ id: postId, is_blurred: true, created_at: Date.now() });
 
-      const result = await Core.LocalModerationService.isBlurred(postId);
+      const result = await Core.LocalModerationService.getModerationRecord(postId);
 
-      expect(result).toBe(false);
+      expect(result).toBeTruthy();
+      expect(result!.id).toBe(postId);
+      expect(result!.is_blurred).toBe(true);
     });
 
-    it('should return true for different post without record', async () => {
+    it('should return correct record for specific post', async () => {
       const postId1 = 'author:post1';
       const postId2 = 'author:post2';
-      await Core.ModerationModel.upsert({ id: postId1, created_at: Date.now() });
+      await Core.ModerationModel.upsert({ id: postId1, is_blurred: false, created_at: Date.now() });
+      await Core.ModerationModel.upsert({ id: postId2, is_blurred: true, created_at: Date.now() });
 
-      const result1 = await Core.LocalModerationService.isBlurred(postId1);
-      const result2 = await Core.LocalModerationService.isBlurred(postId2);
+      const result1 = await Core.LocalModerationService.getModerationRecord(postId1);
+      const result2 = await Core.LocalModerationService.getModerationRecord(postId2);
 
-      expect(result1).toBe(false);
-      expect(result2).toBe(true);
+      expect(result1!.is_blurred).toBe(false);
+      expect(result2!.is_blurred).toBe(true);
     });
   });
 });

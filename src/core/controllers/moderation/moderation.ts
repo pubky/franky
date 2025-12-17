@@ -14,8 +14,4 @@ export class ModerationController {
   static async enrichPosts({ posts }: { posts: Core.PostDetailsModelSchema[] }): Promise<Core.EnrichedPostDetails[]> {
     return Core.ModerationApplication.enrichPostsWithModeration(posts);
   }
-
-  static async getModerationState({ postId }: { postId: string }): Promise<Core.ModerationState> {
-    return Core.ModerationApplication.getModerationState(postId);
-  }
 }
