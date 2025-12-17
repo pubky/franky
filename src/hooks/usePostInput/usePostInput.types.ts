@@ -17,18 +17,23 @@ export interface UsePostInputOptions {
    * @default false
    */
   expanded?: boolean;
-  /** Callback when content or tags change */
-  onContentChange?: (content: string, tags: string[]) => void;
+  /** Callback when content, tags, or attachments change */
+  onContentChange?: (content: string, tags: string[], attachments: File[]) => void;
 }
 
 export interface UsePostInputReturn {
   // Refs
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   containerRef: RefObject<HTMLDivElement | null>;
+  fileInputRef: RefObject<HTMLInputElement | null>;
 
   // State
   content: string;
   tags: string[];
+  setTags: React.Dispatch<React.SetStateAction<string[]>>;
+  attachments: File[];
+  setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+  isDragging: boolean;
   isExpanded: boolean;
   isSubmitting: boolean;
   showEmojiPicker: boolean;
@@ -44,5 +49,9 @@ export interface UsePostInputReturn {
   handleSubmit: () => Promise<void>;
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleEmojiSelect: (emoji: { native: string }) => void;
-  setTags: React.Dispatch<React.SetStateAction<string[]>>;
+  handleFilesAdded: (files: File[]) => void;
+  handleDragEnter: (e: React.DragEvent) => void;
+  handleDragLeave: (e: React.DragEvent) => void;
+  handleDragOver: (e: React.DragEvent) => void;
+  handleDrop: (e: React.DragEvent) => void;
 }
