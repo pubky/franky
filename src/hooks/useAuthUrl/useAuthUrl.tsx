@@ -132,10 +132,20 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
       Libs.Logger.error(`Failed to generate auth URL (attempt ${attempts} of ${MAX_RETRY_ATTEMPTS}):`, error);
 
       if (attempts < MAX_RETRY_ATTEMPTS) {
+        // Only retry if this request is still the latest one and the component is mounted.
+        // Prevents stale retries from older requests and retries continuing after unmount.
+        if (!isMountedRef.current || activeRequestRef.current !== requestId) {
+          return;
+        }
+
         willRetry = true;
         // Bounded exponential backoff: 250ms, 500ms, capped at 1000ms
         const delayMs = Math.min(1000, 250 * attempts);
         await new Promise((resolve) => setTimeout(resolve, delayMs));
+
+        if (!isMountedRef.current || activeRequestRef.current !== requestId) {
+          return;
+        }
         await fetchUrl({ viaRetry: true });
       } else if (isMountedRef.current) {
         // Max retries reached, show error to user
