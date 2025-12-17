@@ -13,6 +13,7 @@ const mockOnboardingStore = {
 
 const mockAuthStore = {
   session: null,
+  isRestoringSession: false,
   hasProfile: false,
   hasHydrated: true,
   selectIsAuthenticated: vi.fn(() => false),
@@ -35,6 +36,7 @@ describe('useAuthStatus', () => {
     mockOnboardingStore.pubky = '';
     mockOnboardingStore.secretKey = '';
     mockAuthStore.session = null;
+    mockAuthStore.isRestoringSession = false;
     mockAuthStore.hasProfile = false;
     mockAuthStore.hasHydrated = true;
     mockAuthStore.selectIsAuthenticated = vi.fn(() => false);

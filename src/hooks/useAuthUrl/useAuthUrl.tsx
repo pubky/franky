@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Session } from '@synonymdev/pubky';
+import type { AuthFlow, Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -43,6 +43,8 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
+  const currentSession = Core.useAuthStore((state) => state.session);
+
   // Ref to track if component is still mounted (prevents state updates after unmount)
   const isMountedRef = useRef(true);
 
@@ -54,6 +56,28 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
 
   // Ref to track retry attempts
   const retryCountRef = useRef(0);
+
+  // Ref to track the active auth flow, so we can stop WASM polling on unmount/replacement.
+  const activeAuthFlowRef = useRef<AuthFlow | null>(null);
+
+  const freeActiveAuthFlow = () => {
+    const flow = activeAuthFlowRef.current;
+    activeAuthFlowRef.current = null;
+    if (!flow) return;
+    try {
+      flow.free();
+    } catch {
+      // Ignore double-free or already-finalized WASM objects.
+    }
+  };
+
+  // If the user becomes authenticated through another pathway (mnemonic, recovery file, etc.),
+  // stop any in-flight auth polling immediately.
+  useEffect(() => {
+    if (currentSession) {
+      freeActiveAuthFlow();
+    }
+  }, [currentSession]);
 
   /**
    * Fetches the authorization URL from the auth controller.
@@ -75,10 +99,34 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     let willRetry = false;
 
     try {
+      // If a previous flow is still active (e.g. user refreshed the QR),
+      // drop it so we don't keep polling forever.
+      freeActiveAuthFlow();
+
       // Request auth URL from controller
-      const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
+      const { authorizationUrl, awaitApproval, authFlow } = await Core.AuthController.getAuthUrl();
+      const freeThisFlow = () => {
+        try {
+          authFlow.free();
+        } catch {
+          // Ignore double-free or already-finalized WASM objects.
+        } finally {
+          if (activeAuthFlowRef.current === authFlow) {
+            activeAuthFlowRef.current = null;
+          }
+        }
+      };
+
+      // If this request is already stale/unmounted, free immediately.
+      if (activeRequestRef.current !== requestId || !isMountedRef.current) {
+        freeThisFlow();
+        return;
+      }
+
+      activeAuthFlowRef.current = authFlow;
 
       if (!authorizationUrl) {
+        freeThisFlow();
         isGeneratingRef.current = false;
         if (isMountedRef.current) setIsLoading(false);
         return;
@@ -114,6 +162,9 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
             title: 'Authorization was not completed',
             description: 'The signer did not complete authorization. Please try again.',
           });
+        })
+        .finally(() => {
+          freeThisFlow();
         });
 
       // Guard against late responses from previous calls
@@ -174,6 +225,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
 
     return () => {
       // Cleanup: mark component as unmounted and clear refs
+      freeActiveAuthFlow();
       isMountedRef.current = false;
       activeRequestRef.current = null;
       isGeneratingRef.current = false;

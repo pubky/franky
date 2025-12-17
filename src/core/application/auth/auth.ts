@@ -48,6 +48,11 @@ export class AuthApplication {
     return await Core.HomeserverService.generateAuthUrl();
   }
 
+  static async restoreSession(sessionExport: string): Promise<Core.THomeserverSessionResult> {
+    const session = await Core.HomeserverService.restoreSession(sessionExport);
+    return { session };
+  }
+
   /**
    * Logs out a user from the system.
    *

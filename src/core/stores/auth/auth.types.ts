@@ -4,8 +4,10 @@ import { Session } from '@synonymdev/pubky';
 export interface AuthState {
   currentUserPubky: Core.Pubky | null;
   session: Session | null;
+  sessionExport: string | null;
   hasProfile: boolean;
   hasHydrated: boolean;
+  isRestoringSession: boolean;
 }
 
 export interface AuthInitParams {
@@ -19,6 +21,7 @@ export interface AuthActions {
   init: (params: AuthInitParams) => void;
   setCurrentUserPubky: (pubky: Core.Pubky | null) => void;
   setSession: (session: Session | null) => void;
+  setIsRestoringSession: (isRestoringSession: boolean) => void;
   setHasProfile: (hasProfile: boolean) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
 }
@@ -33,8 +36,10 @@ export type AuthStore = AuthState & AuthActions & AuthSelectors;
 export const authInitialState: AuthState = {
   currentUserPubky: null,
   session: null,
+  sessionExport: null,
   hasProfile: false,
   hasHydrated: false,
+  isRestoringSession: false,
 };
 
 export enum AuthActionTypes {
@@ -43,6 +48,7 @@ export enum AuthActionTypes {
   SET_PUBKY = 'SET_PUBKY',
   SET_SESSION = 'SET_SESSION',
   CLEAR_SESSION = 'CLEAR_SESSION',
+  SET_IS_RESTORING_SESSION = 'SET_IS_RESTORING_SESSION',
   SET_HAS_PROFILE = 'SET_HAS_PROFILE',
   SET_HAS_HYDRATED = 'SET_HAS_HYDRATED',
 }

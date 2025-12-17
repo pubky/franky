@@ -1,4 +1,4 @@
-import { PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky, AuthFlowKind } from '@synonymdev/pubky';
+import { PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky, AuthFlowKind, Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -194,6 +194,7 @@ export class HomeserverService {
       return {
         authorizationUrl: flow.authorizationUrl,
         awaitApproval: flow.awaitApproval(),
+        authFlow: flow,
       };
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
@@ -361,6 +362,20 @@ export class HomeserverService {
       return pubkySdk.client.fetch(url);
     }
     return pubkySdk.publicStorage.get(url as Address);
+  }
+
+  /**
+   * Restore an authenticated Session from a previous `session.export()` snapshot.
+   */
+  static async restoreSession(sessionExport: string): Promise<Session> {
+    try {
+      const pubkySdk = this.getPubkySdk();
+      return await pubkySdk.restoreSession(sessionExport);
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to restore session', 401, {
+        sessionExport: Boolean(sessionExport),
+      });
+    }
   }
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
