@@ -175,6 +175,13 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     // Reset streamHead if stream ID changed
     if (previousStreamId !== this.streamState.currentStreamId) {
       this.streamState.streamHead = Core.SKIP_FETCH_NEW_POSTS;
+
+      // Clear old queue entry since it's no longer needed
+      if (previousStreamId !== null) {
+        Core.postStreamQueue.remove(previousStreamId);
+        Logger.debug('Cleared queue for previous stream', { previousStreamId });
+      }
+
       if (previousStreamId !== null || this.streamState.currentStreamId !== null) {
         Logger.debug('Stream ID changed, reset stream head', {
           previousStreamId,

@@ -12,6 +12,7 @@ export enum UserStreamTypes {
   TODAY_INFLUENCERS_ALL = 'influencers:today:all',
   MOST_FOLLOWED = 'most_followed:all:all',
   RECOMMENDED = 'recommended:all:all',
+  MUTED = 'muted',
   // TODO: Add all possible cases
 }
 
