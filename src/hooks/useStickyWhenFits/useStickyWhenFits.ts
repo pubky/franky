@@ -39,6 +39,13 @@ interface UseStickyWhenFitsResult {
   shouldBeSticky: boolean | undefined;
   /** Whether the sticky calculation has been performed (client-side only) */
   isReady: boolean;
+  /**
+   * Dynamically calculated negative offset for when sidebar doesn't fit.
+   * Calculated as: viewportHeight - sidebarHeight - bottomOffset
+   * This ensures the sidebar only scrolls as much as needed to reveal bottom elements.
+   * Only valid when shouldBeSticky is false.
+   */
+  nonStickyOffset: number | undefined;
 }
 
 /**
@@ -48,6 +55,16 @@ interface UseStickyWhenFitsResult {
  * The element will only be sticky if its height is less than or equal
  * to the available viewport height (viewport - topOffset - bottomOffset).
  *
+ * ## Dynamic Offset Calculation
+ * When the sidebar doesn't fit vertically, the hook calculates a dynamic
+ * negative offset (`nonStickyOffset`) that positions the sidebar so it only
+ * scrolls as much as needed to reveal bottom elements. The formula is:
+ * `viewportHeight - sidebarHeight - bottomOffset`
+ *
+ * This ensures optimal scrolling behavior - the sidebar will scroll down
+ * when needed, but will return into view with minimal scrolling when
+ * scrolling back up.
+ *
  * ## SSR Behavior
  * - `shouldBeSticky` starts as `undefined` during SSR and initial hydration
  * - After the first client-side render, it's calculated and set to a boolean
@@ -55,18 +72,20 @@ interface UseStickyWhenFitsResult {
  * - Use `shouldBeSticky !== false` for optimistic sticky behavior during SSR
  *
  * @param options - Configuration options
- * @returns Object with ref, shouldBeSticky state, and isReady flag
+ * @returns Object with ref, shouldBeSticky state, isReady flag, and nonStickyOffset
  *
  * @example
  * ```tsx
  * function Sidebar({ children }) {
- *   const { ref, shouldBeSticky } = useStickyWhenFits({ topOffset: 100 });
+ *   const { ref, shouldBeSticky, nonStickyOffset } = useStickyWhenFits({ topOffset: 100 });
+ *
+ *   const stickyTop = shouldBeSticky !== false ? 100 : (nonStickyOffset ?? 100);
  *
  *   return (
  *     <div
  *       ref={ref}
- *       // Use !== false to treat undefined (SSR) as sticky
- *       className={shouldBeSticky !== false ? 'sticky top-[100px]' : ''}
+ *       className="sticky"
+ *       style={{ top: `${stickyTop}px` }}
  *     >
  *       {children}
  *     </div>
@@ -85,6 +104,7 @@ export function useStickyWhenFits(options: UseStickyWhenFitsOptions = {}): UseSt
   // Start with undefined to avoid SSR hydration mismatch
   // The value is only calculated client-side after the component mounts
   const [shouldBeSticky, setShouldBeSticky] = useState<boolean | undefined>(undefined);
+  const [nonStickyOffset, setNonStickyOffset] = useState<number | undefined>(undefined);
 
   const checkIfFits = useCallback(() => {
     if (!ref.current) return;
@@ -93,7 +113,18 @@ export function useStickyWhenFits(options: UseStickyWhenFitsOptions = {}): UseSt
     const viewportHeight = window.innerHeight;
     const availableHeight = viewportHeight - topOffset - bottomOffset;
 
-    setShouldBeSticky(elementHeight <= availableHeight);
+    const fits = elementHeight <= availableHeight;
+    setShouldBeSticky(fits);
+
+    // Calculate dynamic offset when sidebar doesn't fit
+    // Formula: viewportHeight - sidebarHeight - bottomOffset
+    // This positions the sidebar so bottom elements are visible with minimal scrolling
+    if (!fits) {
+      const calculatedOffset = viewportHeight - elementHeight - bottomOffset;
+      setNonStickyOffset(calculatedOffset);
+    } else {
+      setNonStickyOffset(undefined);
+    }
   }, [topOffset, bottomOffset]);
 
   useEffect(() => {
@@ -129,5 +160,6 @@ export function useStickyWhenFits(options: UseStickyWhenFitsOptions = {}): UseSt
     ref,
     shouldBeSticky,
     isReady: shouldBeSticky !== undefined,
+    nonStickyOffset,
   };
 }
