@@ -1,11 +1,12 @@
-import { Pubky, PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky } from '@synonymdev/pubky';
+import { PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
+import { PubkySdk } from './pubkySdk';
+
 const _PKARR_RELAYS = Config.PKARR_RELAYS.split(',');
-const TESTNET = Config.TESTNET.toString() === 'true';
 const CAPABILITIES = '/pub/pubky.app/:rw';
 
 export class HomeserverService {
@@ -15,8 +16,8 @@ export class HomeserverService {
    * Gets a client for the homeserver
    * @returns The client
    */
-  private static getClient(): Pubky {
-    return TESTNET ? Pubky.testnet() : new Pubky();
+  private static getClient() {
+    return PubkySdk.get();
   }
 
   /**
@@ -25,8 +26,8 @@ export class HomeserverService {
    * @returns The signer
    */
   private static getSigner(keypair: Keypair): Signer {
-    const client = this.getClient();
-    return client.signer(keypair);
+    const pubkySdk = this.getClient();
+    return pubkySdk.signer(keypair);
   }
 
   /**
@@ -88,8 +89,8 @@ export class HomeserverService {
    */
   private static async checkHomeserver({ publicKey }: Core.TPublicKeyParams) {
     try {
-      const pubkyClient = this.getClient();
-      const homeserver = await pubkyClient.getHomeserverOf(publicKey);
+      const pubkySdk = this.getClient();
+      const homeserver = await pubkySdk.getHomeserverOf(publicKey);
 
       if (!homeserver) {
         throw Libs.createHomeserverError(
@@ -188,8 +189,8 @@ export class HomeserverService {
     const capabilities: Capabilities = caps || CAPABILITIES;
 
     try {
-      const client = this.getClient();
-      const flow = client.startAuthFlow(capabilities, Config.DEFAULT_HTTP_RELAY);
+      const pubkySdk = this.getClient();
+      const flow = pubkySdk.startAuthFlow(capabilities, Config.DEFAULT_HTTP_RELAY);
 
       return {
         authorizationUrl: flow.authorizationUrl,
@@ -223,10 +224,11 @@ export class HomeserverService {
 
   private static async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
-      const { client } = this.getClient();
+      const pubkySdk = this.getClient();
+      const { client: httpClient } = pubkySdk;
       // Resolve pubky:// URLs to HTTPS URLs before fetching
       const resolvedUrl = url.startsWith('pubky://') ? resolvePubky(url) : url;
-      const response = await client.fetch(resolvedUrl, {
+      const response = await httpClient.fetch(resolvedUrl, {
         method: options?.method,
         body: options?.body as BodyInit | undefined,
         credentials: 'include',
@@ -325,10 +327,10 @@ export class HomeserverService {
     reverse: boolean = false,
     limit: number = 500,
   ): Promise<string[]> {
-    const client = this.getClient();
+    const pubkySdk = this.getClient();
     try {
       // @ts-expect-error - Pubky client.list API type may not be fully defined in TypeScript definitions
-      const files = await client.client.list(baseDirectory, cursor, reverse, limit);
+      const files = await pubkySdk.client.list(baseDirectory, cursor, reverse, limit);
       Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
       return files;
     } catch (error) {
@@ -356,7 +358,8 @@ export class HomeserverService {
    * @returns {Promise<Response>} The fetch response.
    */
   static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
-    const { publicStorage } = this.getClient();
+    const pubkySdk = this.getClient();
+    const { publicStorage } = pubkySdk;
     const jsonData = await publicStorage.getJson(url as Address);
     // Wrap JSON data in a Response object to match the expected return type
     return new Response(JSON.stringify(jsonData), {
