@@ -1,12 +1,13 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useAuthUrl } from './useAuthUrl';
-import type { Session } from '@synonymdev/pubky';
+import type { AuthFlow, Session } from '@synonymdev/pubky';
 
 // Types
 interface MockAuthUrlResponse {
   authorizationUrl: string;
   awaitApproval: Promise<Session>;
+  authFlow: Pick<AuthFlow, 'free'>;
 }
 
 // Mock dependencies
@@ -29,6 +30,10 @@ vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: (...args: unknown[]) => mockGetAuthUrl(...args),
     initializeAuthenticatedSession: (...args: unknown[]) => mockInitializeAuthenticatedSession(...args),
+  },
+  useAuthStore: (selector?: (state: { session: Session | null }) => unknown) => {
+    const state = { session: null };
+    return selector ? selector(state) : state;
   },
 }));
 
@@ -288,6 +293,27 @@ describe('useAuthUrl', () => {
   });
 
   describe('Component unmount cleanup', () => {
+    it('should free authFlow on unmount when approval is pending', async () => {
+      const mockAuthUrl = 'pubkyring://authorize?token=unmount-free';
+      const free = vi.fn();
+
+      mockGetAuthUrl.mockResolvedValue({
+        authorizationUrl: mockAuthUrl,
+        awaitApproval: new Promise<Session>(() => {}),
+        authFlow: { free } as Pick<AuthFlow, 'free'>,
+      });
+
+      const { result, unmount } = renderHook(() => useAuthUrl());
+
+      await waitFor(() => {
+        expect(result.current.url).toBe(mockAuthUrl);
+      });
+
+      unmount();
+
+      expect(free).toHaveBeenCalledTimes(1);
+    });
+
     it('should not update state after unmount', async () => {
       const mockAuthUrl = 'pubkyring://authorize?token=unmount-test';
 
@@ -310,6 +336,7 @@ describe('useAuthUrl', () => {
       resolveGetAuthUrl!({
         authorizationUrl: mockAuthUrl,
         awaitApproval: new Promise<Session>(() => {}),
+        authFlow: { free: vi.fn() } as Pick<AuthFlow, 'free'>,
       });
 
       // Wait a bit to ensure no state updates occur

@@ -3,6 +3,18 @@ import { ZustandSet } from '../stores.types';
 import * as Core from '@/core';
 import { Session } from '@synonymdev/pubky';
 
+const safeSessionExport = (session: Session | null): string | null => {
+  if (!session) return null;
+  try {
+    if (typeof session.export === 'function') {
+      return session.export();
+    }
+  } catch {
+    // ignore export errors; session persistence is best-effort here
+  }
+  return null;
+};
+
 // Actions/Mutators - State modification functions
 export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
   init: ({ session, currentUserPubky, hasProfile }: AuthInitParams) => {
@@ -10,6 +22,7 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
       (state) => ({
         ...state,
         session,
+        sessionExport: safeSessionExport(session),
         currentUserPubky,
         hasProfile,
       }),
@@ -34,7 +47,11 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
   },
 
   setSession: (session: Session | null) => {
-    set({ session }, false, AuthActionTypes.SET_SESSION);
+    set({ session, sessionExport: safeSessionExport(session) }, false, AuthActionTypes.SET_SESSION);
+  },
+
+  setIsRestoringSession: (isRestoringSession: boolean) => {
+    set({ isRestoringSession }, false, AuthActionTypes.SET_IS_RESTORING_SESSION);
   },
 
   setHasProfile: (hasProfile: boolean) => {
