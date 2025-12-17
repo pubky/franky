@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 import * as Hooks from '@/hooks';
@@ -32,20 +32,22 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
-  const { hasHydrated, session, sessionExport, isRestoringSession } = Core.useAuthStore((state) => ({
-    hasHydrated: state.hasHydrated,
-    session: state.session,
-    sessionExport: state.sessionExport,
-    isRestoringSession: state.isRestoringSession,
-  }));
+  const hasHydrated = Core.useAuthStore((state) => state.hasHydrated);
+  const session = Core.useAuthStore((state) => state.session);
+  const sessionExport = Core.useAuthStore((state) => state.sessionExport);
+
+  const lastRestoreAttemptExport = useRef<string | null>(null);
 
   // Attempt to restore an existing session snapshot on fresh loads.
   useEffect(() => {
     if (!hasHydrated) return;
     if (session) return;
     if (!sessionExport) return;
+    if (lastRestoreAttemptExport.current === sessionExport) return;
+
+    lastRestoreAttemptExport.current = sessionExport;
     void Core.AuthController.restoreSessionIfAvailable();
-  }, [hasHydrated, isRestoringSession, session, sessionExport]);
+  }, [hasHydrated, session, sessionExport]);
 
   // Determine if the current route is accessible based on authentication status
   const isRouteAccessible = useMemo(() => {
