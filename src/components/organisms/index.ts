@@ -58,6 +58,7 @@ export * from './PostMentions';
 export * from './PublicKeyCard';
 // SinglePost page components
 export * from './SinglePostCard';
+export * from './SinglePostContent';
 export * from './SinglePostParticipants';
 export * from './PostTagsPanel';
 export * from './RightSidebar';
