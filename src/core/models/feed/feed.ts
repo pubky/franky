@@ -4,7 +4,7 @@ import * as Core from '@/core';
 import { RecordModelBase } from '@/core/models/shared/base/record/baseRecord';
 
 export class FeedModel extends RecordModelBase<number, Core.FeedModelSchema> implements Core.FeedModelSchema {
-  static table: Table<Core.FeedModelSchema> = Core.db.table('feeds');
+  static table: Table<Core.FeedModelSchema, number> = Core.db.table('feeds');
 
   name: string;
   tags: string[];
@@ -25,6 +25,11 @@ export class FeedModel extends RecordModelBase<number, Core.FeedModelSchema> imp
     this.layout = feed.layout;
     this.created_at = feed.created_at;
     this.updated_at = feed.updated_at;
+  }
+
+  static async createAndGet(feed: Core.FeedModelSchema): Promise<Core.FeedModelSchema | null> {
+    const newId = await this.table.add(feed);
+    return this.findById(newId);
   }
 
   static async findAll(): Promise<Core.FeedModelSchema[]> {

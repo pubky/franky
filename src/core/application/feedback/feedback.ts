@@ -25,7 +25,7 @@ export class FeedbackApplication {
    * @param params.name - User's display name
    * @throws AppError if submission fails
    */
-  static async submit({ pubky, comment, name }: Types.TFeedbackSubmitInput): Promise<void> {
+  static async submit({ pubky, comment, name }: Types.TFeedbackSubmitInput) {
     try {
       // Delegate to Chatwoot service
       await Core.ChatwootService.submit({ pubky, comment, name });

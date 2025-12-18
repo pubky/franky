@@ -1,18 +1,19 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { usePostInput } from '@/hooks';
-import { PostInputTags } from '../PostInputTags';
-import { PostInputActionBar } from '../PostInputActionBar';
+import { POST_INPUT_VARIANT } from './PostInput.constants';
+import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar';
 import type { PostInputProps } from './PostInput.types';
+import { PostInputExpandableSection } from '../PostInputExpandableSection';
 
 export function PostInput({
   variant,
   postId,
+  originalPostId,
   onSuccess,
   placeholder,
   showThreadConnector = false,
@@ -28,7 +29,6 @@ export function PostInput({
     isSubmitting,
     showEmojiPicker,
     setShowEmojiPicker,
-    hasContent,
     displayPlaceholder,
     currentUserPubky,
     handleExpand,
@@ -39,6 +39,7 @@ export function PostInput({
   } = usePostInput({
     variant,
     postId,
+    originalPostId,
     onSuccess,
     placeholder,
     expanded,
@@ -74,51 +75,23 @@ export function PostInput({
           disabled={isSubmitting}
         />
 
-        {/* Expandable section with animation */}
-        <Atoms.Container
-          className={`grid transition-all duration-300 ease-in-out ${
-            isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-          }`}
-          overrideDefaults
-        >
-          <Atoms.Container className="overflow-hidden" overrideDefaults>
-            <Atoms.Container className="gap-4">
-              {/* Link preview - show when content has URLs */}
-              {hasContent && <Molecules.PostLinkEmbeds content={content} />}
-
-              {/* Tags row */}
-              {tags.length > 0 && (
-                <Atoms.Container className="flex flex-wrap items-center gap-2" overrideDefaults>
-                  {tags.map((tag, index) => (
-                    <Molecules.PostTag
-                      key={`${tag}-${index}`}
-                      label={tag}
-                      showClose={!isSubmitting}
-                      onClose={() => {
-                        setTags((prevTags) => prevTags.filter((_, i) => i !== index));
-                      }}
-                    />
-                  ))}
-                </Atoms.Container>
-              )}
-
-              <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-                <PostInputTags tags={tags} onTagsChange={setTags} disabled={isSubmitting} />
-                <PostInputActionBar
-                  onPostClick={handleSubmit}
-                  onEmojiClick={() => setShowEmojiPicker(true)}
-                  isPostDisabled={!content.trim() || isSubmitting}
-                  isSubmitting={isSubmitting}
-                />
-              </Atoms.Container>
-            </Atoms.Container>
-          </Atoms.Container>
-        </Atoms.Container>
-
-        <Molecules.EmojiPickerDialog
-          open={showEmojiPicker && !isSubmitting}
-          onOpenChange={setShowEmojiPicker}
+        <PostInputExpandableSection
+          isExpanded={isExpanded}
+          content={content}
+          tags={tags}
+          isSubmitting={isSubmitting}
+          setTags={setTags}
+          onSubmit={handleSubmit}
+          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
+          // Reposts allow empty content, posts and replies require content
+          isPostDisabled={variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting}
+          submitMode={
+            variant === POST_INPUT_VARIANT.REPLY
+              ? POST_INPUT_ACTION_SUBMIT_MODE.REPLY
+              : POST_INPUT_ACTION_SUBMIT_MODE.POST
+          }
         />
       </Atoms.Container>
     </Atoms.Container>

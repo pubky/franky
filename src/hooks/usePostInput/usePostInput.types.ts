@@ -2,10 +2,12 @@ import type { RefObject } from 'react';
 import type { PostInputVariant } from '@/organisms/PostInput/PostInput.types';
 
 export interface UsePostInputOptions {
-  /** Variant determines if this is a reply or a new post */
+  /** Variant determines if this is a reply, repost, or a new post */
   variant: PostInputVariant;
   /** Optional parent post ID (required if variant is 'reply') */
   postId?: string;
+  /** Optional original post ID (required if variant is 'repost') */
+  originalPostId?: string;
   /** Callback after successful post, receives the created post ID */
   onSuccess?: (createdPostId: string) => void;
   /** Custom placeholder text */

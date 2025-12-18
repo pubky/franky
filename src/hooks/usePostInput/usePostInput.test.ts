@@ -13,6 +13,7 @@ const mockSetContent = vi.fn();
 const mockSetTags = vi.fn();
 const mockReply = vi.fn();
 const mockPost = vi.fn();
+const mockRepost = vi.fn();
 let mockContent = '';
 let mockTags: string[] = [];
 let mockIsSubmitting = false;
@@ -28,6 +29,7 @@ vi.mock('@/hooks', () => ({
     setTags: mockSetTags,
     reply: mockReply,
     post: mockPost,
+    repost: mockRepost,
     isSubmitting: mockIsSubmitting,
   })),
   useEmojiInsert: vi.fn(() => vi.fn()),
@@ -38,6 +40,7 @@ const mockPrependPosts = vi.fn();
 vi.mock('@/organisms/TimelineFeed/TimelineFeed', () => ({
   useTimelineFeedContext: vi.fn(() => ({
     prependPosts: mockPrependPosts,
+    removePosts: vi.fn(),
   })),
 }));
 
@@ -47,6 +50,7 @@ describe('usePostInput', () => {
     mockContent = '';
     mockTags = [];
     mockIsSubmitting = false;
+    mockRepost.mockClear();
   });
 
   describe('initial state', () => {
@@ -108,6 +112,17 @@ describe('usePostInput', () => {
       );
 
       expect(result.current.displayPlaceholder).toBe(POST_INPUT_PLACEHOLDER[POST_INPUT_VARIANT.REPLY]);
+    });
+
+    it('uses default placeholder for repost variant', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'repost',
+          originalPostId: 'test-post-id',
+        }),
+      );
+
+      expect(result.current.displayPlaceholder).toBe(POST_INPUT_PLACEHOLDER[POST_INPUT_VARIANT.REPOST]);
     });
 
     it('uses custom placeholder when provided', () => {
@@ -261,9 +276,56 @@ describe('usePostInput', () => {
         onSuccess: expect.any(Function),
       });
       expect(mockPost).not.toHaveBeenCalled();
+      expect(mockRepost).not.toHaveBeenCalled();
     });
 
-    it('does not submit when content is empty', async () => {
+    it('calls repost method for repost variant with originalPostId', async () => {
+      mockContent = 'Test repost content';
+
+      const mockOnSuccess = vi.fn();
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'repost',
+          originalPostId: 'original-post-id',
+          onSuccess: mockOnSuccess,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(mockRepost).toHaveBeenCalledWith({
+        originalPostId: 'original-post-id',
+        onSuccess: expect.any(Function),
+      });
+      expect(mockPost).not.toHaveBeenCalled();
+      expect(mockReply).not.toHaveBeenCalled();
+    });
+
+    it('allows repost with empty content', async () => {
+      mockContent = '';
+
+      const mockOnSuccess = vi.fn();
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'repost',
+          originalPostId: 'original-post-id',
+          onSuccess: mockOnSuccess,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(mockRepost).toHaveBeenCalledWith({
+        originalPostId: 'original-post-id',
+        onSuccess: expect.any(Function),
+      });
+    });
+
+    it('does not submit when content is empty (for post variant)', async () => {
       mockContent = '';
 
       const { result } = renderHook(() =>

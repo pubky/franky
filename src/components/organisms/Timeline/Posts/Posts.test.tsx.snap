@@ -71,7 +71,7 @@ exports[`TimelinePosts - Snapshots > should match snapshot with posts 1`] = `
         />
       </div>
       <div
-        class="h-[20px]"
+        class="h-5"
         data-testid="container"
       />
     </div>

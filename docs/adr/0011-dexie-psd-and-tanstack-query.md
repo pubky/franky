@@ -1,4 +1,4 @@
-# ADR 0011: `useLiveQuery` Constraints and TanStack Query Integration
+# ADR 0011: Dexie PSD and TanStack Query
 
 ## Status
 
@@ -23,7 +23,7 @@ We will:
 1. Treat `useLiveQuery` callbacks as **pure, read-only, local-only** functions over IndexedDB.
 2. **Never call TanStack Query, other network code, or any retry/timer-based workflows from within `useLiveQuery` callbacks.**
 3. Make `useLiveQuery` the **only place in React components and custom hooks that may access local services directly**, and only in a read-only manner. All other UI code must go through controllers.
-4. Perform all fetching via **controllers + TanStack Query + `useEffect` (or equivalent)**, and persist results into Dexie.
+4. Perform all fetching via **controllers + TanStack Query + `useEffect` (or equivalent)**, and persist results into Dexie. Controller read methods must follow the local-first naming contract (`get*`, `fetch*`, `getOrFetch*`) defined in ADR-0001.
 5. Enforce a **persistence order**: entities that are _depended on_ (e.g. authors, tags) are written to IndexedDB **before** entities that reference them (e.g. posts, notifications).
 
 **Goal**
@@ -89,7 +89,8 @@ setTimeout(() => {
 
 ## Related Decisions
 
-- [ADR-0001: Local-First Writes](./0001-local-first-writes.md) — The pattern useLiveQuery supports
+- [ADR-0001: Local-First Writes](./0001-local-first-writes.md) — The pattern `useLiveQuery` supports
+  - [Controller Method Naming Pattern](./0001-local-first-writes.md#controller-method-naming-pattern) — `fetch*` vs `get*` vs `getOrFetch*` vs `commit*`
 - [ADR-0004: Layering and Dependency Rules](./0004-layering-and-dependency-rules.md) — Architectural layers
 - [ADR-0008: Coordinators Layer](./0008-coordinators-layer.md) — System-initiated workflows
 

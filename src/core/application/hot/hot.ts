@@ -83,7 +83,7 @@ export class HotApplication {
    * @param id - Composite ID (timeframe:reach)
    * @param params - Parameters for fetching hot tags
    */
-  private static async refreshCacheInBackground(id: string, params: Core.TTagHotParams): Promise<void> {
+  private static async refreshCacheInBackground(id: string, params: Core.TTagHotParams) {
     try {
       // Fetch and persist users first, then persist hot tags (blocking within this background task)
       // This prevents excessive rerender where liveQuery triggers before users are cached
@@ -106,7 +106,7 @@ export class HotApplication {
    * @param tags - Array of hot tags containing tagger IDs (sorted by score)
    * @param userId - Optional user ID for relationship data
    */
-  private static async fetchUsersForTags(tags: Core.NexusHotTag[], userId?: string): Promise<void> {
+  private static async fetchUsersForTags(tags: Core.NexusHotTag[], userId?: string) {
     // Extract all unique tagger IDs from tags
     const allTaggerIds = [...new Set(tags.flatMap((tag) => tag.taggers_id))];
     if (allTaggerIds.length === 0) {
