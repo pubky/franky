@@ -8,6 +8,7 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import * as App from '@/app';
+import { USER_NAME_MIN_LENGTH, USER_NAME_MAX_LENGTH, USER_BIO_MAX_LENGTH } from '@/config';
 
 import type { ProfileLink, UseProfileFormProps, UseProfileFormReturn } from './useProfileForm.types';
 
@@ -20,9 +21,12 @@ const urlSchema = z.string().trim().url('Invalid URL');
 const nameSchema = z
   .string()
   .trim()
-  .min(3, 'Name must be at least 3 characters')
-  .max(50, 'Name must be no more than 50 characters');
-const bioSchema = z.string().trim().max(160, 'Bio must be no more than 160 characters');
+  .min(USER_NAME_MIN_LENGTH, `Name must be at least ${USER_NAME_MIN_LENGTH} characters`)
+  .max(USER_NAME_MAX_LENGTH, `Name must be no more than ${USER_NAME_MAX_LENGTH} characters`);
+const bioSchema = z
+  .string()
+  .trim()
+  .max(USER_BIO_MAX_LENGTH, `Bio must be no more than ${USER_BIO_MAX_LENGTH} characters`);
 
 export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn {
   const { mode, pubky } = props;
@@ -366,7 +370,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   // Computed values
   const isSubmitDisabled =
     !!nameError ||
-    name.trim().length < 3 ||
+    name.trim().length < USER_NAME_MIN_LENGTH ||
     !!bioError ||
     Object.values(linkUrlErrors).some((m) => !!m) ||
     !!avatarError ||

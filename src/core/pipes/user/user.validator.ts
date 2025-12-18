@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { USER_NAME_MIN_LENGTH, USER_NAME_MAX_LENGTH, USER_BIO_MAX_LENGTH } from '@/config';
 
 export class UserValidator {
   static check(name: string, bio: string, links: { label: string; url: string }[], avatarFile: File | null) {
@@ -42,9 +43,13 @@ export const UiUserSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(3, 'Name must be at least 3 characters')
-    .max(50, 'Name must be no more than 50 characters'),
-  bio: z.string().trim().max(160, 'Bio must be no more than 160 characters').optional(),
+    .min(USER_NAME_MIN_LENGTH, `Name must be at least ${USER_NAME_MIN_LENGTH} characters`)
+    .max(USER_NAME_MAX_LENGTH, `Name must be no more than ${USER_NAME_MAX_LENGTH} characters`),
+  bio: z
+    .string()
+    .trim()
+    .max(USER_BIO_MAX_LENGTH, `Bio must be no more than ${USER_BIO_MAX_LENGTH} characters`)
+    .optional(),
   links: z
     .array(
       z.object({
