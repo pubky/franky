@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
@@ -57,21 +57,11 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
   // Ref to track retry attempts
   const retryCountRef = useRef(0);
 
-  // Ref to track the active auth flow cancel handle, so we can stop WASM polling on unmount/replacement.
-  const activeCancelAuthFlowRef = useRef<(() => void) | null>(null);
-
-  const cancelActiveAuthFlow = () => {
-    const cancel = activeCancelAuthFlowRef.current;
-    activeCancelAuthFlowRef.current = null;
-    if (!cancel) return;
-    cancel();
-  };
-
   // If the user becomes authenticated through another pathway (mnemonic, recovery file, etc.),
   // stop any in-flight auth polling immediately.
   useEffect(() => {
     if (currentSession) {
-      cancelActiveAuthFlow();
+      Core.AuthController.cancelActiveAuthFlow();
     }
   }, [currentSession]);
 
@@ -80,7 +70,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
    * Implements retry logic with exponential backoff.
    * Handles the approval promise for session initialization.
    */
-  const fetchUrl = async (options?: { viaRetry?: boolean }): Promise<void> => {
+  const fetchUrl = useCallback(async (options?: { viaRetry?: boolean }): Promise<void> => {
     // Create unique request identifier for deduplication
     const requestId = Symbol('fetchUrl');
     activeRequestRef.current = requestId;
@@ -95,17 +85,10 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     let willRetry = false;
 
     try {
-      // If a previous flow is still active (e.g. user refreshed the QR),
-      // drop it so we don't keep polling forever.
-      cancelActiveAuthFlow();
-
       // Request auth URL from controller
       const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthController.getAuthUrl();
       const cancelThisFlow = () => {
         cancelAuthFlow();
-        if (activeCancelAuthFlowRef.current === cancelAuthFlow) {
-          activeCancelAuthFlowRef.current = null;
-        }
       };
 
       // If this request is already stale/unmounted, free immediately.
@@ -113,8 +96,6 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
         cancelThisFlow();
         return;
       }
-
-      activeCancelAuthFlowRef.current = cancelAuthFlow;
 
       if (!authorizationUrl) {
         cancelThisFlow();
@@ -214,7 +195,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
         }
       }
     }
-  };
+  }, []);
 
   // Always cleanup on unmount (even when autoFetch is disabled).
   useEffect(() => {
@@ -222,20 +203,25 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
 
     return () => {
       // Cleanup: mark component as unmounted and clear refs
-      cancelActiveAuthFlow();
+      Core.AuthController.cancelActiveAuthFlow();
       isMountedRef.current = false;
       activeRequestRef.current = null;
       isGeneratingRef.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-fetch on mount if enabled
   useEffect(() => {
     if (!autoFetch) return;
-    void fetchUrl();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoFetch]);
+    // In React dev StrictMode, effects mount/unmount twice. Deferring avoids starting
+    // auth-flow polling during the "test" mount, which would otherwise leave long-poll
+    // relay requests pending until they naturally complete.
+    const timeoutId = setTimeout(() => {
+      if (!isMountedRef.current) return;
+      void fetchUrl();
+    }, 0);
+    return () => clearTimeout(timeoutId);
+  }, [autoFetch, fetchUrl]);
 
   return {
     url,

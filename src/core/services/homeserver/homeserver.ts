@@ -43,71 +43,91 @@ export class HomeserverService {
     return this.currentSession;
   }
 
+  private static toPathname(url: string): string | null {
+    if (url.startsWith('/')) return url;
+
+    if (url.startsWith('pubky://')) {
+      const rest = url.slice('pubky://'.length);
+      const idx = rest.indexOf('/');
+      return idx === -1 ? null : rest.slice(idx);
+    }
+
+    if (url.startsWith('pubky') && !url.startsWith('pubkyauth://')) {
+      const idx = url.indexOf('/', 'pubky'.length);
+      return idx === -1 ? null : url.slice(idx);
+    }
+
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      try {
+        return new URL(url).pathname || null;
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  private static extractPubkyZ32(url: string): string | null {
+    if (url.startsWith('pubky://')) {
+      const rest = url.slice('pubky://'.length);
+      const idx = rest.indexOf('/');
+      return (idx === -1 ? rest : rest.slice(0, idx)) || null;
+    }
+
+    if (url.startsWith('pubky') && !url.startsWith('pubkyauth://')) {
+      const rest = url.slice('pubky'.length);
+      const idx = rest.indexOf('/');
+      return (idx === -1 ? rest : rest.slice(0, idx)) || null;
+    }
+
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      try {
+        const { hostname } = new URL(url);
+        return hostname.startsWith('_pubky.') ? hostname.slice('_pubky.'.length) || null : null;
+      } catch {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
   private static resolveOwnedSessionPath(url: string): { session: Session; path: `/pub/${string}` } | null {
     const session = this.getSession();
     if (!session) return null;
 
-    const toPathname = (value: string): string | null => {
-      if (value.startsWith('/')) return value;
-
-      if (value.startsWith('pubky://')) {
-        const rest = value.slice('pubky://'.length);
-        const idx = rest.indexOf('/');
-        return idx === -1 ? null : rest.slice(idx);
-      }
-
-      if (value.startsWith('pubky') && !value.startsWith('pubkyauth://')) {
-        const idx = value.indexOf('/', 'pubky'.length);
-        return idx === -1 ? null : value.slice(idx);
-      }
-
-      if (value.startsWith('http://') || value.startsWith('https://')) {
-        try {
-          return new URL(value).pathname || null;
-        } catch {
-          return null;
-        }
-      }
-
-      return null;
-    };
-
-    const extractPubkyZ32 = (value: string): string | null => {
-      if (value.startsWith('pubky://')) {
-        const rest = value.slice('pubky://'.length);
-        const idx = rest.indexOf('/');
-        return (idx === -1 ? rest : rest.slice(0, idx)) || null;
-      }
-
-      if (value.startsWith('pubky') && !value.startsWith('pubkyauth://')) {
-        const rest = value.slice('pubky'.length);
-        const idx = rest.indexOf('/');
-        return (idx === -1 ? rest : rest.slice(0, idx)) || null;
-      }
-
-      if (value.startsWith('http://') || value.startsWith('https://')) {
-        try {
-          const { hostname } = new URL(value);
-          return hostname.startsWith('_pubky.') ? hostname.slice('_pubky.'.length) || null : null;
-        } catch {
-          return null;
-        }
-      }
-
-      return null;
-    };
-
-    const pathname = toPathname(url);
+    const pathname = this.toPathname(url);
     if (!pathname || !pathname.startsWith('/pub/')) return null;
     const path = pathname as `/pub/${string}`;
 
     if (url.startsWith('/')) return { session, path };
 
     const sessionPubky = session.info.publicKey.z32();
-    const urlPubky = extractPubkyZ32(url);
+    const urlPubky = this.extractPubkyZ32(url);
     if (!urlPubky || urlPubky !== sessionPubky) return null;
 
     return { session, path };
+  }
+
+  private static parseJsonOrUndefined<T>(text: string): T | undefined {
+    if (!text) return undefined;
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      return undefined;
+    }
+  }
+
+  private static throwRequestMappedError(error: unknown, url: string, method: Core.HomeserverAction): never {
+    this.throwMappedError(error, {
+      operation: 'request',
+      message: 'Failed to fetch data',
+      defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
+      defaultStatusCode: 500,
+      url,
+      method,
+    });
   }
 
   private static async assertOk(
@@ -365,13 +385,8 @@ export class HomeserverService {
 
       if (method === Core.HomeserverAction.GET) {
         const response = await this.getOwnedResponse(session, path, url, 'request');
-        try {
-          const text = await response.text();
-          if (!text) return undefined as T;
-          return JSON.parse(text) as T;
-        } catch {
-          return undefined as T;
-        }
+        const text = await response.text();
+        return this.parseJsonOrUndefined<T>(text) as T;
       }
 
       if (method === Core.HomeserverAction.PUT) {
@@ -379,14 +394,7 @@ export class HomeserverService {
           await session.storage.putJson(path, bodyJson ?? {});
           return undefined as T;
         } catch (error) {
-          this.throwMappedError(error, {
-            operation: 'request',
-            message: 'Failed to fetch data',
-            defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-            defaultStatusCode: 500,
-            url,
-            method,
-          });
+          this.throwRequestMappedError(error, url, method);
         }
       }
 
@@ -395,16 +403,18 @@ export class HomeserverService {
           await session.storage.delete(path);
           return undefined as T;
         } catch (error) {
-          this.throwMappedError(error, {
-            operation: 'request',
-            message: 'Failed to fetch data',
-            defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-            defaultStatusCode: 500,
-            url,
-            method,
-          });
+          this.throwRequestMappedError(error, url, method);
         }
       }
+    }
+
+    if (method !== Core.HomeserverAction.GET && !url.startsWith('http://') && !url.startsWith('https://')) {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Authenticated writes must target an owned /pub/* path for the current session.',
+        400,
+        { url, method },
+      );
     }
 
     const pubkySdk = this.getPubkySdk();
@@ -417,14 +427,7 @@ export class HomeserverService {
         }
         return await this.fetch(url, { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined });
       } catch (error) {
-        return this.throwMappedError(error, {
-          operation: 'request',
-          message: 'Failed to fetch data',
-          defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-          defaultStatusCode: 500,
-          url,
-          method,
-        });
+        return this.throwRequestMappedError(error, url, method);
       }
     })();
 
@@ -432,13 +435,8 @@ export class HomeserverService {
 
     if (method !== Core.HomeserverAction.GET) return undefined as T;
 
-    try {
-      const text = await response.text();
-      if (!text) return undefined as T;
-      return JSON.parse(text) as T;
-    } catch {
-      return undefined as T;
-    }
+    const text = await response.text();
+    return this.parseJsonOrUndefined<T>(text) as T;
   }
 
   /**
@@ -466,6 +464,15 @@ export class HomeserverService {
           method: Core.HomeserverAction.PUT,
         });
       }
+    }
+
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Blob uploads must target an owned /pub/* path for the current session.',
+        400,
+        { url },
+      );
     }
 
     const response = await this.fetch(url, { method: Core.HomeserverAction.PUT, body: blob });
@@ -576,6 +583,14 @@ export class HomeserverService {
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
   static async generateSignupToken() {
+    if (process.env.NODE_ENV === 'production') {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'generateSignupToken is only available in non-production environments.',
+        400,
+      );
+    }
+
     const endpoint = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
     const password = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 
