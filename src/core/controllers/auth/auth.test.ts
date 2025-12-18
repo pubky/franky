@@ -489,13 +489,15 @@ describe('AuthController', () => {
       const cancelAuthFlowA = vi.fn();
       const cancelAuthFlowB = vi.fn();
 
-      let resolveFirst: (value: any) => void;
-      const first = new Promise((resolve) => {
+      type GenerateAuthUrlResult = Awaited<ReturnType<typeof Core.AuthApplication.generateAuthUrl>>;
+
+      let resolveFirst!: (value: GenerateAuthUrlResult) => void;
+      const first = new Promise<GenerateAuthUrlResult>((resolve) => {
         resolveFirst = resolve;
       });
 
       vi.spyOn(Core.AuthApplication, 'generateAuthUrl')
-        .mockImplementationOnce(() => first as any)
+        .mockImplementationOnce(() => first)
         .mockResolvedValueOnce({
           authorizationUrl: 'https://example.com/auth?token=B',
           awaitApproval: new Promise(() => {}),

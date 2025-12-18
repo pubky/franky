@@ -16,6 +16,10 @@ export class AuthController {
     cancel();
   }
 
+  static cancelActiveAuthFlow() {
+    this.freeActiveAuthFlow();
+  }
+
   static async restoreSessionIfAvailable(): Promise<boolean> {
     const authStore = Core.useAuthStore.getState();
 

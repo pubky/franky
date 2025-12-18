@@ -486,6 +486,16 @@ describe('HomeserverService', () => {
           expect(mockState.sessionStoragePutJson).toHaveBeenCalledWith('/pub/data.json', bodyData);
         });
 
+        it('should throw INVALID_INPUT when PUT is attempted without a session on a pubky:// address', async () => {
+          HomeserverService.setSession(null);
+          await expect(
+            HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://someone/pub/data.json', { ok: true }),
+          ).rejects.toMatchObject({
+            type: Libs.CommonErrorType.INVALID_INPUT,
+            statusCode: 400,
+          });
+        });
+
         it('should return undefined for successful PUT', async () => {
           HomeserverService.setSession(createMockSession());
 
@@ -587,6 +597,16 @@ describe('HomeserverService', () => {
         await expect(HomeserverService.putBlob('pubky://user/pub/avatar.png', blobData)).rejects.toMatchObject({
           type: Libs.HomeserverErrorType.SESSION_EXPIRED,
           statusCode: 401,
+        });
+      });
+
+      it('should throw INVALID_INPUT when uploading blob without a session to a pubky:// address', async () => {
+        HomeserverService.setSession(null);
+        const blobData = new Uint8Array([1, 2, 3]);
+
+        await expect(HomeserverService.putBlob('pubky://someone/pub/avatar.png', blobData)).rejects.toMatchObject({
+          type: Libs.CommonErrorType.INVALID_INPUT,
+          statusCode: 400,
         });
       });
     });

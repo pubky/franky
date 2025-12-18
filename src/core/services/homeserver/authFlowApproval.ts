@@ -80,8 +80,7 @@ export function createCancelableAuthApproval(
   const awaitApproval = (async () => {
     await Libs.sleep(0);
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    for (;;) {
       if (canceled) throw createCanceledError();
 
       try {
