@@ -68,7 +68,7 @@ export class UserController {
    * @param params - The parameters for fetching taggers
    * @returns The taggers for the user
    */
-  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusTaggers[]> {
     return await Core.UserApplication.fetchTaggers(params);
   }
 
