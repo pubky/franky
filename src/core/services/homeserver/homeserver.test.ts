@@ -452,7 +452,9 @@ describe('HomeserverService', () => {
       describe('Error handling', () => {
         it('should throw FETCH_FAILED error for non-OK response', async () => {
           HomeserverService.setSession(createMockSession());
-          mockState.sessionStorageGet.mockResolvedValue(new Response('Not Found', { status: 404, statusText: 'Not Found' }));
+          mockState.sessionStorageGet.mockResolvedValue(
+            new Response('Not Found', { status: 404, statusText: 'Not Found' }),
+          );
 
           await expect(
             HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/missing.json'),
@@ -464,7 +466,9 @@ describe('HomeserverService', () => {
 
         it('should throw SESSION_EXPIRED error for 401 response', async () => {
           HomeserverService.setSession(createMockSession());
-          mockState.sessionStorageGet.mockResolvedValue(new Response('Unauthorized', { status: 401, statusText: 'Unauthorized' }));
+          mockState.sessionStorageGet.mockResolvedValue(
+            new Response('Unauthorized', { status: 401, statusText: 'Unauthorized' }),
+          );
 
           await expect(
             HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/data.json'),
@@ -558,7 +562,13 @@ describe('HomeserverService', () => {
 
         await HomeserverService.list('pubky://user/pub/posts/', 'cursor123', true, 100);
 
-        expect(mockState.publicStorageList).toHaveBeenCalledWith('pubky://user/pub/posts/', 'cursor123', true, 100, false);
+        expect(mockState.publicStorageList).toHaveBeenCalledWith(
+          'pubky://user/pub/posts/',
+          'cursor123',
+          true,
+          100,
+          false,
+        );
       });
 
       it('should throw FETCH_FAILED error on list failure', async () => {

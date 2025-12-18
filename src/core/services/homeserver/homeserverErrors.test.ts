@@ -112,4 +112,3 @@ describe('mapHomeserverError', () => {
     expect(mapped.details?.originalError).toBe('Network request failed');
   });
 });
-
