@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useAuthUrl } from './useAuthUrl';
 import type { Session } from '@synonymdev/pubky';
@@ -15,6 +15,7 @@ const mockToast = vi.fn();
 const mockLoggerError = vi.fn();
 const mockGetAuthUrl = vi.fn();
 const mockInitializeAuthenticatedSession = vi.fn();
+const mockCancelActiveAuthFlow = vi.fn();
 
 vi.mock('@/molecules', () => ({
   toast: (...args: unknown[]) => mockToast(...args),
@@ -30,6 +31,7 @@ vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: (...args: unknown[]) => mockGetAuthUrl(...args),
     initializeAuthenticatedSession: (...args: unknown[]) => mockInitializeAuthenticatedSession(...args),
+    cancelActiveAuthFlow: (...args: unknown[]) => mockCancelActiveAuthFlow(...args),
   },
   useAuthStore: (selector?: (state: { session: Session | null }) => unknown) => {
     const state = { session: null };
@@ -343,7 +345,9 @@ describe('useAuthUrl', () => {
       expect(result.current.url).toBe('');
 
       // Manually call fetchUrl
-      await result.current.fetchUrl();
+      await act(async () => {
+        await result.current.fetchUrl();
+      });
 
       await waitFor(() => {
         expect(result.current.url).toBe('pubkyring://authorize?token=manual');
@@ -352,7 +356,7 @@ describe('useAuthUrl', () => {
   });
 
   describe('Component unmount cleanup', () => {
-    it('should cancel auth flow on unmount when approval is pending', async () => {
+    it('should cancel active auth flow on unmount when approval is pending', async () => {
       const mockAuthUrl = 'pubkyring://authorize?token=unmount-free';
       const cancelAuthFlow = vi.fn();
 
@@ -370,7 +374,8 @@ describe('useAuthUrl', () => {
 
       unmount();
 
-      expect(cancelAuthFlow).toHaveBeenCalledTimes(1);
+      expect(mockCancelActiveAuthFlow).toHaveBeenCalledTimes(1);
+      expect(cancelAuthFlow).not.toHaveBeenCalled();
     });
 
     it('should not update state after unmount', async () => {
