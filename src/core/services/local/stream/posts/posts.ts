@@ -186,6 +186,9 @@ export class LocalStreamPostsService {
    * @returns Object containing an array of all post attachment URIs collected from the posts
    */
   static async persistPosts({ posts }: Core.TPersistPostsParams): Promise<Core.TPostStreamPersistResult> {
+    // Defensive check: if posts is empty or undefined, return early
+    if (!posts?.length) return { postAttachments: [] };
+
     const postCounts: Core.NexusModelTuple<Core.NexusPostCounts>[] = [];
     const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];

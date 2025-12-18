@@ -385,4 +385,205 @@ describe('useStreamPagination', () => {
       expect(typeof result.current.refresh).toBe('function');
     });
   });
+
+  describe('prependPosts', () => {
+    it('should add single post to the beginning of the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const newPostId = 'new-post-1';
+
+      act(() => {
+        result.current.prependPosts(newPostId);
+      });
+
+      expect(result.current.postIds[0]).toBe(newPostId);
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 1);
+      expect(result.current.postIds.slice(1)).toEqual(initialPostIds);
+    });
+
+    it('should add multiple posts to the beginning of the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const newPostIds = ['new-post-1', 'new-post-2', 'new-post-3'];
+
+      act(() => {
+        result.current.prependPosts(newPostIds);
+      });
+
+      expect(result.current.postIds.slice(0, 3)).toEqual(newPostIds);
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 3);
+      expect(result.current.postIds.slice(3)).toEqual(initialPostIds);
+    });
+
+    it('should not add duplicate posts', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const duplicatePostId = initialPostIds[0];
+
+      act(() => {
+        result.current.prependPosts(duplicatePostId);
+      });
+
+      // Should not have added duplicate
+      expect(result.current.postIds.length).toBe(initialPostIds.length);
+      expect(result.current.postIds[0]).toBe(duplicatePostId);
+    });
+
+    it('should handle empty array', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+
+      act(() => {
+        result.current.prependPosts([]);
+      });
+
+      expect(result.current.postIds).toEqual(initialPostIds);
+    });
+  });
+
+  describe('removePosts', () => {
+    it('should remove single post from the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const postToRemove = initialPostIds[1];
+
+      act(() => {
+        result.current.removePosts(postToRemove);
+      });
+
+      expect(result.current.postIds).not.toContain(postToRemove);
+      expect(result.current.postIds.length).toBe(initialPostIds.length - 1);
+    });
+
+    it('should remove multiple posts from the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const postsToRemove = [initialPostIds[0], initialPostIds[2]];
+
+      act(() => {
+        result.current.removePosts(postsToRemove);
+      });
+
+      expect(result.current.postIds).not.toContain(postsToRemove[0]);
+      expect(result.current.postIds).not.toContain(postsToRemove[1]);
+      expect(result.current.postIds.length).toBe(initialPostIds.length - 2);
+    });
+
+    it('should handle removing non-existent post', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const nonExistentPost = 'non-existent-post';
+
+      act(() => {
+        result.current.removePosts(nonExistentPost);
+      });
+
+      expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should handle empty array', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+
+      act(() => {
+        result.current.removePosts([]);
+      });
+
+      expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should maintain order after removal', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const postToRemove = initialPostIds[1];
+      const expectedOrder = initialPostIds.filter((id) => id !== postToRemove);
+
+      act(() => {
+        result.current.removePosts(postToRemove);
+      });
+
+      expect(result.current.postIds).toEqual(expectedOrder);
+    });
+  });
 });

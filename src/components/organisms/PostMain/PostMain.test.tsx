@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as Hooks from '@/hooks';
 import { PostMain } from './PostMain';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 
@@ -72,14 +73,17 @@ vi.mock('@/organisms', () => ({
     postId,
     className,
     onReplyClick,
+    onRepostClick,
   }: {
     postId: string;
     className?: string;
     onReplyClick?: () => void;
+    onRepostClick?: () => void;
   }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
       {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+      {onRepostClick && <button onClick={onRepostClick}>Repost</button>}
     </div>
   ),
   DialogReply: ({
@@ -95,14 +99,50 @@ vi.mock('@/organisms', () => ({
       DialogReply
     </div>
   ),
-  ClickableTagsList: ({ taggedId }: { taggedId: string }) => (
-    <div data-testid="clickable-tags-list">ClickableTagsList {taggedId}</div>
+  DialogRepost: ({
+    postId,
+    open,
+    onOpenChangeAction,
+  }: {
+    postId: string;
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog-repost" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
+      DialogRepost
+    </div>
+  ),
+  ClickableTagsList: ({
+    taggedId,
+    taggedKind,
+    showCount: _showCount,
+    showInput: _showInput,
+    addMode: _addMode,
+  }: {
+    taggedId: string;
+    taggedKind: unknown;
+    showCount?: boolean;
+    showInput?: boolean;
+    addMode?: boolean;
+    [key: string]: unknown;
+  }) => (
+    <div data-testid="clickable-tags-list" data-tagged-id={taggedId} data-tagged-kind={String(taggedKind)}>
+      ClickableTagsList {taggedId}
+    </div>
   ),
 }));
 
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
+  PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
   PostDeleted: () => <div data-testid="post-deleted">PostDeleted</div>,
+  RepostHeader: ({ onUndo, isUndoing }: { onUndo: () => void; isUndoing?: boolean }) => (
+    <div data-testid="repost-header" data-is-undoing={isUndoing}>
+      <button data-testid="repost-undo" onClick={onUndo}>
+        Undo repost
+      </button>
+    </div>
+  ),
 }));
 
 // Mock hooks
@@ -113,6 +153,22 @@ vi.mock('@/hooks', () => ({
   })),
   usePostDetails: vi.fn(() => ({
     postDetails: { content: 'Some post content' },
+  })),
+  useRepostInfo: vi.fn(() => ({
+    isRepost: false,
+    repostAuthorId: null,
+    isCurrentUserRepost: false,
+    originalPostId: null,
+    isLoading: false,
+    hasError: false,
+  })),
+  useDeletePost: vi.fn(() => ({
+    deletePost: vi.fn(),
+    isDeleting: false,
+  })),
+  usePostHeaderVisibility: vi.fn(() => ({
+    showRepostHeader: false,
+    shouldShowPostHeader: true,
   })),
 }));
 
@@ -181,6 +237,118 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
     expect(screen.getByTestId('clickable-tags-list')).toBeInTheDocument();
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
+  });
+
+  it('shows repost header when post is a repost by current user', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: true,
+    });
+
+    render(<PostMain postId="me:repost-1" />);
+
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+  });
+
+  it('hides PostHeader for simple repost (no content) by current user', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: false,
+    });
+
+    render(<PostMain postId="me:simple-repost-1" />);
+
+    expect(screen.queryByTestId('post-header')).not.toBeInTheDocument();
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('shows PostHeader for quote repost (with content) by current user', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: true,
+    });
+
+    render(<PostMain postId="me:quote-repost-1" />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('shows PostHeader for repost by another user even without content', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: false,
+      shouldShowPostHeader: true,
+    });
+
+    render(<PostMain postId="other-user:repost-1" />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.queryByTestId('repost-header')).not.toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('shows PostHeader for repost with attachments but no text by current user', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: true,
+    });
+
+    render(<PostMain postId="me:repost-with-attachments-1" />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('hides PostHeader for repost with only whitespace content by current user', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: false,
+    });
+
+    render(<PostMain postId="me:whitespace-repost-1" />);
+
+    expect(screen.queryByTestId('post-header')).not.toBeInTheDocument();
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('shows PostHeader when postDetails is loading (undefined)', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: true,
+    });
+
+    render(<PostMain postId="me:loading-repost-1" />);
+
+    // When loading (undefined), we should show PostHeader to avoid layout shift
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+
+  it('shows PostHeader when postDetails is null', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: true,
+    });
+
+    render(<PostMain postId="me:null-repost-1" />);
+
+    // When postDetails is null, we should show PostHeader to avoid layout shift
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-content')).toBeInTheDocument();
   });
 });
 

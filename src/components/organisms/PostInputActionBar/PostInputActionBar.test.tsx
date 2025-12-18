@@ -87,7 +87,6 @@ describe('PostInputActionBar', () => {
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add image' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Add file' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add article' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Post reply' })).toBeInTheDocument();
   });
@@ -95,7 +94,6 @@ describe('PostInputActionBar', () => {
   it('invokes callbacks when buttons are clicked', () => {
     const onEmojiClick = vi.fn();
     const onImageClick = vi.fn();
-    const onFileClick = vi.fn();
     const onArticleClick = vi.fn();
     const onPostClick = vi.fn();
 
@@ -103,7 +101,6 @@ describe('PostInputActionBar', () => {
       <PostInputActionBar
         onEmojiClick={onEmojiClick}
         onImageClick={onImageClick}
-        onFileClick={onFileClick}
         onArticleClick={onArticleClick}
         onPostClick={onPostClick}
       />,
@@ -111,13 +108,11 @@ describe('PostInputActionBar', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Add emoji' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add image' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Add file' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add article' }));
     fireEvent.click(screen.getByRole('button', { name: 'Post reply' }));
 
     expect(onEmojiClick).toHaveBeenCalledTimes(1);
     expect(onImageClick).toHaveBeenCalledTimes(1);
-    expect(onFileClick).toHaveBeenCalledTimes(1);
     expect(onArticleClick).toHaveBeenCalledTimes(1);
     expect(onPostClick).toHaveBeenCalledTimes(1);
   });
@@ -142,7 +137,6 @@ describe('PostInputActionBar', () => {
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Add image' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Add file' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Add article' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Post reply' })).toBeDisabled();
   });
@@ -166,6 +160,11 @@ describe('PostInputActionBar', () => {
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
   });
+
+  it('renders reply labeling when postButtonAriaLabel is Reply', () => {
+    render(<PostInputActionBar postButtonLabel="Reply" postButtonAriaLabel="Reply" />);
+    expect(screen.getByRole('button', { name: 'Reply' })).toBeInTheDocument();
+  });
 });
 
 describe('PostInputActionBar - Snapshots', () => {
@@ -181,7 +180,6 @@ describe('PostInputActionBar - Snapshots', () => {
   it('matches snapshot with all callbacks', () => {
     const onEmojiClick = vi.fn();
     const onImageClick = vi.fn();
-    const onFileClick = vi.fn();
     const onArticleClick = vi.fn();
     const onPostClick = vi.fn();
 
@@ -189,7 +187,6 @@ describe('PostInputActionBar - Snapshots', () => {
       <PostInputActionBar
         onEmojiClick={onEmojiClick}
         onImageClick={onImageClick}
-        onFileClick={onFileClick}
         onArticleClick={onArticleClick}
         onPostClick={onPostClick}
       />,
@@ -199,6 +196,11 @@ describe('PostInputActionBar - Snapshots', () => {
 
   it('matches snapshot with disabled post button', () => {
     const { container } = render(<PostInputActionBar isPostDisabled={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with hideArticle prop', () => {
+    const { container } = render(<PostInputActionBar hideArticle={true} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

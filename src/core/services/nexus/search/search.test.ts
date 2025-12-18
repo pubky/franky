@@ -18,8 +18,8 @@ describe('NexusSearchService', () => {
       expect(result).toEqual(mockUserIds);
     });
 
-    it('should return empty array when queryNexus returns null', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+    it('should return empty array when queryNexus returns empty array', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
 
       const result = await NexusSearchService.usersById({ prefix: 'nonexistent', skip: 0, limit: 5 });
 
@@ -47,8 +47,8 @@ describe('NexusSearchService', () => {
       expect(result).toEqual(mockUserIds);
     });
 
-    it('should return empty array when queryNexus returns null', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+    it('should return empty array when queryNexus returns empty array', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
 
       const result = await NexusSearchService.usersByName({ prefix: 'nonexistent', skip: 0, limit: 5 });
 
@@ -67,8 +67,8 @@ describe('NexusSearchService', () => {
       expect(result).toEqual(mockTags);
     });
 
-    it('should return empty array when queryNexus returns null', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+    it('should return empty array when queryNexus returns empty array', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
 
       const result = await NexusSearchService.tags({ prefix: 'xyz', skip: 0, limit: 5 });
 
