@@ -1,11 +1,6 @@
 import * as Libs from '@/libs';
 
-export type PubkyErrorName =
-  | 'RequestError'
-  | 'InvalidInput'
-  | 'AuthenticationError'
-  | 'PkarrError'
-  | 'InternalError';
+export type PubkyErrorName = 'RequestError' | 'InvalidInput' | 'AuthenticationError' | 'PkarrError' | 'InternalError';
 
 export type PubkyErrorDataLike = {
   statusCode?: number;
@@ -95,32 +90,37 @@ export function mapHomeserverError(error: unknown, ctx: HomeserverErrorContext):
     }
 
     if (pubkyName === 'AuthenticationError' || extractedStatusCode === 401) {
-      return Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, error.message || 'Session expired', 401, {
-        ...baseDetails,
-        pubkyErrorName: pubkyName,
-        pubkyErrorData: error.data,
-      });
+      return Libs.createHomeserverError(
+        Libs.HomeserverErrorType.SESSION_EXPIRED,
+        error.message || 'Session expired',
+        401,
+        {
+          ...baseDetails,
+          pubkyErrorName: pubkyName,
+          pubkyErrorData: error.data,
+        },
+      );
     }
 
-    return Libs.createHomeserverError(
-      ctx.defaultType as Libs.HomeserverErrorType,
-      ctx.message,
-      statusCode,
-      {
-        ...baseDetails,
-        pubkyErrorName: pubkyName,
-        pubkyErrorData: error.data,
-        originalError: error.message,
-      },
-    );
+    return Libs.createHomeserverError(ctx.defaultType as Libs.HomeserverErrorType, ctx.message, statusCode, {
+      ...baseDetails,
+      pubkyErrorName: pubkyName,
+      pubkyErrorData: error.data,
+      originalError: error.message,
+    });
   }
 
   if (error instanceof Error) {
     if (extractedStatusCode === 401) {
-      return Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, error.message || 'Session expired', 401, {
-        ...baseDetails,
-        originalError: error.message,
-      });
+      return Libs.createHomeserverError(
+        Libs.HomeserverErrorType.SESSION_EXPIRED,
+        error.message || 'Session expired',
+        401,
+        {
+          ...baseDetails,
+          originalError: error.message,
+        },
+      );
     }
 
     if (ctx.defaultType === Libs.CommonErrorType.INVALID_INPUT) {

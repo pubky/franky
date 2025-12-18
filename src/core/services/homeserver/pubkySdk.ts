@@ -16,4 +16,3 @@ export class PubkySdk {
     return this.instance;
   }
 }
-

@@ -1,4 +1,13 @@
-import { PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky, AuthFlowKind, Session } from '@synonymdev/pubky';
+import {
+  PublicKey,
+  Keypair,
+  Capabilities,
+  Signer,
+  Address,
+  resolvePubky,
+  AuthFlowKind,
+  Session,
+} from '@synonymdev/pubky';
 import type { AuthFlow } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
@@ -129,10 +138,7 @@ export class HomeserverService {
     return pubkySdk.signer(keypair);
   }
 
-  private static throwMappedError(
-    error: unknown,
-    ctx: HomeserverErrorContext,
-  ): never {
+  private static throwMappedError(error: unknown, ctx: HomeserverErrorContext): never {
     throw mapHomeserverError(error, ctx);
   }
 
@@ -297,7 +303,12 @@ export class HomeserverService {
     };
 
     const isRetryableRelayPollError = (error: unknown): boolean => {
-      if (typeof error === 'object' && error !== null && 'name' in error && (error as { name?: unknown }).name === 'RequestError') {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'name' in error &&
+        (error as { name?: unknown }).name === 'RequestError'
+      ) {
         const statusCode = getStatusCode(error);
         if (!statusCode) return true;
         return [408, 429, 500, 502, 503, 504].includes(statusCode);
@@ -495,7 +506,9 @@ export class HomeserverService {
     const response = await (async () => {
       try {
         if (method === Core.HomeserverAction.GET) {
-          return this.isHttpUrl(url) ? await pubkySdk.client.fetch(url) : await pubkySdk.publicStorage.get(url as Address);
+          return this.isHttpUrl(url)
+            ? await pubkySdk.client.fetch(url)
+            : await pubkySdk.publicStorage.get(url as Address);
         }
         return await this.fetch(url, { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined });
       } catch (error) {
@@ -563,9 +576,14 @@ export class HomeserverService {
     const response = await this.fetch(url, { method: Core.HomeserverAction.PUT, body: blob });
     if (!response.ok) {
       await this.checkSessionExpiration(response, url);
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', response.status, {
-        url,
-      });
+      throw Libs.createHomeserverError(
+        Libs.HomeserverErrorType.PUT_FAILED,
+        'Failed to PUT blob data',
+        response.status,
+        {
+          url,
+        },
+      );
     }
   }
 
