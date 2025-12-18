@@ -21,6 +21,7 @@ import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.typ
 export function usePostInput({
   variant,
   postId,
+  originalPostId,
   onSuccess,
   placeholder,
   expanded = false,
@@ -36,7 +37,7 @@ export function usePostInput({
 
   // Hooks
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
-  const { content, setContent, tags, setTags, reply, post, isSubmitting } = Hooks.usePost();
+  const { content, setContent, tags, setTags, reply, post, repost, isSubmitting } = Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
 
   // Notify parent of content changes
@@ -69,21 +70,34 @@ export function usePostInput({
     }
   }, [isExpanded]);
 
-  // Handle submit using reply or post method from hook
+  // Handle submit using reply, repost, or post method from hook
   const handleSubmit = useCallback(async () => {
-    if (!content.trim() || isSubmitting) return;
+    if (isSubmitting) return;
 
+    // For replies and posts, require content. For reposts, content is optional.
+    if (variant !== POST_INPUT_VARIANT.REPOST && !content.trim()) return;
+
+    // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
+      // Prepend to timeline
       timelineFeed?.prependPosts(createdPostId);
+      // Call original onSuccess callback if provided
       onSuccess?.(createdPostId);
     };
 
-    if (variant === POST_INPUT_VARIANT.REPLY) {
-      await reply({ postId: postId!, onSuccess: handleSuccess });
-    } else {
-      await post({ onSuccess: handleSuccess });
+    switch (variant) {
+      case POST_INPUT_VARIANT.REPLY:
+        await reply({ postId: postId!, onSuccess: handleSuccess });
+        break;
+      case POST_INPUT_VARIANT.REPOST:
+        await repost({ originalPostId: originalPostId!, onSuccess: handleSuccess });
+        break;
+      case POST_INPUT_VARIANT.POST:
+      default:
+        await post({ onSuccess: handleSuccess });
+        break;
     }
-  }, [content, variant, postId, reply, post, isSubmitting, onSuccess, timelineFeed]);
+  }, [content, variant, postId, originalPostId, reply, post, repost, isSubmitting, onSuccess, timelineFeed]);
 
   // Handle textarea change with validation
   const handleChange = useCallback(

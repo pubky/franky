@@ -95,12 +95,13 @@ vi.mock('../PostInputActionBar', () => ({
         data-testid="post-button"
         onClick={onPostClick}
         disabled={isPostDisabled}
-        aria-label={isSubmitting ? 'Posting...' : 'Post reply'}
+        aria-label={isSubmitting ? 'Posting...' : 'Post'}
       >
         {isSubmitting ? 'Posting...' : 'Post'}
       </button>
     </div>
   )),
+  POST_INPUT_ACTION_SUBMIT_MODE: { POST: 'post', REPLY: 'reply' },
 }));
 
 vi.mock('@/molecules', () => ({
@@ -266,7 +267,7 @@ describe('PostInput', () => {
     expect(screen.getByTestId('post-input-tags')).toBeInTheDocument();
     expect(screen.getByTestId('post-input-action-bar')).toBeInTheDocument();
     expect(screen.getByLabelText('Add emoji')).toBeInTheDocument();
-    expect(screen.getByLabelText('Post reply')).toBeInTheDocument();
+    expect(screen.getByLabelText('Post')).toBeInTheDocument();
   });
 
   it('handles post submission for post variant', async () => {
@@ -275,7 +276,7 @@ describe('PostInput', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.POST} onSuccess={mockOnSuccess} />);
 
     // Click the post button
-    const postButton = screen.getByLabelText('Post reply');
+    const postButton = screen.getByLabelText('Post');
     fireEvent.click(postButton);
 
     await waitFor(() => {
@@ -289,7 +290,7 @@ describe('PostInput', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" onSuccess={mockOnSuccess} />);
 
     // Bottom bar is always shown, so post button should be visible
-    const postButton = screen.getByLabelText('Post reply');
+    const postButton = screen.getByLabelText('Post');
     fireEvent.click(postButton);
 
     await waitFor(() => {
@@ -308,7 +309,7 @@ describe('PostInput', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
     // Check that post button is disabled when content is empty
-    const postButton = screen.getByLabelText('Post reply');
+    const postButton = screen.getByLabelText('Post');
     expect(postButton).toBeDisabled();
   });
 

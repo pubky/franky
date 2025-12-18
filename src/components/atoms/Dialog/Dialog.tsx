@@ -60,6 +60,7 @@ function DialogContent({
       <DialogOverlay />
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <DialogPrimitive.Content
+          data-cy="dialog-content"
           data-slot="dialog-content"
           data-testid="dialog-content"
           className={Libs.cn(

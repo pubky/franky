@@ -1,33 +1,43 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
-import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
+import * as Organisms from '@/organisms';
+import type { PostContentOrganismProps } from './PostContent.types';
 
-export interface PostContentOrganismProps {
-  postId: string;
-  className?: string;
-}
-
+/**
+ * PostContent - Renders post content with repost preview support.
+ *
+ * **Rendering logic:**
+ * - **Regular post**: Renders PostContentBase (text, embeds, attachments)
+ * - **Repost with content (quote)**: Renders PostContentBase (quote text) + PostPreviewCard (original post)
+ * - **Repost without content (plain repost)**: Renders PostContentBase (empty wrapper, may have attachments) + PostPreviewCard (original post)
+ *
+ * PostContentBase is always rendered as it's a structural wrapper that maintains layout
+ * and handles attachments even when there's no text content.
+ */
 export function PostContent({ postId, className }: PostContentOrganismProps) {
-  // Fetch post details for content
-  const postDetails = useLiveQuery(async () => {
-    return await Core.PostController.getDetails({ compositeId: postId });
-  }, [postId]);
+  // Get repost information
+  const { isRepost, originalPostId } = Hooks.useRepostInfo(postId);
 
-  if (!postDetails) {
-    // TODO: Add skeleton loading component for PostContent
-    return <div className="text-muted-foreground">Loading content...</div>;
-  }
+  // Get post details to check if repost has content (for spacing between quote and preview).
+  // Note: Reposts can be plain reposts (no content) or quote reposts (with content).
+  const { postDetails } = Hooks.usePostDetails(postId);
+  const hasContent = (postDetails?.content?.trim().length ?? 0) > 0;
+
+  // Determine if we should render the repost preview
+  const shouldRenderRepostPreview = isRepost && !!originalPostId;
 
   return (
-    <Atoms.Container className={Libs.cn('gap-3', className)}>
-      <Molecules.PostText content={postDetails.content} />
-      <Molecules.PostLinkEmbeds content={postDetails.content} />
-      <Organisms.PostAttachments attachments={postDetails.attachments} />
-    </Atoms.Container>
+    <>
+      {/* Always render PostContentBase - it's a structural wrapper for content elements */}
+      <Organisms.PostContentBase postId={postId} className={className} />
+
+      {/* Show original post preview for reposts */}
+      {shouldRenderRepostPreview && (
+        <Molecules.PostPreviewCard postId={originalPostId} className={Libs.cn('bg-muted', hasContent && 'mt-4')} />
+      )}
+    </>
   );
 }

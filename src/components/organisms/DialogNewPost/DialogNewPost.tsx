@@ -28,6 +28,7 @@ export function DialogNewPost({ open, onOpenChangeAction }: DialogNewPostProps) 
           </Atoms.DialogHeader>
           <Atoms.Container className="gap-3">
             <Organisms.PostInput
+              dataCy="new-post-input"
               key={resetKey}
               variant={POST_INPUT_VARIANT.POST}
               onSuccess={() => onOpenChangeAction(false)}

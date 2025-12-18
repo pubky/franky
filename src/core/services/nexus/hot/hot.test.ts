@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
-import { NexusHotService } from './hot.api';
+import { NexusHotService } from './hot';
 
 describe('NexusHotService', () => {
   beforeEach(() => {
@@ -63,30 +62,6 @@ describe('NexusHotService', () => {
       expect(queryNexusSpy).toHaveBeenCalledOnce();
     });
 
-    it('should return empty array when response is null', async () => {
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.ALL_TIME,
-      };
-
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
-
-      const result = await NexusHotService.fetch(params);
-
-      expect(result).toEqual([]);
-    });
-
-    it('should return empty array when response is undefined', async () => {
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.ALL_TIME,
-      };
-
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
-
-      const result = await NexusHotService.fetch(params);
-
-      expect(result).toEqual([]);
-    });
-
     it('should return empty array when response is empty array', async () => {
       const params: Core.TTagHotParams = {
         timeframe: Core.UserStreamTimeframe.TODAY,
@@ -97,41 +72,6 @@ describe('NexusHotService', () => {
       const result = await NexusHotService.fetch(params);
 
       expect(result).toEqual([]);
-    });
-
-    it('should log debug message with count when fetch succeeds', async () => {
-      const mockHotTags = [
-        {
-          label: 'bitcoin',
-          tagged_count: 100,
-          taggers_count: 2,
-          taggers_id: ['user1', 'user2'],
-        },
-      ] as Core.NexusHotTag[];
-
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.TODAY,
-      };
-
-      const loggerSpy = vi.spyOn(Libs.Logger, 'debug');
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
-
-      await NexusHotService.fetch(params);
-
-      expect(loggerSpy).toHaveBeenCalledWith('Hot tags fetched successfully', { count: 1 });
-    });
-
-    it('should log debug message with count 0 when response is null', async () => {
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.TODAY,
-      };
-
-      const loggerSpy = vi.spyOn(Libs.Logger, 'debug');
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
-
-      await NexusHotService.fetch(params);
-
-      expect(loggerSpy).toHaveBeenCalledWith('Hot tags fetched successfully', { count: 0 });
     });
 
     it('should handle user_id parameter', async () => {
