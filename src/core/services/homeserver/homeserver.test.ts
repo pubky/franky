@@ -611,12 +611,15 @@ describe('HomeserverService', () => {
         expect(jsonData).toEqual({ data: 'public' });
       });
 
-      it('should propagate errors from publicStorage.get', async () => {
+      it('should wrap errors from publicStorage.get as AppError', async () => {
         const testUrl = 'pubky://user/pub/data.json';
         const networkError = new Error('Network request failed');
         mockState.publicStorageGet.mockRejectedValue(networkError);
 
-        await expect(HomeserverService.get(testUrl)).rejects.toThrow('Network request failed');
+        await expect(HomeserverService.get(testUrl)).rejects.toMatchObject({
+          type: Libs.HomeserverErrorType.FETCH_FAILED,
+          statusCode: 500,
+        });
       });
     });
   });
