@@ -12,6 +12,7 @@ import {
 } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
+import { parseResponseOrThrow } from '@/core/services/nexus/nexus.utils';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
@@ -63,6 +64,7 @@ type CancelableAuthApproval = {
   cancel: () => void;
 };
 
+// Pubky rc7: awaitApproval consumes the WASM handle, so we use tryPollOnce to keep flow.free() usable.
 const createCancelableAuthApproval = (
   flow: AuthFlow,
   options?: { pollIntervalMs?: number },
@@ -236,18 +238,13 @@ export class HomeserverService {
   }
 
   private static async parseResponseOrUndefined<T>(response: Response): Promise<T | undefined> {
-    if (response.status === 204) return undefined;
-
-    const contentLength = response.headers.get('content-length');
-    if (contentLength === '0') return undefined;
-
-    const text = await response.text();
-    if (!text || text.trim() === '') return undefined;
-
     try {
-      return JSON.parse(text) as T;
-    } catch {
-      return undefined;
+      return await parseResponseOrThrow<T>(response);
+    } catch (error) {
+      if (error instanceof Libs.AppError && error.type === Libs.NexusErrorType.INVALID_RESPONSE) {
+        return undefined;
+      }
+      throw error;
     }
   }
 

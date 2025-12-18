@@ -5,18 +5,16 @@ export class AuthController {
   private constructor() {} // Prevent instantiation
 
   private static restoreSessionPromise: Promise<boolean> | null = null;
-  private static activeCancelAuthFlow: (() => void) | null = null;
-  private static authUrlRequestId = 0;
+  private static activeAuthFlow: { token: symbol; cancel: (() => void) | null } | null = null;
 
   private static freeActiveAuthFlow() {
-    const cancel = this.activeCancelAuthFlow;
-    this.activeCancelAuthFlow = null;
+    const cancel = this.activeAuthFlow?.cancel;
+    this.activeAuthFlow = null;
     if (!cancel) return;
     cancel();
   }
 
   static cancelActiveAuthFlow() {
-    this.authUrlRequestId += 1;
     this.freeActiveAuthFlow();
   }
 
@@ -159,11 +157,12 @@ export class AuthController {
    */
   static async getAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
     await Core.clearDatabase();
-    const requestId = ++this.authUrlRequestId;
+    const token = Symbol('auth-flow');
     this.freeActiveAuthFlow();
+    this.activeAuthFlow = { token, cancel: null };
     const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthApplication.generateAuthUrl();
 
-    if (requestId !== this.authUrlRequestId) {
+    if (!this.activeAuthFlow || this.activeAuthFlow.token !== token) {
       // Stale request (e.g. React StrictMode overlap): cancel immediately so we don't keep polling forever.
       cancelAuthFlow();
       return {
@@ -173,13 +172,13 @@ export class AuthController {
       };
     }
 
-    this.activeCancelAuthFlow = cancelAuthFlow;
+    this.activeAuthFlow.cancel = cancelAuthFlow;
 
     // Ensure the polling flow is always dropped once the promise resolves/rejects,
     // even if the caller forgets to free it.
     const wrappedAwaitApproval = awaitApproval.finally(() => {
-      if (this.activeCancelAuthFlow === cancelAuthFlow) {
-        this.activeCancelAuthFlow = null;
+      if (this.activeAuthFlow?.token === token) {
+        this.activeAuthFlow = null;
       }
       cancelAuthFlow();
     });
