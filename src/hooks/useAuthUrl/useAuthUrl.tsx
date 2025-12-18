@@ -9,91 +9,31 @@ import * as Molecules from '@/molecules';
 
 import type { UseAuthUrlOptions, UseAuthUrlReturn } from './useAuthUrl.types';
 
-const MAX_RETRY_ATTEMPTS = 3;
-
 /**
  * Manages the authentication URL lifecycle for Pubky Ring authorization.
- *
- * Handles:
- * - Auth URL generation with automatic retries and exponential backoff
- * - Request deduplication to prevent race conditions
- * - Component mounting guards to prevent state updates after unmount
- * - Async approval promise handling and session initialization
- * - Error handling with user-facing toast notifications
- *
- * @example
- * ```tsx
- * const { url, isLoading, fetchUrl } = useAuthUrl();
- *
- * return (
- *   <div>
- *     {isLoading ? (
- *       <Spinner />
- *     ) : (
- *       <QRCodeSVG value={url} />
- *     )}
- *     <button onClick={fetchUrl}>Refresh</button>
- *   </div>
- * );
- * ```
  */
 export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
   const { autoFetch = true } = options;
 
   const [url, setUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Ref to track if component is still mounted (prevents state updates after unmount)
+  const [isLoading, setIsLoading] = useState(autoFetch);
   const isMountedRef = useRef(true);
 
-  // Ref to track the latest request (prevents race conditions with stale requests)
-  const activeRequestRef = useRef<symbol | null>(null);
-
-  // Ref to track if URL generation is in progress (including retries)
-  const isGeneratingRef = useRef(false);
-
-  // Ref to track retry attempts
-  const retryCountRef = useRef(0);
-
-  /**
-   * Fetches the authorization URL from the auth controller.
-   * Implements retry logic with exponential backoff.
-   * Handles the approval promise for session initialization.
-   */
-  const fetchUrl = useCallback(async (options?: { viaRetry?: boolean }): Promise<void> => {
-    // Create unique request identifier for deduplication
-    const requestId = Symbol('fetchUrl');
-    activeRequestRef.current = requestId;
-    isGeneratingRef.current = true;
-
-    // Only reset UI state on initial call (not on retries)
-    if (!options?.viaRetry) {
-      setIsLoading(true);
-      setUrl('');
-    }
-
-    let willRetry = false;
+  const fetchUrl = useCallback(async (): Promise<void> => {
+    setIsLoading(true);
+    setUrl('');
 
     try {
-      // Request auth URL from controller
       const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
-      const isStale = activeRequestRef.current !== requestId || !isMountedRef.current;
 
-      // Attach handlers to approval promise to avoid unhandled rejections
-      // even if component unmounts. This ensures proper cleanup.
       awaitApproval
         .then(async (session: Session) => {
-          // Ignore if unmounted or superseded by newer request
-          if (activeRequestRef.current !== requestId || !isMountedRef.current) {
-            return;
-          }
-
+          if (!isMountedRef.current) return;
           try {
             await Core.AuthController.initializeAuthenticatedSession({ session });
           } catch (error) {
             Libs.Logger.error('Failed to persist session and check profile:', error);
             if (!isMountedRef.current) return;
-
             Molecules.toast({
               title: 'Sign in failed. Please try again.',
               description: 'Unable to complete authorization with Pubky Ring. Please try again.',
@@ -101,7 +41,6 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           }
         })
         .catch((error: unknown) => {
-          // Authorization rejected or transport failure
           if (
             typeof error === 'object' &&
             error !== null &&
@@ -112,7 +51,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           }
 
           Libs.Logger.error('Authorization promise rejected:', error);
-          if (!isMountedRef.current || activeRequestRef.current !== requestId) return;
+          if (!isMountedRef.current) return;
 
           Molecules.toast({
             title: 'Authorization was not completed',
@@ -120,96 +59,39 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           });
         });
 
-      if (isStale) {
-        return;
-      }
-
-      if (!authorizationUrl) {
-        isGeneratingRef.current = false;
-        if (isMountedRef.current) setIsLoading(false);
-        return;
-      }
-
-      // Guard against late responses from previous calls
-      if (activeRequestRef.current !== requestId || !isMountedRef.current) {
-        return;
-      }
-
-      // Success: reset retry count and set URL
-      retryCountRef.current = 0;
-      setUrl(authorizationUrl);
+      if (!isMountedRef.current) return;
+      setUrl(authorizationUrl ?? '');
     } catch (error) {
-      // Increment retry count and attempt retry if under limit
-      retryCountRef.current += 1;
-      const attempts = retryCountRef.current;
-
-      Libs.Logger.error(`Failed to generate auth URL (attempt ${attempts} of ${MAX_RETRY_ATTEMPTS}):`, error);
-
-      if (attempts < MAX_RETRY_ATTEMPTS) {
-        // Only retry if this request is still the latest one and the component is mounted.
-        // Prevents stale retries from older requests and retries continuing after unmount.
-        if (!isMountedRef.current || activeRequestRef.current !== requestId) {
-          return;
-        }
-
-        willRetry = true;
-        // Bounded exponential backoff: 250ms, 500ms, capped at 1000ms
-        const delayMs = Math.min(1000, 250 * attempts);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
-
-        if (!isMountedRef.current || activeRequestRef.current !== requestId) {
-          return;
-        }
-        await fetchUrl({ viaRetry: true });
-      } else if (isMountedRef.current) {
-        // Max retries reached, show error to user
-        Molecules.toast({
-          title: 'QR code generation failed',
-          description: 'Unable to generate sign-in QR code. Please refresh and try again.',
-        });
-      }
+      Libs.Logger.error('Failed to generate auth URL:', error);
+      if (!isMountedRef.current) return;
+      Molecules.toast({
+        title: 'QR code generation failed',
+        description: 'Unable to generate sign-in QR code. Please refresh and try again.',
+      });
     } finally {
-      // Only clear loading state if not immediately retrying and this is the latest request
-      if (!willRetry && activeRequestRef.current === requestId) {
-        isGeneratingRef.current = false;
-        if (isMountedRef.current) {
-          setIsLoading(false);
-        }
+      if (isMountedRef.current) {
+        setIsLoading(false);
       }
     }
   }, []);
 
-  // Always cleanup on unmount (even when autoFetch is disabled).
   useEffect(() => {
     isMountedRef.current = true;
 
     return () => {
-      // Cleanup: mark component as unmounted and clear refs
       Core.AuthController.cancelActiveAuthFlow();
       isMountedRef.current = false;
-      activeRequestRef.current = null;
-      isGeneratingRef.current = false;
     };
   }, []);
 
-  // Auto-fetch on mount if enabled
   useEffect(() => {
     if (!autoFetch) return;
-    // In React dev StrictMode, effects mount/unmount twice. Deferring avoids starting
-    // auth-flow polling during the "test" mount, which would otherwise leave long-poll
-    // relay requests pending until they naturally complete.
-    const timeoutId = setTimeout(() => {
-      if (!isMountedRef.current) return;
-      void fetchUrl();
-    }, 0);
-    return () => clearTimeout(timeoutId);
+    void fetchUrl();
   }, [autoFetch, fetchUrl]);
 
   return {
     url,
     isLoading,
-    isGenerating: isGeneratingRef.current,
     fetchUrl,
-    retryCount: retryCountRef.current,
   };
 }
