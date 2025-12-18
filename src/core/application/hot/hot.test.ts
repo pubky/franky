@@ -6,6 +6,9 @@ import { HotApplication } from './hot';
 describe('HotApplication', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Mock user fetching to prevent actual network calls
+    vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([]);
+    vi.spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus').mockResolvedValue(undefined);
   });
 
   describe('getOrFetch', () => {
