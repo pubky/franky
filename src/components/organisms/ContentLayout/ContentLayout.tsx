@@ -7,19 +7,29 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 import * as Types from './ContentLayout.types';
 
 /**
  * Reusable sticky sidebar component for left and right sidebars
+ * Uses useStickyWhenFits to only apply sticky positioning when
+ * the sidebar content fits within the available viewport height.
  */
 function StickySidebar({ children }: Types.StickySidebarProps) {
+  const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
+    topOffset: Config.LAYOUT.HEADER_OFFSET_MAIN,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
+  });
+
   return (
     <Atoms.Container
+      ref={ref}
       overrideDefaults
       className={Libs.cn(
-        'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
-        'top-[147px]', // 144px + 3px for the header
+        'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'w-full max-w-(--filter-bar-width)',
+        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
+        shouldBeSticky !== false ? 'sticky top-(--header-offset-main)' : 'sticky top-(--sidebar-non-sticky-offset)',
       )}
     >
       {children}

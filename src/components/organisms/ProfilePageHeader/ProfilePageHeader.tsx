@@ -47,7 +47,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
           className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}
         >
           <Atoms.Typography data-cy="profile-username-header" as="h1" size="lg" className="text-white lg:text-6xl">
-            {name}
+            {Libs.truncateString(name, 20)}
           </Atoms.Typography>
           {bio && (
             <Atoms.Typography

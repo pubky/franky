@@ -26,11 +26,11 @@ import type { UseUnreadPostsOptions, UseUnreadPostsResult } from './useUnreadPos
 export function useUnreadPosts({ streamId }: UseUnreadPostsOptions): UseUnreadPostsResult {
   const unreadStream = useLiveQuery(async () => {
     if (!streamId) return null;
-    return await Core.UnreadPostStreamModel.findById(streamId);
+    return await Core.StreamPostsController.getUnreadStream({ streamId });
   }, [streamId]);
 
   return {
     unreadPostIds: unreadStream?.stream ?? [],
-    unreadCount: unreadStream?.stream.length ?? 0,
+    unreadCount: unreadStream?.stream?.length ?? 0,
   };
 }

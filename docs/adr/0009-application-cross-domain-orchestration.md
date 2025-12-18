@@ -56,7 +56,7 @@ class PostApplication {
     // Depth 0 → Depth 1
     await FileApplication.upload(files); // OK (PostApplication can call others)
     await PostApplication.create(post); // OK (same class)
-    await TagApplication.create(tags); // OK (PostApplication can call others)
+    await TagApplication.commitCreate(tags); // OK (PostApplication can call others)
   }
 }
 
@@ -72,7 +72,7 @@ class UserApplication {
 class FileApplication {
   static async upload(files) {
     // NOT ALLOWED: FileApplication cannot call other Application classes
-    await TagApplication.create(tags); // ❌ VIOLATION
+    await TagApplication.commitCreate(tags); // ❌ VIOLATION
     await PostApplication.validate(); // ❌ VIOLATION
     await UserApplication.getProfile(); // ❌ VIOLATION
   }
@@ -230,7 +230,7 @@ class PostApplication {
 const handlePostCreate = async () => {
   const fileUrls = await Promise.all(files.map((f) => FileController.upload({ file: f, pubky })));
   await PostController.create({ content, fileUrls });
-  await Promise.all(tags.map((tag) => TagController.create({ taggedId: postId, label: tag })));
+  await Promise.all(tags.map((tag) => TagController.commitCreate({ taggedId: postId, label: tag })));
 };
 ```
 

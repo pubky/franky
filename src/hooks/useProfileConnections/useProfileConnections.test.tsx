@@ -75,15 +75,15 @@ const mockUseLiveQuery = vi.fn(<T,>(queryFn: () => Promise<T> | T, deps: unknown
   if (deps && deps[0] && Array.isArray(deps[0])) {
     // Determine which map to return based on the query function
     const queryFnString = queryFn.toString();
-    if (queryFnString.includes('bulkGetDetails') || queryFnString.includes('UserController.bulkGetDetails')) {
+    if (queryFnString.includes('getManyDetails') || queryFnString.includes('UserController.getManyDetails')) {
       return mockUserDetailsMap as T;
     }
-    if (queryFnString.includes('bulkGetCounts') || queryFnString.includes('UserController.bulkGetCounts')) {
+    if (queryFnString.includes('getManyCounts') || queryFnString.includes('UserController.getManyCounts')) {
       return mockUserCountsMap as T;
     }
     if (
-      queryFnString.includes('bulkGetRelationships') ||
-      queryFnString.includes('UserController.bulkGetRelationships')
+      queryFnString.includes('getManyRelationships') ||
+      queryFnString.includes('UserController.getManyRelationships')
     ) {
       return mockUserRelationshipsMap as T;
     }
@@ -214,13 +214,39 @@ describe('useProfileConnections', () => {
       ]);
 
       mockUserCountsMap = new Map<Core.Pubky, Core.NexusUserCounts>([
-        ['user-1', { unique_tags: 10, posts: 5, tagged: 0 }],
-        ['user-2', { unique_tags: 20, posts: 10, tagged: 0 }],
+        [
+          'user-1',
+          {
+            tagged: 0,
+            tags: 10,
+            unique_tags: 10,
+            posts: 5,
+            replies: 0,
+            following: 0,
+            followers: 0,
+            friends: 0,
+            bookmarks: 0,
+          },
+        ],
+        [
+          'user-2',
+          {
+            tagged: 0,
+            tags: 20,
+            unique_tags: 20,
+            posts: 10,
+            replies: 0,
+            following: 0,
+            followers: 0,
+            friends: 0,
+            bookmarks: 0,
+          },
+        ],
       ]);
 
       mockUserRelationshipsMap = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>([
-        ['user-1', { following: false, followers: 0, following_count: 0 }],
-        ['user-2', { following: true, followers: 0, following_count: 0 }],
+        ['user-1', { id: 'user-1' as Core.Pubky, following: false, followed_by: false, muted: false }],
+        ['user-2', { id: 'user-2' as Core.Pubky, following: true, followed_by: false, muted: false }],
       ]);
 
       mockMocks.mockGetAvatarUrl.mockImplementation((id: Core.Pubky) => {

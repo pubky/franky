@@ -11,7 +11,10 @@ export class NotificationApplication {
    * @param params - Parameters containing user ID and last read timestamp
    * @returns Promise resolving to the number of unread notifications
    */
-  static async notifications({ userId, lastRead }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
+  static async fetchNotifications({
+    userId,
+    lastRead,
+  }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
     const notifications = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
     const flatNotifications = await this.fetchMissingEntities({ notifications, viewerId: userId });
     return await Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead });

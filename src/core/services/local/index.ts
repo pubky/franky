@@ -10,3 +10,4 @@ export * from './file';
 export * from './bookmark';
 export * from './feed';
 export * from './moderation';
+export * from './user';

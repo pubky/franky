@@ -52,3 +52,4 @@ export * from './usePostReplies';
 export * from './usePostCounts';
 export * from './useNestedReplies';
 export * from './useEntityTags';
+export * from './useStickyWhenFits';

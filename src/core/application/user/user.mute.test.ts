@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 import { UserApplication } from './user';
 
-describe('UserApplication.mute', () => {
+describe('UserApplication.commitMute', () => {
   const muter = 'pubky_muter' as Core.Pubky;
   const mutee = 'pubky_mutee' as Core.Pubky;
   const muteUrl = 'pubky://muter/pub/pubky.app/mutes/mutee';
@@ -29,7 +29,7 @@ describe('UserApplication.mute', () => {
     it(`should ${action} when no relationship exists`, async () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await UserApplication.mute({
+      await UserApplication.commitMute({
         eventType: homeserverAction,
         muteUrl,
         muteJson,
@@ -55,7 +55,7 @@ describe('UserApplication.mute', () => {
 
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await UserApplication.mute({
+      await UserApplication.commitMute({
         eventType: homeserverAction,
         muteUrl,
         muteJson,
@@ -81,7 +81,7 @@ describe('UserApplication.mute', () => {
       const updateSpy = vi.spyOn(Core.UserRelationshipsModel, 'update');
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await UserApplication.mute({
+      await UserApplication.commitMute({
         eventType: homeserverAction,
         muteUrl,
         muteJson,
@@ -101,7 +101,7 @@ describe('UserApplication.mute', () => {
       const createSpy = vi.spyOn(Core.LocalMuteService, 'create');
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await UserApplication.mute({
+      await UserApplication.commitMute({
         eventType: Core.HomeserverAction.PUT,
         muteUrl,
         muteJson,
@@ -116,7 +116,7 @@ describe('UserApplication.mute', () => {
       const deleteSpy = vi.spyOn(Core.LocalMuteService, 'delete');
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await UserApplication.mute({
+      await UserApplication.commitMute({
         eventType: Core.HomeserverAction.DELETE,
         muteUrl,
         muteJson,
@@ -135,7 +135,7 @@ describe('UserApplication.mute', () => {
 
       try {
         await expect(
-          UserApplication.mute({
+          UserApplication.commitMute({
             eventType: Core.HomeserverAction.PUT,
             muteUrl,
             muteJson,
@@ -154,7 +154,7 @@ describe('UserApplication.mute', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
 
       await expect(
-        UserApplication.mute({
+        UserApplication.commitMute({
           eventType: Core.HomeserverAction.PUT,
           muteUrl,
           muteJson,
@@ -179,7 +179,7 @@ describe('UserApplication.mute', () => {
 
       try {
         await expect(
-          UserApplication.mute({
+          UserApplication.commitMute({
             eventType: Core.HomeserverAction.PUT,
             muteUrl,
             muteJson,
@@ -201,7 +201,7 @@ describe('UserApplication.mute', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
 
       await expect(
-        UserApplication.mute({
+        UserApplication.commitMute({
           eventType: Core.HomeserverAction.PUT,
           muteUrl,
           muteJson,
@@ -219,7 +219,7 @@ describe('UserApplication.mute', () => {
     it('should handle invalid event types gracefully', async () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await UserApplication.mute({
+      await UserApplication.commitMute({
         eventType: 'INVALID' as unknown as Core.HomeserverAction,
         muteUrl,
         muteJson,
@@ -233,7 +233,7 @@ describe('UserApplication.mute', () => {
     it('should handle undefined return values correctly', async () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      const result = await UserApplication.mute({
+      const result = await UserApplication.commitMute({
         eventType: Core.HomeserverAction.DELETE,
         muteUrl,
         muteJson,

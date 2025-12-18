@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import z from 'zod';
 
 export type UserControllerNewData = Omit<Core.NexusUserDetails, 'id' | 'indexed_at' | 'status'>;
 
@@ -14,4 +15,18 @@ export type TDeleteAccountInput = {
 export type TDownloadDataInput = {
   pubky: Core.Pubky;
   setProgress?: (progress: number) => void;
+};
+
+export type TCommitSetDetailsParams = {
+  profile: z.infer<typeof Core.UiUserSchema>;
+  image: string | null;
+  pubky: Core.Pubky;
+};
+
+export type TCommitUpdateDetailsParams = {
+  name: string;
+  bio: string | undefined;
+  links: Core.UiLink[] | undefined | null;
+  image: string | null;
+  pubky: Core.Pubky;
 };

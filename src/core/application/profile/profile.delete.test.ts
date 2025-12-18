@@ -17,7 +17,7 @@ vi.mock('@/core/services/homeserver', () => ({
 // Mock LocalProfileService
 vi.mock('@/core/services/local/profile', () => ({
   LocalProfileService: {
-    deleteAccount: vi.fn(),
+    deleteAll: vi.fn(),
   },
 }));
 
@@ -32,7 +32,7 @@ beforeEach(async () => {
   ({ ProfileApplication } = await import('./profile'));
 });
 
-describe('ProfileApplication.deleteAccount', () => {
+describe('ProfileApplication.commitDelete', () => {
   const pubky = 'test-pubky' as Pubky;
   const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
   const profileUrl = `${baseDirectory}profile.json`;
@@ -46,12 +46,12 @@ describe('ProfileApplication.deleteAccount', () => {
     ];
 
     const localDeleteSpy = vi
-      .spyOn(Core.LocalProfileService, 'deleteAccount')
+      .spyOn(Core.LocalProfileService, 'deleteAll')
       .mockResolvedValue(undefined as unknown as void);
     const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(fileList);
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
-    await ProfileApplication.deleteAccount({ pubky });
+    await ProfileApplication.commitDelete({ pubky });
 
     expect(localDeleteSpy).toHaveBeenCalledTimes(1);
     expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
@@ -66,12 +66,12 @@ describe('ProfileApplication.deleteAccount', () => {
   it('calls setProgress with correct percentages', async () => {
     const fileList = [`${baseDirectory}file1`, `${baseDirectory}file2`, `${baseDirectory}profile.json`];
 
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(fileList);
     vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
     const setProgress = vi.fn();
-    await ProfileApplication.deleteAccount({ pubky, setProgress });
+    await ProfileApplication.commitDelete({ pubky, setProgress });
 
     expect(setProgress).toHaveBeenNthCalledWith(1, 33);
     expect(setProgress).toHaveBeenNthCalledWith(2, 67);
@@ -81,11 +81,11 @@ describe('ProfileApplication.deleteAccount', () => {
   it('works without setProgress callback', async () => {
     const fileList = [`${baseDirectory}file1`, `${baseDirectory}profile.json`];
 
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(fileList);
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
-    await ProfileApplication.deleteAccount({ pubky });
+    await ProfileApplication.commitDelete({ pubky });
 
     expect(deleteSpy).toHaveBeenCalled();
   });
@@ -93,11 +93,11 @@ describe('ProfileApplication.deleteAccount', () => {
   it('handles empty file list and only deletes profile.json', async () => {
     const fileList = [`${baseDirectory}profile.json`];
 
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(fileList);
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
-    await ProfileApplication.deleteAccount({ pubky });
+    await ProfileApplication.commitDelete({ pubky });
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
     // homeserver.list does not yet support pagination. This ensures all files are deleted.
     expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
@@ -107,12 +107,12 @@ describe('ProfileApplication.deleteAccount', () => {
 
   it('propagates errors when local delete fails', async () => {
     const localDeleteSpy = vi
-      .spyOn(Core.LocalProfileService, 'deleteAccount')
+      .spyOn(Core.LocalProfileService, 'deleteAll')
       .mockRejectedValue(new Error('local delete failed'));
     const listSpy = vi.spyOn(Core.HomeserverService, 'list');
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete');
 
-    await expect(ProfileApplication.deleteAccount({ pubky })).rejects.toThrow('local delete failed');
+    await expect(ProfileApplication.commitDelete({ pubky })).rejects.toThrow('local delete failed');
 
     expect(localDeleteSpy).toHaveBeenCalledTimes(1);
     expect(listSpy).not.toHaveBeenCalled();
@@ -120,11 +120,11 @@ describe('ProfileApplication.deleteAccount', () => {
   });
 
   it('propagates errors when list fails', async () => {
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockRejectedValue(new Error('list failed'));
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete');
 
-    await expect(ProfileApplication.deleteAccount({ pubky })).rejects.toThrow('list failed');
+    await expect(ProfileApplication.commitDelete({ pubky })).rejects.toThrow('list failed');
 
     expect(listSpy).toHaveBeenCalledTimes(1);
     expect(deleteSpy).not.toHaveBeenCalled();
@@ -133,11 +133,11 @@ describe('ProfileApplication.deleteAccount', () => {
   it('propagates errors when delete fails', async () => {
     const fileList = [`${baseDirectory}file1`, `${baseDirectory}profile.json`];
 
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(fileList);
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete').mockRejectedValueOnce(new Error('delete failed'));
 
-    await expect(ProfileApplication.deleteAccount({ pubky })).rejects.toThrow('delete failed');
+    await expect(ProfileApplication.commitDelete({ pubky })).rejects.toThrow('delete failed');
 
     expect(deleteSpy).toHaveBeenCalledTimes(1);
   });
@@ -150,11 +150,11 @@ describe('ProfileApplication.deleteAccount', () => {
       `${baseDirectory}profile.json`,
     ];
 
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(fileList);
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
-    await ProfileApplication.deleteAccount({ pubky });
+    await ProfileApplication.commitDelete({ pubky });
 
     expect(deleteSpy).toHaveBeenNthCalledWith(1, `${baseDirectory}zzz`);
     expect(deleteSpy).toHaveBeenNthCalledWith(2, `${baseDirectory}mmm`);
@@ -169,11 +169,11 @@ describe('ProfileApplication.deleteAccount', () => {
       `${baseDirectory}profile.json`,
     ];
 
-    vi.spyOn(Core.LocalProfileService, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalProfileService, 'deleteAll').mockResolvedValue(undefined as unknown as void);
     const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(largeFileList);
     vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
-    await ProfileApplication.deleteAccount({ pubky });
+    await ProfileApplication.commitDelete({ pubky });
 
     // Verify that list was called with Infinity to get all files
     expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
