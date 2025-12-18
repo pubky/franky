@@ -21,8 +21,9 @@ export class NexusFileService {
       return [];
     }
 
+    // TODO: Handle the error in application layer
     const { url, body } = filesApi.getFiles(fileUris);
-    const files = (await Core.queryNexus<Core.NexusFileDetails[]>(url, 'POST', JSON.stringify(body))) ?? [];
+    const files = await Core.queryNexus<Core.NexusFileDetails[]>(url, 'POST', JSON.stringify(body));
 
     Libs.Logger.debug('Files fetched successfully from Nexus', { count: files.length });
     return files;
