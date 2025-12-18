@@ -1,4 +1,4 @@
-import type { AuthFlow, Session } from '@synonymdev/pubky';
+import type { Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 
@@ -18,7 +18,7 @@ export type THomeserverSessionResult = {
 export type TGenerateAuthUrlResult = {
   authorizationUrl: string;
   awaitApproval: Promise<Session>;
-  authFlow: AuthFlow;
+  cancelAuthFlow: () => void;
 };
 
 export enum HomeserverAction {
