@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import { PostInputActionBar } from '../PostInputActionBar';
+import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar/PostInputActionBar.constants';
 import { PostInputTags } from '../PostInputTags';
 import type { PostInputExpandableSectionProps } from './PostInputExpandableSection.types';
 
@@ -22,6 +23,9 @@ export function PostInputExpandableSection({
 }: PostInputExpandableSectionProps) {
   const hasContent = content.trim().length > 0;
   const isUiDisabled = isSubmitting || isDisabled;
+  const isReplyMode = submitMode === POST_INPUT_ACTION_SUBMIT_MODE.REPLY;
+  const postButtonLabel = isReplyMode ? 'Reply' : 'Post';
+  const postButtonAriaLabel = isReplyMode ? 'Post reply' : 'Create post';
 
   return (
     <>
@@ -57,7 +61,8 @@ export function PostInputExpandableSection({
                 onEmojiClick={() => setShowEmojiPicker(true)}
                 isPostDisabled={!hasContent || isUiDisabled}
                 isSubmitting={isSubmitting}
-                submitMode={submitMode}
+                postButtonLabel={postButtonLabel}
+                postButtonAriaLabel={postButtonAriaLabel}
               />
             </Atoms.Container>
           </Atoms.Container>

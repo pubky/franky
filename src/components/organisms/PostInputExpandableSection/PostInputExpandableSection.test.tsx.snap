@@ -30,7 +30,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when collapse
         />
         <div
           data-post-disabled="false"
-          data-submit-mode="post"
           data-submitting="false"
           data-testid="post-input-action-bar"
         >
@@ -81,7 +80,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when disabled
         />
         <div
           data-post-disabled="true"
-          data-submit-mode="post"
           data-submitting="false"
           data-testid="post-input-action-bar"
         >
@@ -133,7 +131,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when expanded
         />
         <div
           data-post-disabled="false"
-          data-submit-mode="post"
           data-submitting="false"
           data-testid="post-input-action-bar"
         >
@@ -217,7 +214,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when expanded
         </div>
         <div
           data-post-disabled="false"
-          data-submit-mode="post"
           data-submitting="false"
           data-testid="post-input-action-bar"
         >
@@ -268,7 +264,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when submitti
         />
         <div
           data-post-disabled="true"
-          data-submit-mode="post"
           data-submitting="true"
           data-testid="post-input-action-bar"
         >
@@ -320,7 +315,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot with REPLY su
         />
         <div
           data-post-disabled="false"
-          data-submit-mode="reply"
           data-submitting="false"
           data-testid="post-input-action-bar"
         >
@@ -371,7 +365,6 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot with emoji pi
         />
         <div
           data-post-disabled="false"
-          data-submit-mode="post"
           data-submitting="false"
           data-testid="post-input-action-bar"
         >
