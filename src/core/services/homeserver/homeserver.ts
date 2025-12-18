@@ -1,4 +1,5 @@
 import { PublicKey, Keypair, Capabilities, Signer, Address, resolvePubky, AuthFlowKind, Session } from '@synonymdev/pubky';
+import type { AuthFlow } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -257,7 +258,9 @@ export class HomeserverService {
 
       return {
         authorizationUrl: flow.authorizationUrl,
-        awaitApproval: flow.awaitApproval(),
+        // NOTE: do NOT call `flow.awaitApproval()` here. It consumes the WASM handle (`__destroy_into_raw()`),
+        // which makes later `flow.free()` a no-op, and causes relay polling to leak in dev (StrictMode remounts).
+        awaitApproval: this.awaitAuthApproval(flow),
         authFlow: flow,
       };
     } catch (error) {
@@ -269,6 +272,89 @@ export class HomeserverService {
         details: { capabilities, relay: Config.DEFAULT_HTTP_RELAY },
       });
     }
+  }
+
+  /**
+   * Poll for approval using `tryPollOnce()` so the AuthFlow remains free-able for cancellation/unmount.
+   */
+  private static awaitAuthApproval(flow: AuthFlow): Promise<Session> {
+    const pollIntervalMs = 2_000;
+
+    const createCanceledError = () => {
+      const error = new Error('Auth flow canceled');
+      error.name = 'AuthFlowCanceled';
+      return error;
+    };
+
+    const getStatusCode = (error: unknown): number | undefined => {
+      if (typeof error !== 'object' || error === null) return undefined;
+      if (!('data' in error)) return undefined;
+      const data = (error as { data?: unknown }).data;
+      if (typeof data !== 'object' || data === null) return undefined;
+      if (!('statusCode' in data)) return undefined;
+      const statusCode = (data as { statusCode?: unknown }).statusCode;
+      return typeof statusCode === 'number' ? statusCode : undefined;
+    };
+
+    const isRetryableRelayPollError = (error: unknown): boolean => {
+      if (typeof error === 'object' && error !== null && 'name' in error && (error as { name?: unknown }).name === 'RequestError') {
+        const statusCode = getStatusCode(error);
+        if (!statusCode) return true;
+        return [408, 429, 500, 502, 503, 504].includes(statusCode);
+      }
+
+      if (error instanceof Error) {
+        const message = error.message.toLowerCase();
+        if (message.includes('timed out') || message.includes('timeout')) return true;
+        if (message.includes('504') || message.includes('gateway')) return true;
+      }
+
+      return false;
+    };
+
+    let canceled = false;
+    const originalFree = flow.free.bind(flow);
+    const cancelAndFree = () => {
+      canceled = true;
+      try {
+        originalFree();
+      } catch {
+        // Ignore double-free or already-finalized WASM objects.
+      }
+    };
+
+    // Ensure external callers cancel the polling loop when freeing.
+    // eslint-disable-next-line no-param-reassign
+    (flow as unknown as { free: () => void }).free = cancelAndFree;
+
+    const promise = (async () => {
+      // Let the caller store references / attach handlers before the first relay poll begins.
+      // In dev (React StrictMode), components can mount/unmount quickly; starting an unabortable long-poll
+      // before the cleanup runs can leave lingering relay requests for minutes.
+      await Libs.sleep(0);
+
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        if (canceled) throw createCanceledError();
+        try {
+          const maybeSession = await flow.tryPollOnce();
+          if (maybeSession) return maybeSession;
+          if (canceled) throw createCanceledError();
+        } catch (error) {
+          if (canceled) throw createCanceledError();
+          if (isRetryableRelayPollError(error)) {
+            await Libs.sleep(pollIntervalMs);
+            continue;
+          }
+          throw error;
+        }
+        await Libs.sleep(pollIntervalMs);
+      }
+    })();
+
+    return promise.finally(() => {
+      cancelAndFree();
+    });
   }
 
   /**
