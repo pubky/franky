@@ -58,13 +58,13 @@ vi.mock('@/atoms', async () => {
 });
 
 vi.mock('@/organisms', () => ({
-  PostHeader: vi.fn(({ postId, isReplyInput, characterCount, maxLength }) => (
+  PostHeader: vi.fn(({ postId, isReplyInput, characterLimit }) => (
     <div
       data-testid="post-header"
       data-post-id={postId}
       data-is-reply={isReplyInput}
-      data-count={characterCount}
-      data-max={maxLength}
+      data-count={characterLimit?.count}
+      data-max={characterLimit?.max}
     />
   )),
 }));

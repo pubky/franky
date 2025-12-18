@@ -7,55 +7,50 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
   data-testid="container"
 >
   <div
-    class="flex min-w-0 flex-1 gap-3"
-    data-override-defaults="true"
-    data-testid="container"
+    aria-controls="radix-_r_0_"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    class="flex min-w-0 gap-3"
+    data-as-child="true"
+    data-slot="popover-trigger"
+    data-state="closed"
+    data-testid="popover-trigger"
+    type="button"
   >
     <div
-      data-size="default"
-      data-testid="avatar"
-    >
-      <img
-        alt="Snapshot User"
-        data-testid="avatar-image"
-        src="https://example.com/avatar/snapshotUserKey.png"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-    <div
-      class="min-w-0 flex-1"
-      data-override-defaults="true"
+      class="flex min-w-0 gap-3"
       data-testid="container"
     >
-      <p
-        class="block truncate text-base font-bold text-foreground"
-        data-testid="typography"
-      >
-        Snapshot User
-      </p>
+      <span
+        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
+      />
       <div
-        class="flex min-w-0 items-center gap-2"
-        data-override-defaults="true"
+        class="min-w-0 flex-1"
         data-testid="container"
       >
-        <span
-          class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
-          data-as="span"
+        <p
+          class="inline-block truncate text-base leading-none font-bold text-foreground hover:underline hover:decoration-white"
           data-testid="typography"
         >
-          @
-          snapshot
-        </span>
+          Snapshot User
+        </p>
+        <div
+          class="flex min-w-0 items-center gap-2"
+          data-testid="container"
+        >
+          <p
+            class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+            data-testid="typography"
+          >
+            @
+            snapshot
+          </p>
+        </div>
       </div>
     </div>
   </div>
   <div
     class="flex flex-shrink-0 items-center gap-1"
-    data-override-defaults="true"
     data-testid="container"
   >
     <svg
@@ -64,7 +59,6 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
     />
     <span
       class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-      data-as="span"
       data-testid="typography"
     >
       2h

@@ -57,8 +57,8 @@ export function PostInput({
           <Organisms.PostHeader
             postId={currentUserPubky}
             isReplyInput={true}
-            characterCount={content.length}
-            maxLength={POST_MAX_CHARACTER_LENGTH}
+            characterLimit={{ count: content.length, max: POST_MAX_CHARACTER_LENGTH }}
+            showPopover={false}
           />
         )}
 

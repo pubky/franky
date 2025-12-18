@@ -66,12 +66,12 @@ vi.mock('@/hooks', async (importOriginal) => {
 // Mock organisms
 vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(
-    ({ postId, characterCount, maxLength }: { postId: string; characterCount?: number; maxLength?: number }) => (
+    ({ postId, characterLimit }: { postId: string; characterLimit?: { count: number; max: number } }) => (
       <div
         data-testid="post-header"
         data-post-id={postId}
-        data-character-count={characterCount}
-        data-max-length={maxLength}
+        data-character-count={characterLimit?.count}
+        data-max-length={characterLimit?.max}
       >
         PostHeader
       </div>

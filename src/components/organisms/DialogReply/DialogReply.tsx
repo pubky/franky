@@ -17,7 +17,7 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
           {/* Post being replied to */}
           <Atoms.Card className="rounded-md py-0">
             <Atoms.CardContent className="flex flex-col gap-4 p-6">
-              <Organisms.PostHeader postId={postId} />
+              <Organisms.PostHeader postId={postId} showPopover={false} />
               <Organisms.PostContent postId={postId} />
             </Atoms.CardContent>
           </Atoms.Card>
