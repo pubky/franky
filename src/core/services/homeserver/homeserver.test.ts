@@ -156,7 +156,8 @@ describe('HomeserverService', () => {
     mockState.sessionStorageDelete.mockResolvedValue(undefined);
     mockState.startAuthFlow.mockReturnValue({
       authorizationUrl: 'https://auth.example.com/authorize',
-      awaitApproval: vi.fn().mockResolvedValue(createMockSession()),
+      tryPollOnce: vi.fn().mockResolvedValue(createMockSession()),
+      free: vi.fn(),
     });
     mockState.authFlowKindSignin.mockReturnValue('signin-kind');
 

@@ -42,6 +42,10 @@ describe('useAuthUrl', () => {
     vi.clearAllMocks();
   });
 
+  const createMockAuthFlow = (): Pick<AuthFlow, 'free'> => ({
+    free: vi.fn(),
+  });
+
   describe('Initial fetch on mount', () => {
     it('should fetch auth URL automatically on mount', async () => {
       const mockAuthUrl = 'pubkyring://authorize?token=test123';
@@ -50,6 +54,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
+        authFlow: createMockAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -86,6 +91,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
+        authFlow: createMockAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -101,6 +107,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: '',
         awaitApproval: new Promise<Session>(() => {}),
+        authFlow: createMockAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -125,6 +132,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
+        authFlow: createMockAuthFlow(),
       });
 
       renderHook(() => useAuthUrl());
@@ -154,6 +162,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
+        authFlow: createMockAuthFlow(),
       });
 
       renderHook(() => useAuthUrl());
@@ -173,6 +182,34 @@ describe('useAuthUrl', () => {
       });
     });
 
+    it('should not show toast when approval rejects due to cancellation', async () => {
+      const mockAuthUrl = 'pubkyring://authorize?token=canceled-test';
+
+      let rejectApproval: (error: Error) => void;
+      const mockAwaitApproval = new Promise<Session>((_, reject) => {
+        rejectApproval = reject;
+      });
+
+      mockGetAuthUrl.mockResolvedValue({
+        authorizationUrl: mockAuthUrl,
+        awaitApproval: mockAwaitApproval,
+        authFlow: createMockAuthFlow(),
+      });
+
+      renderHook(() => useAuthUrl());
+
+      await waitFor(() => {
+        expect(mockGetAuthUrl).toHaveBeenCalled();
+      });
+
+      const canceledError = new Error('Auth flow canceled');
+      canceledError.name = 'AuthFlowCanceled';
+      rejectApproval!(canceledError);
+
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      expect(mockToast).not.toHaveBeenCalled();
+    });
+
     it('should show toast when initializeAuthenticatedSession fails', async () => {
       const mockAuthUrl = 'pubkyring://authorize?token=init-failure';
       const mockSession = { token: 'test-token' } as Session;
@@ -185,6 +222,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
+        authFlow: createMockAuthFlow(),
       });
 
       mockInitializeAuthenticatedSession.mockRejectedValue(new Error('Failed to initialize session'));
@@ -216,6 +254,7 @@ describe('useAuthUrl', () => {
         .mockResolvedValueOnce({
           authorizationUrl: 'pubkyring://authorize?token=retry-success',
           awaitApproval: new Promise<Session>(() => {}),
+          authFlow: createMockAuthFlow(),
         });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -276,6 +315,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: 'pubkyring://authorize?token=manual',
         awaitApproval: new Promise<Session>(() => {}),
+        authFlow: createMockAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl({ autoFetch: false }));

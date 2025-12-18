@@ -155,8 +155,17 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
         })
         .catch((error: unknown) => {
           // Authorization rejected or transport failure
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'name' in error &&
+            (error as { name?: unknown }).name === 'AuthFlowCanceled'
+          ) {
+            return;
+          }
+
           Libs.Logger.error('Authorization promise rejected:', error);
-          if (!isMountedRef.current) return;
+          if (!isMountedRef.current || activeRequestRef.current !== requestId) return;
 
           Molecules.toast({
             title: 'Authorization was not completed',

@@ -454,9 +454,11 @@ describe('AuthController', () => {
     });
 
     it('should generate auth URL successfully', async () => {
+      const mockAuthFlow = { free: vi.fn() } as any;
       const mockAuthUrl = {
         authorizationUrl: 'https://example.com/auth?token=abc123',
         awaitApproval: Promise.resolve({} as unknown as import('@synonymdev/pubky').Session),
+        authFlow: mockAuthFlow,
       };
       const generateAuthUrlSpy = vi.spyOn(Core.AuthApplication, 'generateAuthUrl').mockResolvedValue(mockAuthUrl);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
@@ -464,7 +466,9 @@ describe('AuthController', () => {
       const result = await AuthController.getAuthUrl();
 
       expect(clearDatabaseSpy).toHaveBeenCalled();
-      expect(result).toEqual(mockAuthUrl);
+      expect(result.authorizationUrl).toEqual(mockAuthUrl.authorizationUrl);
+      expect(result.awaitApproval).toBeInstanceOf(Promise);
+      expect(result.authFlow).toBe(mockAuthFlow);
       expect(generateAuthUrlSpy).toHaveBeenCalled();
     });
 
@@ -478,11 +482,69 @@ describe('AuthController', () => {
       expect(clearDatabaseSpy).toHaveBeenCalled();
       expect(generateAuthUrlSpy).toHaveBeenCalled();
     });
+
+    it('should free stale auth flows when multiple requests overlap (StrictMode)', async () => {
+      vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+
+      const authFlowFreeA = vi.fn();
+      const authFlowFreeB = vi.fn();
+
+      let resolveFirst: (value: any) => void;
+      const first = new Promise((resolve) => {
+        resolveFirst = resolve;
+      });
+
+      vi.spyOn(Core.AuthApplication, 'generateAuthUrl')
+        .mockImplementationOnce(() => first as any)
+        .mockResolvedValueOnce({
+          authorizationUrl: 'https://example.com/auth?token=B',
+          awaitApproval: new Promise(() => {}),
+          authFlow: { free: authFlowFreeB } as any,
+        });
+
+      const firstCall = AuthController.getAuthUrl();
+      const secondCall = AuthController.getAuthUrl();
+
+      // Resolve the first call after the second call already started.
+      resolveFirst!({
+        authorizationUrl: 'https://example.com/auth?token=A',
+        awaitApproval: new Promise(() => {}),
+        authFlow: { free: authFlowFreeA } as any,
+      });
+
+      await secondCall;
+      await firstCall;
+
+      expect(authFlowFreeA).toHaveBeenCalled();
+      expect(authFlowFreeB).not.toHaveBeenCalled();
+    });
   });
 
   describe('initializeAuthenticatedSession', () => {
     beforeEach(() => {
       setupNotificationMocks();
+    });
+
+    it('should stop any active auth flow polling when a session is initialized', async () => {
+      const authFlowFree = vi.fn();
+      vi.spyOn(Core.AuthApplication, 'generateAuthUrl').mockResolvedValue({
+        authorizationUrl: 'https://example.com/auth?token=abc123',
+        awaitApproval: new Promise(() => {}),
+        authFlow: { free: authFlowFree } as any,
+      });
+      vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+
+      await AuthController.getAuthUrl();
+
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+      vi.spyOn(Libs.Identity, 'pubkyFromSession').mockReturnValue(TEST_PUBKY as Core.Pubky);
+      vi.spyOn(Core.AuthApplication, 'userIsSignedUp').mockResolvedValue(false);
+      const authStore = storeMocks.getAuthState();
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+
+      await AuthController.initializeAuthenticatedSession({ session: mockSession });
+
+      expect(authFlowFree).toHaveBeenCalled();
     });
 
     it('should initialize session and bootstrap if user is signed up', async () => {
