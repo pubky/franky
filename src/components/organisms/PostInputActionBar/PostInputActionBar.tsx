@@ -14,7 +14,7 @@ export function PostInputActionBar({
   isPostDisabled = false,
   isSubmitting = false,
   postButtonLabel = 'Post',
-  postButtonAriaLabel = 'Post reply',
+  postButtonAriaLabel = 'Post',
   postButtonIcon,
   hideArticle = false,
 }: PostInputActionBarProps) {
