@@ -113,8 +113,8 @@ vi.mock('../PostInputActionBar', () => ({
     </div>
   ),
   POST_INPUT_ACTION_SUBMIT_MODE: {
-    POST: 'POST',
-    REPLY: 'REPLY',
+    POST: 'post',
+    REPLY: 'reply',
   },
 }));
 

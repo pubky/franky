@@ -6,6 +6,12 @@ export interface PostInputExpandableSectionProps {
   tags: string[];
   isSubmitting: boolean;
   isDisabled?: boolean;
+  /**
+   * Whether the post button should be disabled.
+   * When not provided, defaults to requiring content.
+   * For reposts, this can be false even with empty content.
+   */
+  isPostDisabled?: boolean;
   submitMode: PostInputActionSubmitMode;
   setTags: React.Dispatch<React.SetStateAction<string[]>>;
   onSubmit: () => void | Promise<void>;

@@ -13,6 +13,7 @@ export function PostInputExpandableSection({
   tags,
   isSubmitting,
   isDisabled = false,
+  isPostDisabled: isPostDisabledProp,
   submitMode,
   setTags,
   onSubmit,
@@ -23,6 +24,8 @@ export function PostInputExpandableSection({
 }: PostInputExpandableSectionProps) {
   const hasContent = content.trim().length > 0;
   const isUiDisabled = isSubmitting || isDisabled;
+  // Use provided isPostDisabled or default to requiring content
+  const isPostDisabled = isPostDisabledProp ?? (!hasContent || isUiDisabled);
   const isReplyMode = submitMode === POST_INPUT_ACTION_SUBMIT_MODE.REPLY;
   const postButtonLabel = isReplyMode ? 'Reply' : 'Post';
   const postButtonAriaLabel = isReplyMode ? 'Post reply' : 'Create post';
@@ -59,7 +62,7 @@ export function PostInputExpandableSection({
               <PostInputActionBar
                 onPostClick={onSubmit}
                 onEmojiClick={() => setShowEmojiPicker(true)}
-                isPostDisabled={!hasContent || isUiDisabled}
+                isPostDisabled={isPostDisabled}
                 isSubmitting={isSubmitting}
                 postButtonLabel={postButtonLabel}
                 postButtonAriaLabel={postButtonAriaLabel}
