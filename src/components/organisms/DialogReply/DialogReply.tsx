@@ -21,6 +21,7 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
           {/* Reply input */}
           <Atoms.Container className="relative pl-6" overrideDefaults>
             <Organisms.PostInput
+              dataCy="reply-post-input"
               variant={POST_INPUT_VARIANT.REPLY}
               postId={postId}
               onSuccess={() => {

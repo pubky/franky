@@ -16,6 +16,7 @@ type PostTextProps = {
 export const PostText = ({ content }: PostTextProps) => {
   return (
     <Atoms.Container
+      data-cy="post-text"
       overrideDefaults
       className="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
     >

@@ -162,6 +162,7 @@ describe('DialogReply', () => {
 
     expect(Organisms.PostInput).toHaveBeenCalledWith(
       {
+        dataCy: 'reply-post-input',
         variant: POST_INPUT_VARIANT.REPLY,
         postId: 'test-post-123',
         onSuccess: expect.any(Function),

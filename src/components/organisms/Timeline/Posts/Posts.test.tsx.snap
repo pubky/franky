@@ -38,6 +38,7 @@ exports[`TimelinePosts - Snapshots > should match snapshot with posts 1`] = `
   >
     <div
       class="space-y-4"
+      data-cy="timeline-posts"
       data-testid="container"
     >
       <div

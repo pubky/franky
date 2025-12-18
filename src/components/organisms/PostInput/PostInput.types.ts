@@ -23,6 +23,8 @@ interface PostInputBaseProps {
   hideArticle?: boolean;
   /** Callback when content or tags change, receives content and tags */
   onContentChange?: (content: string, tags: string[]) => void;
+  /** Data Cy for the post input */
+  dataCy?: string;
 }
 
 export type PostInputProps =
