@@ -47,7 +47,9 @@ export * from './PostContentBase';
 export * from './PostHeader';
 export * from './PostInput';
 export * from './PostInputActionBar';
+export * from './PostInputExpandableSection';
 export * from './PostInputTags';
+export * from './QuickReply';
 export * from './PrivacySettings';
 export * from './ProfilePageSidebar';
 export * from './CoordinatorsManager';
@@ -56,6 +58,7 @@ export * from './PostMentions';
 export * from './PublicKeyCard';
 // SinglePost page components
 export * from './SinglePostCard';
+export * from './SinglePostContent';
 export * from './SinglePostParticipants';
 export * from './PostTagsPanel';
 export * from './RightSidebar';

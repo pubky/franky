@@ -160,6 +160,11 @@ describe('PostInputActionBar', () => {
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
   });
+
+  it('renders reply labeling when postButtonAriaLabel is Reply', () => {
+    render(<PostInputActionBar postButtonLabel="Reply" postButtonAriaLabel="Reply" />);
+    expect(screen.getByRole('button', { name: 'Reply' })).toBeInTheDocument();
+  });
 });
 
 describe('PostInputActionBar - Snapshots', () => {
