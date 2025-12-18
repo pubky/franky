@@ -37,18 +37,10 @@ export function ProfilePageSidebar() {
   const isTaggedPage = pathname?.endsWith('/tagged');
 
   // Only apply sticky when content fits in viewport
-  const { ref, shouldBeSticky, nonStickyOffset } = Hooks.useStickyWhenFits({
+  const { ref, stickyTop } = Hooks.useStickyWhenFits({
     topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
     bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
-
-  // Determine the sticky top value
-  const stickyTop =
-    shouldBeSticky !== false
-      ? Config.LAYOUT.HEADER_HEIGHT_PROFILE
-      : nonStickyOffset !== undefined
-        ? nonStickyOffset
-        : Config.LAYOUT.HEADER_HEIGHT_PROFILE; // Fallback during SSR
 
   return (
     <Atoms.Container

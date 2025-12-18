@@ -46,6 +46,14 @@ interface UseStickyWhenFitsResult {
    * Only valid when shouldBeSticky is false.
    */
   nonStickyOffset: number | undefined;
+  /**
+   * Pre-calculated sticky top value in pixels.
+   * - When `shouldBeSticky` is `true` or `undefined` (SSR): returns `topOffset`
+   * - When `shouldBeSticky` is `false`: returns `nonStickyOffset` if available, otherwise `topOffset`
+   *
+   * This eliminates the need for consumers to calculate this value themselves.
+   */
+  stickyTop: number;
 }
 
 /**
@@ -77,9 +85,7 @@ interface UseStickyWhenFitsResult {
  * @example
  * ```tsx
  * function Sidebar({ children }) {
- *   const { ref, shouldBeSticky, nonStickyOffset } = useStickyWhenFits({ topOffset: 100 });
- *
- *   const stickyTop = shouldBeSticky !== false ? 100 : (nonStickyOffset ?? 100);
+ *   const { ref, stickyTop } = useStickyWhenFits({ topOffset: 100 });
  *
  *   return (
  *     <div
@@ -156,10 +162,14 @@ export function useStickyWhenFits(options: UseStickyWhenFitsOptions = {}): UseSt
     };
   }, [checkIfFits, debounceMs]);
 
+  // Calculate stickyTop: use topOffset when sticky or SSR, otherwise use nonStickyOffset
+  const stickyTop = shouldBeSticky !== false ? topOffset : (nonStickyOffset ?? topOffset);
+
   return {
     ref,
     shouldBeSticky,
     isReady: shouldBeSticky !== undefined,
     nonStickyOffset,
+    stickyTop,
   };
 }
