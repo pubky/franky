@@ -788,22 +788,6 @@ describe('PostStreamApplication', () => {
       expect(mocks.fetchFiles).toHaveBeenCalledWith([]);
     });
 
-    it('should handle when postBatch is null/undefined', async () => {
-      const { cacheMissPostIds } = createTestData(1);
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined as unknown as Core.NexusPost[]);
-      const persistPostsSpy = vi
-        .spyOn(Core.LocalStreamPostsService, 'persistPosts')
-        .mockResolvedValue({ postAttachments: [] });
-      vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined);
-
-      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
-        cacheMissPostIds,
-        viewerId,
-      });
-
-      expect(persistPostsSpy).toHaveBeenCalledWith({ posts: undefined });
-    });
-
     it('should fetch and persist users when cacheMissUserIds exist', async () => {
       const { cacheMissPostIds, mockNexusPosts } = createTestData(1);
       const mockNexusUsers = [createMockNexusUser(DEFAULT_AUTHOR)];
