@@ -1,10 +1,24 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import type { AuthFlow } from '@synonymdev/pubky';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
   private static restoreSessionPromise: Promise<boolean> | null = null;
+  private static activeAuthFlow: AuthFlow | null = null;
+  private static authUrlRequestId = 0;
+
+  private static freeActiveAuthFlow() {
+    const flow = this.activeAuthFlow;
+    this.activeAuthFlow = null;
+    if (!flow) return;
+    try {
+      flow.free();
+    } catch {
+      // Ignore double-free or already-finalized WASM objects.
+    }
+  }
 
   static async restoreSessionIfAvailable(): Promise<boolean> {
     const authStore = Core.useAuthStore.getState();
@@ -80,6 +94,7 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
+    this.freeActiveAuthFlow();
     Core.HomeserverService.setSession(session);
     const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
@@ -144,7 +159,45 @@ export class AuthController {
    */
   static async getAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
     await Core.clearDatabase();
-    return await Core.AuthApplication.generateAuthUrl();
+    const requestId = ++this.authUrlRequestId;
+    this.freeActiveAuthFlow();
+    const { authorizationUrl, awaitApproval, authFlow } = await Core.AuthApplication.generateAuthUrl();
+
+    if (requestId !== this.authUrlRequestId) {
+      try {
+        authFlow.free();
+      } catch {
+        // Ignore double-free or already-finalized WASM objects.
+      }
+      return {
+        authorizationUrl,
+        awaitApproval: awaitApproval.finally(() => {
+          try {
+            authFlow.free();
+          } catch {
+            // Ignore double-free or already-finalized WASM objects.
+          }
+        }),
+        authFlow,
+      };
+    }
+
+    this.activeAuthFlow = authFlow;
+
+    // Ensure the polling flow is always dropped once the promise resolves/rejects,
+    // even if the caller forgets to free it.
+    const wrappedAwaitApproval = awaitApproval.finally(() => {
+      if (this.activeAuthFlow === authFlow) {
+        this.activeAuthFlow = null;
+      }
+      try {
+        authFlow.free();
+      } catch {
+        // Ignore double-free or already-finalized WASM objects.
+      }
+    });
+
+    return { authorizationUrl, awaitApproval: wrappedAwaitApproval, authFlow };
   }
 
   /**
@@ -162,6 +215,7 @@ export class AuthController {
     onboardingStore.reset();
     authStore.reset();
     Core.HomeserverService.setSession(null);
+    this.freeActiveAuthFlow();
     Libs.clearCookies();
     await Core.clearDatabase();
   }
