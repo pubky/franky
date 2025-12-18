@@ -7,7 +7,6 @@ export class AuthController {
   private static restoreSessionPromise: Promise<boolean> | null = null;
   private static activeCancelAuthFlow: (() => void) | null = null;
   private static authUrlRequestId = 0;
-  private static lastRestoreAttemptExport: string | null = null;
 
   private static freeActiveAuthFlow() {
     const cancel = this.activeCancelAuthFlow;
@@ -17,6 +16,7 @@ export class AuthController {
   }
 
   static cancelActiveAuthFlow() {
+    this.authUrlRequestId += 1;
     this.freeActiveAuthFlow();
   }
 
@@ -57,24 +57,6 @@ export class AuthController {
   }
 
   /**
-   * Best-effort session restore on app start (e.g. RouteGuardProvider mount).
-   * Dedupes repeated attempts for the same `sessionExport` to avoid loops.
-   */
-  static async maybeRestoreSessionOnHydration(params: {
-    hasHydrated: boolean;
-    session: unknown;
-    sessionExport: string | null;
-  }): Promise<void> {
-    if (!params.hasHydrated) return;
-    if (params.session) return;
-    if (!params.sessionExport) return;
-    if (this.lastRestoreAttemptExport === params.sessionExport) return;
-
-    this.lastRestoreAttemptExport = params.sessionExport;
-    await this.restoreSessionIfAvailable();
-  }
-
-  /**
    * Gets a homeserver service instance using the secret key from the onboarding store.
    * @param params - The authentication parameters
    * @param params.keypair - The cryptographic keypair for the user
@@ -112,7 +94,7 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
-    this.freeActiveAuthFlow();
+    this.cancelActiveAuthFlow();
     Core.HomeserverService.setSession(session);
     const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
@@ -220,7 +202,7 @@ export class AuthController {
     onboardingStore.reset();
     authStore.reset();
     Core.HomeserverService.setSession(null);
-    this.freeActiveAuthFlow();
+    this.cancelActiveAuthFlow();
     Libs.clearCookies();
     await Core.clearDatabase();
   }

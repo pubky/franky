@@ -38,7 +38,10 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
 
   // Attempt to restore an existing session snapshot on fresh loads.
   useEffect(() => {
-    void Core.AuthController.maybeRestoreSessionOnHydration({ hasHydrated, session, sessionExport });
+    if (!hasHydrated) return;
+    if (session) return;
+    if (!sessionExport) return;
+    void Core.AuthController.restoreSessionIfAvailable();
   }, [hasHydrated, session, sessionExport]);
 
   // Determine if the current route is accessible based on authentication status

@@ -1,4 +1,5 @@
 import {
+  Pubky,
   PublicKey,
   Keypair,
   Capabilities,
@@ -7,22 +8,114 @@ import {
   resolvePubky,
   AuthFlowKind,
   Session,
+  type AuthFlow,
 } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
-import { createCancelableAuthApproval } from './authFlowApproval';
-import { PubkySdk } from './pubkySdk';
-import { mapHomeserverError, type HomeserverErrorContext } from './homeserverErrors';
-
+const TESTNET = Config.TESTNET.toString() === 'true';
 const CAPABILITIES = '/pub/pubky.app/:rw';
+const AUTH_FLOW_CANCELED_ERROR_NAME = 'AuthFlowCanceled';
+
+type RetryableStatusCode = 408 | 429 | 500 | 502 | 503 | 504;
+
+const getStatusCode = (error: unknown): number | undefined => {
+  if (typeof error !== 'object' || error === null) return undefined;
+  if (!('data' in error)) return undefined;
+  const data = (error as { data?: unknown }).data;
+  if (typeof data !== 'object' || data === null) return undefined;
+  if (!('statusCode' in data)) return undefined;
+  const statusCode = (data as { statusCode?: unknown }).statusCode;
+  return typeof statusCode === 'number' ? statusCode : undefined;
+};
+
+const isRetryableRelayPollError = (error: unknown): boolean => {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'name' in error &&
+    (error as { name?: unknown }).name === 'RequestError'
+  ) {
+    const statusCode = getStatusCode(error);
+    if (!statusCode) return true;
+    return ([408, 429, 500, 502, 503, 504] as RetryableStatusCode[]).includes(statusCode as RetryableStatusCode);
+  }
+
+  if (error instanceof Error) {
+    const message = error.message.toLowerCase();
+    if (message.includes('timed out') || message.includes('timeout')) return true;
+    if (message.includes('504') || message.includes('gateway')) return true;
+  }
+
+  return false;
+};
+
+const createCanceledError = (): Error => {
+  const error = new Error('Auth flow canceled');
+  error.name = AUTH_FLOW_CANCELED_ERROR_NAME;
+  return error;
+};
+
+type CancelableAuthApproval = {
+  awaitApproval: Promise<Session>;
+  cancel: () => void;
+};
+
+const createCancelableAuthApproval = (
+  flow: AuthFlow,
+  options?: { pollIntervalMs?: number },
+): CancelableAuthApproval => {
+  const pollIntervalMs = options?.pollIntervalMs ?? 2_000;
+
+  let canceled = false;
+  let freed = false;
+
+  const cancel = () => {
+    canceled = true;
+    if (freed) return;
+    freed = true;
+    try {
+      flow.free();
+    } catch {
+      // Ignore double-free or already-finalized WASM objects.
+    }
+  };
+
+  const awaitApproval = (async () => {
+    await Libs.sleep(0);
+
+    for (;;) {
+      if (canceled) throw createCanceledError();
+
+      try {
+        const maybeSession = await flow.tryPollOnce();
+        if (maybeSession) return maybeSession;
+      } catch (error) {
+        if (canceled) throw createCanceledError();
+        if (isRetryableRelayPollError(error)) {
+          await Libs.sleep(pollIntervalMs);
+          continue;
+        }
+        throw error;
+      }
+
+      await Libs.sleep(pollIntervalMs);
+    }
+  })();
+
+  return {
+    awaitApproval: awaitApproval.finally(() => cancel()),
+    cancel,
+  };
+};
 
 export class HomeserverService {
   private constructor() {}
 
   private static currentSession: Session | null = null;
+  private static pubkySdk: Pubky | null = null;
 
   /**
    * Sets the authenticated Session used for session-scoped storage IO.
@@ -35,12 +128,19 @@ export class HomeserverService {
   /**
    * Gets the Pubky SDK singleton.
    */
-  private static getPubkySdk() {
-    return PubkySdk.get();
+  private static getPubkySdk(): Pubky {
+    if (!this.pubkySdk) {
+      this.pubkySdk = TESTNET ? Pubky.testnet() : new Pubky();
+    }
+    return this.pubkySdk;
   }
 
   private static getSession() {
     return this.currentSession;
+  }
+
+  private static isHttpUrl(url: string): boolean {
+    return url.startsWith('http://') || url.startsWith('https://');
   }
 
   private static toPathname(url: string): string | null {
@@ -57,7 +157,7 @@ export class HomeserverService {
       return idx === -1 ? null : url.slice(idx);
     }
 
-    if (url.startsWith('http://') || url.startsWith('https://')) {
+    if (this.isHttpUrl(url)) {
       try {
         return new URL(url).pathname || null;
       } catch {
@@ -81,7 +181,7 @@ export class HomeserverService {
       return (idx === -1 ? rest : rest.slice(0, idx)) || null;
     }
 
-    if (url.startsWith('http://') || url.startsWith('https://')) {
+    if (this.isHttpUrl(url)) {
       try {
         const { hostname } = new URL(url);
         return hostname.startsWith('_pubky.') ? hostname.slice('_pubky.'.length) || null : null;
@@ -110,24 +210,45 @@ export class HomeserverService {
     return { session, path };
   }
 
-  private static parseJsonOrUndefined<T>(text: string): T | undefined {
-    if (!text) return undefined;
+  private static extractStatusCode(error: unknown): number | undefined {
+    if (typeof error !== 'object' || error === null) return undefined;
+
+    if ('statusCode' in error && typeof (error as { statusCode?: unknown }).statusCode === 'number') {
+      return (error as { statusCode: number }).statusCode;
+    }
+
+    if (!('data' in error)) return undefined;
+    const data = (error as { data?: unknown }).data;
+    if (typeof data !== 'object' || data === null) return undefined;
+    if (!('statusCode' in data)) return undefined;
+    const statusCode = (data as { statusCode?: unknown }).statusCode;
+    return typeof statusCode === 'number' ? statusCode : undefined;
+  }
+
+  private static isPubkyErrorLike(error: unknown): error is { name: string; message: string; data?: unknown } {
+    if (typeof error !== 'object' || error === null) return false;
+    return (
+      'name' in error &&
+      typeof (error as { name?: unknown }).name === 'string' &&
+      'message' in error &&
+      typeof (error as { message?: unknown }).message === 'string'
+    );
+  }
+
+  private static async parseResponseOrUndefined<T>(response: Response): Promise<T | undefined> {
+    if (response.status === 204) return undefined;
+
+    const contentLength = response.headers.get('content-length');
+    if (contentLength === '0') return undefined;
+
+    const text = await response.text();
+    if (!text || text.trim() === '') return undefined;
+
     try {
       return JSON.parse(text) as T;
     } catch {
       return undefined;
     }
-  }
-
-  private static throwRequestMappedError(error: unknown, url: string, method: Core.HomeserverAction): never {
-    this.throwMappedError(error, {
-      operation: 'request',
-      message: 'Failed to fetch data',
-      defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-      defaultStatusCode: 500,
-      url,
-      method,
-    });
   }
 
   private static async assertOk(
@@ -145,21 +266,12 @@ export class HomeserverService {
     });
   }
 
-  private static async getOwnedResponse(
-    session: Session,
-    path: `/pub/${string}`,
-    url: string,
-    operation: HomeserverErrorContext['operation'],
-  ): Promise<Response> {
+  private static async getOwnedResponse(session: Session, path: `/pub/${string}`, url: string): Promise<Response> {
     const response = await (async () => {
       try {
         return await session.storage.get(path);
       } catch (error) {
-        return this.throwMappedError(error, {
-          operation,
-          message: 'Failed to fetch data',
-          defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-          defaultStatusCode: 500,
+        return this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
           url,
           method: Core.HomeserverAction.GET,
         });
@@ -180,8 +292,91 @@ export class HomeserverService {
     return pubkySdk.signer(keypair);
   }
 
-  private static throwMappedError(error: unknown, ctx: HomeserverErrorContext): never {
-    throw mapHomeserverError(error, ctx);
+  /**
+   * Handles errors from the homeserver
+   * @param error - The error to handle
+   * @param homeserverErrorType - The type of error
+   * @param message - The message to use
+   * @param statusCode - The status code to use
+   * @param additionalContext - Additional context to add to the error
+   * @param alwaysUseHomeserverError - Whether to always use the homeserver error
+   * @returns Never
+   */
+  private static handleError(
+    error: unknown,
+    homeserverErrorType: Libs.HomeserverErrorType,
+    message: string,
+    statusCode: number,
+    additionalContext: Record<string, unknown> = {},
+    alwaysUseHomeserverError = false,
+  ): never {
+    if (error instanceof Libs.AppError) {
+      throw error;
+    }
+
+    const resolvedStatusCode = this.extractStatusCode(error) ?? statusCode;
+
+    if (this.isPubkyErrorLike(error)) {
+      if (error.name === 'InvalidInput') {
+        throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, error.message, 400, {
+          originalError: error.message,
+          ...additionalContext,
+        });
+      }
+
+      if (error.name === 'AuthenticationError' || resolvedStatusCode === 401) {
+        throw Libs.createHomeserverError(
+          Libs.HomeserverErrorType.SESSION_EXPIRED,
+          error.message || 'Session expired',
+          401,
+          {
+            originalError: error.message,
+            ...additionalContext,
+          },
+        );
+      }
+
+      throw Libs.createHomeserverError(homeserverErrorType, message, resolvedStatusCode, {
+        originalError: error.message,
+        ...additionalContext,
+      });
+    }
+
+    if (error instanceof Error) {
+      if (resolvedStatusCode === 401) {
+        throw Libs.createHomeserverError(
+          Libs.HomeserverErrorType.SESSION_EXPIRED,
+          error.message || 'Session expired',
+          401,
+          {
+            originalError: error.message,
+            ...additionalContext,
+          },
+        );
+      }
+
+      throw Libs.createHomeserverError(homeserverErrorType, message, resolvedStatusCode, {
+        originalError: error.message,
+        ...additionalContext,
+      });
+    }
+
+    if (alwaysUseHomeserverError) {
+      throw Libs.createHomeserverError(homeserverErrorType, message, resolvedStatusCode, {
+        originalError: String(error),
+        ...additionalContext,
+      });
+    }
+
+    throw Libs.createCommonError(
+      Libs.CommonErrorType.NETWORK_ERROR,
+      `An unexpected error occurred during ${message.toLowerCase()}`,
+      resolvedStatusCode,
+      {
+        error,
+        ...additionalContext,
+      },
+    );
   }
 
   /**
@@ -205,12 +400,8 @@ export class HomeserverService {
       Libs.Logger.debug('Homeserver successful', { homeserver });
       return homeserver;
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'checkHomeserver',
-        message: 'Failed to get homeserver. Try again.',
-        defaultType: Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-        defaultStatusCode: 401,
-        details: { publicKey: publicKey?.z32?.() },
+      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get homeserver. Try again.', 401, {
+        publicKey: publicKey?.z32?.(),
       });
     }
   }
@@ -250,13 +441,14 @@ export class HomeserverService {
 
       return { session };
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'signup',
-        message: 'Signup failed',
-        defaultType: Libs.HomeserverErrorType.SIGNUP_FAILED,
-        defaultStatusCode: 500,
-        details: { signupTokenProvided: Boolean(signupToken) },
-      });
+      this.handleError(
+        error,
+        Libs.HomeserverErrorType.SIGNUP_FAILED,
+        'Signup failed',
+        500,
+        { signupTokenProvided: Boolean(signupToken) },
+        true,
+      );
     }
   }
 
@@ -281,13 +473,13 @@ export class HomeserverService {
         // Return undefined to signal caller should retry signin after republish
         return undefined;
       } catch {
-        this.throwMappedError(error, {
-          operation: 'signin',
-          message: 'Not authenticated. Please sign up first.',
-          defaultType: Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          defaultStatusCode: 401,
-          details: { pubky: Libs.Identity.pubkyFromKeypair(keypair) },
-        });
+        this.handleError(
+          error,
+          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+          'Not authenticated. Please sign up first.',
+          401,
+          { pubky: Libs.Identity.pubkyFromKeypair(keypair) },
+        );
       }
     }
   }
@@ -311,12 +503,9 @@ export class HomeserverService {
         cancelAuthFlow: approval.cancel,
       };
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'generateAuthUrl',
-        message: 'Failed to generate auth URL',
-        defaultType: Libs.HomeserverErrorType.AUTH_REQUEST_FAILED,
-        defaultStatusCode: 500,
-        details: { capabilities, relay: Config.DEFAULT_HTTP_RELAY },
+      this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
+        capabilities,
+        relay: Config.DEFAULT_HTTP_RELAY,
       });
     }
   }
@@ -330,13 +519,7 @@ export class HomeserverService {
     try {
       await session.signout();
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'logout',
-        message: 'Failed to logout',
-        defaultType: Libs.HomeserverErrorType.LOGOUT_FAILED,
-        defaultStatusCode: 500,
-        details: { url: 'signout' },
-      });
+      this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500, { url: 'signout' });
     }
   }
 
@@ -356,11 +539,7 @@ export class HomeserverService {
 
       return response;
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'request',
-        message: 'Failed to fetch data',
-        defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-        defaultStatusCode: 500,
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
         url,
         method: options?.method,
       });
@@ -384,9 +563,8 @@ export class HomeserverService {
       const { session, path } = owned;
 
       if (method === Core.HomeserverAction.GET) {
-        const response = await this.getOwnedResponse(session, path, url, 'request');
-        const text = await response.text();
-        return this.parseJsonOrUndefined<T>(text) as T;
+        const response = await this.getOwnedResponse(session, path, url);
+        return (await this.parseResponseOrUndefined<T>(response)) as T;
       }
 
       if (method === Core.HomeserverAction.PUT) {
@@ -394,7 +572,10 @@ export class HomeserverService {
           await session.storage.putJson(path, bodyJson ?? {});
           return undefined as T;
         } catch (error) {
-          this.throwRequestMappedError(error, url, method);
+          this.handleError(error, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT data', 500, {
+            url,
+            method,
+          });
         }
       }
 
@@ -403,12 +584,15 @@ export class HomeserverService {
           await session.storage.delete(path);
           return undefined as T;
         } catch (error) {
-          this.throwRequestMappedError(error, url, method);
+          this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to delete data', 500, {
+            url,
+            method,
+          });
         }
       }
     }
 
-    if (method !== Core.HomeserverAction.GET && !url.startsWith('http://') && !url.startsWith('https://')) {
+    if (method !== Core.HomeserverAction.GET && !this.isHttpUrl(url)) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
         'Authenticated writes must target an owned /pub/* path for the current session.',
@@ -421,13 +605,16 @@ export class HomeserverService {
     const response = await (async () => {
       try {
         if (method === Core.HomeserverAction.GET) {
-          return url.startsWith('http://') || url.startsWith('https://')
+          return this.isHttpUrl(url)
             ? await pubkySdk.client.fetch(url)
             : await pubkySdk.publicStorage.get(url as Address);
         }
         return await this.fetch(url, { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined });
       } catch (error) {
-        return this.throwRequestMappedError(error, url, method);
+        return this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
+          url,
+          method,
+        });
       }
     })();
 
@@ -435,8 +622,7 @@ export class HomeserverService {
 
     if (method !== Core.HomeserverAction.GET) return undefined as T;
 
-    const text = await response.text();
-    return this.parseJsonOrUndefined<T>(text) as T;
+    return (await this.parseResponseOrUndefined<T>(response)) as T;
   }
 
   /**
@@ -455,18 +641,14 @@ export class HomeserverService {
         await owned.session.storage.putBytes(owned.path, blob);
         return;
       } catch (error) {
-        this.throwMappedError(error, {
-          operation: 'putBlob',
-          message: 'Failed to PUT blob data',
-          defaultType: Libs.HomeserverErrorType.PUT_FAILED,
-          defaultStatusCode: 500,
+        this.handleError(error, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', 500, {
           url,
           method: Core.HomeserverAction.PUT,
         });
       }
     }
 
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    if (!this.isHttpUrl(url)) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
         'Blob uploads must target an owned /pub/* path for the current session.',
@@ -510,13 +692,9 @@ export class HomeserverService {
       Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
       return files;
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'list',
-        message: 'Failed to list files',
-        defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-        defaultStatusCode: 500,
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to list files', 500, {
         url: baseDirectory,
-        details: { baseDirectory },
+        baseDirectory,
       });
     }
   }
@@ -541,22 +719,18 @@ export class HomeserverService {
   static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
     const pubkySdk = this.getPubkySdk();
     try {
-      if (url.startsWith('http://') || url.startsWith('https://')) {
+      if (this.isHttpUrl(url)) {
         return await pubkySdk.client.fetch(url);
       }
 
       const owned = this.resolveOwnedSessionPath(url);
       if (owned) {
-        return await this.getOwnedResponse(owned.session, owned.path, url, 'get');
+        return await this.getOwnedResponse(owned.session, owned.path, url);
       }
 
       return await pubkySdk.publicStorage.get(url as Address);
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'get',
-        message: 'Failed to fetch data',
-        defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-        defaultStatusCode: 500,
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
         url,
         method: Core.HomeserverAction.GET,
       });
@@ -571,12 +745,8 @@ export class HomeserverService {
       const pubkySdk = this.getPubkySdk();
       return await pubkySdk.restoreSession(sessionExport);
     } catch (error) {
-      this.throwMappedError(error, {
-        operation: 'restoreSession',
-        message: 'Failed to restore session',
-        defaultType: Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-        defaultStatusCode: 401,
-        details: { sessionExport: Boolean(sessionExport) },
+      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to restore session', 401, {
+        sessionExport: Boolean(sessionExport),
       });
     }
   }

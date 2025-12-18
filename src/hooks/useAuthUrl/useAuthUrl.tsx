@@ -43,8 +43,6 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  const currentSession = Core.useAuthStore((state) => state.session);
-
   // Ref to track if component is still mounted (prevents state updates after unmount)
   const isMountedRef = useRef(true);
 
@@ -56,14 +54,6 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
 
   // Ref to track retry attempts
   const retryCountRef = useRef(0);
-
-  // If the user becomes authenticated through another pathway (mnemonic, recovery file, etc.),
-  // stop any in-flight auth polling immediately.
-  useEffect(() => {
-    if (currentSession) {
-      Core.AuthController.cancelActiveAuthFlow();
-    }
-  }, [currentSession]);
 
   /**
    * Fetches the authorization URL from the auth controller.
@@ -86,23 +76,8 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
 
     try {
       // Request auth URL from controller
-      const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthController.getAuthUrl();
-      const cancelThisFlow = () => {
-        cancelAuthFlow();
-      };
-
-      // If this request is already stale/unmounted, free immediately.
-      if (activeRequestRef.current !== requestId || !isMountedRef.current) {
-        cancelThisFlow();
-        return;
-      }
-
-      if (!authorizationUrl) {
-        cancelThisFlow();
-        isGeneratingRef.current = false;
-        if (isMountedRef.current) setIsLoading(false);
-        return;
-      }
+      const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
+      const isStale = activeRequestRef.current !== requestId || !isMountedRef.current;
 
       // Attach handlers to approval promise to avoid unhandled rejections
       // even if component unmounts. This ensures proper cleanup.
@@ -143,10 +118,17 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
             title: 'Authorization was not completed',
             description: 'The signer did not complete authorization. Please try again.',
           });
-        })
-        .finally(() => {
-          cancelThisFlow();
         });
+
+      if (isStale) {
+        return;
+      }
+
+      if (!authorizationUrl) {
+        isGeneratingRef.current = false;
+        if (isMountedRef.current) setIsLoading(false);
+        return;
+      }
 
       // Guard against late responses from previous calls
       if (activeRequestRef.current !== requestId || !isMountedRef.current) {
