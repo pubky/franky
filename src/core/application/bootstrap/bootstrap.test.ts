@@ -107,6 +107,8 @@ type MockConfig = {
   persistFilesError?: Error;
   fetchMissingEntitiesError?: Error;
   persistNotificationsError?: Error;
+  settingsInitError?: Error;
+  remoteSettings?: Core.SettingsState | null;
 };
 
 type ServiceMocks = {
@@ -122,6 +124,7 @@ type ServiceMocks = {
   upsertTagsStream: unknown;
   fetchMissingEntities: unknown;
   persistNotifications: unknown;
+  initializeSettings: unknown;
 };
 
 const setupMocks = (config: MockConfig = {}): ServiceMocks => {
@@ -140,6 +143,8 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     persistFilesError,
     fetchMissingEntitiesError,
     persistNotificationsError,
+    settingsInitError,
+    remoteSettings = null,
   } = config;
 
   vi.clearAllMocks();
@@ -202,6 +207,11 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
         persistNotificationsError
           ? () => Promise.reject(persistNotificationsError)
           : () => Promise.resolve(unreadCount),
+      ),
+    initializeSettings: vi
+      .spyOn(Core.SettingsApplication, 'initializeSettings')
+      .mockImplementation(
+        settingsInitError ? () => Promise.reject(settingsInitError) : () => Promise.resolve(remoteSettings),
       ),
   };
 };
@@ -585,6 +595,83 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistFiles).toHaveBeenCalledWith(mockAttachments);
       // Verify result doesn't include filesUris
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
+    });
+  });
+
+  describe('settings initialization', () => {
+    it('should call initializeSettings during bootstrap', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mocks.initializeSettings).toHaveBeenCalledWith(TEST_PUBKY);
+    });
+
+    it('should load settings from homeserver when remote settings are newer', async () => {
+      const bootstrapData = emptyBootstrap();
+      const remoteSettings: Core.SettingsState = {
+        notifications: Core.defaultNotificationPreferences,
+        privacy: Core.defaultPrivacyPreferences,
+        muted: [],
+        language: 'fr',
+        updatedAt: Date.now(),
+        version: 2,
+      };
+
+      const mockLoadFromHomeserver = vi.fn();
+      vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
+        loadFromHomeserver: mockLoadFromHomeserver,
+      } as unknown as Core.SettingsStore);
+
+      const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
+      setupMocks({ bootstrapData, remoteSettings });
+
+      await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mockLoadFromHomeserver).toHaveBeenCalledWith(remoteSettings);
+      expect(loggerInfoSpy).toHaveBeenCalledWith('Settings loaded from homeserver', { pubky: TEST_PUBKY });
+    });
+
+    it('should not load settings when remote returns null', async () => {
+      const bootstrapData = emptyBootstrap();
+
+      const mockLoadFromHomeserver = vi.fn();
+      vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
+        loadFromHomeserver: mockLoadFromHomeserver,
+      } as unknown as Core.SettingsStore);
+
+      setupMocks({ bootstrapData, remoteSettings: null });
+
+      await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mockLoadFromHomeserver).not.toHaveBeenCalled();
+    });
+
+    it('should not fail bootstrap when settings initialization fails', async () => {
+      const bootstrapData = emptyBootstrap();
+      const settingsInitError = new Error('Settings sync failed');
+
+      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+      const mocks = setupMocks({ bootstrapData, settingsInitError });
+
+      // Bootstrap should still succeed
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to initialize settings during bootstrap', expect.any(Object));
+      expect(mocks.initializeSettings).toHaveBeenCalledWith(TEST_PUBKY);
+    });
+
+    it('should initialize settings in parallel with notifications', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Both should be called (they run in parallel via Promise.all)
+      expect(mocks.initializeSettings).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(mocks.persistNotifications).toHaveBeenCalled();
     });
   });
 });
