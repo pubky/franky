@@ -86,9 +86,7 @@ export function PostInput({
           setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
           // Reposts allow empty content, posts and replies require content
-          isPostDisabled={
-            variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting
-          }
+          isPostDisabled={variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting}
           submitMode={
             variant === POST_INPUT_VARIANT.REPLY
               ? POST_INPUT_ACTION_SUBMIT_MODE.REPLY
