@@ -1,13 +1,13 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useAuthUrl } from './useAuthUrl';
-import type { AuthFlow, Session } from '@synonymdev/pubky';
+import type { Session } from '@synonymdev/pubky';
 
 // Types
 interface MockAuthUrlResponse {
   authorizationUrl: string;
   awaitApproval: Promise<Session>;
-  authFlow: Pick<AuthFlow, 'free'>;
+  cancelAuthFlow: () => void;
 }
 
 // Mock dependencies
@@ -42,9 +42,7 @@ describe('useAuthUrl', () => {
     vi.clearAllMocks();
   });
 
-  const createMockAuthFlow = (): Pick<AuthFlow, 'free'> => ({
-    free: vi.fn(),
-  });
+  const createCancelAuthFlow = (): (() => void) => vi.fn();
 
   describe('Initial fetch on mount', () => {
     it('should fetch auth URL automatically on mount', async () => {
@@ -54,7 +52,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -91,7 +89,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -107,7 +105,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: '',
         awaitApproval: new Promise<Session>(() => {}),
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -132,7 +130,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       renderHook(() => useAuthUrl());
@@ -162,7 +160,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       renderHook(() => useAuthUrl());
@@ -193,7 +191,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       renderHook(() => useAuthUrl());
@@ -222,7 +220,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: mockAwaitApproval,
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       mockInitializeAuthenticatedSession.mockRejectedValue(new Error('Failed to initialize session'));
@@ -254,7 +252,7 @@ describe('useAuthUrl', () => {
         .mockResolvedValueOnce({
           authorizationUrl: 'pubkyring://authorize?token=retry-success',
           awaitApproval: new Promise<Session>(() => {}),
-          authFlow: createMockAuthFlow(),
+          cancelAuthFlow: createCancelAuthFlow(),
         });
 
       const { result } = renderHook(() => useAuthUrl());
@@ -308,6 +306,27 @@ describe('useAuthUrl', () => {
         { timeout: 3000 },
       );
     });
+
+    it('should not retry once the hook unmounts during backoff', async () => {
+      vi.useFakeTimers();
+      try {
+        mockGetAuthUrl.mockRejectedValue(new Error('Network error'));
+
+        const { result, unmount } = renderHook(() => useAuthUrl({ autoFetch: false }));
+
+        void result.current.fetchUrl();
+        await Promise.resolve();
+
+        expect(mockGetAuthUrl).toHaveBeenCalledTimes(1);
+
+        unmount();
+        await vi.runAllTimersAsync();
+
+        expect(mockGetAuthUrl).toHaveBeenCalledTimes(1);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
   });
 
   describe('Manual fetchUrl call', () => {
@@ -315,7 +334,7 @@ describe('useAuthUrl', () => {
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: 'pubkyring://authorize?token=manual',
         awaitApproval: new Promise<Session>(() => {}),
-        authFlow: createMockAuthFlow(),
+        cancelAuthFlow: createCancelAuthFlow(),
       });
 
       const { result } = renderHook(() => useAuthUrl({ autoFetch: false }));
@@ -333,14 +352,14 @@ describe('useAuthUrl', () => {
   });
 
   describe('Component unmount cleanup', () => {
-    it('should free authFlow on unmount when approval is pending', async () => {
+    it('should cancel auth flow on unmount when approval is pending', async () => {
       const mockAuthUrl = 'pubkyring://authorize?token=unmount-free';
-      const free = vi.fn();
+      const cancelAuthFlow = vi.fn();
 
       mockGetAuthUrl.mockResolvedValue({
         authorizationUrl: mockAuthUrl,
         awaitApproval: new Promise<Session>(() => {}),
-        authFlow: { free } as Pick<AuthFlow, 'free'>,
+        cancelAuthFlow,
       });
 
       const { result, unmount } = renderHook(() => useAuthUrl());
@@ -351,7 +370,7 @@ describe('useAuthUrl', () => {
 
       unmount();
 
-      expect(free).toHaveBeenCalledTimes(1);
+      expect(cancelAuthFlow).toHaveBeenCalledTimes(1);
     });
 
     it('should not update state after unmount', async () => {
@@ -376,7 +395,7 @@ describe('useAuthUrl', () => {
       resolveGetAuthUrl!({
         authorizationUrl: mockAuthUrl,
         awaitApproval: new Promise<Session>(() => {}),
-        authFlow: { free: vi.fn() } as Pick<AuthFlow, 'free'>,
+        cancelAuthFlow: vi.fn(),
       });
 
       // Wait a bit to ensure no state updates occur
@@ -425,6 +444,7 @@ describe('useAuthUrl', () => {
       resolveSecond!({
         authorizationUrl: secondUrl,
         awaitApproval: new Promise<Session>(() => {}),
+        cancelAuthFlow: vi.fn(),
       });
 
       await waitFor(() => {
@@ -435,6 +455,7 @@ describe('useAuthUrl', () => {
       resolveFirst!({
         authorizationUrl: firstUrl,
         awaitApproval: new Promise<Session>(() => {}),
+        cancelAuthFlow: vi.fn(),
       });
 
       await new Promise((resolve) => setTimeout(resolve, 50));

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import type { AuthFlow, Session } from '@synonymdev/pubky';
+import type { Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -57,25 +57,21 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
   // Ref to track retry attempts
   const retryCountRef = useRef(0);
 
-  // Ref to track the active auth flow, so we can stop WASM polling on unmount/replacement.
-  const activeAuthFlowRef = useRef<AuthFlow | null>(null);
+  // Ref to track the active auth flow cancel handle, so we can stop WASM polling on unmount/replacement.
+  const activeCancelAuthFlowRef = useRef<(() => void) | null>(null);
 
-  const freeActiveAuthFlow = () => {
-    const flow = activeAuthFlowRef.current;
-    activeAuthFlowRef.current = null;
-    if (!flow) return;
-    try {
-      flow.free();
-    } catch {
-      // Ignore double-free or already-finalized WASM objects.
-    }
+  const cancelActiveAuthFlow = () => {
+    const cancel = activeCancelAuthFlowRef.current;
+    activeCancelAuthFlowRef.current = null;
+    if (!cancel) return;
+    cancel();
   };
 
   // If the user becomes authenticated through another pathway (mnemonic, recovery file, etc.),
   // stop any in-flight auth polling immediately.
   useEffect(() => {
     if (currentSession) {
-      freeActiveAuthFlow();
+      cancelActiveAuthFlow();
     }
   }, [currentSession]);
 
@@ -101,32 +97,27 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     try {
       // If a previous flow is still active (e.g. user refreshed the QR),
       // drop it so we don't keep polling forever.
-      freeActiveAuthFlow();
+      cancelActiveAuthFlow();
 
       // Request auth URL from controller
-      const { authorizationUrl, awaitApproval, authFlow } = await Core.AuthController.getAuthUrl();
-      const freeThisFlow = () => {
-        try {
-          authFlow.free();
-        } catch {
-          // Ignore double-free or already-finalized WASM objects.
-        } finally {
-          if (activeAuthFlowRef.current === authFlow) {
-            activeAuthFlowRef.current = null;
-          }
+      const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthController.getAuthUrl();
+      const cancelThisFlow = () => {
+        cancelAuthFlow();
+        if (activeCancelAuthFlowRef.current === cancelAuthFlow) {
+          activeCancelAuthFlowRef.current = null;
         }
       };
 
       // If this request is already stale/unmounted, free immediately.
       if (activeRequestRef.current !== requestId || !isMountedRef.current) {
-        freeThisFlow();
+        cancelThisFlow();
         return;
       }
 
-      activeAuthFlowRef.current = authFlow;
+      activeCancelAuthFlowRef.current = cancelAuthFlow;
 
       if (!authorizationUrl) {
-        freeThisFlow();
+        cancelThisFlow();
         isGeneratingRef.current = false;
         if (isMountedRef.current) setIsLoading(false);
         return;
@@ -173,7 +164,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           });
         })
         .finally(() => {
-          freeThisFlow();
+          cancelThisFlow();
         });
 
       // Guard against late responses from previous calls
@@ -225,20 +216,24 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     }
   };
 
-  // Auto-fetch on mount if enabled
+  // Always cleanup on unmount (even when autoFetch is disabled).
   useEffect(() => {
-    if (!autoFetch) return;
-
     isMountedRef.current = true;
-    void fetchUrl();
 
     return () => {
       // Cleanup: mark component as unmounted and clear refs
-      freeActiveAuthFlow();
+      cancelActiveAuthFlow();
       isMountedRef.current = false;
       activeRequestRef.current = null;
       isGeneratingRef.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-fetch on mount if enabled
+  useEffect(() => {
+    if (!autoFetch) return;
+    void fetchUrl();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoFetch]);
 

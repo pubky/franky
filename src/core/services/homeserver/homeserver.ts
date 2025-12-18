@@ -8,22 +8,19 @@ import {
   AuthFlowKind,
   Session,
 } from '@synonymdev/pubky';
-import type { AuthFlow } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
+import { createCancelableAuthApproval } from './authFlowApproval';
 import { PubkySdk } from './pubkySdk';
 import { mapHomeserverError, type HomeserverErrorContext } from './homeserverErrors';
 
-const _PKARR_RELAYS = Config.PKARR_RELAYS.split(',');
 const CAPABILITIES = '/pub/pubky.app/:rw';
 
 export class HomeserverService {
   private constructor() {}
-
-  private static readonly SESSION_STORAGE_PREFIX = '/pub/';
 
   private static currentSession: Session | null = null;
 
@@ -46,86 +43,111 @@ export class HomeserverService {
     return this.currentSession;
   }
 
-  private static isHttpUrl(url: string) {
-    return url.startsWith('http://') || url.startsWith('https://');
-  }
+  private static resolveOwnedSessionPath(url: string): { session: Session; path: `/pub/${string}` } | null {
+    const session = this.getSession();
+    if (!session) return null;
 
-  private static extractPubkyFromAddress(url: string): string | null {
-    if (url.startsWith('pubky://')) {
-      const rest = url.slice('pubky://'.length);
-      const idx = rest.indexOf('/');
-      return (idx === -1 ? rest : rest.slice(0, idx)) || null;
-    }
+    const toPathname = (value: string): string | null => {
+      if (value.startsWith('/')) return value;
 
-    if (url.startsWith('pubky') && !url.startsWith('pubkyauth://')) {
-      const rest = url.slice('pubky'.length);
-      const idx = rest.indexOf('/');
-      return (idx === -1 ? rest : rest.slice(0, idx)) || null;
-    }
+      if (value.startsWith('pubky://')) {
+        const rest = value.slice('pubky://'.length);
+        const idx = rest.indexOf('/');
+        return idx === -1 ? null : rest.slice(idx);
+      }
 
-    if (this.isHttpUrl(url)) {
-      try {
-        const { hostname } = new URL(url);
-        if (hostname.startsWith('_pubky.')) {
-          return hostname.slice('_pubky.'.length) || null;
+      if (value.startsWith('pubky') && !value.startsWith('pubkyauth://')) {
+        const idx = value.indexOf('/', 'pubky'.length);
+        return idx === -1 ? null : value.slice(idx);
+      }
+
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        try {
+          return new URL(value).pathname || null;
+        } catch {
+          return null;
         }
-      } catch {
-        return null;
       }
-    }
 
-    return null;
+      return null;
+    };
+
+    const extractPubkyZ32 = (value: string): string | null => {
+      if (value.startsWith('pubky://')) {
+        const rest = value.slice('pubky://'.length);
+        const idx = rest.indexOf('/');
+        return (idx === -1 ? rest : rest.slice(0, idx)) || null;
+      }
+
+      if (value.startsWith('pubky') && !value.startsWith('pubkyauth://')) {
+        const rest = value.slice('pubky'.length);
+        const idx = rest.indexOf('/');
+        return (idx === -1 ? rest : rest.slice(0, idx)) || null;
+      }
+
+      if (value.startsWith('http://') || value.startsWith('https://')) {
+        try {
+          const { hostname } = new URL(value);
+          return hostname.startsWith('_pubky.') ? hostname.slice('_pubky.'.length) || null : null;
+        } catch {
+          return null;
+        }
+      }
+
+      return null;
+    };
+
+    const pathname = toPathname(url);
+    if (!pathname || !pathname.startsWith('/pub/')) return null;
+    const path = pathname as `/pub/${string}`;
+
+    if (url.startsWith('/')) return { session, path };
+
+    const sessionPubky = session.info.publicKey.z32();
+    const urlPubky = extractPubkyZ32(url);
+    if (!urlPubky || urlPubky !== sessionPubky) return null;
+
+    return { session, path };
   }
 
-  private static toAbsoluteStoragePath(url: string): string | null {
-    if (url.startsWith('/')) return url;
+  private static async assertOk(
+    response: Response,
+    url: string,
+    errorType: Libs.HomeserverErrorType,
+    errorMessage: string,
+  ): Promise<void> {
+    if (response.ok) return;
+    await this.checkSessionExpiration(response, url);
+    throw Libs.createHomeserverError(errorType, errorMessage, response.status, {
+      url,
+      statusCode: response.status,
+      statusText: response.statusText,
+    });
+  }
 
-    if (url.startsWith('pubky://')) {
-      const rest = url.slice('pubky://'.length);
-      const idx = rest.indexOf('/');
-      if (idx === -1) return null;
-      return rest.slice(idx);
-    }
-
-    if (url.startsWith('pubky') && !url.startsWith('pubkyauth://')) {
-      const idx = url.indexOf('/', 'pubky'.length);
-      if (idx === -1) return null;
-      return url.slice(idx);
-    }
-
-    if (this.isHttpUrl(url)) {
+  private static async getOwnedResponse(
+    session: Session,
+    path: `/pub/${string}`,
+    url: string,
+    operation: HomeserverErrorContext['operation'],
+  ): Promise<Response> {
+    const response = await (async () => {
       try {
-        const parsed = new URL(url);
-        return parsed.pathname || null;
-      } catch {
-        return null;
+        return await session.storage.get(path);
+      } catch (error) {
+        return this.throwMappedError(error, {
+          operation,
+          message: 'Failed to fetch data',
+          defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
+          defaultStatusCode: 500,
+          url,
+          method: Core.HomeserverAction.GET,
+        });
       }
-    }
+    })();
 
-    return null;
-  }
-
-  private static isSessionStoragePath(path: string): path is `/pub/${string}` {
-    return path.startsWith(this.SESSION_STORAGE_PREFIX);
-  }
-
-  private static toCurrentSessionStoragePath(url: string, session: Session): `/pub/${string}` | null {
-    const path = this.toAbsoluteStoragePath(url);
-    if (!path) return null;
-    if (!this.isSessionStoragePath(path)) return null;
-
-    if (path.startsWith('/')) {
-      // Absolute paths are implicitly session-scoped
-      if (url.startsWith('/')) return path;
-
-      const addressPubky = this.extractPubkyFromAddress(url);
-      if (!addressPubky) return null;
-      const sessionPubky = session.info.publicKey.z32();
-      if (addressPubky !== sessionPubky) return null;
-      return path;
-    }
-
-    return null;
+    await this.assertOk(response, url, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data');
+    return response;
   }
 
   /**
@@ -261,13 +283,12 @@ export class HomeserverService {
     try {
       const pubkySdk = this.getPubkySdk();
       const flow = pubkySdk.startAuthFlow(capabilities, AuthFlowKind.signin(), Config.DEFAULT_HTTP_RELAY);
+      const approval = createCancelableAuthApproval(flow);
 
       return {
         authorizationUrl: flow.authorizationUrl,
-        // NOTE: do NOT call `flow.awaitApproval()` here. It consumes the WASM handle (`__destroy_into_raw()`),
-        // which makes later `flow.free()` a no-op, and causes relay polling to leak in dev (StrictMode remounts).
-        awaitApproval: this.awaitAuthApproval(flow),
-        authFlow: flow,
+        awaitApproval: approval.awaitApproval,
+        cancelAuthFlow: approval.cancel,
       };
     } catch (error) {
       this.throwMappedError(error, {
@@ -281,94 +302,6 @@ export class HomeserverService {
   }
 
   /**
-   * Poll for approval using `tryPollOnce()` so the AuthFlow remains free-able for cancellation/unmount.
-   */
-  private static awaitAuthApproval(flow: AuthFlow): Promise<Session> {
-    const pollIntervalMs = 2_000;
-
-    const createCanceledError = () => {
-      const error = new Error('Auth flow canceled');
-      error.name = 'AuthFlowCanceled';
-      return error;
-    };
-
-    const getStatusCode = (error: unknown): number | undefined => {
-      if (typeof error !== 'object' || error === null) return undefined;
-      if (!('data' in error)) return undefined;
-      const data = (error as { data?: unknown }).data;
-      if (typeof data !== 'object' || data === null) return undefined;
-      if (!('statusCode' in data)) return undefined;
-      const statusCode = (data as { statusCode?: unknown }).statusCode;
-      return typeof statusCode === 'number' ? statusCode : undefined;
-    };
-
-    const isRetryableRelayPollError = (error: unknown): boolean => {
-      if (
-        typeof error === 'object' &&
-        error !== null &&
-        'name' in error &&
-        (error as { name?: unknown }).name === 'RequestError'
-      ) {
-        const statusCode = getStatusCode(error);
-        if (!statusCode) return true;
-        return [408, 429, 500, 502, 503, 504].includes(statusCode);
-      }
-
-      if (error instanceof Error) {
-        const message = error.message.toLowerCase();
-        if (message.includes('timed out') || message.includes('timeout')) return true;
-        if (message.includes('504') || message.includes('gateway')) return true;
-      }
-
-      return false;
-    };
-
-    let canceled = false;
-    const originalFree = flow.free.bind(flow);
-    const cancelAndFree = () => {
-      canceled = true;
-      try {
-        originalFree();
-      } catch {
-        // Ignore double-free or already-finalized WASM objects.
-      }
-    };
-
-    // Ensure external callers cancel the polling loop when freeing.
-    // eslint-disable-next-line no-param-reassign
-    (flow as unknown as { free: () => void }).free = cancelAndFree;
-
-    const promise = (async () => {
-      // Let the caller store references / attach handlers before the first relay poll begins.
-      // In dev (React StrictMode), components can mount/unmount quickly; starting an unabortable long-poll
-      // before the cleanup runs can leave lingering relay requests for minutes.
-      await Libs.sleep(0);
-
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        if (canceled) throw createCanceledError();
-        try {
-          const maybeSession = await flow.tryPollOnce();
-          if (maybeSession) return maybeSession;
-          if (canceled) throw createCanceledError();
-        } catch (error) {
-          if (canceled) throw createCanceledError();
-          if (isRetryableRelayPollError(error)) {
-            await Libs.sleep(pollIntervalMs);
-            continue;
-          }
-          throw error;
-        }
-        await Libs.sleep(pollIntervalMs);
-      }
-    })();
-
-    return promise.finally(() => {
-      cancelAndFree();
-    });
-  }
-
-  /**
    * Logs out a user from the homeserver
    * @param session - The authenticated Session to sign out
    * @returns Void
@@ -379,8 +312,8 @@ export class HomeserverService {
     } catch (error) {
       this.throwMappedError(error, {
         operation: 'logout',
-        message: 'Failed to fetch data',
-        defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
+        message: 'Failed to logout',
+        defaultType: Libs.HomeserverErrorType.LOGOUT_FAILED,
         defaultStatusCode: 500,
         details: { url: 'signout' },
       });
@@ -425,79 +358,51 @@ export class HomeserverService {
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
   static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
-    const session = this.getSession();
+    const owned = this.resolveOwnedSessionPath(url);
 
-    if (session) {
-      const sessionPath = this.toCurrentSessionStoragePath(url, session);
-      if (sessionPath) {
-        if (method === Core.HomeserverAction.GET) {
-          const response = await (async () => {
-            try {
-              return await session.storage.get(sessionPath);
-            } catch (error) {
-              return this.throwMappedError(error, {
-                operation: 'request',
-                message: 'Failed to fetch data',
-                defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-                defaultStatusCode: 500,
-                url,
-                method,
-              });
-            }
-          })();
-          if (!response.ok) {
-            await this.checkSessionExpiration(response, url);
-            throw Libs.createHomeserverError(
-              Libs.HomeserverErrorType.FETCH_FAILED,
-              'Failed to fetch data',
-              response.status,
-              {
-                url,
-                statusCode: response.status,
-                statusText: response.statusText,
-              },
-            );
-          }
+    if (owned) {
+      const { session, path } = owned;
 
-          try {
-            const text = await response.text();
-            if (!text) return undefined as T;
-            return JSON.parse(text) as T;
-          } catch {
-            return undefined as T;
-          }
+      if (method === Core.HomeserverAction.GET) {
+        const response = await this.getOwnedResponse(session, path, url, 'request');
+        try {
+          const text = await response.text();
+          if (!text) return undefined as T;
+          return JSON.parse(text) as T;
+        } catch {
+          return undefined as T;
         }
+      }
 
-        if (method === Core.HomeserverAction.PUT) {
-          try {
-            await session.storage.putJson(sessionPath, bodyJson ?? {});
-            return undefined as T;
-          } catch (error) {
-            this.throwMappedError(error, {
-              operation: 'request',
-              message: 'Failed to fetch data',
-              defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-              defaultStatusCode: 500,
-              url,
-              method,
-            });
-          }
+      if (method === Core.HomeserverAction.PUT) {
+        try {
+          await session.storage.putJson(path, bodyJson ?? {});
+          return undefined as T;
+        } catch (error) {
+          this.throwMappedError(error, {
+            operation: 'request',
+            message: 'Failed to fetch data',
+            defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
+            defaultStatusCode: 500,
+            url,
+            method,
+          });
         }
+      }
 
-        if (method === Core.HomeserverAction.DELETE) {
-          try {
-            await session.storage.delete(sessionPath);
-            return undefined as T;
-          } catch (error) {
-            this.throwMappedError(error, {
-              operation: 'request',
-              message: 'Failed to fetch data',
-              defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
-              defaultStatusCode: 500,
-              url,
-              method,
-            });
-          }
+      if (method === Core.HomeserverAction.DELETE) {
+        try {
+          await session.storage.delete(path);
+          return undefined as T;
+        } catch (error) {
+          this.throwMappedError(error, {
+            operation: 'request',
+            message: 'Failed to fetch data',
+            defaultType: Libs.HomeserverErrorType.FETCH_FAILED,
+            defaultStatusCode: 500,
+            url,
+            method,
+          });
         }
       }
     }
@@ -506,7 +411,7 @@ export class HomeserverService {
     const response = await (async () => {
       try {
         if (method === Core.HomeserverAction.GET) {
-          return this.isHttpUrl(url)
+          return url.startsWith('http://') || url.startsWith('https://')
             ? await pubkySdk.client.fetch(url)
             : await pubkySdk.publicStorage.get(url as Address);
         }
@@ -523,14 +428,7 @@ export class HomeserverService {
       }
     })();
 
-    if (!response.ok) {
-      await this.checkSessionExpiration(response, url);
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', response.status, {
-        url,
-        statusCode: response.status,
-        statusText: response.statusText,
-      });
-    }
+    await this.assertOk(response, url, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data');
 
     if (method !== Core.HomeserverAction.GET) return undefined as T;
 
@@ -553,38 +451,25 @@ export class HomeserverService {
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
   static async putBlob(url: string, blob: Uint8Array) {
-    const session = this.getSession();
-    if (session) {
-      const sessionPath = this.toCurrentSessionStoragePath(url, session);
-      if (sessionPath) {
-        try {
-          await session.storage.putBytes(sessionPath, blob);
-          return;
-        } catch (error) {
-          this.throwMappedError(error, {
-            operation: 'putBlob',
-            message: 'Failed to PUT blob data',
-            defaultType: Libs.HomeserverErrorType.PUT_FAILED,
-            defaultStatusCode: 500,
-            url,
-            method: Core.HomeserverAction.PUT,
-          });
-        }
+    const owned = this.resolveOwnedSessionPath(url);
+    if (owned) {
+      try {
+        await owned.session.storage.putBytes(owned.path, blob);
+        return;
+      } catch (error) {
+        this.throwMappedError(error, {
+          operation: 'putBlob',
+          message: 'Failed to PUT blob data',
+          defaultType: Libs.HomeserverErrorType.PUT_FAILED,
+          defaultStatusCode: 500,
+          url,
+          method: Core.HomeserverAction.PUT,
+        });
       }
     }
 
     const response = await this.fetch(url, { method: Core.HomeserverAction.PUT, body: blob });
-    if (!response.ok) {
-      await this.checkSessionExpiration(response, url);
-      throw Libs.createHomeserverError(
-        Libs.HomeserverErrorType.PUT_FAILED,
-        'Failed to PUT blob data',
-        response.status,
-        {
-          url,
-        },
-      );
-    }
+    await this.assertOk(response, url, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data');
   }
 
   /**
@@ -606,6 +491,14 @@ export class HomeserverService {
   ): Promise<string[]> {
     const pubkySdk = this.getPubkySdk();
     try {
+      const owned = this.resolveOwnedSessionPath(baseDirectory);
+      if (owned) {
+        const dirPath = owned.path.endsWith('/') ? owned.path : (`${owned.path}/` as `/pub/${string}`);
+        const files = await owned.session.storage.list(dirPath, cursor ?? null, reverse, limit, false);
+        Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
+        return files;
+      }
+
       const files = await pubkySdk.publicStorage.list(baseDirectory as Address, cursor ?? null, reverse, limit, false);
       Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
       return files;
@@ -644,6 +537,12 @@ export class HomeserverService {
       if (url.startsWith('http://') || url.startsWith('https://')) {
         return await pubkySdk.client.fetch(url);
       }
+
+      const owned = this.resolveOwnedSessionPath(url);
+      if (owned) {
+        return await this.getOwnedResponse(owned.session, owned.path, url, 'get');
+      }
+
       return await pubkySdk.publicStorage.get(url as Address);
     } catch (error) {
       this.throwMappedError(error, {

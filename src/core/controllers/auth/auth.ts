@@ -1,23 +1,19 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import type { AuthFlow } from '@synonymdev/pubky';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
   private static restoreSessionPromise: Promise<boolean> | null = null;
-  private static activeAuthFlow: AuthFlow | null = null;
+  private static activeCancelAuthFlow: (() => void) | null = null;
   private static authUrlRequestId = 0;
+  private static lastRestoreAttemptExport: string | null = null;
 
   private static freeActiveAuthFlow() {
-    const flow = this.activeAuthFlow;
-    this.activeAuthFlow = null;
-    if (!flow) return;
-    try {
-      flow.free();
-    } catch {
-      // Ignore double-free or already-finalized WASM objects.
-    }
+    const cancel = this.activeCancelAuthFlow;
+    this.activeCancelAuthFlow = null;
+    if (!cancel) return;
+    cancel();
   }
 
   static async restoreSessionIfAvailable(): Promise<boolean> {
@@ -54,6 +50,24 @@ export class AuthController {
     })();
 
     return await this.restoreSessionPromise;
+  }
+
+  /**
+   * Best-effort session restore on app start (e.g. RouteGuardProvider mount).
+   * Dedupes repeated attempts for the same `sessionExport` to avoid loops.
+   */
+  static async maybeRestoreSessionOnHydration(params: {
+    hasHydrated: boolean;
+    session: unknown;
+    sessionExport: string | null;
+  }): Promise<void> {
+    if (!params.hasHydrated) return;
+    if (params.session) return;
+    if (!params.sessionExport) return;
+    if (this.lastRestoreAttemptExport === params.sessionExport) return;
+
+    this.lastRestoreAttemptExport = params.sessionExport;
+    await this.restoreSessionIfAvailable();
   }
 
   /**
@@ -161,43 +175,30 @@ export class AuthController {
     await Core.clearDatabase();
     const requestId = ++this.authUrlRequestId;
     this.freeActiveAuthFlow();
-    const { authorizationUrl, awaitApproval, authFlow } = await Core.AuthApplication.generateAuthUrl();
+    const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthApplication.generateAuthUrl();
 
     if (requestId !== this.authUrlRequestId) {
-      try {
-        authFlow.free();
-      } catch {
-        // Ignore double-free or already-finalized WASM objects.
-      }
+      // Stale request (e.g. React StrictMode overlap): cancel immediately so we don't keep polling forever.
+      cancelAuthFlow();
       return {
         authorizationUrl,
-        awaitApproval: awaitApproval.finally(() => {
-          try {
-            authFlow.free();
-          } catch {
-            // Ignore double-free or already-finalized WASM objects.
-          }
-        }),
-        authFlow,
+        awaitApproval: awaitApproval.finally(() => cancelAuthFlow()),
+        cancelAuthFlow,
       };
     }
 
-    this.activeAuthFlow = authFlow;
+    this.activeCancelAuthFlow = cancelAuthFlow;
 
     // Ensure the polling flow is always dropped once the promise resolves/rejects,
     // even if the caller forgets to free it.
     const wrappedAwaitApproval = awaitApproval.finally(() => {
-      if (this.activeAuthFlow === authFlow) {
-        this.activeAuthFlow = null;
+      if (this.activeCancelAuthFlow === cancelAuthFlow) {
+        this.activeCancelAuthFlow = null;
       }
-      try {
-        authFlow.free();
-      } catch {
-        // Ignore double-free or already-finalized WASM objects.
-      }
+      cancelAuthFlow();
     });
 
-    return { authorizationUrl, awaitApproval: wrappedAwaitApproval, authFlow };
+    return { authorizationUrl, awaitApproval: wrappedAwaitApproval, cancelAuthFlow };
   }
 
   /**

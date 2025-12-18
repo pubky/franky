@@ -19,6 +19,7 @@ const mockState = vi.hoisted(() => ({
   sessionStoragePutJson: vi.fn(),
   sessionStoragePutBytes: vi.fn(),
   sessionStorageDelete: vi.fn(),
+  sessionStorageList: vi.fn(),
   // Client methods
   clientFetch: vi.fn(),
   // Public storage
@@ -114,6 +115,7 @@ const createMockSession = (): Session =>
       putJson: (...args: unknown[]) => mockState.sessionStoragePutJson(...args),
       putBytes: (...args: unknown[]) => mockState.sessionStoragePutBytes(...args),
       delete: (...args: unknown[]) => mockState.sessionStorageDelete(...args),
+      list: (...args: unknown[]) => mockState.sessionStorageList(...args),
     },
     signout: (...args: unknown[]) => mockState.sessionSignout(...args),
   }) as unknown as Session;
@@ -154,6 +156,7 @@ describe('HomeserverService', () => {
     mockState.sessionStoragePutJson.mockResolvedValue(undefined);
     mockState.sessionStoragePutBytes.mockResolvedValue(undefined);
     mockState.sessionStorageDelete.mockResolvedValue(undefined);
+    mockState.sessionStorageList.mockResolvedValue([]);
     mockState.startAuthFlow.mockReturnValue({
       authorizationUrl: 'https://auth.example.com/authorize',
       tryPollOnce: vi.fn().mockResolvedValue(createMockSession()),
@@ -332,7 +335,7 @@ describe('HomeserverService', () => {
         mockState.sessionSignout.mockRejectedValue(new Error('Network error'));
 
         await expect(HomeserverService.logout({ session })).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.FETCH_FAILED,
+          type: Libs.HomeserverErrorType.LOGOUT_FAILED,
           statusCode: 500,
         });
       });
@@ -344,8 +347,63 @@ describe('HomeserverService', () => {
 
         expect(result).toHaveProperty('authorizationUrl');
         expect(result).toHaveProperty('awaitApproval');
+        expect(result).toHaveProperty('cancelAuthFlow');
         expect(typeof result.authorizationUrl).toBe('string');
         expect(result.awaitApproval).toBeInstanceOf(Promise);
+      });
+
+      it('should cancel polling before first poll when cancelAuthFlow is called immediately', async () => {
+        vi.useFakeTimers();
+        try {
+          const tryPollOnce = vi.fn().mockResolvedValue(undefined);
+          const free = vi.fn();
+          mockState.startAuthFlow.mockReturnValue({
+            authorizationUrl: 'https://auth.example.com/authorize',
+            tryPollOnce,
+            free,
+          });
+
+          const result = await HomeserverService.generateAuthUrl();
+          const approvalPromise = result.awaitApproval;
+          const rejection = expect(approvalPromise).rejects.toMatchObject({ name: 'AuthFlowCanceled' });
+
+          result.cancelAuthFlow();
+          await vi.runAllTimersAsync();
+
+          await rejection;
+          expect(tryPollOnce).not.toHaveBeenCalled();
+          expect(free).toHaveBeenCalledTimes(1);
+        } finally {
+          vi.useRealTimers();
+        }
+      });
+
+      it('should retry polling on retryable relay errors (e.g. 504) and eventually resolve', async () => {
+        vi.useFakeTimers();
+        try {
+          const session = createMockSession();
+          const tryPollOnce = vi
+            .fn()
+            .mockRejectedValueOnce({ name: 'RequestError', message: 'Gateway Timeout', data: { statusCode: 504 } })
+            .mockResolvedValueOnce(session);
+          const free = vi.fn();
+          mockState.startAuthFlow.mockReturnValue({
+            authorizationUrl: 'https://auth.example.com/authorize',
+            tryPollOnce,
+            free,
+          });
+
+          const result = await HomeserverService.generateAuthUrl();
+          const approvalPromise = result.awaitApproval;
+
+          await vi.advanceTimersByTimeAsync(0);
+          await vi.advanceTimersByTimeAsync(2_000);
+
+          await expect(approvalPromise).resolves.toBe(session);
+          expect(tryPollOnce).toHaveBeenCalledTimes(2);
+        } finally {
+          vi.useRealTimers();
+        }
       });
 
       it('should call startAuthFlow with default capabilities', async () => {
@@ -543,6 +601,24 @@ describe('HomeserverService', () => {
         expect(result).toEqual(mockFiles);
       });
 
+      it('should use session.storage.list for owned directories when session is set', async () => {
+        HomeserverService.setSession(createMockSession());
+        const mockFiles = ['pubky://user/pub/posts/file1.json', 'pubky://user/pub/posts/file2.json'];
+        mockState.sessionStorageList.mockResolvedValue(mockFiles);
+
+        const result = await HomeserverService.list('pubky://user/pub/posts/');
+
+        expect(result).toEqual(mockFiles);
+        expect(mockState.sessionStorageList).toHaveBeenCalledWith(
+          '/pub/posts/',
+          null, // cursor
+          false, // reverse
+          500, // limit
+          false, // shallow
+        );
+        expect(mockState.publicStorageList).not.toHaveBeenCalled();
+      });
+
       it('should call list with default parameters', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
 
@@ -620,6 +696,24 @@ describe('HomeserverService', () => {
         expect(result).toBeInstanceOf(Response);
         const jsonData = await result.json();
         expect(jsonData).toEqual({ data: 'public' });
+      });
+
+      it('should use session.storage.get for owned paths when session is set', async () => {
+        HomeserverService.setSession(createMockSession());
+        const testUrl = 'pubky://user/pub/private.json';
+        const mockResponse = new Response(JSON.stringify({ data: 'private' }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+        mockState.sessionStorageGet.mockResolvedValue(mockResponse);
+
+        const result = await HomeserverService.get(testUrl);
+
+        expect(mockState.sessionStorageGet).toHaveBeenCalledWith('/pub/private.json');
+        expect(mockState.publicStorageGet).not.toHaveBeenCalled();
+        expect(result).toBeInstanceOf(Response);
+        const jsonData = await result.json();
+        expect(jsonData).toEqual({ data: 'private' });
       });
 
       it('should wrap errors from publicStorage.get as AppError', async () => {
