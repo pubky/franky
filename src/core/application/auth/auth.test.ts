@@ -89,9 +89,11 @@ describe('AuthApplication', () => {
   describe('generateAuthUrl', () => {
     it('should generate and return auth URL', async () => {
       const mockSession = { token: 'test-token' } as unknown as Session;
+      const cancelAuthFlow = vi.fn();
       const expectedResult = {
         authorizationUrl: 'https://example.com/auth?token=test-token',
         awaitApproval: Promise.resolve(mockSession),
+        cancelAuthFlow,
       };
 
       const generateAuthUrlSpy = vi.spyOn(Core.HomeserverService, 'generateAuthUrl').mockResolvedValue(expectedResult);
