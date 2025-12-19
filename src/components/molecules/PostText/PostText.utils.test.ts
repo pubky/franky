@@ -6,6 +6,7 @@ import {
   remarkMentions,
   remarkShowMoreButton,
   extractTextFromChildren,
+  truncateAtWordBoundary,
 } from './PostText.utils';
 
 // Helper to create a simple paragraph node with text
@@ -1217,5 +1218,76 @@ describe('remarkShowMoreButton', () => {
         'show-more-button',
       );
     });
+  });
+});
+
+describe('truncateAtWordBoundary', () => {
+  it('returns original text if under limit', () => {
+    const text = 'Short text';
+    expect(truncateAtWordBoundary(text, 100)).toBe('Short text');
+  });
+
+  it('returns original text if exactly at limit', () => {
+    const text = 'Hello';
+    expect(truncateAtWordBoundary(text, 5)).toBe('Hello');
+  });
+
+  it('truncates at word boundary when space is within 80% of limit', () => {
+    const text = 'Hello world this is a test';
+    // Limit 20, slice(0,20) = "Hello world this is ", lastSpace = 16, 80% = 16, 16 > 16 = false
+    // Actually: "Hello world this is " has space at 11 and 17, lastSpace = 17
+    // 17 > 16 = true, so truncates at word boundary
+    const result = truncateAtWordBoundary(text, 20);
+    expect(result).toBe('Hello world this is...\u00A0');
+  });
+
+  it('hard cuts when no suitable word boundary within 80% of limit', () => {
+    const text = 'Supercalifragilisticexpialidocious is a long word';
+    // Limit 20, 80% = 16, no space within first 20 chars
+    const result = truncateAtWordBoundary(text, 20);
+    expect(result).toBe('Supercalifragilistic...\u00A0');
+  });
+
+  it('truncates at last word boundary before limit', () => {
+    const text = 'The quick brown fox jumps over the lazy dog';
+    // Limit 25, slice(0,25) = "The quick brown fox jumps", lastSpace = 19
+    // 80% of 25 = 20, 19 < 20, so hard cuts
+    const result = truncateAtWordBoundary(text, 25);
+    expect(result).toBe('The quick brown fox jumps...\u00A0');
+  });
+
+  it('avoids cutting mid-word when space is within threshold', () => {
+    const text = 'This is collaboration between teams';
+    // Limit 25, slice(0,25) = "This is collaboration bet", lastSpace = 21
+    // 80% of 25 = 20, 21 > 20 = true, so truncates at "collaboration"
+    const result = truncateAtWordBoundary(text, 25);
+    expect(result).toBe('This is collaboration...\u00A0');
+  });
+
+  it('preserves words when possible', () => {
+    const text = 'Short words here now test';
+    // Limit 22, slice(0,22) = "Short words here now t", lastSpace = 20
+    // 80% of 22 = 17, 20 > 17 = true, so truncates at word boundary
+    const result = truncateAtWordBoundary(text, 22);
+    expect(result).toBe('Short words here now...\u00A0');
+  });
+
+  it('handles text with no spaces by hard cutting', () => {
+    const text = 'NoSpacesInThisLongText';
+    const result = truncateAtWordBoundary(text, 10);
+    expect(result).toBe('NoSpacesIn...\u00A0');
+  });
+
+  it('handles text with space at very end of limit', () => {
+    const text = 'Word Word2 Word3';
+    // Limit 10, space at index 4 and 10
+    const result = truncateAtWordBoundary(text, 10);
+    expect(result).toBe('Word Word2...\u00A0');
+  });
+
+  it('appends ellipsis with non-breaking space', () => {
+    const text = 'Hello world test';
+    const result = truncateAtWordBoundary(text, 12);
+    expect(result.endsWith('...\u00A0')).toBe(true);
   });
 });

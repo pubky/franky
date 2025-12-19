@@ -1,8 +1,15 @@
 'use client';
 
+import { useMemo } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { remarkHashtags, remarkMentions, remarkPlaintextCodeblock, remarkShowMoreButton } from './PostText.utils';
+import {
+  remarkHashtags,
+  remarkMentions,
+  remarkPlaintextCodeblock,
+  remarkShowMoreButton,
+  truncateAtWordBoundary,
+} from './PostText.utils';
 import { PostTextProps, RemarkAnchorProps } from './PostText.types';
 import { TRUNCATION_LIMIT } from './PostText.constants';
 import * as Libs from '@/libs';
@@ -17,8 +24,20 @@ export const PostText = ({ content }: PostTextProps) => {
 
   const contentTruncated =
     content.length > TRUNCATION_LIMIT && !pathname.startsWith(POST_ROUTES.POST)
-      ? content.slice(0, TRUNCATION_LIMIT) + '...\u00A0'
+      ? truncateAtWordBoundary(content, TRUNCATION_LIMIT)
       : null;
+
+  // Memoize plugins array to avoid recreation on every render
+  const remarkPlugins = useMemo(
+    () => [
+      remarkGfm,
+      remarkPlaintextCodeblock,
+      remarkHashtags,
+      remarkMentions,
+      ...(contentTruncated ? [remarkShowMoreButton] : []),
+    ],
+    [contentTruncated],
+  );
 
   return (
     <Atoms.Container
@@ -29,13 +48,7 @@ export const PostText = ({ content }: PostTextProps) => {
       <Markdown
         allowedElements={['em', 'strong', 'code', 'pre', 'a', 'p', 'br', 'ul', 'ol', 'li', 'del', 'blockquote', 'hr']}
         unwrapDisallowed
-        remarkPlugins={[
-          remarkGfm,
-          remarkPlaintextCodeblock,
-          remarkHashtags,
-          remarkMentions,
-          ...(contentTruncated ? [remarkShowMoreButton] : []),
-        ]}
+        remarkPlugins={remarkPlugins}
         components={{
           a(props: RemarkAnchorProps) {
             const { children, className, 'data-type': dataType, node: _node, ref: _ref, ...rest } = props;
@@ -50,8 +63,14 @@ export const PostText = ({ content }: PostTextProps) => {
                 <span
                   role="button"
                   tabIndex={0}
+                  aria-label="Show full post content"
                   className={Libs.cn(className, 'cursor-pointer text-brand transition-colors hover:text-brand/80')}
-                  onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault(); // Prevent scroll on space
+                      e.currentTarget.click();
+                    }
+                  }}
                 >
                   {children}
                 </span>

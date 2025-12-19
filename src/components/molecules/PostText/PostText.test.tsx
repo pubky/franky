@@ -455,7 +455,7 @@ describe('PostText', () => {
       const shortContent = generateContent(400);
       render(<PostText content={shortContent} />);
 
-      expect(screen.queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
       expect(screen.queryByText(/\.\.\./)).not.toBeInTheDocument();
     });
 
@@ -463,7 +463,7 @@ describe('PostText', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      const showMoreButton = screen.getByRole('button', { name: 'Show more' });
+      const showMoreButton = screen.getByRole('button', { name: 'Show full post content' });
       expect(showMoreButton).toBeInTheDocument();
     });
 
@@ -482,7 +482,7 @@ describe('PostText', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      expect(screen.queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
     });
 
     it('does not truncate on nested post routes', () => {
@@ -490,7 +490,7 @@ describe('PostText', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      expect(screen.queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
     });
 
     it('truncates on non-post pages like home', () => {
@@ -498,7 +498,7 @@ describe('PostText', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Show full post content' })).toBeInTheDocument();
     });
 
     it('truncates on search page', () => {
@@ -506,7 +506,7 @@ describe('PostText', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Show full post content' })).toBeInTheDocument();
     });
 
     it('truncates on profile page', () => {
@@ -514,14 +514,14 @@ describe('PostText', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Show full post content' })).toBeInTheDocument();
     });
 
     it('renders "Show more" button with correct styling classes', () => {
       const longContent = generateContent(600);
       render(<PostText content={longContent} />);
 
-      const showMoreButton = screen.getByRole('button', { name: 'Show more' });
+      const showMoreButton = screen.getByRole('button', { name: 'Show full post content' });
       expect(showMoreButton).toHaveClass('cursor-pointer');
       expect(showMoreButton).toHaveClass('text-brand');
     });
@@ -536,7 +536,7 @@ describe('PostText', () => {
         </div>,
       );
 
-      const showMoreButton = screen.getByRole('button', { name: 'Show more' });
+      const showMoreButton = screen.getByRole('button', { name: 'Show full post content' });
       fireEvent.click(showMoreButton);
 
       // Click should propagate to parent (unlike regular links)

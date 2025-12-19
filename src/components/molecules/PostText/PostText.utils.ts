@@ -161,3 +161,17 @@ export const extractTextFromChildren = (children: ReactNode) =>
     : Array.isArray(children) && typeof children[0] === 'string'
       ? children[0]
       : '';
+
+// Truncate text at word boundaries to avoid cutting mid-word, mid-markdown, or mid-URL.
+// Falls back to hard cut if no suitable word boundary is found within 80% of the limit.
+export const truncateAtWordBoundary = (text: string, limit: number): string => {
+  if (text.length <= limit) return text;
+
+  const truncated = text.slice(0, limit);
+  const lastSpace = truncated.lastIndexOf(' ');
+
+  // Only use word boundary if it's within 80% of the limit to avoid too-short truncation
+  const minBoundary = Math.floor(limit * 0.8);
+
+  return (lastSpace > minBoundary ? truncated.slice(0, lastSpace) : truncated) + '...\u00A0';
+};
