@@ -54,6 +54,9 @@ export const CreateProfileForm = () => {
                   variant="dashed"
                   rows={40}
                   onChange={(e) => handlers.setBio(e.target.value)}
+                  status={errors.bioError ? 'error' : 'default'}
+                  message={errors.bioError ?? undefined}
+                  messageType={errors.bioError ? 'error' : 'default'}
                 />
               </Atoms.Container>
             </Atoms.Container>

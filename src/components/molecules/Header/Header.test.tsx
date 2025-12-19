@@ -123,11 +123,15 @@ vi.mock('@/libs', async (importOriginal) => {
 });
 
 // Mock the config
-vi.mock('@/config', () => ({
-  GITHUB_URL: 'https://github.com',
-  TWITTER_GETPUBKY_URL: 'https://twitter.com/getpubky',
-  TELEGRAM_URL: 'https://t.me/getpubky',
-}));
+vi.mock('@/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config')>();
+  return {
+    ...actual,
+    GITHUB_URL: 'https://github.com',
+    TWITTER_GETPUBKY_URL: 'https://twitter.com/getpubky',
+    TELEGRAM_URL: 'https://t.me/getpubky',
+  };
+});
 
 // Mock the app routes
 vi.mock('@/app', async (importOriginal) => {

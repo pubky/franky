@@ -21,6 +21,7 @@ export interface ProfileFormState {
 
 export interface ProfileFormErrors {
   nameError: string | null;
+  bioError: string | null;
   linkUrlErrors: Record<number, string | null>;
   avatarError: string | null;
 }
