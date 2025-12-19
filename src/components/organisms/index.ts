@@ -1,4 +1,5 @@
 export * from './AlertBackup';
+export * from './Backup';
 export * from './BackupMethodCard';
 export * from './ContentLayout';
 export * from './CreateProfileHeader';

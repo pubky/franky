@@ -4,7 +4,6 @@ export * from './ActiveUsers';
 export * from './HumanBitcoinCard';
 export * from './AvatarWithFallback';
 export * from './AvatarZoomModal';
-export * from './Backup';
 export * from './Breadcrumb';
 export * from './ContainerRoot';
 export * from './FeedSection';
