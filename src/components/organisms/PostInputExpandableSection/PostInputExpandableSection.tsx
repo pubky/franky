@@ -20,6 +20,8 @@ export function PostInputExpandableSection({
   showEmojiPicker,
   setShowEmojiPicker,
   onEmojiSelect,
+  onFileClick,
+  onImageClick,
   className,
 }: PostInputExpandableSectionProps) {
   const hasContent = content.trim().length > 0;
@@ -62,6 +64,8 @@ export function PostInputExpandableSection({
               <PostInputActionBar
                 onPostClick={onSubmit}
                 onEmojiClick={() => setShowEmojiPicker(true)}
+                onFileClick={onFileClick}
+                onImageClick={onImageClick}
                 isPostDisabled={isPostDisabled}
                 isSubmitting={isSubmitting}
                 postButtonLabel={postButtonLabel}
