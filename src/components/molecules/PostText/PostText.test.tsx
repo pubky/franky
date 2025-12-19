@@ -1,6 +1,12 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PostText } from './PostText';
+
+// Mock next/navigation
+const mockUsePathname = vi.fn();
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockUsePathname(),
+}));
 
 // Mock @/atoms
 vi.mock('@/atoms', () => ({
@@ -42,7 +48,21 @@ vi.mock('@/organisms', () => ({
   ),
 }));
 
+// Helper to generate content of specific length
+const generateContent = (length: number): string => {
+  const base = 'Lorem ipsum dolor sit amet. ';
+  let result = '';
+  while (result.length < length) {
+    result += base;
+  }
+  return result.slice(0, length);
+};
+
 describe('PostText', () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue('/home');
+  });
+
   describe('Basic rendering', () => {
     it('renders plain text content', () => {
       render(<PostText content="Hello, world!" />);
@@ -429,9 +449,116 @@ describe('PostText', () => {
       expect(link).toBeInTheDocument();
     });
   });
+
+  describe('Content truncation and Show more button', () => {
+    it('does not truncate content under 500 characters', () => {
+      const shortContent = generateContent(400);
+      render(<PostText content={shortContent} />);
+
+      expect(screen.queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+      expect(screen.queryByText(/\.\.\./)).not.toBeInTheDocument();
+    });
+
+    it('truncates content over 500 characters and shows "Show more" button', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      const showMoreButton = screen.getByRole('button', { name: 'Show more' });
+      expect(showMoreButton).toBeInTheDocument();
+    });
+
+    it('shows truncated content with ellipsis when over 500 characters', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      // The truncated content should be 500 chars + "..." + non-breaking space
+      // Original content beyond 500 chars should not be present
+      const originalEndText = longContent.slice(495, 505);
+      expect(screen.queryByText(originalEndText)).not.toBeInTheDocument();
+    });
+
+    it('does not truncate on post detail page', () => {
+      mockUsePathname.mockReturnValue('/post/some-post-id');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+    });
+
+    it('does not truncate on nested post routes', () => {
+      mockUsePathname.mockReturnValue('/post/author/123');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.queryByRole('button', { name: 'Show more' })).not.toBeInTheDocument();
+    });
+
+    it('truncates on non-post pages like home', () => {
+      mockUsePathname.mockReturnValue('/home');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+    });
+
+    it('truncates on search page', () => {
+      mockUsePathname.mockReturnValue('/search');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+    });
+
+    it('truncates on profile page', () => {
+      mockUsePathname.mockReturnValue('/profile/some-user-id');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.getByRole('button', { name: 'Show more' })).toBeInTheDocument();
+    });
+
+    it('renders "Show more" button with correct styling classes', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      const showMoreButton = screen.getByRole('button', { name: 'Show more' });
+      expect(showMoreButton).toHaveClass('cursor-pointer');
+      expect(showMoreButton).toHaveClass('text-brand');
+    });
+
+    it('does not stop event propagation on "Show more" button click', () => {
+      const handleParentClick = vi.fn();
+      const longContent = generateContent(600);
+
+      render(
+        <div onClick={handleParentClick}>
+          <PostText content={longContent} />
+        </div>,
+      );
+
+      const showMoreButton = screen.getByRole('button', { name: 'Show more' });
+      fireEvent.click(showMoreButton);
+
+      // Click should propagate to parent (unlike regular links)
+      expect(handleParentClick).toHaveBeenCalled();
+    });
+
+    it('truncates content exactly at 500 characters plus ellipsis', () => {
+      const longContent = generateContent(600);
+      const { container } = render(<PostText content={longContent} />);
+
+      // The displayed text should contain the first 500 chars
+      const expectedStart = longContent.slice(0, 100);
+      expect(container.textContent).toContain(expectedStart);
+    });
+  });
 });
 
 describe('PostText - Snapshots', () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue('/home');
+  });
+
   it('matches snapshot for plain text', () => {
     const { container } = render(<PostText content="Simple plain text content" />);
     expect(container.firstChild).toMatchSnapshot();
@@ -656,6 +783,21 @@ Third line`}
     const { container } = render(
       <PostText content="This is **bold** with pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo and *italic* text" />,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for truncated content with Show more button', () => {
+    const longContent =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
+    const { container } = render(<PostText content={longContent} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for non-truncated long content on post page', () => {
+    mockUsePathname.mockReturnValue('/post/some-post-id');
+    const longContent =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
+    const { container } = render(<PostText content={longContent} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

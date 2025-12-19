@@ -2,18 +2,25 @@
 
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { remarkHashtags, remarkMentions, remarkPlaintextCodeblock } from './PostText.utils';
+import { remarkHashtags, remarkMentions, remarkPlaintextCodeblock, remarkShowMoreButton } from './PostText.utils';
 import { RemarkAnchorProps } from './PostText.types';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import { usePathname } from 'next/navigation';
+import { POST_ROUTES } from '@/app/routes';
 
 type PostTextProps = {
   content: string;
 };
 
 export const PostText = ({ content }: PostTextProps) => {
+  const pathname = usePathname();
+
+  const contentTruncated =
+    content.length > 500 && !pathname.startsWith(POST_ROUTES.POST) ? content.slice(0, 500) + '...\u00A0' : null;
+
   return (
     <Atoms.Container
       data-cy="post-text"
@@ -23,13 +30,29 @@ export const PostText = ({ content }: PostTextProps) => {
       <Markdown
         allowedElements={['em', 'strong', 'code', 'pre', 'a', 'p', 'br', 'ul', 'ol', 'li', 'del', 'blockquote', 'hr']}
         unwrapDisallowed
-        remarkPlugins={[remarkGfm, remarkPlaintextCodeblock, remarkHashtags, remarkMentions]}
+        remarkPlugins={[
+          remarkGfm,
+          remarkPlaintextCodeblock,
+          remarkHashtags,
+          remarkMentions,
+          ...(contentTruncated ? [remarkShowMoreButton] : []),
+        ]}
         components={{
           a(props: RemarkAnchorProps) {
             const { children, className, 'data-type': dataType, node: _node, ref: _ref, ...rest } = props;
 
             if (dataType === 'hashtag') return <Molecules.PostHashtags {...props} />;
             if (dataType === 'mention') return <Organisms.PostMentions {...props} />;
+
+            // No stopPropagation on this button therefore click takes user to post via parent element
+            if (dataType === 'show-more-button')
+              return (
+                <button
+                  className={Libs.cn(className, 'cursor-pointer text-brand transition-colors hover:text-brand/80')}
+                >
+                  {children}
+                </button>
+              );
 
             return (
               <a
@@ -78,7 +101,7 @@ export const PostText = ({ content }: PostTextProps) => {
           },
         }}
       >
-        {content}
+        {contentTruncated || content}
       </Markdown>
     </Atoms.Container>
   );
