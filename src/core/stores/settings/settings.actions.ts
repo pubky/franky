@@ -1,4 +1,10 @@
-import { type SettingsStore, type SettingsActions, settingsInitialState, SettingsActionTypes } from './settings.types';
+import {
+  type SettingsStore,
+  type SettingsActions,
+  type SettingsState,
+  settingsInitialState,
+  SettingsActionTypes,
+} from './settings.types';
 import { type ZustandSet } from '../stores.types';
 
 // Helper to update state with timestamp
@@ -186,6 +192,22 @@ export const createSettingsActions = (set: ZustandSet<SettingsStore>): SettingsA
       }),
       false,
       SettingsActionTypes.RESET,
+    );
+  },
+
+  // Homeserver sync action, used by bootstrap to load remote settings
+  loadFromHomeserver: (settings: SettingsState) => {
+    set(
+      {
+        notifications: settings.notifications,
+        privacy: settings.privacy,
+        muted: settings.muted,
+        language: settings.language,
+        updatedAt: settings.updatedAt,
+        version: settings.version,
+      },
+      false,
+      SettingsActionTypes.LOAD_FROM_HOMESERVER,
     );
   },
 });
