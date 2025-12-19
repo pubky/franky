@@ -190,7 +190,7 @@ describe('API Route: /api/chatwoot', () => {
       // The controller will validate and throw AppError
       const appError = new Libs.AppError(
         'INVALID_INPUT',
-        `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+        `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
         400,
       );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
@@ -199,7 +199,7 @@ describe('API Route: /api/chatwoot', () => {
       const data = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe(`Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`);
+      expect(data.error).toBe(`Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`);
     });
   });
 

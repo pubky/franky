@@ -1,0 +1,35 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchTagSection > Snapshots > matches snapshot when empty 1`] = `null`;
+
+exports[`SearchTagSection > Snapshots > matches snapshot with tags 1`] = `
+<div
+  class="gap-2"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <span
+    class="tracking-widest text-muted-foreground uppercase"
+    data-size="xs"
+    data-testid="typography"
+  >
+    Recent searches
+  </span>
+  <div
+    class="flex flex-wrap gap-3"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <button
+      data-testid="tag-bitcoin"
+    >
+      bitcoin
+    </button>
+    <button
+      data-testid="tag-satoshi"
+    >
+      satoshi
+    </button>
+  </div>
+</div>
+`;

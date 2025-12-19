@@ -11,3 +11,4 @@ export * from './moderation';
 export * from './tags';
 export * from './theme';
 export * from './urls';
+export * from './user';
