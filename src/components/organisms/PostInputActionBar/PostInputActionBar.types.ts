@@ -1,5 +1,10 @@
 import type * as React from 'react';
 
+import { POST_INPUT_ACTION_SUBMIT_MODE } from './PostInputActionBar.constants';
+
+export type PostInputActionSubmitMode =
+  (typeof POST_INPUT_ACTION_SUBMIT_MODE)[keyof typeof POST_INPUT_ACTION_SUBMIT_MODE];
+
 export interface PostInputActionBarProps {
   onEmojiClick?: () => void;
   onImageClick?: () => void;
@@ -8,6 +13,10 @@ export interface PostInputActionBarProps {
   onPostClick?: () => void;
   isPostDisabled?: boolean;
   isSubmitting?: boolean;
+  postButtonLabel?: string;
+  postButtonAriaLabel?: string;
+  postButtonIcon?: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  hideArticle?: boolean;
 }
 
 export interface ActionButtonConfig {

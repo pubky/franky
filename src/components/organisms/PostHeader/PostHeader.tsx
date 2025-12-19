@@ -6,6 +6,8 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 
 export interface PostHeaderProps {
+  // We should rethink how we want to name this variable, because sometimes we use it as postID and sometimes as userId.
+  // Potentially even refactor this component
   postId: string;
   isReplyInput?: boolean;
   characterCount?: number;
@@ -16,7 +18,7 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
   // Extract userId from postId (format: userId:postId or just userId if isReplyInput is true)
   const userId = isReplyInput ? postId : postId.split(':')[0];
 
-  // When isReplyInput is true, skip fetching the post details since there's no post yet
+  // When isReplyInput is true, skip fetching post details since there's no post yet
   const { postDetails } = Hooks.usePostDetails(isReplyInput ? null : postId);
 
   // Fetch user details for avatar and name
@@ -53,6 +55,7 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
             </Atoms.Typography>
             {characterCount !== undefined && maxLength !== undefined && (
               <Atoms.Typography
+                data-cy="post-header-character-count"
                 as="span"
                 className="shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
                 overrideDefaults

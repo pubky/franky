@@ -37,7 +37,7 @@ export function ProfilePageSidebar() {
   const isTaggedPage = pathname?.endsWith('/tagged');
 
   // Only apply sticky when content fits in viewport
-  const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
+  const { ref, stickyTop } = Hooks.useStickyWhenFits({
     topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
     bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
@@ -46,11 +46,8 @@ export function ProfilePageSidebar() {
     <Atoms.Container
       ref={ref}
       overrideDefaults={true}
-      className={Libs.cn(
-        'hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex',
-        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
-        shouldBeSticky !== false && 'sticky top-(--header-height)',
-      )}
+      className={Libs.cn('hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex', 'sticky')}
+      style={{ top: `${stickyTop}px` }}
     >
       {!isTaggedPage && (
         <Molecules.ProfilePageTaggedAs
