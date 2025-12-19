@@ -62,7 +62,7 @@ describe('getBtcUsdRate', () => {
     mockFetch.mockRejectedValue(new Error('Network down'));
 
     await expect(getBtcUsdRate()).rejects.toMatchObject({
-      type: NexusErrorType.NETWORK_ERROR,
+      type: NexusErrorType.SERVICE_UNAVAILABLE,
     });
   });
 
