@@ -3,7 +3,8 @@
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { remarkHashtags, remarkMentions, remarkPlaintextCodeblock, remarkShowMoreButton } from './PostText.utils';
-import { RemarkAnchorProps } from './PostText.types';
+import { PostTextProps, RemarkAnchorProps } from './PostText.types';
+import { TRUNCATION_LIMIT } from './PostText.constants';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -11,15 +12,13 @@ import * as Organisms from '@/organisms';
 import { usePathname } from 'next/navigation';
 import { POST_ROUTES } from '@/app/routes';
 
-type PostTextProps = {
-  content: string;
-};
-
 export const PostText = ({ content }: PostTextProps) => {
   const pathname = usePathname();
 
   const contentTruncated =
-    content.length > 500 && !pathname.startsWith(POST_ROUTES.POST) ? content.slice(0, 500) + '...\u00A0' : null;
+    content.length > TRUNCATION_LIMIT && !pathname.startsWith(POST_ROUTES.POST)
+      ? content.slice(0, TRUNCATION_LIMIT) + '...\u00A0'
+      : null;
 
   return (
     <Atoms.Container
@@ -44,14 +43,18 @@ export const PostText = ({ content }: PostTextProps) => {
             if (dataType === 'hashtag') return <Molecules.PostHashtags {...props} />;
             if (dataType === 'mention') return <Organisms.PostMentions {...props} />;
 
-            // No stopPropagation on this button therefore click takes user to post via parent element
+            // No stopPropagation on this element therefore click takes user to post via parent element
+            // Using span with role='button' instead of button to avoid invalid HTML (button inside p)
             if (dataType === 'show-more-button')
               return (
-                <button
+                <span
+                  role="button"
+                  tabIndex={0}
                   className={Libs.cn(className, 'cursor-pointer text-brand transition-colors hover:text-brand/80')}
+                  onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.click()}
                 >
                   {children}
-                </button>
+                </span>
               );
 
             return (
