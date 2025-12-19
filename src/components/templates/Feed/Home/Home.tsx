@@ -16,7 +16,7 @@ export function Home() {
       >
         <Organisms.AlertBackup />
         <Organisms.TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME}>
-          <Organisms.PostInput variant={POST_INPUT_VARIANT.POST} />
+          <Organisms.PostInput dataCy="home-post-input" variant={POST_INPUT_VARIANT.POST} />
         </Organisms.TimelineFeed>
       </Organisms.ContentLayout>
     </>

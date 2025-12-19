@@ -1,5 +1,6 @@
 import * as Config from '@/config';
-import * as Libs from '@/libs';
+import { nexusQueryClient } from './nexus.query-client';
+import { NexusErrorType, createNexusError } from '@/libs';
 
 /**
  * Shared API utilities for all endpoints
@@ -26,6 +27,26 @@ export function buildCdnUrl(endpoint: string): string {
  */
 export function encodePathSegment(segment: string): string {
   return encodeURIComponent(segment);
+}
+
+/**
+ * Maps HTTP status codes to specific Nexus error types
+ */
+export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
+  switch (status) {
+    case 400:
+      return NexusErrorType.INVALID_REQUEST;
+    case 404:
+      return NexusErrorType.RESOURCE_NOT_FOUND;
+    case 429:
+      return NexusErrorType.RATE_LIMIT_EXCEEDED;
+    case 500:
+      return NexusErrorType.INTERNAL_SERVER_ERROR;
+    case 503:
+      return NexusErrorType.SERVICE_UNAVAILABLE;
+    default:
+      return NexusErrorType.BOOTSTRAP_FAILED;
+  }
 }
 
 /**
@@ -78,8 +99,8 @@ export function createFetchOptions(method: HttpMethod = 'GET', body?: BodyInit |
  */
 export function ensureHttpResponseOk({ ok, status, statusText }: Response) {
   if (!ok) {
-    const errorType = Libs.mapHttpStatusToNexusErrorType(status);
-    throw Libs.createNexusError(errorType, `Request failed: ${statusText}`, status, {
+    const errorType = mapHttpStatusToNexusErrorType(status);
+    throw createNexusError(errorType, `Request failed: ${statusText}`, status, {
       statusCode: status,
       statusText: statusText,
     });
@@ -89,52 +110,55 @@ export function ensureHttpResponseOk({ ok, status, statusText }: Response) {
 /**
  * Parses response body as JSON, throws NexusError if parsing fails
  * @param response - Response object
- * @param noContentDefaultValue - Default value to return when response has no content (e.g., [] for arrays, undefined for objects)
  * @returns Parsed JSON data
  * @throws {NexusError} When response body is not valid JSON
  */
-export async function parseResponseOrThrow<T>(response: Response): Promise<T | undefined> {
-  // 204 No Content never has a body, so return early
-  if (response.status === 204) {
-    return undefined;
-  }
+export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
+  const text = await response.text();
 
-  // Check if response has a body by checking content-length header
-  const contentLength = response.headers.get('content-length');
-  if (contentLength === '0') {
-    return undefined;
+  // Nexus API always returns JSON for successful responses.
+  // Empty body on 2xx is unexpected - treat as server error.
+  if (!text || text.trim() === '') {
+    throw createNexusError(NexusErrorType.INVALID_RESPONSE, 'Response body is empty (expected JSON)', 500);
   }
 
   try {
-    // Try to read the body as text first to check if it's empty
-    // This handles cases like 201 Created which might have an empty body
-    const text = await response.text();
-    if (!text || text.trim() === '') {
-      return undefined;
-    }
     return JSON.parse(text) as T;
   } catch (error) {
-    throw Libs.createNexusError(Libs.NexusErrorType.INVALID_RESPONSE, 'Failed to parse response', 500, {
+    throw createNexusError(NexusErrorType.INVALID_RESPONSE, 'Failed to parse JSON response', 500, {
       error,
     });
   }
 }
 
 /**
- * Queries Nexus API and returns parsed response data
+ * Raw fetch function without retry logic.
+ * Used internally by queryNexus and for cases where retry is not desired.
+ *
  * @param url - Full API endpoint URL
  * @param method - HTTP method (default: 'GET')
  * @param body - Request body (optional)
- * @param noContentDefaultValue - Default value to return when response has no content (e.g., [] for arrays, undefined for objects)
  * @returns Parsed response data
  * @throws {NexusError} When response is not ok or JSON parsing fails
  */
-export async function queryNexus<T>(
-  url: string,
-  method: HttpMethod = 'GET',
-  body: BodyInit | null = null,
-): Promise<T | undefined> {
+export async function fetchNexus<T>(url: string, method: HttpMethod = 'GET', body: BodyInit | null = null): Promise<T> {
   const response = await fetch(url, createFetchOptions(method, body));
   ensureHttpResponseOk(response);
   return parseResponseOrThrow<T>(response);
+}
+
+/**
+ * Queries Nexus API with automatic retry logic via TanStack Query
+ *
+ * @param url - Full API endpoint URL
+ * @param method - HTTP method (default: 'GET')
+ * @param body - Request body (optional)
+ * @returns Parsed response data
+ * @throws {NexusError} When response is not ok after all retries
+ */
+export async function queryNexus<T>(url: string, method: HttpMethod = 'GET', body: BodyInit | null = null): Promise<T> {
+  return nexusQueryClient.fetchQuery({
+    queryKey: ['nexus', url, method, body],
+    queryFn: () => fetchNexus<T>(url, method, body),
+  });
 }

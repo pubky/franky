@@ -138,9 +138,12 @@ describe('NexusBootstrapService', () => {
     },
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     global.fetch = mockFetch;
+    // Clear query client cache between tests
+    const { nexusQueryClient } = await import('../nexus.query-client');
+    nexusQueryClient.clear();
   });
 
   describe('read', () => {
@@ -167,6 +170,8 @@ describe('NexusBootstrapService', () => {
     });
 
     it('should propagate errors from queryNexus', async () => {
+      // Use a different pubky to avoid cache collision
+      const errorPubky = 'error-user-456';
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
@@ -174,15 +179,18 @@ describe('NexusBootstrapService', () => {
         headers: {
           get: vi.fn(),
         },
+        text: vi.fn().mockResolvedValue(''),
       });
 
-      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
+      await expect(Core.NexusBootstrapService.fetch(errorPubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.INVALID_REQUEST,
         statusCode: 400,
       });
     });
 
-    it('should return undefined when response is empty', async () => {
+    it('should throw INVALID_RESPONSE error when response is empty', async () => {
+      // Use a different pubky to avoid cache collision
+      const emptyPubky = 'empty-user-789';
       mockFetch.mockResolvedValueOnce({
         ok: true,
         status: 204,
@@ -192,8 +200,10 @@ describe('NexusBootstrapService', () => {
         },
       });
 
-      const result = await Core.NexusBootstrapService.fetch(pubky);
-      expect(result).toBeUndefined();
+      await expect(Core.NexusBootstrapService.fetch(emptyPubky)).rejects.toMatchObject({
+        type: Libs.NexusErrorType.INVALID_RESPONSE,
+        statusCode: 500,
+      });
     });
   });
 });

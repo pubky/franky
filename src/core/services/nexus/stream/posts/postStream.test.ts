@@ -654,7 +654,11 @@ describe('NexusPostStreamService', () => {
         expectedInUrl: ['source=author_replies', 'author_id=author-pubky-id', 'tags=coding'],
       },
     ])('routes $name stream correctly', async ({ invokeEndpoint, params, extraParams, expectedInUrl }) => {
-      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+      const mockResponse: Core.NexusPostsKeyStream = {
+        post_keys: [],
+        last_post_score: 0,
+      };
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockResponse);
 
       const fetchParams: Core.TPostStreamFetchParams = {
         params,
@@ -737,22 +741,8 @@ describe('NexusPostStreamService', () => {
       const result = await NexusPostStreamService.fetch(params);
 
       expect(result).toEqual(mockResponse);
-      expect(result?.post_keys).toHaveLength(3);
-      expect(result?.last_post_score).toBe(123456);
-    });
-
-    it('should return undefined when queryNexus returns undefined', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
-
-      const params: Core.TPostStreamFetchParams = {
-        params: { limit: 10, viewer_id: mockViewerId },
-        invokeEndpoint: Core.StreamSource.ALL,
-        extraParams: {},
-      };
-
-      const result = await NexusPostStreamService.fetch(params);
-
-      expect(result).toBeUndefined();
+      expect(result.post_keys).toHaveLength(3);
+      expect(result.last_post_score).toBe(123456);
     });
   });
 });

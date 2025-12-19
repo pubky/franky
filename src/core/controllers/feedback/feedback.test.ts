@@ -80,7 +80,7 @@ describe('FeedbackController', () => {
       const params = createFeedbackParams({ comment: longComment });
 
       await expect(FeedbackController.submit(params)).rejects.toThrow(
-        `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+        `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
       );
     });
 

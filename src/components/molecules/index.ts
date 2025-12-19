@@ -51,6 +51,8 @@ export * from './PostCodeBlock';
 export * from './PostDeleted';
 export * from './PostHashtags';
 export * from './PostLinkEmbeds';
+export * from './PostPreviewCard';
+export * from './RepostHeader';
 export * from './PostTag';
 export * from './PostTagAddButton';
 export * from './PostTagInput';
