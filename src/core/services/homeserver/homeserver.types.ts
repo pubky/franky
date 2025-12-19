@@ -18,6 +18,7 @@ export type THomeserverSessionResult = {
 export type TGenerateAuthUrlResult = {
   authorizationUrl: string;
   awaitApproval: Promise<Session>;
+  cancelAuthFlow: () => void;
 };
 
 export enum HomeserverAction {

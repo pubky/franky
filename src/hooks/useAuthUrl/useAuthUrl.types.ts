@@ -11,10 +11,6 @@ export interface UseAuthUrlReturn {
   url: string;
   /** Whether the auth URL is currently being generated */
   isLoading: boolean;
-  /** Whether a generation request is in progress (including retries) */
-  isGenerating: boolean;
   /** Manually trigger auth URL generation */
   fetchUrl: () => Promise<void>;
-  /** Current retry attempt count */
-  retryCount: number;
 }

@@ -75,6 +75,7 @@ const storeMocks = vi.hoisted(() => {
       setSession: vi.fn(),
       setCurrentUserPubky: vi.fn(),
       setHasProfile: vi.fn(),
+      setIsRestoringSession: vi.fn(),
       setHasHydrated: vi.fn(),
       reset: resetAuthStore,
       selectCurrentUserPubky: vi.fn(() => TEST_PUBKY),
@@ -202,11 +203,9 @@ describe('AuthController', () => {
         signupToken,
       });
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBeUndefined();
     });
 
@@ -266,11 +265,9 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl('test-pubky'),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: true,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -298,11 +295,9 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -373,11 +368,9 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl('test-pubky'),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: true,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -406,11 +399,9 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -463,9 +454,11 @@ describe('AuthController', () => {
     });
 
     it('should generate auth URL successfully', async () => {
+      const cancelAuthFlow = vi.fn();
       const mockAuthUrl = {
         authorizationUrl: 'https://example.com/auth?token=abc123',
         awaitApproval: Promise.resolve({} as unknown as import('@synonymdev/pubky').Session),
+        cancelAuthFlow,
       };
       const generateAuthUrlSpy = vi.spyOn(Core.AuthApplication, 'generateAuthUrl').mockResolvedValue(mockAuthUrl);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
@@ -473,7 +466,9 @@ describe('AuthController', () => {
       const result = await AuthController.getAuthUrl();
 
       expect(clearDatabaseSpy).toHaveBeenCalled();
-      expect(result).toEqual(mockAuthUrl);
+      expect(result.authorizationUrl).toEqual(mockAuthUrl.authorizationUrl);
+      expect(result.awaitApproval).toBeInstanceOf(Promise);
+      expect(result.cancelAuthFlow).toBe(cancelAuthFlow);
       expect(generateAuthUrlSpy).toHaveBeenCalled();
     });
 
@@ -487,11 +482,117 @@ describe('AuthController', () => {
       expect(clearDatabaseSpy).toHaveBeenCalled();
       expect(generateAuthUrlSpy).toHaveBeenCalled();
     });
+
+    it('should free stale auth flows when multiple requests overlap (StrictMode)', async () => {
+      vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+
+      const cancelAuthFlowA = vi.fn();
+      const cancelAuthFlowB = vi.fn();
+
+      type GenerateAuthUrlResult = Awaited<ReturnType<typeof Core.AuthApplication.generateAuthUrl>>;
+
+      let resolveFirst!: (value: GenerateAuthUrlResult) => void;
+      const first = new Promise<GenerateAuthUrlResult>((resolve) => {
+        resolveFirst = resolve;
+      });
+
+      vi.spyOn(Core.AuthApplication, 'generateAuthUrl')
+        .mockImplementationOnce(() => first)
+        .mockResolvedValueOnce({
+          authorizationUrl: 'https://example.com/auth?token=B',
+          awaitApproval: new Promise(() => {}),
+          cancelAuthFlow: cancelAuthFlowB,
+        });
+
+      const firstCall = AuthController.getAuthUrl();
+      const secondCall = AuthController.getAuthUrl();
+
+      // Resolve the first call after the second call already started.
+      resolveFirst!({
+        authorizationUrl: 'https://example.com/auth?token=A',
+        awaitApproval: new Promise(() => {}),
+        cancelAuthFlow: cancelAuthFlowA,
+      });
+
+      await secondCall;
+      await firstCall;
+
+      expect(cancelAuthFlowA).toHaveBeenCalled();
+      expect(cancelAuthFlowB).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('restoreSessionIfAvailable', () => {
+    it('should restore a session when sessionExport exists and store has hydrated', async () => {
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+
+      const authStore = {
+        ...storeMocks.getAuthState(),
+        hasHydrated: true,
+        session: null,
+        sessionExport: 'session-export',
+        isRestoringSession: false,
+        setIsRestoringSession: vi.fn(),
+      } as unknown as Core.AuthStore;
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore);
+
+      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
+      const initializeSpy = vi
+        .spyOn(AuthController, 'initializeAuthenticatedSession')
+        .mockResolvedValue(undefined as unknown as void);
+
+      const result = await AuthController.restoreSessionIfAvailable();
+
+      expect(result).toBe(true);
+      expect(authStore.setIsRestoringSession).toHaveBeenCalledWith(true);
+      expect(initializeSpy).toHaveBeenCalledWith({ session: mockSession });
+      expect(authStore.setIsRestoringSession).toHaveBeenCalledWith(false);
+    });
+
+    it('should return false when no sessionExport exists', async () => {
+      const authStore = {
+        ...storeMocks.getAuthState(),
+        hasHydrated: true,
+        session: null,
+        sessionExport: null,
+        isRestoringSession: false,
+        setIsRestoringSession: vi.fn(),
+      } as unknown as Core.AuthStore;
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore);
+
+      const result = await AuthController.restoreSessionIfAvailable();
+      expect(result).toBe(false);
+      expect(authStore.setIsRestoringSession).not.toHaveBeenCalledWith(true);
+    });
   });
 
   describe('initializeAuthenticatedSession', () => {
     beforeEach(() => {
       setupNotificationMocks();
+    });
+
+    it('should stop any active auth flow polling when a session is initialized', async () => {
+      const cancelAuthFlow = vi.fn();
+      vi.spyOn(Core.AuthApplication, 'generateAuthUrl').mockResolvedValue({
+        authorizationUrl: 'https://example.com/auth?token=abc123',
+        awaitApproval: new Promise(() => {}),
+        cancelAuthFlow,
+      });
+      vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+
+      await AuthController.getAuthUrl();
+
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+      vi.spyOn(Libs.Identity, 'pubkyFromSession').mockReturnValue(TEST_PUBKY as Core.Pubky);
+      vi.spyOn(Core.AuthApplication, 'userIsSignedUp').mockResolvedValue(false);
+      const authStore = storeMocks.getAuthState();
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+
+      await AuthController.initializeAuthenticatedSession({ session: mockSession });
+
+      expect(cancelAuthFlow).toHaveBeenCalled();
     });
 
     it('should initialize session and bootstrap if user is signed up', async () => {
@@ -516,11 +617,9 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: true,
-      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(true);
     });
 
     it('should initialize session without bootstrap if user is not signed up', async () => {
@@ -539,11 +638,9 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(storeMocks.initAuthStore).toHaveBeenCalledWith({
-        session: mockSession,
-        currentUserPubky: mockPubky,
-        hasProfile: false,
-      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
     });
   });
 
@@ -584,7 +681,7 @@ describe('AuthController', () => {
 
       await AuthController.logout();
 
-      expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky' });
+      expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
@@ -600,7 +697,7 @@ describe('AuthController', () => {
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
 
       await expect(AuthController.logout()).rejects.toThrow('Network error');
-      expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky' });
+      expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
       // Local state should not be cleared if homeserver logout fails
       expect(storeMocks.resetOnboardingStore).not.toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).not.toHaveBeenCalled();
