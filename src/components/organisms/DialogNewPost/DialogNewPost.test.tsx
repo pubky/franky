@@ -188,6 +188,7 @@ describe('DialogNewPost', () => {
 
     expect(Organisms.PostInput).toHaveBeenCalledWith(
       {
+        dataCy: 'new-post-input',
         variant: POST_INPUT_VARIANT.POST,
         onSuccess: expect.any(Function),
         expanded: true,

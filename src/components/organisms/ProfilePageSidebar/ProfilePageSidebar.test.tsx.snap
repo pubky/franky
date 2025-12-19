@@ -2,8 +2,9 @@
 
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`] = `
 <div
-  class="hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex sticky top-(--header-height)"
+  class="hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex sticky"
   data-testid="container"
+  style="top: 146px;"
 >
   <div
     class="flex flex-col gap-2"

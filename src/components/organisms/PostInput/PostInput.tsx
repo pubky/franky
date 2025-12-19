@@ -11,6 +11,7 @@ import type { PostInputProps } from './PostInput.types';
 import { PostInputExpandableSection } from '../PostInputExpandableSection';
 
 export function PostInput({
+  dataCy,
   variant,
   postId,
   originalPostId,
@@ -48,6 +49,7 @@ export function PostInput({
 
   return (
     <Atoms.Container
+      data-cy={dataCy}
       ref={containerRef}
       className="relative cursor-pointer rounded-md border border-dashed border-input p-6"
       onClick={handleExpand}
