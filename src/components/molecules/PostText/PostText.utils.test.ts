@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import type { Root, Paragraph, Text, Code, Link } from 'mdast';
-import { remarkPlaintextCodeblock, remarkHashtags, remarkMentions, extractTextFromChildren } from './PostText.utils';
+import {
+  remarkPlaintextCodeblock,
+  remarkHashtags,
+  remarkMentions,
+  remarkShowMoreButton,
+  extractTextFromChildren,
+  truncateAtWordBoundary,
+} from './PostText.utils';
 
 // Helper to create a simple paragraph node with text
 const createParagraph = (text: string): Paragraph => ({
@@ -955,5 +962,332 @@ describe('extractTextFromChildren', () => {
     it('returns empty string for object', () => {
       expect(extractTextFromChildren({ type: 'element' } as unknown as React.ReactNode)).toBe('');
     });
+  });
+});
+
+describe('remarkShowMoreButton', () => {
+  describe('Basic functionality', () => {
+    it('appends show more button to the last paragraph', () => {
+      const paragraph = createParagraph('Hello world');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('#');
+    });
+
+    it('preserves existing text in the paragraph', () => {
+      const paragraph = createParagraph('Hello world');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes).toHaveLength(1);
+      expect(textNodes[0].value).toBe('Hello world');
+    });
+
+    it('appends to the last paragraph when multiple paragraphs exist', () => {
+      const paragraph1 = createParagraph('First paragraph');
+      const paragraph2 = createParagraph('Second paragraph');
+      const paragraph3 = createParagraph('Third paragraph');
+      const tree = createRoot([paragraph1, paragraph2, paragraph3]);
+
+      remarkShowMoreButton()(tree);
+
+      // First and second paragraphs should not have the button
+      expect(getLinks(paragraph1)).toHaveLength(0);
+      expect(getLinks(paragraph2)).toHaveLength(0);
+
+      // Last paragraph should have the button
+      const links = getLinks(paragraph3);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('#');
+    });
+  });
+
+  describe('Fallback behavior', () => {
+    it('creates a new paragraph when no paragraphs exist', () => {
+      const codeBlock: Code = { type: 'code', value: 'const x = 1;' };
+      const tree = createRoot([codeBlock]);
+
+      remarkShowMoreButton()(tree);
+
+      expect(tree.children).toHaveLength(2);
+      expect(tree.children[1].type).toBe('paragraph');
+
+      const newParagraph = tree.children[1] as Paragraph;
+      const links = getLinks(newParagraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('#');
+    });
+
+    it('creates a new paragraph when tree is empty', () => {
+      const tree: Root = { type: 'root', children: [] };
+
+      remarkShowMoreButton()(tree);
+
+      expect(tree.children).toHaveLength(1);
+      expect(tree.children[0].type).toBe('paragraph');
+
+      const newParagraph = tree.children[0] as Paragraph;
+      const links = getLinks(newParagraph);
+      expect(links).toHaveLength(1);
+    });
+
+    it('creates new paragraph containing only the show more button when no paragraphs exist', () => {
+      const codeBlock: Code = { type: 'code', value: 'code' };
+      const tree = createRoot([codeBlock]);
+
+      remarkShowMoreButton()(tree);
+
+      const newParagraph = tree.children[1] as Paragraph;
+      expect(newParagraph.children).toHaveLength(1);
+      expect(newParagraph.children[0].type).toBe('link');
+    });
+  });
+
+  describe('Link node structure', () => {
+    it('creates link with correct data-type attribute', () => {
+      const paragraph = createParagraph('Some text');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].data).toEqual({
+        hProperties: {
+          'data-type': 'show-more-button',
+        },
+      });
+    });
+
+    it('creates link with "Show more" text', () => {
+      const paragraph = createParagraph('Some text');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].children).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('Show more');
+    });
+
+    it('creates link with # as URL placeholder', () => {
+      const paragraph = createParagraph('Some text');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].url).toBe('#');
+    });
+
+    it('creates link node with correct type', () => {
+      const paragraph = createParagraph('Some text');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].type).toBe('link');
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('handles paragraph with empty text', () => {
+      const paragraph = createParagraph('');
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+    });
+
+    it('handles paragraph with existing links', () => {
+      const existingLink: Link = {
+        type: 'link',
+        url: 'https://example.com',
+        children: [{ type: 'text', value: 'Example' } as Text],
+      };
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [{ type: 'text', value: 'Check out ' } as Text, existingLink],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(2);
+      expect(links[0].url).toBe('https://example.com');
+      expect(links[1].url).toBe('#');
+      expect((links[1].data as { hProperties: { 'data-type': string } }).hProperties['data-type']).toBe(
+        'show-more-button',
+      );
+    });
+
+    it('appends button after hashtag links', () => {
+      const paragraph = createParagraph('Check out #react');
+      const tree = createRoot([paragraph]);
+
+      // Apply hashtag plugin first
+      remarkHashtags()(tree);
+      // Then apply show more button
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(2);
+      expect((links[0].data as { hProperties: { 'data-type': string } }).hProperties['data-type']).toBe('hashtag');
+      expect((links[1].data as { hProperties: { 'data-type': string } }).hProperties['data-type']).toBe(
+        'show-more-button',
+      );
+    });
+
+    it('does not modify non-paragraph children', () => {
+      const codeBlock: Code = { type: 'code', value: 'const x = 1;', lang: 'javascript' };
+      const paragraph = createParagraph('Some text');
+      const tree = createRoot([codeBlock, paragraph]);
+
+      remarkShowMoreButton()(tree);
+
+      expect(tree.children[0]).toBe(codeBlock);
+      expect((tree.children[0] as Code).value).toBe('const x = 1;');
+    });
+
+    it('handles tree with only code blocks by creating new paragraph at end', () => {
+      const codeBlock1: Code = { type: 'code', value: 'line 1' };
+      const codeBlock2: Code = { type: 'code', value: 'line 2' };
+      const tree = createRoot([codeBlock1, codeBlock2]);
+
+      remarkShowMoreButton()(tree);
+
+      expect(tree.children).toHaveLength(3);
+      expect(tree.children[2].type).toBe('paragraph');
+    });
+  });
+
+  describe('Interaction with other plugins', () => {
+    it('works correctly after remarkHashtags is applied', () => {
+      const paragraph = createParagraph('Post about #coding');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(2);
+      // Hashtag link
+      expect(links[0].url).toBe('/search?tags=coding');
+      // Show more button
+      expect(links[1].url).toBe('#');
+    });
+
+    it('works correctly after remarkMentions is applied', () => {
+      const paragraph = createParagraph('Hello pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(2);
+      // Mention link
+      expect((links[0].data as { hProperties: { 'data-type': string } }).hProperties['data-type']).toBe('mention');
+      // Show more button
+      expect((links[1].data as { hProperties: { 'data-type': string } }).hProperties['data-type']).toBe(
+        'show-more-button',
+      );
+    });
+
+    it('works correctly after both hashtags and mentions plugins are applied', () => {
+      const paragraph = createParagraph('Hello pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo check #test');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+      remarkHashtags()(tree);
+      remarkShowMoreButton()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(3);
+      // Show more button should be last
+      expect((links[2].data as { hProperties: { 'data-type': string } }).hProperties['data-type']).toBe(
+        'show-more-button',
+      );
+    });
+  });
+});
+
+describe('truncateAtWordBoundary', () => {
+  it('returns original text if under limit', () => {
+    const text = 'Short text';
+    expect(truncateAtWordBoundary(text, 100)).toBe('Short text');
+  });
+
+  it('returns original text if exactly at limit', () => {
+    const text = 'Hello';
+    expect(truncateAtWordBoundary(text, 5)).toBe('Hello');
+  });
+
+  it('truncates at word boundary when space is within 80% of limit', () => {
+    const text = 'Hello world this is a test';
+    // Limit 20, slice(0,20) = "Hello world this is ", lastSpace = 16, 80% = 16, 16 > 16 = false
+    // Actually: "Hello world this is " has space at 11 and 17, lastSpace = 17
+    // 17 > 16 = true, so truncates at word boundary
+    const result = truncateAtWordBoundary(text, 20);
+    expect(result).toBe('Hello world this is...\u00A0');
+  });
+
+  it('hard cuts when no suitable word boundary within 80% of limit', () => {
+    const text = 'Supercalifragilisticexpialidocious is a long word';
+    // Limit 20, 80% = 16, no space within first 20 chars
+    const result = truncateAtWordBoundary(text, 20);
+    expect(result).toBe('Supercalifragilistic...\u00A0');
+  });
+
+  it('truncates at last word boundary before limit', () => {
+    const text = 'The quick brown fox jumps over the lazy dog';
+    // Limit 25, slice(0,25) = "The quick brown fox jumps", lastSpace = 19
+    // 80% of 25 = 20, 19 < 20, so hard cuts
+    const result = truncateAtWordBoundary(text, 25);
+    expect(result).toBe('The quick brown fox jumps...\u00A0');
+  });
+
+  it('avoids cutting mid-word when space is within threshold', () => {
+    const text = 'This is collaboration between teams';
+    // Limit 25, slice(0,25) = "This is collaboration bet", lastSpace = 21
+    // 80% of 25 = 20, 21 > 20 = true, so truncates at "collaboration"
+    const result = truncateAtWordBoundary(text, 25);
+    expect(result).toBe('This is collaboration...\u00A0');
+  });
+
+  it('preserves words when possible', () => {
+    const text = 'Short words here now test';
+    // Limit 22, slice(0,22) = "Short words here now t", lastSpace = 20
+    // 80% of 22 = 17, 20 > 17 = true, so truncates at word boundary
+    const result = truncateAtWordBoundary(text, 22);
+    expect(result).toBe('Short words here now...\u00A0');
+  });
+
+  it('handles text with no spaces by hard cutting', () => {
+    const text = 'NoSpacesInThisLongText';
+    const result = truncateAtWordBoundary(text, 10);
+    expect(result).toBe('NoSpacesIn...\u00A0');
+  });
+
+  it('handles text with space at very end of limit', () => {
+    const text = 'Word Word2 Word3';
+    // Limit 10, space at index 4 and 10
+    const result = truncateAtWordBoundary(text, 10);
+    expect(result).toBe('Word Word2...\u00A0');
+  });
+
+  it('appends ellipsis with non-breaking space', () => {
+    const text = 'Hello world test';
+    const result = truncateAtWordBoundary(text, 12);
+    expect(result.endsWith('...\u00A0')).toBe(true);
   });
 });
