@@ -36,12 +36,6 @@ vi.mock('@/molecules', () => ({
   TimelineLoadingMore: () => <div data-testid="timeline-loading-more">Loading more...</div>,
   TimelineError: ({ message }: { message: string }) => <div data-testid="timeline-error">Error: {message}</div>,
   TimelineEndMessage: () => <div data-testid="timeline-end-message">End of replies</div>,
-}));
-
-vi.mock('@/organisms', () => ({
-  PostMain: ({ postId, onClick, isReply }: { postId: string; onClick: () => void; isReply: boolean }) => (
-    <div data-testid={`post-${postId}`} onClick={onClick} data-is-reply={isReply} />
-  ),
   TimelineStateWrapper: ({
     loading,
     error,
@@ -58,6 +52,12 @@ vi.mock('@/organisms', () => ({
     if (!hasItems) return <div data-testid="timeline-empty">No replies</div>;
     return <>{children}</>;
   },
+}));
+
+vi.mock('@/organisms', () => ({
+  PostMain: ({ postId, onClick, isReply }: { postId: string; onClick: () => void; isReply: boolean }) => (
+    <div data-testid={`post-${postId}`} onClick={onClick} data-is-reply={isReply} />
+  ),
 }));
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
@@ -382,8 +382,8 @@ describe('TimelineRepliesWithParent', () => {
       const mockParentId = 'author2:parent1';
 
       // Mock a pending fetch scenario
-      const mockGetOrFetchPost = vi.fn(() => new Promise(() => {})); // Never resolves
-      vi.spyOn(Core.PostController, 'getOrFetchPost').mockImplementation(mockGetOrFetchPost);
+      const mockGetOrFetchDetails = vi.fn(() => new Promise(() => {})); // Never resolves
+      vi.spyOn(Core.PostController, 'getOrFetchDetails').mockImplementation(mockGetOrFetchDetails);
 
       mockUseStreamPagination.mockReturnValue({
         postIds: [mockReplyId],
@@ -403,7 +403,7 @@ describe('TimelineRepliesWithParent', () => {
       const { unmount } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
       // Verify fetch was initiated
-      expect(mockGetOrFetchPost).toHaveBeenCalledWith({ compositeId: mockParentId, viewerId: mockViewerId });
+      expect(mockGetOrFetchDetails).toHaveBeenCalledWith({ compositeId: mockParentId, viewerId: mockViewerId });
 
       // Unmount component while fetch is pending
       unmount();

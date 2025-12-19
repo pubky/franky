@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { filesApi, buildFileBodyUrl } from './file.api';
-import { FileVariant, type TImageParams, type TFileBody } from './file.types';
+import { FileVariant, type TFileParams, type TFileBody } from './file.types';
 import * as Config from '@/config';
 
 const pubky = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry';
@@ -16,37 +16,37 @@ describe('File API', () => {
     });
   });
 
-  describe('filesApi.getImageUrl', () => {
+  describe('filesApi.getFileUrl', () => {
     it('should generate correct URL for SMALL variant', () => {
-      const params: TImageParams = {
+      const params: TFileParams = {
         pubky,
         file_id: fileId,
         variant: FileVariant.SMALL,
       };
 
-      const result = filesApi.getImageUrl(params);
+      const result = filesApi.getFileUrl(params);
       expect(result).toBe(`${Config.CDN_URL}/files/${encodedPubky}/${encodedFileId}/small`);
     });
 
     it('should generate correct URL for FEED variant', () => {
-      const params: TImageParams = {
+      const params: TFileParams = {
         pubky,
         file_id: fileId,
         variant: FileVariant.FEED,
       };
 
-      const result = filesApi.getImageUrl(params);
+      const result = filesApi.getFileUrl(params);
       expect(result).toBe(`${Config.CDN_URL}/files/${encodedPubky}/${encodedFileId}/feed`);
     });
 
     it('should generate correct URL for MAIN variant', () => {
-      const params: TImageParams = {
+      const params: TFileParams = {
         pubky,
         file_id: fileId,
         variant: FileVariant.MAIN,
       };
 
-      const result = filesApi.getImageUrl(params);
+      const result = filesApi.getFileUrl(params);
       expect(result).toBe(`${Config.CDN_URL}/files/${encodedPubky}/${encodedFileId}/main`);
     });
   });
@@ -122,7 +122,7 @@ describe('File API', () => {
       const endpointKeys = Object.keys(filesApi);
       expect(endpointKeys).toHaveLength(3);
       expect(endpointKeys).toContain('getAvatarUrl');
-      expect(endpointKeys).toContain('getImageUrl');
+      expect(endpointKeys).toContain('getFileUrl');
       expect(endpointKeys).toContain('getFiles');
     });
   });

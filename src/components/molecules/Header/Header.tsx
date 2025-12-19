@@ -120,7 +120,7 @@ export function HeaderNavigationButtons({
         <NavigationButton key={item.href} {...item} isActive={pathname === item.href} />
       ))}
 
-      <Atoms.Link id="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
+      <Atoms.Link data-cy="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
         <Atoms.Avatar className="h-12 w-12 cursor-pointer">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>

@@ -1,0 +1,101 @@
+'use client';
+
+import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
+import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
+import { usePostInput } from '@/hooks';
+import { POST_INPUT_VARIANT } from './PostInput.constants';
+import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar';
+import type { PostInputProps } from './PostInput.types';
+import { PostInputExpandableSection } from '../PostInputExpandableSection';
+
+export function PostInput({
+  dataCy,
+  variant,
+  postId,
+  originalPostId,
+  onSuccess,
+  placeholder,
+  showThreadConnector = false,
+  expanded = false,
+  onContentChange,
+}: PostInputProps) {
+  const {
+    textareaRef,
+    containerRef,
+    content,
+    tags,
+    isExpanded,
+    isSubmitting,
+    showEmojiPicker,
+    setShowEmojiPicker,
+    displayPlaceholder,
+    currentUserPubky,
+    handleExpand,
+    handleSubmit,
+    handleChange,
+    handleEmojiSelect,
+    setTags,
+  } = usePostInput({
+    variant,
+    postId,
+    originalPostId,
+    onSuccess,
+    placeholder,
+    expanded,
+    onContentChange,
+  });
+
+  return (
+    <Atoms.Container
+      data-cy={dataCy}
+      ref={containerRef}
+      className="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+      onClick={handleExpand}
+    >
+      {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
+      <Atoms.Container className="gap-4">
+        {currentUserPubky && (
+          <Organisms.PostHeader
+            postId={currentUserPubky}
+            isReplyInput={true}
+            characterCount={content.length}
+            maxLength={POST_MAX_CHARACTER_LENGTH}
+          />
+        )}
+
+        <Atoms.Textarea
+          ref={textareaRef}
+          placeholder={displayPlaceholder}
+          className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          value={content}
+          onChange={handleChange}
+          onFocus={handleExpand}
+          maxLength={POST_MAX_CHARACTER_LENGTH}
+          rows={1}
+          disabled={isSubmitting}
+        />
+
+        <PostInputExpandableSection
+          isExpanded={isExpanded}
+          content={content}
+          tags={tags}
+          isSubmitting={isSubmitting}
+          setTags={setTags}
+          onSubmit={handleSubmit}
+          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker}
+          onEmojiSelect={handleEmojiSelect}
+          // Reposts allow empty content, posts and replies require content
+          isPostDisabled={variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting}
+          submitMode={
+            variant === POST_INPUT_VARIANT.REPLY
+              ? POST_INPUT_ACTION_SUBMIT_MODE.REPLY
+              : POST_INPUT_ACTION_SUBMIT_MODE.POST
+          }
+        />
+      </Atoms.Container>
+    </Atoms.Container>
+  );
+}

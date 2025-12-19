@@ -15,7 +15,7 @@ export type TGetMetadataParams = {
   fileAttachments: string[];
 };
 
-export type TGetImageUrlParams = {
+export type TGetFileUrlParams = {
   // Composite ID: author:fileId
   fileId: string;
   variant: Core.FileVariant;

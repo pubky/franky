@@ -9,6 +9,7 @@ import {
   ensureHttpResponseOk,
   parseResponseOrThrow,
   queryNexus,
+  mapHttpStatusToNexusErrorType,
   HTTP_METHODS,
 } from './nexus.utils';
 
@@ -62,6 +63,17 @@ describe('nexus.utils', () => {
     });
   });
 
+  describe('mapHttpStatusToNexusErrorType', () => {
+    it('should map HTTP status codes to correct Nexus error types', () => {
+      expect(mapHttpStatusToNexusErrorType(400)).toBe(Libs.NexusErrorType.INVALID_REQUEST);
+      expect(mapHttpStatusToNexusErrorType(404)).toBe(Libs.NexusErrorType.RESOURCE_NOT_FOUND);
+      expect(mapHttpStatusToNexusErrorType(429)).toBe(Libs.NexusErrorType.RATE_LIMIT_EXCEEDED);
+      expect(mapHttpStatusToNexusErrorType(500)).toBe(Libs.NexusErrorType.INTERNAL_SERVER_ERROR);
+      expect(mapHttpStatusToNexusErrorType(503)).toBe(Libs.NexusErrorType.SERVICE_UNAVAILABLE);
+      expect(mapHttpStatusToNexusErrorType(418)).toBe(Libs.NexusErrorType.BOOTSTRAP_FAILED); // Default case
+    });
+  });
+
   describe('ensureHttpResponseOk', () => {
     it('should not throw for successful response', () => {
       const response = { ok: true, status: 200, statusText: 'OK' } as Response;
@@ -91,14 +103,20 @@ describe('nexus.utils', () => {
         ...overrides,
       }) as unknown as Response;
 
-    it('should return undefined for 204 No Content', async () => {
-      const response = createMockResponse({ status: 204 });
-      expect(await parseResponseOrThrow(response)).toBeUndefined();
+    it('should throw INVALID_RESPONSE error for 204 No Content with empty body', async () => {
+      const response = createMockResponse({ status: 204, text: vi.fn().mockResolvedValue('') });
+      await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
+        type: Libs.NexusErrorType.INVALID_RESPONSE,
+        statusCode: 500,
+      });
     });
 
-    it('should return undefined for empty text', async () => {
+    it('should throw INVALID_RESPONSE error for empty text', async () => {
       const response = createMockResponse({ text: vi.fn().mockResolvedValue('') });
-      expect(await parseResponseOrThrow(response)).toBeUndefined();
+      await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
+        type: Libs.NexusErrorType.INVALID_RESPONSE,
+        statusCode: 500,
+      });
     });
 
     it('should parse valid JSON response', async () => {
@@ -128,49 +146,57 @@ describe('nexus.utils', () => {
       ...overrides,
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       vi.clearAllMocks();
       global.fetch = mockFetch;
+      // Clear query client cache between tests
+      const { nexusQueryClient } = await import('./nexus.query-client');
+      nexusQueryClient.clear();
     });
 
     it('should fetch and parse JSON response successfully', async () => {
       const mockData = { id: '123', name: 'test' };
+      const url = 'https://example.com/api/test1';
       mockFetch.mockResolvedValueOnce(
         createMockResponse({ text: vi.fn().mockResolvedValue(JSON.stringify(mockData)) }),
       );
 
-      const result = await queryNexus<typeof mockData>('https://example.com/api/test');
+      const result = await queryNexus<typeof mockData>(url);
       expect(result).toEqual(mockData);
     });
 
     it('should use POST method with body when provided', async () => {
       const body = JSON.stringify({ key: 'value' });
       const mockData = { success: true };
+      const url = 'https://example.com/api/test2';
       mockFetch.mockResolvedValueOnce(
         createMockResponse({ text: vi.fn().mockResolvedValue(JSON.stringify(mockData)) }),
       );
 
-      await queryNexus('https://example.com/api/test', 'POST', body);
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://example.com/api/test',
-        expect.objectContaining({ method: 'POST', body }),
-      );
+      await queryNexus(url, 'POST', body);
+      expect(mockFetch).toHaveBeenCalledWith(url, expect.objectContaining({ method: 'POST', body }));
     });
 
-    it('should return undefined for empty response', async () => {
-      mockFetch.mockResolvedValueOnce(createMockResponse({ status: 204 }));
-      expect(await queryNexus('https://example.com/api/test')).toBeUndefined();
+    it('should throw INVALID_RESPONSE error for empty response', async () => {
+      const url = 'https://example.com/api/test3';
+      mockFetch.mockResolvedValueOnce(createMockResponse({ status: 204, text: vi.fn().mockResolvedValue('') }));
+      await expect(queryNexus(url)).rejects.toMatchObject({
+        type: Libs.NexusErrorType.INVALID_RESPONSE,
+        statusCode: 500,
+      });
     });
 
     it('should propagate errors', async () => {
+      const errorUrl = 'https://example.com/api/error';
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
         statusText: 'Bad Request',
         headers: { get: vi.fn() },
+        text: vi.fn().mockResolvedValue(''),
       });
 
-      await expect(queryNexus('https://example.com/api/test')).rejects.toMatchObject({
+      await expect(queryNexus(errorUrl)).rejects.toMatchObject({
         type: Libs.NexusErrorType.INVALID_REQUEST,
         statusCode: 400,
       });

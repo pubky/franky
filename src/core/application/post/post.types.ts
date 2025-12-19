@@ -5,3 +5,8 @@ export interface TCreatePostInput extends Core.TLocalSavePostParams {
   fileAttachments?: Core.TFileAttachmentResult[];
   tags?: Core.TCreateTagInput[];
 }
+
+export type TGetOrFetchPostParams = {
+  compositeId: string;
+  viewerId: Core.Pubky;
+};

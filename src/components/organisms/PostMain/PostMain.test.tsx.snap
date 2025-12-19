@@ -1,16 +1,46 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
+exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="post-deleted"
+    >
+      PostDeleted
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
+<div
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -26,20 +56,29 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
         post-no-reply-456
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-tagged-id="post-no-reply-456"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-no-reply-456
         </div>
         <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
           data-testid="post-actions"
         >
           Actions 
           post-no-reply-456
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>
@@ -49,11 +88,13 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
   data-testid="container"
 >
   <div
     data-class-name="w-3 shrink-0"
+    data-override-defaults="true"
     data-testid="container"
   >
     <div
@@ -65,11 +106,21 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -85,20 +136,29 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         post-reply-123
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-tagged-id="post-reply-123"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-reply-123
         </div>
         <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
           data-testid="post-actions"
         >
           Actions 
           post-reply-123
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>
@@ -108,27 +168,26 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="w-3 shrink-0"
-    data-testid="container"
-  >
-    <div
-      data-height="150"
-      data-testid="thread-connector"
-      data-variant="regular"
-    >
-      ThreadConnector
-    </div>
-  </div>
-  <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -144,20 +203,29 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
         post-123
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-tagged-id="post-123"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-123
         </div>
         <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
           data-testid="post-actions"
         >
           Actions 
           post-123
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>
@@ -167,27 +235,26 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
 <div
-  data-class-name="relative flex cursor-pointer"
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
   data-testid="container"
 >
   <div
-    data-class-name="w-3 shrink-0"
-    data-testid="container"
-  >
-    <div
-      data-height="150"
-      data-testid="thread-connector"
-      data-variant="regular"
-    >
-      ThreadConnector
-    </div>
-  </div>
-  <div
-    data-class-name="flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -203,20 +270,29 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
         post-789
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="post-tags-list"
+          data-tagged-id="post-789"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
         >
-          PostTagsList 
+          ClickableTagsList 
           post-789
         </div>
         <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
           data-testid="post-actions"
         >
           Actions 
           post-789
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
         </div>
       </div>
     </div>

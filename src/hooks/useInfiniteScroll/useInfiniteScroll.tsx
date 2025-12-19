@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface UseInfiniteScrollOptions {
   onLoadMore: () => void;
@@ -17,31 +17,39 @@ export const useInfiniteScroll = ({
   threshold = 200,
   debounceMs = 300,
 }: UseInfiniteScrollOptions) => {
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  // Use state to track sentinel element - this ensures useEffect re-runs when sentinel mounts
+  const [sentinel, setSentinel] = useState<HTMLDivElement | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const onLoadMoreRef = useRef(onLoadMore);
+
+  // Keep onLoadMore ref updated to avoid stale closures
+  useEffect(() => {
+    onLoadMoreRef.current = onLoadMore;
+  }, [onLoadMore]);
+
+  // Callback ref - called when element mounts/unmounts
+  const sentinelRef = useCallback((node: HTMLDivElement | null) => {
+    setSentinel(node);
+  }, []);
 
   const debouncedLoadMore = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     timeoutRef.current = setTimeout(() => {
-      onLoadMore();
+      onLoadMoreRef.current();
     }, debounceMs);
-  }, [onLoadMore, debounceMs]);
-
-  const handleIntersection = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const target = entries[0];
-      if (target.isIntersecting && hasMore && !isLoading) {
-        debouncedLoadMore();
-      }
-    },
-    [debouncedLoadMore, hasMore, isLoading],
-  );
+  }, [debounceMs]);
 
   useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+    if (!sentinel || !hasMore || isLoading) return;
+
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting) {
+        debouncedLoadMore();
+      }
+    };
 
     const observer = new IntersectionObserver(handleIntersection, {
       root: null,
@@ -58,7 +66,7 @@ export const useInfiniteScroll = ({
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [handleIntersection, threshold]);
+  }, [sentinel, hasMore, isLoading, threshold, debouncedLoadMore]);
 
   return { sentinelRef };
 };

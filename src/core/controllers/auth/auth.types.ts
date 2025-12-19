@@ -1,4 +1,4 @@
-import { PublicKey, Keypair } from '@synonymdev/pubky';
+import { PublicKey } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 
@@ -6,16 +6,12 @@ export interface TPubkyParams {
   pubky: Core.Pubky;
 }
 
-export interface TAuthenticatedData extends TPubkyParams {
-  session: Core.SignupResult['session'];
-}
-
-export interface TKeypairParams {
-  keypair: Keypair;
+export interface TPublicKeyParams {
+  publicKey: PublicKey;
 }
 
 export interface TSignUpParams {
-  keypair: Core.TKeyPair;
+  secretKey: string;
   signupToken: string;
 }
 
@@ -28,16 +24,6 @@ export interface TLoginWithEncryptedFileParams {
   password: string;
 }
 
-export interface TLoginWithAuthUrlParams {
-  publicKey: PublicKey;
-}
-
-export interface TBootstrapResponseParams {
-  authStore: Core.AuthStore;
-  bootstrapResponse: { notification: Core.NotificationState; filesUris: string[] };
-}
-
 export interface TBootstrapResponse {
   notification: Core.NotificationState;
-  filesUris: string[];
 }

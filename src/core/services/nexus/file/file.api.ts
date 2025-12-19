@@ -24,7 +24,7 @@ export const filesApi = {
     const encodedPubky = Core.encodePathSegment(pubky);
     return Core.buildCdnUrl(`avatar/${encodedPubky}`);
   },
-  getImageUrl: ({ pubky, file_id, variant }: Core.TImageParams) => {
+  getFileUrl: ({ pubky, file_id, variant }: Core.TFileParams) => {
     const encodedPubky = Core.encodePathSegment(pubky);
     const encodedFileId = Core.encodePathSegment(file_id);
     return Core.buildCdnUrl(`${STATIC_PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);

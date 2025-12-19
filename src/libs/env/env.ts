@@ -17,7 +17,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_DB_NAME: z.string().default('franky'),
   NEXT_PUBLIC_DB_VERSION: z
     .string()
-    .default('2')
+    .default('1')
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
@@ -38,7 +38,7 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: z
     .string()
-    .default('88000') // 88 seconds in milliseconds
+    .default('8888') // 8888 milliseconds
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
@@ -53,6 +53,30 @@ const envSchema = z.object({
     .default('true')
     .transform((val) => val === 'true')
     .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: z
+    .string()
+    .default('8888') // 8888 milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_STREAM_POLL_ON_START: z
+    .string()
+    .default('false')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: z
+    .string()
+    .default('true')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_FETCH_LIMIT: z
+    .string()
+    .default('10')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_TESTNET: z
     .string()
@@ -79,6 +103,19 @@ const envSchema = z.object({
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
+
+  // Server-side Chatwoot configuration (optional in schema, validated at runtime when service is used)
+  // These are server-side only and not available in browser, so we make them optional here
+  // but ChatwootService.getConfig() will validate they exist when actually needed
+  BASE_URL_SUPPORT: z.string().url().optional(),
+  SUPPORT_API_ACCESS_TOKEN: z.string().min(1).optional(),
+  SUPPORT_ACCOUNT_ID: z.string().min(1).optional(),
+  SUPPORT_FEEDBACK_INBOX_ID: z
+    .string()
+    .min(1)
+    .optional()
+    .default('26')
+    .transform((val) => parseInt(val, 10)),
 
   NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.png'),
   NEXT_PUBLIC_SITE_NAME: z.string().optional().default('Pubky App'),
@@ -121,6 +158,10 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
       NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
       NEXT_MAX_STREAM_TAGS: process.env.NEXT_MAX_STREAM_TAGS,
+      NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
+      NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
+      NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
+      NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
@@ -130,6 +171,10 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_EXCHANGE_RATE_API: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API,
       NEXT_PUBLIC_HOMEGATE_URL: process.env.NEXT_PUBLIC_HOMEGATE_URL,
       VITEST: process.env.VITEST,
+      BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
+      SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,
+      SUPPORT_ACCOUNT_ID: process.env.SUPPORT_ACCOUNT_ID,
+      SUPPORT_FEEDBACK_INBOX_ID: process.env.SUPPORT_FEEDBACK_INBOX_ID,
       NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
       NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
       NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,

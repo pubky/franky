@@ -100,7 +100,9 @@ Cypress.Commands.add(
     cy.location('pathname').should('eq', '/onboarding/profile');
 
     cy.get('#profile-name-input').type(profileName);
-    cy.get('#profile-bio-input').type(profileBio);
+    if (profileBio) {
+      cy.get('#profile-bio-input').type(profileBio);
+    }
     //cy.get('#profile-links-input').type(profileLinks);
 
     cy.get('#profile-finish-btn').click(extendedTimeout());
@@ -289,8 +291,8 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
       win.focus();
       // requires browser to be in focus
       return win.navigator.clipboard.readText().then((text) => {
-        // assert that pubky was copied to clipboard in correct format
-        expect(text).to.match(/^pk:/);
+        // todo: add format assertion once we use `pubky` prefix
+        //expect(text).to.match(/^pk:/);
         return text;
       });
       // previous 'then' is callback of a promise which doesn't guarantee synchronous execution

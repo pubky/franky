@@ -5,22 +5,14 @@ import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
-import { AUTH_ROUTES } from '@/app';
+import * as App from '@/app';
 
-export interface AccountProps {
-  className?: string;
-}
-
-export function Account({ className }: AccountProps) {
+export function Account() {
   const router = useRouter();
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  const handleSignOut = () => {
-    router.push(AUTH_ROUTES.LOGOUT);
-  };
 
   const handleDownloadData = async () => {
     setLoadingDownload(true);
@@ -36,21 +28,13 @@ export function Account({ className }: AccountProps) {
     setShowDeleteDialog(true);
   };
 
+  const handleEditProfile = () => {
+    router.push(App.SETTINGS_ROUTES.EDIT);
+  };
+
   return (
     <>
-      <Molecules.SettingsSectionCard className={className}>
-        <Molecules.SettingsSection
-          icon={Libs.LogOut}
-          title="Sign out from Pubky"
-          description="Sign out to protect your account from unauthorized access."
-          buttonText="Sign out"
-          buttonIcon={Libs.LogOut}
-          buttonId="settings-sign-out-btn"
-          buttonOnClick={handleSignOut}
-        />
-
-        <Molecules.SettingsDivider />
-
+      <Molecules.SettingsSectionCard>
         <Molecules.SettingsSection
           icon={Libs.Pencil}
           title="Edit your profile"
@@ -58,7 +42,7 @@ export function Account({ className }: AccountProps) {
           buttonText="Edit profile"
           buttonIcon={Libs.Pencil}
           buttonId="edit-profile-btn"
-          buttonOnClick={() => {}}
+          buttonOnClick={handleEditProfile}
         />
 
         <Molecules.SettingsDivider />

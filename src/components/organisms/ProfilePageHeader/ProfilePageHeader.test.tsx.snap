@@ -38,12 +38,14 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
       >
         <h1
           class="text-2xl font-bold text-white lg:text-6xl"
+          data-cy="profile-username-header"
           data-testid="typography"
         >
           Satoshi Nakamoto
         </h1>
         <p
           class="text-sm font-medium text-secondary-foreground lg:text-base"
+          data-cy="profile-bio-header"
           data-testid="typography"
         >
           Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.
@@ -176,7 +178,7 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           aria-controls="radix-[id]"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+          class="flex h-8 cursor-pointer items-center gap-1 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
           data-as-child="true"
           data-slot="popover-trigger"
           data-state="closed"
@@ -185,14 +187,12 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           type="button"
         >
           <span
-            class="font-semibold text-foreground text-base leading-none"
-            data-testid="typography"
+            class="text-base leading-6"
           >
             🌴
           </span>
           <span
-            class="text-base font-bold text-white"
-            data-testid="typography"
+            class="text-base leading-6 font-bold text-white"
           >
             Vacationing
           </span>

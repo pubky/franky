@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import * as Core from '@/core';
 import { useProfileActions } from './useProfileActions';
 
@@ -11,8 +11,30 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock useCopyToClipboard hook
+// Mock AuthController.logout
+const mockLogout = vi.fn();
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    AuthController: {
+      ...actual.AuthController,
+      logout: () => mockLogout(),
+    },
+  };
+});
+
+// Mock useCopyToClipboard hook - mock both paths
 const mockCopyToClipboard = vi.fn();
+
+// Mock direct import path (used by useProfileActions)
+vi.mock('@/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({
+    copyToClipboard: mockCopyToClipboard,
+  }),
+}));
+
+// Mock barrel export
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
@@ -126,33 +148,76 @@ describe('useProfileActions', () => {
   });
 
   describe('onSignOut', () => {
-    it('navigates to logout route', () => {
+    it('calls logout and navigates to logout route', async () => {
+      mockLogout.mockResolvedValue(undefined);
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
-      result.current.onSignOut();
+      await act(async () => {
+        await result.current.onSignOut();
+      });
 
+      expect(mockLogout).toHaveBeenCalledTimes(1);
       expect(mockPush).toHaveBeenCalledWith('/logout');
       expect(mockPush).toHaveBeenCalledTimes(1);
     });
-  });
 
-  describe('onEdit', () => {
-    it('logs to console (not implemented yet)', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
+    it('sets isLoggingOut to true during logout', async () => {
+      let resolveLogout: (value?: unknown) => void;
+      mockLogout.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveLogout = resolve;
+          }),
+      );
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
-      result.current.onEdit();
+      expect(result.current.isLoggingOut).toBe(false);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Edit clicked');
+      // Start the logout process (don't await, we want to check loading state)
+      const signOutPromise = result.current.onSignOut();
+
+      // Verify isLoggingOut is true during the process
+      await waitFor(() => {
+        expect(result.current.isLoggingOut).toBe(true);
+      });
+
+      // Complete the logout and wait for the promise to finish
+      await act(async () => {
+        resolveLogout();
+        await signOutPromise;
+      });
+    });
+
+    it('handles logout error gracefully', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      mockLogout.mockRejectedValue(new Error('Logout failed'));
+      const { result } = renderHook(() => useProfileActions(defaultProps));
+
+      await act(async () => {
+        await result.current.onSignOut();
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to logout:', expect.any(Error));
+      expect(mockPush).not.toHaveBeenCalled();
 
       consoleSpy.mockRestore();
     });
   });
 
+  describe('onEdit', () => {
+    it('navigates to settings edit route', () => {
+      const { result } = renderHook(() => useProfileActions(defaultProps));
+
+      result.current.onEdit();
+
+      expect(mockPush).toHaveBeenCalledWith('/settings/edit');
+      expect(mockPush).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('onStatusChange', () => {
-    it('calls ProfileController.updateStatus with status', async () => {
-      const mockUpdateStatus = vi.spyOn(Core.ProfileController, 'updateStatus').mockResolvedValue(undefined);
+    it('calls ProfileController.commitUpdateStatus with status', async () => {
+      const mockUpdateStatus = vi.spyOn(Core.ProfileController, 'commitUpdateStatus').mockResolvedValue(undefined);
       const mockAuthStore = {
         currentUserPubky: 'pk:test-user',
         setCurrentUserPubky: vi.fn(),
@@ -227,13 +292,13 @@ describe('useProfileActions', () => {
       expect(mockCopyToClipboard).toHaveBeenCalledWith('https://new-link.com/profile/user');
     });
 
-    it('handlers maintain stability based on their dependencies', () => {
+    it('handlers change correctly when props update', () => {
       const { result, rerender } = renderHook(({ publicKey, link }) => useProfileActions({ publicKey, link }), {
         initialProps: defaultProps,
       });
 
-      const firstOnEdit = result.current.onEdit;
-      const firstOnStatusChange = result.current.onStatusChange;
+      const firstOnCopyPublicKey = result.current.onCopyPublicKey;
+      const firstOnCopyLink = result.current.onCopyLink;
 
       // Rerender with different props
       rerender({
@@ -241,9 +306,9 @@ describe('useProfileActions', () => {
         link: 'https://new-link.com',
       });
 
-      // onEdit and onStatusChange don't depend on props, so they should remain stable
-      expect(result.current.onEdit).toBe(firstOnEdit);
-      expect(result.current.onStatusChange).toBe(firstOnStatusChange);
+      // onCopyPublicKey and onCopyLink depend on props, so they should change
+      expect(result.current.onCopyPublicKey).not.toBe(firstOnCopyPublicKey);
+      expect(result.current.onCopyLink).not.toBe(firstOnCopyLink);
     });
   });
 
@@ -269,12 +334,16 @@ describe('useProfileActions', () => {
       expect(mockCopyToClipboard).toHaveBeenCalledWith('https://example.com/profile/test-user-id');
     });
 
-    it('handles multiple onSignOut calls', () => {
+    it('handles multiple onSignOut calls', async () => {
+      mockLogout.mockResolvedValue(undefined);
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
-      result.current.onSignOut();
-      result.current.onSignOut();
+      await act(async () => {
+        await result.current.onSignOut();
+        await result.current.onSignOut();
+      });
 
+      expect(mockLogout).toHaveBeenCalledTimes(2);
       expect(mockPush).toHaveBeenCalledTimes(2);
       expect(mockPush).toHaveBeenCalledWith('/logout');
     });

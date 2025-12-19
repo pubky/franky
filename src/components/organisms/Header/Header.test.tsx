@@ -106,6 +106,18 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   SearchInput: () => <div data-testid="search-input">Search Input</div>,
+  HeaderHome: () => (
+    <div data-testid="header-home">
+      <div data-testid="header-social-links">Social Links</div>
+      <button>Sign in</button>
+    </div>
+  ),
+  HeaderSignIn: () => (
+    <div data-testid="header-sign-in">
+      <div data-testid="search-input">Search Input</div>
+      <div data-testid="header-navigation-buttons">Navigation Buttons</div>
+    </div>
+  ),
 }));
 
 // Mock hooks
@@ -120,7 +132,7 @@ describe('Header', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mock return values
-    mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+    mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
     mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
     mockUseRouter.mockReturnValue({ push: vi.fn() });
   });
@@ -138,7 +150,7 @@ describe('Header', () => {
   });
 
   it('hides header container on mobile when signed in outside onboarding', () => {
-    mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+    mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
     mockUsePathname.mockReturnValue(App.HOME_ROUTES.HOME);
 
     render(<Header />);
@@ -148,7 +160,7 @@ describe('Header', () => {
   });
 
   it('keeps header visible on mobile during onboarding when signed in', () => {
-    mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+    mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
     mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
 
     render(<Header />);
@@ -281,7 +293,7 @@ describe('Header', () => {
 
   describe('Authentication Logic', () => {
     it('renders SignInHeader when user is authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -293,7 +305,7 @@ describe('Header', () => {
     });
 
     it('renders HomeHeader when user is not authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -304,7 +316,7 @@ describe('Header', () => {
     });
 
     it('does not render HeaderTitle when user is authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -313,7 +325,7 @@ describe('Header', () => {
     });
 
     it('renders HomeHeader when user is not authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -323,7 +335,7 @@ describe('Header', () => {
     });
 
     it('prioritizes onboarding header over authentication state', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.INSTALL);
 
       render(<Header />);
@@ -400,7 +412,7 @@ describe('Header', () => {
 
   describe('HeaderTitle Display Logic', () => {
     it('renders HeaderTitle when user is not signed in', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -410,7 +422,7 @@ describe('Header', () => {
     });
 
     it('renders HeaderTitle when on step 5 (profile) even if signed in', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
 
       render(<Header />);
@@ -420,7 +432,7 @@ describe('Header', () => {
     });
 
     it('does not render HeaderTitle when signed in and not on step 5', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -441,7 +453,7 @@ describe('Header', () => {
 
       testCases.forEach(({ path, expectedTitle }) => {
         mockUsePathname.mockReturnValue(path);
-        mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+        mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
 
         const { rerender } = render(<Header />);
 
@@ -488,7 +500,7 @@ describe('Header', () => {
 
     it('shows HeaderTitle on step 5 regardless of authentication state', () => {
       // Test with authenticated user
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
 
       const { rerender } = render(<Header />);
@@ -497,7 +509,7 @@ describe('Header', () => {
       expect(screen.getByTestId('header-title')).toHaveTextContent('Profile');
 
       // Test with unauthenticated user
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
       rerender(<Header />);
 
       expect(screen.getByTestId('header-title')).toBeInTheDocument();
@@ -507,7 +519,7 @@ describe('Header', () => {
 
   describe('State Updates', () => {
     it('updates authentication state when isAuthenticated changes', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       const { rerender } = render(<Header />);
@@ -515,7 +527,7 @@ describe('Header', () => {
       expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
 
       // Change authentication state
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       rerender(<Header />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
@@ -540,7 +552,7 @@ describe('Header', () => {
 
     it('updates HeaderTitle visibility when authentication state changes', () => {
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
 
       const { rerender } = render(<Header />);
 
@@ -548,7 +560,7 @@ describe('Header', () => {
       expect(screen.getByTestId('header-title')).toBeInTheDocument();
 
       // Change to authenticated
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       rerender(<Header />);
 
       // Should hide HeaderTitle when authenticated (not on step 5)
@@ -556,7 +568,7 @@ describe('Header', () => {
     });
 
     it('updates HeaderTitle visibility when moving to/from step 5', () => {
-      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       const { rerender } = render(<Header />);

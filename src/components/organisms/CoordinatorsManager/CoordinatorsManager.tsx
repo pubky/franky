@@ -12,7 +12,7 @@ import * as Core from '@/core';
  * This component has no UI - it only manages coordinator lifecycles.
  *
  * Responsibilities:
- * - Initialize coordinators on mount
+ * - Initialize coordinators on mount (NotificationCoordinator, StreamCoordinator)
  * - Start coordination when the component is mounted
  * - Track route changes and inform coordinators
  * - Stop coordination and cleanup when unmounted
@@ -25,23 +25,29 @@ import * as Core from '@/core';
 export function CoordinatorsManager() {
   const pathname = usePathname();
 
-  // Start notification coordinator on mount, stop on unmount
+  // Start coordinators on mount, stop on unmount
   useEffect(() => {
     const notificationCoordinator = Core.NotificationCoordinator.getInstance();
+    const streamCoordinator = Core.StreamCoordinator.getInstance();
 
-    // Start the notification coordinator
+    // Start the coordinators
     notificationCoordinator.start();
+    streamCoordinator.start();
 
-    // Cleanup: stop coordinator when component unmounts
+    // Cleanup: stop coordinators when component unmounts
     return () => {
       notificationCoordinator.stop();
+      streamCoordinator.stop();
     };
   }, []);
 
-  // Update notification coordinator with current route for route-based activation/deactivation
+  // Update coordinators with current route for route-based activation/deactivation
   useEffect(() => {
     const notificationCoordinator = Core.NotificationCoordinator.getInstance();
+    const streamCoordinator = Core.StreamCoordinator.getInstance();
+
     notificationCoordinator.setRoute(pathname);
+    streamCoordinator.setRoute(pathname);
   }, [pathname]);
 
   // This component has no UI - it only manages coordinator lifecycles

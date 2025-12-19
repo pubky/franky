@@ -15,6 +15,17 @@ interface MetadataProps {
 }
 import * as Config from '@/config';
 
+export function getPWAConfig() {
+  return {
+    manifest: '/manifest.json',
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: 'black' as const,
+      title: Config.DEFAULT_SITE_NAME,
+    },
+  };
+}
+
 export function Metadata({
   title,
   description,
@@ -40,7 +51,11 @@ export function Metadata({
     icons: {
       icon: favicon,
       shortcut: favicon,
-      apple: favicon,
+      apple: [
+        { url: '/images/manifest/web-app-manifest-180x180.png', sizes: '180x180', type: 'image/png' },
+        { url: '/images/manifest/web-app-manifest-152x152.png', sizes: '152x152', type: 'image/png' },
+        { url: '/images/manifest/web-app-manifest-144x144.png', sizes: '144x144', type: 'image/png' },
+      ],
     },
     openGraph: {
       title,
@@ -73,5 +88,6 @@ export function Metadata({
     alternates: {
       canonical: url,
     },
+    ...getPWAConfig(),
   };
 }

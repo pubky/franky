@@ -38,7 +38,7 @@ describe('useInfiniteScroll', () => {
     vi.clearAllMocks();
   });
 
-  it('should return a sentinelRef', () => {
+  it('should return a sentinelRef callback', () => {
     const { result } = renderHook(() =>
       useInfiniteScroll({
         onLoadMore: mockOnLoadMore,
@@ -49,7 +49,7 @@ describe('useInfiniteScroll', () => {
     );
 
     expect(result.current.sentinelRef).toBeDefined();
-    expect(result.current.sentinelRef.current).toBeNull();
+    expect(typeof result.current.sentinelRef).toBe('function');
   });
 
   it('should initialize without errors', () => {
@@ -63,7 +63,7 @@ describe('useInfiniteScroll', () => {
 
     expect(result.current).toBeDefined();
     expect(result.current.sentinelRef).toBeDefined();
-    expect(result.current.sentinelRef.current).toBeNull();
+    expect(typeof result.current.sentinelRef).toBe('function');
   });
 
   it('should work with different configurations', () => {

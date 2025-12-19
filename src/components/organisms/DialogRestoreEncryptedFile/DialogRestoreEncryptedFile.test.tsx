@@ -9,28 +9,23 @@ vi.mock('@synonymdev/pubky', () => ({
 }));
 
 // Mock @/core
-vi.mock('@/core', () => ({
-  AuthController: {
-    loginWithEncryptedFile: vi.fn(),
-  },
-  BootstrapController: {
-    run: vi.fn().mockResolvedValue({}),
-  },
-  useAuthStore: {
-    getState: vi.fn().mockReturnValue({
-      currentUserPubky: 'mock-user-pubkey-123',
-    }),
-  },
-}));
-
-// Mock @radix-ui/react-dialog
-vi.mock('@radix-ui/react-dialog', () => ({
-  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-close" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    AuthController: {
+      loginWithEncryptedFile: vi.fn(),
+    },
+    BootstrapController: {
+      run: vi.fn().mockResolvedValue({}),
+    },
+    useAuthStore: {
+      getState: vi.fn().mockReturnValue({
+        currentUserPubky: 'mock-user-pubkey-123',
+      }),
+    },
+  };
+});
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -51,8 +46,21 @@ vi.mock('@/components/atoms', () => ({
       {children}
     </div>
   ),
-  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-content" className={className}>
+  DialogContent: ({
+    children,
+    className,
+    hiddenTitle,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    hiddenTitle?: string;
+  }) => (
+    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
+      {hiddenTitle && (
+        <h2 className="sr-only" data-testid="dialog-hidden-title">
+          {hiddenTitle}
+        </h2>
+      )}
       {children}
     </div>
   ),
@@ -70,6 +78,11 @@ vi.mock('@/components/atoms', () => ({
     <p data-testid="dialog-description" className={className}>
       {children}
     </p>
+  ),
+  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+    <div data-testid="dialog-close" data-as-child={asChild}>
+      {children}
+    </div>
   ),
   Button: ({
     children,

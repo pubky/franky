@@ -17,8 +17,11 @@ export class LocalUserTagService {
         }
         await Promise.all([
           this.saveUserTagsModel(taggedId, userTagsModel),
-          Core.UserCountsModel.updateCounts(taggerId, { tagged: 1 }),
-          Core.UserCountsModel.updateCounts(taggedId, { tags: 1, unique_tags: !tagExists ? 1 : undefined }),
+          Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: 1 } }),
+          Core.UserCountsModel.updateCounts({
+            userId: taggedId,
+            countChanges: { tags: 1, unique_tags: !tagExists ? 1 : undefined },
+          }),
         ]);
 
         Libs.Logger.debug('User tag created', { taggedId, label, taggerId });
@@ -45,8 +48,11 @@ export class LocalUserTagService {
         if (typeof lastTaggerOnTag === 'boolean') {
           await Promise.all([
             this.saveUserTagsModel(taggedId, userTagsModel),
-            Core.UserCountsModel.updateCounts(taggerId, { tagged: -1 }),
-            Core.UserCountsModel.updateCounts(taggedId, { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined }),
+            Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: -1 } }),
+            Core.UserCountsModel.updateCounts({
+              userId: taggedId,
+              countChanges: { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined },
+            }),
           ]);
           Libs.Logger.debug('User tag deleted', { taggedId, label, taggerId });
         } else {
@@ -80,5 +86,18 @@ export class LocalUserTagService {
       id: userId,
       tags: userTagsModel.tags as Core.NexusTag[],
     });
+  }
+
+  /**
+   * Find which users don't have tags persisted in cache.
+   * Used to identify missing tag data that needs to be fetched.
+   * @param userIds - Array of user IDs to check
+   * @returns Array of user IDs that don't have tags in cache
+   */
+  static async getNotPersistedUserTagsInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
+    if (userIds.length === 0) return [];
+
+    const existingTags = await Core.UserTagsModel.findByIdsPreserveOrder(userIds);
+    return userIds.filter((_userId, index) => existingTags[index] === undefined);
   }
 }

@@ -8,6 +8,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
+  usePathname: () => '/profile/posts',
 }));
 
 // Mock dexie-react-hooks
@@ -16,44 +17,54 @@ vi.mock('dexie-react-hooks', () => ({
 }));
 
 // Mock @/core
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(() => ({
-    currentUserPubky: 'test-pubky-123',
-  })),
-  ProfileController: {
-    read: vi.fn().mockResolvedValue({
-      links: [
-        { title: 'Example Link', url: 'https://example.com' },
-        { title: 'GitHub', url: 'https://github.com/test' },
-      ],
-    }),
-  },
-}));
-
-// Mock @/libs/icons
-vi.mock('@/libs/icons', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs/icons')>();
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    getIconFromUrl: () => {
-      const MockIcon = ({ size, className }: { size: number; className: string }) => (
-        <span data-testid="mock-icon" data-size={size} className={className}>
-          Icon
-        </span>
-      );
-      return MockIcon;
+    useAuthStore: vi.fn(() => ({
+      selectCurrentUserPubky: () => 'test-pubky-123',
+    })),
+    ProfileController: {
+      read: vi.fn().mockResolvedValue({
+        links: [
+          { title: 'Example Link', url: 'https://example.com' },
+          { title: 'GitHub', url: 'https://github.com/test' },
+        ],
+      }),
     },
   };
 });
 
-// Mock @/hooks
-vi.mock('@/hooks', () => ({
-  useCurrentUserProfile: vi.fn(() => ({
-    userDetails: null,
-    currentUserPubky: 'test-pubky-123',
+// Mock @/providers
+vi.mock('@/providers', () => ({
+  useProfileContext: vi.fn(() => ({
+    pubky: 'test-pubky-123',
+    isOwnProfile: true,
+    isLoading: false,
   })),
-  useUserTags: vi.fn(() => []),
 }));
+
+// Mock @/hooks
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCurrentUserProfile: vi.fn(() => ({
+      userDetails: null,
+      currentUserPubky: 'test-pubky-123',
+    })),
+    useTagged: vi.fn(() => ({
+      tags: [],
+      isLoading: false,
+      handleTagToggle: vi.fn(),
+    })),
+    useUserProfile: vi.fn(() => ({
+      profile: { links: null },
+      isLoading: false,
+    })),
+    useAvatarUrl: vi.fn(() => undefined),
+  };
+});
 
 describe('ProfilePageSidebar', () => {
   beforeEach(() => {
@@ -78,16 +89,7 @@ describe('ProfilePageSidebar', () => {
   it('has correct structure with sticky positioning', () => {
     const { container } = render(<ProfilePageSidebar />);
     const rootElement = container.firstChild as HTMLElement;
-    expect(rootElement).toHaveClass(
-      'sticky',
-      'top-(--header-height)',
-      'hidden',
-      'w-(--filter-bar-width)',
-      'flex-col',
-      'gap-6',
-      'self-start',
-      'lg:flex',
-    );
+    expect(rootElement).toHaveClass('w-(--filter-bar-width)', 'flex-col', 'gap-6', 'self-start', 'lg:flex', 'sticky');
   });
 
   it('renders with empty tags initially', () => {

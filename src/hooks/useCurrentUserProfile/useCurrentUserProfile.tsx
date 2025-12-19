@@ -21,7 +21,7 @@ export function useCurrentUserProfile(): Types.UseCurrentUserProfileResult {
 
   const userDetails = useLiveQuery(async () => {
     if (!currentUserPubky) return null;
-    return await Core.ProfileController.read({ userId: currentUserPubky });
+    return await Core.UserController.getDetails({ userId: currentUserPubky });
   }, [currentUserPubky]);
 
   return { userDetails, currentUserPubky };

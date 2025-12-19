@@ -4,17 +4,30 @@ import { useProfileStats } from './useProfileStats';
 import * as Core from '@/core';
 
 // Hoist mock data using vi.hoisted
-const { mockUserCounts, setMockUserCounts, mockNotificationsCount, setMockNotificationsCount } = vi.hoisted(() => {
-  const data = { current: null as Core.UserCountsModelSchema | null };
+// Note: undefined = query not executed yet (loading), null = query executed but no data found
+const {
+  mockUserCounts,
+  setMockUserCounts,
+  mockNotificationsCount,
+  setMockNotificationsCount,
+  mockTaggedCount,
+  setMockTaggedCount,
+} = vi.hoisted(() => {
+  const data = { current: undefined as Core.UserCountsModelSchema | null | undefined };
   const notificationsCount = { current: 0 };
+  const taggedCount = { current: 0 };
   return {
     mockUserCounts: data,
-    setMockUserCounts: (value: Core.UserCountsModelSchema | null) => {
+    setMockUserCounts: (value: Core.UserCountsModelSchema | null | undefined) => {
       data.current = value;
     },
     mockNotificationsCount: notificationsCount,
     setMockNotificationsCount: (value: number) => {
       notificationsCount.current = value;
+    },
+    mockTaggedCount: taggedCount,
+    setMockTaggedCount: (value: number) => {
+      taggedCount.current = value;
     },
   };
 });
@@ -30,6 +43,24 @@ vi.mock('dexie-react-hooks', () => ({
   }),
 }));
 
+// Mock useNotifications from direct path (used by useProfileStats)
+vi.mock('@/hooks/useNotifications', () => ({
+  useNotifications: vi.fn(() => ({
+    notifications: [],
+    unreadNotifications: [],
+    count: 0,
+    unreadCount: mockNotificationsCount.current,
+    isLoading: false,
+    isLoadingMore: false,
+    hasMore: false,
+    error: null,
+    loadMore: vi.fn(),
+    refresh: vi.fn(),
+    markAllAsRead: vi.fn(),
+    isNotificationUnread: vi.fn(() => false),
+  })),
+}));
+
 // Mock hooks
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
@@ -41,7 +72,19 @@ vi.mock('@/hooks', async (importOriginal) => {
       count: 0,
       unreadCount: mockNotificationsCount.current,
       isLoading: false,
+      isLoadingMore: false,
+      hasMore: false,
+      error: null,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
       markAllAsRead: vi.fn(),
+      isNotificationUnread: vi.fn(() => false),
+    })),
+    useTagged: vi.fn(() => ({
+      tags: [],
+      count: mockTaggedCount.current,
+      isLoading: false,
+      handleTagAdd: vi.fn(),
     })),
   };
 });
@@ -54,18 +97,27 @@ vi.mock('@/core', async (importOriginal) => {
     UserController: {
       getCounts: vi.fn().mockImplementation(() => Promise.resolve(mockUserCounts.current)),
     },
+    NotificationController: {
+      getNotificationsCountsNow: vi.fn(() => mockNotificationsCount.current),
+    },
+    useNotificationStore: vi.fn((selector: (state: { selectUnread: () => number }) => number) =>
+      selector({ selectUnread: () => mockNotificationsCount.current }),
+    ),
   };
 });
 
 describe('useProfileStats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setMockUserCounts(null);
+    // Default to undefined (simulating query not yet executed)
+    setMockUserCounts(undefined);
     setMockNotificationsCount(0);
+    setMockTaggedCount(0);
   });
 
   describe('Stats fetching', () => {
-    it('returns zero stats when user counts are not available', () => {
+    it('returns zero stats and isLoading true when query has not executed yet (undefined)', () => {
+      setMockUserCounts(undefined);
       const { result } = renderHook(() => useProfileStats('test-user-id'));
 
       expect(result.current.stats.posts).toBe(0);
@@ -76,6 +128,20 @@ describe('useProfileStats', () => {
       expect(result.current.stats.uniqueTags).toBe(0);
       expect(result.current.stats.notifications).toBe(0);
       expect(result.current.isLoading).toBe(true);
+    });
+
+    it('returns zero stats and isLoading false when counts not found (null)', () => {
+      setMockUserCounts(null);
+      const { result } = renderHook(() => useProfileStats('test-user-id'));
+
+      expect(result.current.stats.posts).toBe(0);
+      expect(result.current.stats.replies).toBe(0);
+      expect(result.current.stats.followers).toBe(0);
+      expect(result.current.stats.following).toBe(0);
+      expect(result.current.stats.friends).toBe(0);
+      expect(result.current.stats.uniqueTags).toBe(0);
+      expect(result.current.stats.notifications).toBe(0);
+      expect(result.current.isLoading).toBe(false);
     });
 
     it('returns correct stats when user counts exist', () => {
@@ -180,10 +246,18 @@ describe('useProfileStats', () => {
   });
 
   describe('Loading state', () => {
-    it('isLoading is true when user counts are null', () => {
+    it('isLoading is true when query has not executed yet (undefined)', () => {
+      setMockUserCounts(undefined);
       const { result } = renderHook(() => useProfileStats('test-user-id'));
 
       expect(result.current.isLoading).toBe(true);
+    });
+
+    it('isLoading is false when counts not found (null)', () => {
+      setMockUserCounts(null);
+      const { result } = renderHook(() => useProfileStats('test-user-id'));
+
+      expect(result.current.isLoading).toBe(false);
     });
 
     it('isLoading is false when user counts are available', () => {
@@ -208,7 +282,10 @@ describe('useProfileStats', () => {
   });
 
   describe('Edge cases', () => {
-    it('handles empty userId', () => {
+    it('handles empty userId - returns loading true (query returns null for empty userId)', () => {
+      // When userId is empty, the query returns null (not found)
+      // but the mock returns undefined by default (query not executed)
+      setMockUserCounts(undefined);
       const { result } = renderHook(() => useProfileStats(''));
 
       expect(result.current.stats.posts).toBe(0);

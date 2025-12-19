@@ -1,10 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatDistanceToNow } from 'date-fns';
-
-type ExtractInitialsProps = { name: string; maxLength?: number };
-type CopyToClipboardProps = { text: string };
-type FormatPublicKeyProps = { key: string; length: number };
+import type {
+  ExtractInitialsProps,
+  CopyToClipboardProps,
+  FormatPublicKeyProps,
+  GetDisplayTagsOptions,
+} from './utils.types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -229,6 +231,19 @@ export function timeAgo(date: Date): string {
 }
 
 /**
+ * Pauses execution for the specified duration.
+ * Useful for adding delays in async operations.
+ *
+ * @param ms - Duration to sleep in milliseconds
+ * @returns Promise that resolves after the specified duration
+ *
+ * @example
+ * await sleep(1000); // Wait 1 second
+ * await sleep(5000); // Wait 5 seconds
+ */
+export const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
  * Helper functions to create timestamps relative to now
  */
 export const minutesAgo = (mins: number): number => Date.now() - mins * 60 * 1000;
@@ -429,3 +444,47 @@ export const convertHmsToSeconds = (
 
   return h * 3600 + m * 60 + s;
 };
+
+export const isPostDeleted = (content: string | undefined) => content === '[DELETED]';
+
+/**
+ * Get tags that fit within the character budget.
+ * Shows fewer tags if they would exceed the total character limit.
+ *
+ * @param tags - Array of tag labels to filter
+ * @param options - Configuration options for limiting tags
+ * @returns Array of tags that fit within the constraints
+ *
+ * @example
+ * ```ts
+ * const tags = ['javascript', 'typescript', 'react', 'nodejs'];
+ * getDisplayTags(tags); // ['javascript', 'typescript'] - limited by total chars
+ * getDisplayTags(tags, { maxCount: 2 }); // ['javascript', 'typescript']
+ * getDisplayTags(tags, { maxTotalChars: 50 }); // More tags fit
+ * ```
+ */
+export function getDisplayTags(tags: string[], options: GetDisplayTagsOptions = {}): string[] {
+  const { maxTagLength = 10, maxTotalChars = 24, maxCount = 3 } = options;
+
+  if (tags.length === 0) return [];
+
+  const result: string[] = [];
+  let totalChars = 0;
+
+  for (const tag of tags) {
+    if (result.length >= maxCount) break;
+
+    // Calculate effective length (truncated if needed)
+    const effectiveLength = Math.min(tag.length, maxTagLength);
+
+    // Check if adding this tag would exceed the budget
+    if (totalChars + effectiveLength > maxTotalChars && result.length > 0) {
+      break;
+    }
+
+    result.push(tag);
+    totalChars += effectiveLength;
+  }
+
+  return result;
+}

@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Hot - Snapshots > matches snapshot 1`] = `
+<div>
+  <div
+    data-testid="content-layout"
+  >
+    <div
+      data-testid="hot-tags-cards-section"
+    >
+      HotTagsCardsSection
+    </div>
+    <div
+      data-testid="hot-tags-overview"
+    >
+      HotTagsOverview
+    </div>
+    <div
+      data-testid="hot-active-users"
+    >
+      HotActiveUsers
+    </div>
+    <div
+      class="flex flex-col gap-2"
+      data-testid="container"
+    >
+      <div
+        data-testid="heading-5"
+      >
+        Trending posts
+      </div>
+      <div
+        data-testid="timeline-feed"
+      >
+        TimelineFeed
+      </div>
+    </div>
+  </div>
+</div>
+`;

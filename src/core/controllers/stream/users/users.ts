@@ -39,7 +39,8 @@ export class StreamUserController {
 
     // Background fetch for missing users (non-blocking)
     if (cacheMissUserIds.length > 0) {
-      void Core.UserStreamApplication.fetchMissingUsersFromNexus({
+      // TODO: When TTL is implemented, we can return to void
+      await Core.UserStreamApplication.fetchMissingUsersFromNexus({
         cacheMissUserIds,
         viewerId,
       });

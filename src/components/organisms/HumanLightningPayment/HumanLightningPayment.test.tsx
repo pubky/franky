@@ -4,7 +4,7 @@ import { render, waitFor, fireEvent } from '@testing-library/react';
 import { Homegate } from '@/core/services/homegate';
 import { HumanLightningPayment } from './HumanLightningPayment';
 
-vi.mock('@/core/application/homegate', () => ({
+vi.mock('@/core/services/homegate', () => ({
   Homegate: {
     requestLightningInvoice: vi.fn().mockResolvedValue('mock-invoice'),
   },

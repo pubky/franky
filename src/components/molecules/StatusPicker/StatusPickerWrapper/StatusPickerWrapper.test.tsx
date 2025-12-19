@@ -228,13 +228,24 @@ describe('StatusPickerWrapper', () => {
   });
 
   describe('StatusPickerWrapper - Snapshots', () => {
+    // Helper to normalize non-deterministic Radix UI IDs in DOM element
+    const normalizeRadixIds = (element: Element | null) => {
+      if (!element) return;
+      const button = element.querySelector('button[aria-controls]');
+      if (button && button.getAttribute('aria-controls')?.startsWith('radix-')) {
+        button.setAttribute('aria-controls', 'radix-normalized');
+      }
+    };
+
     it('matches snapshot with predefined status', () => {
       const { container } = render(<StatusPickerWrapper emoji="🌴" status="vacationing" />);
+      normalizeRadixIds(container.firstChild as Element);
       expect(container.firstChild).toMatchSnapshot();
     });
 
     it('matches snapshot with custom status', () => {
       const { container } = render(<StatusPickerWrapper emoji="😊" status="😊Working" />);
+      normalizeRadixIds(container.firstChild as Element);
       expect(container.firstChild).toMatchSnapshot();
     });
 
@@ -242,11 +253,13 @@ describe('StatusPickerWrapper', () => {
       const { container } = render(
         <StatusPickerWrapper emoji="🌴" status="vacationing" onStatusChange={mockOnStatusChange} />,
       );
+      normalizeRadixIds(container.firstChild as Element);
       expect(container.firstChild).toMatchSnapshot();
     });
 
     it('matches snapshot with custom sideOffset', () => {
       const { container } = render(<StatusPickerWrapper emoji="🌴" status="vacationing" sideOffset={-50} />);
+      normalizeRadixIds(container.firstChild as Element);
       expect(container.firstChild).toMatchSnapshot();
     });
   });

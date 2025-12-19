@@ -37,7 +37,7 @@ export async function getBtcUsdRate(): Promise<number> {
 
     if (!response.ok) {
       throw createNexusError(
-        NexusErrorType.NETWORK_ERROR,
+        NexusErrorType.SERVICE_UNAVAILABLE,
         `Failed to fetch exchange rate: ${response.statusText}`,
         response.status,
         { url: apiUrl, statusCode: response.status },
@@ -81,7 +81,7 @@ export async function getBtcUsdRate(): Promise<number> {
 
     // Wrap other errors (network failures, JSON parse errors, etc.)
     throw createNexusError(
-      NexusErrorType.NETWORK_ERROR,
+      NexusErrorType.SERVICE_UNAVAILABLE,
       `Failed to fetch BTC/USD exchange rate: ${error instanceof Error ? error.message : 'Unknown error'}`,
       500,
       { url: apiUrl, originalError: error },

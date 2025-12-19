@@ -1,23 +1,23 @@
 import type { Session } from '@synonymdev/pubky';
+
 import * as Core from '@/core';
 
 export type FetchOptions = {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: HomeserverAction;
   body?: string | Uint8Array;
 };
 
-export type SignupResult = {
+export type THomeserverSignUpParams = Core.TKeypairParams & {
+  signupToken: string;
+};
+
+export type THomeserverSessionResult = {
   session: Session;
 };
 
-export type TKeyPair = {
-  pubky: Core.Pubky;
-  secretKey: string;
-};
-
-export type TAuthenticateKeypairResult = {
-  pubky: Core.Pubky;
-  session: Session;
+export type TGenerateAuthUrlResult = {
+  authorizationUrl: string;
+  awaitApproval: Promise<Session>;
 };
 
 export enum HomeserverAction {

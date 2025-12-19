@@ -1,8 +1,16 @@
 import './globals.css';
 
+import type { Viewport } from 'next';
+
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Providers from '@/providers';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#000000',
+};
 
 export const metadata = Molecules.Metadata({
   title: 'Pubky App - Unlock the web',
@@ -18,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Organisms.CoordinatorsManager />
           <Organisms.Header />
           {children}
+          <Molecules.NewPostCTA />
           <Molecules.Toaster />
         </Providers.RouteGuardProvider>
       </Providers.DatabaseProvider>

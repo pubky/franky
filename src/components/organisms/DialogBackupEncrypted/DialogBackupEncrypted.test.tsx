@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogBackupEncrypted } from './DialogBackupEncrypted';
-import * as Libs from '@/libs';
 
 // Mock Next.js Image
 vi.mock('next/image', () => ({
@@ -21,31 +20,27 @@ vi.mock('next/image', () => ({
   }) => <img data-testid="next-image" src={src} alt={alt} width={width} height={height} className={className} />,
 }));
 
-// Mock Radix UI DialogClose
-vi.mock('@radix-ui/react-dialog', () => ({
-  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="radix-dialog-close" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
+// Mock ProfileController
+const { mockCreateRecoveryFile } = vi.hoisted(() => ({
+  mockCreateRecoveryFile: vi.fn(),
 }));
 
-// Mock stores
-vi.mock('@/core', () => ({
-  useOnboardingStore: () => ({
-    secretKey: 'mock-secret-key',
-    pubky: 'mock-public-key',
-  }),
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    ProfileController: {
+      ...actual.ProfileController,
+      createRecoveryFile: mockCreateRecoveryFile,
+    },
+  };
+});
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    Identity: {
-      createRecoveryFile: vi.fn(),
-    },
   };
 });
 
@@ -179,10 +174,11 @@ vi.mock('@/components/atoms', () => ({
 }));
 
 describe('DialogBackupEncrypted', () => {
-  it('handles Enter key on password input when passwords match', () => {
-    const mockCreateRecoveryFile = vi.fn();
-    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
+  beforeEach(() => {
+    mockCreateRecoveryFile.mockClear();
+  });
 
+  it('handles Enter key on password input when passwords match', () => {
     render(<DialogBackupEncrypted />);
 
     const passwordInput = screen.getByPlaceholderText('Enter a strong password');
@@ -195,19 +191,10 @@ describe('DialogBackupEncrypted', () => {
     // Press Enter on password input
     fireEvent.keyDown(passwordInput, { key: 'Enter' });
 
-    expect(mockCreateRecoveryFile).toHaveBeenCalledWith(
-      {
-        pubky: 'mock-public-key',
-        secretKey: 'mock-secret-key',
-      },
-      'TestPassword123!',
-    );
+    expect(mockCreateRecoveryFile).toHaveBeenCalledWith('TestPassword123!');
   });
 
   it('does not trigger download on Enter when passwords do not match', () => {
-    const mockCreateRecoveryFile = vi.fn();
-    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
-
     render(<DialogBackupEncrypted />);
 
     const passwordInput = screen.getByPlaceholderText('Enter a strong password');
@@ -224,9 +211,6 @@ describe('DialogBackupEncrypted', () => {
   });
 
   it('handles Enter key on confirm password input when passwords match', () => {
-    const mockCreateRecoveryFile = vi.fn();
-    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
-
     render(<DialogBackupEncrypted />);
 
     const passwordInput = screen.getByPlaceholderText('Enter a strong password');
@@ -239,19 +223,10 @@ describe('DialogBackupEncrypted', () => {
     // Press Enter on confirm password input
     fireEvent.keyDown(confirmPasswordInput, { key: 'Enter' });
 
-    expect(mockCreateRecoveryFile).toHaveBeenCalledWith(
-      {
-        pubky: 'mock-public-key',
-        secretKey: 'mock-secret-key',
-      },
-      'TestPassword123!',
-    );
+    expect(mockCreateRecoveryFile).toHaveBeenCalledWith('TestPassword123!');
   });
 
   it('does not trigger download on Enter from confirm password when passwords do not match', () => {
-    const mockCreateRecoveryFile = vi.fn();
-    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
-
     render(<DialogBackupEncrypted />);
 
     const passwordInput = screen.getByPlaceholderText('Enter a strong password');
@@ -268,9 +243,6 @@ describe('DialogBackupEncrypted', () => {
   });
 
   it('guards against IME composition on Enter key', () => {
-    const mockCreateRecoveryFile = vi.fn();
-    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
-
     render(<DialogBackupEncrypted />);
 
     const passwordInput = screen.getByPlaceholderText('Enter a strong password');

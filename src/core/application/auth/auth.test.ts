@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import { LastReadResult } from 'pubky-app-specs';
 import type { Session, Keypair } from '@synonymdev/pubky';
 
 vi.mock('pubky-app-specs', () => ({
@@ -8,80 +7,39 @@ vi.mock('pubky-app-specs', () => ({
 }));
 
 describe('AuthApplication', () => {
-  const createMockInstance = () => ({
-    signup: vi.fn(),
-    authenticateKeypair: vi.fn(),
-    generateAuthUrl: vi.fn(),
-    logout: vi.fn(),
-  });
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('signUp', () => {
     const createParams = (): Core.TAuthenticateKeypairParams => ({
-      keypair: { pubky: 'test-pubky' as Core.Pubky, secretKey: 'test-secret-key-hex' },
+      keypair: {
+        publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
+        secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
+      } as unknown as Keypair,
       signupToken: 'test-signup-token',
       secretKey: 'test-secret-key',
-      lastRead: {
-        last_read: { toJson: vi.fn(() => ({ timestamp: 1234567890 })) },
-        meta: { url: 'pubky://test-pubky/pub/pubky.app/last-read' },
-      } as unknown as LastReadResult,
     });
 
-    it('should sign up and update last read', async () => {
+    it('should sign up successfully', async () => {
       const params = createParams();
-      const mockInstance = createMockInstance();
       const mockSession = { token: 'test-token' } as unknown as Session;
-      const expectedResult = { pubky: 'test-pubky' as Core.Pubky, session: mockSession };
+      const expectedResult = { session: mockSession };
 
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
-      mockInstance.signup.mockResolvedValue(expectedResult);
+      const signUpSpy = vi.spyOn(Core.HomeserverService, 'signUp').mockResolvedValue(expectedResult);
 
       const result = await Core.AuthApplication.signUp(params);
 
-      expect(mockInstance.signup).toHaveBeenCalledWith(params.keypair, params.signupToken);
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        params.lastRead.meta.url,
-        params.lastRead.last_read.toJson(),
-      );
+      expect(signUpSpy).toHaveBeenCalledWith({ keypair: params.keypair, signupToken: params.signupToken });
       expect(result).toEqual(expectedResult);
     });
 
     it('should propagate error when signup fails', async () => {
       const params = createParams();
-      const mockInstance = createMockInstance();
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
-      mockInstance.signup.mockRejectedValue(new Error('Signup failed'));
+      const signUpSpy = vi.spyOn(Core.HomeserverService, 'signUp').mockRejectedValue(new Error('Signup failed'));
 
       await expect(Core.AuthApplication.signUp(params)).rejects.toThrow('Signup failed');
-      expect(mockInstance.signup).toHaveBeenCalledOnce();
-      expect(requestSpy).not.toHaveBeenCalled();
-    });
-
-    it('should propagate error when last read update fails', async () => {
-      const params = createParams();
-      const mockInstance = createMockInstance();
-      const mockSession = { token: 'test-token' } as unknown as Session;
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
-
-      mockInstance.signup.mockResolvedValue({ pubky: 'test-pubky' as Core.Pubky, session: mockSession });
-      requestSpy.mockRejectedValue(new Error('Failed to update last read'));
-
-      await expect(Core.AuthApplication.signUp(params)).rejects.toThrow('Failed to update last read');
-      expect(mockInstance.signup).toHaveBeenCalledOnce();
-      expect(requestSpy).toHaveBeenCalledOnce();
+      expect(signUpSpy).toHaveBeenCalledOnce();
     });
   });
 
@@ -96,102 +54,84 @@ describe('AuthApplication', () => {
 
     it('should successfully authenticate and return result', async () => {
       const params = createParams();
-      const mockInstance = createMockInstance();
       const mockSession = { token: 'test-token' } as unknown as Session;
-      const expectedResult = { pubky: 'test-pubky' as Core.Pubky, session: mockSession };
+      const expectedResult = { session: mockSession };
 
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.authenticateKeypair.mockResolvedValue(expectedResult);
+      const signInSpy = vi.spyOn(Core.HomeserverService, 'signIn').mockResolvedValue(expectedResult);
 
       const result = await Core.AuthApplication.signIn(params);
 
-      expect(mockInstance.authenticateKeypair).toHaveBeenCalledWith(params.keypair);
+      expect(signInSpy).toHaveBeenCalledWith({ keypair: params.keypair });
       expect(result).toEqual(expectedResult);
     });
 
     it('should return undefined when homeserver is not found during authentication', async () => {
       const params = createParams();
-      const mockInstance = createMockInstance();
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.authenticateKeypair.mockResolvedValue(undefined);
+      const signInSpy = vi.spyOn(Core.HomeserverService, 'signIn').mockResolvedValue(undefined);
 
       const result = await Core.AuthApplication.signIn(params);
 
-      expect(mockInstance.authenticateKeypair).toHaveBeenCalledWith(params.keypair);
+      expect(signInSpy).toHaveBeenCalledWith({ keypair: params.keypair });
       expect(result).toBeUndefined();
     });
 
     it('should propagate error when authentication throws', async () => {
       const params = createParams();
-      const mockInstance = createMockInstance();
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.authenticateKeypair.mockRejectedValue(new Error('Authentication failed'));
+      const signInSpy = vi
+        .spyOn(Core.HomeserverService, 'signIn')
+        .mockRejectedValue(new Error('Authentication failed'));
 
       await expect(Core.AuthApplication.signIn(params)).rejects.toThrow('Authentication failed');
-      expect(mockInstance.authenticateKeypair).toHaveBeenCalledOnce();
+      expect(signInSpy).toHaveBeenCalledOnce();
     });
   });
 
   describe('generateAuthUrl', () => {
     it('should generate and return auth URL', async () => {
-      const params = { secretKey: 'test-secret-key' };
-      const mockInstance = createMockInstance();
-      const expectedUrl = 'https://example.com/auth?token=test-token';
+      const mockSession = { token: 'test-token' } as unknown as Session;
+      const expectedResult = {
+        authorizationUrl: 'https://example.com/auth?token=test-token',
+        awaitApproval: Promise.resolve(mockSession),
+      };
 
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.generateAuthUrl.mockResolvedValue(expectedUrl);
+      const generateAuthUrlSpy = vi.spyOn(Core.HomeserverService, 'generateAuthUrl').mockResolvedValue(expectedResult);
 
-      const result = await Core.AuthApplication.generateAuthUrl(params);
+      const result = await Core.AuthApplication.generateAuthUrl();
 
-      expect(mockInstance.generateAuthUrl).toHaveBeenCalled();
-      expect(result).toBe(expectedUrl);
+      expect(generateAuthUrlSpy).toHaveBeenCalled();
+      expect(result).toEqual(expectedResult);
     });
 
     it('should propagate error when URL generation fails', async () => {
-      const params = { secretKey: 'test-secret-key' };
-      const mockInstance = createMockInstance();
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.generateAuthUrl.mockRejectedValue(new Error('Failed to generate auth URL'));
+      const generateAuthUrlSpy = vi
+        .spyOn(Core.HomeserverService, 'generateAuthUrl')
+        .mockRejectedValue(new Error('Failed to generate auth URL'));
 
-      await expect(Core.AuthApplication.generateAuthUrl(params)).rejects.toThrow('Failed to generate auth URL');
-      expect(mockInstance.generateAuthUrl).toHaveBeenCalledOnce();
+      await expect(Core.AuthApplication.generateAuthUrl()).rejects.toThrow('Failed to generate auth URL');
+      expect(generateAuthUrlSpy).toHaveBeenCalledOnce();
     });
   });
 
   describe('logout', () => {
-    it('should successfully logout', async () => {
-      const params = { pubky: 'test-pubky' as Core.Pubky, secretKey: 'test-secret-key' };
-      const mockInstance = createMockInstance();
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.logout.mockResolvedValue(undefined);
+    it('should successfully logout and reset PubkySpecsSingleton', async () => {
+      const params = { pubky: 'test-pubky' as Core.Pubky };
+      const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(new Response());
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await Core.AuthApplication.logout(params);
 
-      expect(mockInstance.logout).toHaveBeenCalledWith(params.pubky);
+      expect(logoutSpy).toHaveBeenCalledWith(params);
+      expect(resetSpy).toHaveBeenCalledOnce();
     });
 
-    it('should propagate error when logout fails', async () => {
-      const params = { pubky: 'test-pubky' as Core.Pubky, secretKey: 'test-secret-key' };
-      const mockInstance = createMockInstance();
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      mockInstance.logout.mockRejectedValue(new Error('Logout failed'));
+    it('should propagate error when logout fails and not reset PubkySpecsSingleton', async () => {
+      const params = { pubky: 'test-pubky' as Core.Pubky };
+      const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockRejectedValue(new Error('Logout failed'));
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await expect(Core.AuthApplication.logout(params)).rejects.toThrow('Logout failed');
-      expect(mockInstance.logout).toHaveBeenCalledOnce();
+      expect(logoutSpy).toHaveBeenCalledOnce();
+      expect(resetSpy).not.toHaveBeenCalled();
     });
   });
 

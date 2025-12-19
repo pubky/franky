@@ -9,11 +9,18 @@ export interface ProfileMenuItem {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
   pageType: Types.ProfilePageType;
+  /** Whether this item should only be shown for own profile */
+  ownProfileOnly?: boolean;
 }
 
 export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
   { icon: Libs.CircleUserRound, label: 'Profile', pageType: Types.PROFILE_PAGE_TYPES.PROFILE },
-  { icon: Libs.Bell, label: 'Notifications', pageType: Types.PROFILE_PAGE_TYPES.NOTIFICATIONS },
+  {
+    icon: Libs.Bell,
+    label: 'Notifications',
+    pageType: Types.PROFILE_PAGE_TYPES.NOTIFICATIONS,
+    ownProfileOnly: true, // Notifications only make sense for logged-in user
+  },
   { icon: Libs.MessageCircle, label: 'Replies', pageType: Types.PROFILE_PAGE_TYPES.REPLIES },
   { icon: Libs.StickyNote, label: 'Posts', pageType: Types.PROFILE_PAGE_TYPES.POSTS },
   { icon: Libs.UsersRound, label: 'Followers', pageType: Types.PROFILE_PAGE_TYPES.FOLLOWERS },
@@ -25,9 +32,25 @@ export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
 export interface ProfilePageMobileMenuProps {
   activePage: Types.ProfilePageType;
   onPageChangeAction: (page: Types.ProfilePageType) => void;
+  /** Whether this is the logged-in user's own profile */
+  isOwnProfile?: boolean;
 }
 
-export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: ProfilePageMobileMenuProps) {
+export function ProfilePageMobileMenu({
+  activePage,
+  onPageChangeAction,
+  isOwnProfile = true,
+}: ProfilePageMobileMenuProps) {
+  // Filter menu items based on isOwnProfile
+  const visibleItems = React.useMemo(() => {
+    return PROFILE_MENU_ITEMS.filter((item) => {
+      if (item.ownProfileOnly && !isOwnProfile) {
+        return false;
+      }
+      return true;
+    });
+  }, [isOwnProfile]);
+
   return (
     <Atoms.Container
       overrideDefaults={true}
@@ -35,7 +58,7 @@ export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: Profil
       data-testid="profile-page-mobile-menu"
     >
       <Atoms.Container overrideDefaults={true} className="flex w-full" data-testid="profile-page-mobile-menu-items">
-        {PROFILE_MENU_ITEMS.map((item, index) => {
+        {visibleItems.map((item, index) => {
           const Icon = item.icon;
           const isSelected = item.pageType === activePage;
 

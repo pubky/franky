@@ -19,7 +19,7 @@ export function useStreamPagination({
 }: Types.UseStreamPaginationOptions): Types.UseStreamPaginationResult {
   const [postIds, setPostIds] = useState<string[]>([]);
   const [lastPostId, setLastPostId] = useState<string | undefined>(undefined);
-  const [streamTail, setStreamTail] = useState<number>(0);
+  const [streamTail, setStreamTail] = useState<number>(Core.NOT_FOUND_CACHED_STREAM);
 
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -51,7 +51,7 @@ export function useStreamPagination({
         let result: Core.TReadPostStreamChunkResponse;
 
         if (isInitialLoad) {
-          const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp(streamId);
+          const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp({ streamId });
           setStreamTail(cachedLastPostTimestamp);
 
           result = await Core.StreamPostsController.getOrFetchStreamSlice({
@@ -148,6 +148,41 @@ export function useStreamPagination({
     await fetchStreamSlice(false);
   }, [loadingMore, hasMore, fetchStreamSlice]);
 
+  /**
+   * Optimistically add post(s) to the top of the timeline
+   * This avoids a full refresh when creating new posts
+   * @param postIds - A single post ID or array of post IDs to add
+   */
+  const prependPosts = useCallback((postIds: string | string[]) => {
+    const idsToAdd = Array.isArray(postIds) ? postIds : [postIds];
+
+    // Filter out posts that already exist to avoid duplicates
+    const existingIds = new Set(postIdsRef.current);
+    const newIds = idsToAdd.filter((id) => !existingIds.has(id));
+
+    if (newIds.length === 0) {
+      return;
+    }
+
+    const updatedPostIds = [...newIds, ...postIdsRef.current];
+    postIdsRef.current = updatedPostIds;
+    setPostIds(updatedPostIds);
+  }, []);
+
+  /**
+   * Remove post(s) from the timeline
+   * Used when posts are deleted to immediately remove them from the UI
+   * @param postIds - A single post ID or array of post IDs to remove
+   */
+  const removePosts = useCallback((postIds: string | string[]) => {
+    const idsToRemove = Array.isArray(postIds) ? postIds : [postIds];
+    const idsToRemoveSet = new Set(idsToRemove);
+
+    const updatedPostIds = postIdsRef.current.filter((id) => !idsToRemoveSet.has(id));
+    postIdsRef.current = updatedPostIds;
+    setPostIds(updatedPostIds);
+  }, []);
+
   // Initial load and reset when streamId changes
   useEffect(() => {
     if (resetOnStreamChange) {
@@ -165,5 +200,7 @@ export function useStreamPagination({
     hasMore,
     loadMore,
     refresh,
+    prependPosts,
+    removePosts,
   };
 }

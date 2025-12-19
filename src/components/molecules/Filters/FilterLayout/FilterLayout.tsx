@@ -14,7 +14,6 @@ export function FilterLayout({
     () => [
       { key: Core.LAYOUT.COLUMNS, label: 'Columns', icon: Libs.Columns3 },
       { key: Core.LAYOUT.WIDE, label: 'Wide', icon: Libs.Menu },
-      { key: Core.LAYOUT.VISUAL, label: 'Visual', icon: Libs.LayoutGrid, disabled: true },
     ],
     [],
   );

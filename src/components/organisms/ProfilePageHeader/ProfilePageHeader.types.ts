@@ -21,6 +21,13 @@ export interface ProfileHeaderActions {
   onSignOut?: () => void;
   onStatusChange?: (status: string) => void;
   onAvatarClick?: () => void;
+  isLoggingOut?: boolean;
+  /** Follow/unfollow action for other user's profiles */
+  onFollowToggle?: () => void;
+  /** Whether the follow action is in progress */
+  isFollowLoading?: boolean;
+  /** Whether the current user is following this profile */
+  isFollowing?: boolean;
 }
 
 /**
@@ -32,6 +39,8 @@ export interface ProfilePageHeaderProps {
   profile: ProfileHeaderData;
   /** Action handlers for user interactions */
   actions: ProfileHeaderActions;
+  /** Whether this is the logged-in user's own profile */
+  isOwnProfile?: boolean;
 }
 
 /**

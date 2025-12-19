@@ -22,12 +22,8 @@ export {
   PublicKeyCard,
   RightSidebar,
   SignInNavigation,
-  SinglePost,
-  SinglePostContent,
-  SinglePostCounts,
-  SinglePostReplies,
-  SinglePostReplyInput,
-  SinglePostTags,
-  SinglePostUserDetails,
+  SinglePostCard,
+  SinglePostParticipants,
+  PostTagsPanel,
 } from './organisms';
 export * from './templates';

@@ -13,13 +13,11 @@ export const BackupNavigation = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const { pubky, secretKey, inviteCode } = Core.useOnboardingStore();
+  const { secretKey, inviteCode } = Core.useOnboardingStore();
   const onHandleContinueButton = async () => {
     setLoading(true);
     try {
-      const keypair = { pubky, secretKey };
-      const signupToken = inviteCode;
-      await Core.AuthController.signUp({ keypair, signupToken });
+      await Core.AuthController.signUp({ secretKey: secretKey!, signupToken: inviteCode });
       router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch (error) {
       toast({

@@ -12,10 +12,14 @@ vi.mock('pubky-app-specs', () => ({
 }));
 
 // Mock config
-vi.mock('@/config', () => ({
-  DB_NAME: 'test-db',
-  DB_VERSION: 1,
-}));
+vi.mock('@/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config')>();
+  return {
+    ...actual,
+    DB_NAME: 'test-db',
+    DB_VERSION: 1,
+  };
+});
 
 // Mock the Env module
 vi.mock('@/libs/env', () => ({

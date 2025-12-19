@@ -28,9 +28,15 @@ exports[`TimelinePostReplies > Snapshots > should match snapshot when rendering 
       data-testid="post-thread-spacer"
     />
     <div
-      data-is-last-reply="true"
+      data-is-last-reply="false"
       data-is-reply="true"
       data-testid="post-main-author:reply3"
+    />
+    <div
+      data-testid="post-thread-spacer"
+    />
+    <div
+      data-testid="quick-reply-author:post123"
     />
   </div>
 </div>

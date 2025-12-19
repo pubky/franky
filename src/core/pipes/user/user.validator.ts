@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { USER_NAME_MIN_LENGTH, USER_NAME_MAX_LENGTH, USER_BIO_MAX_LENGTH } from '@/config';
 
 export class UserValidator {
   static check(name: string, bio: string, links: { label: string; url: string }[], avatarFile: File | null) {
@@ -16,6 +17,7 @@ export class UserValidator {
       for (const issue of result.error.issues) {
         const path0 = issue.path[0];
         if (path0 === 'name') errorList.push({ type: 'name', message: issue.message });
+        if (path0 === 'bio') errorList.push({ type: 'bio', message: issue.message });
         if (path0 === 'links') {
           const index = typeof issue.path[1] === 'number' ? (issue.path[1] as number) : undefined;
           const field = issue.path[2];
@@ -38,8 +40,16 @@ export class UserValidator {
 }
 
 export const UiUserSchema = z.object({
-  name: z.string().trim().min(3, 'Name must be at least 3 characters'),
-  bio: z.string().trim().optional(),
+  name: z
+    .string()
+    .trim()
+    .min(USER_NAME_MIN_LENGTH, `Name must be at least ${USER_NAME_MIN_LENGTH} characters`)
+    .max(USER_NAME_MAX_LENGTH, `Name must be no more than ${USER_NAME_MAX_LENGTH} characters`),
+  bio: z
+    .string()
+    .trim()
+    .max(USER_BIO_MAX_LENGTH, `Bio must be no more than ${USER_BIO_MAX_LENGTH} characters`)
+    .optional(),
   links: z
     .array(
       z.object({

@@ -7,7 +7,6 @@ import {
   createNexusError,
   createDatabaseError,
   createCommonError,
-  mapHttpStatusToNexusErrorType,
   Logger,
 } from '@/libs';
 
@@ -118,16 +117,6 @@ describe('Error Library', () => {
       expect(error.type).toBe(CommonErrorType.TIMEOUT);
       expect(error.statusCode).toBe(408);
       expect(error.details).toEqual({ duration: 5000 });
-    });
-  });
-
-  describe('HTTP Status Mapping', () => {
-    it('should map HTTP status codes to correct Nexus error types', () => {
-      expect(mapHttpStatusToNexusErrorType(400)).toBe(NexusErrorType.INVALID_REQUEST);
-      expect(mapHttpStatusToNexusErrorType(404)).toBe(NexusErrorType.RESOURCE_NOT_FOUND);
-      expect(mapHttpStatusToNexusErrorType(429)).toBe(NexusErrorType.RATE_LIMIT_EXCEEDED);
-      expect(mapHttpStatusToNexusErrorType(503)).toBe(NexusErrorType.SERVICE_UNAVAILABLE);
-      expect(mapHttpStatusToNexusErrorType(418)).toBe(NexusErrorType.BOOTSTRAP_FAILED); // Default case
     });
   });
 });

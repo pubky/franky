@@ -3,23 +3,20 @@ import { type VariantProps } from 'class-variance-authority';
 import { breadcrumbVariants, breadcrumbItemVariants, breadcrumbSeparatorVariants } from './Breadcrumb';
 
 export interface BreadcrumbProps
-  extends React.ComponentPropsWithoutRef<'nav'>,
-    VariantProps<typeof breadcrumbVariants> {
+  extends React.ComponentPropsWithoutRef<'nav'>, VariantProps<typeof breadcrumbVariants> {
   children: React.ReactNode;
   separator?: React.ReactNode;
 }
 
 export interface BreadcrumbItemProps
-  extends React.ComponentPropsWithoutRef<'li'>,
-    VariantProps<typeof breadcrumbItemVariants> {
+  extends React.ComponentPropsWithoutRef<'li'>, VariantProps<typeof breadcrumbItemVariants> {
   children: React.ReactNode;
   href?: string;
   dropdown?: boolean;
 }
 
 export interface BreadcrumbSeparatorProps
-  extends React.ComponentPropsWithoutRef<'li'>,
-    VariantProps<typeof breadcrumbSeparatorVariants> {
+  extends React.ComponentPropsWithoutRef<'li'>, VariantProps<typeof breadcrumbSeparatorVariants> {
   icon?: React.ReactNode;
 }
 

@@ -144,10 +144,9 @@ describe('UserStreamApplication', () => {
 
     it('should return empty array when no more users available', async () => {
       const streamId = Core.buildUserCompositeId({ userId: DEFAULT_USER_ID, reach: 'followers' });
-      const mockUsers: Core.NexusUser[] = [];
 
       // Mock Nexus API to return empty
-      const fetchSpy = vi.spyOn(Core.NexusUserStreamService, 'fetch').mockResolvedValue(mockUsers);
+      const fetchSpy = vi.spyOn(Core.NexusUserStreamService, 'fetch').mockResolvedValue([]);
 
       // Test
       const result = await Core.UserStreamApplication.getOrFetchStreamSlice({
@@ -337,25 +336,6 @@ describe('UserStreamApplication', () => {
         expect.any(String),
       );
       expect(persistSpy).toHaveBeenCalledWith(mockUsers);
-    });
-
-    it('should handle when userBatch is null/undefined', async () => {
-      const cacheMissUserIds: Core.Pubky[] = ['user-1', 'user-2'];
-
-      // Mock queryNexus to return null
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
-
-      // Mock persistUsers to ensure it's NOT called
-      const persistSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
-
-      // Test
-      await Core.UserStreamApplication.fetchMissingUsersFromNexus({
-        cacheMissUserIds,
-        viewerId: DEFAULT_VIEWER_ID,
-      });
-
-      // Assert: persistUsers should NOT be called when userBatch is null
-      expect(persistSpy).not.toHaveBeenCalled();
     });
 
     it('should not fetch when cacheMissUserIds is empty', async () => {

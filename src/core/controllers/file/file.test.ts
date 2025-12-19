@@ -10,9 +10,9 @@ const mockFileNormalizer = {
 };
 
 const mockFileApplication = {
-  upload: vi.fn(),
+  commitCreate: vi.fn(),
   getAvatarUrl: vi.fn(),
-  getImageUrl: vi.fn(),
+  getFileUrl: vi.fn(),
   getMetadata: vi.fn(),
 };
 
@@ -79,15 +79,15 @@ describe('FileController', () => {
     mockFileNormalizer.toBlob.mockReset();
     mockFileNormalizer.toFile.mockReset();
     mockFileNormalizer.toFileAttachment.mockReset();
-    mockFileApplication.upload.mockReset();
+    mockFileApplication.commitCreate.mockReset();
     mockFileApplication.getAvatarUrl.mockReset();
-    mockFileApplication.getImageUrl.mockReset();
+    mockFileApplication.getFileUrl.mockReset();
     mockFileApplication.getMetadata.mockReset();
 
     ({ FileController } = await import('./file'));
   });
 
-  describe('upload', () => {
+  describe('commitCreate', () => {
     it('normalizes file and uploads it', async () => {
       const file = createMockFile();
       const blobResult = createMockBlobResult();
@@ -95,12 +95,12 @@ describe('FileController', () => {
       const fileAttachment = { blobResult, fileResult };
 
       mockFileNormalizer.toFileAttachment.mockResolvedValue(fileAttachment);
-      mockFileApplication.upload.mockResolvedValue(undefined);
+      mockFileApplication.commitCreate.mockResolvedValue(undefined);
 
-      const result = await FileController.upload({ file, pubky: testPubky });
+      const result = await FileController.commitCreate({ file, pubky: testPubky });
 
       expect(mockFileNormalizer.toFileAttachment).toHaveBeenCalledWith({ file, pubky: testPubky });
-      expect(mockFileApplication.upload).toHaveBeenCalledWith({ fileAttachments: [fileAttachment] });
+      expect(mockFileApplication.commitCreate).toHaveBeenCalledWith({ fileAttachments: [fileAttachment] });
       expect(result).toBe(fileResult.meta.url);
     });
 
@@ -108,16 +108,16 @@ describe('FileController', () => {
       const file = createMockFile();
       mockFileNormalizer.toFileAttachment.mockRejectedValue(new Error('normalizer failed'));
 
-      await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('normalizer failed');
-      expect(mockFileApplication.upload).not.toHaveBeenCalled();
+      await expect(FileController.commitCreate({ file, pubky: testPubky })).rejects.toThrow('normalizer failed');
+      expect(mockFileApplication.commitCreate).not.toHaveBeenCalled();
     });
 
     it('propagates errors when file normalization fails', async () => {
       const file = createMockFile();
       mockFileNormalizer.toFileAttachment.mockRejectedValue(new Error('file failed'));
 
-      await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('file failed');
-      expect(mockFileApplication.upload).not.toHaveBeenCalled();
+      await expect(FileController.commitCreate({ file, pubky: testPubky })).rejects.toThrow('file failed');
+      expect(mockFileApplication.commitCreate).not.toHaveBeenCalled();
     });
 
     it('propagates errors when homeserver upload fails', async () => {
@@ -125,9 +125,9 @@ describe('FileController', () => {
       const blobResult = createMockBlobResult();
       const fileResult = createMockFileResult();
       mockFileNormalizer.toFileAttachment.mockResolvedValue({ blobResult, fileResult });
-      mockFileApplication.upload.mockRejectedValue(new Error('upload failed'));
+      mockFileApplication.commitCreate.mockRejectedValue(new Error('upload failed'));
 
-      await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('upload failed');
+      await expect(FileController.commitCreate({ file, pubky: testPubky })).rejects.toThrow('upload failed');
     });
 
     it('propagates errors when file.arrayBuffer() fails', async () => {
@@ -135,9 +135,9 @@ describe('FileController', () => {
       vi.spyOn(file, 'arrayBuffer').mockRejectedValue(new Error('arrayBuffer failed'));
       mockFileNormalizer.toFileAttachment.mockRejectedValue(new Error('arrayBuffer failed'));
 
-      await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('arrayBuffer failed');
+      await expect(FileController.commitCreate({ file, pubky: testPubky })).rejects.toThrow('arrayBuffer failed');
       expect(mockFileNormalizer.toFileAttachment).toHaveBeenCalledWith({ file, pubky: testPubky });
-      expect(mockFileApplication.upload).not.toHaveBeenCalled();
+      expect(mockFileApplication.commitCreate).not.toHaveBeenCalled();
     });
   });
 
@@ -153,36 +153,36 @@ describe('FileController', () => {
     });
   });
 
-  describe('getImageUrl', () => {
-    it('delegates to FileApplication.getImageUrl with correct parameters', () => {
+  describe('getFileUrl', () => {
+    it('delegates to FileApplication.getFileUrl with correct parameters', () => {
       const fileId = 'user123:file456';
       const variant = FileVariant.SMALL;
       const expectedUrl = 'https://cdn.example.com/files/user123/file456/small';
 
-      mockFileApplication.getImageUrl.mockReturnValue(expectedUrl);
+      mockFileApplication.getFileUrl.mockReturnValue(expectedUrl);
 
-      const result = FileController.getImageUrl({
+      const result = FileController.getFileUrl({
         fileId,
         variant,
       });
 
-      expect(mockFileApplication.getImageUrl).toHaveBeenCalledWith({
+      expect(mockFileApplication.getFileUrl).toHaveBeenCalledWith({
         fileId,
         variant,
       });
       expect(result).toBe(expectedUrl);
     });
 
-    it('propagates errors when FileApplication.getImageUrl fails (e.g., invalid fileId)', () => {
+    it('propagates errors when FileApplication.getFileUrl fails (e.g., invalid fileId)', () => {
       const invalidFileId = 'invalid-file-id';
       const variant = FileVariant.SMALL;
       const error = new Error('Invalid composite id: invalid-file-id');
 
-      mockFileApplication.getImageUrl.mockImplementation(() => {
+      mockFileApplication.getFileUrl.mockImplementation(() => {
         throw error;
       });
 
-      expect(() => FileController.getImageUrl({ fileId: invalidFileId, variant })).toThrow(
+      expect(() => FileController.getFileUrl({ fileId: invalidFileId, variant })).toThrow(
         'Invalid composite id: invalid-file-id',
       );
     });

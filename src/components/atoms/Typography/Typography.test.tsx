@@ -41,6 +41,11 @@ describe('Typography - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
+  it('matches snapshot for extra small size', () => {
+    const { container } = render(<Typography size="xs">Extra small text</Typography>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
   it('matches snapshot for small size', () => {
     const { container } = render(<Typography size="sm">Small text</Typography>);
     expect(container.firstChild).toMatchSnapshot();

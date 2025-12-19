@@ -159,6 +159,42 @@ exports[`Link - Snapshots > matches snapshot with image children 1`] = `
 </a>
 `;
 
+exports[`Link - Snapshots > matches snapshot with overrideDefaults true 1`] = `
+<a
+  class="custom-override-class"
+  href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <span>
+    Override Defaults Link
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot with overrideDefaults true and no className 1`] = `
+<a
+  href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <span>
+    No Class Override Link
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot with overrideDefaults true for internal link 1`] = `
+<a
+  class="internal-override"
+  href="/about"
+>
+  <span>
+    Internal Override Link
+  </span>
+</a>
+`;
+
 exports[`Link - Snapshots > matches snapshot with text children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"

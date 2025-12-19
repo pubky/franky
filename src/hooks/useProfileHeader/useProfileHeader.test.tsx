@@ -24,6 +24,26 @@ let mockActions: ProfileActions = {
   onStatusClick: vi.fn(),
 };
 
+// Mock direct imports (used by useProfileHeader)
+vi.mock('@/hooks/useUserProfile', () => ({
+  useUserProfile: vi.fn(() => ({
+    profile: mockProfile,
+    isLoading: mockProfileLoading,
+  })),
+}));
+
+vi.mock('@/hooks/useProfileStats', () => ({
+  useProfileStats: vi.fn(() => ({
+    stats: mockStats,
+    isLoading: mockStatsLoading,
+  })),
+}));
+
+vi.mock('@/hooks/useProfileActions', () => ({
+  useProfileActions: vi.fn(() => mockActions),
+}));
+
+// Mock barrel export (for compatibility)
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {

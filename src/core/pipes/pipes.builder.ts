@@ -12,4 +12,13 @@ export class PubkySpecsSingleton {
     }
     return this.builder;
   }
+
+  /**
+   * Resets the singleton state. Should be called during sign-out
+   * to ensure clean state for subsequent sign-ins.
+   * Also useful for testing purposes.
+   */
+  static reset(): void {
+    this.builder = null;
+  }
 }

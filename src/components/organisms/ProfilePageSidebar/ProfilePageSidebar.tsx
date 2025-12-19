@@ -1,23 +1,64 @@
 'use client';
 
+import { useMemo } from 'react';
+import { usePathname } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
-import * as Core from '@/core';
+import * as Libs from '@/libs';
+import * as Providers from '@/providers';
+import * as Config from '@/config';
+import { MAX_SIDEBAR_TAGS } from './ProfilePageSidebar.constants';
 
 export function ProfilePageSidebar() {
-  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
-  const { userDetails } = Hooks.useCurrentUserProfile();
-  const tags = Hooks.useUserTags(currentUserPubky);
+  const pathname = usePathname();
+
+  // Get the profile pubky from context
+  const { pubky } = Providers.useProfileContext();
+
+  // Get user profile data for the target user
+  const { profile } = Hooks.useUserProfile(pubky ?? '');
+
+  const {
+    tags,
+    isLoading: isLoadingTags,
+    handleTagToggle,
+  } = Hooks.useTagged(pubky, {
+    enablePagination: false,
+    enableStats: false,
+  });
+
+  // Show only top 5 most popular tags (sorted by taggers_count)
+  const topTags = useMemo(() => {
+    return [...tags].sort((a, b) => (b.taggers_count ?? 0) - (a.taggers_count ?? 0)).slice(0, MAX_SIDEBAR_TAGS);
+  }, [tags]);
+
+  const isTaggedPage = pathname?.endsWith('/tagged');
+
+  // Only apply sticky when content fits in viewport
+  const { ref, stickyTop } = Hooks.useStickyWhenFits({
+    topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
+  });
 
   return (
     <Atoms.Container
+      ref={ref}
       overrideDefaults={true}
-      className="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
+      className={Libs.cn('hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex', 'sticky')}
+      style={{ top: `${stickyTop}px` }}
     >
-      <Molecules.ProfilePageTaggedAs tags={tags?.map((tag) => ({ name: tag.label, count: tag.taggers_count })) ?? []} />
-      <Molecules.ProfilePageLinks links={userDetails?.links} />
+      {!isTaggedPage && (
+        <Molecules.ProfilePageTaggedAs
+          tags={topTags}
+          isLoading={isLoadingTags}
+          onTagClick={handleTagToggle}
+          pubky={pubky ?? ''}
+          userName={profile?.name}
+        />
+      )}
+      <Molecules.ProfilePageLinks links={profile?.links} />
       <Organisms.FeedbackCard />
     </Atoms.Container>
   );

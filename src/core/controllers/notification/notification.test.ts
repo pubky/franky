@@ -1,0 +1,200 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { NotificationController } from './notification';
+import * as Core from '@/core';
+import * as Config from '@/config';
+
+const mockUserId = 'pubky-user-123' as Core.Pubky;
+
+const mockAuthStore = (userId: Core.Pubky = mockUserId) => {
+  vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+    selectCurrentUserPubky: () => userId,
+  } as ReturnType<typeof Core.useAuthStore.getState>);
+};
+
+describe('NotificationController', () => {
+  beforeEach(() => vi.clearAllMocks());
+  afterEach(() => vi.restoreAllMocks());
+
+  describe('fetchNotifications', () => {
+    const setupNotificationStore = (lastRead: number) => {
+      const selectLastRead = vi.fn(() => lastRead);
+      const setUnread = vi.fn();
+      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+        selectLastRead,
+        setUnread,
+      } as unknown as Core.NotificationStore);
+      return { selectLastRead, setUnread };
+    };
+
+    it('should poll notifications and update store with unread count', async () => {
+      const { selectLastRead, setUnread } = setupNotificationStore(1234);
+      const notificationsSpy = vi.spyOn(Core.NotificationApplication, 'fetchNotifications').mockResolvedValue(5);
+
+      await NotificationController.fetchNotifications({ userId: mockUserId });
+
+      expect(selectLastRead).toHaveBeenCalled();
+      expect(notificationsSpy).toHaveBeenCalledWith({ userId: mockUserId, lastRead: 1234 });
+      expect(setUnread).toHaveBeenCalledWith(5);
+    });
+
+    it('should bubble errors and not update store', async () => {
+      const { setUnread } = setupNotificationStore(1234);
+      vi.spyOn(Core.NotificationApplication, 'fetchNotifications').mockRejectedValue(new Error('poll-fail'));
+
+      await expect(NotificationController.fetchNotifications({ userId: mockUserId })).rejects.toThrow('poll-fail');
+      expect(setUnread).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getOrFetchNotifications', () => {
+    const mockResponse: Core.TGetOrFetchNotificationsResponse = {
+      notifications: [
+        { type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
+      ] as Core.FlatNotification[],
+      olderThan: 3000,
+    };
+
+    beforeEach(() => mockAuthStore());
+
+    it.each([
+      { params: {}, expectedOlderThan: Infinity, expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT },
+      { params: { olderThan: 5000 }, expectedOlderThan: 5000, expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT },
+      { params: { limit: 50 }, expectedOlderThan: Infinity, expectedLimit: 50 },
+      { params: { olderThan: 8000, limit: 20 }, expectedOlderThan: 8000, expectedLimit: 20 },
+    ])('should call application with params: $params', async ({ params, expectedOlderThan, expectedLimit }) => {
+      const spy = vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue(mockResponse);
+
+      await NotificationController.getOrFetchNotifications(params);
+
+      expect(spy).toHaveBeenCalledWith({
+        userId: mockUserId,
+        olderThan: expectedOlderThan,
+        limit: expectedLimit,
+      });
+    });
+
+    it('should return response from application', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue(mockResponse);
+
+      const result = await NotificationController.getOrFetchNotifications({});
+
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should return empty response when no notifications', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue({
+        notifications: [],
+        olderThan: undefined,
+      });
+
+      const result = await NotificationController.getOrFetchNotifications({});
+
+      expect(result.notifications).toHaveLength(0);
+      expect(result.olderThan).toBeUndefined();
+    });
+
+    it('should bubble errors from application', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockRejectedValue(new Error('fetch-fail'));
+
+      await expect(NotificationController.getOrFetchNotifications({})).rejects.toThrow('fetch-fail');
+    });
+  });
+
+  describe('markAllAsRead', () => {
+    const mockTimestamp = 1234567890;
+    const mockLastReadUrl = 'pubky://test-user/pub/pubky.app/last-read';
+
+    const setupStores = (pubky: Core.Pubky | null) => {
+      const setLastRead = vi.fn();
+      const setUnread = vi.fn();
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+        selectCurrentUserPubky: () => pubky,
+      } as unknown as ReturnType<typeof Core.useAuthStore.getState>);
+
+      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+        setLastRead,
+        setUnread,
+      } as unknown as Core.NotificationStore);
+
+      return { setLastRead, setUnread };
+    };
+
+    it('should call application and update local store', () => {
+      const { setLastRead, setUnread } = setupStores(mockUserId);
+
+      const mockLastReadResult = {
+        last_read: {
+          timestamp: BigInt(mockTimestamp),
+          toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+        },
+        meta: { url: mockLastReadUrl },
+      };
+
+      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+        mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+      );
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead').mockImplementation(() => {});
+
+      NotificationController.markAllAsRead();
+
+      expect(Core.LastReadNormalizer.to).toHaveBeenCalledWith(mockUserId);
+      expect(applicationSpy).toHaveBeenCalledWith(mockLastReadResult);
+      expect(setLastRead).toHaveBeenCalledWith(mockTimestamp);
+      expect(setUnread).toHaveBeenCalledWith(0);
+    });
+
+    it('should not call application when no user is authenticated', () => {
+      const { setLastRead, setUnread } = setupStores(null);
+
+      const mockLastReadResult = {
+        last_read: {
+          timestamp: BigInt(mockTimestamp),
+          toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+        },
+        meta: { url: mockLastReadUrl },
+      };
+
+      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+        mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+      );
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead');
+
+      NotificationController.markAllAsRead();
+
+      // When pubky is null, LastReadNormalizer.to is still called but application should handle it
+      expect(applicationSpy).toHaveBeenCalled();
+      expect(setLastRead).toHaveBeenCalledWith(mockTimestamp);
+      expect(setUnread).toHaveBeenCalledWith(0);
+    });
+  });
+
+  describe('getAllFromCache', () => {
+    it('should delegate to NotificationApplication.getAllFromCache', async () => {
+      const expected = [
+        { type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
+        { type: Core.NotificationType.Follow, timestamp: 2000, followed_by: 'user-2' },
+      ] as Core.FlatNotification[];
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'getAllFromCache').mockResolvedValue(expected);
+
+      const result = await NotificationController.getAllFromCache();
+
+      expect(applicationSpy).toHaveBeenCalled();
+      expect(result).toEqual(expected);
+    });
+
+    it('should return empty array when no notifications exist', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getAllFromCache').mockResolvedValue([]);
+
+      const result = await NotificationController.getAllFromCache();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should bubble application errors', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getAllFromCache').mockRejectedValue(new Error('app-fail'));
+
+      await expect(NotificationController.getAllFromCache()).rejects.toThrow('app-fail');
+    });
+  });
+});

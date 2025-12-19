@@ -1,0 +1,102 @@
+'use client';
+
+import { useState, useCallback, useMemo } from 'react';
+import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
+
+/**
+ * Hook to handle feedback submission to Chatwoot.
+ *
+ * Fetches current user data internally via useCurrentUserProfile.
+ * Submission is guarded - requires authenticated user with loaded profile.
+ *
+ * @returns feedback - Current feedback text
+ * @returns handleChange - Handler for textarea onChange
+ * @returns submit - Async function to submit feedback
+ * @returns isSubmitting - True while submission is in progress
+ * @returns isSuccess - True after successful submission
+ * @returns hasContent - True if feedback has non-whitespace content
+ * @returns reset - Resets all state to initial values
+ */
+export function useFeedback() {
+  const { toast } = Molecules.useToast();
+  const { currentUserPubky, userDetails } = Hooks.useCurrentUserProfile();
+  const [feedback, setFeedback] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const showErrorToast = useCallback(
+    (description: string) => {
+      toast({
+        title: 'Error',
+        description,
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
+      });
+    },
+    [toast],
+  );
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFeedback(e.target.value);
+  }, []);
+
+  const submit = useCallback(async () => {
+    const currentFeedback = feedback.trim();
+
+    if (!currentFeedback) return;
+    if (isSubmitting) return;
+
+    if (!currentUserPubky || !userDetails?.name) {
+      showErrorToast('User profile not loaded. Please try again.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/chatwoot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pubky: currentUserPubky,
+          comment: currentFeedback,
+          name: userDetails.name,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        const errorMessage = errorData.error || 'Failed to submit feedback';
+        showErrorToast(errorMessage);
+        return;
+      }
+
+      setIsSuccess(true);
+      // Note: feedback is cleared by reset() when dialog closes, no need to clear here
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      showErrorToast('Failed to submit feedback. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [feedback, isSubmitting, currentUserPubky, userDetails?.name, showErrorToast]);
+
+  const reset = useCallback(() => {
+    setFeedback('');
+    setIsSuccess(false);
+    setIsSubmitting(false);
+  }, []);
+
+  const hasContent = useMemo(() => feedback.trim().length > 0, [feedback]);
+
+  return {
+    feedback,
+    handleChange,
+    submit,
+    isSubmitting,
+    isSuccess,
+    hasContent,
+    reset,
+  };
+}

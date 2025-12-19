@@ -1,9 +1,10 @@
 import * as Core from '@/core';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export interface TCreatePostParams {
   authorId: Core.Pubky;
   content: string;
-  kind?: Core.PubkyAppPostKind;
+  kind?: PubkyAppPostKind;
   tags?: string[];
   attachments?: File[];
   parentPostId?: string;
@@ -21,4 +22,9 @@ export interface TFileAttachmentsParams {
 
 export interface TNormalizeTagsParams {
   tags: Core.TTagEventParams[];
+}
+
+export interface TFetchMorePostTagsParams extends Core.TCompositeId {
+  skip?: number;
+  limit?: number;
 }

@@ -8,7 +8,7 @@ import * as Config from '@/config';
 import * as Libs from '@/libs';
 
 interface DialogBackupExportProps {
-  mnemonic?: string;
+  mnemonic?: Libs.TMnemonicWords | null;
   children?: React.ReactNode;
 }
 

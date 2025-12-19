@@ -14,44 +14,43 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    const [data, { notificationList, lastRead }] = await Promise.all([
-      Core.NexusBootstrapService.fetch(params.pubky),
-      this.fetchNotifications(params),
-    ]);
-    if (!data) {
-      // TODO: Maybe in the UI, we should redirect or show some special message to the user.
-      throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
+    const data = await Core.NexusBootstrapService.fetch(params.pubky);
+    if (!data.indexed) {
+      Libs.Logger.error('User is not indexed in Nexus. Adding user to TTL', { pubky: params.pubky });
     }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
-      Core.LocalStreamPostsService.persistPosts(data.posts),
+      Core.LocalStreamPostsService.persistPosts({ posts: data.posts }),
       Core.LocalStreamPostsService.upsert({
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
-        stream: data.list.stream,
+        stream: data.ids.stream,
       }),
       Core.LocalStreamUsersService.upsert({
         streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-        stream: data.list.influencers,
+        stream: data.ids.influencers,
       }),
       Core.LocalStreamUsersService.upsert({
         streamId: Core.UserStreamTypes.RECOMMENDED,
-        stream: data.list.recommended,
+        stream: data.ids.recommended,
       }),
       // Both features: hot tags and tag streams
-      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
-      Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
-      Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
+      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
+      Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
+      // Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead }),
     ]);
 
-    const filesUris = results[1].postAttachments;
-    const unread = results[results.length - 1] as number;
+    const [_, notification] = await Promise.all([
+      // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
+      Core.FileApplication.fetchFiles(results[1].postAttachments),
+      this.fetchNotifications(params),
+    ]);
 
-    return { notification: { unread, lastRead }, filesUris };
+    return { notification };
   }
 
   /**
-   * Retrieves user's last read timestamp from homeserver and fetches notification data from Nexus and .
-   * Used internally by initialize() to get notification state.
+   * Retrieves user's last read timestamp from homeserver, fetches notification data from Nexus
+   * and persists the notifications to the cache.
    *
    * @private
    * @param params - Bootstrap parameters
@@ -59,7 +58,10 @@ export class BootstrapApplication {
    * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification list and last read timestamp
    */
-  private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
+  private static async fetchNotifications({
+    pubky,
+    lastReadUrl,
+  }: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let userLastRead: number;
     try {
       const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
@@ -77,6 +79,7 @@ export class BootstrapApplication {
       } else {
         // Network errors, timeouts, server errors, etc. should bubble up
         Libs.Logger.error('Failed to fetch last read timestamp', error);
+        // TODO: TO harsh, we should handle this error better
         throw error;
       }
     }
@@ -85,37 +88,17 @@ export class BootstrapApplication {
       user_id: pubky,
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
-    return { notificationList, lastRead: userLastRead };
-  }
 
-  /**
-   * Performs application bootstrap with retry logic.
-   * Retries bootstrap up to 3 times with 5-second delays to allow Nexus time to index new users.
-   *
-   * @param params - Bootstrap parameters
-   * @param params.pubky - The user's public key identifier
-   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
-   * @returns Promise resolving to notification state after successful bootstrap
-   */
-  static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
-    let success = false;
-    let retries = 0;
-    let notificationState: Core.TBootstrapResponse = { notification: Core.notificationInitialState, filesUris: [] };
-    while (!success && retries < 3) {
-      try {
-        // Wait 5 seconds before each attempt to let Nexus index the user
-        Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt ${retries + 1}...`);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        notificationState = await this.initialize(params);
-        success = true;
-      } catch (error) {
-        Libs.Logger.error('Failed to bootstrap', error, retries);
-        retries++;
-      }
-    }
-    if (!success) {
-      throw new Error('User still not indexed');
-    }
-    return notificationState;
+    // TODO: Temporal fix.This is an anti-pattern, we should fetch notifications also from nexus, like this we just need to persist and get the unread count.
+    // Nexus will manage which parts of notifications are missings like Users and Posts.
+    const flatNotifications = await Core.NotificationApplication.fetchMissingEntities({
+      notifications: notificationList,
+      viewerId: pubky,
+    });
+    const unread = await Core.LocalNotificationService.persistAndGetUnreadCount({
+      flatNotifications,
+      lastRead: userLastRead,
+    });
+    return { unread, lastRead: userLastRead };
   }
 }

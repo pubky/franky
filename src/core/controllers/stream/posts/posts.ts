@@ -21,6 +21,7 @@ export class StreamPostsController {
    *
    * @param params - Parameters for the stream slice request
    * @param params.streamId - Unique identifier for the stream (e.g., 'timeline:all:all', 'engagement:all:images')
+   * @param params.streamHead - Identifier of the newest post in the current page for pagination.
    * @param params.streamTail - Identifier of the last post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
    * @param params.lastPostId - Post ID of the last post in the current page. We use to get the chunk of the stream from the cache.
    * @param params.limit - Limit of posts to fetch. Default is Config.NEXUS_POSTS_PER_PAGE.
@@ -44,21 +45,26 @@ export class StreamPostsController {
    */
   static async getOrFetchStreamSlice({
     streamId,
-    streamTail,
+    streamHead = Core.SKIP_FETCH_NEW_POSTS,
+    streamTail = Core.NOT_FOUND_CACHED_STREAM,
     lastPostId,
     limit = Config.NEXUS_POSTS_PER_PAGE,
+    order,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
     const { nextPageIds, cacheMissPostIds, timestamp } = await Core.PostStreamApplication.getOrFetchStreamSlice({
       streamId,
       limit,
+      streamHead,
       streamTail,
       lastPostId,
       viewerId,
+      order,
     });
     // Query nexus to get the cacheMissPostIds
     if (cacheMissPostIds.length > 0) {
-      void Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }); //might be 2s to persist
+      // TODO: When TTL is implemented, we can return to void
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId });
     }
     return { nextPageIds, timestamp };
   }
@@ -72,7 +78,55 @@ export class StreamPostsController {
    * @param streamId - The ID of the post stream to query
    * @returns Promise resolving to the timestamp (number) or 0 if not found
    */
-  static async getCachedLastPostTimestamp(streamId: Core.PostStreamId): Promise<number> {
-    return await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+  static async getCachedLastPostTimestamp(params: Core.TStreamIdParams): Promise<number> {
+    return await Core.PostStreamApplication.getCachedLastPostTimestamp(params);
+  }
+
+  /**
+   *
+   * The "head" refers to the first post in the stream array, which represents
+   * the most recently indexed post. For reply streams without a cached head,
+   * returns 1 if replies exist, otherwise 0.
+   *
+   * @param streamId - The stream ID to get the head timestamp for
+   * @returns The indexed_at timestamp of the head post, or 0 if the stream is empty or head post not found
+   */
+  static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
+    return await Core.PostStreamApplication.getStreamHead(params);
+  }
+
+  /**
+   * Get local stream data from cache
+   * @param streamId - The ID of the stream
+   * @returns The cached stream or null if not found
+   */
+  static async getLocalStream(params: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+    return await Core.PostStreamApplication.getLocalStream(params);
+  }
+
+  /**
+   * Get the unread stream data from cache
+   * @param streamId - The ID of the stream
+   * @returns The unread stream or null if not found
+   */
+  static async getUnreadStream(params: Core.TStreamIdParams): Promise<Core.TStreamResult | null> {
+    return await Core.PostStreamApplication.getUnreadStream(params);
+  }
+
+  /**
+   * Merge the unread stream with the post stream
+   * @param params - The stream ID to merge the unread stream with the post stream
+   */
+  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams) {
+    return await Core.PostStreamApplication.mergeUnreadStreamWithPostStream(params);
+  }
+
+  /**
+   * Clear the unread stream and return the post IDs that were in it
+   * @param params - The stream ID to clear the unread stream for
+   * @returns Array of post IDs that were in the unread stream
+   */
+  static async clearUnreadStream(params: Core.TStreamIdParams): Promise<string[]> {
+    return await Core.PostStreamApplication.clearUnreadStream(params);
   }
 }

@@ -5,7 +5,7 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   aria-controls="radix-_r_g_"
   aria-expanded="false"
   aria-haspopup="dialog"
-  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  class="flex h-8 cursor-pointer items-center gap-1 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
   data-as-child="true"
   data-slot="popover-trigger"
   data-state="closed"
@@ -14,14 +14,12 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   type="button"
 >
   <span
-    class="font-semibold text-foreground text-base leading-none"
-    data-testid="typography"
+    class="text-base leading-6"
   >
     🌴
   </span>
   <span
-    class="text-base font-bold text-white"
-    data-testid="typography"
+    class="text-base leading-6 font-bold text-white"
   >
     Vacationing
   </span>
@@ -50,7 +48,7 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   aria-controls="radix-_r_e_"
   aria-expanded="false"
   aria-haspopup="dialog"
-  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  class="flex h-8 cursor-pointer items-center gap-1 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
   data-as-child="true"
   data-slot="popover-trigger"
   data-state="closed"
@@ -59,14 +57,12 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   type="button"
 >
   <span
-    class="font-semibold text-foreground text-base leading-none"
-    data-testid="typography"
+    class="text-base leading-6"
   >
     😊
   </span>
   <span
-    class="text-base font-bold text-white"
-    data-testid="typography"
+    class="text-base leading-6 font-bold text-white"
   >
     Working
   </span>
@@ -95,7 +91,7 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   aria-controls="radix-_r_f_"
   aria-expanded="false"
   aria-haspopup="dialog"
-  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  class="flex h-8 cursor-pointer items-center gap-1 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
   data-as-child="true"
   data-slot="popover-trigger"
   data-state="closed"
@@ -104,14 +100,12 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   type="button"
 >
   <span
-    class="font-semibold text-foreground text-base leading-none"
-    data-testid="typography"
+    class="text-base leading-6"
   >
     🌴
   </span>
   <span
-    class="text-base font-bold text-white"
-    data-testid="typography"
+    class="text-base leading-6 font-bold text-white"
   >
     Vacationing
   </span>
@@ -140,7 +134,7 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   aria-controls="radix-_r_d_"
   aria-expanded="false"
   aria-haspopup="dialog"
-  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  class="flex h-8 cursor-pointer items-center gap-1 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
   data-as-child="true"
   data-slot="popover-trigger"
   data-state="closed"
@@ -149,14 +143,12 @@ exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapsho
   type="button"
 >
   <span
-    class="font-semibold text-foreground text-base leading-none"
-    data-testid="typography"
+    class="text-base leading-6"
   >
     🌴
   </span>
   <span
-    class="text-base font-bold text-white"
-    data-testid="typography"
+    class="text-base leading-6 font-bold text-white"
   >
     Vacationing
   </span>

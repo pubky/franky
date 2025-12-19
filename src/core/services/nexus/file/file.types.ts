@@ -10,7 +10,7 @@ export enum FileVariant {
   MAIN = 'main',
 }
 
-export type TImageParams = {
+export type TFileParams = {
   pubky: Core.Pubky;
   file_id: string;
   variant: FileVariant;

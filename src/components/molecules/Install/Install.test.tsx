@@ -34,6 +34,18 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
+// Mock Core
+const mockReset = vi.fn();
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useOnboardingStore: () => ({
+      reset: mockReset,
+    }),
+  };
+});
+
 describe('InstallCard', () => {
   it('matches snapshot', () => {
     const { container } = render(<InstallCard />);

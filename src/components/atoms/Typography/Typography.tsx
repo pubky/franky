@@ -23,7 +23,8 @@ interface TypographyProps {
     | 'blockquote';
   children: ReactNode;
   className?: React.HTMLAttributes<HTMLElement>['className'];
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  overrideDefaults?: boolean;
   'data-testid'?: string;
 }
 
@@ -32,22 +33,22 @@ export function Typography({
   children,
   className,
   size = 'md',
+  overrideDefaults = false,
   'data-testid': dataTestId,
   ...props
 }: TypographyProps & React.HTMLAttributes<HTMLElement>) {
   const sizeClasses = {
+    xs: 'text-xs font-medium',
     sm: 'text-sm font-semibold',
     md: 'text-xl font-semibold',
     lg: 'text-2xl font-bold',
     xl: 'text-4xl font-bold',
   };
 
+  const typographyClassName = overrideDefaults ? className : cn(sizeClasses[size], 'text-foreground', className);
+
   return (
-    <Tag
-      data-testid={dataTestId || 'typography'}
-      {...props}
-      className={cn(sizeClasses[size], 'text-foreground', className)}
-    >
+    <Tag data-testid={dataTestId || 'typography'} {...props} className={typographyClassName}>
       {children}
     </Tag>
   );

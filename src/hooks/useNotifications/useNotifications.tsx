@@ -1,88 +1,166 @@
 'use client';
 
-import { useMemo, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import * as Core from '@/core';
 import type { FlatNotification } from '@/core';
-import { getNotificationText, getUserIdFromNotification } from '@/components/molecules/NotificationItem';
-
-interface UseNotificationsResult {
-  notifications: FlatNotification[];
-  unreadNotifications: FlatNotification[];
-  count: number;
-  unreadCount: number;
-  isLoading: boolean;
-  markAllAsRead: () => void;
-}
+import type { UseNotificationsResult } from './useNotifications.types';
 
 /**
- * Hook for fetching and managing notifications.
- *
- * TODO: Implement real data fetching using NotificationStore and NotificationModel.
- * This will fetch notifications from the local database and sync with the homeserver.
- *
- * @returns Notifications array, unread notifications, counts, loading state, and markAsRead method
+ * Hook for notifications with infinite scroll pagination.
+ * Fetches directly from NotificationController using timestamp-based pagination.
  */
 export function useNotifications(): UseNotificationsResult {
-  // TODO: Implement real data fetching here
-  // - Fetch notifications from NotificationModel.getRecent()
-  // - Calculate unread notifications based on user's lastRead timestamp from store
-  // - Implement markAllAsRead to update the store
-  const notifications = useMemo(() => {
-    return [];
-  }, []);
+  const [notifications, setNotifications] = useState<FlatNotification[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const unreadNotifications = useMemo(() => {
-    return [];
-  }, []);
+  const olderThanRef = useRef<number | undefined>(undefined);
+  const loadingRef = useRef(false);
 
+  const { currentUserPubky } = Core.useAuthStore();
+  const lastRead = Core.useNotificationStore((s) => s.lastRead);
+  const lastReadRef = useRef(lastRead);
+
+  useEffect(() => {
+    if (lastReadRef.current === 0 && lastRead > 0) {
+      lastReadRef.current = lastRead;
+    }
+  }, [lastRead]);
+
+  /**
+   * Perform initial load - fetches first page of notifications
+   */
+  const performInitialLoad = useCallback(async () => {
+    if (!currentUserPubky || loadingRef.current) return;
+
+    loadingRef.current = true;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { flatNotifications: notifications, olderThan } = await Core.NotificationController.getOrFetchNotifications(
+        {},
+      );
+
+      setNotifications(notifications);
+      olderThanRef.current = olderThan;
+      setHasMore(olderThan !== undefined);
+    } catch {
+      setError('Failed to load notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoading(false);
+    }
+  }, [currentUserPubky]);
+
+  /**
+   * Load more notifications using timestamp-based pagination
+   */
+  const loadMore = useCallback(async () => {
+    if (loadingRef.current || !hasMore || !currentUserPubky) return;
+    if (olderThanRef.current === undefined) {
+      setHasMore(false);
+      return;
+    }
+
+    loadingRef.current = true;
+    setIsLoadingMore(true);
+    setError(null);
+
+    try {
+      const { flatNotifications: notifications, olderThan } = await Core.NotificationController.getOrFetchNotifications(
+        {
+          olderThan: olderThanRef.current,
+        },
+      );
+
+      setNotifications((prev) => {
+        // Deduplicate using id (business key). Defensive code for edge cases.
+        const existingIds = new Set(prev.map((n) => n.id));
+        const newNotifications = notifications.filter((n) => !existingIds.has(n.id));
+        return [...prev, ...newNotifications];
+      });
+      olderThanRef.current = olderThan;
+      setHasMore(olderThan !== undefined);
+    } catch {
+      setError('Failed to load more notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, currentUserPubky]);
+
+  /**
+   * Refresh notifications - resets pagination and fetches from start
+   */
+  const refresh = useCallback(async () => {
+    if (!currentUserPubky || loadingRef.current) return;
+
+    loadingRef.current = true;
+    setIsLoading(true);
+    setError(null);
+    olderThanRef.current = undefined;
+    setHasMore(true);
+
+    try {
+      const { flatNotifications: notifications, olderThan } = await Core.NotificationController.getOrFetchNotifications(
+        {},
+      );
+
+      setNotifications(notifications);
+      olderThanRef.current = olderThan;
+      setHasMore(olderThan !== undefined);
+    } catch {
+      setError('Failed to refresh notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoading(false);
+    }
+  }, [currentUserPubky]);
+
+  /**
+   * Mark all notifications as read
+   */
   const markAllAsRead = useCallback(() => {
-    // TODO: Implement real mark as read functionality
-    // - Update user's lastRead timestamp in the store
-    // - Sync to homeserver if needed
+    Core.NotificationController.markAllAsRead();
   }, []);
+
+  /**
+   * Check if a notification is unread
+   */
+  const isNotificationUnread = useCallback((n: FlatNotification) => {
+    return n.timestamp > lastReadRef.current;
+  }, []);
+
+  /**
+   * List of unread notifications
+   */
+  const unreadNotifications = useMemo(() => {
+    return notifications.filter((n) => n.timestamp > lastReadRef.current);
+  }, [notifications]);
+
+  /**
+   * Initial load - fetch first page when component mounts
+   */
+  useEffect(() => {
+    if (!currentUserPubky) return;
+    performInitialLoad();
+  }, [currentUserPubky, performInitialLoad]);
 
   return {
     notifications,
     unreadNotifications,
     count: notifications.length,
     unreadCount: unreadNotifications.length,
-    isLoading: false,
+    isLoading,
+    isLoadingMore,
+    hasMore,
+    error,
+    loadMore,
+    refresh,
     markAllAsRead,
-  };
-}
-
-/**
- * Get user data for a notification user ID.
- *
- * TODO: Implement real user data fetching using UserController or UserDetailsModel.
- * This should fetch user details from the local database or Nexus API.
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getNotificationUserData(userId: string): { name: string; avatar?: string } | null {
-  // TODO: Implement real user data fetching
-  // - Fetch from UserDetailsModel.findById(userId)
-  // - Or fetch from Nexus API if not in local DB
-  return null;
-}
-
-/**
- * Get all display data needed for a notification item
- */
-export interface NotificationDisplayData {
-  userName: string;
-  avatarUrl?: string;
-  notificationText: string;
-}
-
-export function getNotificationDisplayData(notification: FlatNotification): NotificationDisplayData {
-  const userId = getUserIdFromNotification(notification);
-  const userData = userId ? getNotificationUserData(userId) : null;
-  const userName = userData?.name || 'User';
-  const avatarUrl = userData?.avatar;
-  const notificationText = getNotificationText(notification, userName);
-
-  return {
-    userName,
-    avatarUrl,
-    notificationText,
+    isNotificationUnread,
   };
 }

@@ -44,8 +44,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       if (!hasErrors && allFilled) {
         onRestore?.();
       }
-    } catch (error) {
-      console.error('Error logging in with mnemonic', error);
+    } catch {
       // TODO: handle error based on the error type
       // show error toast
       toast({

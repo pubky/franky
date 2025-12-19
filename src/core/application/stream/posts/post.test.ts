@@ -137,7 +137,7 @@ describe('PostStreamApplication', () => {
 
   const setupDefaultMocks = () => ({
     persistPosts: vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({ postAttachments: [] }),
-    persistFilesFromUris: vi.spyOn(Core, 'persistFilesFromUris').mockResolvedValue(),
+    fetchFiles: vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined),
     getUserDetails: vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder'),
   });
 
@@ -150,6 +150,7 @@ describe('PostStreamApplication', () => {
     vi.clearAllMocks();
 
     await Core.PostStreamModel.table.clear();
+    await Core.UnreadPostStreamModel.table.clear();
     await Core.PostDetailsModel.table.clear();
     await Core.UserDetailsModel.table.clear();
     await Core.UserCountsModel.table.clear();
@@ -173,6 +174,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         streamTail: 0,
         viewerId: 'user-viewer' as Core.Pubky,
       });
@@ -191,6 +193,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         streamTail: 0,
         viewerId: 'user-viewer' as Core.Pubky,
       });
@@ -216,6 +219,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         lastPostId: `${DEFAULT_AUTHOR}:post-5`,
         streamTail: BASE_TIMESTAMP + 4,
         viewerId: 'user-viewer' as Core.Pubky,
@@ -233,12 +237,16 @@ describe('PostStreamApplication', () => {
       const postIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
         lastPostId: `${DEFAULT_AUTHOR}:post-2`,
+        streamHead: 0,
         streamTail: BASE_TIMESTAMP + 1,
         viewerId: 'user-viewer' as Core.Pubky,
       });
@@ -262,6 +270,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 10,
         streamTail: 0,
+        streamHead: 0,
         viewerId: 'user-viewer' as Core.Pubky,
       });
 
@@ -284,6 +293,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         lastPostId: `${DEFAULT_AUTHOR}:post-5`,
         streamTail: BASE_TIMESTAMP + 4,
         viewerId: 'user-viewer' as Core.Pubky,
@@ -303,6 +313,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 10,
         streamTail: 0,
+        streamHead: 0,
         viewerId: DEFAULT_AUTHOR,
       });
 
@@ -325,6 +336,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         lastPostId: `${DEFAULT_AUTHOR}:post-3`,
         streamTail: BASE_TIMESTAMP + 2,
         viewerId: DEFAULT_AUTHOR,
@@ -349,6 +361,7 @@ describe('PostStreamApplication', () => {
           streamId,
           limit: 10,
           streamTail: 0,
+          streamHead: 0,
           viewerId: DEFAULT_AUTHOR,
         }),
       ).rejects.toThrow('Network error');
@@ -367,6 +380,7 @@ describe('PostStreamApplication', () => {
           streamId,
           limit: 10,
           streamTail: 0,
+          streamHead: 0,
           viewerId: DEFAULT_AUTHOR,
         }),
       ).rejects.toThrow('Failed to persist stream chunk');
@@ -387,6 +401,7 @@ describe('PostStreamApplication', () => {
           streamId,
           limit: 10,
           streamTail: 0,
+          streamHead: 0,
           viewerId: DEFAULT_AUTHOR,
         }),
       ).rejects.toThrow('Database query failed');
@@ -407,6 +422,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 10,
         streamTail: 0,
+        streamHead: 0,
         viewerId: DEFAULT_AUTHOR,
       });
 
@@ -419,11 +435,15 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
 
-      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 0,
+        streamHead: 0,
         streamTail: 0,
         viewerId: DEFAULT_AUTHOR,
       });
@@ -444,6 +464,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         streamTail: BASE_TIMESTAMP,
         viewerId: DEFAULT_AUTHOR,
       });
@@ -460,6 +481,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         streamTail: staleStreamTail,
         lastPostId: undefined, // Initial load
         viewerId: DEFAULT_AUTHOR,
@@ -489,6 +511,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId: engagementStreamId,
         limit: 10,
+        streamHead: 0,
         streamTail: 0,
         viewerId: DEFAULT_AUTHOR,
       });
@@ -512,6 +535,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         lastPostId: `${DEFAULT_AUTHOR}:post-999`, // Not in cache
         streamTail: BASE_TIMESTAMP + 999,
         viewerId: DEFAULT_AUTHOR,
@@ -545,6 +569,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 5,
         streamTail: 0,
+        streamHead: 0,
         viewerId: DEFAULT_AUTHOR,
       });
 
@@ -577,6 +602,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         streamTail: BASE_TIMESTAMP + 100, // Original streamTail
         viewerId: DEFAULT_AUTHOR,
       });
@@ -604,6 +630,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 5,
+        streamHead: 0,
         streamTail: 0,
         viewerId: DEFAULT_AUTHOR,
       });
@@ -636,6 +663,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         lastPostId: `${DEFAULT_AUTHOR}:post-5`, // Last post in cache
         streamTail: BASE_TIMESTAMP + 4,
         viewerId: DEFAULT_AUTHOR,
@@ -660,6 +688,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamHead: 0,
         streamTail: 0,
         viewerId: DEFAULT_AUTHOR,
       });
@@ -678,7 +707,7 @@ describe('PostStreamApplication', () => {
 
   describe('getCachedLastPostTimestamp', () => {
     it('should return 0 when stream does not exist', async () => {
-      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp({ streamId });
 
       expect(result).toBe(0);
     });
@@ -686,7 +715,7 @@ describe('PostStreamApplication', () => {
     it('should return 0 when stream is empty', async () => {
       await createStreamWithPosts([]);
 
-      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp({ streamId });
 
       expect(result).toBe(0);
     });
@@ -696,7 +725,7 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
 
-      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp({ streamId });
 
       // Last post is post-5, which has timestamp BASE_TIMESTAMP + 4
       expect(result).toBe(BASE_TIMESTAMP + 4);
@@ -708,7 +737,7 @@ describe('PostStreamApplication', () => {
       // Only create details for first 3 posts (post-1, post-2, post-3)
       await createPostDetails(postIds.slice(0, 3));
 
-      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp({ streamId });
 
       // Should find post-3 (3rd from end), which has timestamp BASE_TIMESTAMP + 2
       expect(result).toBe(BASE_TIMESTAMP + 2);
@@ -719,7 +748,7 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       // Don't create any post details
 
-      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp({ streamId });
 
       expect(result).toBe(0);
     });
@@ -729,7 +758,7 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(new Error('Database error'));
 
-      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+      const result = await Core.PostStreamApplication.getCachedLastPostTimestamp({ streamId });
 
       expect(result).toBe(0);
     });
@@ -755,21 +784,8 @@ describe('PostStreamApplication', () => {
         'POST',
         expect.stringContaining(JSON.stringify({ post_ids: cacheMissPostIds, viewer_id: viewerId })),
       );
-      expect(mocks.persistPosts).toHaveBeenCalledWith(mockNexusPosts);
-      expect(mocks.persistFilesFromUris).toHaveBeenCalledWith([]);
-    });
-
-    it('should handle when postBatch is null/undefined', async () => {
-      const { cacheMissPostIds } = createTestData(1);
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
-      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
-
-      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
-        cacheMissPostIds,
-        viewerId,
-      });
-
-      expect(persistPostsSpy).not.toHaveBeenCalled();
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: mockNexusPosts });
+      expect(mocks.fetchFiles).toHaveBeenCalledWith([]);
     });
 
     it('should fetch and persist users when cacheMissUserIds exist', async () => {
@@ -805,16 +821,18 @@ describe('PostStreamApplication', () => {
       const mocks = setupDefaultMocks();
       mocks.getUserDetails.mockResolvedValue([undefined]);
 
-      vi.spyOn(Core, 'queryNexus').mockResolvedValueOnce(mockNexusPosts).mockResolvedValueOnce(undefined);
+      vi.spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce(mockNexusPosts)
+        .mockResolvedValueOnce(undefined as unknown as Core.NexusUser[]);
 
-      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       await Core.PostStreamApplication.fetchMissingPostsFromNexus({
         cacheMissPostIds,
         viewerId,
       });
 
-      expect(persistUsersSpy).not.toHaveBeenCalled();
+      expect(persistUsersSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('should not fetch users when all users are already cached', async () => {
@@ -848,7 +866,7 @@ describe('PostStreamApplication', () => {
         'POST',
         expect.stringContaining(JSON.stringify({ post_ids: [], viewer_id: viewerId })),
       );
-      expect(mocks.persistPosts).toHaveBeenCalledWith([]);
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: [] });
     });
 
     it('should handle when postBatch is empty array', async () => {
@@ -862,7 +880,7 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      expect(mocks.persistPosts).toHaveBeenCalledWith([]);
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: [] });
     });
 
     it('should handle when userBatch is empty array', async () => {
@@ -918,8 +936,8 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
         postAttachments: mockAttachments,
       });
-      const persistFilesFromUrisSpy = vi
-        .spyOn(Core, 'persistFilesFromUris')
+      const fetchFilesSpy = vi
+        .spyOn(Core.FileApplication, 'fetchFiles')
         .mockRejectedValue(new Error('Failed to persist files'));
 
       const getUserDetailsSpy = vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder');
@@ -930,7 +948,7 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      expect(persistFilesFromUrisSpy).toHaveBeenCalledWith(mockAttachments);
+      expect(fetchFilesSpy).toHaveBeenCalledWith(mockAttachments);
       expect(queryNexusSpy).toHaveBeenCalledTimes(1);
       expect(getUserDetailsSpy).not.toHaveBeenCalled();
       expect(persistUsersSpy).not.toHaveBeenCalled();
@@ -1058,6 +1076,274 @@ describe('PostStreamApplication', () => {
       });
 
       expect(Core.UserDetailsModel.findByIdsPreserveOrder).toHaveBeenCalled();
+    });
+  });
+
+  describe('getStreamHead', () => {
+    it('should return stream head timestamp when stream exists with posts', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+      await createPostDetails(postIds);
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      // Should return the timestamp of the first post (head of stream)
+      expect(result).toBe(BASE_TIMESTAMP);
+    });
+
+    it('should return stream head timestamp from unread stream when it exists', async () => {
+      const unreadPostIds = Array.from({ length: 2 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+
+      // Create unread stream (should take precedence)
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+      await createPostDetails(unreadPostIds);
+
+      // Create post stream
+      await createStreamWithPosts(postIds);
+      await createPostDetails(postIds);
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      // Should return timestamp from unread stream head (first unread post)
+      expect(result).toBe(BASE_TIMESTAMP);
+    });
+
+    it('should return FORCE_FETCH_NEW_POSTS when stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.FORCE_FETCH_NEW_POSTS);
+    });
+
+    it('should return SKIP_FETCH_NEW_POSTS when stream exists but head post has no details', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+      // Don't create post details
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.SKIP_FETCH_NEW_POSTS);
+    });
+
+    it('should handle errors from underlying service gracefully', async () => {
+      const getStreamHeadSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'getStreamHead')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.getStreamHead({ streamId })).rejects.toThrow('Database error');
+
+      expect(getStreamHeadSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const expectedTimestamp = BASE_TIMESTAMP + 50;
+
+      const getStreamHeadSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'getStreamHead')
+        .mockResolvedValue(expectedTimestamp);
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId: customStreamId });
+
+      expect(getStreamHeadSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toBe(expectedTimestamp);
+    });
+  });
+
+  describe('mergeUnreadStreamWithPostStream', () => {
+    it('should merge unread stream with post stream when both exist', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+
+      // Create unread stream
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+      // Create post stream
+      await createStreamWithPosts(postIds);
+
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      // Verify the streams were merged: unread posts first, then post stream
+      const mergedStream = await Core.PostStreamModel.findById(streamId);
+      expect(mergedStream).toBeTruthy();
+      expect(mergedStream!.stream).toEqual([...unreadPostIds, ...postIds]);
+    });
+
+    it('should handle when unread stream does not exist (no-op)', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+
+      // Should not throw and should not modify post stream
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      expect(postStream).toBeTruthy();
+      expect(postStream!.stream).toEqual(postIds);
+    });
+
+    it('should handle when post stream does not exist (no-op)', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      // Should not throw and should not create post stream
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      expect(postStream).toBeNull();
+    });
+
+    it('should handle when both streams do not exist (no-op)', async () => {
+      // Should not throw
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      expect(postStream).toBeNull();
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const mergeSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'mergeUnreadStreamWithPostStream')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId })).rejects.toThrow(
+        'Database error',
+      );
+
+      expect(mergeSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+
+      const mergeSpy = vi.spyOn(Core.LocalStreamPostsService, 'mergeUnreadStreamWithPostStream').mockResolvedValue();
+
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId: customStreamId });
+
+      expect(mergeSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+    });
+  });
+
+  describe('getUnreadStream', () => {
+    it('should return unread stream when it exists', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      const result = await Core.PostStreamApplication.getUnreadStream({ streamId });
+
+      expect(result).toBeTruthy();
+      expect(result!.stream).toEqual(unreadPostIds);
+    });
+
+    it('should return null when unread stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.getUnreadStream({ streamId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const readUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'readUnreadStream')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.getUnreadStream({ streamId })).rejects.toThrow('Database error');
+
+      expect(readUnreadStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const mockUnreadStream = { stream: ['post-1', 'post-2'] };
+
+      const readUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'readUnreadStream')
+        .mockResolvedValue(mockUnreadStream);
+
+      const result = await Core.PostStreamApplication.getUnreadStream({ streamId: customStreamId });
+
+      expect(readUnreadStreamSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toEqual(mockUnreadStream);
+    });
+  });
+
+  describe('getLocalStream', () => {
+    it('should return local stream when it exists', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+
+      const result = await Core.PostStreamApplication.getLocalStream({ streamId });
+
+      expect(result).toBeTruthy();
+      expect(result!.stream).toEqual(postIds);
+    });
+
+    it('should return null when stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.getLocalStream({ streamId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const getLocalStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'read')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.getLocalStream({ streamId })).rejects.toThrow('Database error');
+
+      expect(getLocalStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const mockStream = { stream: ['post-1', 'post-2'] };
+
+      const getLocalStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'read').mockResolvedValue(mockStream);
+
+      const result = await Core.PostStreamApplication.getLocalStream({ streamId: customStreamId });
+
+      expect(getLocalStreamSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toEqual(mockStream);
+    });
+  });
+
+  describe('clearUnreadStream', () => {
+    it('should clear unread stream and return post IDs', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      const result = await Core.PostStreamApplication.clearUnreadStream({ streamId });
+
+      expect(result).toEqual(unreadPostIds);
+      const clearedStream = await Core.UnreadPostStreamModel.findById(streamId);
+      expect(clearedStream).toBeNull();
+    });
+
+    it('should return empty array when unread stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.clearUnreadStream({ streamId });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const clearUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'clearUnreadStream')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.clearUnreadStream({ streamId })).rejects.toThrow('Database error');
+
+      expect(clearUnreadStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const mockPostIds = ['post-1', 'post-2'];
+
+      const clearUnreadStreamSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'clearUnreadStream')
+        .mockResolvedValue(mockPostIds);
+
+      const result = await Core.PostStreamApplication.clearUnreadStream({ streamId: customStreamId });
+
+      expect(clearUnreadStreamSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toEqual(mockPostIds);
     });
   });
 });

@@ -34,7 +34,7 @@ export class LocalPostTagService {
         await Promise.all([
           this.savePostTagsModel(postId, postTagsModel),
           this.updatePostCounts(postId, postTagsModel),
-          Core.UserCountsModel.updateCounts(taggerId, { tagged: 1 }),
+          Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: 1 } }),
         ]);
 
         Libs.Logger.debug('Post tag created', { postId, label, taggerId });
@@ -87,7 +87,7 @@ export class LocalPostTagService {
 
         await this.savePostTagsModel(postId, postTagsModel);
         await this.updatePostCounts(postId, postTagsModel);
-        await Core.UserCountsModel.updateCounts(taggerId, { tagged: -1 });
+        await Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: -1 } });
 
         Libs.Logger.debug('Tag removed', { postId, label, taggerId });
       });
@@ -138,6 +138,62 @@ export class LocalPostTagService {
     } else {
       // TODO: Maybe fetch counts from Nexus and reconcile local tag counts.
       Libs.Logger.warn('Post counts not found, skipping update', { postId });
+    }
+  }
+
+  /**
+   * Merges new tags from Nexus with existing local tags.
+   * Updates existing tags or adds new ones without removing any.
+   *
+   * @param postId - Unique identifier of the post
+   * @param tags - Array of NexusTags to merge
+   */
+  static async mergeTags({ postId, tags }: { postId: string; tags: Core.NexusTag[] }) {
+    try {
+      await Core.db.transaction('rw', [Core.PostTagsModel.table], async () => {
+        const existing = await Core.PostTagsModel.findById(postId);
+        const existingTags = existing?.tags ?? [];
+
+        // Create a map of existing tags by label for quick lookup
+        const tagMap = new Map<string, Core.NexusTag>();
+        for (const tag of existingTags) {
+          tagMap.set(tag.label.toLowerCase(), tag);
+        }
+
+        // Merge new tags - update existing or add new
+        for (const newTag of tags) {
+          const key = newTag.label.toLowerCase();
+          const existingTag = tagMap.get(key);
+
+          if (existingTag) {
+            // Merge taggers - combine unique taggers
+            const mergedTaggers = [...new Set([...(existingTag.taggers ?? []), ...(newTag.taggers ?? [])])];
+            tagMap.set(key, {
+              ...existingTag,
+              ...newTag,
+              taggers: mergedTaggers,
+              taggers_count: Math.max(existingTag.taggers_count ?? 0, newTag.taggers_count ?? mergedTaggers.length),
+            });
+          } else {
+            tagMap.set(key, newTag);
+          }
+        }
+
+        // Convert map back to array
+        const mergedTags = Array.from(tagMap.values());
+
+        await Core.PostTagsModel.upsert({
+          id: postId,
+          tags: mergedTags,
+        });
+
+        Libs.Logger.debug('Merged post tags', { postId, newTagsCount: tags.length, totalTags: mergedTags.length });
+      });
+    } catch (error) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to merge post tags`, 500, {
+        error,
+        postId,
+      });
     }
   }
 }

@@ -34,6 +34,7 @@ When working on this codebase, prioritize reading these files in order:
 │   ├── component-guidelines.md     # Component development standards
 │   ├── figma-context.md            # Design system integration
 │   ├── error-handling.md           # Error handling conventions
+│   ├── z-index-conventions.md      # Z-index layering system
 │   ├── mcp-setup.md                # MCP server configuration guide
 │   ├── mcp.json                    # MCP server definitions
 │   └── rules/                      # Cursor-specific automation rules
@@ -50,7 +51,8 @@ When working on this codebase, prioritize reading these files in order:
     │   ├── 0006-pipes-normalization.md
     │   ├── 0007-dexie-version-normalization.md
     │   ├── 0008-coordinators-layer.md
-    │   └── 0009-application-cross-domain-orchestration.md
+    │   ├── 0009-application-cross-domain-orchestration.md
+│   └── 0010-notification-application-orchestration.md
     └── snapshot-testing.md         # Snapshot testing philosophy
 ```
 
@@ -152,6 +154,7 @@ ADRs document key architectural choices. They capture the **why** behind decisio
 - [0007: Dexie Version Normalization](docs/adr/0007-dexie-version-normalization.md) - Database versioning
 - [0008: Coordinators Layer](docs/adr/0008-coordinators-layer.md) - System-initiated workflows
 - [0009: Application Cross-Domain Orchestration](docs/adr/0009-application-cross-domain-orchestration.md) - Application-to-Application calls for workflow orchestration
+- [0010: Notification Application Orchestration](docs/adr/0010-notification-application-orchestration.md) - NotificationApplication cross-domain entity aggregation privilege
 
 **Creating new ADRs**: Use `docs/adr/TEMPLATE.md` as the starting point.
 

@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 
 /**
  * Nexus User Service
@@ -14,11 +13,9 @@ export class NexusUserService {
    * @returns user data (users, posts, streams)
    */
   static async notifications(params: Core.TUserPaginationParams): Promise<Core.NexusNotification[]> {
+    // TODO: Handle the error in application layer
     const url = Core.userApi.notifications(params);
-    let notificationList = await Core.queryNexus<Core.NexusNotification[]>(url);
-    if (!notificationList) notificationList = [];
-    Libs.Logger.debug(`Notifications fetched successfully!`);
-    return notificationList;
+    return await Core.queryNexus<Core.NexusNotification[]>(url);
   }
 
   /**
@@ -28,11 +25,9 @@ export class NexusUserService {
    * @returns Array of tags assigned to the user
    */
   static async tags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {
+    // TODO: Handle the error in application layer
     const url = Core.userApi.tags(params);
-    let tagList = await Core.queryNexus<Core.NexusTag[]>(url);
-    if (!tagList) tagList = [];
-    Libs.Logger.debug(`User tags fetched successfully! Returned ${tagList.length} tags`);
-    return tagList;
+    return await Core.queryNexus<Core.NexusTag[]>(url);
   }
 
   /**
@@ -41,12 +36,10 @@ export class NexusUserService {
    * @param params - Parameters containing user ID, label, and pagination options
    * @returns Array of users who tagged the user with the specified label
    */
-  static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+  static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusTaggers[]> {
+    // TODO: Handle the error in application layer
     const url = Core.userApi.taggers(params);
-    let taggerList = await Core.queryNexus<Core.NexusUser[]>(url);
-    if (!taggerList) taggerList = [];
-    Libs.Logger.debug(`User taggers fetched successfully! Returned ${taggerList.length} taggers`);
-    return taggerList;
+    return await Core.queryNexus<Core.NexusTaggers[]>(url);
   }
 
   /**
@@ -55,13 +48,10 @@ export class NexusUserService {
    * @param params - Parameters containing user ID
    * @returns User details including name, bio, status, image, and links
    */
-  static async details(params: Core.TUserId): Promise<Core.NexusUserDetails | undefined> {
+  static async details(params: Core.TUserId): Promise<Core.NexusUserDetails> {
+    // TODO: Handle the error in application layer
     const url = Core.userApi.details(params);
-    const userDetails = await Core.queryNexus<Core.NexusUserDetails>(url);
-    if (userDetails) {
-      Libs.Logger.debug(`User details fetched successfully for user ${params.user_id}`);
-    }
-    return userDetails;
+    return await Core.queryNexus<Core.NexusUserDetails>(url);
   }
 
   /**
@@ -70,12 +60,9 @@ export class NexusUserService {
    * @param params - Parameters containing user ID
    * @returns User counts including followers, following, and friends
    */
-  static async counts(params: Core.TUserId): Promise<Core.NexusUserCounts | undefined> {
+  static async counts(params: Core.TUserId): Promise<Core.NexusUserCounts> {
+    // TODO: Handle the error in application layer
     const url = Core.userApi.counts(params);
-    const userCounts = await Core.queryNexus<Core.NexusUserCounts>(url);
-    if (userCounts) {
-      Libs.Logger.debug(`User counts fetched successfully for user ${params.user_id}`);
-    }
-    return userCounts;
+    return await Core.queryNexus<Core.NexusUserCounts>(url);
   }
 }

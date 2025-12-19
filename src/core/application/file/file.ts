@@ -17,7 +17,7 @@ export class FileApplication {
    * @param params.blobResult - Normalized blob result
    * @param params.fileResult - Normalized file result
    */
-  static async upload({ fileAttachments }: Core.FilesListParams) {
+  static async commitCreate({ fileAttachments }: Core.FilesListParams) {
     await Promise.all(
       fileAttachments.map(async (fileAttachment) => {
         const { blobResult, fileResult } = fileAttachment;
@@ -31,7 +31,11 @@ export class FileApplication {
     );
   }
 
-  static async delete(fileAttachments: string[]) {
+  /**
+   * Commit the delete file operation, this will delete the file from the local database and sync to the homeserver.
+   * @param fileAttachments - The file attachments to delete
+   */
+  static async commitDelete(fileAttachments: string[]) {
     await Promise.all(
       fileAttachments.map(async (fileUri) => {
         // Delete the file metadata
@@ -41,7 +45,7 @@ export class FileApplication {
           domain: Core.CompositeIdDomain.FILES,
         });
         if (fileCompositeId) {
-          const file = await Core.FileDetailsModel.findById(fileCompositeId);
+          const file = await Core.LocalFileService.read(fileCompositeId);
           if (file) {
             // Delete the file blob
             await Core.HomeserverService.delete(file.src);
@@ -56,6 +60,11 @@ export class FileApplication {
     );
   }
 
+  /**
+   * Gets the metadata for a list of file attachments.
+   * @param fileAttachments - The file attachments to get the metadata for
+   * @returns The metadata for the file attachments
+   */
   static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
     const compositeFileIds = fileAttachments.flatMap((uri) => {
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
@@ -65,13 +74,24 @@ export class FileApplication {
     return files;
   }
 
+  /**
+   * Gets the avatar URL for a user.
+   * @param pubky - The user's public key
+   * @returns The avatar URL
+   */
   static getAvatarUrl(pubky: Core.Pubky): string {
     return Core.filesApi.getAvatarUrl(pubky);
   }
 
-  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
+  /**
+   * Gets the file URL for a file.
+   * @param fileId - The file ID
+   * @param variant - The variant of the file
+   * @returns The file URL
+   */
+  static getFileUrl({ fileId, variant }: Core.TGetFileUrlParams): string {
     const { pubky, id } = Core.parseCompositeId(fileId);
-    return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
+    return Core.filesApi.getFileUrl({ pubky, file_id: id, variant });
   }
 
   /**
@@ -81,7 +101,24 @@ export class FileApplication {
    * @param fileUris - Array of file URIs to fetch and persist
    * @returns Promise that resolves when files are persisted
    */
-  static async persistFiles(fileUris: string[]) {
-    return Core.persistFilesFromUris(fileUris);
+  static async fetchFiles(fileUris: string[]) {
+    if (fileUris.length === 0) {
+      return;
+    }
+
+    const nexusFiles = await Core.NexusFileService.fetchFiles(fileUris);
+    const filesWithCompositeIds = nexusFiles.map((file) => {
+      const compositeId = Core.buildCompositeIdFromPubkyUri({
+        uri: file.uri,
+        domain: Core.CompositeIdDomain.FILES,
+      });
+      return {
+        ...file,
+        urls: JSON.parse(file.urls as unknown as string) as Core.NexusFileUrls,
+        id: compositeId,
+      };
+    });
+
+    await Core.LocalFileService.createMany({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
   }
 }

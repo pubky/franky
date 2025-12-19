@@ -1,4 +1,4 @@
-import { PostResult, PubkyAppPostEmbed } from 'pubky-app-specs';
+import { PostResult, PubkyAppPostEmbed, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
@@ -23,7 +23,7 @@ export class PostNormalizer {
       if (embeddedPostId) {
         const embeddedPost = await Core.PostDetailsModel.findById(embeddedPostId);
         if (embeddedPost) {
-          embedObject = new PubkyAppPostEmbed(post.embed, embeddedPost.kind as unknown as Core.PubkyAppPostKind);
+          embedObject = new PubkyAppPostEmbed(post.embed, embeddedPost.kind as unknown as PubkyAppPostKind);
         }
       }
     }

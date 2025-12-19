@@ -3,8 +3,20 @@ import * as Core from '@/core';
 export class LocalFileService {
   private constructor() {} // Prevent instantiation
 
-  static async persistFiles({ files }: Core.TPersistFilesParams) {
+  static async createMany({ files }: Core.TPersistFilesParams) {
     await Core.FileDetailsModel.bulkSave(files);
+  }
+
+  static async read(compositeFileId: string): Promise<Core.NexusFileDetails | null> {
+    return await Core.FileDetailsModel.findById(compositeFileId);
+  }
+
+  static async findByIds(compositeFileIds: string[]): Promise<Core.NexusFileDetails[]> {
+    return await Core.FileDetailsModel.findByIds(compositeFileIds);
+  }
+
+  static async deleteById(compositeFileId: string) {
+    await Core.FileDetailsModel.deleteById(compositeFileId);
   }
 
   /**
@@ -36,13 +48,5 @@ export class LocalFileService {
       };
       await Core.FileDetailsModel.create(file);
     }
-  }
-
-  static async findByIds(compositeFileIds: string[]): Promise<Core.NexusFileDetails[]> {
-    return await Core.FileDetailsModel.findByIds(compositeFileIds);
-  }
-
-  static async deleteById(compositeFileId: string) {
-    await Core.FileDetailsModel.deleteById(compositeFileId);
   }
 }

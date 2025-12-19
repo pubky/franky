@@ -218,7 +218,7 @@ describe('StreamUserController', () => {
       });
     });
 
-    it('should handle background fetch as non-blocking', async () => {
+    it('should await background fetch for missing users', async () => {
       const streamId = Core.buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
       const nextPageIds: Core.Pubky[] = ['follower-1', 'follower-2'];
       const cacheMissUserIds: Core.Pubky[] = ['follower-3'];
@@ -229,10 +229,9 @@ describe('StreamUserController', () => {
         skip: 20,
       });
 
-      // Make fetchMissingUsersFromNexus slow to verify non-blocking
       const fetchMissingUsersSpy = vi
         .spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus')
-        .mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+        .mockResolvedValue();
 
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
@@ -240,14 +239,16 @@ describe('StreamUserController', () => {
         skip: 0,
       });
 
-      // Result should be returned immediately (background fetch runs after await)
       expect(result).toEqual({
         nextPageIds,
         skip: 20,
       });
 
-      // But fetchMissingUsersFromNexus should still be called
-      expect(fetchMissingUsersSpy).toHaveBeenCalled();
+      // fetchMissingUsersFromNexus should be called and awaited
+      expect(fetchMissingUsersSpy).toHaveBeenCalledWith({
+        cacheMissUserIds,
+        viewerId,
+      });
     });
   });
 });

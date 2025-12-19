@@ -1,5 +1,5 @@
 import { BlobResult, FileResult, PubkyAppUser } from 'pubky-app-specs';
-import type { Pubky } from '@/core';
+import type { Pubky, NexusUserLink } from '@/core';
 
 export type TUploadAvatarInput = {
   blobResult: BlobResult;
@@ -20,4 +20,12 @@ export type TDeleteAccountParams = {
 export type TDownloadDataParams = {
   pubky: Pubky;
   setProgress?: (progress: number) => void;
+};
+
+export type TApplicationCommitUpdateDetailsParams = {
+  pubky: Pubky;
+  name: string;
+  bio: string | undefined;
+  image: string | null;
+  links: NexusUserLink[];
 };

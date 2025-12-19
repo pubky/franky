@@ -14,7 +14,7 @@ body {
   --color-foreground: var(--foreground);
   --font-sans: Inter Tight, sans-serif;
   --font-serif: Inter Tight, serif;
-  --font-mono: Inter Tight, monospace;
+  --font-mono: monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -84,7 +84,7 @@ body {
   --accent-foreground: oklch(0.951 0.011 286.195);
   --destructive: oklch(0.628 0.258 29.234);
   --border: oklch(0.311 0.007 285.98);
-  --input: oklch(0.439 0 0);
+  --input: #525252;
   --ring: oklch(0.55 0.008 286.145);
   --chart-1: oklch(0.517 0.27 263.327);
   --chart-2: oklch(0.871 0.261 146.685);
@@ -125,6 +125,22 @@ body {
    * - Responsive: Mobile only (hidden on desktop via lg:hidden)
    */
   --header-height-mobile: 80px;
+
+  /**
+   * Main content header offset
+   * - Vertical offset for sticky sidebars and floating elements below main header
+   * - Used by: ContentLayout sidebars, NewPostsButton when in fixed/floating mode
+   * 
+   * Value rationale (150px):
+   * - Header outer container: py-6 (24px top + 24px bottom) = 48px
+   * - Header inner container: py-6 (24px top + 24px bottom) = 48px  
+   * - Header content height (buttons h-12) = 48px
+   * - Total header visual height ~144px, rounded up to 150px for spacing
+   * - Ensures sidebars and floating elements appear clearly below header
+   * 
+   * Note: Profile pages use --header-height (146px) for ProfilePageHeader.
+   */
+  --header-offset-main: 150px;
 
   /**
    * Sidebar and filter bar width
@@ -277,6 +293,16 @@ body {
 
   .scrollbar-none::-webkit-scrollbar {
     display: none;
+  }
+
+  /**
+   * Fullscreen image display
+   * - Ensures images maintain aspect ratio when viewed in fullscreen mode
+   * - Prevents stretching/distortion of images in native fullscreen API
+   * - Applied to: Any img element when user triggers fullscreen view
+   */
+  img:fullscreen {
+    object-fit: contain;
   }
 
   .onboarding-nav {

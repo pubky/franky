@@ -1,0 +1,386 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot when collapsed 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[0fr] opacity-0 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test content
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="false"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-post-disabled="false"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot when disabled 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="true"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-post-disabled="true"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+            disabled=""
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot when expanded with content 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test content with link https://example.com
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="false"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-post-disabled="false"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot when expanded with tags 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test content
+      </div>
+      <div
+        class="flex flex-wrap items-center gap-2"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          data-testid="post-tag"
+        >
+          tag1
+          <button
+            data-testid="tag-close-tag1"
+          >
+            ×
+          </button>
+        </div>
+        <div
+          data-testid="post-tag"
+        >
+          tag2
+          <button
+            data-testid="tag-close-tag2"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="false"
+          data-testid="post-input-tags"
+        >
+          <span>
+            tag1
+          </span>
+          <span>
+            tag2
+          </span>
+        </div>
+        <div
+          data-post-disabled="false"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot when submitting 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="true"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-post-disabled="true"
+          data-submitting="true"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+            disabled=""
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot with REPLY submit mode 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test content
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="false"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-post-disabled="false"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot with emoji picker open 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Test content
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="false"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-post-disabled="false"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

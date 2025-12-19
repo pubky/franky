@@ -7,20 +7,30 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 import * as Types from './ContentLayout.types';
 
 /**
  * Reusable sticky sidebar component for left and right sidebars
+ * Uses useStickyWhenFits to only apply sticky positioning when
+ * the sidebar content fits within the available viewport height.
  */
 function StickySidebar({ children }: Types.StickySidebarProps) {
+  const { ref, stickyTop } = Hooks.useStickyWhenFits({
+    topOffset: Config.LAYOUT.HEADER_OFFSET_MAIN,
+    bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
+  });
+
   return (
     <Atoms.Container
+      ref={ref}
       overrideDefaults
       className={Libs.cn(
-        'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
-        'top-[147px]', // 144px + 3px for the header
+        'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'w-full max-w-(--filter-bar-width)',
+        'sticky',
       )}
+      style={{ top: `${stickyTop}px` }}
     >
       {children}
     </Atoms.Container>
@@ -80,8 +90,8 @@ export function ContentLayout({
             <StickySidebar>{leftSidebarContent}</StickySidebar>
           )}
 
-          {/* Main content area - grows to fill space */}
-          <Atoms.Container className="w-full flex-1 gap-6">{children}</Atoms.Container>
+          {/* Main content area - grows to fill space, min-w-0 prevents flex overflow */}
+          <Atoms.Container className="w-full min-w-0 flex-1 gap-6 overflow-hidden">{children}</Atoms.Container>
 
           {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (

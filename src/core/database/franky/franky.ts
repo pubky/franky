@@ -20,6 +20,7 @@ import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream
 import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.schema';
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
 import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
+import { feedTableSchema } from '@/core/models/feed/feed.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -42,12 +43,16 @@ export class AppDatabase extends Dexie {
   file_details!: Dexie.Table<Core.FileDetailsModelSchema>;
   // Streams
   post_streams!: Dexie.Table<PostStreamModelSchema>;
+  unread_post_streams!: Dexie.Table<PostStreamModelSchema>;
   user_streams!: Dexie.Table<UserStreamModelSchema>;
   tag_streams!: Dexie.Table<TagStreamModelSchema>;
   // Bookmarks
   bookmarks!: Dexie.Table<Core.BookmarkModelSchema>;
   // Hot tags
   hot_tags!: Dexie.Table<HotTagsModelSchema>;
+  // Feeds
+  feeds!: Dexie.Table<Core.FeedModelSchema>;
+
   constructor(databaseName: string = Config.DB_NAME) {
     super(databaseName);
 
@@ -71,12 +76,15 @@ export class AppDatabase extends Dexie {
         file_details: fileDetailsTableSchema,
         // Streams
         post_streams: postStreamTableSchema,
+        unread_post_streams: postStreamTableSchema,
         user_streams: userStreamTableSchema,
         tag_streams: tagStreamTableSchema,
         // Bookmarks
         bookmarks: bookmarkTableSchema,
         // Hot tags
         hot_tags: hotTagsTableSchema,
+        // Feeds
+        feeds: feedTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(

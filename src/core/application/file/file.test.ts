@@ -26,8 +26,9 @@ vi.mock('@/core/services/homeserver', () => ({
 vi.mock('@/core/services/local/file', () => ({
   LocalFileService: {
     findByIds: vi.fn(),
-    persistFiles: vi.fn(),
+    createMany: vi.fn(),
     create: vi.fn(),
+    read: vi.fn(),
     deleteById: vi.fn(),
   },
 }));
@@ -46,7 +47,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     filesApi: {
       getAvatarUrl: vi.fn(),
-      getImageUrl: vi.fn(),
+      getFileUrl: vi.fn(),
       getFiles: vi.fn(),
     },
     FileDetailsModel: {
@@ -110,7 +111,7 @@ beforeEach(async () => {
 });
 
 describe('FileApplication', () => {
-  describe('upload', () => {
+  describe('commitCreate', () => {
     it('uploads blob and then file record to homeserver', async () => {
       const fileJson = { id: 'file-1', kind: 'image' };
       const blobResult = createMockBlobResult();
@@ -120,7 +121,7 @@ describe('FileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockResolvedValue(undefined);
 
-      await FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] });
+      await FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] });
 
       expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
@@ -143,7 +144,7 @@ describe('FileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
       const createSpy = vi.spyOn(Core.LocalFileService, 'create');
 
-      await expect(FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(
+      await expect(FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(
         'blob upload failed',
       );
       expect(putBlobSpy).toHaveBeenCalledTimes(1);
@@ -163,7 +164,7 @@ describe('FileApplication', () => {
         .mockRejectedValueOnce(new Error('file record upload failed'));
       const createSpy = vi.spyOn(Core.LocalFileService, 'create');
 
-      await expect(FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(
+      await expect(FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(
         'file record upload failed',
       );
       expect(putBlobSpy).toHaveBeenCalledTimes(1);
@@ -184,7 +185,7 @@ describe('FileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockResolvedValue(undefined);
 
-      await FileApplication.upload({
+      await FileApplication.commitCreate({
         fileAttachments: [
           { blobResult: blobResult1, fileResult: fileResult1 },
           { blobResult: blobResult2, fileResult: fileResult2 },
@@ -217,7 +218,7 @@ describe('FileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockRejectedValue(error);
 
-      await expect(FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(
+      await expect(FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(
         'Local persistence failed',
       );
 
@@ -315,20 +316,20 @@ describe('FileApplication', () => {
     });
   });
 
-  describe('getImageUrl', () => {
-    it('parses composite ID and delegates to filesApi.getImageUrl', () => {
+  describe('getFileUrl', () => {
+    it('parses composite ID and delegates to filesApi.getFileUrl', () => {
       const fileId = 'file-123';
       const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
       const variant = FileVariant.SMALL;
       const expectedUrl = 'https://cdn.example.com/files/encoded-pubky/encoded-file-id/small';
 
       const parseCompositeIdSpy = vi.spyOn(Core, 'parseCompositeId').mockReturnValue({ pubky: TEST_PUBKY, id: fileId });
-      vi.spyOn(Core.filesApi, 'getImageUrl').mockReturnValue(expectedUrl);
+      vi.spyOn(Core.filesApi, 'getFileUrl').mockReturnValue(expectedUrl);
 
-      const result = FileApplication.getImageUrl({ fileId: compositeId, variant });
+      const result = FileApplication.getFileUrl({ fileId: compositeId, variant });
 
       expect(parseCompositeIdSpy).toHaveBeenCalledWith(compositeId);
-      expect(Core.filesApi.getImageUrl).toHaveBeenCalledWith({ pubky: TEST_PUBKY, file_id: fileId, variant });
+      expect(Core.filesApi.getFileUrl).toHaveBeenCalledWith({ pubky: TEST_PUBKY, file_id: fileId, variant });
       expect(result).toBe(expectedUrl);
     });
 
@@ -340,22 +341,22 @@ describe('FileApplication', () => {
         throw new Error(`Invalid composite id: ${invalidCompositeId}`);
       });
 
-      expect(() => FileApplication.getImageUrl({ fileId: invalidCompositeId, variant })).toThrow(
+      expect(() => FileApplication.getFileUrl({ fileId: invalidCompositeId, variant })).toThrow(
         `Invalid composite id: ${invalidCompositeId}`,
       );
-      expect(Core.filesApi.getImageUrl).not.toHaveBeenCalled();
+      expect(Core.filesApi.getFileUrl).not.toHaveBeenCalled();
     });
   });
 
-  describe('persistFiles', () => {
+  describe('fetchFiles', () => {
     it('returns early when fileUris is empty', async () => {
-      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles');
+      const createManySpy = vi.spyOn(Core.LocalFileService, 'createMany');
       const fetchFilesSpy = vi.spyOn(Core.NexusFileService, 'fetchFiles');
 
-      await FileApplication.persistFiles([]);
+      await FileApplication.fetchFiles([]);
 
       expect(fetchFilesSpy).not.toHaveBeenCalled();
-      expect(persistFilesSpy).not.toHaveBeenCalled();
+      expect(createManySpy).not.toHaveBeenCalled();
     });
 
     it('fetches files from nexus and persists them with composite IDs', async () => {
@@ -383,12 +384,12 @@ describe('FileApplication', () => {
       ];
 
       vi.spyOn(Core.NexusFileService, 'fetchFiles').mockResolvedValue(nexusFiles as unknown as NexusFileDetails[]);
-      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+      const createManySpy = vi.spyOn(Core.LocalFileService, 'createMany').mockResolvedValue(undefined);
 
-      await FileApplication.persistFiles([uri1, uri2]);
+      await FileApplication.fetchFiles([uri1, uri2]);
 
       expect(Core.NexusFileService.fetchFiles).toHaveBeenCalledWith([uri1, uri2]);
-      expect(persistFilesSpy).toHaveBeenCalledWith({ files: expectedFilesWithIds });
+      expect(createManySpy).toHaveBeenCalledWith({ files: expectedFilesWithIds });
     });
 
     it('filters out files with invalid URIs when building composite IDs', async () => {
@@ -414,23 +415,23 @@ describe('FileApplication', () => {
       ];
 
       vi.spyOn(Core.NexusFileService, 'fetchFiles').mockResolvedValue(nexusFiles as unknown as NexusFileDetails[]);
-      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+      const createManySpy = vi.spyOn(Core.LocalFileService, 'createMany').mockResolvedValue(undefined);
 
-      await FileApplication.persistFiles([validUri, invalidUri]);
+      await FileApplication.fetchFiles([validUri, invalidUri]);
 
-      expect(persistFilesSpy).toHaveBeenCalledWith({ files: expectedFilesWithIds });
+      expect(createManySpy).toHaveBeenCalledWith({ files: expectedFilesWithIds });
     });
 
     it('handles empty response from NexusFileService', async () => {
       const uri = 'pubky://user/pub/pubky.app/files/file-123';
 
       vi.spyOn(Core.NexusFileService, 'fetchFiles').mockResolvedValue([]);
-      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+      const createManySpy = vi.spyOn(Core.LocalFileService, 'createMany').mockResolvedValue(undefined);
 
-      await FileApplication.persistFiles([uri]);
+      await FileApplication.fetchFiles([uri]);
 
       expect(Core.NexusFileService.fetchFiles).toHaveBeenCalledWith([uri]);
-      expect(persistFilesSpy).toHaveBeenCalledWith({ files: [] });
+      expect(createManySpy).toHaveBeenCalledWith({ files: [] });
     });
 
     it('propagates errors from NexusFileService', async () => {
@@ -438,13 +439,13 @@ describe('FileApplication', () => {
       const error = new Error('Network error');
 
       vi.spyOn(Core.NexusFileService, 'fetchFiles').mockRejectedValue(error);
-      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles');
+      const createManySpy = vi.spyOn(Core.LocalFileService, 'createMany');
 
-      await expect(FileApplication.persistFiles([uri])).rejects.toThrow('Network error');
-      expect(persistFilesSpy).not.toHaveBeenCalled();
+      await expect(FileApplication.fetchFiles([uri])).rejects.toThrow('Network error');
+      expect(createManySpy).not.toHaveBeenCalled();
     });
 
-    it('propagates errors from LocalFileService.persistFiles', async () => {
+    it('propagates errors from LocalFileService.createMany', async () => {
       const fileId = 'file-123';
       const uri = createFileUri(fileId);
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
@@ -461,14 +462,14 @@ describe('FileApplication', () => {
 
       vi.spyOn(Core.NexusFileService, 'fetchFiles').mockResolvedValue(nexusFiles as unknown as NexusFileDetails[]);
       const error = new Error('Database save failed');
-      vi.spyOn(Core.LocalFileService, 'persistFiles').mockRejectedValue(error);
+      vi.spyOn(Core.LocalFileService, 'createMany').mockRejectedValue(error);
 
-      await expect(FileApplication.persistFiles([uri])).rejects.toThrow('Database save failed');
-      expect(Core.LocalFileService.persistFiles).toHaveBeenCalledWith({ files: expectedFilesWithIds });
+      await expect(FileApplication.fetchFiles([uri])).rejects.toThrow('Database save failed');
+      expect(Core.LocalFileService.createMany).toHaveBeenCalledWith({ files: expectedFilesWithIds });
     });
   });
 
-  describe('delete', () => {
+  describe('commitDelete', () => {
     it('deletes file metadata, blob, and local record when file exists locally', async () => {
       const fileId = 'file-123';
       const fileUri = createFileUri(fileId);
@@ -478,20 +479,20 @@ describe('FileApplication', () => {
       const mockFile = createMockFile(compositeId, 'file1.jpg', fileUri, { src: blobUrl });
 
       const deleteMetadataSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined);
-      const findByIdSpy = vi.spyOn(Core.FileDetailsModel, 'findById').mockResolvedValue(mockFile);
+      const readSpy = vi.spyOn(Core.LocalFileService, 'read').mockResolvedValue(mockFile);
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById').mockResolvedValue(undefined);
 
-      await FileApplication.delete([fileUri]);
+      await FileApplication.commitDelete([fileUri]);
 
       // Verify deletion sequence
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(1, fileUri); // Delete metadata
-      expect(findByIdSpy).toHaveBeenCalledWith(compositeId);
+      expect(readSpy).toHaveBeenCalledWith(compositeId);
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(2, blobUrl); // Delete blob
       expect(deleteLocalSpy).toHaveBeenCalledWith(compositeId);
 
       // Verify invocation order
-      expect(deleteMetadataSpy.mock.invocationCallOrder[0]).toBeLessThan(findByIdSpy.mock.invocationCallOrder[0]);
-      expect(findByIdSpy.mock.invocationCallOrder[0]).toBeLessThan(deleteMetadataSpy.mock.invocationCallOrder[1]);
+      expect(deleteMetadataSpy.mock.invocationCallOrder[0]).toBeLessThan(readSpy.mock.invocationCallOrder[0]);
+      expect(readSpy.mock.invocationCallOrder[0]).toBeLessThan(deleteMetadataSpy.mock.invocationCallOrder[1]);
       expect(deleteMetadataSpy.mock.invocationCallOrder[1]).toBeLessThan(deleteLocalSpy.mock.invocationCallOrder[0]);
     });
 
@@ -502,24 +503,24 @@ describe('FileApplication', () => {
       const blobUrl = 'pubky://user/blob/abc123';
 
       const deleteMetadataSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined);
-      const findByIdSpy = vi.spyOn(Core.FileDetailsModel, 'findById').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalFileService, 'read').mockResolvedValue(null);
       const requestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
         .mockResolvedValue({ src: blobUrl } as unknown as void);
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById');
 
-      await FileApplication.delete([fileUri]);
+      await FileApplication.commitDelete([fileUri]);
 
       // Verify deletion sequence
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(1, fileUri); // Delete metadata
-      expect(findByIdSpy).toHaveBeenCalledWith(compositeId);
+      expect(readSpy).toHaveBeenCalledWith(compositeId);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, fileUri); // Fetch from homeserver
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(2, blobUrl); // Delete blob
       expect(deleteLocalSpy).not.toHaveBeenCalled(); // No local deletion in fallback path
 
       // Verify invocation order
-      expect(deleteMetadataSpy.mock.invocationCallOrder[0]).toBeLessThan(findByIdSpy.mock.invocationCallOrder[0]);
-      expect(findByIdSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
+      expect(deleteMetadataSpy.mock.invocationCallOrder[0]).toBeLessThan(readSpy.mock.invocationCallOrder[0]);
+      expect(readSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
       expect(requestSpy.mock.invocationCallOrder[0]).toBeLessThan(deleteMetadataSpy.mock.invocationCallOrder[1]);
     });
 
@@ -537,21 +538,21 @@ describe('FileApplication', () => {
       const mockFile2 = createMockFile(compositeId2, 'file2.png', uri2, { src: blobUrl2 });
 
       const deleteMetadataSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined);
-      const findByIdSpy = vi
-        .spyOn(Core.FileDetailsModel, 'findById')
+      const readSpy = vi
+        .spyOn(Core.LocalFileService, 'read')
         .mockResolvedValueOnce(mockFile1)
         .mockResolvedValueOnce(mockFile2);
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById').mockResolvedValue(undefined);
 
-      await FileApplication.delete([uri1, uri2]);
+      await FileApplication.commitDelete([uri1, uri2]);
 
       // Verify both files were processed
       expect(deleteMetadataSpy).toHaveBeenCalledWith(uri1);
       expect(deleteMetadataSpy).toHaveBeenCalledWith(uri2);
       expect(deleteMetadataSpy).toHaveBeenCalledWith(blobUrl1);
       expect(deleteMetadataSpy).toHaveBeenCalledWith(blobUrl2);
-      expect(findByIdSpy).toHaveBeenCalledWith(compositeId1);
-      expect(findByIdSpy).toHaveBeenCalledWith(compositeId2);
+      expect(readSpy).toHaveBeenCalledWith(compositeId1);
+      expect(readSpy).toHaveBeenCalledWith(compositeId2);
       expect(deleteLocalSpy).toHaveBeenCalledWith(compositeId1);
       expect(deleteLocalSpy).toHaveBeenCalledWith(compositeId2);
     });
@@ -564,7 +565,7 @@ describe('FileApplication', () => {
       const findByIdSpy = vi.spyOn(Core.FileDetailsModel, 'findById');
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById');
 
-      await FileApplication.delete([invalidUri]);
+      await FileApplication.commitDelete([invalidUri]);
 
       // Verify metadata deletion still happens
       expect(deleteMetadataSpy).toHaveBeenCalledWith(invalidUri);
@@ -582,7 +583,7 @@ describe('FileApplication', () => {
       const findByIdSpy = vi.spyOn(Core.FileDetailsModel, 'findById');
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById');
 
-      await expect(FileApplication.delete([fileUri])).rejects.toThrow('Metadata deletion failed');
+      await expect(FileApplication.commitDelete([fileUri])).rejects.toThrow('Metadata deletion failed');
 
       expect(deleteMetadataSpy).toHaveBeenCalledWith(fileUri);
       expect(findByIdSpy).not.toHaveBeenCalled();
@@ -608,13 +609,13 @@ describe('FileApplication', () => {
         }
         return Promise.resolve(undefined);
       });
-      const findByIdSpy = vi.spyOn(Core.FileDetailsModel, 'findById').mockResolvedValue(mockFile);
+      const readSpy = vi.spyOn(Core.LocalFileService, 'read').mockResolvedValue(mockFile);
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById');
 
-      await expect(FileApplication.delete([fileUri])).rejects.toThrow('Blob deletion failed');
+      await expect(FileApplication.commitDelete([fileUri])).rejects.toThrow('Blob deletion failed');
 
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(1, fileUri);
-      expect(findByIdSpy).toHaveBeenCalledWith(compositeId);
+      expect(readSpy).toHaveBeenCalledWith(compositeId);
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(2, blobUrl);
       expect(deleteLocalSpy).not.toHaveBeenCalled(); // Not reached due to error
     });
@@ -630,13 +631,13 @@ describe('FileApplication', () => {
       const error = new Error('Local deletion failed');
       vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockReturnValue(compositeId);
       vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined);
-      vi.spyOn(Core.FileDetailsModel, 'findById').mockResolvedValue(mockFile);
+      vi.spyOn(Core.LocalFileService, 'read').mockResolvedValue(mockFile);
       const deleteLocalSpy = vi.spyOn(Core.LocalFileService, 'deleteById').mockRejectedValue(error);
 
-      await expect(FileApplication.delete([fileUri])).rejects.toThrow('Local deletion failed');
+      await expect(FileApplication.commitDelete([fileUri])).rejects.toThrow('Local deletion failed');
 
       expect(Core.HomeserverService.delete).toHaveBeenNthCalledWith(1, fileUri);
-      expect(Core.FileDetailsModel.findById).toHaveBeenCalledWith(compositeId);
+      expect(Core.LocalFileService.read).toHaveBeenCalledWith(compositeId);
       expect(Core.HomeserverService.delete).toHaveBeenNthCalledWith(2, blobUrl);
       expect(deleteLocalSpy).toHaveBeenCalledWith(compositeId);
     });
@@ -649,13 +650,13 @@ describe('FileApplication', () => {
       const error = new Error('Homeserver fetch failed');
       vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockReturnValue(compositeId);
       vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined);
-      vi.spyOn(Core.FileDetailsModel, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.LocalFileService, 'read').mockResolvedValue(null);
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(error);
 
-      await expect(FileApplication.delete([fileUri])).rejects.toThrow('Homeserver fetch failed');
+      await expect(FileApplication.commitDelete([fileUri])).rejects.toThrow('Homeserver fetch failed');
 
       expect(Core.HomeserverService.delete).toHaveBeenNthCalledWith(1, fileUri);
-      expect(Core.FileDetailsModel.findById).toHaveBeenCalledWith(compositeId);
+      expect(Core.LocalFileService.read).toHaveBeenCalledWith(compositeId);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, fileUri);
       expect(Core.HomeserverService.delete).toHaveBeenCalledTimes(1); // Blob deletion not reached
     });

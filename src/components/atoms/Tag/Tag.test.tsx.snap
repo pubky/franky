@@ -5,15 +5,16 @@ exports[`Tag - Snapshots > matches snapshot for long tag name 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 85, 0, 0.3); border: 1px solid transparent;"
+  title="very-long-tag-name-example"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     very-long-tag-name-example
   </p>
   <p
-    class="text-sm ml-1.5 font-medium text-foreground/50"
+    class="text-sm ml-1.5 shrink-0 font-medium text-foreground/50"
     data-testid="tag-count"
   >
     7
@@ -26,9 +27,10 @@ exports[`Tag - Snapshots > matches snapshot when clicked 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 51, 0, 0.3); border: 1px solid rgb(255, 51, 0);"
+  title="been clicked"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     been clicked
@@ -41,15 +43,16 @@ exports[`Tag - Snapshots > matches snapshot with all props combined 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 combined-tag"
   data-testid="combined-test"
   style="background-color: rgba(255, 0, 4, 0.3); border: 1px solid rgb(255, 0, 4);"
+  title="defi"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     defi
   </p>
   <p
-    class="text-sm ml-1.5 font-medium text-foreground/50"
+    class="text-sm ml-1.5 shrink-0 font-medium text-foreground/50"
     data-testid="tag-count"
   >
     123
@@ -62,15 +65,16 @@ exports[`Tag - Snapshots > matches snapshot with count 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(171, 0, 255, 0.3); border: 1px solid transparent;"
+  title="sixteen count"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     sixteen count
   </p>
   <p
-    class="text-sm ml-1.5 font-medium text-foreground/50"
+    class="text-sm ml-1.5 shrink-0 font-medium text-foreground/50"
     data-testid="tag-count"
   >
     16
@@ -83,9 +87,10 @@ exports[`Tag - Snapshots > matches snapshot with custom className 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 custom-tag"
   data-testid="tag"
   style="background-color: rgba(28, 255, 0, 0.3); border: 1px solid transparent;"
+  title="custom-class"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     custom-class
@@ -98,9 +103,10 @@ exports[`Tag - Snapshots > matches snapshot with default props 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 209, 0, 0.3); border: 1px solid transparent;"
+  title="default props"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     default props
@@ -113,15 +119,16 @@ exports[`Tag - Snapshots > matches snapshot with large count 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 0, 234, 0.3); border: 1px solid transparent;"
+  title="large count"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     large count
   </p>
   <p
-    class="text-sm ml-1.5 font-medium text-foreground/50"
+    class="text-sm ml-1.5 shrink-0 font-medium text-foreground/50"
     data-testid="tag-count"
   >
     999999
@@ -134,15 +141,16 @@ exports[`Tag - Snapshots > matches snapshot with zero count 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(0, 255, 151, 0.3); border: 1px solid transparent;"
+  title="zero count"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     zero count
   </p>
   <p
-    class="text-sm ml-1.5 font-medium text-foreground/50"
+    class="text-sm ml-1.5 shrink-0 font-medium text-foreground/50"
     data-testid="tag-count"
   >
     0
@@ -155,9 +163,10 @@ exports[`Tag - Snapshots > matches snapshot without clicked 1`] = `
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(0, 22, 255, 0.3); border: 1px solid transparent;"
+  title="clicked false"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold text-foreground truncate"
     data-testid="tag-name"
   >
     clicked false

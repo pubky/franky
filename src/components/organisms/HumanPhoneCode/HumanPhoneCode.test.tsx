@@ -1,24 +1,45 @@
 import { describe, it, expect, vi } from 'vitest';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { Homegate } from '@/core/services/homegate';
 
 import { HumanPhoneCode } from './HumanPhoneCode';
 
 describe('HumanPhoneCode', () => {
   it('on back button click, onBack function is called', () => {
-    let isBackClicked = false;
-    const r = render(
-      <HumanPhoneCode
-        phoneNumber="1234567890"
-        onBack={() => {
-          isBackClicked = true;
-        }}
-        onSuccess={() => {}}
-      />,
-    );
+    vi.useFakeTimers();
+    try {
+      let isBackClicked = false;
+      const r = render(
+        <HumanPhoneCode
+          phoneNumber="1234567890"
+          onBack={() => {
+            isBackClicked = true;
+          }}
+          onSuccess={() => {}}
+        />,
+      );
 
-    fireEvent.click(r.getByTestId('human-phone-resend-code-btn'));
-    expect(isBackClicked).toBe(true);
+      // Button is disabled initially (timer > 0)
+      const button = r.getByTestId('human-phone-resend-code-btn');
+      expect(button).toBeDisabled();
+
+      // Advance timer by 65 seconds in act to ensure React processes state updates
+      act(() => {
+        vi.advanceTimersByTime(65000);
+      });
+
+      // Button should now be enabled (timer should be 0 or less)
+      const enabledButton = r.getByTestId('human-phone-resend-code-btn');
+      expect(enabledButton).not.toBeDisabled();
+
+      // Click the button
+      act(() => {
+        fireEvent.click(enabledButton);
+      });
+      expect(isBackClicked).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('on verify code button click, onVerifyCode function is called', async () => {

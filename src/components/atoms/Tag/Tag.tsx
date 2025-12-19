@@ -3,15 +3,7 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-interface TagProps {
-  name: string;
-  count?: number;
-  clicked?: boolean;
-  onClick?: (tagName: string) => void;
-  className?: React.HTMLAttributes<HTMLDivElement>['className'];
-  'data-testid'?: string;
-}
+import type { TagProps } from './Tag.types';
 
 export const Tag = ({
   name,
@@ -19,6 +11,7 @@ export const Tag = ({
   clicked = false,
   onClick,
   className,
+  maxLength,
   'data-testid': dataTestId,
   ...props
 }: TagProps) => {
@@ -31,6 +24,9 @@ export const Tag = ({
       borderColor: Libs.hexToRgba(base, 1),
     };
   }, [name]);
+
+  // Truncate name if maxLength is provided
+  const displayName = maxLength && name.length > maxLength ? `${name.slice(0, maxLength)}…` : name;
 
   const handleClick = () => {
     onClick?.(name);
@@ -58,15 +54,16 @@ export const Tag = ({
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      title={name}
       data-testid={dataTestId || 'tag'}
       {...props}
     >
-      <Atoms.Typography size="sm" data-testid="tag-name">
-        {name}
+      <Atoms.Typography size="sm" className="truncate" data-testid="tag-name">
+        {displayName}
       </Atoms.Typography>
 
       {count !== undefined && (
-        <Atoms.Typography size="sm" className="ml-1.5 font-medium text-foreground/50" data-testid="tag-count">
+        <Atoms.Typography size="sm" className="ml-1.5 shrink-0 font-medium text-foreground/50" data-testid="tag-count">
           {count}
         </Atoms.Typography>
       )}

@@ -29,22 +29,11 @@ describe('Help', () => {
     render(<Help />);
     expect(screen.getByText('Support')).toBeInTheDocument();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<Help className="custom-help" />);
-    expect(container.firstChild).toBeInTheDocument();
-  });
 });
 
 describe('Help - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<Help />);
-    const normalisedContainer = normaliseRadixIds(container);
-    expect(normalisedContainer.innerHTML).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<Help className="custom-help" />);
     const normalisedContainer = normaliseRadixIds(container);
     expect(normalisedContainer.innerHTML).toMatchSnapshot();
   });

@@ -96,6 +96,123 @@ describe('Link', () => {
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     });
   });
+
+  describe('overrideDefaults Prop', () => {
+    it('applies default variant classes when overrideDefaults is false (default)', () => {
+      render(<Link href="https://example.com">Default Styling</Link>);
+      const link = screen.getByText('Default Styling');
+      expect(link).toHaveClass('text-brand');
+      expect(link).toHaveClass('cursor-pointer');
+      expect(link).toHaveClass('text-sm');
+    });
+
+    it('does not apply default variant classes when overrideDefaults is true', () => {
+      render(
+        <Link href="https://example.com" overrideDefaults>
+          No Default Styling
+        </Link>,
+      );
+      const link = screen.getByText('No Default Styling');
+      expect(link).not.toHaveClass('text-brand');
+      expect(link).not.toHaveClass('cursor-pointer');
+      expect(link).not.toHaveClass('text-sm');
+    });
+
+    it('uses only custom className when overrideDefaults is true', () => {
+      render(
+        <Link href="https://example.com" overrideDefaults className="custom-only-class">
+          Custom Only
+        </Link>,
+      );
+      const link = screen.getByText('Custom Only');
+      expect(link).toHaveClass('custom-only-class');
+      expect(link).not.toHaveClass('text-brand');
+      expect(link).not.toHaveClass('cursor-pointer');
+    });
+
+    it('ignores variant and size props when overrideDefaults is true', () => {
+      render(
+        <Link href="https://example.com" overrideDefaults variant="muted" size="lg" className="my-class">
+          Ignored Variants
+        </Link>,
+      );
+      const link = screen.getByText('Ignored Variants');
+      expect(link).toHaveClass('my-class');
+      expect(link).not.toHaveClass('text-muted-foreground');
+      expect(link).not.toHaveClass('text-lg');
+    });
+
+    it('works with internal links when overrideDefaults is true', () => {
+      render(
+        <Link href="/about" overrideDefaults className="internal-custom">
+          Internal Override
+        </Link>,
+      );
+      const link = screen.getByText('Internal Override');
+      expect(link).toHaveClass('internal-custom');
+      expect(link).not.toHaveClass('text-brand');
+      expect(link).not.toHaveAttribute('target', '_blank');
+    });
+
+    it('still applies external link attributes when overrideDefaults is true', () => {
+      render(
+        <Link href="https://example.com" overrideDefaults>
+          External Override
+        </Link>,
+      );
+      const link = screen.getByText('External Override');
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+  });
+
+  describe('className Merging', () => {
+    it('merges custom className with default variant classes', () => {
+      render(
+        <Link href="https://example.com" className="custom-class">
+          Merged Classes Link
+        </Link>,
+      );
+      const link = screen.getByText('Merged Classes Link');
+      expect(link).toHaveClass('custom-class');
+      expect(link).toHaveClass('text-brand');
+      expect(link).toHaveClass('cursor-pointer');
+    });
+
+    it('allows custom className to override default classes via Tailwind merge', () => {
+      render(
+        <Link href="https://example.com" className="text-red-500">
+          Override Classes Link
+        </Link>,
+      );
+      const link = screen.getByText('Override Classes Link');
+      expect(link).toHaveClass('text-red-500');
+      expect(link).not.toHaveClass('text-brand');
+    });
+
+    it('merges className with variant and size classes', () => {
+      render(
+        <Link href="https://example.com" variant="muted" size="lg" className="font-bold">
+          Combined Classes Link
+        </Link>,
+      );
+      const link = screen.getByText('Combined Classes Link');
+      expect(link).toHaveClass('font-bold');
+      expect(link).toHaveClass('text-muted-foreground');
+      expect(link).toHaveClass('text-lg');
+    });
+
+    it('merges className for internal links', () => {
+      render(
+        <Link href="/about" className="underline">
+          Internal Merged Link
+        </Link>,
+      );
+      const link = screen.getByText('Internal Merged Link');
+      expect(link).toHaveClass('underline');
+      expect(link).toHaveClass('cursor-pointer');
+    });
+  });
 });
 
 describe('Link - Snapshots', () => {
@@ -213,6 +330,33 @@ describe('Link - Snapshots', () => {
     const { container } = render(
       <Link href="https://example.com" variant="muted" size="lg" className="custom-class">
         <span>Combined Props Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with overrideDefaults true', () => {
+    const { container } = render(
+      <Link href="https://example.com" overrideDefaults className="custom-override-class">
+        <span>Override Defaults Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with overrideDefaults true and no className', () => {
+    const { container } = render(
+      <Link href="https://example.com" overrideDefaults>
+        <span>No Class Override Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with overrideDefaults true for internal link', () => {
+    const { container } = render(
+      <Link href="/about" overrideDefaults className="internal-override">
+        <span>Internal Override Link</span>
       </Link>,
     );
     expect(container.firstChild).toMatchSnapshot();

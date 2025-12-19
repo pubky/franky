@@ -12,6 +12,15 @@ import * as Core from '@/core';
  * errors and potentially retry or implement compensation logic.
  */
 export class BookmarkApplication {
+  /**
+   * Check if a post is bookmarked
+   * @param postId - Composite post ID (authorId:postId)
+   * @returns boolean indicating if the post is bookmarked
+   */
+  static async exists(postId: string): Promise<boolean> {
+    return Core.LocalBookmarkService.exists(postId);
+  }
+
   static async persist(action: Core.HomeserverAction, params: Core.TBookmarkPersistInput) {
     // Get current user ID for user counts update
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();

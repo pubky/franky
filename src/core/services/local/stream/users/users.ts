@@ -35,6 +35,39 @@ export class LocalStreamUsersService {
   }
 
   /**
+   * Prepend user ID(s) to a stream
+   * Only adds users if not already present
+   *
+   * @param streamId - The stream to prepend to
+   * @param userIds - The user ID(s) to prepend
+   */
+  static async prependToStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
+    await Core.UserStreamModel.prependItems(streamId, userIds);
+  }
+
+  /**
+   * Remove user ID(s) from a stream
+   *
+   * @param streamId - The stream to remove from
+   * @param userIds - The user ID(s) to remove
+   */
+  static async removeFromStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
+    await Core.UserStreamModel.removeItems(streamId, userIds);
+  }
+
+  /**
+   * Find which users are not yet persisted in cache
+   * Used to identify missing user data that needs to be fetched
+   *
+   * @param userIds - Array of user IDs to check
+   * @returns Array of user IDs that are not persisted in cache
+   */
+  static async getNotPersistedUsersInCache(userIds: Core.Pubky[]): Promise<Core.Pubky[]> {
+    const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
+    return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
+  }
+
+  /**
    * Persist user data to normalized tables
    * Separates user details, counts, tags, and relationships
    *

@@ -1,0 +1,189 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePageEmptyState - Snapshots > matches snapshot with ReactNode subtitle 1`] = `
+<div
+  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  data-testid="container"
+>
+  <img
+    alt="Test - Empty state"
+    data-testid="image"
+    src="/images/test-empty-state.png"
+  />
+  <div
+    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="tag-icon"
+    >
+      Tag
+    </svg>
+  </div>
+  <div
+    class="relative z-10 flex w-full flex-col items-center justify-center"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <h3
+      class="pb-6 text-center leading-8"
+      data-testid="typography"
+    >
+      Test Title
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      First line
+      <br />
+      Second line
+    </p>
+  </div>
+</div>
+`;
+
+exports[`ProfilePageEmptyState - Snapshots > matches snapshot with children 1`] = `
+<div
+  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  data-testid="container"
+>
+  <img
+    alt="Test - Empty state"
+    data-testid="image"
+    src="/images/test-empty-state.png"
+  />
+  <div
+    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="tag-icon"
+    >
+      Tag
+    </svg>
+  </div>
+  <div
+    class="relative z-10 flex w-full flex-col items-center justify-center"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <h3
+      class="pb-6 text-center leading-8"
+      data-testid="typography"
+    >
+      Test Title
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      Test subtitle
+    </p>
+  </div>
+  <div
+    class="relative z-10 flex items-center justify-center"
+    data-testid="container"
+  >
+    <div
+      data-testid="test-child"
+    >
+      Child component
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ProfilePageEmptyState - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  data-testid="container"
+>
+  <img
+    alt="Test - Empty state"
+    data-testid="image"
+    src="/images/test-empty-state.png"
+  />
+  <div
+    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="frown-icon"
+    >
+      Frown
+    </svg>
+  </div>
+  <div
+    class="relative z-10 flex w-full flex-col items-center justify-center"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <h3
+      class="pb-6 text-center leading-8"
+      data-testid="typography"
+    >
+      Nothing to see here
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      This is a test subtitle
+    </p>
+  </div>
+</div>
+`;
+
+exports[`ProfilePageEmptyState - Snapshots > matches snapshot with different icon 1`] = `
+<div
+  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  data-testid="container"
+>
+  <img
+    alt="Tagged - Empty state"
+    data-testid="image"
+    src="/images/tagged-empty-state.png"
+  />
+  <div
+    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="tag-icon"
+    >
+      Tag
+    </svg>
+  </div>
+  <div
+    class="relative z-10 flex w-full flex-col items-center justify-center"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <h3
+      class="pb-6 text-center leading-8"
+      data-testid="typography"
+    >
+      Discover who tagged you
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      No one has tagged you yet.
+    </p>
+  </div>
+</div>
+`;

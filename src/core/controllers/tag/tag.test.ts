@@ -3,10 +3,12 @@ import { TagResult } from 'pubky-app-specs';
 import * as Core from '@/core';
 import type { TTagEventParams } from './tag.types';
 
-// Mock homeserver
-const mockHomeserver = {
-  fetch: vi.fn().mockResolvedValue({ ok: true }),
-};
+// Mock HomeserverService
+vi.mock('@/core/services/homeserver', () => ({
+  HomeserverService: {
+    request: vi.fn(),
+  },
+}));
 
 // Mock pubky-app-specs
 vi.mock('pubky-app-specs', () => ({
@@ -71,9 +73,10 @@ describe('TagController', () => {
   let TagController: typeof import('./tag').TagController;
 
   beforeEach(async () => {
-    vi.resetModules();
     vi.clearAllMocks();
-    mockHomeserver.fetch.mockClear().mockResolvedValue({ ok: true });
+
+    // Mock HomeserverService.request to resolve successfully
+    vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
 
     vi.spyOn(Core.TagNormalizer, 'to').mockImplementation((uri: string, label: string, pubky: Core.Pubky) => {
       return {
@@ -81,18 +84,6 @@ describe('TagController', () => {
         meta: { url: `pubky://${pubky}/pub/pubky.app/tags/${label}` },
         free: vi.fn(),
       } as unknown as TagResult;
-    });
-
-    // Mock Core module
-    vi.doMock('@/core', async () => {
-      const actual = await vi.importActual('@/core');
-      return {
-        ...actual,
-        HomeserverService: {
-          getInstance: vi.fn(() => mockHomeserver),
-          request: vi.fn(async () => undefined),
-        },
-      };
     });
 
     // Initialize database and clear tables
@@ -112,10 +103,10 @@ describe('TagController', () => {
     TagController = tagModule.TagController;
   });
 
-  describe('create', () => {
+  describe('commitCreate', () => {
     describe('POST tags', () => {
       it('should save post tag and sync to homeserver', async () => {
-        await TagController.create(createTagParams('javascript', Core.TagKind.POST));
+        await TagController.commitCreate(createTagParams('javascript', Core.TagKind.POST));
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags).toBeTruthy();
@@ -123,20 +114,34 @@ describe('TagController', () => {
         expect(savedTags!.tags[0].label).toBe('javascript');
         expect(savedTags!.tags[0].taggers_count).toBe(1);
         expect(savedTags!.tags[0].relationship).toBe(true);
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.PUT,
+          expect.stringContaining('pubky://'),
+          expect.any(Object),
+        );
       });
 
       it('should normalize post tag label (trim and lowercase)', async () => {
-        await TagController.create(createTagParams('  JavaScript  ', Core.TagKind.POST));
+        await TagController.commitCreate(createTagParams('  JavaScript  ', Core.TagKind.POST));
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags!.tags[0].label).toBe('javascript');
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.PUT,
+          expect.stringContaining('pubky://'),
+          expect.any(Object),
+        );
       });
     });
 
     describe.skip('USER tags', () => {
       // TODO: Implement LocalUserTagService.createUserTag() before enabling these tests
       it('should save user tag and sync to homeserver', async () => {
-        await TagController.create(createTagParams('developer', Core.TagKind.USER));
+        await TagController.commitCreate(createTagParams('developer', Core.TagKind.USER));
 
         const savedTags = await getSavedTags(Core.TagKind.USER);
         expect(savedTags).toBeTruthy();
@@ -147,7 +152,7 @@ describe('TagController', () => {
       });
 
       it('should normalize user tag label (trim and lowercase)', async () => {
-        await TagController.create(createTagParams('  Developer  ', Core.TagKind.USER));
+        await TagController.commitCreate(createTagParams('  Developer  ', Core.TagKind.USER));
 
         const savedTags = await getSavedTags(Core.TagKind.USER);
         expect(savedTags!.tags[0].label).toBe('developer');
@@ -155,24 +160,36 @@ describe('TagController', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('commitDelete', () => {
     describe('POST tags', () => {
       beforeEach(async () => {
         await setupExistingTag('javascript', Core.TagKind.POST);
       });
 
       it('should remove post tag and sync to homeserver', async () => {
-        await TagController.delete(createTagParams('javascript', Core.TagKind.POST));
+        await TagController.commitDelete(createTagParams('javascript', Core.TagKind.POST));
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags!.tags).toHaveLength(0);
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.DELETE,
+          expect.stringContaining('pubky://'),
+        );
       });
 
       it('should normalize post tag label (trim and lowercase)', async () => {
-        await TagController.delete(createTagParams('  JavaScript  ', Core.TagKind.POST));
+        await TagController.commitDelete(createTagParams('  JavaScript  ', Core.TagKind.POST));
 
         const savedTags = await getSavedTags(Core.TagKind.POST);
         expect(savedTags!.tags).toHaveLength(0);
+
+        // Verify homeserver sync was called
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
+          Core.HomeserverAction.DELETE,
+          expect.stringContaining('pubky://'),
+        );
       });
     });
 
@@ -183,14 +200,14 @@ describe('TagController', () => {
       });
 
       it('should remove user tag and sync to homeserver', async () => {
-        await TagController.delete(createTagParams('developer', Core.TagKind.USER));
+        await TagController.commitDelete(createTagParams('developer', Core.TagKind.USER));
 
         const savedTags = await getSavedTags(Core.TagKind.USER);
         expect(savedTags!.tags).toHaveLength(0);
       });
 
       it('should normalize user tag label (trim and lowercase)', async () => {
-        await TagController.delete(createTagParams('  Developer  ', Core.TagKind.USER));
+        await TagController.commitDelete(createTagParams('  Developer  ', Core.TagKind.USER));
 
         const savedTags = await getSavedTags(Core.TagKind.USER);
         expect(savedTags!.tags).toHaveLength(0);

@@ -1,11 +1,15 @@
 import * as Core from '@/core';
-import { LastReadResult } from 'pubky-app-specs';
+import { Keypair } from '@synonymdev/pubky';
+
+export type TKeypairParams = {
+  keypair: Keypair;
+};
 
 export type TSecretKey = {
   secretKey: string;
 };
 
-export type TAuthenticateKeypairParams = Core.TSignUpParams & TSecretKey & { lastRead: LastReadResult };
+export type TAuthenticateKeypairParams = Core.TSignUpParams & TSecretKey;
 
 export type THomeserverAuthenticateParams = Core.TKeypairParams & TSecretKey;
 

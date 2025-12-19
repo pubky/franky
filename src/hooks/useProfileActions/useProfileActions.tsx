@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Core from '@/core';
-import { AUTH_ROUTES } from '@/app';
-import * as Hooks from '@/hooks';
+import { AUTH_ROUTES, SETTINGS_ROUTES } from '@/app';
+// Import directly to avoid circular dependency with @/hooks barrel
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 
 export interface ProfileActions {
   onEdit: () => void;
@@ -12,6 +13,7 @@ export interface ProfileActions {
   onCopyLink: () => void;
   onSignOut: () => void;
   onStatusChange: (status: string) => void;
+  isLoggingOut: boolean;
 }
 
 export interface UseProfileActionsProps {
@@ -29,13 +31,13 @@ export interface UseProfileActionsProps {
  */
 export function useProfileActions({ publicKey, link }: UseProfileActionsProps): ProfileActions {
   const router = useRouter();
-  const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const { copyToClipboard } = useCopyToClipboard();
   const authStore = Core.useAuthStore();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const onEdit = useCallback(() => {
-    console.log('Edit clicked');
-    // TODO: Navigate to profile edit page when implemented
-  }, []);
+    router.push(SETTINGS_ROUTES.EDIT);
+  }, [router]);
 
   const onCopyPublicKey = useCallback(() => {
     void copyToClipboard(publicKey);
@@ -45,8 +47,15 @@ export function useProfileActions({ publicKey, link }: UseProfileActionsProps): 
     void copyToClipboard(link);
   }, [link, copyToClipboard]);
 
-  const onSignOut = useCallback(() => {
-    router.push(AUTH_ROUTES.LOGOUT);
+  const onSignOut = useCallback(async () => {
+    setIsLoggingOut(true);
+    try {
+      await Core.AuthController.logout();
+      router.push(AUTH_ROUTES.LOGOUT);
+    } catch (error) {
+      console.error('Failed to logout:', error);
+      setIsLoggingOut(false);
+    }
   }, [router]);
 
   const onStatusChange = useCallback(
@@ -58,7 +67,7 @@ export function useProfileActions({ publicKey, link }: UseProfileActionsProps): 
       }
 
       try {
-        await Core.ProfileController.updateStatus({ pubky: currentUserPubky, status });
+        await Core.ProfileController.commitUpdateStatus({ pubky: currentUserPubky, status });
       } catch (error) {
         console.error('Failed to update status:', error);
       }
@@ -72,5 +81,6 @@ export function useProfileActions({ publicKey, link }: UseProfileActionsProps): 
     onCopyLink,
     onSignOut,
     onStatusChange,
+    isLoggingOut,
   };
 }
