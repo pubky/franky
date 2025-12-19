@@ -5,6 +5,11 @@ import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 
+// Mock next/navigation for usePathname used by PostText
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn(() => '/'),
+}));
+
 // Mock hooks used by PostContentBase
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();

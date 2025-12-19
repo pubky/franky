@@ -613,6 +613,18 @@ exports[`PostText - Snapshots > matches snapshot for nested blockquote 1`] = `
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for non-truncated long content on post page 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for ordered list 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -759,6 +771,26 @@ exports[`PostText - Snapshots > matches snapshot for strikethrough text 1`] = `
       strikethrough
     </del>
      text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for truncated content with Show more button 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters... 
+    <span
+      aria-label="Show full post content"
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      role="button"
+      tabindex="0"
+    >
+      Show more
+    </span>
   </p>
 </div>
 `;
