@@ -17,9 +17,6 @@ export interface TOnboardingSecrets {
 export interface OnboardingActions {
   reset: () => void;
   setInviteCode: (inviteCode: string) => void;
-  setSecretKey: (secretKey: string) => void;
-  setMnemonic: (mnemonic: string) => void;
-  setKeypairFromMnemonic: (mnemonic: string) => void;
   setSecrets: (secrets: TOnboardingSecrets) => void;
   clearSecrets: () => void;
   setHydrated: (hasHydrated: boolean) => void;
