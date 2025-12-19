@@ -77,6 +77,18 @@ vi.mock('@/atoms', async () => {
         </Tag>
       );
     }),
+    Input: vi.fn(({ type, accept, multiple, onChange, ref, className, id }) => (
+      <input
+        ref={ref}
+        type={type}
+        accept={accept}
+        multiple={multiple}
+        onChange={onChange}
+        className={className}
+        id={id}
+        data-testid="input"
+      />
+    )),
   };
 });
 
@@ -187,6 +199,30 @@ vi.mock('@/molecules', () => ({
       ) : null,
   ),
   useToast: vi.fn(() => ({ toast: vi.fn() })),
+}));
+
+// Mock the direct import of PostInputAttachments
+vi.mock('@/molecules/PostInputAttachments/PostInputAttachments', () => ({
+  PostInputAttachments: vi.fn(
+    ({
+      attachments,
+      isSubmitting,
+    }: {
+      ref: React.RefObject<HTMLInputElement>;
+      attachments: File[];
+      setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+      handleFilesAdded: (files: FileList | File[]) => void;
+      isSubmitting: boolean;
+    }) => (
+      <div data-testid="post-input-attachments" data-submitting={isSubmitting}>
+        {attachments.map((file: File, index: number) => (
+          <div key={index} data-testid={`attachment-${file.name}`}>
+            {file.name}
+          </div>
+        ))}
+      </div>
+    ),
+  ),
 }));
 
 // Mock the underlying hooks that usePostInput uses

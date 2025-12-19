@@ -44,6 +44,7 @@ export function PostInput({
     handleChange,
     handleEmojiSelect,
     handleFilesAdded,
+    handleFileClick,
     handleDragEnter,
     handleDragLeave,
     handleDragOver,
@@ -123,6 +124,8 @@ export function PostInput({
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
+          onFileClick={handleFileClick}
+          onImageClick={handleFileClick}
           // Reposts allow empty content, posts and replies require content
           isPostDisabled={variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting}
           submitMode={

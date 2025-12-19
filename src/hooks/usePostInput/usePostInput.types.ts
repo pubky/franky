@@ -50,6 +50,7 @@ export interface UsePostInputReturn {
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleEmojiSelect: (emoji: { native: string }) => void;
   handleFilesAdded: (files: File[]) => void;
+  handleFileClick: () => void;
   handleDragEnter: (e: React.DragEvent) => void;
   handleDragLeave: (e: React.DragEvent) => void;
   handleDragOver: (e: React.DragEvent) => void;

@@ -259,6 +259,11 @@ export function usePostInput({
     [handleFilesAdded],
   );
 
+  // Trigger file input click
+  const handleFileClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
   // Derived values
   const hasContent = content.trim().length > 0;
   const displayPlaceholder = placeholder ?? POST_INPUT_PLACEHOLDER[variant];
@@ -292,6 +297,7 @@ export function usePostInput({
     handleChange,
     handleEmojiSelect,
     handleFilesAdded,
+    handleFileClick,
     handleDragEnter,
     handleDragLeave,
     handleDragOver,
