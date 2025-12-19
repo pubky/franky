@@ -9,8 +9,16 @@ vi.mock('@/molecules', async () => {
   return {
     ...actual,
     HumanSmsCard: () => <div data-testid="mock-sms-card">SMS Verification Card</div>,
-    HumanBitcoinCard: () => <div data-testid="mock-bitcoin-card">Bitcoin Payment Card</div>,
     HumanFooter: () => <div data-testid="mock-human-footer">Human Footer</div>,
+  };
+});
+
+vi.mock('@/organisms', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>('@/organisms');
+
+  return {
+    ...actual,
+    HumanBitcoinCard: () => <div data-testid="mock-bitcoin-card">Bitcoin Payment Card</div>,
   };
 });
 

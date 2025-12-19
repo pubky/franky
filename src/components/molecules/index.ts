@@ -1,7 +1,6 @@
 export * from './ActionButtons';
 export * from './ActionSection';
 export * from './ActiveUsers';
-export * from './HumanBitcoinCard';
 export * from './AvatarWithFallback';
 export * from './AvatarZoomModal';
 export * from './Breadcrumb';

@@ -1,5 +1,6 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import React from 'react';
 
 interface HumanSelectionProps {
@@ -24,7 +25,7 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
 
       <Atoms.Container data-testid="human-verification-cards" className="gap-6 lg:flex-row lg:items-stretch lg:gap-8">
         <Molecules.HumanSmsCard onClick={() => onClick('sms')} />
-        <Molecules.HumanBitcoinCard onClick={() => onClick('payment')} />
+        <Organisms.HumanBitcoinCard onClick={() => onClick('payment')} />
       </Atoms.Container>
       {isDevMode && (
         <Atoms.Container className="relative mt-6 flex items-start rounded border px-4 py-6">

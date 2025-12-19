@@ -22,6 +22,7 @@ export * from './DialogTerms';
 export * from './DialogWelcome';
 export * from './FeedbackCard';
 export * from './Header';
+export * from './HumanBitcoinCard';
 export * from './HumanSelection';
 export * from './HumanPhoneInput';
 export * from './HumanPhoneCode';
