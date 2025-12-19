@@ -65,7 +65,6 @@ export const ScanContent = () => {
           // Ignore if unmounted or superseded
           if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
           try {
-            // TODO: Instead of going to the feed, this should go to the create profile page.
             await Core.AuthController.loginWithAuthUrl({ publicKey });
           } catch (error) {
             Libs.Logger.error('Failed to login with auth URL:', error);
