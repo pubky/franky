@@ -55,6 +55,7 @@ export function PostHeader({ postId, isReplyInput = false, characterCount, maxLe
             </Atoms.Typography>
             {characterCount !== undefined && maxLength !== undefined && (
               <Atoms.Typography
+                data-cy="post-header-character-count"
                 as="span"
                 className="shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
                 overrideDefaults

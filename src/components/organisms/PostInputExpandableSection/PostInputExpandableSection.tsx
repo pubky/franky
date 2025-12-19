@@ -28,7 +28,7 @@ export function PostInputExpandableSection({
   const isPostDisabled = isPostDisabledProp ?? (!hasContent || isUiDisabled);
   const isReplyMode = submitMode === POST_INPUT_ACTION_SUBMIT_MODE.REPLY;
   const postButtonLabel = isReplyMode ? 'Reply' : 'Post';
-  const postButtonAriaLabel = isReplyMode ? 'Post reply' : 'Create post';
+  const postButtonAriaLabel = isReplyMode ? 'Reply' : 'Post';
 
   return (
     <>

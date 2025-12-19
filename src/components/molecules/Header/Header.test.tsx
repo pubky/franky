@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import { HeaderContainer, HeaderTitle, HeaderOnboarding, HeaderSocialLinks, HeaderNavigationButtons } from './Header';
-import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
+import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/molecules';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
@@ -109,7 +109,6 @@ vi.mock('@/molecules', async (importOriginal) => {
     ),
     SearchInput: () => <div data-testid="search-input">Search Input</div>,
     HeaderSocialLinks: () => <div data-testid="header-social-links">Social Links</div>,
-    HeaderButtonSignIn: () => <div data-testid="header-button-sign-in">Sign In Button</div>,
   };
 });
 
@@ -123,11 +122,15 @@ vi.mock('@/libs', async (importOriginal) => {
 });
 
 // Mock the config
-vi.mock('@/config', () => ({
-  GITHUB_URL: 'https://github.com',
-  TWITTER_GETPUBKY_URL: 'https://twitter.com/getpubky',
-  TELEGRAM_URL: 'https://t.me/getpubky',
-}));
+vi.mock('@/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config')>();
+  return {
+    ...actual,
+    GITHUB_URL: 'https://github.com',
+    TWITTER_GETPUBKY_URL: 'https://twitter.com/getpubky',
+    TELEGRAM_URL: 'https://t.me/getpubky',
+  };
+});
 
 // Mock the app routes
 vi.mock('@/app', async (importOriginal) => {

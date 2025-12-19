@@ -14,7 +14,7 @@ export function PostInputActionBar({
   isPostDisabled = false,
   isSubmitting = false,
   postButtonLabel = 'Post',
-  postButtonAriaLabel = 'Post reply',
+  postButtonAriaLabel = 'Post',
   postButtonIcon,
   hideArticle = false,
 }: PostInputActionBarProps) {
@@ -91,6 +91,7 @@ export function PostInputActionBar({
           labelText,
         }) => (
           <Atoms.Button
+            data-cy={`post-input-action-bar-${ariaLabel.toLowerCase().replace(' ', '-')}`}
             key={ariaLabel}
             {...commonButtonProps}
             onClick={onClick}
