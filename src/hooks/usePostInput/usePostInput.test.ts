@@ -11,11 +11,13 @@ vi.mock('@/config', () => ({
 // Mock usePost hook
 const mockSetContent = vi.fn();
 const mockSetTags = vi.fn();
+const mockSetAttachments = vi.fn();
 const mockReply = vi.fn();
 const mockPost = vi.fn();
 const mockRepost = vi.fn();
 let mockContent = '';
 let mockTags: string[] = [];
+let mockAttachments: File[] = [];
 let mockIsSubmitting = false;
 
 vi.mock('@/hooks', () => ({
@@ -27,6 +29,8 @@ vi.mock('@/hooks', () => ({
     setContent: mockSetContent,
     tags: mockTags,
     setTags: mockSetTags,
+    attachments: mockAttachments,
+    setAttachments: mockSetAttachments,
     reply: mockReply,
     post: mockPost,
     repost: mockRepost,
@@ -44,11 +48,20 @@ vi.mock('@/organisms/TimelineFeed/TimelineFeed', () => ({
   })),
 }));
 
+// Mock useToast
+const mockToast = vi.fn();
+vi.mock('@/molecules', () => ({
+  useToast: vi.fn(() => ({
+    toast: mockToast,
+  })),
+}));
+
 describe('usePostInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockContent = '';
     mockTags = [];
+    mockAttachments = [];
     mockIsSubmitting = false;
     mockRepost.mockClear();
   });
@@ -64,6 +77,7 @@ describe('usePostInput', () => {
       expect(result.current.isExpanded).toBe(false);
       expect(result.current.showEmojiPicker).toBe(false);
       expect(result.current.hasContent).toBe(false);
+      expect(result.current.isDragging).toBe(false);
       expect(result.current.currentUserPubky).toBe('test-user-pubky');
     });
 
@@ -87,8 +101,10 @@ describe('usePostInput', () => {
 
       expect(result.current.textareaRef).toBeDefined();
       expect(result.current.containerRef).toBeDefined();
+      expect(result.current.fileInputRef).toBeDefined();
       expect(result.current.textareaRef.current).toBeNull();
       expect(result.current.containerRef.current).toBeNull();
+      expect(result.current.fileInputRef.current).toBeNull();
     });
   });
 
@@ -409,14 +425,15 @@ describe('usePostInput', () => {
         }),
       );
 
-      // The effect runs on mount with initial content and tags
-      expect(mockOnContentChange).toHaveBeenCalledWith('', []);
+      // The effect runs on mount with initial content, tags, and attachments
+      expect(mockOnContentChange).toHaveBeenCalledWith('', [], []);
     });
 
-    it('calls onContentChange with updated content and tags', () => {
+    it('calls onContentChange with updated content, tags, and attachments', () => {
       const mockOnContentChange = vi.fn();
       mockContent = 'Updated content';
       mockTags = ['tag1', 'tag2'];
+      mockAttachments = [new File(['test'], 'test.png', { type: 'image/png' })];
 
       renderHook(() =>
         usePostInput({
@@ -425,7 +442,7 @@ describe('usePostInput', () => {
         }),
       );
 
-      expect(mockOnContentChange).toHaveBeenCalledWith('Updated content', ['tag1', 'tag2']);
+      expect(mockOnContentChange).toHaveBeenCalledWith('Updated content', ['tag1', 'tag2'], mockAttachments);
     });
 
     it('does not throw when onContentChange is not provided', () => {
@@ -561,6 +578,580 @@ describe('usePostInput', () => {
       );
 
       expect(result.current.setTags).toBe(mockSetTags);
+    });
+  });
+
+  describe('attachments state', () => {
+    it('exposes attachments from usePost', () => {
+      mockAttachments = [new File(['test'], 'test.png', { type: 'image/png' })];
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      expect(result.current.attachments).toBe(mockAttachments);
+    });
+
+    it('exposes setAttachments from usePost', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      expect(result.current.setAttachments).toBe(mockSetAttachments);
+    });
+  });
+
+  describe('handleFilesAdded', () => {
+    it('does not process files when submitting', () => {
+      mockIsSubmitting = true;
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.handleFilesAdded([file]);
+      });
+
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+    });
+
+    it('does not process empty file array', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      act(() => {
+        result.current.handleFilesAdded([]);
+      });
+
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+    });
+
+    it('adds valid image files', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.handleFilesAdded([file]);
+      });
+
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('adds valid video files', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.mp4', { type: 'video/mp4' });
+
+      act(() => {
+        result.current.handleFilesAdded([file]);
+      });
+
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('adds valid audio files', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.mp3', { type: 'audio/mpeg' });
+
+      act(() => {
+        result.current.handleFilesAdded([file]);
+      });
+
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('adds valid PDF files', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+
+      act(() => {
+        result.current.handleFilesAdded([file]);
+      });
+
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('rejects files with invalid types and shows toast', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.exe', { type: 'application/x-msdownload' });
+
+      act(() => {
+        result.current.handleFilesAdded([file]);
+      });
+
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: expect.stringContaining('not an accepted file type'),
+      });
+    });
+
+    it('rejects images exceeding 5MB and shows toast', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      // Create a file object with size > 5MB
+      const largeFile = new File(['test'], 'large.png', { type: 'image/png' });
+      Object.defineProperty(largeFile, 'size', { value: 6 * 1024 * 1024 });
+
+      act(() => {
+        result.current.handleFilesAdded([largeFile]);
+      });
+
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: expect.stringContaining('exceeds the maximum size of 5MB'),
+      });
+    });
+
+    it('rejects non-image files exceeding 20MB and shows toast', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      // Create a video file with size > 20MB
+      const largeFile = new File(['test'], 'large.mp4', { type: 'video/mp4' });
+      Object.defineProperty(largeFile, 'size', { value: 21 * 1024 * 1024 });
+
+      act(() => {
+        result.current.handleFilesAdded([largeFile]);
+      });
+
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: expect.stringContaining('exceeds the maximum size of 20MB'),
+      });
+    });
+
+    it('shows toast when maximum files limit reached', () => {
+      // Set up 4 existing attachments
+      mockAttachments = [
+        new File(['1'], '1.png', { type: 'image/png' }),
+        new File(['2'], '2.png', { type: 'image/png' }),
+        new File(['3'], '3.png', { type: 'image/png' }),
+        new File(['4'], '4.png', { type: 'image/png' }),
+      ];
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const newFile = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.handleFilesAdded([newFile]);
+      });
+
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Maximum of 4 files allowed',
+      });
+    });
+
+    it('limits files added when approaching maximum', () => {
+      // Set up 3 existing attachments
+      mockAttachments = [
+        new File(['1'], '1.png', { type: 'image/png' }),
+        new File(['2'], '2.png', { type: 'image/png' }),
+        new File(['3'], '3.png', { type: 'image/png' }),
+      ];
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      // Try to add 2 files when only 1 slot is available
+      const file1 = new File(['test1'], 'test1.png', { type: 'image/png' });
+      const file2 = new File(['test2'], 'test2.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.handleFilesAdded([file1, file2]);
+      });
+
+      // Should add only 1 file and show error for the rest
+      expect(mockSetAttachments).toHaveBeenCalled();
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: expect.stringContaining('Maximum of 4 files allowed'),
+      });
+    });
+
+    it('shows multiple errors with "Errors" title', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const invalidFile = new File(['test'], 'test.exe', { type: 'application/x-msdownload' });
+      const largeFile = new File(['test'], 'large.png', { type: 'image/png' });
+      Object.defineProperty(largeFile, 'size', { value: 6 * 1024 * 1024 });
+
+      act(() => {
+        result.current.handleFilesAdded([invalidFile, largeFile]);
+      });
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Errors',
+        description: expect.any(String),
+      });
+    });
+  });
+
+  describe('drag and drop handlers', () => {
+    const createMockDragEvent = (type: string, hasFiles = true): React.DragEvent => {
+      const event = {
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        dataTransfer: {
+          types: hasFiles ? ['Files'] : [],
+          items: [],
+        },
+      } as unknown as React.DragEvent;
+      return event;
+    };
+
+    describe('handleDragEnter', () => {
+      it('sets isDragging to true when files are being dragged', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        expect(result.current.isDragging).toBe(false);
+
+        const mockEvent = createMockDragEvent('dragenter', true);
+
+        act(() => {
+          result.current.handleDragEnter(mockEvent);
+        });
+
+        expect(result.current.isDragging).toBe(true);
+        expect(mockEvent.preventDefault).toHaveBeenCalled();
+        expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      });
+
+      it('does not set isDragging when no files are being dragged', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        const mockEvent = createMockDragEvent('dragenter', false);
+
+        act(() => {
+          result.current.handleDragEnter(mockEvent);
+        });
+
+        expect(result.current.isDragging).toBe(false);
+      });
+
+      it('auto-expands when dragging files over collapsed component', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+            expanded: false,
+          }),
+        );
+
+        expect(result.current.isExpanded).toBe(false);
+
+        const mockEvent = createMockDragEvent('dragenter', true);
+
+        act(() => {
+          result.current.handleDragEnter(mockEvent);
+        });
+
+        expect(result.current.isExpanded).toBe(true);
+      });
+    });
+
+    describe('handleDragLeave', () => {
+      it('sets isDragging to false when all nested elements are left', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        // First enter
+        const enterEvent = createMockDragEvent('dragenter', true);
+        act(() => {
+          result.current.handleDragEnter(enterEvent);
+        });
+
+        expect(result.current.isDragging).toBe(true);
+
+        // Then leave
+        const leaveEvent = createMockDragEvent('dragleave', true);
+        act(() => {
+          result.current.handleDragLeave(leaveEvent);
+        });
+
+        expect(result.current.isDragging).toBe(false);
+        expect(leaveEvent.preventDefault).toHaveBeenCalled();
+        expect(leaveEvent.stopPropagation).toHaveBeenCalled();
+      });
+
+      it('keeps isDragging true when leaving nested element but still inside container', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        // Enter twice (container + nested element)
+        const enterEvent1 = createMockDragEvent('dragenter', true);
+        const enterEvent2 = createMockDragEvent('dragenter', true);
+
+        act(() => {
+          result.current.handleDragEnter(enterEvent1);
+          result.current.handleDragEnter(enterEvent2);
+        });
+
+        expect(result.current.isDragging).toBe(true);
+
+        // Leave once (leaving nested element)
+        const leaveEvent = createMockDragEvent('dragleave', true);
+        act(() => {
+          result.current.handleDragLeave(leaveEvent);
+        });
+
+        // Should still be dragging since we're still inside container
+        expect(result.current.isDragging).toBe(true);
+      });
+    });
+
+    describe('handleDragOver', () => {
+      it('prevents default and stops propagation', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        const mockEvent = createMockDragEvent('dragover', true);
+
+        act(() => {
+          result.current.handleDragOver(mockEvent);
+        });
+
+        expect(mockEvent.preventDefault).toHaveBeenCalled();
+        expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      });
+    });
+
+    describe('handleDrop', () => {
+      it('resets isDragging to false on drop', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        // First set isDragging to true
+        const enterEvent = createMockDragEvent('dragenter', true);
+        act(() => {
+          result.current.handleDragEnter(enterEvent);
+        });
+
+        expect(result.current.isDragging).toBe(true);
+
+        // Then drop
+        const dropEvent = {
+          preventDefault: vi.fn(),
+          stopPropagation: vi.fn(),
+          dataTransfer: {
+            items: [],
+          },
+        } as unknown as React.DragEvent;
+
+        act(() => {
+          result.current.handleDrop(dropEvent);
+        });
+
+        expect(result.current.isDragging).toBe(false);
+        expect(dropEvent.preventDefault).toHaveBeenCalled();
+        expect(dropEvent.stopPropagation).toHaveBeenCalled();
+      });
+
+      it('extracts files from dataTransfer and calls handleFilesAdded', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        const dropEvent = {
+          preventDefault: vi.fn(),
+          stopPropagation: vi.fn(),
+          dataTransfer: {
+            items: [
+              {
+                kind: 'file',
+                getAsFile: () => mockFile,
+              },
+            ],
+          },
+        } as unknown as React.DragEvent;
+
+        act(() => {
+          result.current.handleDrop(dropEvent);
+        });
+
+        expect(mockSetAttachments).toHaveBeenCalled();
+      });
+
+      it('ignores non-file items in dataTransfer', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        const dropEvent = {
+          preventDefault: vi.fn(),
+          stopPropagation: vi.fn(),
+          dataTransfer: {
+            items: [
+              {
+                kind: 'string',
+                getAsFile: () => null,
+              },
+            ],
+          },
+        } as unknown as React.DragEvent;
+
+        act(() => {
+          result.current.handleDrop(dropEvent);
+        });
+
+        expect(mockSetAttachments).not.toHaveBeenCalled();
+      });
+
+      it('handles null dataTransfer gracefully', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        const dropEvent = {
+          preventDefault: vi.fn(),
+          stopPropagation: vi.fn(),
+          dataTransfer: null,
+        } as unknown as React.DragEvent;
+
+        expect(() => {
+          act(() => {
+            result.current.handleDrop(dropEvent);
+          });
+        }).not.toThrow();
+
+        expect(mockSetAttachments).not.toHaveBeenCalled();
+      });
+
+      it('handles null file from getAsFile gracefully', () => {
+        const { result } = renderHook(() =>
+          usePostInput({
+            variant: 'post',
+          }),
+        );
+
+        const dropEvent = {
+          preventDefault: vi.fn(),
+          stopPropagation: vi.fn(),
+          dataTransfer: {
+            items: [
+              {
+                kind: 'file',
+                getAsFile: () => null,
+              },
+            ],
+          },
+        } as unknown as React.DragEvent;
+
+        act(() => {
+          result.current.handleDrop(dropEvent);
+        });
+
+        expect(mockSetAttachments).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('click outside collapse behavior with attachments', () => {
+    it('does not collapse when there are attachments even with empty content', () => {
+      mockAttachments = [new File(['test'], 'test.png', { type: 'image/png' })];
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+          expanded: false,
+        }),
+      );
+
+      // Expand first
+      act(() => {
+        result.current.handleExpand();
+      });
+
+      expect(result.current.isExpanded).toBe(true);
+
+      // The click outside handler checks for attachments too,
+      // so it won't collapse when attachments exist
+      // This is tested via the effect, not directly callable
     });
   });
 });

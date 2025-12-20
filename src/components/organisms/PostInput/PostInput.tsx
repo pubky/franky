@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Utils from '@/libs/utils';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { usePostInput } from '@/hooks';
@@ -9,6 +10,7 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar';
 import type { PostInputProps } from './PostInput.types';
 import { PostInputExpandableSection } from '../PostInputExpandableSection';
+import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
 
 export function PostInput({
   dataCy,
@@ -24,8 +26,13 @@ export function PostInput({
   const {
     textareaRef,
     containerRef,
+    fileInputRef,
     content,
     tags,
+    setTags,
+    attachments,
+    setAttachments,
+    isDragging,
     isExpanded,
     isSubmitting,
     showEmojiPicker,
@@ -36,7 +43,12 @@ export function PostInput({
     handleSubmit,
     handleChange,
     handleEmojiSelect,
-    setTags,
+    handleFilesAdded,
+    handleFileClick,
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver,
+    handleDrop,
   } = usePostInput({
     variant,
     postId,
@@ -51,9 +63,26 @@ export function PostInput({
     <Atoms.Container
       data-cy={dataCy}
       ref={containerRef}
-      className="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+      className={Utils.cn(
+        'relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
+        isDragging ? 'border-brand' : 'border-input',
+      )}
       onClick={handleExpand}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
+      {/* Drag overlay */}
+      {isDragging && (
+        <Atoms.Container
+          className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-brand/10"
+          overrideDefaults
+        >
+          <Atoms.Typography className="text-brand">Drop files here</Atoms.Typography>
+        </Atoms.Container>
+      )}
+
       {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
       <Atoms.Container className="gap-4">
         {currentUserPubky && (
@@ -77,6 +106,14 @@ export function PostInput({
           disabled={isSubmitting}
         />
 
+        <PostInputAttachments
+          ref={fileInputRef}
+          attachments={attachments}
+          setAttachments={setAttachments}
+          handleFilesAdded={handleFilesAdded}
+          isSubmitting={isSubmitting}
+        />
+
         <PostInputExpandableSection
           isExpanded={isExpanded}
           content={content}
@@ -87,6 +124,8 @@ export function PostInput({
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
+          onFileClick={handleFileClick}
+          onImageClick={handleFileClick}
           // Reposts allow empty content, posts and replies require content
           isPostDisabled={variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting}
           submitMode={

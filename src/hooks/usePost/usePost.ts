@@ -22,11 +22,11 @@ interface UsePostRepostOptions {
 /**
  * Custom hook to handle post creation (replies, reposts, and root posts)
  *
- * @returns Object containing content state, setContent function, tags state, setTags function, reply method, post method, repost method, isSubmitting state, and error state
+ * @returns Object containing content state, setContent function, tags state, setTags function, attachments state, setAttachments function, reply method, post method, repost method, isSubmitting state, and error state
  *
  * @example
  * ```tsx
- * const { content, setContent, tags, setTags, reply, post, repost, isSubmitting, error } = usePost();
+ * const { content, setContent, tags, setTags, attachments, setAttachments, reply, post, repost, isSubmitting, error } = usePost();
  *
  * // For replies:
  * const handleSubmit = reply({ postId: 'post-123', onSuccess: () => {} });
@@ -41,6 +41,7 @@ interface UsePostRepostOptions {
 export function usePost() {
   const [content, setContent] = useState('');
   const [tags, setTags] = useState<string[]>([]);
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
   const { toast } = Molecules.useToast();
@@ -78,9 +79,11 @@ export function usePost() {
           content: content.trim(),
           authorId: currentUserId,
           tags: tags.length > 0 ? tags : undefined,
+          attachments: attachments.length > 0 ? attachments : undefined,
         });
         setContent('');
         setTags([]);
+        setAttachments([]);
         showSuccessToast('Reply posted', 'Your reply has been posted successfully.');
         onSuccess?.(createdPostId);
       } catch (err) {
@@ -90,7 +93,7 @@ export function usePost() {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast, showSuccessToast],
+    [content, tags, attachments, currentUserId, showErrorToast, showSuccessToast],
   );
 
   const post = useCallback(
@@ -104,9 +107,11 @@ export function usePost() {
           content: content.trim(),
           authorId: currentUserId,
           tags: tags.length > 0 ? tags : undefined,
+          attachments: attachments.length > 0 ? attachments : undefined,
         });
         setContent('');
         setTags([]);
+        setAttachments([]);
         showSuccessToast('Post created', 'Your post has been created successfully.');
         onSuccess?.(createdPostId);
       } catch (err) {
@@ -116,7 +121,7 @@ export function usePost() {
         setIsSubmitting(false);
       }
     },
-    [content, tags, currentUserId, showErrorToast, showSuccessToast],
+    [content, tags, attachments, currentUserId, showErrorToast, showSuccessToast],
   );
 
   const repost = useCallback(
@@ -151,6 +156,8 @@ export function usePost() {
     setContent,
     tags,
     setTags,
+    attachments,
+    setAttachments,
     reply,
     post,
     repost,
