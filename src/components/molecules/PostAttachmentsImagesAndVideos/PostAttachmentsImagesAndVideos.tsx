@@ -40,14 +40,14 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
     });
   }, [api]);
 
+  const isOnlyMedia = imagesAndVideos.length === 1;
+
   return (
     <Atoms.Dialog open={open} onOpenChange={setOpen}>
       {/* Grid layout */}
       <Atoms.Container display="grid" className="gap-3 sm:grid-cols-2">
-        {imagesAndVideos.map((media, i) => {
-          const isOnlyMedia = imagesAndVideos.length === 1;
-
-          return media.type.startsWith('image') ? (
+        {imagesAndVideos.map((media, i) =>
+          media.type.startsWith('image') ? (
             <Atoms.DialogTrigger
               key={i}
               asChild
@@ -81,8 +81,8 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
               pauseVideo={open}
               className="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
             />
-          );
-        })}
+          ),
+        )}
       </Atoms.Container>
 
       {/* Carousel dialog */}
