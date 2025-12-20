@@ -1,0 +1,38 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+
+import { HumanSelection } from './HumanSelection';
+
+vi.mock('@/molecules', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>('@/molecules');
+
+  return {
+    ...actual,
+    HumanSmsCard: () => <div data-testid="mock-sms-card">SMS Verification Card</div>,
+    HumanFooter: () => <div data-testid="mock-human-footer">Human Footer</div>,
+  };
+});
+
+vi.mock('@/organisms', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>('@/organisms');
+
+  return {
+    ...actual,
+    HumanBitcoinCard: () => <div data-testid="mock-bitcoin-card">Bitcoin Payment Card</div>,
+  };
+});
+
+describe('HumanSelection', () => {
+  it('renders both verification cards', () => {
+    render(<HumanSelection onClick={() => {}} onDevMode={() => {}} />);
+
+    expect(screen.getByTestId('mock-sms-card')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-bitcoin-card')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-human-footer')).toBeInTheDocument();
+  });
+
+  it('matches snapshot', () => {
+    const { container } = render(<HumanSelection onClick={() => {}} onDevMode={() => {}} />);
+    expect(container).toMatchSnapshot();
+  });
+});

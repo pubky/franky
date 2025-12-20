@@ -13,7 +13,7 @@ export const HomeActions = () => {
   const router = useRouter();
 
   const handleCreateAccount = () => {
-    router.push(App.ONBOARDING_ROUTES.INSTALL);
+    router.push(App.ONBOARDING_ROUTES.HUMAN);
   };
 
   const handleSignIn = () => {
@@ -40,9 +40,8 @@ export const HomeSectionTitle = () => {
   return (
     <Atoms.Container className="flex-row items-start gap-2">
       <Atoms.Typography size="md" className="self-center font-light text-brand sm:text-2xl">
-        Pubky requires an invite code
+        Your keys, your content, your rules.
       </Atoms.Typography>
-      <Molecules.PopoverInvite />
     </Atoms.Container>
   );
 };

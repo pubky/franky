@@ -37,13 +37,11 @@ export const ScanContent = () => {
 
     await copyAuthUrlToClipboard();
 
-    const deeplink = Libs.generatePubkyRingDeeplink(url, { encode: false });
-
     try {
-      const openedWindow = window.open(deeplink, '_blank');
+      const openedWindow = window.open(url, '_blank');
 
       if (!openedWindow) {
-        window.location.href = deeplink;
+        window.location.href = url;
         return;
       }
 

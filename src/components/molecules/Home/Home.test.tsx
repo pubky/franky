@@ -23,7 +23,6 @@ vi.mock('@/molecules', () => ({
       </button>
     </div>
   ),
-  PopoverInvite: () => <div data-testid="popover-invite">Invite Popover</div>,
 }));
 
 // Mock organisms
@@ -77,7 +76,7 @@ describe('HomeActions', () => {
     const createAccountButton = screen.getByTestId('create-account-button');
     fireEvent.click(createAccountButton);
 
-    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.HUMAN);
   });
 
   it('handles sign in button click', () => {
@@ -112,12 +111,11 @@ describe('HomeFooter', () => {
 });
 
 describe('HomeSectionTitle', () => {
-  it('renders section title with typography and popover', () => {
+  it('renders section title with typography', () => {
     render(<HomeSectionTitle />);
 
     expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('typography')).toBeInTheDocument();
-    expect(screen.getByTestId('popover-invite')).toBeInTheDocument();
   });
 });
 

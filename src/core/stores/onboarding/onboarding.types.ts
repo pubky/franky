@@ -3,6 +3,7 @@ export interface OnboardingState {
   mnemonic: string | null;
   hasHydrated: boolean;
   showWelcomeDialog: boolean;
+  inviteCode: string;
 }
 
 /**
@@ -15,6 +16,7 @@ export interface TOnboardingSecrets {
 
 export interface OnboardingActions {
   reset: () => void;
+  setInviteCode: (inviteCode: string) => void;
   setSecrets: (secrets: TOnboardingSecrets) => void;
   clearSecrets: () => void;
   setHydrated: (hasHydrated: boolean) => void;
@@ -33,6 +35,7 @@ export const onboardingInitialState: OnboardingState = {
   mnemonic: null,
   hasHydrated: false,
   showWelcomeDialog: false,
+  inviteCode: '',
 };
 
 export enum OnboardingActionTypes {
@@ -41,4 +44,8 @@ export enum OnboardingActionTypes {
   CLEAR_SECRETS = 'CLEAR_SECRETS',
   SET_HYDRATED = 'SET_HYDRATED',
   SET_SHOW_WELCOME_DIALOG = 'SET_SHOW_WELCOME_DIALOG',
+  SET_INVITE_CODE = 'SET_INVITE_CODE',
+  SET_SECRET_KEY = 'SET_SECRET_KEY',
+  SET_MNEMONIC = 'SET_MNEMONIC',
+  SET_KEYPAIR_FROM_MNEMONIC = 'SET_KEYPAIR_FROM_MNEMONIC',
 }

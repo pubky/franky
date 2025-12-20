@@ -2,6 +2,9 @@ import type { NextConfig } from 'next';
 import withSerwistInit from '@serwist/next';
 
 const nextConfig: NextConfig = {
+  experimental: {
+    webpackMemoryOptimizations: true,
+  },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('@synonymdev/pubky');
