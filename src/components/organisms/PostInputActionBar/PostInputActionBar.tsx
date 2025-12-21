@@ -13,6 +13,10 @@ export function PostInputActionBar({
   onPostClick,
   isPostDisabled = false,
   isSubmitting = false,
+  postButtonLabel = 'Post',
+  postButtonAriaLabel = 'Post',
+  postButtonIcon,
+  hideArticle = false,
 }: PostInputActionBarProps) {
   const commonButtonProps = React.useMemo(
     () => ({
@@ -23,8 +27,8 @@ export function PostInputActionBar({
     [],
   );
 
-  const actionButtons: ActionButtonConfig[] = React.useMemo(
-    () => [
+  const actionButtons: ActionButtonConfig[] = React.useMemo(() => {
+    const buttons: ActionButtonConfig[] = [
       {
         icon: Libs.Smile,
         onClick: onEmojiClick,
@@ -43,24 +47,42 @@ export function PostInputActionBar({
         ariaLabel: 'Add file',
         disabled: !onFileClick || isSubmitting,
       },
-      {
+    ];
+
+    // Only add article button if not hidden
+    if (!hideArticle) {
+      buttons.push({
         icon: Libs.Newspaper,
         onClick: onArticleClick,
         ariaLabel: 'Add article',
         disabled: !onArticleClick || isSubmitting,
-      },
-      {
-        icon: isSubmitting ? Libs.Loader2 : Libs.Send,
-        onClick: onPostClick,
-        disabled: isPostDisabled || !onPostClick,
-        ariaLabel: isSubmitting ? 'Posting...' : 'Post reply',
-        showLabel: true,
-        labelText: isSubmitting ? 'Posting...' : 'Post',
-        iconClassName: isSubmitting ? 'animate-spin' : undefined,
-      },
-    ],
-    [onEmojiClick, onImageClick, onFileClick, onArticleClick, onPostClick, isPostDisabled, isSubmitting],
-  );
+      });
+    }
+
+    buttons.push({
+      icon: isSubmitting ? Libs.Loader2 : postButtonIcon || Libs.Send,
+      onClick: onPostClick,
+      disabled: isPostDisabled || !onPostClick,
+      ariaLabel: isSubmitting ? 'Posting...' : postButtonAriaLabel,
+      showLabel: true,
+      labelText: isSubmitting ? 'Posting...' : postButtonLabel,
+      iconClassName: isSubmitting ? 'animate-spin' : undefined,
+    });
+
+    return buttons;
+  }, [
+    onEmojiClick,
+    onImageClick,
+    onFileClick,
+    onArticleClick,
+    onPostClick,
+    isPostDisabled,
+    isSubmitting,
+    postButtonLabel,
+    postButtonAriaLabel,
+    postButtonIcon,
+    hideArticle,
+  ]);
 
   return (
     <Atoms.Container className="flex items-center justify-end gap-2" overrideDefaults>
@@ -76,6 +98,7 @@ export function PostInputActionBar({
           labelText,
         }) => (
           <Atoms.Button
+            data-cy={`post-input-action-bar-${ariaLabel.toLowerCase().replace(' ', '-')}`}
             key={ariaLabel}
             {...commonButtonProps}
             onClick={onClick}

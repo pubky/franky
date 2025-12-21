@@ -16,7 +16,7 @@ import * as Types from './ContentLayout.types';
  * the sidebar content fits within the available viewport height.
  */
 function StickySidebar({ children }: Types.StickySidebarProps) {
-  const { ref, shouldBeSticky } = Hooks.useStickyWhenFits({
+  const { ref, stickyTop } = Hooks.useStickyWhenFits({
     topOffset: Config.LAYOUT.HEADER_OFFSET_MAIN,
     bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
@@ -28,9 +28,9 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       className={Libs.cn(
         'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'w-full max-w-(--filter-bar-width)',
-        // Use !== false to treat undefined (SSR) as sticky (optimistic assumption)
-        shouldBeSticky !== false ? 'sticky top-(--header-offset-main)' : 'sticky top-(--sidebar-non-sticky-offset)',
+        'sticky',
       )}
+      style={{ top: `${stickyTop}px` }}
     >
       {children}
     </Atoms.Container>

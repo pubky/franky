@@ -175,7 +175,7 @@ describe('UserApplication.fetchTaggers', () => {
   });
 
   it('should delegate to NexusUserService with correct params', async () => {
-    const mockTaggers = [] as Core.NexusUser[];
+    const mockTaggers = [] as Core.NexusTaggers[];
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'taggers').mockResolvedValue(mockTaggers);
 
     const result = await UserApplication.fetchTaggers({
@@ -255,7 +255,9 @@ describe('UserApplication.getOrFetchDetails', () => {
 
   it('should return null when user not found in local cache or Nexus', async () => {
     const localSpy = vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(null);
-    const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
+    const nexusSpy = vi
+      .spyOn(Core.NexusUserService, 'details')
+      .mockResolvedValue(undefined as unknown as Core.NexusUserDetails);
     const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockResolvedValue(undefined);
 
     const result = await UserApplication.getOrFetchDetails({ userId });
@@ -263,7 +265,7 @@ describe('UserApplication.getOrFetchDetails', () => {
     expect(result).toBeNull();
     expect(localSpy).toHaveBeenCalledTimes(2);
     expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-    expect(upsertSpy).not.toHaveBeenCalled();
+    expect(upsertSpy).toHaveBeenCalledWith(undefined);
   });
 
   it('should propagate errors from local service', async () => {

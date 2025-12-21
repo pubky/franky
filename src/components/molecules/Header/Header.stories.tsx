@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { HeaderContainer, HeaderTitle, HeaderOnboarding, HeaderSocialLinks, HeaderNavigationButtons } from './Header';
-import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
+import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/molecules';
 
 const meta: Meta<typeof HeaderContainer> = {
   title: 'Molecules/Header',

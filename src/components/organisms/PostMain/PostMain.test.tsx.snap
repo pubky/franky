@@ -7,7 +7,7 @@ exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
     <div
@@ -26,9 +26,19 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
     <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
@@ -50,6 +60,8 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
         data-testid="container"
       >
         <div
+          data-tagged-id="post-no-reply-456"
+          data-tagged-kind="post"
           data-testid="clickable-tags-list"
         >
           ClickableTagsList 
@@ -63,6 +75,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
           post-no-reply-456
           <button>
             Reply
+          </button>
+          <button>
+            Repost
           </button>
         </div>
       </div>
@@ -91,9 +106,19 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
     <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
@@ -115,6 +140,8 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         data-testid="container"
       >
         <div
+          data-tagged-id="post-reply-123"
+          data-tagged-kind="post"
           data-testid="clickable-tags-list"
         >
           ClickableTagsList 
@@ -128,6 +155,9 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
           post-reply-123
           <button>
             Reply
+          </button>
+          <button>
+            Repost
           </button>
         </div>
       </div>
@@ -143,9 +173,19 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
     <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
@@ -167,6 +207,8 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
         data-testid="container"
       >
         <div
+          data-tagged-id="post-123"
+          data-tagged-kind="post"
           data-testid="clickable-tags-list"
         >
           ClickableTagsList 
@@ -180,6 +222,9 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
           post-123
           <button>
             Reply
+          </button>
+          <button>
+            Repost
           </button>
         </div>
       </div>
@@ -195,9 +240,19 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="min-w-0 flex-1 rounded-md py-0"
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
     <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
@@ -219,6 +274,8 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
         data-testid="container"
       >
         <div
+          data-tagged-id="post-789"
+          data-tagged-kind="post"
           data-testid="clickable-tags-list"
         >
           ClickableTagsList 
@@ -232,6 +289,9 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
           post-789
           <button>
             Reply
+          </button>
+          <button>
+            Repost
           </button>
         </div>
       </div>
