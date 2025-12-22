@@ -10,7 +10,7 @@ import { buildSearchUrl, calculateNewTags } from './useTagSearch.utils';
 
 export function useTagSearch(): UseTagSearchResult {
   const router = useRouter();
-  const { activeTags, addActiveTag, removeActiveTag, addTag } = Core.useSearchStore();
+  const { activeTags, setActiveTags, removeActiveTag, addTag } = Core.useSearchStore();
 
   const addTagToSearch = useCallback(
     (tag: string, options?: TagSearchOptions) => {
@@ -21,16 +21,16 @@ export function useTagSearch(): UseTagSearchResult {
         addTag(normalizedTag);
       }
 
-      // Calculate new tags using same logic as store
+      // Calculate new tags once (using shared utility)
       const newTags = calculateNewTags(activeTags, normalizedTag);
 
-      // Update store (store will handle deduplication and max limit)
-      addActiveTag(normalizedTag);
+      // Update store with calculated tags (no duplicate calculation)
+      setActiveTags(newTags);
 
       // Navigate with calculated tags
       router.push(buildSearchUrl(newTags));
     },
-    [router, activeTags, addActiveTag, addTag],
+    [router, activeTags, setActiveTags, addTag],
   );
 
   const removeTagFromSearch = useCallback(

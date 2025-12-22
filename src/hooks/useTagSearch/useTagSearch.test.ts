@@ -13,7 +13,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock the search store
-const mockAddActiveTag = vi.fn();
+const mockSetActiveTags = vi.fn();
 const mockRemoveActiveTag = vi.fn();
 const mockAddTag = vi.fn();
 let mockActiveTags: string[] = [];
@@ -21,7 +21,7 @@ let mockActiveTags: string[] = [];
 vi.mock('@/core', () => ({
   useSearchStore: () => ({
     activeTags: mockActiveTags,
-    addActiveTag: mockAddActiveTag,
+    setActiveTags: mockSetActiveTags,
     removeActiveTag: mockRemoveActiveTag,
     addTag: mockAddTag,
   }),
@@ -64,7 +64,7 @@ describe('useTagSearch', () => {
         result.current.addTagToSearch('typescript');
       });
 
-      expect(mockAddActiveTag).toHaveBeenCalledWith('typescript');
+      expect(mockSetActiveTags).toHaveBeenCalledWith(['react', 'typescript']);
       expect(mockPush).toHaveBeenCalledWith('/search?tags=react,typescript');
     });
 
@@ -75,7 +75,7 @@ describe('useTagSearch', () => {
         result.current.addTagToSearch('');
       });
 
-      expect(mockAddActiveTag).not.toHaveBeenCalled();
+      expect(mockSetActiveTags).not.toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();
     });
 
@@ -97,7 +97,7 @@ describe('useTagSearch', () => {
         result.current.addTagToSearch('react');
       });
 
-      expect(mockAddActiveTag).toHaveBeenCalledWith('react');
+      expect(mockSetActiveTags).toHaveBeenCalledWith(['react']);
       expect(mockPush).toHaveBeenCalledWith('/search?tags=react');
     });
   });

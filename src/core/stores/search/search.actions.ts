@@ -1,6 +1,7 @@
 import { SearchStore, SearchActions, SearchActionTypes, RecentUserSearch, RecentTagSearch } from './search.types';
 import { ZustandSet } from '../stores.types';
 import { MAX_RECENT_SEARCHES, MAX_ACTIVE_SEARCH_TAGS } from './search.constants';
+import { addTagToArray, addItemToTop } from './search.utils';
 import * as Core from '@/core';
 
 /**
@@ -16,19 +17,8 @@ export const createSearchActions = (set: ZustandSet<SearchStore>): SearchActions
     set(
       (state) => {
         const now = Date.now();
-        const existingIndex = state.recentUsers.findIndex((user) => user.id === userId);
-
-        let newUsers: RecentUserSearch[];
-
-        if (existingIndex >= 0) {
-          // Move existing user to top
-          newUsers = [{ id: userId, searchedAt: now }, ...state.recentUsers.filter((user) => user.id !== userId)];
-        } else {
-          // Add new user, remove oldest if at limit
-          const usersToKeep = state.recentUsers.slice(0, MAX_RECENT_SEARCHES - 1);
-          newUsers = [{ id: userId, searchedAt: now }, ...usersToKeep];
-        }
-
+        const newUser: RecentUserSearch = { id: userId, searchedAt: now };
+        const newUsers = addItemToTop(state.recentUsers, newUser, (user) => user.id === userId, MAX_RECENT_SEARCHES);
         return { recentUsers: newUsers };
       },
       false,
@@ -46,19 +36,8 @@ export const createSearchActions = (set: ZustandSet<SearchStore>): SearchActions
     set(
       (state) => {
         const now = Date.now();
-        const existingIndex = state.recentTags.findIndex((t) => t.tag === tag);
-
-        let newTags: RecentTagSearch[];
-
-        if (existingIndex >= 0) {
-          // Move existing tag to top
-          newTags = [{ tag, searchedAt: now }, ...state.recentTags.filter((t) => t.tag !== tag)];
-        } else {
-          // Add new tag, remove oldest if at limit
-          const tagsToKeep = state.recentTags.slice(0, MAX_RECENT_SEARCHES - 1);
-          newTags = [{ tag, searchedAt: now }, ...tagsToKeep];
-        }
-
+        const newTag: RecentTagSearch = { tag, searchedAt: now };
+        const newTags = addItemToTop(state.recentTags, newTag, (t) => t.tag === tag, MAX_RECENT_SEARCHES);
         return { recentTags: newTags };
       },
       false,
@@ -104,29 +83,8 @@ export const createSearchActions = (set: ZustandSet<SearchStore>): SearchActions
   addActiveTag: (tag: string) => {
     set(
       (state) => {
-        if (tag.length === 0) return state;
-
-        // Check if tag already exists
-        const existingIndex = state.activeTags.indexOf(tag);
-
-        if (existingIndex >= 0) {
-          // Move existing tag to end
-          const tagsWithoutExisting = state.activeTags.filter((t) => t !== tag);
-          return {
-            activeTags: [...tagsWithoutExisting, tag],
-          };
-        }
-
-        // If at max, remove oldest (first) tag
-        if (state.activeTags.length >= MAX_ACTIVE_SEARCH_TAGS) {
-          return {
-            activeTags: [...state.activeTags.slice(1), tag],
-          };
-        }
-
-        return {
-          activeTags: [...state.activeTags, tag],
-        };
+        const newTags = addTagToArray(state.activeTags, tag);
+        return { activeTags: newTags };
       },
       false,
       SearchActionTypes.ADD_ACTIVE_TAG,
