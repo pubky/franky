@@ -1,0 +1,117 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchRecentSection > Snapshots > matches snapshot with only tags 1`] = `
+<div
+  class="flex flex-col gap-3"
+>
+  <div
+    class="flex items-center gap-2"
+  >
+    <span
+      class="tracking-widest text-muted-foreground uppercase"
+      data-size="xs"
+    >
+      Recent searches
+    </span>
+  </div>
+  <div
+    class="flex flex-wrap gap-2"
+  >
+    <div
+      data-testid="tag-item-tech"
+    >
+      Tag: tech
+    </div>
+    <div
+      data-testid="tag-item-news"
+    >
+      Tag: news
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SearchRecentSection > Snapshots > matches snapshot with only users 1`] = `
+<div
+  class="flex flex-col gap-3"
+>
+  <div
+    class="flex items-center gap-2"
+  >
+    <span
+      class="tracking-widest text-muted-foreground uppercase"
+      data-size="xs"
+    >
+      Recent searches
+    </span>
+  </div>
+  <div
+    class="flex flex-wrap gap-2"
+  >
+    <div
+      data-testid="user-item-pk:user1"
+    >
+      User: pk:user1
+    </div>
+    <div
+      data-testid="user-item-pk:user2"
+    >
+      User: pk:user2
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SearchRecentSection > Snapshots > matches snapshot with users and tags 1`] = `
+<div
+  class="flex flex-col gap-3"
+>
+  <div
+    class="flex items-center gap-2"
+  >
+    <span
+      class="tracking-widest text-muted-foreground uppercase"
+      data-size="xs"
+    >
+      Recent searches
+    </span>
+    <button
+      class="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+      data-testid="clear-all-button"
+    >
+      <svg
+        class="size-4"
+        data-testid="x-icon"
+      />
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap gap-2"
+  >
+    <div
+      data-testid="user-item-pk:user1"
+    >
+      User: pk:user1
+    </div>
+    <div
+      data-testid="user-item-pk:user2"
+    >
+      User: pk:user2
+    </div>
+  </div>
+  <div
+    class="flex flex-wrap gap-2"
+  >
+    <div
+      data-testid="tag-item-tech"
+    >
+      Tag: tech
+    </div>
+    <div
+      data-testid="tag-item-news"
+    >
+      Tag: news
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchAsTagLink > Snapshots > matches snapshot with query 1`] = `
+<div
+  class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
+  data-testid="search-as-tag-link"
+>
+  <svg
+    class="size-4 text-muted-foreground"
+    data-testid="search-icon"
+  />
+  <span
+    class="text-sm text-foreground"
+  >
+    Search 
+    <span
+      class="font-semibold"
+    >
+      '
+      technology
+      '
+    </span>
+     as tag
+  </span>
+</div>
+`;
+
+exports[`SearchAsTagLink > Snapshots > matches snapshot with whitespace query (null) 1`] = `null`;

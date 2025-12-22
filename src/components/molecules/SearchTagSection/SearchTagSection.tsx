@@ -2,6 +2,12 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import type { SearchTagSectionProps } from './SearchTagSection.types';
 
+/**
+ * SearchTagSection
+ *
+ * Displays a section of tags with a title.
+ * Used in search suggestions to show autocomplete tag results or hot tags.
+ */
 export function SearchTagSection({ title, tags, onTagClick }: SearchTagSectionProps) {
   if (tags.length === 0) return null;
 

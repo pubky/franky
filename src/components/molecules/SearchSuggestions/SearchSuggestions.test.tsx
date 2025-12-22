@@ -56,23 +56,30 @@ describe('SearchSuggestions', () => {
     { name: 'keys', count: 3 },
   ];
 
+  const defaultProps = {
+    hotTags,
+    hasInput: false,
+    onTagClick: vi.fn(),
+    onUserClick: vi.fn(),
+    onRecentUserClick: vi.fn(),
+    onRecentTagClick: vi.fn(),
+  };
+
   it('renders hot tags section', () => {
-    const onTagClick = vi.fn();
-    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+    render(<SearchSuggestions {...defaultProps} />);
 
     expect(screen.getByTestId('section-hot-tags')).toBeInTheDocument();
   });
 
   it('renders search-suggestions test id', () => {
-    const onTagClick = vi.fn();
-    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+    render(<SearchSuggestions {...defaultProps} />);
 
     expect(screen.getByTestId('search-suggestions')).toBeInTheDocument();
   });
 
   it('calls onTagClick when a tag is clicked', () => {
     const onTagClick = vi.fn();
-    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+    render(<SearchSuggestions {...defaultProps} onTagClick={onTagClick} />);
 
     fireEvent.click(screen.getByTestId('tag-pubky'));
 
@@ -80,8 +87,7 @@ describe('SearchSuggestions', () => {
   });
 
   it('applies dropdown styles', () => {
-    const onTagClick = vi.fn();
-    render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+    render(<SearchSuggestions {...defaultProps} />);
 
     const dropdown = screen.getByTestId('search-suggestions');
     expect(dropdown).toHaveStyle({
@@ -91,14 +97,12 @@ describe('SearchSuggestions', () => {
 
   describe('Snapshots', () => {
     it('matches snapshot with hot tags', () => {
-      const onTagClick = vi.fn();
-      const { container } = render(<SearchSuggestions hotTags={hotTags} onTagClick={onTagClick} />);
+      const { container } = render(<SearchSuggestions {...defaultProps} />);
       expect(container.firstChild).toMatchSnapshot();
     });
 
     it('matches snapshot with empty hot tags', () => {
-      const onTagClick = vi.fn();
-      const { container } = render(<SearchSuggestions hotTags={[]} onTagClick={onTagClick} />);
+      const { container } = render(<SearchSuggestions {...defaultProps} hotTags={[]} />);
       expect(container.firstChild).toMatchSnapshot();
     });
   });

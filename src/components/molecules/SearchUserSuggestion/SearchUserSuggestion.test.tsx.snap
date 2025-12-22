@@ -1,0 +1,65 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchUserSuggestion > Snapshots > matches snapshot with full user data 1`] = `
+<div
+  class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
+  data-testid="search-user-suggestion-pk:abc123def456"
+>
+  <div
+    data-name="John Doe"
+    data-size="default"
+    data-testid="avatar"
+  >
+    Avatar
+  </div>
+  <div
+    class="min-w-0 flex-1 flex-col items-start"
+  >
+    <span
+      class="block truncate text-sm font-bold text-foreground"
+      data-testid="user-name"
+    >
+      John Doe
+    </span>
+    <span
+      class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+      data-testid="user-pubky"
+    >
+      @
+      pk:abc12...
+    </span>
+  </div>
+</div>
+`;
+
+exports[`SearchUserSuggestion > Snapshots > matches snapshot without avatar 1`] = `
+<div
+  class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
+  data-testid="search-user-suggestion-pk:xyz789"
+>
+  <div
+    data-name="Jane Doe"
+    data-size="default"
+    data-testid="avatar"
+  >
+    Avatar
+  </div>
+  <div
+    class="min-w-0 flex-1 flex-col items-start"
+  >
+    <span
+      class="block truncate text-sm font-bold text-foreground"
+      data-testid="user-name"
+    >
+      Jane Doe
+    </span>
+    <span
+      class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+      data-testid="user-pubky"
+    >
+      @
+      pk:xyz78...
+    </span>
+  </div>
+</div>
+`;

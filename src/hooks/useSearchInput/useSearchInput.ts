@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { UseSearchInputParams, UseSearchInputResult } from './useSearchInput.types';
 
 /**
@@ -7,36 +7,39 @@ import type { UseSearchInputParams, UseSearchInputResult } from './useSearchInpu
  * Hook for managing search input state and behavior.
  * Handles input value, focus state, click outside, and keyboard events.
  */
-export function useSearchInput({ defaultExpanded = false }: UseSearchInputParams = {}): UseSearchInputResult {
+export function useSearchInput({ onEnter }: UseSearchInputParams = {}): UseSearchInputResult {
   const [inputValue, setInputValue] = useState('');
-  const [isFocused, setIsFocused] = useState(defaultExpanded);
+  const [isFocused, setIsFocused] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-  }, []);
+  };
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        // TODO: implement search navigation
-        console.log('Search:', inputValue);
-      }
-      if (e.key === 'Escape') setIsFocused(false);
-    },
-    [inputValue],
-  );
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      onEnter?.(inputValue.trim());
+      setInputValue('');
+    } else if (e.key === 'Escape') {
+      setIsFocused(false);
+    }
+  };
 
-  const handleFocus = useCallback(() => {
+  const handleFocus = () => {
     setIsFocused(true);
-  }, []);
+  };
 
-  const handleTagClick = useCallback((tag: string) => {
-    setInputValue(tag);
-    // TODO: implement search navigation
-    console.log('Search tag:', tag);
-    setIsFocused(false);
-  }, []);
+  const clearInputValue = () => {
+    setInputValue('');
+  };
+
+  const setFocus = (focused: boolean) => {
+    setIsFocused(focused);
+    if (!focused && inputRef.current) {
+      inputRef.current.blur();
+    }
+  };
 
   // Close on click outside
   useEffect(() => {
@@ -56,9 +59,11 @@ export function useSearchInput({ defaultExpanded = false }: UseSearchInputParams
     inputValue,
     isFocused,
     containerRef,
+    inputRef,
     handleInputChange,
     handleKeyDown,
     handleFocus,
-    handleTagClick,
+    clearInputValue,
+    setFocus,
   };
 }

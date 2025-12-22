@@ -1,0 +1,112 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchInputBar > Snapshots > matches snapshot - default state 1`] = `
+<div
+  class="relative flex items-center min-h-12 border border-border px-5 rounded-full"
+  data-testid="search-input-bar"
+>
+  <input
+    aria-autocomplete="list"
+    aria-label="Search input"
+    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+    placeholder="Search"
+    type="text"
+    value=""
+  />
+  <svg
+    aria-hidden="true"
+    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
+    data-testid="search-icon"
+  />
+</div>
+`;
+
+exports[`SearchInputBar > Snapshots > matches snapshot - focused state 1`] = `
+<div
+  class="relative flex items-center min-h-12 border border-border px-5 rounded-t-2xl border-b-transparent"
+  data-testid="search-input-bar"
+  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
+>
+  <input
+    aria-autocomplete="list"
+    aria-label="Search input"
+    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+    placeholder="Search"
+    type="text"
+    value=""
+  />
+  <svg
+    aria-hidden="true"
+    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
+    data-testid="search-icon"
+  />
+</div>
+`;
+
+exports[`SearchInputBar > Snapshots > matches snapshot - with active tags 1`] = `
+<div
+  class="relative flex items-center min-h-12 border border-border px-5 rounded-full"
+  data-testid="search-input-bar"
+>
+  <div
+    aria-label="Active search tags"
+    class="flex shrink-0 items-center gap-2.5 py-2"
+    role="list"
+  >
+    <span
+      data-testid="active-tag-bitcoin"
+    >
+      bitcoin
+      <button
+        data-testid="remove-tag-bitcoin"
+      >
+        x
+      </button>
+    </span>
+    <span
+      data-testid="active-tag-pubky"
+    >
+      pubky
+      <button
+        data-testid="remove-tag-pubky"
+      >
+        x
+      </button>
+    </span>
+  </div>
+  <input
+    aria-autocomplete="list"
+    aria-label="Search input"
+    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-2.5"
+    placeholder=""
+    type="text"
+    value=""
+  />
+  <svg
+    aria-hidden="true"
+    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
+    data-testid="search-icon"
+  />
+</div>
+`;
+
+exports[`SearchInputBar > Snapshots > matches snapshot - with input value 1`] = `
+<div
+  class="relative flex items-center min-h-12 border border-border px-5 rounded-full"
+  data-testid="search-input-bar"
+>
+  <input
+    aria-autocomplete="list"
+    aria-label="Search input"
+    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+    placeholder="Search"
+    type="text"
+    value="test query"
+  />
+  <svg
+    aria-hidden="true"
+    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
+    data-testid="search-icon"
+  />
+</div>
+`;
