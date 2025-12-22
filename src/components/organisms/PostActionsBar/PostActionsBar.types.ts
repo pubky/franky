@@ -3,7 +3,6 @@ export interface PostActionsBarProps {
   onTagClick?: () => void;
   onReplyClick?: () => void;
   onRepostClick?: () => void;
-  onMoreClick?: () => void;
   className?: string;
 }
 
