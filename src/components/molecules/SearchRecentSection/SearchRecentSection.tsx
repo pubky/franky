@@ -32,8 +32,9 @@ export function SearchRecentSection({ users, tags, onUserClick, onTagClick, onCl
             className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             onClick={onClearAll}
             data-testid="clear-all-button"
+            aria-label="Clear all recent searches"
           >
-            <Libs.X className="size-4" strokeWidth={2} />
+            <Libs.X className="size-4" strokeWidth={2} aria-hidden="true" />
           </Atoms.Button>
         )}
       </Atoms.Container>

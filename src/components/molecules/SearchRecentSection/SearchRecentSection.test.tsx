@@ -66,9 +66,7 @@ vi.mock('@/molecules', () => ({
   },
 }));
 
-vi.mock('@/libs', () => ({
-  X: ({ className }: { className?: string }) => <svg data-testid="x-icon" className={className} />,
-}));
+// Use real icon implementations - icons should never be mocked per guidelines
 
 describe('SearchRecentSection', () => {
   const mockUsers = [
@@ -110,7 +108,7 @@ describe('SearchRecentSection', () => {
   });
 
   it('renders clear button when onClearAll is provided', () => {
-    render(
+    const { container } = render(
       <SearchRecentSection
         users={mockUsers}
         tags={mockTags}
@@ -121,6 +119,9 @@ describe('SearchRecentSection', () => {
     );
 
     expect(screen.getByTestId('clear-all-button')).toBeInTheDocument();
+    // Real icon implementation renders as SVG with lucide-x class
+    const svg = container.querySelector('svg.lucide-x');
+    expect(svg).toBeInTheDocument();
   });
 
   it('does not render clear button when onClearAll is not provided', () => {
@@ -146,6 +147,21 @@ describe('SearchRecentSection', () => {
     expect(onClearAll).toHaveBeenCalled();
   });
 
+  it('clear button has correct aria-label', () => {
+    render(
+      <SearchRecentSection
+        users={mockUsers}
+        tags={mockTags}
+        onUserClick={vi.fn()}
+        onTagClick={vi.fn()}
+        onClearAll={vi.fn()}
+      />,
+    );
+
+    const clearButton = screen.getByTestId('clear-all-button');
+    expect(clearButton).toHaveAttribute('aria-label', 'Clear all recent searches');
+  });
+
   it('calls onUserClick when user item is clicked', () => {
     const onUserClick = vi.fn();
     render(<SearchRecentSection users={mockUsers} tags={[]} onUserClick={onUserClick} onTagClick={vi.fn()} />);
@@ -164,7 +180,7 @@ describe('SearchRecentSection', () => {
     expect(onTagClick).toHaveBeenCalledWith(mockTags[0]);
   });
 
-  describe('Snapshots', () => {
+  describe('SearchRecentSection - Snapshots', () => {
     it('matches snapshot with users and tags', () => {
       const { container } = render(
         <SearchRecentSection

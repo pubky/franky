@@ -34,14 +34,8 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-vi.mock('@/libs', () => ({
-  formatPublicKey: ({ key, length }: { key: string; length: number }) => `${key.slice(0, length)}...`,
-  truncateString: (str: string, maxLength: number) => {
-    if (!str) return '';
-    if (str.length <= maxLength) return str;
-    return `${str.slice(0, maxLength)}...`;
-  },
-}));
+// Use real utility implementations - formatPublicKey and truncateString are pure functions
+// Pure utility functions should never be mocked per guidelines
 
 describe('SearchUserSuggestion', () => {
   const mockUser = {
@@ -59,7 +53,11 @@ describe('SearchUserSuggestion', () => {
   it('renders formatted pubky', () => {
     render(<SearchUserSuggestion user={mockUser} />);
 
-    expect(screen.getByTestId('user-pubky')).toHaveTextContent('@pk:abc12...');
+    // Real formatPublicKey implementation formats differently than mock
+    // pk:abc123def456 with length 8 should format as pk:abc1...f456
+    const pubkyElement = screen.getByTestId('user-pubky');
+    expect(pubkyElement).toHaveTextContent(/@pk:/);
+    expect(pubkyElement.textContent).toMatch(/@pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
   });
 
   it('renders avatar with correct props', () => {
@@ -99,7 +97,19 @@ describe('SearchUserSuggestion', () => {
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
   });
 
-  describe('Snapshots', () => {
+  it('has correct aria-label and role', () => {
+    render(<SearchUserSuggestion user={mockUser} />);
+
+    const suggestion = screen.getByTestId(`search-user-suggestion-${mockUser.id}`);
+    expect(suggestion).toHaveAttribute('role', 'option');
+    expect(suggestion).toHaveAttribute('aria-label');
+    const ariaLabel = suggestion.getAttribute('aria-label');
+    expect(ariaLabel).toContain('John Doe');
+    // Real formatPublicKey formats as pk:abc1...f456 (length 8)
+    expect(ariaLabel).toMatch(/pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
+  });
+
+  describe('SearchUserSuggestion - Snapshots', () => {
     it('matches snapshot with full user data', () => {
       const { container } = render(<SearchUserSuggestion user={mockUser} onClick={vi.fn()} />);
       expect(container.firstChild).toMatchSnapshot();

@@ -26,6 +26,8 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
       className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
       onClick={handleClick}
       data-testid={`recent-user-${user.id}`}
+      role="button"
+      aria-label={`View profile for ${userDetails?.name || user.id}`}
     >
       <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1 flex-col items-start">

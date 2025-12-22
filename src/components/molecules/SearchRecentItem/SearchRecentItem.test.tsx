@@ -94,7 +94,7 @@ describe('SearchRecentItem', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  describe('Snapshots', () => {
+  describe('SearchRecentItem - Snapshots', () => {
     it('matches snapshot for user type', () => {
       const { container } = render(
         <SearchRecentItem type={RECENT_ITEM_TYPE.USER} user={mockUser} onUserClick={vi.fn()} />,

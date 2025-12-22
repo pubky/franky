@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchRecentItem > Snapshots > matches snapshot for tag type 1`] = `
+exports[`SearchRecentItem > SearchRecentItem - Snapshots > matches snapshot for tag type 1`] = `
 <button
   data-testid="recent-tag-technology"
 >
@@ -8,7 +8,7 @@ exports[`SearchRecentItem > Snapshots > matches snapshot for tag type 1`] = `
 </button>
 `;
 
-exports[`SearchRecentItem > Snapshots > matches snapshot for user type 1`] = `
+exports[`SearchRecentItem > SearchRecentItem - Snapshots > matches snapshot for user type 1`] = `
 <div
   data-testid="user-item-pk:user123"
 >

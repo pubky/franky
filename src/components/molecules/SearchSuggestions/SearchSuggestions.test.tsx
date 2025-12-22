@@ -95,7 +95,15 @@ describe('SearchSuggestions', () => {
     });
   });
 
-  describe('Snapshots', () => {
+  it('has correct aria-label and role', () => {
+    render(<SearchSuggestions {...defaultProps} role="listbox" aria-label="Search suggestions" />);
+
+    const suggestions = screen.getByTestId('search-suggestions');
+    expect(suggestions).toHaveAttribute('role', 'listbox');
+    expect(suggestions).toHaveAttribute('aria-label', 'Search suggestions');
+  });
+
+  describe('SearchSuggestions - Snapshots', () => {
     it('matches snapshot with hot tags', () => {
       const { container } = render(<SearchSuggestions {...defaultProps} />);
       expect(container.firstChild).toMatchSnapshot();

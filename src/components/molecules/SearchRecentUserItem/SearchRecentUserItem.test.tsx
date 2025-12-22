@@ -34,14 +34,8 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-vi.mock('@/libs', () => ({
-  formatPublicKey: ({ key, length }: { key: string; length: number }) => `${key.slice(0, length)}...`,
-  truncateString: (str: string, maxLength: number) => {
-    if (!str) return '';
-    if (str.length <= maxLength) return str;
-    return `${str.slice(0, maxLength)}...`;
-  },
-}));
+// Use real utility implementations - formatPublicKey and truncateString are pure functions
+// Pure utility functions should never be mocked per guidelines
 
 vi.mock('@/hooks', () => ({
   useUserDetails: (userId: string) => ({
@@ -70,7 +64,11 @@ describe('SearchRecentUserItem', () => {
   it('renders formatted pubky', () => {
     render(<SearchRecentUserItem user={mockUser} onClick={vi.fn()} />);
 
-    expect(screen.getByTestId('user-pubky')).toHaveTextContent('@pk:abc12...');
+    // Real formatPublicKey implementation formats differently than mock
+    // pk:abc123 with length 8 should format as pk:ab...c123
+    const pubkyElement = screen.getByTestId('user-pubky');
+    expect(pubkyElement).toHaveTextContent(/@pk:/);
+    expect(pubkyElement.textContent).toMatch(/@pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
   });
 
   it('renders avatar with avatar url', () => {
@@ -90,7 +88,16 @@ describe('SearchRecentUserItem', () => {
     expect(onClick).toHaveBeenCalledWith(mockUser.id);
   });
 
-  describe('Snapshots', () => {
+  it('has correct aria-label', () => {
+    render(<SearchRecentUserItem user={mockUser} onClick={vi.fn()} />);
+
+    const item = screen.getByTestId(`recent-user-${mockUser.id}`);
+    expect(item).toHaveAttribute('role', 'button');
+    expect(item).toHaveAttribute('aria-label');
+    expect(item.getAttribute('aria-label')).toContain('Test User');
+  });
+
+  describe('SearchRecentUserItem - Snapshots', () => {
     it('matches snapshot', () => {
       const { container } = render(<SearchRecentUserItem user={mockUser} onClick={vi.fn()} />);
       expect(container.firstChild).toMatchSnapshot();

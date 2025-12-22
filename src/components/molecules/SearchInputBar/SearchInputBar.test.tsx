@@ -51,12 +51,8 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-vi.mock('@/libs', () => ({
-  cn: (...args: (string | undefined | false)[]) => args.filter(Boolean).join(' '),
-  Search: ({ className, ...props }: { className?: string }) => (
-    <svg data-testid="search-icon" className={className} {...props} />
-  ),
-}));
+// Use real implementations - cn is a pure utility function, Search is an icon component
+// Both should use real implementations per guidelines
 
 vi.mock('@/organisms/SearchInput/SearchInput.constants', () => ({
   SEARCH_EXPANDED_STYLE: {
@@ -90,9 +86,11 @@ describe('SearchInputBar', () => {
     });
 
     it('renders the search icon', () => {
-      render(<SearchInputBar {...defaultProps} />);
+      const { container } = render(<SearchInputBar {...defaultProps} />);
 
-      expect(screen.getByTestId('search-icon')).toBeInTheDocument();
+      // Real icon implementation renders as SVG with lucide-search class
+      const svg = container.querySelector('svg.lucide-search');
+      expect(svg).toBeInTheDocument();
     });
 
     it('renders input with Search placeholder when no active tags', () => {
@@ -234,7 +232,7 @@ describe('SearchInputBar', () => {
     });
   });
 
-  describe('Snapshots', () => {
+  describe('SearchInputBar - Snapshots', () => {
     it('matches snapshot - default state', () => {
       const { container } = render(<SearchInputBar {...defaultProps} />);
       expect(container.firstChild).toMatchSnapshot();

@@ -1,9 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchUserSuggestion > Snapshots > matches snapshot with full user data 1`] = `
+exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snapshot with full user data 1`] = `
 <div
+  aria-label="User John Doe (pk:a...f456)"
   class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
   data-testid="search-user-suggestion-pk:abc123def456"
+  role="option"
 >
   <div
     data-name="John Doe"
@@ -26,16 +28,18 @@ exports[`SearchUserSuggestion > Snapshots > matches snapshot with full user data
       data-testid="user-pubky"
     >
       @
-      pk:abc12...
+      pk:a...f456
     </span>
   </div>
 </div>
 `;
 
-exports[`SearchUserSuggestion > Snapshots > matches snapshot without avatar 1`] = `
+exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snapshot without avatar 1`] = `
 <div
+  aria-label="User Jane Doe (pk:x...z789)"
   class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
   data-testid="search-user-suggestion-pk:xyz789"
+  role="option"
 >
   <div
     data-name="Jane Doe"
@@ -58,7 +62,7 @@ exports[`SearchUserSuggestion > Snapshots > matches snapshot without avatar 1`] 
       data-testid="user-pubky"
     >
       @
-      pk:xyz78...
+      pk:x...z789
     </span>
   </div>
 </div>

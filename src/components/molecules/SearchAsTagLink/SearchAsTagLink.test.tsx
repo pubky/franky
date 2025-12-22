@@ -20,9 +20,7 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-vi.mock('@/libs', () => ({
-  Search: ({ className }: { className?: string }) => <svg data-testid="search-icon" className={className} />,
-}));
+// Use real icon implementations - icons should never be mocked per guidelines
 
 describe('SearchAsTagLink', () => {
   it('renders query text', () => {
@@ -34,9 +32,11 @@ describe('SearchAsTagLink', () => {
   });
 
   it('renders search icon', () => {
-    render(<SearchAsTagLink query="technology" onClick={vi.fn()} />);
+    const { container } = render(<SearchAsTagLink query="technology" onClick={vi.fn()} />);
 
-    expect(screen.getByTestId('search-icon')).toBeInTheDocument();
+    // Real icon implementation renders as SVG with lucide-search class
+    const svg = container.querySelector('svg.lucide-search');
+    expect(svg).toBeInTheDocument();
   });
 
   it('calls onClick with trimmed query when clicked', () => {
@@ -66,7 +66,15 @@ describe('SearchAsTagLink', () => {
     expect(screen.getByText("'tech'")).toBeInTheDocument();
   });
 
-  describe('Snapshots', () => {
+  it('has correct aria-label', () => {
+    render(<SearchAsTagLink query="technology" onClick={vi.fn()} />);
+
+    const link = screen.getByTestId('search-as-tag-link');
+    expect(link).toHaveAttribute('aria-label', "Search 'technology' as tag");
+    expect(link).toHaveAttribute('role', 'button');
+  });
+
+  describe('SearchAsTagLink - Snapshots', () => {
     it('matches snapshot with query', () => {
       const { container } = render(<SearchAsTagLink query="technology" onClick={vi.fn()} />);
       expect(container.firstChild).toMatchSnapshot();

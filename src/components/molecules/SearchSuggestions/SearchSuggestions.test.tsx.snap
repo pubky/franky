@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchSuggestions > Snapshots > matches snapshot with empty hot tags 1`] = `
+exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot with empty hot tags 1`] = `
 <div
   class="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
   data-override-defaults="true"
@@ -15,7 +15,7 @@ exports[`SearchSuggestions > Snapshots > matches snapshot with empty hot tags 1`
 </div>
 `;
 
-exports[`SearchSuggestions > Snapshots > matches snapshot with hot tags 1`] = `
+exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot with hot tags 1`] = `
 <div
   class="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
   data-override-defaults="true"

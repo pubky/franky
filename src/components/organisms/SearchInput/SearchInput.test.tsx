@@ -365,7 +365,7 @@ describe('SearchInput', () => {
       expect(screen.getByTestId('search-suggestions')).toBeInTheDocument();
     });
 
-    it('sets aria-expanded to true when suggestions visible', async () => {
+    it('has correct aria attributes when suggestions visible', async () => {
       const { useSearchInput, useHotTags } = await import('@/hooks');
       vi.mocked(useSearchInput).mockReturnValue({
         inputValue: '',
@@ -383,10 +383,13 @@ describe('SearchInput', () => {
       render(<SearchInput />);
 
       const container = screen.getByTestId('search-input');
+      expect(container).toHaveAttribute('role', 'combobox');
       expect(container).toHaveAttribute('aria-expanded', 'true');
+      expect(container).toHaveAttribute('aria-haspopup', 'listbox');
+      expect(container).toHaveAttribute('aria-owns', 'search-suggestions-listbox');
     });
 
-    it('sets aria-expanded to false when suggestions hidden', async () => {
+    it('has correct aria attributes when suggestions hidden', async () => {
       const { useSearchInput, useHotTags } = await import('@/hooks');
       vi.mocked(useSearchInput).mockReturnValue({
         inputValue: '',
@@ -404,7 +407,10 @@ describe('SearchInput', () => {
       render(<SearchInput />);
 
       const container = screen.getByTestId('search-input');
+      expect(container).toHaveAttribute('role', 'combobox');
       expect(container).toHaveAttribute('aria-expanded', 'false');
+      expect(container).toHaveAttribute('aria-haspopup', 'listbox');
+      expect(container).not.toHaveAttribute('aria-owns');
     });
   });
 
@@ -471,7 +477,7 @@ describe('SearchInput', () => {
     });
   });
 
-  describe('Snapshots', () => {
+  describe('SearchInput - Snapshots', () => {
     it('matches snapshot - default state', () => {
       const { container } = render(<SearchInput />);
       expect(container.firstChild).toMatchSnapshot();

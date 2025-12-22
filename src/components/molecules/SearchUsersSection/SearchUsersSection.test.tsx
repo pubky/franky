@@ -63,7 +63,17 @@ describe('SearchUsersSection', () => {
     expect(onUserClick).toHaveBeenCalledWith('pk:user1');
   });
 
-  describe('Snapshots', () => {
+  it('renders section with accessible structure', () => {
+    render(<SearchUsersSection title="Users" users={mockUsers} onUserClick={vi.fn()} />);
+
+    // Section should have title visible
+    expect(screen.getByText('Users')).toBeInTheDocument();
+    // Users should be rendered
+    expect(screen.getByTestId('user-pk:user1')).toBeInTheDocument();
+    expect(screen.getByTestId('user-pk:user2')).toBeInTheDocument();
+  });
+
+  describe('SearchUsersSection - Snapshots', () => {
     it('matches snapshot with users', () => {
       const { container } = render(<SearchUsersSection title="Users" users={mockUsers} onUserClick={vi.fn()} />);
       expect(container.firstChild).toMatchSnapshot();

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchRecentSection > Snapshots > matches snapshot with only tags 1`] = `
+exports[`SearchRecentSection > SearchRecentSection - Snapshots > matches snapshot with only tags 1`] = `
 <div
   class="flex flex-col gap-3"
 >
@@ -31,7 +31,7 @@ exports[`SearchRecentSection > Snapshots > matches snapshot with only tags 1`] =
 </div>
 `;
 
-exports[`SearchRecentSection > Snapshots > matches snapshot with only users 1`] = `
+exports[`SearchRecentSection > SearchRecentSection - Snapshots > matches snapshot with only users 1`] = `
 <div
   class="flex flex-col gap-3"
 >
@@ -62,7 +62,7 @@ exports[`SearchRecentSection > Snapshots > matches snapshot with only users 1`] 
 </div>
 `;
 
-exports[`SearchRecentSection > Snapshots > matches snapshot with users and tags 1`] = `
+exports[`SearchRecentSection > SearchRecentSection - Snapshots > matches snapshot with users and tags 1`] = `
 <div
   class="flex flex-col gap-3"
 >
@@ -76,13 +76,30 @@ exports[`SearchRecentSection > Snapshots > matches snapshot with users and tags 
       Recent searches
     </span>
     <button
+      aria-label="Clear all recent searches"
       class="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       data-testid="clear-all-button"
     >
       <svg
-        class="size-4"
-        data-testid="x-icon"
-      />
+        aria-hidden="true"
+        class="lucide lucide-x size-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
     </button>
   </div>
   <div

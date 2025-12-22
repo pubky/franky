@@ -23,8 +23,10 @@ export function SearchAsTagLink({ query, onClick }: SearchAsTagLinkProps) {
       className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
       onClick={() => onClick(trimmedQuery)}
       data-testid="search-as-tag-link"
+      role="button"
+      aria-label={`Search '${trimmedQuery}' as tag`}
     >
-      <Libs.Search className="size-4 text-muted-foreground" />
+      <Libs.Search className="size-4 text-muted-foreground" aria-hidden="true" />
       <Atoms.Typography className="text-sm text-foreground" overrideDefaults>
         Search <span className="font-semibold">&apos;{trimmedQuery}&apos;</span> as tag
       </Atoms.Typography>

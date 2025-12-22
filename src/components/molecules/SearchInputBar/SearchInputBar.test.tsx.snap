@@ -1,8 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchInputBar > Snapshots > matches snapshot - default state 1`] = `
+exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - default state 1`] = `
 <div
-  class="relative flex items-center min-h-12 border border-border px-5 rounded-full"
+  class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
   data-testid="search-input-bar"
 >
   <input
@@ -15,15 +15,32 @@ exports[`SearchInputBar > Snapshots > matches snapshot - default state 1`] = `
   />
   <svg
     aria-hidden="true"
-    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
-    data-testid="search-icon"
-  />
+    class="lucide lucide-search pointer-events-none size-4 shrink-0 text-muted-foreground"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m21 21-4.34-4.34"
+    />
+    <circle
+      cx="11"
+      cy="11"
+      r="8"
+    />
+  </svg>
 </div>
 `;
 
-exports[`SearchInputBar > Snapshots > matches snapshot - focused state 1`] = `
+exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - focused state 1`] = `
 <div
-  class="relative flex items-center min-h-12 border border-border px-5 rounded-t-2xl border-b-transparent"
+  class="relative flex min-h-12 items-center border border-border px-5 rounded-t-2xl border-b-transparent"
   data-testid="search-input-bar"
   style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
 >
@@ -37,15 +54,32 @@ exports[`SearchInputBar > Snapshots > matches snapshot - focused state 1`] = `
   />
   <svg
     aria-hidden="true"
-    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
-    data-testid="search-icon"
-  />
+    class="lucide lucide-search pointer-events-none size-4 shrink-0 text-muted-foreground"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m21 21-4.34-4.34"
+    />
+    <circle
+      cx="11"
+      cy="11"
+      r="8"
+    />
+  </svg>
 </div>
 `;
 
-exports[`SearchInputBar > Snapshots > matches snapshot - with active tags 1`] = `
+exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with active tags 1`] = `
 <div
-  class="relative flex items-center min-h-12 border border-border px-5 rounded-full"
+  class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
   data-testid="search-input-bar"
 >
   <div
@@ -84,15 +118,32 @@ exports[`SearchInputBar > Snapshots > matches snapshot - with active tags 1`] = 
   />
   <svg
     aria-hidden="true"
-    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
-    data-testid="search-icon"
-  />
+    class="lucide lucide-search pointer-events-none size-4 shrink-0 text-muted-foreground"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m21 21-4.34-4.34"
+    />
+    <circle
+      cx="11"
+      cy="11"
+      r="8"
+    />
+  </svg>
 </div>
 `;
 
-exports[`SearchInputBar > Snapshots > matches snapshot - with input value 1`] = `
+exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with input value 1`] = `
 <div
-  class="relative flex items-center min-h-12 border border-border px-5 rounded-full"
+  class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
   data-testid="search-input-bar"
 >
   <input
@@ -105,8 +156,25 @@ exports[`SearchInputBar > Snapshots > matches snapshot - with input value 1`] = 
   />
   <svg
     aria-hidden="true"
-    class="pointer-events-none size-4 shrink-0 text-muted-foreground"
-    data-testid="search-icon"
-  />
+    class="lucide lucide-search pointer-events-none size-4 shrink-0 text-muted-foreground"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m21 21-4.34-4.34"
+    />
+    <circle
+      cx="11"
+      cy="11"
+      r="8"
+    />
+  </svg>
 </div>
 `;
