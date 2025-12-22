@@ -4,14 +4,13 @@ import { PostMenuActionsContent } from './PostMenuActionsContent';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock hooks - use vi.fn() to allow mocking in tests
-const mockUsePostDetails = vi.fn(() => ({ postDetails: { kind: 'short', content: 'Test post' }, isLoading: false }));
-const mockUseUserDetails = vi.fn(() => ({ userDetails: { name: 'Test User', id: 'pk:test123' }, isLoading: false }));
-const mockUseCurrentUserProfile = vi.fn(() => ({ currentUserPubky: 'pk:current123' }));
+const mockUsePostMenuActions = vi.fn(() => ({
+  menuItems: [],
+  isLoading: false,
+}));
 
 vi.mock('@/hooks', () => ({
-  usePostDetails: () => mockUsePostDetails(),
-  useUserDetails: () => mockUseUserDetails(),
-  useCurrentUserProfile: () => mockUseCurrentUserProfile(),
+  usePostMenuActions: (postId: string) => mockUsePostMenuActions(postId),
 }));
 
 // Mock core
@@ -34,18 +33,22 @@ vi.mock('@/libs', () => ({
   },
 }));
 
-// Mock icons
-vi.mock('@/libs/icons', () => ({
-  UserPlus: () => <span data-testid="icon-user-plus">UserPlus</span>,
-  UserMinus: () => <span data-testid="icon-user-minus">UserMinus</span>,
-  Pencil: () => <span data-testid="icon-pencil">Pencil</span>,
-  KeyRound: () => <span data-testid="icon-key-round">KeyRound</span>,
-  Link: () => <span data-testid="icon-link">Link</span>,
-  FileText: () => <span data-testid="icon-file-text">FileText</span>,
-  MegaphoneOff: () => <span data-testid="icon-megaphone-off">MegaphoneOff</span>,
-  Trash: () => <span data-testid="icon-trash">Trash</span>,
-  Flag: () => <span data-testid="icon-flag">Flag</span>,
-}));
+// Mock libs icons (used by usePostMenuActions)
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  const MockIcon = ({ className }: { className?: string }) => <span className={className}>Icon</span>;
+  return {
+    ...actual,
+    UserRoundPlus: MockIcon,
+    UserRoundMinus: MockIcon,
+    Key: MockIcon,
+    Link: MockIcon,
+    FileText: MockIcon,
+    MegaphoneOff: MockIcon,
+    Trash: MockIcon,
+    Flag: MockIcon,
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -114,52 +117,58 @@ describe('PostMenuActionsContent', () => {
   });
 
   it('renders menu items for own post', async () => {
-    const Core = await import('@/core');
-    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'pk:test123' });
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { kind: 'short', content: 'Test post' },
+    const Libs = await import('@/libs');
+    mockUsePostMenuActions.mockReturnValue({
+      menuItems: [
+        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
+        { id: 'delete', label: 'Delete post', icon: Libs.Trash, onClick: vi.fn(), variant: 'destructive' },
+      ],
       isLoading: false,
     });
-    mockUseUserDetails.mockReturnValue({
-      userDetails: { name: 'Test User', id: 'pk:test123' },
-      isLoading: false,
-    });
-    vi.mocked(Core.parseCompositeId).mockReturnValue({ pubky: 'pk:test123', id: 'post456' });
 
     render(<PostMenuActionsContent postId="pk:test123:post456" variant="dropdown" />);
 
-    expect(screen.getByText('Edit post')).toBeInTheDocument();
+    expect(screen.getByText('Copy pubky')).toBeInTheDocument();
+    expect(screen.getByText('Copy link to post')).toBeInTheDocument();
+    expect(screen.getByText('Copy text of post')).toBeInTheDocument();
     expect(screen.getByText('Delete post')).toBeInTheDocument();
     expect(screen.queryByText(/Follow|Unfollow/)).not.toBeInTheDocument();
   });
 
   it('renders menu items for other user post', async () => {
-    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'pk:current123' });
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { kind: 'short', content: 'Test post' },
-      isLoading: false,
-    });
-    mockUseUserDetails.mockReturnValue({
-      userDetails: { name: 'Test User', id: 'pk:test123' },
+    const Libs = await import('@/libs');
+    mockUsePostMenuActions.mockReturnValue({
+      menuItems: [
+        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
+        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
+        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+      ],
       isLoading: false,
     });
 
     render(<PostMenuActionsContent postId="pk:test123:post456" variant="dropdown" />);
 
     expect(screen.getByText(/Follow/)).toBeInTheDocument();
-    expect(screen.getByText('Mute user')).toBeInTheDocument();
+    expect(screen.getByText(/Mute/)).toBeInTheDocument();
     expect(screen.getByText('Report post')).toBeInTheDocument();
-    expect(screen.queryByText('Edit post')).not.toBeInTheDocument();
     expect(screen.queryByText('Delete post')).not.toBeInTheDocument();
   });
 
   it('hides copy text for article posts', async () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { kind: 'long', content: 'Article content' },
-      isLoading: false,
-    });
-    mockUseUserDetails.mockReturnValue({
-      userDetails: { name: 'Test User', id: 'pk:test123' },
+    const Libs = await import('@/libs');
+    mockUsePostMenuActions.mockReturnValue({
+      menuItems: [
+        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
+        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
+        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+      ],
       isLoading: false,
     });
 
@@ -178,13 +187,16 @@ describe('PostMenuActionsContent - Snapshots', () => {
   });
 
   it('matches snapshot for all menu items visible (other user post)', async () => {
-    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'pk:current123' });
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { kind: 'short', content: 'Test post' },
-      isLoading: false,
-    });
-    mockUseUserDetails.mockReturnValue({
-      userDetails: { name: 'Test User', id: 'pk:test123' },
+    const Libs = await import('@/libs');
+    mockUsePostMenuActions.mockReturnValue({
+      menuItems: [
+        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
+        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
+        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+      ],
       isLoading: false,
     });
 
@@ -194,17 +206,16 @@ describe('PostMenuActionsContent - Snapshots', () => {
   });
 
   it('matches snapshot for own post menu items', async () => {
-    const Core = await import('@/core');
-    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'pk:test123' });
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { kind: 'short', content: 'Test post' },
+    const Libs = await import('@/libs');
+    mockUsePostMenuActions.mockReturnValue({
+      menuItems: [
+        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
+        { id: 'delete', label: 'Delete post', icon: Libs.Trash, onClick: vi.fn(), variant: 'destructive' },
+      ],
       isLoading: false,
     });
-    mockUseUserDetails.mockReturnValue({
-      userDetails: { name: 'Test User', id: 'pk:test123' },
-      isLoading: false,
-    });
-    vi.mocked(Core.parseCompositeId).mockReturnValue({ pubky: 'pk:test123', id: 'post456' });
 
     const { container } = render(<PostMenuActionsContent postId="pk:test123:post456" variant="dropdown" />);
     const normalizedContainer = normaliseRadixIds(container);
@@ -212,13 +223,16 @@ describe('PostMenuActionsContent - Snapshots', () => {
   });
 
   it('matches snapshot for mobile sheet variant', async () => {
-    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'pk:current123' });
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { kind: 'short', content: 'Test post' },
-      isLoading: false,
-    });
-    mockUseUserDetails.mockReturnValue({
-      userDetails: { name: 'Test User', id: 'pk:test123' },
+    const Libs = await import('@/libs');
+    mockUsePostMenuActions.mockReturnValue({
+      menuItems: [
+        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
+        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
+        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
+        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+      ],
       isLoading: false,
     });
 

@@ -8,6 +8,7 @@ export * from './Checkbox';
 export * from './Carousel';
 export * from './Container';
 export * from './Dialog';
+export * from './DropdownMenu';
 export * from './Filter';
 export * from './FooterLinks';
 export * from './Heading';
