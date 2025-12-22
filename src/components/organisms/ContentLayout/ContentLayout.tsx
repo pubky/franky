@@ -91,7 +91,7 @@ export function ContentLayout({
           )}
 
           {/* Main content area - grows to fill space, min-w-0 prevents flex overflow */}
-          <Atoms.Container className="w-full min-w-0 flex-1 gap-6 overflow-hidden">{children}</Atoms.Container>
+          <Atoms.Container className="w-full min-w-0 flex-1 gap-6 lg:overflow-hidden">{children}</Atoms.Container>
 
           {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (

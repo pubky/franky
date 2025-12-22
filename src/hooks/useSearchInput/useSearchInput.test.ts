@@ -11,12 +11,6 @@ describe('useSearchInput', () => {
     expect(result.current.containerRef.current).toBe(null);
   });
 
-  it('initializes expanded when defaultExpanded is true', () => {
-    const { result } = renderHook(() => useSearchInput({ defaultExpanded: true }));
-
-    expect(result.current.isFocused).toBe(true);
-  });
-
   it('updates input value on change', () => {
     const { result } = renderHook(() => useSearchInput());
 
@@ -37,20 +31,33 @@ describe('useSearchInput', () => {
     expect(result.current.isFocused).toBe(true);
   });
 
-  it('logs search on Enter key', () => {
-    const consoleSpy = vi.spyOn(console, 'log');
-    const { result } = renderHook(() => useSearchInput());
+  it('calls onEnter callback on Enter key with trimmed value', () => {
+    const onEnter = vi.fn();
+    const { result } = renderHook(() => useSearchInput({ onEnter }));
 
     act(() => {
-      result.current.handleInputChange({ target: { value: 'test query' } } as React.ChangeEvent<HTMLInputElement>);
+      result.current.handleFocus();
+      result.current.handleInputChange({ target: { value: '  test query  ' } } as React.ChangeEvent<HTMLInputElement>);
     });
 
     act(() => {
       result.current.handleKeyDown({ key: 'Enter' } as React.KeyboardEvent<HTMLInputElement>);
     });
 
-    expect(consoleSpy).toHaveBeenCalledWith('Search:', 'test query');
-    consoleSpy.mockRestore();
+    expect(onEnter).toHaveBeenCalledWith('test query');
+    expect(result.current.inputValue).toBe('');
+    expect(result.current.isFocused).toBe(true); // Focus remains after Enter
+  });
+
+  it('does not call onEnter on Enter key with empty input', () => {
+    const onEnter = vi.fn();
+    const { result } = renderHook(() => useSearchInput({ onEnter }));
+
+    act(() => {
+      result.current.handleKeyDown({ key: 'Enter' } as React.KeyboardEvent<HTMLInputElement>);
+    });
+
+    expect(onEnter).not.toHaveBeenCalled();
   });
 
   it('closes on Escape key', () => {
@@ -67,21 +74,23 @@ describe('useSearchInput', () => {
     expect(result.current.isFocused).toBe(false);
   });
 
-  it('handles tag click correctly', () => {
-    const consoleSpy = vi.spyOn(console, 'log');
+  it('clears input value correctly', () => {
     const { result } = renderHook(() => useSearchInput());
 
+    // Set some input value first
     act(() => {
+      result.current.handleInputChange({ target: { value: 'some text' } } as React.ChangeEvent<HTMLInputElement>);
       result.current.handleFocus();
     });
 
+    expect(result.current.inputValue).toBe('some text');
+    expect(result.current.isFocused).toBe(true);
+
     act(() => {
-      result.current.handleTagClick('bitcoin');
+      result.current.clearInputValue();
     });
 
-    expect(result.current.inputValue).toBe('bitcoin');
-    expect(consoleSpy).toHaveBeenCalledWith('Search tag:', 'bitcoin');
-    expect(result.current.isFocused).toBe(false);
-    consoleSpy.mockRestore();
+    expect(result.current.inputValue).toBe('');
+    expect(result.current.isFocused).toBe(true); // Focus remains
   });
 });

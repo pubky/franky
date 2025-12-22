@@ -1,8 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SearchTagSection > Snapshots > matches snapshot when empty 1`] = `null`;
+exports[`SearchTagSection > SearchTagSection - Snapshots > matches snapshot when empty 1`] = `null`;
 
-exports[`SearchTagSection > Snapshots > matches snapshot with tags 1`] = `
+exports[`SearchTagSection > SearchTagSection - Snapshots > matches snapshot with tags 1`] = `
 <div
   class="gap-2"
   data-override-defaults="true"

@@ -59,7 +59,17 @@ describe('SearchTagSection', () => {
     expect(onTagClick).toHaveBeenCalledWith('bitcoin');
   });
 
-  describe('Snapshots', () => {
+  it('renders section with accessible structure', () => {
+    render(<SearchTagSection title="Hot tags" tags={mockTags} onTagClick={vi.fn()} />);
+
+    // Section should have title visible
+    expect(screen.getByText('Hot tags')).toBeInTheDocument();
+    // Tags should be rendered
+    expect(screen.getByTestId('tag-bitcoin')).toBeInTheDocument();
+    expect(screen.getByTestId('tag-satoshi')).toBeInTheDocument();
+  });
+
+  describe('SearchTagSection - Snapshots', () => {
     it('matches snapshot with tags', () => {
       const onTagClick = vi.fn();
       const { container } = render(

@@ -10,6 +10,9 @@ import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/molecules';
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
   usePathname: vi.fn(),
+  useSearchParams: vi.fn(() => ({
+    get: vi.fn(() => null),
+  })),
 }));
 
 // Mock dexie-react-hooks
@@ -24,6 +27,16 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     useAuthStore: vi.fn(),
     useNotificationStore: vi.fn(),
+    useSearchStore: vi.fn(() => ({
+      recentUsers: [],
+      recentTags: [],
+      activeTags: [],
+      addUser: vi.fn(),
+      addTag: vi.fn(),
+      setActiveTags: vi.fn(),
+      addActiveTag: vi.fn(),
+      removeActiveTag: vi.fn(),
+    })),
     ProfileController: {
       read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
     },
