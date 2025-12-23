@@ -19,7 +19,7 @@ export const PostAttachmentsCarouselImage = ({ image, id }: PostAttachmentsCarou
         <Atoms.Image
           src={image.urls.feed as string}
           alt={image.name}
-          className="max-h-[75dvh] w-full rounded-md object-cover object-center"
+          className="max-h-[75dvh] w-full rounded-md object-contain"
         />
       )}
 
@@ -28,7 +28,7 @@ export const PostAttachmentsCarouselImage = ({ image, id }: PostAttachmentsCarou
         id={isMainLoaded ? id : undefined}
         src={image.urls.main}
         alt={image.name}
-        className={isMainLoaded ? 'max-h-[75dvh] w-full rounded-md object-cover object-center' : 'size-0'}
+        className={isMainLoaded ? 'max-h-[75dvh] w-full rounded-md object-contain' : 'size-0'}
         onLoad={() => setIsMainLoaded(true)}
       />
     </>

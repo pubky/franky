@@ -114,8 +114,7 @@ describe('PostAttachmentsCarouselImage', () => {
       expect(feedImage).toHaveClass('max-h-[75dvh]');
       expect(feedImage).toHaveClass('w-full');
       expect(feedImage).toHaveClass('rounded-md');
-      expect(feedImage).toHaveClass('object-cover');
-      expect(feedImage).toHaveClass('object-center');
+      expect(feedImage).toHaveClass('object-contain');
     });
 
     it('hides main image before it loads (size-0 class)', () => {
@@ -154,8 +153,7 @@ describe('PostAttachmentsCarouselImage', () => {
       expect(mainImage).toHaveClass('max-h-[75dvh]');
       expect(mainImage).toHaveClass('w-full');
       expect(mainImage).toHaveClass('rounded-md');
-      expect(mainImage).toHaveClass('object-cover');
-      expect(mainImage).toHaveClass('object-center');
+      expect(mainImage).toHaveClass('object-contain');
       expect(mainImage).not.toHaveClass('size-0');
     });
 
