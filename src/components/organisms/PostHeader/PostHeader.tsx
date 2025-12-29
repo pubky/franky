@@ -10,7 +10,7 @@ export function PostHeader({ postId, isReplyInput = false, characterLimit, showP
   // Extract userId from postId (format: userId:postId or just userId if isReplyInput is true)
   const userId = isReplyInput ? postId : postId.split(':')[0];
 
-  // When isReplyInput is true, skip fetching the post details since there's no post yet
+  // When isReplyInput is true, skip fetching post details since there's no post yet
   const { postDetails } = Hooks.usePostDetails(isReplyInput ? null : postId);
 
   // Fetch user details for avatar and name

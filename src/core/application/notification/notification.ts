@@ -127,7 +127,7 @@ export class NotificationApplication {
         start: olderThan === Infinity ? undefined : olderThan,
       });
 
-      if (!notifications || notifications.length === 0) {
+      if (notifications.length === 0) {
         return { flatNotifications: [], olderThan: undefined };
       }
 

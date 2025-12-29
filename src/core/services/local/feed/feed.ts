@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 const FEED_TABLES = [Core.FeedModel.table];
 
@@ -15,31 +16,40 @@ export class LocalFeedService {
         // For new records: omit id to trigger Dexie auto-increment (++id schema)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { id, ...feedWithoutId } = feed;
-        const newId = await Core.FeedModel.table.add(feedWithoutId as Core.FeedModelSchema);
-        const persistedFeed = await Core.FeedModel.table.get(newId);
+
+        const persistedFeed = await Core.FeedModel.createAndGet(feedWithoutId as Core.FeedModelSchema);
+
         if (!persistedFeed) {
-          throw new Error('Failed to retrieve persisted feed');
+          throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, {
+            feedId: feed.id,
+          });
         }
         return persistedFeed;
       }
 
       await Core.FeedModel.upsert(feed);
-      const persistedFeed = await Core.FeedModel.table.get(feed.id);
+      const persistedFeed = await Core.FeedModel.findById(feed.id);
       if (!persistedFeed) {
-        throw new Error('Failed to retrieve persisted feed');
+        throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, {
+          feedId: feed.id,
+        });
       }
       return persistedFeed;
     });
   }
 
-  static async delete({ feedId }: Core.TFeedIdParam): Promise<void> {
+  static async delete({ feedId }: Core.TFeedIdParam) {
     await Core.db.transaction('rw', FEED_TABLES, async () => {
       await Core.FeedModel.deleteById(feedId);
     });
   }
 
-  static async read({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema | undefined> {
-    return Core.FeedModel.table.get(feedId);
+  static async read({ feedId }: Core.TFeedIdParam): Promise<Core.FeedModelSchema> {
+    const feed = await Core.FeedModel.findById(feedId);
+    if (!feed) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId });
+    }
+    return feed;
   }
 
   static async readAll(): Promise<Core.FeedModelSchema[]> {

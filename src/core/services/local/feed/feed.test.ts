@@ -110,10 +110,12 @@ describe('LocalFeedService', () => {
       expect(found!.name).toBe(feed.name);
     });
 
-    it('should return undefined when not found', async () => {
-      const found = await Core.LocalFeedService.read({ feedId: 99999 });
-
-      expect(found).toBeUndefined();
+    it('should throw RECORD_NOT_FOUND error when not found', async () => {
+      await expect(Core.LocalFeedService.read({ feedId: 99999 })).rejects.toMatchObject({
+        name: 'AppError',
+        type: 'RECORD_NOT_FOUND',
+        statusCode: 404,
+      });
     });
   });
 

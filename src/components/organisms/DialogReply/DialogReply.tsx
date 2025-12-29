@@ -1,6 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import type { DialogReplyProps } from './DialogReply.types';
@@ -15,16 +16,12 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
         </Atoms.DialogHeader>
         <Atoms.Container className="gap-3">
           {/* Post being replied to */}
-          <Atoms.Card className="rounded-md py-0">
-            <Atoms.CardContent className="flex flex-col gap-4 p-6">
-              <Organisms.PostHeader postId={postId} showPopover={false} />
-              <Organisms.PostContent postId={postId} />
-            </Atoms.CardContent>
-          </Atoms.Card>
+          <Molecules.PostPreviewCard postId={postId} />
 
           {/* Reply input */}
           <Atoms.Container className="relative pl-6" overrideDefaults>
             <Organisms.PostInput
+              dataCy="reply-post-input"
               variant={POST_INPUT_VARIANT.REPLY}
               postId={postId}
               onSuccess={() => {
@@ -32,6 +29,7 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
               }}
               showThreadConnector={true}
               expanded={true}
+              hideArticle={true}
             />
           </Atoms.Container>
         </Atoms.Container>
