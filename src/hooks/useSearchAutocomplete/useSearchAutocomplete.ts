@@ -26,6 +26,8 @@ export function useSearchAutocomplete({
   const [tags, setTags] = useState<AutocompleteTag[]>([]);
   const [userIds, setUserIds] = useState<Core.Pubky[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  // Guards against out-of-order async responses overwriting newer results.
+  const requestIdRef = useRef(0);
 
   const userDetailsMap = useLiveQuery(
     async () => {
@@ -56,6 +58,7 @@ export function useSearchAutocomplete({
   // Debounced search function
   const debouncedSearchRef = useRef(
     debounce(async (searchQuery: string) => {
+      const requestId = ++requestIdRef.current;
       setIsSearching(true);
 
       try {
@@ -111,6 +114,11 @@ export function useSearchAutocomplete({
           userByIdPromise || Promise.resolve([]),
         ]);
 
+        // If a newer request started while we awaited, ignore stale results.
+        if (requestId !== requestIdRef.current) {
+          return;
+        }
+
         // Process tag results
         const tagSuggestions: AutocompleteTag[] = (tagResults as string[]).map((name) => ({ name }));
 
@@ -119,7 +127,9 @@ export function useSearchAutocomplete({
 
         // Combine and deduplicate user results
         const allUserResults = [...(nameResults as string[]), ...(idResults as string[])];
-        const uniqueUserIds = Array.from(new Set(allUserResults)).map((id) => id as Core.Pubky);
+        const uniqueUserIds = Array.from(new Set(allUserResults))
+          .map((id) => id as Core.Pubky)
+          .slice(0, AUTOCOMPLETE_USER_LIMIT);
 
         // Update user IDs (useLiveQuery will reactively read details from cache)
         setUserIds(uniqueUserIds);
@@ -136,10 +146,14 @@ export function useSearchAutocomplete({
         }
       } catch (error) {
         Libs.Logger.error('[useSearchAutocomplete] Search failed:', error);
-        setTags([]);
-        setUserIds([]);
+        if (requestId === requestIdRef.current) {
+          setTags([]);
+          setUserIds([]);
+        }
       } finally {
-        setIsSearching(false);
+        if (requestId === requestIdRef.current) {
+          setIsSearching(false);
+        }
       }
     }, AUTOCOMPLETE_DEBOUNCE_MS),
   );
@@ -147,6 +161,7 @@ export function useSearchAutocomplete({
   useEffect(() => {
     // Reset results if disabled or empty query
     if (!enabled || !query.trim()) {
+      requestIdRef.current += 1; // invalidate any in-flight request
       setTags([]);
       setUserIds([]);
       setIsSearching(false);

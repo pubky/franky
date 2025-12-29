@@ -1,10 +1,10 @@
-import * as Core from '@/core';
+import type { Pubky } from '@/core/models';
 
 /**
  * Recent search item types
  */
 export interface RecentUserSearch {
-  id: Core.Pubky;
+  id: Pubky;
   searchedAt: number; // Timestamp
 }
 
@@ -27,7 +27,7 @@ export interface SearchState {
  * Search Store Actions
  */
 export interface SearchActions {
-  addUser: (userId: Core.Pubky) => void;
+  addUser: (userId: Pubky) => void;
   /** Add a tag to recent searches. Tag should be normalized (lowercase, trimmed) before calling */
   addTag: (tag: string) => void;
   /** Clear only recent searches (users and tags), keep active tags */

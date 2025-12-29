@@ -109,6 +109,7 @@ vi.mock('@/molecules', () => ({
     inputValue,
     isFocused,
     isReadOnly,
+    isExpanded,
     suggestionsId,
     onTagRemove,
     onInputChange,
@@ -119,6 +120,7 @@ vi.mock('@/molecules', () => ({
     inputValue: string;
     isFocused: boolean;
     isReadOnly: boolean;
+    isExpanded?: boolean;
     suggestionsId?: string;
     onTagRemove: (tag: string) => void;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -153,6 +155,7 @@ vi.mock('@/molecules', () => ({
         aria-label="Search input"
         aria-autocomplete="list"
         aria-controls={suggestionsId || undefined}
+        aria-expanded={isExpanded}
       />
       <svg data-testid="search-icon" />
     </div>
@@ -254,11 +257,11 @@ describe('SearchInput', () => {
       expect(screen.getByTestId('search-icon')).toBeInTheDocument();
     });
 
-    it('renders with combobox role', () => {
+    it('does not render combobox role on container (suggestions are button-based, not listbox)', () => {
       render(<SearchInput />);
 
       const container = screen.getByTestId('search-input');
-      expect(container).toHaveAttribute('role', 'combobox');
+      expect(container).not.toHaveAttribute('role');
     });
 
     it('renders input with correct aria attributes', () => {
@@ -383,10 +386,8 @@ describe('SearchInput', () => {
       render(<SearchInput />);
 
       const container = screen.getByTestId('search-input');
-      expect(container).toHaveAttribute('role', 'combobox');
-      expect(container).toHaveAttribute('aria-expanded', 'true');
-      expect(container).toHaveAttribute('aria-haspopup', 'listbox');
-      expect(container).toHaveAttribute('aria-owns', 'search-suggestions-listbox');
+      expect(container).not.toHaveAttribute('role');
+      expect(container).not.toHaveAttribute('aria-owns');
     });
 
     it('has correct aria attributes when suggestions hidden', async () => {
@@ -407,9 +408,7 @@ describe('SearchInput', () => {
       render(<SearchInput />);
 
       const container = screen.getByTestId('search-input');
-      expect(container).toHaveAttribute('role', 'combobox');
-      expect(container).toHaveAttribute('aria-expanded', 'false');
-      expect(container).toHaveAttribute('aria-haspopup', 'listbox');
+      expect(container).not.toHaveAttribute('role');
       expect(container).not.toHaveAttribute('aria-owns');
     });
   });

@@ -96,10 +96,10 @@ describe('SearchSuggestions', () => {
   });
 
   it('has correct aria-label and role', () => {
-    render(<SearchSuggestions {...defaultProps} role="listbox" aria-label="Search suggestions" />);
+    render(<SearchSuggestions {...defaultProps} aria-label="Search suggestions" />);
 
     const suggestions = screen.getByTestId('search-suggestions');
-    expect(suggestions).toHaveAttribute('role', 'listbox');
+    expect(suggestions).toHaveAttribute('role', 'region');
     expect(suggestions).toHaveAttribute('aria-label', 'Search suggestions');
   });
 

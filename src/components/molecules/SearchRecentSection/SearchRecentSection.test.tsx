@@ -47,14 +47,14 @@ vi.mock('@/molecules', () => ({
     type: string;
     user?: { id: string };
     tag?: { tag: string };
-    onUserClick?: (user: { id: string }) => void;
-    onTagClick?: (tag: { tag: string }) => void;
+    onUserClick?: (userId: string) => void;
+    onTagClick?: (tagName: string) => void;
   }) => (
     <div
       data-testid={type === 'user' ? `user-item-${user?.id}` : `tag-item-${tag?.tag}`}
       onClick={() => {
-        if (type === 'user' && user && onUserClick) onUserClick(user);
-        if (type === 'tag' && tag && onTagClick) onTagClick(tag);
+        if (type === 'user' && user && onUserClick) onUserClick(user.id);
+        if (type === 'tag' && tag && onTagClick) onTagClick(tag.tag);
       }}
     >
       {type === 'user' ? `User: ${user?.id}` : `Tag: ${tag?.tag}`}
@@ -168,7 +168,7 @@ describe('SearchRecentSection', () => {
 
     fireEvent.click(screen.getByTestId('user-item-pk:user1'));
 
-    expect(onUserClick).toHaveBeenCalledWith(mockUsers[0]);
+    expect(onUserClick).toHaveBeenCalledWith(mockUsers[0].id);
   });
 
   it('calls onTagClick when tag item is clicked', () => {
@@ -177,7 +177,7 @@ describe('SearchRecentSection', () => {
 
     fireEvent.click(screen.getByTestId('tag-item-tech'));
 
-    expect(onTagClick).toHaveBeenCalledWith(mockTags[0]);
+    expect(onTagClick).toHaveBeenCalledWith(mockTags[0].tag);
   });
 
   describe('SearchRecentSection - Snapshots', () => {

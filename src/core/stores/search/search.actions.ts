@@ -2,7 +2,7 @@ import { SearchStore, SearchActions, SearchActionTypes, RecentUserSearch, Recent
 import { ZustandSet } from '../stores.types';
 import { MAX_RECENT_SEARCHES, MAX_ACTIVE_SEARCH_TAGS } from './search.constants';
 import { addTagToArray, addItemToTop } from './search.utils';
-import * as Core from '@/core';
+import type { Pubky } from '@/core/models';
 
 /**
  * Actions/Mutators - State modification functions
@@ -13,7 +13,7 @@ export const createSearchActions = (set: ZustandSet<SearchStore>): SearchActions
    * Moves existing user to top if already present
    * Removes oldest if at max capacity
    */
-  addUser: (userId: Core.Pubky) => {
+  addUser: (userId: Pubky) => {
     set(
       (state) => {
         const now = Date.now();

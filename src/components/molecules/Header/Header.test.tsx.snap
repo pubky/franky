@@ -508,11 +508,8 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
   data-testid="container"
 >
   <div
-    aria-expanded="false"
-    aria-haspopup="listbox"
     class="mx-auto w-full flex-col flex relative"
     data-testid="search-input"
-    role="combobox"
   >
     <div
       class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
@@ -520,6 +517,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     >
       <input
         aria-autocomplete="list"
+        aria-expanded="false"
         aria-label="Search input"
         class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
         data-testid="input"

@@ -5,6 +5,7 @@ exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot wi
   class="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
   data-override-defaults="true"
   data-testid="search-suggestions"
+  role="region"
   style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
 >
   <div
@@ -20,6 +21,7 @@ exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot wi
   class="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
   data-override-defaults="true"
   data-testid="search-suggestions"
+  role="region"
   style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
 >
   <div

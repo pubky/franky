@@ -12,6 +12,8 @@ export interface SearchInputBarProps {
   isFocused: boolean;
   /** Whether the input is read-only (at max tags) */
   isReadOnly: boolean;
+  /** Whether suggestions popover is expanded */
+  isExpanded?: boolean;
   /** ID of the suggestions listbox (for ARIA relationship) */
   suggestionsId?: string;
   /** Ref for the input element */

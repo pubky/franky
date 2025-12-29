@@ -68,25 +68,17 @@ export function SearchInput() {
 
   const hasRecentContent = hotTags.length > 0 || recentUsers.length > 0 || recentTags.length > 0;
   const hasSuggestions = isFocused && (hasInput || hasRecentContent);
-
-  const suggestionsId = 'search-suggestions-listbox';
+  const suggestionsId = 'search-suggestions';
 
   return (
-    <Atoms.Container
-      ref={containerRef}
-      data-testid="search-input"
-      className="relative"
-      role="combobox"
-      aria-expanded={hasSuggestions}
-      aria-haspopup="listbox"
-      aria-owns={hasSuggestions ? suggestionsId : undefined}
-    >
+    <Atoms.Container ref={containerRef} data-testid="search-input" className="relative">
       {/* Input bar with active tags */}
       <Molecules.SearchInputBar
         activeTags={activeTags}
         inputValue={inputValue}
         isFocused={isFocused}
         isReadOnly={isReadOnly}
+        isExpanded={hasSuggestions}
         suggestionsId={hasSuggestions ? suggestionsId : undefined}
         inputRef={inputRef}
         onTagRemove={removeTagFromSearch}
@@ -99,7 +91,6 @@ export function SearchInput() {
       {hasSuggestions && (
         <Molecules.SearchSuggestions
           id={suggestionsId}
-          role="listbox"
           aria-label="Search suggestions"
           hotTags={hotTags}
           inputValue={inputValue}

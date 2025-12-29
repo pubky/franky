@@ -11,6 +11,7 @@ export function SearchInputBar({
   inputValue,
   isFocused,
   isReadOnly,
+  isExpanded,
   suggestionsId,
   inputRef,
   onTagRemove,
@@ -55,6 +56,8 @@ export function SearchInputBar({
         aria-label="Search input"
         aria-autocomplete="list"
         aria-controls={suggestionsId || undefined}
+        aria-expanded={isExpanded}
+        aria-haspopup={suggestionsId ? 'dialog' : undefined}
         className={Libs.cn(
           'min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground',
           hasActiveTags ? 'pl-2.5' : 'pl-0',

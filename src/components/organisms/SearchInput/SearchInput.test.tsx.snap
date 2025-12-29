@@ -2,11 +2,8 @@
 
 exports[`SearchInput > SearchInput - Snapshots > matches snapshot - default state 1`] = `
 <div
-  aria-expanded="false"
-  aria-haspopup="listbox"
   class="relative"
   data-testid="search-input"
-  role="combobox"
 >
   <div
     class="rounded-full"
@@ -14,6 +11,7 @@ exports[`SearchInput > SearchInput - Snapshots > matches snapshot - default stat
   >
     <input
       aria-autocomplete="list"
+      aria-expanded="false"
       aria-label="Search input"
       placeholder="Search"
       type="text"
@@ -28,12 +26,8 @@ exports[`SearchInput > SearchInput - Snapshots > matches snapshot - default stat
 
 exports[`SearchInput > SearchInput - Snapshots > matches snapshot - focused with suggestions 1`] = `
 <div
-  aria-expanded="true"
-  aria-haspopup="listbox"
-  aria-owns="search-suggestions-listbox"
   class="relative"
   data-testid="search-input"
-  role="combobox"
 >
   <div
     class="rounded-t-2xl"
@@ -42,7 +36,8 @@ exports[`SearchInput > SearchInput - Snapshots > matches snapshot - focused with
   >
     <input
       aria-autocomplete="list"
-      aria-controls="search-suggestions-listbox"
+      aria-controls="search-suggestions"
+      aria-expanded="true"
       aria-label="Search input"
       placeholder="Search"
       type="text"
@@ -57,11 +52,10 @@ exports[`SearchInput > SearchInput - Snapshots > matches snapshot - focused with
     autocompletetags=""
     autocompleteusers=""
     data-testid="search-suggestions"
-    id="search-suggestions-listbox"
+    id="search-suggestions"
     inputvalue=""
     recenttags=""
     recentusers=""
-    role="listbox"
   >
     <button
       data-testid="hot-tag-pubky"
@@ -79,11 +73,8 @@ exports[`SearchInput > SearchInput - Snapshots > matches snapshot - focused with
 
 exports[`SearchInput > SearchInput - Snapshots > matches snapshot - with active tags 1`] = `
 <div
-  aria-expanded="false"
-  aria-haspopup="listbox"
   class="relative"
   data-testid="search-input"
-  role="combobox"
 >
   <div
     class="rounded-full"
@@ -116,6 +107,7 @@ exports[`SearchInput > SearchInput - Snapshots > matches snapshot - with active 
     </div>
     <input
       aria-autocomplete="list"
+      aria-expanded="false"
       aria-label="Search input"
       placeholder=""
       type="text"

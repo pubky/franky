@@ -7,8 +7,6 @@ import type { RecentUserSearchItem, RecentTagSearchItem } from '../SearchRecentU
 export interface SearchSuggestionsProps {
   /** ID for ARIA relationship with input */
   id?: string;
-  /** ARIA role for the suggestions container */
-  role?: string;
   /** ARIA label for the suggestions container */
   'aria-label'?: string;
   /** Hot tags to display (only when input is empty) */

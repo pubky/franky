@@ -6,7 +6,6 @@ import type { SearchSuggestionsProps } from './SearchSuggestions.types';
 
 export function SearchSuggestions({
   id,
-  role,
   'aria-label': ariaLabel,
   hotTags,
   inputValue,
@@ -73,7 +72,7 @@ export function SearchSuggestions({
   return (
     <Atoms.Container
       id={id}
-      role={role}
+      role="region"
       aria-label={ariaLabel}
       data-testid="search-suggestions"
       className="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"

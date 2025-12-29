@@ -101,7 +101,6 @@ describe('SearchUserSuggestion', () => {
     render(<SearchUserSuggestion user={mockUser} />);
 
     const suggestion = screen.getByTestId(`search-user-suggestion-${mockUser.id}`);
-    expect(suggestion).toHaveAttribute('role', 'option');
     expect(suggestion).toHaveAttribute('aria-label');
     const ariaLabel = suggestion.getAttribute('aria-label');
     expect(ariaLabel).toContain('John Doe');

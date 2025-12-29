@@ -22,7 +22,8 @@ export function useSearchInput({ onEnter }: UseSearchInputParams = {}): UseSearc
       onEnter?.(inputValue.trim());
       setInputValue('');
     } else if (e.key === 'Escape') {
-      setIsFocused(false);
+      // Keep blur behavior consistent with `setFocus(false)`
+      setFocus(false);
     }
   };
 
