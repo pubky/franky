@@ -33,34 +33,42 @@ export function SearchSuggestions({
   const hasRecentSearches = hasRecentUsers || hasRecentTags;
   const hasHotTags = hotTags.length > 0;
 
-  const renderAutocompleteContent = () => (
-    <>
-      {hasSearchQuery && onSearchAsTagClick && (
-        <Molecules.SearchAsTagLink query={inputValue} onClick={onSearchAsTagClick} />
-      )}
-      {hasAutocompleteTags && (
-        <Molecules.SearchTagSection title="Tags" tags={autocompleteTags} onTagClick={onTagClick} />
-      )}
-      {hasAutocompleteUsers && (
-        <Molecules.SearchUsersSection title="Users" users={autocompleteUsers} onUserClick={onUserClick} />
-      )}
-    </>
-  );
+  const renderAutocompleteContent = () => {
+    if (!hasInput) return null;
 
-  const renderRecentContent = () => (
-    <>
-      {hasRecentSearches && (
-        <Molecules.SearchRecentSection
-          users={displayRecentUsers}
-          tags={displayRecentTags}
-          onUserClick={onUserClick}
-          onTagClick={onTagClick}
-          onClearAll={onClearRecentSearches}
-        />
-      )}
-      {hasHotTags && <Molecules.SearchTagSection title="Hot tags" tags={hotTags} onTagClick={onTagClick} />}
-    </>
-  );
+    return (
+      <>
+        {hasSearchQuery && onSearchAsTagClick && (
+          <Molecules.SearchAsTagLink query={inputValue} onClick={onSearchAsTagClick} />
+        )}
+        {hasAutocompleteTags && (
+          <Molecules.SearchTagSection title="Tags" tags={autocompleteTags} onTagClick={onTagClick} />
+        )}
+        {hasAutocompleteUsers && (
+          <Molecules.SearchUsersSection title="Users" users={autocompleteUsers} onUserClick={onUserClick} />
+        )}
+      </>
+    );
+  };
+
+  const renderRecentContent = () => {
+    if (hasInput) return null;
+
+    return (
+      <>
+        {hasRecentSearches && (
+          <Molecules.SearchRecentSection
+            users={displayRecentUsers}
+            tags={displayRecentTags}
+            onUserClick={onUserClick}
+            onTagClick={onTagClick}
+            onClearAll={onClearRecentSearches}
+          />
+        )}
+        {hasHotTags && <Molecules.SearchTagSection title="Hot tags" tags={hotTags} onTagClick={onTagClick} />}
+      </>
+    );
+  };
 
   return (
     <Atoms.Container
@@ -72,8 +80,9 @@ export function SearchSuggestions({
       style={Organisms.SEARCH_EXPANDED_STYLE}
       overrideDefaults
     >
-      <Atoms.Container className="flex flex-col gap-6 p-6" overrideDefaults>
-        {hasInput ? renderAutocompleteContent() : renderRecentContent()}
+      <Atoms.Container className="flex flex-col space-y-6 p-6" overrideDefaults>
+        {renderAutocompleteContent()}
+        {renderRecentContent()}
       </Atoms.Container>
     </Atoms.Container>
   );

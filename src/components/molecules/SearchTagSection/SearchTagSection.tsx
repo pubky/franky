@@ -12,7 +12,7 @@ export function SearchTagSection({ title, tags, onTagClick }: SearchTagSectionPr
   if (tags.length === 0) return null;
 
   return (
-    <Atoms.Container overrideDefaults className="gap-2">
+    <Atoms.Container overrideDefaults className="flex flex-col gap-2">
       <Atoms.Typography size="xs" className="tracking-widest text-muted-foreground uppercase">
         {title}
       </Atoms.Typography>

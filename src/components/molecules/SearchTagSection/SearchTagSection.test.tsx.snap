@@ -4,7 +4,7 @@ exports[`SearchTagSection > SearchTagSection - Snapshots > matches snapshot when
 
 exports[`SearchTagSection > SearchTagSection - Snapshots > matches snapshot with tags 1`] = `
 <div
-  class="gap-2"
+  class="flex flex-col gap-2"
   data-override-defaults="true"
   data-testid="container"
 >
