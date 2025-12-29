@@ -1,0 +1,24 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostHeaderUserInfoPopoverContent - Snapshots > matches snapshot 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-3"
+  data-testid="container"
+>
+  <div
+    data-testid="header"
+  />
+  <p
+    class="text-base leading-6 font-medium whitespace-pre-wrap text-secondary-foreground"
+    data-testid="typography"
+  >
+    Bio
+  </p>
+  <div
+    data-testid="stats"
+  />
+  <div
+    data-testid="follow-button"
+  />
+</div>
+`;

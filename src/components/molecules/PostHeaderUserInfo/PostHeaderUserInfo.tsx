@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import * as Config from '@/config';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
@@ -14,17 +13,14 @@ export function PostHeaderUserInfo({
   characterLimit,
   showPopover = true,
 }: PostHeaderUserInfoProps) {
-  const formattedPublicKey = useMemo(
-    () => Libs.formatPublicKey({ key: userId, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH }),
-    [userId],
-  );
+  const formattedPublicKey = Libs.formatPublicKey({ key: userId, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
 
   const content = (
-    <Atoms.Container overrideDefaults className="flex min-w-0 gap-3">
+    <Atoms.Container overrideDefaults className="flex min-w-0 items-center gap-3">
       <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
         <Atoms.Typography
-          className="inline-block cursor-pointer truncate leading-none font-bold text-foreground hover:underline"
+          className="inline-block cursor-pointer truncate text-base leading-6 font-bold text-foreground hover:underline"
           overrideDefaults
         >
           {userName}

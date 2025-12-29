@@ -7,60 +7,26 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
   data-testid="container"
 >
   <div
-    aria-controls="radix-_r_0_"
-    aria-expanded="false"
-    aria-haspopup="dialog"
-    class="flex min-w-0 gap-3"
-    data-as-child="true"
-    data-slot="popover-trigger"
-    data-state="closed"
-    data-testid="popover-trigger"
-    type="button"
+    data-testid="post-header-user-info"
   >
     <div
-      class="flex min-w-0 gap-3"
-      data-testid="container"
-    >
-      <span
-        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
-      />
-      <div
-        class="min-w-0 flex-1"
-        data-testid="container"
-      >
-        <p
-          class="inline-block truncate text-base leading-none font-bold text-foreground hover:underline hover:decoration-white"
-          data-testid="typography"
-        >
-          Snapshot User
-        </p>
-        <div
-          class="flex min-w-0 items-center gap-2"
-          data-testid="container"
-        >
-          <p
-            class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
-            data-testid="typography"
-          >
-            @
-            snapshot
-          </p>
-        </div>
-      </div>
+      data-testid="avatar"
+    />
+    <div>
+      Snapshot User
+    </div>
+    <div>
+      @
+      snapshot
     </div>
   </div>
   <div
-    class="flex flex-shrink-0 items-center gap-1"
-    data-testid="container"
+    data-testid="post-header-timestamp"
   >
     <svg
-      class="size-4 text-muted-foreground"
       data-testid="clock-icon"
     />
-    <span
-      class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-      data-testid="typography"
-    >
+    <span>
       2h
     </span>
   </div>

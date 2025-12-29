@@ -4,7 +4,6 @@ import { PostHeader } from './PostHeader';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
-import * as Molecules from '@/molecules';
 
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
@@ -179,15 +178,9 @@ describe('PostHeader', () => {
 });
 
 describe('PostHeader - Snapshots', () => {
-  // Use real PostHeaderUserInfo and PostHeaderTimestamp for snapshot tests
-  // Real atoms (including Avatar) are already available via importOriginal
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    const actualMolecules = await vi.importActual<typeof import('@/molecules')>('@/molecules');
-    // Replace the mock implementations with real ones for snapshots
-    vi.mocked(Molecules.PostHeaderUserInfo).mockImplementation(actualMolecules.PostHeaderUserInfo);
-    vi.mocked(Molecules.PostHeaderTimestamp).mockImplementation(actualMolecules.PostHeaderTimestamp);
-  }, 30000); // Increase timeout to 30 seconds
+  });
 
   it('matches snapshot in loaded state', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');

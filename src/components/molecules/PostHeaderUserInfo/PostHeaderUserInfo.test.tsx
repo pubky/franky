@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostHeaderUserInfo } from './PostHeaderUserInfo';
 import * as Libs from '@/libs';
@@ -146,7 +146,7 @@ vi.mock('@/molecules', async (importOriginal) => {
         <div data-testid="popover-trigger" data-as-child="true">
           {children}
         </div>
-        <div data-testid="popover-content" data-side="top" data-side-offset="8">
+        <div data-testid="popover-content" data-side="top" data-side-offset="1">
           <div data-testid="popover-inner-content">
             <div data-testid="avatar" />
             <div>{userName}</div>
@@ -266,118 +266,9 @@ describe('PostHeaderUserInfo', () => {
     const content = screen.getByTestId('popover-content');
     expect(content).toBeInTheDocument();
     expect(content).toHaveAttribute('data-side', 'top');
-    expect(content).toHaveAttribute('data-side-offset', '8');
+    expect(content).toHaveAttribute('data-side-offset', '1');
   });
-
-  it('displays bio when available', () => {
-    mockUseUserProfile.mockReturnValue({
-      profile: {
-        name: 'Test User',
-        bio: 'This is a test bio',
-        avatarUrl: undefined,
-        publicKey: 'pk:user123',
-      },
-      isLoading: false,
-    });
-
-    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
-
-    expect(screen.getByText('This is a test bio')).toBeInTheDocument();
-  });
-
-  it('does not display bio when not available', () => {
-    mockUseUserProfile.mockReturnValue({
-      profile: {
-        name: 'Test User',
-        bio: '',
-        avatarUrl: undefined,
-        publicKey: 'pk:user123',
-      },
-      isLoading: false,
-    });
-
-    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
-
-    const typographies = screen.getAllByTestId('typography');
-    const bioTypography = typographies.find((el) => el.textContent && el.textContent.length > 20);
-    expect(bioTypography).toBeUndefined();
-  });
-
-  it('shows Follow button when not current user', () => {
-    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'currentUser123' });
-    mockUseIsFollowing.mockReturnValue({
-      isFollowing: false,
-      isLoading: false,
-    });
-
-    render(<PostHeaderUserInfo userId="otherUser123" userName="Other User" />);
-
-    const followButton = screen.getByTestId('button');
-    expect(followButton).toBeInTheDocument();
-    expect(followButton).toHaveAttribute('aria-label', 'Follow');
-  });
-
-  it('does not show Follow button when viewing own profile', () => {
-    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'user123' });
-
-    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
-
-    const buttons = screen.queryAllByTestId('button');
-    expect(buttons.length).toBe(0);
-  });
-
-  it('shows Following state when already following', () => {
-    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'currentUser123' });
-    mockUseIsFollowing.mockReturnValue({
-      isFollowing: true,
-      isLoading: false,
-    });
-
-    render(<PostHeaderUserInfo userId="otherUser123" userName="Other User" />);
-
-    const followButton = screen.getByTestId('button');
-    expect(followButton).toHaveAttribute('aria-label', 'Unfollow');
-  });
-
-  it('calls toggleFollow when Follow button is clicked', async () => {
-    const mockToggleFollow = vi.fn().mockResolvedValue(undefined);
-    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'currentUser123' });
-    mockUseIsFollowing.mockReturnValue({
-      isFollowing: false,
-      isLoading: false,
-    });
-    mockUseFollowUser.mockReturnValue({
-      toggleFollow: mockToggleFollow,
-      isUserLoading: vi.fn(() => false),
-    });
-
-    render(<PostHeaderUserInfo userId="otherUser123" userName="Other User" />);
-
-    const followButton = screen.getByTestId('button');
-    fireEvent.click(followButton);
-
-    await waitFor(() => {
-      expect(mockToggleFollow).toHaveBeenCalledWith('otherUser123', false);
-    });
-  });
-
-  it('disables Follow button when loading', () => {
-    const mockIsUserLoading = vi.fn(() => true);
-    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'currentUser123' });
-    mockUseIsFollowing.mockReturnValue({
-      isFollowing: false,
-      isLoading: true,
-    });
-    mockUseFollowUser.mockReturnValue({
-      toggleFollow: vi.fn(),
-      isUserLoading: mockIsUserLoading,
-    });
-
-    render(<PostHeaderUserInfo userId="otherUser123" userName="Other User" />);
-
-    const followButton = screen.getByTestId('button');
-    expect(followButton).toBeDisabled();
-  });
+  // Popover content details (bio/follow actions) are covered by PostHeaderUserInfoPopoverWrapper + hooks tests.
 
   it('renders without popover when showPopover is false', () => {
     render(<PostHeaderUserInfo userId="user123" userName="Test User" showPopover={false} />);

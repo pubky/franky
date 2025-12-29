@@ -9,4 +9,4 @@ export const MAX_AVATARS = 3;
 export const POPOVER_ALIGN_OFFSET = -24;
 
 /** Vertical offset for popover positioning from trigger */
-export const POPOVER_SIDE_OFFSET = 12;
+export const POPOVER_SIDE_OFFSET = 1;
