@@ -17,6 +17,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
   const [open, setOpen] = useState(false);
   const [api, setApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const { toast } = Molecules.useToast();
 
@@ -38,6 +39,25 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
     api.on('select', () => {
       setCurrentIndex(api.selectedScrollSnap());
     });
+  }, [api]);
+
+  // Disable carousel swipe when in fullscreen mode
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isFullscreen = document.fullscreenElement !== null;
+
+      setIsFullscreen(isFullscreen);
+
+      if (api) {
+        api.reInit({ watchDrag: !isFullscreen });
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
   }, [api]);
 
   const isOnlyMedia = imagesAndVideos.length === 1;
@@ -103,6 +123,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
           opts={{
             startIndex: currentIndex,
             loop: true,
+            watchDrag: !isFullscreen,
           }}
           setApi={setApi}
           className="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
