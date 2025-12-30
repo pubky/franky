@@ -33,6 +33,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
       data-slot="dialog-overlay"
       onClick={(e) => {
         e.stopPropagation();
+        document.getElementById('dialog-close-btn')?.click();
       }}
       className={Libs.cn(
         'fixed inset-0 z-40 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
@@ -75,12 +76,16 @@ function DialogContent({
         >
           {hiddenTitle && <DialogPrimitive.Title className="sr-only">{hiddenTitle}</DialogPrimitive.Title>}
           {children}
-          {showCloseButton && (
-            <DialogClose className="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
-              <Libs.X className="h-4 w-4 text-secondary-foreground opacity-70" />
-              <span className="sr-only">Close</span>
-            </DialogClose>
-          )}
+          <DialogClose
+            className={Libs.cn(
+              showCloseButton
+                ? 'absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50'
+                : 'hidden',
+            )}
+          >
+            <Libs.X className="h-4 w-4 text-secondary-foreground opacity-70" />
+            <span className="sr-only">Close</span>
+          </DialogClose>
         </DialogPrimitive.Content>
       </div>
     </DialogPortal>
