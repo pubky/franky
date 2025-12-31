@@ -1,13 +1,15 @@
+import type React from 'react';
+
 export interface PostActionsBarProps {
   postId: string;
   onTagClick?: () => void;
   onReplyClick?: () => void;
   onRepostClick?: () => void;
-  onMoreClick?: () => void;
   className?: string;
 }
 
 export interface ActionButtonConfig {
+  id: string;
   icon: React.ComponentType<{ className?: string; strokeWidth?: number; fill?: string }>;
   count?: number;
   onClick?: () => void;

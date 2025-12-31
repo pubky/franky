@@ -1,0 +1,518 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { usePostMenuActions } from './usePostMenuActions';
+import * as Libs from '@/libs';
+import { POST_MENU_ACTION_IDS } from './usePostMenuActions.constants';
+
+// Hoist mocks
+const {
+  mockIsAppError,
+  mockParseCompositeId,
+  mockUseCurrentUserProfile,
+  mockUsePostDetails,
+  mockUseUserProfile,
+  mockUseIsFollowing,
+  mockUseFollowUser,
+  mockUseDeletePost,
+  mockUseCopyToClipboard,
+  mockToast,
+} = vi.hoisted(() => ({
+  mockIsAppError: vi.fn(),
+  mockParseCompositeId: vi.fn(),
+  mockUseCurrentUserProfile: vi.fn(),
+  mockUsePostDetails: vi.fn(),
+  mockUseUserProfile: vi.fn(),
+  mockUseIsFollowing: vi.fn(),
+  mockUseFollowUser: vi.fn(),
+  mockUseDeletePost: vi.fn(),
+  mockUseCopyToClipboard: vi.fn(),
+  mockToast: vi.fn(),
+}));
+
+// Mock Core
+vi.mock('@/core', () => ({
+  parseCompositeId: (id: string) => mockParseCompositeId(id),
+}));
+
+// Mock Hooks
+vi.mock('@/hooks', () => ({
+  useCurrentUserProfile: (props: unknown) => mockUseCurrentUserProfile(props),
+  usePostDetails: (postId: string) => mockUsePostDetails(postId),
+  useUserProfile: (userId: string) => mockUseUserProfile(userId),
+  useIsFollowing: (userId: string) => mockUseIsFollowing(userId),
+  useFollowUser: () => mockUseFollowUser(),
+  useDeletePost: (postId: string) => mockUseDeletePost(postId),
+  useCopyToClipboard: (options: unknown) => mockUseCopyToClipboard(options),
+}));
+
+// Mock Molecules
+vi.mock('@/molecules', () => ({
+  toast: (props: unknown) => mockToast(props),
+}));
+
+// Mock Libs
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    UserRoundPlus: vi.fn(() => <span>UserRoundPlus</span>),
+    UserRoundMinus: vi.fn(() => <span>UserRoundMinus</span>),
+    Key: vi.fn(() => <span>Key</span>),
+    Link: vi.fn(() => <span>Link</span>),
+    FileText: vi.fn(() => <span>FileText</span>),
+    MegaphoneOff: vi.fn(() => <span>MegaphoneOff</span>),
+    Flag: vi.fn(() => <span>Flag</span>),
+    Trash: vi.fn(() => <span>Trash</span>),
+    isAppError: mockIsAppError,
+  };
+});
+
+// Mock window.location
+Object.defineProperty(window, 'location', {
+  value: {
+    origin: 'https://example.com',
+  },
+  writable: true,
+});
+
+describe('usePostMenuActions', () => {
+  const mockPostId = 'pk:author123:post456';
+  const mockAuthorId = 'author123';
+  const mockCurrentUserId = 'currentUser123';
+
+  const defaultMocks = {
+    currentUserPubky: mockCurrentUserId,
+    postDetails: { id: 'post456', content: 'Test post', kind: 'short' },
+    authorProfile: { name: 'Test Author' },
+    isFollowing: false,
+    toggleFollow: vi.fn().mockResolvedValue(undefined),
+    isFollowLoading: false,
+    isUserLoading: vi.fn().mockReturnValue(false),
+    deletePost: vi.fn(),
+    isDeleting: false,
+    copyToClipboard: vi.fn().mockResolvedValue(true),
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsAppError.mockReturnValue(false);
+
+    mockParseCompositeId.mockReturnValue({
+      pubky: mockAuthorId,
+      id: 'post456',
+    });
+
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: defaultMocks.currentUserPubky,
+    });
+
+    mockUsePostDetails.mockReturnValue({
+      postDetails: defaultMocks.postDetails,
+      isLoading: false,
+    });
+
+    mockUseUserProfile.mockReturnValue({
+      profile: defaultMocks.authorProfile,
+      isLoading: false,
+    });
+
+    mockUseIsFollowing.mockReturnValue({
+      isFollowing: defaultMocks.isFollowing,
+      isLoading: false,
+    });
+
+    mockUseFollowUser.mockReturnValue({
+      toggleFollow: defaultMocks.toggleFollow,
+      isLoading: defaultMocks.isFollowLoading,
+      isUserLoading: defaultMocks.isUserLoading,
+    });
+
+    mockUseDeletePost.mockReturnValue({
+      deletePost: defaultMocks.deletePost,
+      isDeleting: defaultMocks.isDeleting,
+    });
+
+    mockUseCopyToClipboard.mockReturnValue({
+      copyToClipboard: defaultMocks.copyToClipboard,
+    });
+  });
+
+  describe('Menu items for other user posts', () => {
+    it('returns follow action when not following', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem).toBeDefined();
+      expect(followItem?.label).toBe('Follow Test Author');
+      expect(followItem?.disabled).toBe(false);
+    });
+
+    it('returns unfollow action when following', () => {
+      mockUseIsFollowing.mockReturnValue({
+        isFollowing: true,
+        isLoading: false,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem).toBeDefined();
+      expect(followItem?.label).toBe('Unfollow Test Author');
+    });
+
+    it('disables follow action when loading', () => {
+      mockUseFollowUser.mockReturnValue({
+        toggleFollow: defaultMocks.toggleFollow,
+        isLoading: true,
+        isUserLoading: defaultMocks.isUserLoading,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem?.disabled).toBe(true);
+    });
+
+    it('calls toggleFollow on follow action click', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem).toBeDefined();
+
+      await act(async () => {
+        await followItem?.onClick();
+      });
+
+      expect(defaultMocks.toggleFollow).toHaveBeenCalledWith(mockAuthorId, false);
+    });
+
+    it('shows error toast when follow fails with AppError', async () => {
+      const error = { type: 'AppError', message: 'Follow failed' } as Error;
+      vi.mocked(Libs.isAppError).mockReturnValue(true);
+      defaultMocks.toggleFollow.mockRejectedValue(error);
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+
+      await act(async () => {
+        await followItem?.onClick();
+      });
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Error',
+          description: 'Follow failed',
+        });
+      });
+    });
+
+    it('shows generic error toast when follow fails with non-AppError', async () => {
+      const error = new Error('Follow failed');
+      vi.mocked(Libs.isAppError).mockReturnValue(false);
+      defaultMocks.toggleFollow.mockRejectedValue(error);
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+
+      await act(async () => {
+        await followItem?.onClick();
+      });
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Error',
+          description: 'Failed to update follow status',
+        });
+      });
+    });
+
+    it('includes mute action (disabled)', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const muteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.MUTE);
+      expect(muteItem).toBeDefined();
+      expect(muteItem?.disabled).toBe(true);
+      expect(muteItem?.label).toBe('Mute Test Author');
+    });
+
+    it('includes report action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
+      expect(reportItem).toBeDefined();
+      expect(reportItem?.label).toBe('Report post');
+    });
+
+    it('shows toast when report is clicked', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
+
+      await act(async () => {
+        await reportItem?.onClick();
+      });
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Report',
+        description: 'Report functionality coming soon',
+      });
+    });
+
+    it('does not include delete action for other user posts', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const deleteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.DELETE);
+      expect(deleteItem).toBeUndefined();
+    });
+  });
+
+  describe('Menu items for own posts', () => {
+    beforeEach(() => {
+      mockUseCurrentUserProfile.mockReturnValue({
+        currentUserPubky: mockAuthorId,
+      });
+    });
+
+    it('does not include follow action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem).toBeUndefined();
+    });
+
+    it('does not include mute action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const muteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.MUTE);
+      expect(muteItem).toBeUndefined();
+    });
+
+    it('does not include report action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
+      expect(reportItem).toBeUndefined();
+    });
+
+    it('includes delete action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const deleteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.DELETE);
+      expect(deleteItem).toBeDefined();
+      expect(deleteItem?.label).toBe('Delete post');
+      expect(deleteItem?.variant).toBe('destructive');
+      expect(deleteItem?.disabled).toBe(false);
+    });
+
+    it('disables delete action when deleting', () => {
+      mockUseDeletePost.mockReturnValue({
+        deletePost: defaultMocks.deletePost,
+        isDeleting: true,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const deleteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.DELETE);
+      expect(deleteItem?.disabled).toBe(true);
+    });
+
+    it('calls deletePost on delete action click', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const deleteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.DELETE);
+
+      await act(async () => {
+        await deleteItem?.onClick();
+      });
+
+      expect(defaultMocks.deletePost).toHaveBeenCalled();
+    });
+  });
+
+  describe('Copy actions', () => {
+    it('includes copy pubky action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyPubkyItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_PUBKY);
+      expect(copyPubkyItem).toBeDefined();
+      expect(copyPubkyItem?.label).toBe('Copy pubky');
+    });
+
+    it('calls copyToClipboard with pubky on copy pubky click', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyPubkyItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_PUBKY);
+
+      await act(async () => {
+        await copyPubkyItem?.onClick();
+      });
+
+      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith(mockAuthorId);
+    });
+
+    it('includes copy link action', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyLinkItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_LINK);
+      expect(copyLinkItem).toBeDefined();
+      expect(copyLinkItem?.label).toBe('Copy link to post');
+    });
+
+    it('calls copyToClipboard with post URL on copy link click', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyLinkItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_LINK);
+
+      await act(async () => {
+        await copyLinkItem?.onClick();
+      });
+
+      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith('https://example.com/post/author123/post456');
+    });
+
+    it('includes copy text action for short posts', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyTextItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_TEXT);
+      expect(copyTextItem).toBeDefined();
+      expect(copyTextItem?.label).toBe('Copy text of post');
+    });
+
+    it('does not include copy text action for articles', () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: { id: 'post456', content: 'Test article', kind: 'long' },
+        isLoading: false,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyTextItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_TEXT);
+      expect(copyTextItem).toBeUndefined();
+    });
+
+    it('calls copyToClipboard with post content on copy text click', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyTextItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_TEXT);
+
+      await act(async () => {
+        await copyTextItem?.onClick();
+      });
+
+      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith('Test post');
+    });
+
+    it('handles missing post content in copy text', async () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: null,
+        isLoading: false,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const copyTextItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.COPY_TEXT);
+
+      await act(async () => {
+        await copyTextItem?.onClick();
+      });
+
+      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith('');
+    });
+  });
+
+  describe('Loading state', () => {
+    it('returns isLoading true when post details are loading', () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: null,
+        isLoading: true,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('returns isLoading true when author profile is loading', () => {
+      mockUseUserProfile.mockReturnValue({
+        profile: null,
+        isLoading: true,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('returns isLoading true when following status is loading', () => {
+      mockUseIsFollowing.mockReturnValue({
+        isFollowing: false,
+        isLoading: true,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('returns isLoading false when all data is loaded', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
+  describe('Username fallback', () => {
+    it('uses author profile name when available', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem?.label).toContain('Test Author');
+    });
+
+    it('falls back to author ID when profile name is not available', () => {
+      mockUseUserProfile.mockReturnValue({
+        profile: null,
+        isLoading: false,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const followItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.FOLLOW);
+      expect(followItem?.label).toContain(mockAuthorId);
+    });
+  });
+
+  describe('Menu items order', () => {
+    it('returns menu items in correct order for other user posts', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const itemIds = result.current.menuItems.map((item) => item.id);
+      expect(itemIds).toEqual([
+        POST_MENU_ACTION_IDS.FOLLOW,
+        POST_MENU_ACTION_IDS.COPY_PUBKY,
+        POST_MENU_ACTION_IDS.COPY_LINK,
+        POST_MENU_ACTION_IDS.COPY_TEXT,
+        POST_MENU_ACTION_IDS.MUTE,
+        POST_MENU_ACTION_IDS.REPORT,
+      ]);
+    });
+
+    it('returns menu items in correct order for own posts', () => {
+      mockUseCurrentUserProfile.mockReturnValue({
+        currentUserPubky: mockAuthorId,
+      });
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId));
+
+      const itemIds = result.current.menuItems.map((item) => item.id);
+      expect(itemIds).toEqual([
+        POST_MENU_ACTION_IDS.COPY_PUBKY,
+        POST_MENU_ACTION_IDS.COPY_LINK,
+        POST_MENU_ACTION_IDS.COPY_TEXT,
+        POST_MENU_ACTION_IDS.DELETE,
+      ]);
+    });
+  });
+});
