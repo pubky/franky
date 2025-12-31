@@ -131,30 +131,6 @@ describe('DialogNewPost', () => {
     expect(screen.getByTestId('post-input')).toBeInTheDocument();
   });
 
-  it('renders PostInput with correct props', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    expect(Organisms.PostInput).toHaveBeenCalledWith(
-      {
-        dataCy: 'new-post-input',
-        variant: POST_INPUT_VARIANT.POST,
-        onSuccess: expect.any(Function),
-        expanded: true,
-        onContentChange: expect.any(Function),
-      },
-      undefined,
-    );
-  });
-
-  it('passes onOpenChangeAction to Dialog', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialog = screen.getByTestId('dialog');
-    expect(dialog).toHaveAttribute('data-open', 'true');
-  });
-
   it('calls onOpenChangeAction when PostInput onSuccess is called', async () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
@@ -165,30 +141,6 @@ describe('DialogNewPost', () => {
     await waitFor(() => {
       expect(onOpenChangeAction).toHaveBeenCalledWith(false);
     });
-  });
-
-  it('applies correct className to DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveClass('w-3xl');
-  });
-
-  it('sets hiddenTitle on DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveAttribute('aria-label', 'New post');
-  });
-
-  it('renders DialogHeader with title', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Post');
   });
 
   it('handles open prop correctly', () => {

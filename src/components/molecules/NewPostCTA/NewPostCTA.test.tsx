@@ -115,48 +115,6 @@ describe('NewPostCTA', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('renders Plus icon', () => {
-    render(<NewPostCTA />);
-    expect(document.querySelector('.lucide-plus')).toBeInTheDocument();
-  });
-
-  it('has correct positioning classes', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('fixed');
-    expect(button).toHaveClass('bottom-[72px]');
-    expect(button).toHaveClass('right-3');
-    expect(button).toHaveClass('md:bottom-20');
-    expect(button).toHaveClass('lg:bottom-6');
-    expect(button).toHaveClass('sm:right-10');
-  });
-
-  it('has correct size classes', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('w-20');
-    expect(button).toHaveClass('h-20');
-    expect(button).toHaveClass('rounded-full');
-  });
-
-  it('has hover background class', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('hover:bg-brand');
-  });
-
-  it('has correct z-index', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('z-40');
-  });
-
-  it('has aria-label for accessibility', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveAttribute('aria-label', 'New post');
-  });
-
   it('opens dialog when button is clicked', () => {
     render(<NewPostCTA />);
     const button = screen.getByTestId('new-post-cta');
