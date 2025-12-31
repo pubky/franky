@@ -44,13 +44,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
   // Disable carousel swipe when in fullscreen mode
   useEffect(() => {
     const handleFullscreenChange = () => {
-      const isFullscreen = document.fullscreenElement !== null;
-
-      setIsFullscreen(isFullscreen);
-
-      if (api) {
-        api.reInit({ watchDrag: !isFullscreen });
-      }
+      setIsFullscreen(document.fullscreenElement !== null);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -58,7 +52,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [api]);
+  }, []);
 
   const isOnlyMedia = imagesAndVideos.length === 1;
 

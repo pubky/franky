@@ -187,7 +187,6 @@ vi.mock('@/atoms', () => ({
         setApi({
           selectedScrollSnap: () => 0,
           on: vi.fn(),
-          reInit: vi.fn(),
         });
       }
     }, [setApi]);
