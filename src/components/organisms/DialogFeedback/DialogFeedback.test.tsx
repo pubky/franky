@@ -226,12 +226,7 @@ vi.mock('@/atoms', () => ({
 // Mock libs
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    Check: () => <span data-testid="check-icon">✓</span>,
-    Send: () => <span data-testid="send-icon">→</span>,
-    Loader2: () => <span data-testid="loader-icon">⟳</span>,
-  };
+  return { ...actual };
 });
 
 describe('DialogFeedback', () => {
@@ -423,6 +418,11 @@ describe('DialogFeedback - Snapshots', () => {
     });
 
     const { container } = render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for closed state', () => {
+    const { container } = render(<DialogFeedback open={false} onOpenChange={mockOnOpenChange} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

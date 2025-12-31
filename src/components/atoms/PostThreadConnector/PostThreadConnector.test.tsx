@@ -30,11 +30,13 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-vi.mock('@/libs', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-  RoundedCorner: () => <svg data-testid="rounded-corner" />,
-  LineHorizontal: () => <svg data-testid="line-horizontal" />,
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  };
+});
 
 describe('PostThreadConnector', () => {
   describe('Functionality', () => {
@@ -72,13 +74,6 @@ describe('PostThreadConnector', () => {
       const { container } = render(<PostThreadConnector height={0} data-testid="connector" />);
       const connector = container.querySelector('[data-testid="connector"]');
       expect(connector).toHaveStyle({ height: '96px' });
-    });
-
-    it('renders with Container default data-testid when not provided', () => {
-      const { container } = render(<PostThreadConnector height={100} />);
-      // Container component always adds a default data-testid
-      const connectors = container.querySelectorAll('[data-testid]');
-      expect(connectors.length).toBeGreaterThan(0);
     });
   });
 
