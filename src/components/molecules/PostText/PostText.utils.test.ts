@@ -127,7 +127,7 @@ describe('remarkHashtags', () => {
   });
 
   describe('Hashtag pattern validation', () => {
-    it('requires hashtag to start with a letter', () => {
+    it('allows hashtag to start with a letter', () => {
       const paragraph = createParagraph('#abc123 is valid');
       const tree = createRoot([paragraph]);
 
@@ -138,14 +138,15 @@ describe('remarkHashtags', () => {
       expect(links[0].url).toBe('/search?tags=abc123');
     });
 
-    it('does not match hashtags starting with a number', () => {
-      const paragraph = createParagraph('#123 is not a valid hashtag');
+    it('allows hashtags starting with a number', () => {
+      const paragraph = createParagraph('#123 is a valid hashtag');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(0);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=123');
     });
 
     it('allows underscores in hashtags', () => {
@@ -247,14 +248,15 @@ describe('remarkHashtags', () => {
       expect(links).toHaveLength(0);
     });
 
-    it('does not match hash followed by only numbers', () => {
+    it('matches hash followed by only numbers', () => {
       const paragraph = createParagraph('Issue #123 is fixed');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(0);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=123');
     });
 
     it('handles multiple hashes in sequence', () => {
@@ -326,15 +328,16 @@ describe('remarkHashtags', () => {
     });
 
     it('handles mixed valid and invalid hashtag patterns', () => {
-      const paragraph = createParagraph('#valid #123invalid no#match #also_valid');
+      const paragraph = createParagraph('#valid #123numeric no#match #also_valid');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(2);
+      expect(links).toHaveLength(3);
       expect(links[0].url).toBe('/search?tags=valid');
-      expect(links[1].url).toBe('/search?tags=also_valid');
+      expect(links[1].url).toBe('/search?tags=123numeric');
+      expect(links[2].url).toBe('/search?tags=also_valid');
     });
 
     it('handles newlines as whitespace', () => {

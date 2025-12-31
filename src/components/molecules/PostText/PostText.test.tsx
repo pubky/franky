@@ -347,10 +347,11 @@ describe('PostText', () => {
       expect(hashtag).toHaveTextContent('#web3');
     });
 
-    it('does not parse hashtag starting with number', () => {
-      render(<PostText content="This is #123invalid" />);
+    it('parses hashtag starting with number', () => {
+      render(<PostText content="This is #123numeric" />);
 
-      expect(screen.queryByTestId('post-hashtag')).not.toBeInTheDocument();
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#123numeric');
     });
 
     it('renders hashtags mixed with markdown formatting', () => {
