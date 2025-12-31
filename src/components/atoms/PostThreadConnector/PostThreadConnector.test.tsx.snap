@@ -39,7 +39,7 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`
   style="height: 300px;"
 >
   <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start min-w-3"
+    class="relative flex min-h-px w-full shrink-0 grow basis-0 flex-col items-start min-w-3"
     data-override-defaults="true"
   >
     <div
@@ -121,7 +121,7 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant
   style="height: 100px;"
 >
   <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start min-w-3"
+    class="relative flex min-h-px w-full shrink-0 grow basis-0 flex-col items-start min-w-3"
     data-override-defaults="true"
   >
     <div
@@ -162,7 +162,7 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with small height 1`
   style="height: 50px;"
 >
   <div
-    class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start min-w-3"
+    class="relative flex min-h-px w-full shrink-0 grow basis-0 flex-col items-start min-w-3"
     data-override-defaults="true"
   >
     <div

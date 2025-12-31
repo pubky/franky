@@ -2,7 +2,7 @@
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn 1`] = `
 <button
-  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+  class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
   data-slot="button"
   data-variant="secondary"
   id="header-sign-in-btn"
@@ -40,11 +40,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex-col flex container flex flex-row flex-wrap items-center justify-between gap-4 sm:gap-6 px-4 py-4 sm:px-6 sm:py-6"
+    class="mx-auto w-full container flex flex-row flex-wrap items-center justify-between gap-4 sm:gap-6 px-4 py-4 sm:px-6 sm:py-6"
     data-testid="container"
   >
     <nav
-      class="mx-auto w-full flex-col flex flex w-full flex-row flex-wrap items-center gap-4 sm:flex-nowrap sm:items-center sm:gap-6"
+      class="mx-auto flex w-full flex-row flex-wrap items-center gap-4 sm:flex-nowrap sm:items-center sm:gap-6"
       data-testid="container"
     >
       <div>
@@ -57,15 +57,15 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
 <div
-  class="mx-auto w-full flex-col flex flex-1 flex-row items-center justify-end"
+  class="mx-auto w-full flex flex-1 flex-row items-center justify-end"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex-col flex mr-6 hidden flex-row justify-end gap-6 md:flex"
+    class="mx-auto w-full mr-6 hidden flex-row justify-end gap-6 md:flex"
     data-testid="header-social-links"
   >
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+      class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
       href="https://github.com"
       rel="noopener noreferrer"
       target="_blank"
@@ -88,7 +88,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
       </svg>
     </a>
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+      class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
       href="https://twitter.com/getpubky"
       rel="noopener noreferrer"
       target="_blank"
@@ -124,7 +124,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
       </svg>
     </a>
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+      class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
       href="https://t.me/getpubky"
       rel="noopener noreferrer"
       target="_blank"
@@ -145,7 +145,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
     </a>
   </div>
   <button
-    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
     data-slot="button"
     data-variant="secondary"
     id="header-sign-in-btn"
@@ -180,16 +180,16 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationButtons 1`] = `
 <div
-  class="mx-auto w-full flex-col flex hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
+  class="mx-auto hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
   data-testid="container"
 >
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/home"
   >
     <button
       aria-label="/home"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -217,12 +217,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/hot"
   >
     <button
       aria-label="/hot"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -247,12 +247,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/bookmarks"
   >
     <button
       aria-label="/bookmarks"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -277,12 +277,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/settings"
   >
     <button
       aria-label="/settings"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -312,12 +312,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm relative"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm relative"
     data-cy="header-nav-profile-btn"
     href="/profile"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 h-12 w-12 cursor-pointer"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12 cursor-pointer"
     >
       <span
         class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -331,16 +331,16 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationButtons with counter 1`] = `
 <div
-  class="mx-auto w-full flex-col flex hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
+  class="mx-auto hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
   data-testid="container"
 >
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/home"
   >
     <button
       aria-label="/home"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -368,12 +368,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/hot"
   >
     <button
       aria-label="/hot"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -398,12 +398,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/bookmarks"
   >
     <button
       aria-label="/bookmarks"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -428,12 +428,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
     href="/settings"
   >
     <button
       aria-label="/settings"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -463,12 +463,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm relative"
+    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm relative"
     data-cy="header-nav-profile-btn"
     href="/profile"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 h-12 w-12 cursor-pointer"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12 cursor-pointer"
     >
       <span
         class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -477,12 +477,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
       </span>
     </span>
     <div
-      class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
+      class="inline-flex items-center justify-center border px-2 py-0.5 text-xs font-medium whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
       data-slot="badge"
       data-variant="secondary"
     >
       <p
-        class="text-sm font-semibold text-foreground text-primary-foreground"
+        class="text-sm font-semibold text-primary-foreground"
         data-testid="typography"
       >
         5
@@ -504,7 +504,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderOnboarding 1
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] = `
 <div
-  class="mx-auto w-full flex-col flex flex-1 flex-row items-center justify-end gap-3"
+  class="mx-auto w-full flex flex-1 flex-row items-center justify-end gap-3"
   data-testid="container"
 >
   <div
@@ -516,7 +516,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       data-testid="container"
     >
       <input
-        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 h-full flex-1 border-none py-0 pr-10 pl-6 font-medium text-foreground"
+        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex w-full min-w-0 rounded-md border bg-transparent px-3 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 h-full flex-1 border-none py-0 pr-10 pl-6 font-medium text-foreground"
         data-testid="input"
         placeholder="Search"
         type="text"
@@ -547,16 +547,16 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     </div>
   </div>
   <div
-    class="mx-auto w-full flex-col flex hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
+    class="mx-auto hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
     data-testid="container"
   >
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
       href="/home"
     >
       <button
         aria-label="/home"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -584,12 +584,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
       href="/hot"
     >
       <button
         aria-label="/hot"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -614,12 +614,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
       href="/bookmarks"
     >
       <button
         aria-label="/bookmarks"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -644,12 +644,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
       href="/settings"
     >
       <button
         aria-label="/settings"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -679,12 +679,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm relative"
+      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm relative"
       data-cy="header-nav-profile-btn"
       href="/profile"
     >
       <span
-        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 h-12 w-12 cursor-pointer"
+        class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12 cursor-pointer"
       >
         <span
           class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -699,11 +699,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 1`] = `
 <div
-  class="mx-auto w-full flex-col flex mr-6 hidden flex-row justify-end gap-6 md:flex"
+  class="mx-auto w-full mr-6 hidden flex-row justify-end gap-6 md:flex"
   data-testid="header-social-links"
 >
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+    class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
     href="https://github.com"
     rel="noopener noreferrer"
     target="_blank"
@@ -726,7 +726,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
     </svg>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+    class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
     href="https://twitter.com/getpubky"
     rel="noopener noreferrer"
     target="_blank"
@@ -762,7 +762,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
     </svg>
   </a>
   <a
-    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+    class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
     href="https://t.me/getpubky"
     rel="noopener noreferrer"
     target="_blank"
@@ -786,11 +786,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderTitle 1`] = `
 <div
-  class="mx-auto w-full flex-col flex hidden flex-1 md:flex"
+  class="mx-auto w-full flex-col hidden flex-1 md:flex"
   data-testid="container"
 >
   <h2
-    class="text-2xl font-bold text-foreground font-normal text-muted-foreground"
+    class="text-2xl font-normal text-muted-foreground"
     data-testid="heading-2"
   >
     Test Title

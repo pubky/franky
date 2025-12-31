@@ -2,13 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
-// Mock @/libs
+// Mock @/libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './Sheet';

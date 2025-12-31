@@ -20,13 +20,10 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Use real libs, only stub cn for deterministic classes if used by atoms callers
+// Use real libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 // Stub child dialogs so we can trigger onRestore

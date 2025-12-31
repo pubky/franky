@@ -30,12 +30,10 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
+// Mock @/libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 describe('PostThreadConnector', () => {

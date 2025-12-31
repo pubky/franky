@@ -85,10 +85,11 @@ vi.mock('@/atoms', () => ({
   Spinner: ({ size }: { size: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual implementations
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock core
 vi.mock('@/core', () => ({

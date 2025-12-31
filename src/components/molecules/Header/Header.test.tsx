@@ -115,10 +115,7 @@ vi.mock('@/molecules', async (importOriginal) => {
 // Mock the libs - keep real implementations and only stub helpers we need
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 // Mock the config

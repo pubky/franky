@@ -27,12 +27,13 @@ vi.mock('@/core', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  Logger: {
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    Logger: { error: vi.fn() },
+  };
+});
 
 // Mock icons
 vi.mock('@/libs/icons', () => ({

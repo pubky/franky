@@ -2,13 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
-// Mock @/libs - use actual implementations and only stub cn helper
+// Mock @/libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 // Import the actual Dialog components after mocking

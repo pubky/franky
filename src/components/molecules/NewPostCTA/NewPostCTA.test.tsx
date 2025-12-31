@@ -67,13 +67,10 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Use real libs, only stub cn to a deterministic join
+// Use real libs
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 describe('NewPostCTA', () => {

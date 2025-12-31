@@ -19,13 +19,10 @@ vi.mock('@/atoms', () => ({
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
 }));
 
-// Mock the libs - keep real icons via importOriginal and only stub cn helper
+// Mock the libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+  return { ...actual };
 });
 
 // Mock the app routes
