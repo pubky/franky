@@ -160,6 +160,49 @@ describe('remarkHashtags', () => {
       expect(links[0].url).toBe('/search?tags=hello_world');
     });
 
+    it('allows multiple underscores separating words', () => {
+      const paragraph = createParagraph('#one_two_three is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=one_two_three');
+    });
+
+    it('does not match hashtags starting with underscore', () => {
+      const paragraph = createParagraph('#_invalid is not a hashtag');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('stops at trailing underscore', () => {
+      const paragraph = createParagraph('#hello_ world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at double underscore', () => {
+      const paragraph = createParagraph('#hello__world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
     it('allows numbers after the first letter', () => {
       const paragraph = createParagraph('#test123abc is valid');
       const tree = createRoot([paragraph]);
