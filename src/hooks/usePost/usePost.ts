@@ -69,7 +69,8 @@ export function usePost() {
 
   const reply = useCallback(
     async ({ postId, onSuccess }: UsePostReplyOptions) => {
-      if (!content.trim() || !postId || !currentUserId) return;
+      // allow empty content and attachments
+      if ((!content.trim() && attachments.length === 0) || !postId || !currentUserId) return;
 
       setIsSubmitting(true);
 
@@ -98,7 +99,8 @@ export function usePost() {
 
   const post = useCallback(
     async ({ onSuccess }: UsePostPostOptions) => {
-      if (!content.trim() || !currentUserId) return;
+      // allow empty content and attachments
+      if ((!content.trim() && attachments.length === 0) || !currentUserId) return;
 
       setIsSubmitting(true);
 

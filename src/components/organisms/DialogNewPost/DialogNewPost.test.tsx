@@ -1,8 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DialogNewPost } from './DialogNewPost';
-import * as Organisms from '@/organisms';
-import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
