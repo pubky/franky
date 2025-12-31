@@ -237,27 +237,13 @@ describe('usePostMenuActions', () => {
       expect(muteItem?.label).toBe('Mute Test Author');
     });
 
-    it('includes report action', () => {
+    it('includes report action (disabled)', () => {
       const { result } = renderHook(() => usePostMenuActions(mockPostId));
 
       const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
       expect(reportItem).toBeDefined();
       expect(reportItem?.label).toBe('Report post');
-    });
-
-    it('shows toast when report is clicked', async () => {
-      const { result } = renderHook(() => usePostMenuActions(mockPostId));
-
-      const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
-
-      await act(async () => {
-        await reportItem?.onClick();
-      });
-
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Report',
-        description: 'Report functionality coming soon',
-      });
+      expect(reportItem?.disabled).toBe(true);
     });
 
     it('does not include delete action for other user posts', () => {

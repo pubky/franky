@@ -107,13 +107,9 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
       id: POST_MENU_ACTION_IDS.REPORT,
       label: 'Report post',
       icon: Libs.Flag,
-      onClick: () => {
-        Molecules.toast({
-          title: 'Report',
-          description: 'Report functionality coming soon',
-        });
-      },
+      onClick: () => {},
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+      disabled: true,
     });
   }
 
