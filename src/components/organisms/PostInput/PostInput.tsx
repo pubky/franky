@@ -90,6 +90,7 @@ export function PostInput({
             postId={currentUserPubky}
             isReplyInput={true}
             characterLimit={{ count: content.length, max: POST_MAX_CHARACTER_LENGTH }}
+            showPopover={false}
           />
         )}
 
