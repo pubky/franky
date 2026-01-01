@@ -67,9 +67,10 @@ type CancelableAuthApproval = {
 // Pubky rc7: awaitApproval consumes the WASM handle, so we use tryPollOnce to keep flow.free() usable.
 const createCancelableAuthApproval = (
   flow: AuthFlow,
-  options?: { pollIntervalMs?: number },
+  options?: { pollIntervalMs?: number; maxPollAttempts?: number },
 ): CancelableAuthApproval => {
   const pollIntervalMs = options?.pollIntervalMs ?? 2_000;
+  const maxPollAttempts = options?.maxPollAttempts ?? 150;
 
   let canceled = false;
   let freed = false;
@@ -88,8 +89,13 @@ const createCancelableAuthApproval = (
   const awaitApproval = (async () => {
     await Libs.sleep(0);
 
+    let attempts = 0;
     for (;;) {
       if (canceled) throw createCanceledError();
+
+      if (++attempts > maxPollAttempts) {
+        throw new Error('Auth flow timed out after maximum attempts');
+      }
 
       try {
         const maybeSession = await flow.tryPollOnce();
@@ -205,7 +211,8 @@ export class HomeserverService {
 
     if (url.startsWith('/')) return { session, path };
 
-    const sessionPubky = session.info.publicKey.z32();
+    const sessionPubky = session.info?.publicKey?.z32?.();
+    if (!sessionPubky) return null;
     const urlPubky = this.extractPubkyZ32(url);
     if (!urlPubky || urlPubky !== sessionPubky) return null;
 

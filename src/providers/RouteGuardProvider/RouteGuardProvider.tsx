@@ -41,7 +41,9 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
     if (!hasHydrated) return;
     if (session) return;
     if (!sessionExport) return;
-    void Core.AuthController.restoreSessionIfAvailable();
+    Core.AuthController.restoreSessionIfAvailable().catch((error) => {
+      Libs.Logger.error('Failed to restore session:', error);
+    });
   }, [hasHydrated, session, sessionExport]);
 
   // Determine if the current route is accessible based on authentication status

@@ -167,7 +167,7 @@ export class AuthController {
       cancelAuthFlow();
       return {
         authorizationUrl,
-        awaitApproval: awaitApproval.finally(() => cancelAuthFlow()),
+        awaitApproval,
         cancelAuthFlow,
       };
     }
@@ -193,17 +193,20 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
 
-    if (authStore.session) {
-      await Core.AuthApplication.logout({ session: authStore.session });
+    try {
+      if (authStore.session) {
+        await Core.AuthApplication.logout({ session: authStore.session });
+      }
+    } finally {
+      // Always clear local state, even if homeserver logout fails
+      authStore.setSession(null);
+      onboardingStore.reset();
+      authStore.reset();
+      Core.HomeserverService.setSession(null);
+      this.cancelActiveAuthFlow();
+      Libs.clearCookies();
+      await Core.clearDatabase();
     }
-    // Always clear local state, even if homeserver logout fails
-    authStore.setSession(null);
-    onboardingStore.reset();
-    authStore.reset();
-    Core.HomeserverService.setSession(null);
-    this.cancelActiveAuthFlow();
-    Libs.clearCookies();
-    await Core.clearDatabase();
   }
 
   /**
