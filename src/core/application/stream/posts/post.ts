@@ -42,6 +42,11 @@ export class PostStreamApplication {
     }
   }
 
+  /**
+   * Gets the head of the stream
+   * @param params - The parameters for the stream
+   * @returns The postId of the head of the stream
+   */
   static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
     return await Core.LocalStreamPostsService.getStreamHead(params);
   }
@@ -55,7 +60,7 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.read({ streamId });
   }
 
-  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams): Promise<void> {
+  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams) {
     return await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream(params);
   }
 
@@ -179,13 +184,11 @@ export class PostStreamApplication {
     try {
       const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
-      if (postBatch) {
-        const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
-        // Persist the post attachments metadata
-        await Core.FileApplication.fetchFiles(postAttachments);
-        // Persist the missing authors of the posts
-        await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
-      }
+      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
+      // Persist the post attachments metadata
+      await Core.FileApplication.fetchFiles(postAttachments);
+      // Persist the missing authors of the posts
+      await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
     }
@@ -249,9 +252,7 @@ export class PostStreamApplication {
         viewer_id: viewerId,
       });
       const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
-      if (userBatch) {
-        await Core.LocalStreamUsersService.persistUsers(userBatch);
-      }
+      await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }
 
@@ -272,11 +273,6 @@ export class PostStreamApplication {
       order,
     });
     const postStreamChunk = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
-
-    if (!postStreamChunk) {
-      return { nextPageIds: [], cacheMissPostIds: [], timestamp: undefined };
-    }
-
     const { last_post_score: timestamp, post_keys: compositePostIds } = postStreamChunk;
 
     // Do not persist any stream related with engagement sorting

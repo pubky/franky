@@ -241,7 +241,10 @@ describe('PostStreamApplication', () => {
       const postIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -429,6 +432,31 @@ describe('PostStreamApplication', () => {
 
       expect(result.nextPageIds).toHaveLength(3);
       expect(result.nextPageIds).toEqual(['author-1:post-1', 'author-2:post-2', 'author-1:post-3']);
+    });
+
+    it('should handle when limit is 0', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+      await createPostDetails(postIds);
+
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 0,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
+      });
+
+      expect(result.nextPageIds).toHaveLength(0);
+      expect(result.cacheMissPostIds).toEqual([]);
+      expect(result.timestamp).toBeUndefined();
+      // Note: When limit is 0, getStreamFromCache returns empty immediately and doesn't fetch from Nexus
+      expect(nexusFetchSpy).not.toHaveBeenCalled();
     });
 
     it('should handle when timestamp is provided but post_id is not', async () => {
@@ -764,19 +792,6 @@ describe('PostStreamApplication', () => {
       expect(mocks.fetchFiles).toHaveBeenCalledWith([]);
     });
 
-    it('should handle when postBatch is null/undefined', async () => {
-      const { cacheMissPostIds } = createTestData(1);
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
-      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
-
-      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
-        cacheMissPostIds,
-        viewerId,
-      });
-
-      expect(persistPostsSpy).not.toHaveBeenCalled();
-    });
-
     it('should fetch and persist users when cacheMissUserIds exist', async () => {
       const { cacheMissPostIds, mockNexusPosts } = createTestData(1);
       const mockNexusUsers = [createMockNexusUser(DEFAULT_AUTHOR)];
@@ -810,16 +825,18 @@ describe('PostStreamApplication', () => {
       const mocks = setupDefaultMocks();
       mocks.getUserDetails.mockResolvedValue([undefined]);
 
-      vi.spyOn(Core, 'queryNexus').mockResolvedValueOnce(mockNexusPosts).mockResolvedValueOnce(undefined);
+      vi.spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce(mockNexusPosts)
+        .mockResolvedValueOnce(undefined as unknown as Core.NexusUser[]);
 
-      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       await Core.PostStreamApplication.fetchMissingPostsFromNexus({
         cacheMissPostIds,
         viewerId,
       });
 
-      expect(persistUsersSpy).not.toHaveBeenCalled();
+      expect(persistUsersSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('should not fetch users when all users are already cached', async () => {

@@ -1,0 +1,112 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostContentBase - Snapshots > matches snapshot with empty content 1`] = `
+<div
+  class="gap-3"
+  data-testid="container"
+>
+  <div
+    data-testid="post-attachments"
+  />
+</div>
+`;
+
+exports[`PostContentBase - Snapshots > matches snapshot with loading state 1`] = `
+<div
+  class="text-muted-foreground"
+>
+  Loading content...
+</div>
+`;
+
+exports[`PostContentBase - Snapshots > matches snapshot with multiline content (preserves newlines) 1`] = `
+<div
+  class="gap-3"
+  data-testid="container"
+>
+  <div
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+    data-testid="container"
+  >
+    <p>
+      Line 1
+Line 2
+    </p>
+    
+
+    <p>
+      Line 3
+    </p>
+  </div>
+  <div
+    data-testid="post-attachments"
+  />
+</div>
+`;
+
+exports[`PostContentBase - Snapshots > matches snapshot with single-line content 1`] = `
+<div
+  class="gap-3"
+  data-testid="container"
+>
+  <div
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+    data-testid="container"
+  >
+    <p>
+      One liner
+    </p>
+  </div>
+  <div
+    data-testid="post-attachments"
+  />
+</div>
+`;
+
+exports[`PostContentBase - Snapshots > matches snapshot with special characters in content 1`] = `
+<div
+  class="gap-3"
+  data-testid="container"
+>
+  <div
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+    data-testid="container"
+  >
+    <p>
+      Content with 
+      &lt;tags&gt;
+       & "quotes" & 'apostrophes'
+    </p>
+  </div>
+  <div
+    data-testid="post-attachments"
+  />
+</div>
+`;
+
+exports[`PostContentBase - Snapshots > matches snapshot with very long content 1`] = `
+<div
+  class="gap-3"
+  data-testid="container"
+>
+  <div
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+    data-testid="container"
+  >
+    <p>
+      AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA... 
+      <span
+        aria-label="Show full post content"
+        class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+        role="button"
+        tabindex="0"
+      >
+        Show more
+      </span>
+    </p>
+  </div>
+  <div
+    data-testid="post-attachments"
+  />
+</div>
+`;

@@ -151,15 +151,24 @@ vi.mock('@/atoms', () => ({
     pauseVideo,
     className,
     id,
+    onClick,
     'data-testid': dataTestId,
   }: {
     src: string;
     pauseVideo?: boolean;
     className?: string;
     id?: string;
+    onClick?: (e: React.MouseEvent) => void;
     'data-testid'?: string;
   }) => (
-    <video data-testid={dataTestId || 'video'} src={src} data-pause-video={pauseVideo} className={className} id={id} />
+    <video
+      data-testid={dataTestId || 'video'}
+      src={src}
+      data-pause-video={pauseVideo}
+      className={className}
+      id={id}
+      onClick={onClick}
+    />
   ),
   Carousel: ({
     children,
@@ -604,7 +613,7 @@ describe('PostAttachmentsImagesAndVideos', () => {
   });
 
   describe('Click behavior', () => {
-    it('stops event propagation when media container is clicked', () => {
+    it('stops event propagation when image button is clicked', () => {
       const parentClickHandler = vi.fn();
       const imagesAndVideos = [createMockImage()];
 
@@ -614,13 +623,26 @@ describe('PostAttachmentsImagesAndVideos', () => {
         </div>,
       );
 
-      const containers = screen.getAllByTestId('container');
-      // Click on a media container (not the main grid container)
-      const mediaContainer = containers.find((c) => c.className.includes('h-52'));
-      if (mediaContainer) {
-        fireEvent.click(mediaContainer);
-        expect(parentClickHandler).not.toHaveBeenCalled();
-      }
+      // Click on the image button (which has stopPropagation)
+      const button = screen.getByTestId('button');
+      fireEvent.click(button);
+      expect(parentClickHandler).not.toHaveBeenCalled();
+    });
+
+    it('stops event propagation when video is clicked', () => {
+      const parentClickHandler = vi.fn();
+      const imagesAndVideos = [createMockVideo()];
+
+      render(
+        <div onClick={parentClickHandler}>
+          <PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} />
+        </div>,
+      );
+
+      // Click on the video element (which has stopPropagation)
+      const video = screen.getByTestId('video');
+      fireEvent.click(video);
+      expect(parentClickHandler).not.toHaveBeenCalled();
     });
 
     it('stops event propagation when dialog content is clicked', () => {

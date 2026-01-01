@@ -287,19 +287,6 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistUsers).not.toHaveBeenCalled();
     });
 
-    it('should throw NO_CONTENT AppError when bootstrap data is empty (null)', async () => {
-      const mocks = setupMocks({ bootstrapData: null });
-
-      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toMatchObject({
-        name: 'AppError',
-        type: Libs.NexusErrorType.NO_CONTENT,
-        statusCode: 204,
-        message: 'No content found for bootstrap data',
-      });
-
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
-    });
-
     it('should throw error when LocalPersistenceService fails', async () => {
       const bootstrapData = emptyBootstrap();
       const mocks = setupMocks({ bootstrapData, persistUsersError: new Error('Database error') });

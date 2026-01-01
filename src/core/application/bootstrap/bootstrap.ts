@@ -15,10 +15,6 @@ export class BootstrapApplication {
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
     const data = await Core.NexusBootstrapService.fetch(params.pubky);
-    // TODO: With the new Nexus API, data is never undefined
-    if (!data) {
-      throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
-    }
     if (!data.indexed) {
       Libs.Logger.error('User is not indexed in Nexus. Adding user to TTL', { pubky: params.pubky });
     }

@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 
 /**
  * Nexus Hot Service
@@ -16,11 +15,8 @@ export class NexusHotService {
    * @returns Array of hot tags with metadata
    */
   static async fetch(params: Core.TTagHotParams): Promise<Core.NexusHotTag[]> {
+    // TODO: Handle the error in application layer
     const url = Core.tagApi.hot(params);
-    const response = await Core.queryNexus<Core.NexusHotTag[]>(url);
-
-    Libs.Logger.debug('Hot tags fetched successfully', { count: response?.length ?? 0 });
-
-    return response || [];
+    return await Core.queryNexus<Core.NexusHotTag[]>(url);
   }
 }
