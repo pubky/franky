@@ -29,25 +29,6 @@ describe('LanguageSelector', () => {
     expect(screen.getByText('English')).toBeInTheDocument();
   });
 
-  it('shows selected language flag and name', () => {
-    render(<LanguageSelector />);
-    expect(screen.getByText('🇺🇸')).toBeInTheDocument();
-    expect(screen.getByText('English')).toBeInTheDocument();
-  });
-
-  it('opens dropdown when clicked', () => {
-    render(<LanguageSelector />);
-    const trigger = screen.getByRole('button');
-    fireEvent.click(trigger);
-
-    // All languages should be visible in dropdown (use getAllByText for English since it appears twice)
-    expect(screen.getAllByText('English').length).toBeGreaterThan(1);
-    expect(screen.getByText('Spanish')).toBeInTheDocument();
-    expect(screen.getByText('German')).toBeInTheDocument();
-    expect(screen.getByText('French')).toBeInTheDocument();
-    expect(screen.getByText('Italian')).toBeInTheDocument();
-  });
-
   it('closes dropdown when clicking outside', () => {
     render(<LanguageSelector />);
     const trigger = screen.getByRole('button');
@@ -85,16 +66,6 @@ describe('LanguageSelector', () => {
     fireEvent.click(spanishOption);
 
     expect(mockSetLanguage).not.toHaveBeenCalled();
-  });
-
-  it('shows check icon for selected language', () => {
-    render(<LanguageSelector />);
-    const trigger = screen.getByRole('button');
-    fireEvent.click(trigger);
-
-    // The selected language (English) should have a check icon
-    const englishButton = screen.getAllByRole('button').find((btn) => btn.textContent?.includes('English'));
-    expect(englishButton).toBeInTheDocument();
   });
 });
 

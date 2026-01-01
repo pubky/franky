@@ -5,7 +5,7 @@ exports[`Checkbox - Snapshots > matches snapshot when checked 1`] = `
   aria-checked="true"
   class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
   data-state="checked"
-  id="_r_a_"
+  id="radix-_r_0_"
   role="checkbox"
   type="button"
   value="on"
@@ -43,7 +43,7 @@ exports[`Checkbox - Snapshots > matches snapshot when disabled 1`] = `
   data-disabled=""
   data-state="unchecked"
   disabled=""
-  id="_r_c_"
+  id="radix-_r_0_"
   role="checkbox"
   type="button"
   value="on"
@@ -57,7 +57,7 @@ exports[`Checkbox - Snapshots > matches snapshot when disabled and checked 1`] =
   data-disabled=""
   data-state="checked"
   disabled=""
-  id="_r_d_"
+  id="radix-_r_0_"
   role="checkbox"
   type="button"
   value="on"
@@ -94,19 +94,7 @@ exports[`Checkbox - Snapshots > matches snapshot when unchecked 1`] = `
   aria-checked="false"
   class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
   data-state="unchecked"
-  id="_r_b_"
-  role="checkbox"
-  type="button"
-  value="on"
-/>
-`;
-
-exports[`Checkbox - Snapshots > matches snapshot with custom className 1`] = `
-<button
-  aria-checked="false"
-  class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand custom-checkbox"
-  data-state="unchecked"
-  id="_r_g_"
+  id="radix-_r_0_"
   role="checkbox"
   type="button"
   value="on"
@@ -118,7 +106,7 @@ exports[`Checkbox - Snapshots > matches snapshot with default props 1`] = `
   aria-checked="false"
   class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
   data-state="unchecked"
-  id="_r_9_"
+  id="radix-_r_0_"
   role="checkbox"
   type="button"
   value="on"
@@ -134,7 +122,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label 1`] = `
     aria-checked="false"
     class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
     data-state="unchecked"
-    id="_r_e_"
+    id="radix-_r_0_"
     role="checkbox"
     type="button"
     value="on"
@@ -146,7 +134,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label 1`] = `
     <label
       class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
-      for="_r_e_"
+      for="radix-_r_0_"
     >
       Test label
     </label>
@@ -154,7 +142,42 @@ exports[`Checkbox - Snapshots > matches snapshot with label 1`] = `
 </div>
 `;
 
-exports[`Checkbox - Snapshots > matches snapshot with label and checked 1`] = `
+exports[`Checkbox - Snapshots > matches snapshot with label and description 1`] = `
+<div
+  class="flex items-start gap-2"
+  data-testid="container"
+>
+  <button
+    aria-checked="false"
+    class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
+    data-state="unchecked"
+    id="radix-_r_0_"
+    role="checkbox"
+    type="button"
+    value="on"
+  />
+  <div
+    class="flex flex-col gap-1.5"
+    data-testid="container"
+  >
+    <label
+      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+      data-slot="label"
+      for="radix-_r_0_"
+    >
+      Label
+    </label>
+    <p
+      class="font-semibold text-sm leading-normal text-muted-foreground"
+      data-testid="typography"
+    >
+      Description text
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Checkbox - Snapshots > matches snapshot with label, description and checked 1`] = `
 <div
   class="flex items-start gap-2"
   data-testid="container"
@@ -163,7 +186,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label and checked 1`] = `
     aria-checked="true"
     class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
     data-state="checked"
-    id="_r_h_"
+    id="radix-_r_0_"
     role="checkbox"
     type="button"
     value="on"
@@ -199,38 +222,9 @@ exports[`Checkbox - Snapshots > matches snapshot with label and checked 1`] = `
     <label
       class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
-      for="_r_h_"
+      for="radix-_r_0_"
     >
       Checked label
-    </label>
-  </div>
-</div>
-`;
-
-exports[`Checkbox - Snapshots > matches snapshot with label and description 1`] = `
-<div
-  class="flex items-start gap-2"
-  data-testid="container"
->
-  <button
-    aria-checked="false"
-    class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
-    data-state="unchecked"
-    id="_r_f_"
-    role="checkbox"
-    type="button"
-    value="on"
-  />
-  <div
-    class="flex flex-col gap-1.5"
-    data-testid="container"
-  >
-    <label
-      class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
-      data-slot="label"
-      for="_r_f_"
-    >
-      Label
     </label>
     <p
       class="font-semibold text-sm leading-normal text-muted-foreground"
