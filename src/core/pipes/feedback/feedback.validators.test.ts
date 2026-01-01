@@ -63,7 +63,7 @@ describe('FeedbackValidators', () => {
       const longComment = 'a'.repeat(FEEDBACK_MAX_CHARACTER_LENGTH + 1);
       expect(() => FeedbackValidators.validateComment(longComment)).toThrow(Libs.AppError);
       expect(() => FeedbackValidators.validateComment(longComment)).toThrow(
-        `Comment must be at most ${FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+        `Comment must be no more than ${FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
       );
     });
   });

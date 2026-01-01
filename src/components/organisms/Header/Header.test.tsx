@@ -106,6 +106,18 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   SearchInput: () => <div data-testid="search-input">Search Input</div>,
+  HeaderHome: () => (
+    <div data-testid="header-home">
+      <div data-testid="header-social-links">Social Links</div>
+      <button>Sign in</button>
+    </div>
+  ),
+  HeaderSignIn: () => (
+    <div data-testid="header-sign-in">
+      <div data-testid="search-input">Search Input</div>
+      <div data-testid="header-navigation-buttons">Navigation Buttons</div>
+    </div>
+  ),
 }));
 
 // Mock hooks

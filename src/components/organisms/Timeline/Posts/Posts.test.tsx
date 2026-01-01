@@ -90,9 +90,10 @@ describe('TimelinePosts', () => {
       prefetch: vi.fn(),
     } as ReturnType<typeof useRouter>);
 
-    // Mock infinite scroll
+    // Mock infinite scroll - create a proper ref object
+    const mockSentinelRef = { current: document.createElement('div') };
     mockUseInfiniteScroll.mockReturnValue({
-      sentinelRef: { current: null },
+      sentinelRef: mockSentinelRef,
     });
 
     // Mock usePostNavigation
@@ -488,6 +489,11 @@ describe('TimelinePosts', () => {
     });
 
     it('should render sentinel element for infinite scroll', async () => {
+      const mockSentinelRef = { current: document.createElement('div') };
+      mockUseInfiniteScroll.mockReturnValue({
+        sentinelRef: mockSentinelRef,
+      });
+
       const { container } = render(
         <TimelinePosts
           postIds={mockPostIds}
@@ -500,7 +506,7 @@ describe('TimelinePosts', () => {
       );
 
       await waitFor(() => {
-        const sentinel = container.querySelector('.h-\\[20px\\]');
+        const sentinel = container.querySelector('.h-5');
         expect(sentinel).toBeInTheDocument();
       });
     });

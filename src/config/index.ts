@@ -10,3 +10,4 @@ export * from './metadata';
 export * from './tags';
 export * from './theme';
 export * from './urls';
+export * from './user';
