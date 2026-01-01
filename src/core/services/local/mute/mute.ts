@@ -77,7 +77,7 @@ export class LocalMuteService {
 
       // Update muted stream if status changed (outside transaction)
       if (statusChanged) {
-        await this.updateUserStreams(muter, mutee, isMuting);
+        await this.updateUserStreams(mutee, isMuting);
       }
 
       Logger.debug(successMessage, { muter, mutee });
@@ -90,16 +90,14 @@ export class LocalMuteService {
   /**
    * Update user streams after mute/unmute
    *
-   * @param muter - User performing the mute action
    * @param mutee - User being muted/unmuted
    * @param isMuting - True for mute, false for unmute
    */
-  private static async updateUserStreams(muter: Core.Pubky, mutee: Core.Pubky, isMuting: boolean): Promise<void> {
+  private static async updateUserStreams(mutee: Core.Pubky, isMuting: boolean): Promise<void> {
     const streamOp = isMuting
       ? Core.LocalStreamUsersService.prependToStream
       : Core.LocalStreamUsersService.removeFromStream;
 
-    const mutedStreamId = Core.buildUserCompositeId({ userId: muter, reach: Core.UserStreamSource.MUTED });
-    await streamOp.call(Core.LocalStreamUsersService, mutedStreamId, [mutee]);
+    await streamOp.call(Core.LocalStreamUsersService, Core.UserStreamTypes.MUTED, [mutee]);
   }
 }
