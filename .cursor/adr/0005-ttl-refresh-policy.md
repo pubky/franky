@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted — 2025-10-26
+Accepted — 2025-10-26  
+Updated — 2026-01-01
 
 ## Context
 
@@ -12,9 +13,11 @@ Local Dexie tables for users, posts, and tag collections store bootstrap data an
 
 Apply per-entity TTL tracking for the persistence layer:
 
-- Maintain `user_ttl`, `post_ttl`, and tag-related TTL tables that record the next refresh timestamp per composite ID.
+- Maintain `user_ttl`, `post_ttl`, and tag-related TTL tables that record `lastUpdatedAt` timestamp per composite ID.
+- Staleness is computed as `(now - lastUpdatedAt) > TTL_MS` (see ADR-0012 for schema details).
 - Local services update TTL rows whenever they write or reconcile records; expired entries trigger refetch before reuse.
 - Application workflows consult TTL helpers to decide when to refresh, keeping TTL logic out of controllers/UI.
+- **ADR-0012** defines the TTL Coordinator for viewport-aware, batched TTL refresh.
 
 ## Consequences
 
