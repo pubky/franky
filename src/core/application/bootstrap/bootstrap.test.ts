@@ -16,7 +16,7 @@ const MOCK_LAST_READ = 1234567890;
 const emptyBootstrap = (): Core.NexusBootstrapResponse => ({
   users: [],
   posts: [],
-  ids: { stream: [], influencers: [], recommended: [], hot_tags: [] },
+  ids: { stream: [], influencers: [], recommended: [], hot_tags: [], muted: [] },
   indexed: true,
 });
 
@@ -69,6 +69,7 @@ const createMockBootstrapData = (): Core.NexusBootstrapResponse => ({
     influencers: ['user-1'],
     recommended: ['user-2'],
     hot_tags: [{ label: 'technology', taggers_id: ['user-1'], tagged_count: 1, taggers_count: 1 }],
+    muted: [],
   },
   indexed: true,
 });
@@ -228,6 +229,11 @@ const assertCommonCalls = (
   expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
     streamId: Core.UserStreamTypes.RECOMMENDED,
     stream: bootstrapData.ids.recommended,
+  });
+  // Check muted users stream is stored from bootstrap response
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.MUTED,
+    stream: bootstrapData.ids.muted,
   });
   // Check both hot tags features are called
   expect(mocks.upsertHotTags).toHaveBeenCalledWith(
@@ -572,6 +578,34 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistFiles).toHaveBeenCalledWith(mockAttachments);
       // Verify result doesn't include filesUris
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
+    });
+
+    it('should persist muted users from bootstrap response', async () => {
+      const bootstrapData = createMockBootstrapData();
+      // Add muted users to bootstrap data
+      bootstrapData.ids.muted = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
+      const notifications = [createMockNotification()];
+      const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Verify muted users from bootstrap response were persisted
+      assertCommonCalls(mocks, bootstrapData, notifications);
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
+    });
+
+    it('should handle empty muted users list in bootstrap response', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Verify empty muted stream is still persisted
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.MUTED,
+        stream: [],
+      });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
     });
   });
 });
