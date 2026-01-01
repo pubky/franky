@@ -50,6 +50,7 @@ export * from './PostAttachmentsCarouselImage';
 export * from './PostCodeBlock';
 export * from './PostDeleted';
 export * from './PostHashtags';
+export * from './PostInputAttachments';
 export * from './PostLinkEmbeds';
 export * from './PostPreviewCard';
 export * from './RepostHeader';

@@ -1,0 +1,520 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostInputAttachments - Snapshots > matches snapshot when submitting 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+        disabled=""
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-photo.jpg"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attachments (4) 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image0.jpg"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image1.jpg"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image2.jpg"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image3.jpg"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with mixed attachment types 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-photo.jpg"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <video
+        class="h-48 w-full cursor-auto"
+        data-testid="video"
+        src="blob:mock-url-video.mp4"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-1/2 -translate-y-1/2 size-6"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-3"
+          data-testid="trash-icon"
+        />
+      </button>
+      <audio
+        class="w-full cursor-auto"
+        controls=""
+        data-testid="audio"
+        src="blob:mock-url-audio.mp3"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-1/2 -translate-y-1/2 size-8"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <div
+        class="cursor-auto flex-row items-center gap-x-2 rounded-md bg-muted p-4 pr-14"
+        data-testid="container"
+      >
+        <svg
+          class="size-6 shrink-0"
+          data-testid="file-text-icon"
+        />
+        <span
+          class="font-bold break-all"
+          data-size="sm"
+          data-testid="typography"
+        >
+          document.pdf
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with multiple images 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image1.jpg"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image2.png"
+      />
+    </div>
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-image3.gif"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with no attachments 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with single PDF attachment 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-1/2 -translate-y-1/2 size-8"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <div
+        class="cursor-auto flex-row items-center gap-x-2 rounded-md bg-muted p-4 pr-14"
+        data-testid="container"
+      >
+        <svg
+          class="size-6 shrink-0"
+          data-testid="file-text-icon"
+        />
+        <span
+          class="font-bold break-all"
+          data-size="sm"
+          data-testid="typography"
+        >
+          document.pdf
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with single audio attachment 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-1/2 -translate-y-1/2 size-6"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-3"
+          data-testid="trash-icon"
+        />
+      </button>
+      <audio
+        class="w-full cursor-auto"
+        controls=""
+        data-testid="audio"
+        src="blob:mock-url-audio.mp3"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with single image attachment 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-photo.jpg"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot with single video attachment 1`] = `
+<div>
+  <input
+    accept="image/*,video/*,audio/*,application/pdf"
+    class="hidden"
+    data-testid="file-input"
+    multiple=""
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <video
+        class="h-48 w-full cursor-auto"
+        data-testid="video"
+        src="blob:mock-url-video.mp4"
+      />
+    </div>
+  </div>
+</div>
+`;

@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
+import * as Utils from '@/libs/utils';
 import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
 import type { CarouselApi } from '@/components/atoms/Carousel';
 import { useEffect, useState } from 'react';
@@ -39,38 +40,49 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
     });
   }, [api]);
 
+  const isOnlyMedia = imagesAndVideos.length === 1;
+
   return (
     <Atoms.Dialog open={open} onOpenChange={setOpen}>
       {/* Grid layout */}
       <Atoms.Container display="grid" className="gap-3 sm:grid-cols-2">
-        {imagesAndVideos.map((media, i) => (
-          <Atoms.Container
-            key={i}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="h-52 only:h-96 sm:last:odd:col-span-2"
-          >
-            {media.type.startsWith('image') ? (
-              <Atoms.DialogTrigger asChild>
-                <Atoms.Button
-                  overrideDefaults
-                  onClick={() => setCurrentIndex(i)}
-                  className="relative h-full w-full cursor-pointer"
-                >
-                  <Atoms.Image
-                    src={media.type === 'image/gif' ? media.urls.main : (media.urls.feed as string)}
-                    alt={media.name}
-                    fill
-                    className="rounded-md object-cover object-center"
-                  />
-                </Atoms.Button>
-              </Atoms.DialogTrigger>
-            ) : (
-              <Atoms.Video src={media.urls.main} pauseVideo={open} className="h-full w-full cursor-auto" />
-            )}
-          </Atoms.Container>
-        ))}
+        {imagesAndVideos.map((media, i) =>
+          media.type.startsWith('image') ? (
+            <Atoms.DialogTrigger
+              key={i}
+              asChild
+              className="relative h-52 w-full cursor-pointer only:static only:h-auto only:w-fit sm:last:odd:col-span-2"
+            >
+              <Atoms.Button
+                overrideDefaults
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentIndex(i);
+                }}
+              >
+                <Atoms.Image
+                  src={media.type === 'image/gif' ? media.urls.main : (media.urls.feed as string)}
+                  alt={media.name}
+                  fill={!isOnlyMedia}
+                  className={Utils.cn(
+                    'rounded-md',
+                    isOnlyMedia ? 'max-h-96 w-fit object-contain' : 'object-cover object-center',
+                  )}
+                />
+              </Atoms.Button>
+            </Atoms.DialogTrigger>
+          ) : (
+            <Atoms.Video
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              src={media.urls.main}
+              pauseVideo={open}
+              className="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+            />
+          ),
+        )}
       </Atoms.Container>
 
       {/* Carousel dialog */}
