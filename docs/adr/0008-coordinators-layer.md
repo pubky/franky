@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted — 2024-11-19
+Accepted — 2024-11-19  
+Updated — 2026-01-01
 
 ## Context
 
@@ -180,3 +181,4 @@ Patterns established for:
 
 - **ADR-0004: Layering and Dependency Rules** — Coordinators extend the layering model with a new entry point type
 - **ADR-0001: Local-First Writes** — Coordinators enable background sync without blocking UI
+- **ADR-0012: TTL Coordinator** — Implements the TtlCoordinator pattern for viewport-aware data refresh

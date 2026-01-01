@@ -52,7 +52,9 @@ When working on this codebase, prioritize reading these files in order:
     │   ├── 0007-dexie-version-normalization.md
     │   ├── 0008-coordinators-layer.md
     │   ├── 0009-application-cross-domain-orchestration.md
-│   └── 0010-notification-application-orchestration.md
+    │   ├── 0010-notification-application-orchestration.md
+    │   ├── 0011-dexie-psd-and-tanstack-query.md
+    │   └── 0012-ttl-coordinator.md
     └── snapshot-testing.md         # Snapshot testing philosophy
 ```
 
@@ -155,6 +157,8 @@ ADRs document key architectural choices. They capture the **why** behind decisio
 - [0008: Coordinators Layer](docs/adr/0008-coordinators-layer.md) - System-initiated workflows
 - [0009: Application Cross-Domain Orchestration](docs/adr/0009-application-cross-domain-orchestration.md) - Application-to-Application calls for workflow orchestration
 - [0010: Notification Application Orchestration](docs/adr/0010-notification-application-orchestration.md) - NotificationApplication cross-domain entity aggregation privilege
+- [0011: Dexie PSD and TanStack Query](docs/adr/0011-dexie-psd-and-tanstack-query.md) - Database and query integration
+- [0012: TTL Coordinator](docs/adr/0012-ttl-coordinator.md) - Viewport-aware TTL refresh for posts and users
 
 **Creating new ADRs**: Use `docs/adr/TEMPLATE.md` as the starting point.
 
