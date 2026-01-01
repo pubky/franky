@@ -24,17 +24,13 @@ function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.
 }
 
 function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close id="dialog-close-btn" data-slot="dialog-close" {...props} />;
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
 function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
-      onClick={(e) => {
-        e.stopPropagation();
-        document.getElementById('dialog-close-btn')?.click();
-      }}
       className={Libs.cn(
         'fixed inset-0 z-40 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
         className,
