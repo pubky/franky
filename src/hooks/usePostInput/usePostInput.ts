@@ -86,8 +86,10 @@ export function usePostInput({
 
     // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
-      // Prepend to timeline
-      timelineFeed?.prependPosts(createdPostId);
+      // Only prepend to timeline for posts and reposts, not replies
+      if (variant !== POST_INPUT_VARIANT.REPLY) {
+        timelineFeed?.prependPosts(createdPostId);
+      }
       // Call original onSuccess callback if provided
       onSuccess?.(createdPostId);
     };
