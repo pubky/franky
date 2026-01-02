@@ -19,6 +19,7 @@ export * from './EditProfileForm';
 export * from './EditProfileHeader';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogFeedback';
+export * from './DialogReportPost';
 export * from './DialogPrivacy';
 export * from './DialogNewPost';
 export * from './DialogReply';

@@ -1,0 +1,70 @@
+'use client';
+
+import { useEffect } from 'react';
+
+import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
+import { REPORT_POST_STEPS } from '@/hooks/useReportPost';
+import { DialogReportPostIssueStep } from './DialogReportPostIssueStep';
+import { DialogReportPostReasonStep } from './DialogReportPostReasonStep';
+import { DialogReportPostSuccess } from './DialogReportPostSuccess';
+import type { DialogReportPostProps } from './DialogReportPost.types';
+
+export function DialogReportPost({ open, onOpenChange, postId }: DialogReportPostProps) {
+  const {
+    step,
+    selectedIssueType,
+    reason,
+    isSubmitting,
+    isSuccess,
+    hasContent,
+    selectIssueType,
+    handleReasonChange,
+    submit,
+    reset,
+  } = Hooks.useReportPost(postId);
+
+  // Reset state when the dialog closes
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open, reset]);
+
+  const handleCancel = () => {
+    onOpenChange(false);
+  };
+
+  const renderContent = () => {
+    if (isSuccess) {
+      return <DialogReportPostSuccess onOpenChange={onOpenChange} />;
+    }
+
+    if (step === REPORT_POST_STEPS.REASON_INPUT && selectedIssueType !== null) {
+      return (
+        <DialogReportPostReasonStep
+          reason={reason}
+          hasContent={hasContent}
+          isSubmitting={isSubmitting}
+          onReasonChange={handleReasonChange}
+          onCancel={handleCancel}
+          onSubmit={submit}
+        />
+      );
+    }
+
+    return <DialogReportPostIssueStep onSelectIssueType={selectIssueType} onCancel={handleCancel} />;
+  };
+
+  return (
+    <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
+      <Atoms.DialogContent className="w-xl" hiddenTitle="Report Post" onOpenAutoFocus={(e) => e.preventDefault()}>
+        <Atoms.DialogHeader>
+          <Atoms.DialogTitle className="sr-only">Report Post</Atoms.DialogTitle>
+          <Atoms.DialogDescription className="sr-only">Report post dialog</Atoms.DialogDescription>
+        </Atoms.DialogHeader>
+        {renderContent()}
+      </Atoms.DialogContent>
+    </Atoms.Dialog>
+  );
+}

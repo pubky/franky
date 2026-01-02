@@ -13,6 +13,11 @@ export interface PostMenuActionItem {
   disabled?: boolean;
 }
 
+export interface UsePostMenuActionsOptions {
+  /** Callback when report action is clicked - opens the report dialog */
+  onReportClick: () => void;
+}
+
 export interface UsePostMenuActionsResult {
   menuItems: PostMenuActionItem[];
   isLoading: boolean;

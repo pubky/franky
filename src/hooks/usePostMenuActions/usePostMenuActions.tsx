@@ -6,7 +6,11 @@ import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import { POST_ROUTES } from '@/app/routes';
 import { POST_MENU_ACTION_IDS, POST_MENU_ACTION_VARIANTS } from './usePostMenuActions.constants';
-import type { UsePostMenuActionsResult, PostMenuActionItem } from './usePostMenuActions.types';
+import type {
+  UsePostMenuActionsResult,
+  UsePostMenuActionsOptions,
+  PostMenuActionItem,
+} from './usePostMenuActions.types';
 
 /**
  * usePostMenuActions
@@ -16,9 +20,11 @@ import type { UsePostMenuActionsResult, PostMenuActionItem } from './usePostMenu
  * Handles follow/unfollow, copy actions (pubky, link, text), mute (disabled), report, and delete.
  *
  * @param postId - Composite post ID in format "author:postId"
- * @returns Menu items array and loading state
+ * @param options - Optional configuration including callbacks
+ * @returns Menu items array, loading state, and report post data
  */
-export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
+export function usePostMenuActions(postId: string, options: UsePostMenuActionsOptions): UsePostMenuActionsResult {
+  const { onReportClick } = options;
   const parsedId = Core.parseCompositeId(postId);
   const postAuthorId = parsedId.pubky;
 
@@ -135,9 +141,8 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
       id: POST_MENU_ACTION_IDS.REPORT,
       label: 'Report post',
       icon: Libs.Flag,
-      onClick: () => {},
+      onClick: onReportClick,
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
-      disabled: true,
     });
   }
 

@@ -1,0 +1,200 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import * as Atoms from '@/atoms';
+import { DialogReportPostReasonStep } from './DialogReportPostReasonStep';
+import { REPORT_REASON_MAX_LENGTH } from '@/core/pipes/report';
+
+// Mock @/libs - use actual implementations and only stub cn helper
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
+  };
+});
+
+// Mock hooks
+const mockUseCurrentUserProfile = vi.fn();
+
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCurrentUserProfile: () => mockUseCurrentUserProfile(),
+  };
+});
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  PostHeader: ({
+    postId,
+    characterLimit,
+  }: {
+    postId: string;
+    isReplyInput?: boolean;
+    characterLimit?: { count: number; max: number };
+  }) => (
+    <div
+      data-testid="post-header"
+      data-post-id={postId}
+      data-character-count={characterLimit?.count}
+      data-max-length={characterLimit?.max}
+    >
+      PostHeader
+    </div>
+  ),
+}));
+
+const renderWithDialog = (component: React.ReactElement) => {
+  return render(
+    <Atoms.Dialog open={true}>
+      <Atoms.DialogContent>{component}</Atoms.DialogContent>
+    </Atoms.Dialog>,
+  );
+};
+
+describe('DialogReportPostReasonStep', () => {
+  const mockOnReasonChange = vi.fn();
+  const mockOnCancel = vi.fn();
+  const mockOnSubmit = vi.fn();
+
+  const defaultProps = {
+    reason: '',
+    hasContent: false,
+    isSubmitting: false,
+    onReasonChange: mockOnReasonChange,
+    onCancel: mockOnCancel,
+    onSubmit: mockOnSubmit,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: 'test-user-123',
+    });
+  });
+
+  it('renders with correct title', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} />);
+
+    const title = screen.getByRole('heading', { name: 'Report Post' });
+    expect(title).toBeInTheDocument();
+  });
+
+  it('displays PostHeader when currentUserPubky is available', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('post-header')).toHaveAttribute('data-post-id', 'test-user-123');
+  });
+
+  it('calls onCancel when cancel button is clicked', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} />);
+
+    const cancelButton = screen.getByRole('button', { name: 'Cancel report' });
+    fireEvent.click(cancelButton);
+
+    expect(mockOnCancel).toHaveBeenCalled();
+  });
+
+  it('calls onReasonChange when textarea value changes', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} />);
+
+    const textarea = screen.getByLabelText('Report reason');
+    fireEvent.change(textarea, { target: { value: 'Some reason' } });
+
+    expect(mockOnReasonChange).toHaveBeenCalled();
+  });
+
+  it('displays character count in PostHeader', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} reason="Hello" />);
+
+    const postHeader = screen.getByTestId('post-header');
+    expect(postHeader).toHaveAttribute('data-character-count', '5');
+    expect(postHeader).toHaveAttribute('data-max-length', String(REPORT_REASON_MAX_LENGTH));
+  });
+
+  it('disables submit button when hasContent is false', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} hasContent={false} />);
+
+    const submitButton = screen.getByRole('button', { name: 'Submit report' });
+    expect(submitButton).toBeDisabled();
+  });
+
+  it('enables submit button when hasContent is true', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} hasContent={true} />);
+
+    const submitButton = screen.getByRole('button', { name: 'Submit report' });
+    expect(submitButton).not.toBeDisabled();
+  });
+
+  it('calls onSubmit when submit button is clicked', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} hasContent={true} />);
+
+    const submitButton = screen.getByRole('button', { name: 'Submit report' });
+    fireEvent.click(submitButton);
+
+    expect(mockOnSubmit).toHaveBeenCalled();
+  });
+
+  it('shows loader when isSubmitting is true', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} isSubmitting={true} hasContent={true} />);
+
+    const submitButton = screen.getByRole('button', { name: 'Submitting report' });
+    expect(submitButton).toBeInTheDocument();
+  });
+
+  it('disables textarea when isSubmitting is true', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} isSubmitting={true} />);
+
+    const textarea = screen.getByLabelText('Report reason');
+    expect(textarea).toBeDisabled();
+  });
+
+  it('disables cancel button when isSubmitting is true', () => {
+    renderWithDialog(<DialogReportPostReasonStep {...defaultProps} isSubmitting={true} />);
+
+    const cancelButton = screen.getByRole('button', { name: 'Cancel report' });
+    expect(cancelButton).toBeDisabled();
+  });
+});
+
+describe('DialogReportPostReasonStep - Snapshots', () => {
+  const mockOnReasonChange = vi.fn();
+  const mockOnCancel = vi.fn();
+  const mockOnSubmit = vi.fn();
+
+  const defaultProps = {
+    reason: '',
+    hasContent: false,
+    isSubmitting: false,
+    onReasonChange: mockOnReasonChange,
+    onCancel: mockOnCancel,
+    onSubmit: mockOnSubmit,
+  };
+
+  beforeEach(() => {
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: 'test-user-123',
+    });
+  });
+
+  it('matches snapshot for default state', () => {
+    const { container } = renderWithDialog(<DialogReportPostReasonStep {...defaultProps} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with reason content', () => {
+    const { container } = renderWithDialog(
+      <DialogReportPostReasonStep {...defaultProps} reason="This is a test reason" hasContent={true} />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when submitting', () => {
+    const { container } = renderWithDialog(
+      <DialogReportPostReasonStep {...defaultProps} isSubmitting={true} hasContent={true} />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

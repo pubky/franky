@@ -25,6 +25,11 @@ exports[`PostMenuActions - Snapshots > matches snapshot for desktop dropdown 1`]
       <button>
         Close
       </button>
+      <button
+        data-testid="report-button"
+      >
+        Report
+      </button>
     </div>
   </div>
 </div>
@@ -67,6 +72,11 @@ exports[`PostMenuActions - Snapshots > matches snapshot for mobile sheet 1`] = `
       >
         <button>
           Close
+        </button>
+        <button
+          data-testid="report-button"
+        >
+          Report
         </button>
       </div>
     </div>
