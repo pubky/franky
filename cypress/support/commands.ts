@@ -71,7 +71,7 @@ Cypress.Commands.add(
 
       // either skip phrase confirmation or confirm it
       if (backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation)) {
-        cy.get('#dialog-close-btn').click();
+        cy.get('[data-testid="dialog-close"]').click();
       } else if (backup?.includes(BackupType.RecoveryPhraseWithConfirmation)) {
         cy.get(`@recoveryPhrase-${profileName}`).then((recoveryPhrase) => {
           confirmRecoveryPhrase(recoveryPhrase.toString());
