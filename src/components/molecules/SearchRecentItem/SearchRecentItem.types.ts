@@ -1,0 +1,24 @@
+import * as Core from '@/core';
+import * as Molecules from '@/molecules';
+import { RECENT_ITEM_TYPE } from './SearchRecentItem.constants';
+
+/**
+ * Type derived from RECENT_ITEM_TYPE constant values
+ */
+export type RecentItemType = (typeof RECENT_ITEM_TYPE)[keyof typeof RECENT_ITEM_TYPE];
+
+/**
+ * Props for SearchRecentItem component
+ */
+export interface SearchRecentItemProps {
+  /** Type of recent search item */
+  type: RecentItemType;
+  /** User data (required if type is 'user') */
+  user?: Molecules.RecentUserSearchItem;
+  /** Tag data (required if type is 'tag') */
+  tag?: Molecules.RecentTagSearchItem;
+  /** Callback when user item is clicked (only for type='user') */
+  onUserClick?: (userId: Core.Pubky) => void;
+  /** Callback when tag item is clicked (only for type='tag') */
+  onTagClick?: (tag: string) => void;
+}

@@ -46,6 +46,20 @@ describe('TagInput', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockOnTagAdd).toHaveBeenCalledWith('bitcoin');
   });
+
+  it('converts uppercase input to lowercase', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'BITCOIN' } });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(input.value).toBe('bitcoin');
+
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: false });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(mockOnTagAdd).toHaveBeenCalledWith('bitcoin');
+  });
 });
 
 describe('TagInput - Snapshots', () => {

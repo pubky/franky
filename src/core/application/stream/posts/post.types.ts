@@ -51,3 +51,13 @@ export interface TPersistUnreadNewStreamChunkParams {
   streamId: Core.PostStreamId;
   compositePostIds: string[];
 }
+
+/**
+ * Entry stored in the in-memory queue for overflow posts between pagination requests.
+ * @property posts - Array of composite post IDs (authorPubky:postId) not yet returned to UI
+ * @property cursor - The last timestamp used for pagination
+ */
+export interface TQueueEntry {
+  posts: string[];
+  cursor: number;
+}

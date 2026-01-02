@@ -29,7 +29,7 @@ describe('Onboarding', () => {
     cy.get('#backup-btn').should('exist').click();
     // confirm backup dialog can be shown and closed
     cy.get('#backup-dialog-title').should('exist');
-    cy.get('#dialog-close-btn').click();
+    cy.get('[data-testid="dialog-close"]').click();
     // confirm backup done button can be clicked
     cy.get('#backup-done-btn').click();
     // confirm backup confirmation dialog can be shown and dismissed
