@@ -44,6 +44,38 @@ describe('useTagInput', () => {
     expect(result.current.inputValue).toBe('new-tag');
   });
 
+  it('converts uppercase input to lowercase', () => {
+    const { result } = renderHook(() =>
+      useTagInput({
+        onTagAdd: mockOnTagAdd,
+      }),
+    );
+
+    act(() => {
+      result.current.handleInputChange({
+        target: { value: 'NEW-TAG' },
+      } as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(result.current.inputValue).toBe('new-tag');
+  });
+
+  it('converts mixed case input to lowercase', () => {
+    const { result } = renderHook(() =>
+      useTagInput({
+        onTagAdd: mockOnTagAdd,
+      }),
+    );
+
+    act(() => {
+      result.current.handleInputChange({
+        target: { value: 'New-Tag' },
+      } as React.ChangeEvent<HTMLInputElement>);
+    });
+
+    expect(result.current.inputValue).toBe('new-tag');
+  });
+
   it('calls onTagAdd and clears input on submit', () => {
     const { result } = renderHook(() =>
       useTagInput({

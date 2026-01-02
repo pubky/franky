@@ -6,7 +6,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.react-tweet-theme]:max-h-75 [&_.react-tweet-theme]:overflow-y-auto!"
+    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.tweet-media\\\\_root\\\\_\\\\_k6gQ2]:max-h-75! [&_.tweet-media\\\\_root\\\\_\\\\_k6gQ2]:overflow-y-auto!"
     data-testid="twitter-container"
     data-theme="dark"
   >
@@ -52,7 +52,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.react-tweet-theme]:max-h-75 [&_.react-tweet-theme]:overflow-y-auto!"
+    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.tweet-media\\\\_root\\\\_\\\\_k6gQ2]:max-h-75! [&_.tweet-media\\\\_root\\\\_\\\\_k6gQ2]:overflow-y-auto!"
     data-testid="twitter-container"
     data-theme="dark"
   >

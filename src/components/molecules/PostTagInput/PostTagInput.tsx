@@ -47,7 +47,7 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(e.target.value);
+      onChange?.(e.target.value.toLowerCase());
     };
 
     return (

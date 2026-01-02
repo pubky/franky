@@ -21,6 +21,26 @@ describe('PostTagInput', () => {
     expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
   });
 
+  it('converts uppercase input to lowercase', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'BITCOIN' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
+  });
+
+  it('converts mixed case input to lowercase', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'BitCoin' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
+  });
+
   it('calls onSubmit when Enter is pressed with value', () => {
     const mockOnSubmit = vi.fn();
     render(<PostTagInput value="bitcoin" onSubmit={mockOnSubmit} />);

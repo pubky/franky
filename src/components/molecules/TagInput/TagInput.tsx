@@ -75,7 +75,7 @@ export function TagInput({
 
   const handleSuggestionClick = useCallback(
     (tagLabel: string) => {
-      setInputValue(tagLabel);
+      setInputValue(tagLabel.toLowerCase());
       setShowSuggestions(false);
       inputRef.current?.focus();
     },
@@ -86,7 +86,7 @@ export function TagInput({
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+      const value = e.target.value.toLowerCase();
       setInputValue(value);
       if (!hideSuggestions) {
         setShowSuggestions(value.trim().length > 0);
