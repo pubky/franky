@@ -104,6 +104,14 @@ export const normaliseRadixIds = (container: HTMLElement) => {
     }
   });
 
+  // Normalise for attributes (e.g. labels)
+  const elementsWithFor = clonedContainer.querySelectorAll('[for]');
+  elementsWithFor.forEach((el) => {
+    if (shouldNormalise(el.getAttribute('for'))) {
+      el.setAttribute('for', normalizedId);
+    }
+  });
+
   return clonedContainer;
 };
 
