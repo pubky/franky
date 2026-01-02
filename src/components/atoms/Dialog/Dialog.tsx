@@ -73,6 +73,7 @@ function DialogContent({
       <DialogOverlay onCloseRef={closeRef} />
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <DialogPrimitive.Content
+          aria-describedby={undefined}
           data-cy="dialog-content"
           data-slot="dialog-content"
           data-testid="dialog-content"
