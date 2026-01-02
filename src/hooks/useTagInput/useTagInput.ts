@@ -49,7 +49,7 @@ export function useTagInput({
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(e.target.value);
+      setInputValue(e.target.value.toLowerCase());
       // Clear limit reached message when user starts typing
       if (limitReached) {
         setLimitReached(false);
@@ -86,7 +86,7 @@ export function useTagInput({
   // Wrapper to handle emoji insertion with limit check
   const handleEmojiChange = useCallback(
     (newValue: string) => {
-      setInputValue(newValue);
+      setInputValue(newValue.toLowerCase());
       if (limitReached) {
         setLimitReached(false);
       }
