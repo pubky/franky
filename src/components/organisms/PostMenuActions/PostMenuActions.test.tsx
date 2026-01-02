@@ -19,7 +19,6 @@ vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    Logger: { error: vi.fn() },
   };
 });
 
