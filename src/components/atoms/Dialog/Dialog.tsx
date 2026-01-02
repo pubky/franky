@@ -3,6 +3,16 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 
 import * as Libs from '@/libs';
 
+type DialogContextValue = {
+  closeRef: React.RefObject<HTMLButtonElement | null>;
+};
+
+const DialogContext = React.createContext<DialogContextValue | null>(null);
+
+function useDialogContext() {
+  return React.useContext(DialogContext);
+}
+
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" data-testid="dialog" {...props} />;
 }
@@ -24,16 +34,18 @@ function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.
 }
 
 function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close id="dialog-close-btn" data-slot="dialog-close" {...props} />;
+  const context = useDialogContext();
+  return <DialogPrimitive.Close ref={context?.closeRef} data-slot="dialog-close" {...props} />;
 }
 
 function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+  const context = useDialogContext();
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       onClick={(e) => {
         e.stopPropagation();
-        document.getElementById('dialog-close-btn')?.click();
+        context?.closeRef.current?.click();
       }}
       className={Libs.cn(
         'fixed inset-0 z-40 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
@@ -56,39 +68,43 @@ function DialogContent({
   hiddenTitle?: string;
   overrideDefaults?: boolean;
 }) {
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+
   return (
-    <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <DialogPrimitive.Content
-          data-cy="dialog-content"
-          data-slot="dialog-content"
-          data-testid="dialog-content"
-          className={Libs.cn(
-            'relative z-50 grid',
-            'duration-200',
-            'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-            'm-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-            overrideDefaults ? '' : 'gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8',
-            className,
-          )}
-          {...props}
-        >
-          {hiddenTitle && <DialogPrimitive.Title className="sr-only">{hiddenTitle}</DialogPrimitive.Title>}
-          {children}
-          <DialogClose
+    <DialogContext.Provider value={{ closeRef }}>
+      <DialogPortal data-slot="dialog-portal">
+        <DialogOverlay />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <DialogPrimitive.Content
+            data-cy="dialog-content"
+            data-slot="dialog-content"
+            data-testid="dialog-content"
             className={Libs.cn(
-              showCloseButton
-                ? 'absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50'
-                : 'hidden',
+              'relative z-50 grid',
+              'duration-200',
+              'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+              'm-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+              overrideDefaults ? '' : 'gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8',
+              className,
             )}
+            {...props}
           >
-            <Libs.X className="h-4 w-4 text-secondary-foreground opacity-70" />
-            <span className="sr-only">Close</span>
-          </DialogClose>
-        </DialogPrimitive.Content>
-      </div>
-    </DialogPortal>
+            {hiddenTitle && <DialogPrimitive.Title className="sr-only">{hiddenTitle}</DialogPrimitive.Title>}
+            {children}
+            <DialogClose
+              className={Libs.cn(
+                showCloseButton
+                  ? 'absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50'
+                  : 'hidden',
+              )}
+            >
+              <Libs.X className="h-4 w-4 text-secondary-foreground opacity-70" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+          </DialogPrimitive.Content>
+        </div>
+      </DialogPortal>
+    </DialogContext.Provider>
   );
 }
 
