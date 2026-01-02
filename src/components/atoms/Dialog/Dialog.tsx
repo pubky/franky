@@ -23,17 +23,27 @@ function DialogPortal({ ...props }: React.ComponentProps<typeof DialogPrimitive.
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
 
-function DialogClose({ ...props }: React.ComponentProps<typeof DialogPrimitive.Close>) {
-  return <DialogPrimitive.Close id="dialog-close-btn" data-slot="dialog-close" {...props} />;
-}
+const DialogClose = React.forwardRef<
+  React.ComponentRef<typeof DialogPrimitive.Close>,
+  React.ComponentProps<typeof DialogPrimitive.Close>
+>(({ ...props }, ref) => {
+  return <DialogPrimitive.Close ref={ref} data-slot="dialog-close" {...props} />;
+});
+DialogClose.displayName = 'DialogClose';
 
-function DialogOverlay({ className, ...props }: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+function DialogOverlay({
+  className,
+  onCloseRef,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Overlay> & {
+  onCloseRef?: React.RefObject<HTMLButtonElement | null>;
+}) {
   return (
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       onClick={(e) => {
         e.stopPropagation();
-        document.getElementById('dialog-close-btn')?.click();
+        onCloseRef?.current?.click();
       }}
       className={Libs.cn(
         'fixed inset-0 z-40 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
@@ -56,9 +66,11 @@ function DialogContent({
   hiddenTitle?: string;
   overrideDefaults?: boolean;
 }) {
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+
   return (
     <DialogPortal data-slot="dialog-portal">
-      <DialogOverlay />
+      <DialogOverlay onCloseRef={closeRef} />
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <DialogPrimitive.Content
           data-cy="dialog-content"
@@ -77,6 +89,7 @@ function DialogContent({
           {hiddenTitle && <DialogPrimitive.Title className="sr-only">{hiddenTitle}</DialogPrimitive.Title>}
           {children}
           <DialogClose
+            ref={closeRef}
             className={Libs.cn(
               showCloseButton
                 ? 'absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50'
