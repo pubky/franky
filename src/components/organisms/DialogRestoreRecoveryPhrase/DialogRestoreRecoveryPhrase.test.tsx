@@ -5,8 +5,8 @@ import { DialogRestoreRecoveryPhrase } from './DialogRestoreRecoveryPhrase';
 
 // Mock external dependencies
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
   };
