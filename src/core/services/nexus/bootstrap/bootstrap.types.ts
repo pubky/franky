@@ -12,4 +12,5 @@ export type NexusBootstrapList = {
   influencers: Core.Pubky[];
   recommended: Core.Pubky[];
   hot_tags: Core.NexusHotTag[];
+  muted: Core.Pubky[];
 };
