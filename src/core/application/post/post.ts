@@ -3,13 +3,15 @@ import * as Libs from '@/libs';
 
 export class PostApplication {
   /**
-   * Reads post details from local database
+   * Reads post details from local database and enriches with moderation state
    * @param compositeId - Composite post ID in format "authorId:postId"
-   * @returns Post details or null if not found
+   * @returns Post details with moderation state or null if not found
    */
-  static async getDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
-    // TODO: Throw an error and do not return null
-    return await Core.LocalPostService.readDetails({ postId: compositeId });
+  static async getDetails({ compositeId }: Core.TCompositeId): Promise<Core.EnrichedPostDetails | null> {
+    const post = await Core.LocalPostService.readDetails({ postId: compositeId });
+    if (!post) return null;
+    const [enriched] = await Core.ModerationController.enrichPosts([post]);
+    return enriched;
   }
 
   /**

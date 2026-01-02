@@ -113,8 +113,8 @@ In development mode with `NEXT_PUBLIC_DEBUG_MODE=true`, the environment configur
 │   NODE_ENV  │             'development'               │
 │ DB_VERSION  │                    1                    │
 │ DEBUG_MODE  │                  true                   │
-│ NEXUS_URL   │     'https://nexus.staging.pubky.app' │
-│  CDN_URL    │ 'https://nexus.staging.pubky.app/static' │
+│ NEXUS_URL   │     'https://nexus.staging.pubky.app'   │
+│  CDN_URL    │ 'https://nexus.staging.pubky.app/static'│
 │  SYNC_TTL   │            '300000ms (300s)'            │
 └─────────────┴─────────────────────────────────────────┘
 ```

@@ -18,6 +18,8 @@ vi.mock('@/config', async (importOriginal) => {
     ...actual,
     DB_NAME: 'test-db',
     DB_VERSION: 1,
+    MODERATED_TAGS: [],
+    MODERATION_ID: 'test-moderation-id',
   };
 });
 

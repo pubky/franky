@@ -10,6 +10,7 @@ export * from './useIsMobile';
 export * from './useLayoutReset';
 export * from './useRecoveryPhraseValidation';
 export * from './usePost';
+export * from './usePostModeration';
 export * from './useStreamIdFromFilters';
 export * from './useControlledState';
 export * from './useRadiogroupKeyboard';
