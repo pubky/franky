@@ -25,6 +25,7 @@ export * from './useTagged';
 export * from './useOgMetadata';
 export * from './useNotifications';
 export * from './useStreamPagination';
+export * from './usePostMenuActions';
 export * from './usePostNavigation';
 export * from './usePostDetails';
 export * from './useProfileConnections';
