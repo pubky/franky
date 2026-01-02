@@ -34,4 +34,18 @@ export class LocalModerationService {
       });
     }
   }
+
+  /**
+   * Gets the moderation records for multiple posts.
+   */
+  static async getModerationRecords(postIds: string[]): Promise<Core.ModerationModelSchema[]> {
+    try {
+      return await Core.ModerationModel.findByIds(postIds);
+    } catch (error) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get moderation records', 500, {
+        error,
+        postIds,
+      });
+    }
+  }
 }

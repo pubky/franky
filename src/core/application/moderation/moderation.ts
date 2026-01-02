@@ -14,7 +14,7 @@ export class ModerationApplication {
   ): Promise<Core.EnrichedPostDetails[]> {
     if (posts.length === 0) return [];
 
-    const records = await Core.ModerationModel.findByIds(posts.map((p) => p.id));
+    const records = await Core.LocalModerationService.getModerationRecords(posts.map((p) => p.id));
     const recordMap = new Map(records.map((r) => [r.id, r]));
 
     return posts.map((post) => {
