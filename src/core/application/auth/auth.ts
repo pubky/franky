@@ -5,6 +5,49 @@ import { userUriBuilder } from 'pubky-app-specs';
 export class AuthApplication {
   private constructor() {} // Prevent instantiation
 
+  private static restoreSessionPromise: Core.TRestoreSessionResult | null = null;
+
+  /**
+   * Restores a session from a persisted session export.
+   * Prevents concurrent restoration attempts by managing a singleton promise.
+   *
+   * @param authStore - The auth store object containing state and actions needed for restoration
+   * @returns The restored session, or null if restoration failed
+   */
+  static async restorePersistedSession({ authStore }: Core.TRestoreSessionParams): Core.TRestoreSessionResult {
+
+    // If a restoration is already in progress, return the existing promise
+    if (this.restoreSessionPromise) {
+      return await this.restoreSessionPromise;
+    }
+
+    // Safety check: if sessionExport is missing, return null
+    if (!authStore.sessionExport) {
+      if (authStore.isRestoringSession) authStore.setIsRestoringSession(false);
+      return null;
+    }
+
+    // Start restoration and store the promise so concurrent calls can await the same one
+    this.restoreSessionPromise = (async () => {
+      authStore.setIsRestoringSession(true);
+      try {
+        const session = await Core.HomeserverService.restoreSession({ sessionExport: authStore.sessionExport! });
+        return { session };
+      } catch (error) {
+        Libs.Logger.error('Failed to restore session from persisted export', error);
+        authStore.setSession(null);
+        authStore.setCurrentUserPubky(null);
+        authStore.setHasProfile(false);
+        return null;
+      } finally {
+        authStore.setIsRestoringSession(false);
+        this.restoreSessionPromise = null;
+      }
+    })();
+
+    return await this.restoreSessionPromise;
+  }
+
   /**
    * Signs up a new user in the homeserver with the provided keypair and authentication credentials.
    *
@@ -46,11 +89,6 @@ export class AuthApplication {
    */
   static async generateAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
     return await Core.HomeserverService.generateAuthUrl();
-  }
-
-  static async restoreSession(sessionExport: string): Promise<Core.THomeserverSessionResult> {
-    const session = await Core.HomeserverService.restoreSession(sessionExport);
-    return { session };
   }
 
   /**

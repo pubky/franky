@@ -522,7 +522,7 @@ describe('AuthController', () => {
     });
   });
 
-  describe('restoreSessionIfAvailable', () => {
+  describe('restorePersistedSession', () => {
     it('should restore a session when sessionExport exists and store has hydrated', async () => {
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
@@ -537,12 +537,12 @@ describe('AuthController', () => {
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore);
 
-      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
+      vi.spyOn(Core.AuthApplication, 'restorePersistedSession').mockResolvedValue({ session: mockSession });
       const initializeSpy = vi
         .spyOn(AuthController, 'initializeAuthenticatedSession')
         .mockResolvedValue(undefined as unknown as void);
 
-      const result = await AuthController.restoreSessionIfAvailable();
+      const result = await AuthController.restorePersistedSession();
 
       expect(result).toBe(true);
       expect(authStore.setIsRestoringSession).toHaveBeenCalledWith(true);
@@ -562,7 +562,7 @@ describe('AuthController', () => {
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore);
 
-      const result = await AuthController.restoreSessionIfAvailable();
+      const result = await AuthController.restorePersistedSession();
       expect(result).toBe(false);
       expect(authStore.setIsRestoringSession).not.toHaveBeenCalledWith(true);
     });
