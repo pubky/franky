@@ -13,16 +13,20 @@ vi.mock('@/hooks', () => ({
   usePostMenuActions: (postId: string) => mockUsePostMenuActions(postId),
 }));
 
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(() => ({ currentUserPubky: 'pk:current123' })),
-  parseCompositeId: vi.fn((id: string) => {
-    const [pubky, postId] = id.split(':');
-    return { pubky, id: postId };
-  }),
-  PostController: {
-    delete: vi.fn(),
-  },
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(() => ({ currentUserPubky: 'pk:current123' })),
+    parseCompositeId: vi.fn((id: string) => {
+      const [pubky, postId] = id.split(':');
+      return { pubky, id: postId };
+    }),
+    PostController: {
+      delete: vi.fn(),
+    },
+  };
+});
 
 vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
