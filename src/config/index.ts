@@ -11,5 +11,6 @@ export * from './metadata';
 export * from './moderation';
 export * from './tags';
 export * from './theme';
+export * from './ui';
 export * from './urls';
 export * from './user';
