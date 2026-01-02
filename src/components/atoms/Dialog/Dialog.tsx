@@ -27,7 +27,7 @@ const DialogClose = React.forwardRef<
   React.ComponentRef<typeof DialogPrimitive.Close>,
   React.ComponentProps<typeof DialogPrimitive.Close>
 >(({ ...props }, ref) => {
-  return <DialogPrimitive.Close ref={ref} data-slot="dialog-close" {...props} />;
+  return <DialogPrimitive.Close ref={ref} data-slot="dialog-close" data-testid="dialog-close" {...props} />;
 });
 DialogClose.displayName = 'DialogClose';
 

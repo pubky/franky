@@ -28,6 +28,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with close butt
     <button
       class="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
       data-slot="dialog-close"
+      data-testid="dialog-close"
       type="button"
     >
       <svg
@@ -82,6 +83,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with default pr
     <button
       class="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
       data-slot="dialog-close"
+      data-testid="dialog-close"
       type="button"
     >
       <svg
@@ -150,6 +152,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with overrideDe
     <button
       class="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
       data-slot="dialog-close"
+      data-testid="dialog-close"
       type="button"
     >
       <svg
@@ -204,6 +207,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
     <button
       class="hidden"
       data-slot="dialog-close"
+      data-testid="dialog-close"
       type="button"
     >
       <svg
@@ -272,6 +276,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without overrid
     <button
       class="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
       data-slot="dialog-close"
+      data-testid="dialog-close"
       type="button"
     >
       <svg
@@ -426,6 +431,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
     <button
       class="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50"
       data-slot="dialog-close"
+      data-testid="dialog-close"
       type="button"
     >
       <svg
