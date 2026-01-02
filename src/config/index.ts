@@ -4,6 +4,7 @@ export * from './layout';
 export * from './network';
 export * from './nexus';
 export * from './posts';
+export * from './search';
 export * from './sync';
 export * from './logs';
 export * from './metadata';

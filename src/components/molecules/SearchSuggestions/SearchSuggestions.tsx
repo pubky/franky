@@ -1,6 +1,6 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Organisms from '@/organisms';
+import { SEARCH_EXPANDED_STYLE } from '@/config/search';
 import { MAX_RECENT_SEARCHES } from '@/core/stores/search/search.constants';
 import type { SearchSuggestionsProps } from './SearchSuggestions.types';
 
@@ -76,7 +76,7 @@ export function SearchSuggestions({
       aria-label={ariaLabel}
       data-testid="search-suggestions"
       className="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
-      style={Organisms.SEARCH_EXPANDED_STYLE}
+      style={SEARCH_EXPANDED_STYLE}
       overrideDefaults
     >
       <Atoms.Container className="flex flex-col space-y-6 p-6" overrideDefaults>

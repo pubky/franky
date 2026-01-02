@@ -3,7 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import { SEARCH_EXPANDED_STYLE } from '@/organisms/SearchInput/SearchInput.constants';
+import { SEARCH_EXPANDED_STYLE } from '@/config/search';
 import type { SearchInputBarProps } from './SearchInputBar.types';
 
 export function SearchInputBar({

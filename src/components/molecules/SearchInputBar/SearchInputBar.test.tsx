@@ -54,7 +54,7 @@ vi.mock('@/molecules', () => ({
 // Use real implementations - cn is a pure utility function, Search is an icon component
 // Both should use real implementations per guidelines
 
-vi.mock('@/organisms/SearchInput/SearchInput.constants', () => ({
+vi.mock('@/config/search', () => ({
   SEARCH_EXPANDED_STYLE: {
     background: 'linear-gradient(180deg, #05050A 0%, rgba(5, 5, 10, 0.50) 100%)',
     backdropFilter: 'blur(12px)',
@@ -67,6 +67,7 @@ describe('SearchInputBar', () => {
     inputValue: '',
     isFocused: false,
     isReadOnly: false,
+    isExpanded: false,
     suggestionsId: undefined,
     onTagRemove: vi.fn(),
     onInputChange: vi.fn(),
@@ -204,6 +205,22 @@ describe('SearchInputBar', () => {
 
       const input = screen.getByRole('textbox');
       expect(input).toHaveValue('search query');
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('sets aria-expanded to true when expanded', () => {
+      render(<SearchInputBar {...defaultProps} isExpanded={true} />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('aria-expanded', 'true');
+    });
+
+    it('sets aria-expanded to false when not expanded', () => {
+      render(<SearchInputBar {...defaultProps} isExpanded={false} />);
+
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('aria-expanded', 'false');
     });
   });
 

@@ -7,6 +7,7 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - defaul
 >
   <input
     aria-autocomplete="list"
+    aria-expanded="false"
     aria-label="Search input"
     class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
     placeholder="Search"
@@ -46,6 +47,7 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - focuse
 >
   <input
     aria-autocomplete="list"
+    aria-expanded="false"
     aria-label="Search input"
     class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
     placeholder="Search"
@@ -110,6 +112,7 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with a
   </div>
   <input
     aria-autocomplete="list"
+    aria-expanded="false"
     aria-label="Search input"
     class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-2.5"
     placeholder=""
@@ -148,6 +151,7 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with i
 >
   <input
     aria-autocomplete="list"
+    aria-expanded="false"
     aria-label="Search input"
     class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
     placeholder="Search"
