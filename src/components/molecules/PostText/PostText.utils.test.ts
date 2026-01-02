@@ -139,14 +139,14 @@ describe('remarkHashtags', () => {
     });
 
     it('allows hashtags starting with a number', () => {
-      const paragraph = createParagraph('#123 is a valid hashtag');
+      const paragraph = createParagraph('#123abc is a valid hashtag');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
       expect(links).toHaveLength(1);
-      expect(links[0].url).toBe('/search?tags=123');
+      expect(links[0].url).toBe('/search?tags=123abc');
     });
 
     it('allows underscores in hashtags', () => {
