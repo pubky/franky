@@ -140,6 +140,15 @@ describe('API Route: /api/og-metadata', () => {
       expect(data.error).toContain('Top-level domain (TLD) must be at least 2 characters');
     });
 
+    it('should reject Tor .onion addresses', async () => {
+      const request = createRequest('https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('Tor .onion addresses are not supported');
+    });
+
     it('should allow localhost (special exception)', async () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['127.0.0.1']);
 
