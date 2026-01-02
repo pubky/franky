@@ -88,6 +88,7 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -250,6 +251,7 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -394,6 +396,7 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -478,6 +481,7 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -566,6 +570,7 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"

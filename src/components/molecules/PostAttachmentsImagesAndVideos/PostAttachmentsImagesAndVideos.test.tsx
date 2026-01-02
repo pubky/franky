@@ -177,7 +177,7 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    opts?: { startIndex?: number; loop?: boolean; duration?: number };
+    opts?: { startIndex?: number; loop?: boolean; duration?: number; watchDrag?: boolean };
     setApi?: (api: unknown) => void;
     className?: string;
   }) => {
@@ -196,6 +196,7 @@ vi.mock('@/atoms', () => ({
         data-start-index={opts?.startIndex}
         data-loop={opts?.loop}
         data-duration={opts?.duration}
+        data-watch-drag={opts?.watchDrag}
         className={className}
       >
         {children}
@@ -624,6 +625,64 @@ describe('PostAttachmentsImagesAndVideos', () => {
       });
 
       document.body.removeChild(mockElement);
+    });
+  });
+
+  describe('Fullscreen swipe disable', () => {
+    it('sets watchDrag to true when exiting fullscreen', () => {
+      setDialogOpen(true);
+      const imagesAndVideos = [createMockImage()];
+      render(<PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} />);
+
+      // Simulate entering fullscreen first
+      Object.defineProperty(document, 'fullscreenElement', {
+        value: document.createElement('div'),
+        configurable: true,
+      });
+      fireEvent(document, new Event('fullscreenchange'));
+
+      // Simulate exiting fullscreen
+      Object.defineProperty(document, 'fullscreenElement', { value: null, configurable: true });
+      fireEvent(document, new Event('fullscreenchange'));
+
+      const carousel = screen.getByTestId('carousel');
+      expect(carousel).toHaveAttribute('data-watch-drag', 'true');
+    });
+
+    it('sets watchDrag to false when entering fullscreen', () => {
+      setDialogOpen(true);
+      const imagesAndVideos = [createMockImage()];
+      render(<PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} />);
+
+      // Simulate entering fullscreen
+      Object.defineProperty(document, 'fullscreenElement', {
+        value: document.createElement('div'),
+        configurable: true,
+      });
+      fireEvent(document, new Event('fullscreenchange'));
+
+      const carousel = screen.getByTestId('carousel');
+      expect(carousel).toHaveAttribute('data-watch-drag', 'false');
+    });
+
+    it('adds fullscreenchange event listener on mount', () => {
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+      const imagesAndVideos = [createMockImage()];
+      render(<PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} />);
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith('fullscreenchange', expect.any(Function));
+      addEventListenerSpy.mockRestore();
+    });
+
+    it('removes fullscreenchange event listener on unmount', () => {
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+      const imagesAndVideos = [createMockImage()];
+      const { unmount } = render(<PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} />);
+
+      unmount();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('fullscreenchange', expect.any(Function));
+      removeEventListenerSpy.mockRestore();
     });
   });
 
