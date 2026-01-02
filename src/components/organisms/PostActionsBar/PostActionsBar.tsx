@@ -1,36 +1,24 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import * as Organisms from '@/organisms';
 import type { PostActionsBarProps, ActionButtonConfig } from './PostActionsBar.types';
 
-export function PostActionsBar({
-  postId,
-  onTagClick,
-  onReplyClick,
-  onRepostClick,
-  onMoreClick,
-  className,
-}: PostActionsBarProps) {
-  // Fetch post counts
-  const postCounts = useLiveQuery(async () => {
-    return await Core.PostController.getCounts({ compositeId: postId });
-  }, [postId]);
+export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick, className }: PostActionsBarProps) {
+  const { postCounts, isLoading: isCountsLoading } = Hooks.usePostCounts(postId);
 
-  // Bookmark state and toggle
   const {
     isBookmarked,
     isLoading: isBookmarkLoading,
     isToggling: isBookmarkToggling,
     toggle: toggleBookmark,
   } = Hooks.useBookmark(postId);
+
   const isBookmarkBusy = isBookmarkLoading || isBookmarkToggling;
 
-  if (!postCounts) {
-    // TODO: Add skeleton loading component for PostActionsBar
+  if (isCountsLoading || !postCounts) {
     return (
       <Atoms.Container overrideDefaults className="text-muted-foreground">
         Loading actions...
@@ -46,24 +34,28 @@ export function PostActionsBar({
 
   const actionButtons: ActionButtonConfig[] = [
     {
+      id: 'tag',
       icon: Libs.Tag,
       count: postCounts.tags,
       onClick: onTagClick,
       ariaLabel: `Tag post (${postCounts.tags})`,
     },
     {
+      id: 'reply',
       icon: Libs.MessageCircle,
       count: postCounts.replies,
       onClick: onReplyClick,
       ariaLabel: `Reply to post (${postCounts.replies})`,
     },
     {
+      id: 'repost',
       icon: Libs.Repeat,
       count: postCounts.reposts,
       onClick: onRepostClick,
       ariaLabel: `Repost (${postCounts.reposts})`,
     },
     {
+      id: 'bookmark',
       icon: isBookmarkBusy ? Libs.Loader2 : Libs.Bookmark,
       onClick: toggleBookmark,
       ariaLabel: isBookmarkBusy ? 'Loading...' : isBookmarked ? 'Remove bookmark' : 'Add bookmark',
@@ -74,19 +66,20 @@ export function PostActionsBar({
       },
       disabled: isBookmarkBusy,
     },
-    {
-      icon: Libs.Ellipsis,
-      onClick: onMoreClick,
-      ariaLabel: 'More options',
-    },
   ];
+
+  const moreButton = (
+    <Atoms.Button {...commonButtonProps} aria-label="More options">
+      <Libs.Ellipsis />
+    </Atoms.Button>
+  );
 
   return (
     <Atoms.Container overrideDefaults className={Libs.cn('flex gap-2', className)}>
       {actionButtons.map(
-        ({ icon: Icon, count, onClick, ariaLabel, className: buttonClassName, iconProps, disabled }, index) => (
+        ({ id, icon: Icon, count, onClick, ariaLabel, className: buttonClassName, iconProps, disabled }) => (
           <Atoms.Button
-            key={index}
+            key={id}
             {...commonButtonProps}
             onClick={onClick}
             disabled={disabled}
@@ -94,10 +87,19 @@ export function PostActionsBar({
             aria-label={ariaLabel}
           >
             <Icon {...iconProps} />
-            {count !== undefined && <span className="text-xs leading-4 font-bold text-muted-foreground">{count}</span>}
+            {count !== undefined && (
+              <Atoms.Typography
+                as="span"
+                overrideDefaults
+                className="text-xs leading-4 font-bold text-muted-foreground"
+              >
+                {count}
+              </Atoms.Typography>
+            )}
           </Atoms.Button>
         ),
       )}
+      <Organisms.PostMenuActions postId={postId} trigger={moreButton} />
     </Atoms.Container>
   );
 }

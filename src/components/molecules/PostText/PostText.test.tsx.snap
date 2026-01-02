@@ -2,7 +2,7 @@
 
 exports[`PostText - Snapshots > matches snapshot for autolinked URL 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -22,7 +22,7 @@ exports[`PostText - Snapshots > matches snapshot for autolinked URL 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for blockquote 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -42,7 +42,7 @@ exports[`PostText - Snapshots > matches snapshot for blockquote 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for bold and italic combination 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -60,7 +60,7 @@ exports[`PostText - Snapshots > matches snapshot for bold and italic combination
 
 exports[`PostText - Snapshots > matches snapshot for bold and italic text 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -80,7 +80,7 @@ exports[`PostText - Snapshots > matches snapshot for bold and italic text 1`] = 
 
 exports[`PostText - Snapshots > matches snapshot for code block 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -99,7 +99,7 @@ console.log(greeting);
 
 exports[`PostText - Snapshots > matches snapshot for code block without language 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -117,7 +117,7 @@ exports[`PostText - Snapshots > matches snapshot for code block without language
 
 exports[`PostText - Snapshots > matches snapshot for combined markdown elements 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -202,7 +202,7 @@ exports[`PostText - Snapshots > matches snapshot for combined markdown elements 
 
 exports[`PostText - Snapshots > matches snapshot for content with special characters 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -214,7 +214,7 @@ exports[`PostText - Snapshots > matches snapshot for content with special charac
 
 exports[`PostText - Snapshots > matches snapshot for empty content 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 />
@@ -222,7 +222,7 @@ exports[`PostText - Snapshots > matches snapshot for empty content 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for hashtag alongside link 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -249,7 +249,7 @@ exports[`PostText - Snapshots > matches snapshot for hashtag alongside link 1`] 
 
 exports[`PostText - Snapshots > matches snapshot for hashtag with markdown formatting 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -276,7 +276,7 @@ exports[`PostText - Snapshots > matches snapshot for hashtag with markdown forma
 
 exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -302,7 +302,7 @@ exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for horizontal rule 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -322,7 +322,7 @@ exports[`PostText - Snapshots > matches snapshot for horizontal rule 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for inline code 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -340,7 +340,7 @@ exports[`PostText - Snapshots > matches snapshot for inline code 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for italic and bold combination 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -358,7 +358,7 @@ exports[`PostText - Snapshots > matches snapshot for italic and bold combination
 
 exports[`PostText - Snapshots > matches snapshot for italic and strikethrough combination 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -376,7 +376,7 @@ exports[`PostText - Snapshots > matches snapshot for italic and strikethrough co
 
 exports[`PostText - Snapshots > matches snapshot for links 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -397,7 +397,7 @@ exports[`PostText - Snapshots > matches snapshot for links 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for long hashtag 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -416,7 +416,7 @@ exports[`PostText - Snapshots > matches snapshot for long hashtag 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for mention alongside hashtag 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -440,7 +440,7 @@ exports[`PostText - Snapshots > matches snapshot for mention alongside hashtag 1
 
 exports[`PostText - Snapshots > matches snapshot for mention alongside link 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -467,7 +467,7 @@ exports[`PostText - Snapshots > matches snapshot for mention alongside link 1`] 
 
 exports[`PostText - Snapshots > matches snapshot for mention with markdown formatting 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -494,7 +494,7 @@ exports[`PostText - Snapshots > matches snapshot for mention with markdown forma
 
 exports[`PostText - Snapshots > matches snapshot for mention with text 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -513,7 +513,7 @@ exports[`PostText - Snapshots > matches snapshot for mention with text 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for multiline content with line breaks 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -527,7 +527,7 @@ Third line
 
 exports[`PostText - Snapshots > matches snapshot for multiple hashtags 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -558,7 +558,7 @@ exports[`PostText - Snapshots > matches snapshot for multiple hashtags 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for multiple mentions 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -582,7 +582,7 @@ exports[`PostText - Snapshots > matches snapshot for multiple mentions 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for nested blockquote 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -615,7 +615,7 @@ exports[`PostText - Snapshots > matches snapshot for nested blockquote 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for non-truncated long content on post page 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -627,7 +627,7 @@ exports[`PostText - Snapshots > matches snapshot for non-truncated long content 
 
 exports[`PostText - Snapshots > matches snapshot for ordered list 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -657,7 +657,7 @@ exports[`PostText - Snapshots > matches snapshot for ordered list 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for plain text 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -669,7 +669,7 @@ exports[`PostText - Snapshots > matches snapshot for plain text 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for single hashtag 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -687,7 +687,7 @@ exports[`PostText - Snapshots > matches snapshot for single hashtag 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for single mention with pk: prefix 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -705,7 +705,7 @@ exports[`PostText - Snapshots > matches snapshot for single mention with pk: pre
 
 exports[`PostText - Snapshots > matches snapshot for single mention with pubky prefix 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -723,7 +723,7 @@ exports[`PostText - Snapshots > matches snapshot for single mention with pubky p
 
 exports[`PostText - Snapshots > matches snapshot for strikethrough and inline code combination 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -743,7 +743,7 @@ exports[`PostText - Snapshots > matches snapshot for strikethrough and inline co
 
 exports[`PostText - Snapshots > matches snapshot for strikethrough and italic combination 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -761,7 +761,7 @@ exports[`PostText - Snapshots > matches snapshot for strikethrough and italic co
 
 exports[`PostText - Snapshots > matches snapshot for strikethrough text 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -777,7 +777,7 @@ exports[`PostText - Snapshots > matches snapshot for strikethrough text 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for truncated content with Show more button 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -797,7 +797,7 @@ exports[`PostText - Snapshots > matches snapshot for truncated content with Show
 
 exports[`PostText - Snapshots > matches snapshot for unordered list 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
