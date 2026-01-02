@@ -10,7 +10,11 @@ type DialogContextValue = {
 const DialogContext = React.createContext<DialogContextValue | null>(null);
 
 function useDialogContext() {
-  return React.useContext(DialogContext);
+  const context = React.useContext(DialogContext);
+  if (!context && process.env.NODE_ENV === 'development') {
+    console.warn('Dialog subcomponents must be used within DialogContent');
+  }
+  return context;
 }
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
