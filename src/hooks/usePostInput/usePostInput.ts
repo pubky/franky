@@ -81,8 +81,8 @@ export function usePostInput({
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) return;
 
-    // For replies and posts, require content. For reposts, content is optional.
-    if (variant !== POST_INPUT_VARIANT.REPOST && !content.trim()) return;
+    // For replies and posts, require content or attachments. For reposts, content is optional.
+    if (variant !== POST_INPUT_VARIANT.REPOST && !content.trim() && attachments.length === 0) return;
 
     // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
@@ -104,7 +104,19 @@ export function usePostInput({
         await post({ onSuccess: handleSuccess });
         break;
     }
-  }, [content, variant, postId, originalPostId, reply, post, repost, isSubmitting, onSuccess, timelineFeed]);
+  }, [
+    content,
+    attachments,
+    variant,
+    postId,
+    originalPostId,
+    reply,
+    post,
+    repost,
+    isSubmitting,
+    onSuccess,
+    timelineFeed,
+  ]);
 
   // Handle textarea change with validation
   const handleChange = useCallback(

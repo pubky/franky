@@ -26,10 +26,11 @@ vi.mock('@/atoms', () => ({
   Spinner: ({ size }: { size: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
+});
 
 describe('PostTagsPanel', () => {
   beforeEach(() => {

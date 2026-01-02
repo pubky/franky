@@ -26,21 +26,8 @@ vi.mock('@/core', () => ({
 
 vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
-  const MockIcon = ({ className }: { className?: string }) => <span className={className}>Icon</span>;
   return {
     ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-    Logger: {
-      error: vi.fn(),
-    },
-    UserRoundPlus: MockIcon,
-    UserRoundMinus: MockIcon,
-    Key: MockIcon,
-    Link: MockIcon,
-    FileText: MockIcon,
-    MegaphoneOff: MockIcon,
-    Trash: MockIcon,
-    Flag: MockIcon,
   };
 });
 

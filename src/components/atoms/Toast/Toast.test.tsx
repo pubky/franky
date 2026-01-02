@@ -2,13 +2,10 @@ import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Toast, ToastProvider, ToastViewport } from './Toast';
 
-// Mock @/libs - use actual implementations and only stub cn helper
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-  };
+// Mock @/libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('Toast Components', () => {
