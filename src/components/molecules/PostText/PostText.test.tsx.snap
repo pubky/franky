@@ -247,6 +247,25 @@ exports[`PostText - Snapshots > matches snapshot for hashtag alongside link 1`] 
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for hashtag with hyphens 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=hello-world"
+    >
+      #hello-world
+    </a>
+     tag
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for hashtag with markdown formatting 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -274,6 +293,25 @@ exports[`PostText - Snapshots > matches snapshot for hashtag with markdown forma
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for hashtag with mixed hyphens and underscores 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=hello-world_test-example"
+    >
+      #hello-world_test-example
+    </a>
+     tag
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -296,6 +334,25 @@ exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
       #blockchain
     </a>
      technology
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag with underscores 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=hello_world"
+    >
+      #hello_world
+    </a>
+     tag
   </p>
 </div>
 `;

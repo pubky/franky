@@ -171,6 +171,39 @@ describe('remarkHashtags', () => {
       expect(links[0].url).toBe('/search?tags=one_two_three');
     });
 
+    it('allows hyphens in hashtags', () => {
+      const paragraph = createParagraph('#hello-world is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=hello-world');
+    });
+
+    it('allows multiple hyphens separating words', () => {
+      const paragraph = createParagraph('#one-two-three is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=one-two-three');
+    });
+
+    it('allows mixed hyphens and underscores separating words', () => {
+      const paragraph = createParagraph('#hello-world_test is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=hello-world_test');
+    });
+
     it('does not match hashtags starting with underscore', () => {
       const paragraph = createParagraph('#_invalid is not a hashtag');
       const tree = createRoot([paragraph]);
@@ -194,6 +227,60 @@ describe('remarkHashtags', () => {
 
     it('stops at double underscore', () => {
       const paragraph = createParagraph('#hello__world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('does not match hashtags starting with hyphen', () => {
+      const paragraph = createParagraph('#-invalid is not a hashtag');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('stops at trailing hyphen', () => {
+      const paragraph = createParagraph('#hello- world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at double hyphen', () => {
+      const paragraph = createParagraph('#hello--world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at mixed consecutive separators (hyphen-underscore)', () => {
+      const paragraph = createParagraph('#hello-_world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at mixed consecutive separators (underscore-hyphen)', () => {
+      const paragraph = createParagraph('#hello_-world');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);

@@ -340,6 +340,20 @@ describe('PostText', () => {
       expect(hashtag).toHaveTextContent('#hello_world');
     });
 
+    it('renders hashtags with hyphens', () => {
+      render(<PostText content="Check #hello-world tag" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#hello-world');
+    });
+
+    it('renders hashtags with mixed hyphens and underscores', () => {
+      render(<PostText content="Check #hello-world_test tag" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#hello-world_test');
+    });
+
     it('renders hashtags with numbers', () => {
       render(<PostText content="Check #web3 tag" />);
 
@@ -735,6 +749,21 @@ Third line`}
     const { container } = render(
       <PostText content="Check out this #verylooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonghashtagwithlotsofcharactersandnumbers123456789 tag" />,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with underscores', () => {
+    const { container } = render(<PostText content="Check out #hello_world tag" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with hyphens', () => {
+    const { container } = render(<PostText content="Check out #hello-world tag" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with mixed hyphens and underscores', () => {
+    const { container } = render(<PostText content="Check out #hello-world_test-example tag" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

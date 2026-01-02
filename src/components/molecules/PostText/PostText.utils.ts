@@ -93,10 +93,10 @@ const createPatternPlugin = (config: PatternPluginConfig) => {
 };
 
 // Parse hashtags in paragraph text nodes and convert them to links with data-type="hashtag"
-// Hashtag pattern: # followed by a letter or number, then letters/numbers, with underscores allowed only between alphanumerics
+// Hashtag pattern: # followed by a letter or number, then letters/numbers, with underscores or hyphens allowed only between alphanumerics
 // Must be at start of text or preceded by whitespace (standalone)
 export const remarkHashtags = createPatternPlugin({
-  regex: /(^|\s)(#[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*)/g,
+  regex: /(^|\s)(#[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*)/g,
   getUrl: (hashtag: string) => {
     // Extract tag name without the # symbol for the URL
     const tagName = hashtag.slice(1);
