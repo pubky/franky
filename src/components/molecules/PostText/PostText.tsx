@@ -43,7 +43,7 @@ export const PostText = ({ content }: PostTextProps) => {
     <Atoms.Container
       data-cy="post-text"
       overrideDefaults
-      className="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+      className="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
     >
       <Markdown
         allowedElements={['em', 'strong', 'code', 'pre', 'a', 'p', 'br', 'ul', 'ol', 'li', 'del', 'blockquote', 'hr']}
