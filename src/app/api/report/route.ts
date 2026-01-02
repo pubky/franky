@@ -1,27 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 /**
- * API Route for post report submission
+ * API Route for post report submission to Chatwoot
  *
- * TODO: Implement Core layer integration (ReportController) in next PR.
- * Currently validates request and returns success for UI development.
+ * This endpoint receives report data from the UI and processes it through
+ * the controller layer following Franky's architecture.
+ *
+ * All validation is handled by the controller layer.
+ * This route only parses the request body and delegates to the controller.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { pubky, postUrl, issueType, reason, name } = body;
 
-    // Basic validation - full validation will be in Core layer
-    if (!pubky || !postUrl || !issueType || !reason || !name) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-    }
-
-    // TODO: Replace with Core.ReportController.submit() in next PR
-    console.log('[STUB] Report received:', { pubky, postUrl, issueType, name });
+    // Delegate to controller - validation happens there
+    await Core.ReportController.submit({ pubky, postUrl, issueType, reason, name });
 
     return NextResponse.json({ message: 'Success' });
   } catch (error) {
-    console.error('[STUB] Error in report API handler:', error);
+    // Handle AppError from controller/application/service layers
+    if (error instanceof Libs.AppError) {
+      return NextResponse.json({ error: error.message }, { status: error.statusCode });
+    }
+
+    // Handle unexpected errors
+    Libs.Logger.error('Error in report API handler:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

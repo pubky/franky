@@ -12,3 +12,4 @@ export * from './feed';
 export * from './notification';
 export * from './search';
 export * from './feedback';
+export * from './report';
