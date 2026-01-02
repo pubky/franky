@@ -13,8 +13,10 @@ const {
   mockUseUserProfile,
   mockUseIsFollowing,
   mockUseFollowUser,
+  mockUseMuteUser,
   mockUseDeletePost,
   mockUseCopyToClipboard,
+  mockUseSettingsStore,
   mockToast,
 } = vi.hoisted(() => ({
   mockIsAppError: vi.fn(),
@@ -24,14 +26,17 @@ const {
   mockUseUserProfile: vi.fn(),
   mockUseIsFollowing: vi.fn(),
   mockUseFollowUser: vi.fn(),
+  mockUseMuteUser: vi.fn(),
   mockUseDeletePost: vi.fn(),
   mockUseCopyToClipboard: vi.fn(),
+  mockUseSettingsStore: vi.fn(),
   mockToast: vi.fn(),
 }));
 
 // Mock Core
 vi.mock('@/core', () => ({
   parseCompositeId: (id: string) => mockParseCompositeId(id),
+  useSettingsStore: (selector: unknown) => mockUseSettingsStore(selector),
 }));
 
 // Mock Hooks
@@ -41,6 +46,7 @@ vi.mock('@/hooks', () => ({
   useUserProfile: (userId: string) => mockUseUserProfile(userId),
   useIsFollowing: (userId: string) => mockUseIsFollowing(userId),
   useFollowUser: () => mockUseFollowUser(),
+  useMuteUser: () => mockUseMuteUser(),
   useDeletePost: (postId: string) => mockUseDeletePost(postId),
   useCopyToClipboard: (options: unknown) => mockUseCopyToClipboard(options),
 }));
@@ -125,6 +131,19 @@ describe('usePostMenuActions', () => {
       toggleFollow: defaultMocks.toggleFollow,
       isLoading: defaultMocks.isFollowLoading,
       isUserLoading: defaultMocks.isUserLoading,
+    });
+
+    mockUseMuteUser.mockReturnValue({
+      muteUser: vi.fn().mockResolvedValue(undefined),
+      unmuteUser: vi.fn().mockResolvedValue(undefined),
+      isLoading: false,
+      loadingUserId: null,
+      isUserLoading: vi.fn().mockReturnValue(false),
+      error: null,
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      muted: [],
     });
 
     mockUseDeletePost.mockReturnValue({
@@ -228,12 +247,12 @@ describe('usePostMenuActions', () => {
       });
     });
 
-    it('includes mute action (disabled)', () => {
+    it('includes mute action (enabled)', () => {
       const { result } = renderHook(() => usePostMenuActions(mockPostId));
 
       const muteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.MUTE);
       expect(muteItem).toBeDefined();
-      expect(muteItem?.disabled).toBe(true);
+      expect(muteItem?.disabled).toBe(false);
       expect(muteItem?.label).toBe('Mute Test Author');
     });
 
