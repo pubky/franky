@@ -40,7 +40,8 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
   });
 
   const isOwnPost = currentUserPubky === postAuthorId;
-  const username = authorProfile?.name || postAuthorId;
+  const rawUsername = authorProfile?.name || postAuthorId;
+  const username = Libs.truncateString(rawUsername, 15);
   const isArticle = postDetails?.kind === 'long';
   const isLoading = isPostLoading || isAuthorLoading || isFollowingLoading;
   const postUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}${POST_ROUTES.POST}/${parsedId.pubky}/${parsedId.id}`;
@@ -71,7 +72,16 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
     id: POST_MENU_ACTION_IDS.COPY_PUBKY,
     label: 'Copy pubky',
     icon: Libs.Key,
-    onClick: () => void copyPubky(postAuthorId),
+    onClick: async () => {
+      try {
+        await copyPubky(postAuthorId);
+      } catch (error) {
+        Molecules.toast({
+          title: 'Error',
+          description: Libs.isAppError(error) ? error.message : 'Failed to copy pubky',
+        });
+      }
+    },
     variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
   });
 
@@ -79,7 +89,16 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
     id: POST_MENU_ACTION_IDS.COPY_LINK,
     label: 'Copy link to post',
     icon: Libs.Link,
-    onClick: () => void copyLink(postUrl),
+    onClick: async () => {
+      try {
+        await copyLink(postUrl);
+      } catch (error) {
+        Molecules.toast({
+          title: 'Error',
+          description: Libs.isAppError(error) ? error.message : 'Failed to copy link',
+        });
+      }
+    },
     variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
   });
 
@@ -88,7 +107,16 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
       id: POST_MENU_ACTION_IDS.COPY_TEXT,
       label: 'Copy text of post',
       icon: Libs.FileText,
-      onClick: () => void copyText(postDetails?.content ?? ''),
+      onClick: async () => {
+        try {
+          await copyText(postDetails?.content ?? '');
+        } catch (error) {
+          Molecules.toast({
+            title: 'Error',
+            description: Libs.isAppError(error) ? error.message : 'Failed to copy text',
+          });
+        }
+      },
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
     });
   }
