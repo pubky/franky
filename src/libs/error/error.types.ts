@@ -26,6 +26,7 @@ export enum HomeserverErrorType {
   USER_ALREADY_EXISTS = 'User already exists',
   AUTH_REQUEST_FAILED = 'AUTH_REQUEST_FAILED',
   PUT_FAILED = 'PUT_FAILED',
+  DELETE_FAILED = 'DELETE_FAILED',
 }
 
 export enum DatabaseErrorType {

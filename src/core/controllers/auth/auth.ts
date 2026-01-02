@@ -22,12 +22,11 @@ export class AuthController {
    * @returns Promise resolving to true if the session was restored successfully, false otherwise
    */
   static async restorePersistedSession(): Promise<boolean> {
+    console.log('restorePersistedSession');
     const authStore = Core.useAuthStore.getState();
     const result = await Core.AuthApplication.restorePersistedSession({ authStore });
     if (!result) return false;
     const { session } = result;
-    authStore.setSession(result.session);
-    authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session: result.session }));
     const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: true };
     authStore.init(initialState);
     return true;
@@ -80,7 +79,7 @@ export class AuthController {
       // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
       await this.hydrateMeImAlive({ pubky });
     }
-    const initialState = { session, currentUserPubky: pubky, hasProfile: false };
+    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
     authStore.init(initialState);
   }
 
@@ -142,7 +141,7 @@ export class AuthController {
       cancelAuthFlow();
       return {
         authorizationUrl,
-        awaitApproval: awaitApproval.finally(() => cancelAuthFlow()),
+        awaitApproval,
         cancelAuthFlow,
       };
     }
@@ -169,13 +168,15 @@ export class AuthController {
     const onboardingStore = Core.useOnboardingStore.getState();
 
     if (authStore.session) {
-      await Core.AuthApplication.logout({ session: authStore.session });
+      try {
+        await Core.AuthApplication.logout({ session: authStore.session });
+      } catch (error) {
+        Libs.Logger.warn('Homeserver logout failed, clearing local state anyway', { error });
+      }
     }
-    // Always clear local state, even if homeserver logout fails
-    authStore.setSession(null);
+    this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();
-    this.cancelActiveAuthFlow();
     Libs.clearCookies();
     await Core.clearDatabase();
   }
