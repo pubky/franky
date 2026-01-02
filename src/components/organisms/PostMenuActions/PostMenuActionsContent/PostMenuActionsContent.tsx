@@ -4,10 +4,16 @@ import * as Atoms from '@/atoms';
 import { MENU_VARIANT } from '@/config/ui';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
+import { POST_MENU_ACTION_IDS } from '@/hooks/usePostMenuActions';
 import type { PostMenuActionsContentProps } from './PostMenuActionsContent.types';
 
-export function PostMenuActionsContent({ postId, variant, onActionComplete }: PostMenuActionsContentProps) {
-  const { menuItems, isLoading } = Hooks.usePostMenuActions(postId);
+export function PostMenuActionsContent({
+  postId,
+  variant,
+  onActionComplete,
+  onReportClick,
+}: PostMenuActionsContentProps) {
+  const { menuItems, isLoading } = Hooks.usePostMenuActions(postId, { onReportClick });
 
   if (isLoading) {
     return (
@@ -21,7 +27,10 @@ export function PostMenuActionsContent({ postId, variant, onActionComplete }: Po
 
   const handleItemClick = async (item: (typeof menuItems)[0]) => {
     await item.onClick();
-    onActionComplete?.();
+    // Report action handles menu closing internally via onReportClick
+    if (item.id !== POST_MENU_ACTION_IDS.REPORT) {
+      onActionComplete();
+    }
   };
 
   return (
