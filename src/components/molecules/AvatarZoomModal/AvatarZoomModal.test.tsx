@@ -72,8 +72,8 @@ vi.mock('@/molecules', async (importOriginal) => {
 });
 
 // Mock libs - use real extractInitials
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
   };

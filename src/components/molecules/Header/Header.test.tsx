@@ -10,6 +10,9 @@ import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/molecules';
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
   usePathname: vi.fn(),
+  useSearchParams: vi.fn(() => ({
+    get: vi.fn(() => null),
+  })),
 }));
 
 // Mock dexie-react-hooks
@@ -24,6 +27,16 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     useAuthStore: vi.fn(),
     useNotificationStore: vi.fn(),
+    useSearchStore: vi.fn(() => ({
+      recentUsers: [],
+      recentTags: [],
+      activeTags: [],
+      addUser: vi.fn(),
+      addTag: vi.fn(),
+      setActiveTags: vi.fn(),
+      addActiveTag: vi.fn(),
+      removeActiveTag: vi.fn(),
+    })),
     ProfileController: {
       read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
     },
@@ -113,12 +126,9 @@ vi.mock('@/molecules', async (importOriginal) => {
 });
 
 // Mock the libs - keep real implementations and only stub helpers we need
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 // Mock the config
