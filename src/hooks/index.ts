@@ -57,3 +57,5 @@ export * from './useNestedReplies';
 export * from './useEntityTags';
 export * from './useStickyWhenFits';
 export * from './useSearchInput';
+export * from './useSearchAutocomplete';
+export * from './useTagSearch';
