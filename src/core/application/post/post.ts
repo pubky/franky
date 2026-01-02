@@ -10,7 +10,8 @@ export class PostApplication {
   static async getDetails({ compositeId }: Core.TCompositeId): Promise<Core.EnrichedPostDetails | null> {
     const post = await Core.LocalPostService.readDetails({ postId: compositeId });
     if (!post) return null;
-    return await Core.ModerationApplication.enrichPostWithModeration(post);
+    const [enriched] = await Core.ModerationController.enrichPosts([post]);
+    return enriched;
   }
 
   /**

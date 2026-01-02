@@ -4,23 +4,17 @@ import * as Libs from '@/libs';
 export class LocalModerationService {
   private constructor() {}
 
-  /**
-   * Sets the blur state for a moderated post.
-   * Only updates posts that exist in the moderation table.
-   */
-  static async setBlur(postId: string, blur: boolean): Promise<void> {
+  static async setUnblur(postId: string): Promise<void> {
     try {
       const record = await Core.ModerationModel.findById(postId);
       if (!record) {
-        // Post is not moderated, nothing to update
         return;
       }
-      await Core.ModerationModel.update(postId, { is_blurred: blur });
+      await Core.ModerationModel.update(postId, { is_blurred: false });
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to set blur state', 500, {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to unblur post', 500, {
         error,
         postId,
-        blur,
       });
     }
   }

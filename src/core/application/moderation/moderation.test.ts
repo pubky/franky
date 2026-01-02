@@ -4,8 +4,13 @@ import * as Core from '@/core';
 
 vi.mock('@/core/services/local/moderation', () => ({
   LocalModerationService: {
-    setBlur: vi.fn(),
-    getModerationRecord: vi.fn(),
+    setUnblur: vi.fn(),
+  },
+}));
+
+vi.mock('@/core/models/moderation', () => ({
+  ModerationModel: {
+    findByIds: vi.fn(),
   },
 }));
 
@@ -14,133 +19,101 @@ describe('ModerationApplication', () => {
     vi.clearAllMocks();
   });
 
-  describe('setBlur', () => {
+  describe('setUnblur', () => {
     it('should delegate to LocalModerationService', async () => {
       const postId = 'author:post1';
-      const setBlurSpy = vi.spyOn(Core.LocalModerationService, 'setBlur').mockResolvedValue(undefined);
+      const spy = vi.spyOn(Core.LocalModerationService, 'setUnblur').mockResolvedValue(undefined);
 
-      await ModerationApplication.setBlur(postId, true);
+      await ModerationApplication.setUnblur(postId);
 
-      expect(setBlurSpy).toHaveBeenCalledWith(postId, true);
-    });
-  });
-
-  describe('enrichPostWithModeration', () => {
-    it('should return not moderated when no record exists', async () => {
-      const post: Core.PostDetailsModelSchema = {
-        id: 'author:post1',
-        content: 'Test content',
-        kind: 'short',
-        indexed_at: 123456,
-        uri: 'pubky://author/pub/pubky.app/posts/post1',
-        attachments: [],
-      };
-
-      const settingsSpy = vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
-        privacy: { blurCensored: true },
-      } as Partial<Core.SettingsStore> as Core.SettingsStore);
-      const getModerationRecordSpy = vi
-        .spyOn(Core.LocalModerationService, 'getModerationRecord')
-        .mockResolvedValue(null);
-
-      const result = await ModerationApplication.enrichPostWithModeration(post);
-
-      expect(result).toEqual({
-        ...post,
-        is_moderated: false,
-        is_blurred: false,
-      });
-      settingsSpy.mockRestore();
-      getModerationRecordSpy.mockRestore();
-    });
-
-    it('should return blurred when post is moderated and is_blurred is true', async () => {
-      const post: Core.PostDetailsModelSchema = {
-        id: 'author:post1',
-        content: 'Test content',
-        kind: 'short',
-        indexed_at: 123456,
-        uri: 'pubky://author/pub/pubky.app/posts/post1',
-        attachments: [],
-      };
-
-      const settingsSpy = vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
-        privacy: { blurCensored: true },
-      } as Partial<Core.SettingsStore> as Core.SettingsStore);
-      const getModerationRecordSpy = vi
-        .spyOn(Core.LocalModerationService, 'getModerationRecord')
-        .mockResolvedValue({ id: post.id, is_blurred: true, created_at: Date.now() });
-
-      const result = await ModerationApplication.enrichPostWithModeration(post);
-
-      expect(result).toEqual({
-        ...post,
-        is_moderated: true,
-        is_blurred: true,
-      });
-      settingsSpy.mockRestore();
-      getModerationRecordSpy.mockRestore();
-    });
-
-    it('should return not blurred when post is moderated but is_blurred is false', async () => {
-      const post: Core.PostDetailsModelSchema = {
-        id: 'author:post1',
-        content: 'Test content',
-        kind: 'short',
-        indexed_at: 123456,
-        uri: 'pubky://author/pub/pubky.app/posts/post1',
-        attachments: [],
-      };
-
-      const settingsSpy = vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
-        privacy: { blurCensored: true },
-      } as Partial<Core.SettingsStore> as Core.SettingsStore);
-      const getModerationRecordSpy = vi
-        .spyOn(Core.LocalModerationService, 'getModerationRecord')
-        .mockResolvedValue({ id: post.id, is_blurred: false, created_at: Date.now() });
-
-      const result = await ModerationApplication.enrichPostWithModeration(post);
-
-      expect(result).toEqual({
-        ...post,
-        is_moderated: true,
-        is_blurred: false,
-      });
-      settingsSpy.mockRestore();
-      getModerationRecordSpy.mockRestore();
-    });
-
-    it('should return not blurred when blur is disabled globally', async () => {
-      const post: Core.PostDetailsModelSchema = {
-        id: 'author:post1',
-        content: 'Test content',
-        kind: 'short',
-        indexed_at: 123456,
-        uri: 'pubky://author/pub/pubky.app/posts/post1',
-        attachments: [],
-      };
-
-      const settingsSpy = vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
-        privacy: { blurCensored: false },
-      } as Partial<Core.SettingsStore> as Core.SettingsStore);
-      const getModerationRecordSpy = vi
-        .spyOn(Core.LocalModerationService, 'getModerationRecord')
-        .mockResolvedValue({ id: post.id, is_blurred: true, created_at: Date.now() });
-
-      const result = await ModerationApplication.enrichPostWithModeration(post);
-
-      expect(result).toEqual({
-        ...post,
-        is_moderated: true,
-        is_blurred: false,
-      });
-      settingsSpy.mockRestore();
-      getModerationRecordSpy.mockRestore();
+      expect(spy).toHaveBeenCalledWith(postId);
     });
   });
 
   describe('enrichPostsWithModeration', () => {
-    it('should enrich multiple posts in parallel', async () => {
+    it('should return not moderated when no record exists', async () => {
+      const posts: Core.PostDetailsModelSchema[] = [
+        {
+          id: 'author:post1',
+          content: 'Test content',
+          kind: 'short',
+          indexed_at: 123456,
+          uri: 'pubky://author/pub/pubky.app/posts/post1',
+          attachments: [],
+        },
+      ];
+
+      vi.spyOn(Core.ModerationModel, 'findByIds').mockResolvedValue([]);
+
+      const result = await ModerationApplication.enrichPostsWithModeration(posts, false);
+
+      expect(result).toEqual([{ ...posts[0], is_moderated: false, is_blurred: false }]);
+    });
+
+    it('should return blurred when post is moderated and is_blurred is true', async () => {
+      const posts: Core.PostDetailsModelSchema[] = [
+        {
+          id: 'author:post1',
+          content: 'Test content',
+          kind: 'short',
+          indexed_at: 123456,
+          uri: 'pubky://author/pub/pubky.app/posts/post1',
+          attachments: [],
+        },
+      ];
+
+      vi.spyOn(Core.ModerationModel, 'findByIds').mockResolvedValue([
+        { id: posts[0].id, is_blurred: true, created_at: Date.now() },
+      ]);
+
+      const result = await ModerationApplication.enrichPostsWithModeration(posts, false);
+
+      expect(result).toEqual([{ ...posts[0], is_moderated: true, is_blurred: true }]);
+    });
+
+    it('should return not blurred when post is moderated but is_blurred is false', async () => {
+      const posts: Core.PostDetailsModelSchema[] = [
+        {
+          id: 'author:post1',
+          content: 'Test content',
+          kind: 'short',
+          indexed_at: 123456,
+          uri: 'pubky://author/pub/pubky.app/posts/post1',
+          attachments: [],
+        },
+      ];
+
+      vi.spyOn(Core.ModerationModel, 'findByIds').mockResolvedValue([
+        { id: posts[0].id, is_blurred: false, created_at: Date.now() },
+      ]);
+
+      const result = await ModerationApplication.enrichPostsWithModeration(posts, false);
+
+      expect(result).toEqual([{ ...posts[0], is_moderated: true, is_blurred: false }]);
+    });
+
+    it('should return not blurred when blur is disabled globally', async () => {
+      const posts: Core.PostDetailsModelSchema[] = [
+        {
+          id: 'author:post1',
+          content: 'Test content',
+          kind: 'short',
+          indexed_at: 123456,
+          uri: 'pubky://author/pub/pubky.app/posts/post1',
+          attachments: [],
+        },
+      ];
+
+      vi.spyOn(Core.ModerationModel, 'findByIds').mockResolvedValue([
+        { id: posts[0].id, is_blurred: true, created_at: Date.now() },
+      ]);
+
+      const result = await ModerationApplication.enrichPostsWithModeration(posts, true); // blur disabled
+
+      expect(result).toEqual([{ ...posts[0], is_moderated: true, is_blurred: false }]);
+    });
+
+    it('should use single batch query for multiple posts', async () => {
       const posts: Core.PostDetailsModelSchema[] = [
         {
           id: 'author:post1',
@@ -160,35 +133,20 @@ describe('ModerationApplication', () => {
         },
       ];
 
-      const settingsSpy = vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
-        privacy: { blurCensored: true },
-      } as Partial<Core.SettingsStore> as Core.SettingsStore);
-      const getModerationRecordSpy = vi
-        .spyOn(Core.LocalModerationService, 'getModerationRecord')
-        .mockImplementation(async (id) => {
-          if (id === 'author:post1') return { id, is_blurred: true, created_at: Date.now() };
-          return null;
-        });
+      const findByIdsSpy = vi
+        .spyOn(Core.ModerationModel, 'findByIds')
+        .mockResolvedValue([{ id: 'author:post1', is_blurred: true, created_at: Date.now() }]);
 
-      const result = await ModerationApplication.enrichPostsWithModeration(posts);
+      const result = await ModerationApplication.enrichPostsWithModeration(posts, false);
 
+      expect(findByIdsSpy).toHaveBeenCalledWith(['author:post1', 'author:post2']);
       expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({
-        ...posts[0],
-        is_moderated: true,
-        is_blurred: true,
-      });
-      expect(result[1]).toEqual({
-        ...posts[1],
-        is_moderated: false,
-        is_blurred: false,
-      });
-      settingsSpy.mockRestore();
-      getModerationRecordSpy.mockRestore();
+      expect(result[0]).toEqual({ ...posts[0], is_moderated: true, is_blurred: true });
+      expect(result[1]).toEqual({ ...posts[1], is_moderated: false, is_blurred: false });
     });
 
     it('should return empty array for empty input', async () => {
-      const result = await ModerationApplication.enrichPostsWithModeration([]);
+      const result = await ModerationApplication.enrichPostsWithModeration([], false);
 
       expect(result).toEqual([]);
     });
@@ -221,30 +179,19 @@ describe('ModerationApplication', () => {
         },
       ];
 
-      const settingsSpy = vi.spyOn(Core.useSettingsStore, 'getState').mockReturnValue({
-        privacy: { blurCensored: true },
-      } as Partial<Core.SettingsStore> as Core.SettingsStore);
-      const getModerationRecordSpy = vi
-        .spyOn(Core.LocalModerationService, 'getModerationRecord')
-        .mockImplementation(async (id) => {
-          if (id === 'author:post1') return { id, is_blurred: false, created_at: Date.now() };
-          if (id === 'author:post2') return { id, is_blurred: true, created_at: Date.now() };
-          return null;
-        });
+      vi.spyOn(Core.ModerationModel, 'findByIds').mockResolvedValue([
+        { id: 'author:post1', is_blurred: false, created_at: Date.now() },
+        { id: 'author:post2', is_blurred: true, created_at: Date.now() },
+      ]);
 
-      const result = await ModerationApplication.enrichPostsWithModeration(posts);
+      const result = await ModerationApplication.enrichPostsWithModeration(posts, false);
 
       expect(result[0].is_moderated).toBe(true);
       expect(result[0].is_blurred).toBe(false);
-
       expect(result[1].is_moderated).toBe(true);
       expect(result[1].is_blurred).toBe(true);
-
       expect(result[2].is_moderated).toBe(false);
       expect(result[2].is_blurred).toBe(false);
-
-      settingsSpy.mockRestore();
-      getModerationRecordSpy.mockRestore();
     });
   });
 });

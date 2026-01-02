@@ -9,23 +9,12 @@ describe('LocalModerationService', () => {
     });
   });
 
-  describe('setBlur', () => {
-    it('should update is_blurred to true when blur is true', async () => {
-      const postId = 'author:post1';
-      await Core.ModerationModel.upsert({ id: postId, is_blurred: false, created_at: Date.now() });
-
-      await Core.LocalModerationService.setBlur(postId, true);
-
-      const record = await Core.ModerationModel.table.get(postId);
-      expect(record).toBeTruthy();
-      expect(record!.is_blurred).toBe(true);
-    });
-
-    it('should update is_blurred to false when blur is false', async () => {
+  describe('setUnblur', () => {
+    it('should set is_blurred to false', async () => {
       const postId = 'author:post1';
       await Core.ModerationModel.upsert({ id: postId, is_blurred: true, created_at: Date.now() });
 
-      await Core.LocalModerationService.setBlur(postId, false);
+      await Core.LocalModerationService.setUnblur(postId);
 
       const record = await Core.ModerationModel.table.get(postId);
       expect(record).toBeTruthy();
@@ -35,8 +24,7 @@ describe('LocalModerationService', () => {
     it('should do nothing if post is not in moderation table', async () => {
       const postId = 'author:post1';
 
-      // Should not throw
-      await Core.LocalModerationService.setBlur(postId, false);
+      await Core.LocalModerationService.setUnblur(postId);
 
       const record = await Core.ModerationModel.table.get(postId);
       expect(record).toBeUndefined();
