@@ -64,6 +64,10 @@ export const Twitter: ProviderTypes.EmbedProvider = {
 
   /**
    * Render Twitter/X component embed using Twitter post ID
+   *
+   * Note: The selector `.tweet-media_root__k6gQ2` targets a CSS modules class
+   * from react-tweet. The hash suffix may change in library updates - verify
+   * styling after upgrading react-tweet package.
    */
   renderEmbed: (embedData: ProviderTypes.EmbedData) => {
     // Type guard: ensure we have an ID type
