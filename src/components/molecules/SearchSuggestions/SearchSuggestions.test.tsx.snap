@@ -2,14 +2,14 @@
 
 exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot with empty hot tags 1`] = `
 <div
-  class="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
+  class="absolute top-full right-0 left-0 z-50 overflow-y-auto rounded-b-2xl border-x border-b border-border"
   data-override-defaults="true"
   data-testid="search-suggestions"
   role="region"
-  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
+  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%); max-height: 300px;"
 >
   <div
-    class="flex flex-col space-y-6 p-6"
+    class="flex flex-col space-y-6 px-6 pt-3 pb-6"
     data-override-defaults="true"
     data-testid="container"
   />
@@ -18,14 +18,14 @@ exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot wi
 
 exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot with hot tags 1`] = `
 <div
-  class="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
+  class="absolute top-full right-0 left-0 z-50 overflow-y-auto rounded-b-2xl border-x border-b border-border"
   data-override-defaults="true"
   data-testid="search-suggestions"
   role="region"
-  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
+  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%); max-height: 300px;"
 >
   <div
-    class="flex flex-col space-y-6 p-6"
+    class="flex flex-col space-y-6 px-6 pt-3 pb-6"
     data-override-defaults="true"
     data-testid="container"
   >
