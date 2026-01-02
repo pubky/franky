@@ -1,0 +1,121 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchInput > SearchInput - Snapshots > matches snapshot - default state 1`] = `
+<div
+  class="relative"
+  data-testid="search-input"
+>
+  <div
+    class="rounded-full"
+    data-testid="search-input-bar"
+  >
+    <input
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-label="Search input"
+      placeholder="Search"
+      type="text"
+      value=""
+    />
+    <svg
+      data-testid="search-icon"
+    />
+  </div>
+</div>
+`;
+
+exports[`SearchInput > SearchInput - Snapshots > matches snapshot - focused with suggestions 1`] = `
+<div
+  class="relative"
+  data-testid="search-input"
+>
+  <div
+    class="rounded-t-2xl"
+    data-testid="search-input-bar"
+    style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
+  >
+    <input
+      aria-autocomplete="list"
+      aria-controls="search-suggestions"
+      aria-expanded="true"
+      aria-label="Search input"
+      placeholder="Search"
+      type="text"
+      value=""
+    />
+    <svg
+      data-testid="search-icon"
+    />
+  </div>
+  <div
+    aria-label="Search suggestions"
+    autocompletetags=""
+    autocompleteusers=""
+    data-testid="search-suggestions"
+    id="search-suggestions"
+    inputvalue=""
+    recenttags=""
+    recentusers=""
+  >
+    <button
+      data-testid="hot-tag-pubky"
+    >
+      pubky
+    </button>
+    <button
+      data-testid="hot-tag-bitcoin"
+    >
+      bitcoin
+    </button>
+  </div>
+</div>
+`;
+
+exports[`SearchInput > SearchInput - Snapshots > matches snapshot - with active tags 1`] = `
+<div
+  class="relative"
+  data-testid="search-input"
+>
+  <div
+    class="rounded-full"
+    data-testid="search-input-bar"
+  >
+    <div
+      aria-label="Active search tags"
+      role="list"
+    >
+      <span
+        data-testid="active-tag-bitcoin"
+      >
+        bitcoin
+        <button
+          data-testid="remove-tag-bitcoin"
+        >
+          x
+        </button>
+      </span>
+      <span
+        data-testid="active-tag-pubky"
+      >
+        pubky
+        <button
+          data-testid="remove-tag-pubky"
+        >
+          x
+        </button>
+      </span>
+    </div>
+    <input
+      aria-autocomplete="list"
+      aria-expanded="false"
+      aria-label="Search input"
+      placeholder=""
+      type="text"
+      value=""
+    />
+    <svg
+      data-testid="search-icon"
+    />
+  </div>
+</div>
+`;
