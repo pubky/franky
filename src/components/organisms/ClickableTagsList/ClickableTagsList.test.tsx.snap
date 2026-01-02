@@ -23,9 +23,9 @@ exports[`ClickableTagsList > Snapshots > matches snapshot with add button 1`] = 
     <button
       data-count="10"
       data-selected="false"
-      data-testid="post-tag-crypto"
+      data-testid="post-tag-web3"
     >
-      crypto
+      web3
     </button>
     <button
       data-testid="post-tag-add-button"
@@ -69,11 +69,11 @@ exports[`ClickableTagsList > Snapshots > matches snapshot with close buttons 1`]
     <button
       data-count="10"
       data-selected="false"
-      data-testid="post-tag-crypto"
+      data-testid="post-tag-web3"
     >
-      crypto
+      web3
       <span
-        data-testid="close-crypto"
+        data-testid="close-web3"
       >
         ×
       </span>
@@ -105,9 +105,9 @@ exports[`ClickableTagsList > Snapshots > matches snapshot with input visible 1`]
     <button
       data-count="10"
       data-selected="false"
-      data-testid="post-tag-crypto"
+      data-testid="post-tag-web3"
     >
-      crypto
+      web3
     </button>
     <input
       data-testid="post-tag-input"
@@ -140,9 +140,9 @@ exports[`ClickableTagsList > Snapshots > matches snapshot with tags and count 1`
     <button
       data-count="10"
       data-selected="false"
-      data-testid="post-tag-crypto"
+      data-testid="post-tag-web3"
     >
-      crypto
+      web3
     </button>
   </div>
 </div>

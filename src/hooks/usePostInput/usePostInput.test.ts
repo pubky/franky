@@ -391,7 +391,7 @@ describe('usePostInput', () => {
       expect(mockPost).not.toHaveBeenCalled();
     });
 
-    it('calls onSuccess and prependPosts when submission succeeds', async () => {
+    it('calls onSuccess and prependPosts when submission succeeds for post variant', async () => {
       mockContent = 'Test content';
       mockPost.mockImplementation(async ({ onSuccess }) => {
         onSuccess('created-post-id');
@@ -411,6 +411,54 @@ describe('usePostInput', () => {
 
       expect(mockPrependPosts).toHaveBeenCalledWith('created-post-id');
       expect(mockOnSuccess).toHaveBeenCalledWith('created-post-id');
+    });
+
+    it('calls onSuccess and prependPosts when submission succeeds for repost variant', async () => {
+      mockContent = 'Test repost content';
+      mockRepost.mockImplementation(async ({ onSuccess }) => {
+        onSuccess('created-repost-id');
+      });
+
+      const mockOnSuccess = vi.fn();
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'repost',
+          originalPostId: 'original-post-id',
+          onSuccess: mockOnSuccess,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(mockPrependPosts).toHaveBeenCalledWith('created-repost-id');
+      expect(mockOnSuccess).toHaveBeenCalledWith('created-repost-id');
+    });
+
+    it('calls onSuccess but does NOT prependPosts for reply variant', async () => {
+      mockContent = 'Test reply content';
+      mockReply.mockImplementation(async ({ onSuccess }) => {
+        onSuccess('created-reply-id');
+      });
+
+      const mockOnSuccess = vi.fn();
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'reply',
+          postId: 'parent-post-id',
+          onSuccess: mockOnSuccess,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      // Reply should NOT prepend to timeline (fix for issue #601)
+      expect(mockPrependPosts).not.toHaveBeenCalled();
+      // But onSuccess should still be called
+      expect(mockOnSuccess).toHaveBeenCalledWith('created-reply-id');
     });
   });
 

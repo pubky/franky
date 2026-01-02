@@ -4,8 +4,8 @@ import { PostCodeBlock } from './PostCodeBlock';
 
 // Mock only copyToClipboard from @/libs (uses browser Clipboard API)
 // Keep real implementations of pure functions like cn
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     copyToClipboard: vi.fn().mockResolvedValue(undefined),

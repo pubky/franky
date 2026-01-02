@@ -301,3 +301,33 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with tel link 1`] = `
   </div>
 </div>
 `;
+
+exports[`ProfilePageLinks - Snapshots > matches snapshot with undefined links 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+    data-testid="heading-2"
+  >
+    Links
+  </h2>
+  <div
+    class="mx-auto w-full flex-col flex"
+    data-testid="container"
+  >
+    <div
+      class="mx-auto w-full mt-2 flex flex-col"
+      data-testid="container"
+    >
+      <span
+        class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
+      >
+        No links added yet.
+      </span>
+    </div>
+  </div>
+</div>
+`;

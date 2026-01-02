@@ -127,17 +127,10 @@ vi.mock('@/atoms', async (importOriginal) => {
   };
 });
 
-// Mock Libs - use actual truncateString implementation
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    truncateString: (str: string, maxLength: number): string => {
-      if (!str) return '';
-      if (str.length <= maxLength) return str;
-      return `${str.slice(0, maxLength)}...`;
-    },
-  };
+// Mock Libs
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('FeedbackCard', () => {

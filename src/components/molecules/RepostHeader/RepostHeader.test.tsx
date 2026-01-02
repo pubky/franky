@@ -58,8 +58,8 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     Repeat: ({ className }: { className?: string }) => <svg data-testid="repeat-icon" className={className} />,

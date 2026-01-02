@@ -208,8 +208,8 @@ This document outlines the essential rules and patterns for creating unit tests 
    ```typescript
    import * as Libs from '@/libs';
    
-   vi.mock('@/libs', async (importOriginal) => {
-     const actual = await importOriginal<typeof import('@/libs')>();
+   vi.mock('@/libs', async () => {
+     const actual = await vi.importActual('@/libs');
      return {
        ...actual,  // Keep all real implementations
        Logger: {

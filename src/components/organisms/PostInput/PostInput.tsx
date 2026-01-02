@@ -89,8 +89,7 @@ export function PostInput({
           <Organisms.PostHeader
             postId={currentUserPubky}
             isReplyInput={true}
-            characterCount={content.length}
-            maxLength={POST_MAX_CHARACTER_LENGTH}
+            characterLimit={{ count: content.length, max: POST_MAX_CHARACTER_LENGTH }}
           />
         )}
 
@@ -126,8 +125,12 @@ export function PostInput({
           onEmojiSelect={handleEmojiSelect}
           onFileClick={handleFileClick}
           onImageClick={handleFileClick}
-          // Reposts allow empty content, posts and replies require content
-          isPostDisabled={variant === POST_INPUT_VARIANT.REPOST ? isSubmitting : !content.trim() || isSubmitting}
+          // Reposts allow empty content, posts and replies require content or attachments
+          isPostDisabled={
+            variant === POST_INPUT_VARIANT.REPOST
+              ? isSubmitting
+              : (!content.trim() && attachments.length === 0) || isSubmitting
+          }
           submitMode={
             variant === POST_INPUT_VARIANT.REPLY
               ? POST_INPUT_ACTION_SUBMIT_MODE.REPLY

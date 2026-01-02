@@ -89,7 +89,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 5. Resolve DNS and validate IP BEFORE fetch (prevents DNS rebinding)
+    // 5. Block Tor .onion addresses (they require Tor network and will always fail)
+    if (hostname.endsWith('.onion')) {
+      return NextResponse.json({ error: 'Tor .onion addresses are not supported.' }, { status: 400 });
+    }
+
+    // 6. Resolve DNS and validate IP BEFORE fetch (prevents DNS rebinding)
     let resolvedIp: string;
 
     try {
@@ -109,12 +114,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'DNS resolution failed' }, { status: 400 });
     }
 
-    // 6. Validate the resolved IP address
+    // 7. Validate the resolved IP address
     if (!isIpSafe(resolvedIp)) {
       return NextResponse.json({ error: 'Blocked IP range. Cannot fetch from private networks.' }, { status: 403 });
     }
 
-    // 7. Fetch with timeout
+    // 8. Fetch with timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
@@ -139,12 +144,12 @@ export async function GET(request: NextRequest) {
 
     clearTimeout(timeoutId);
 
-    // 8. Validate response status
+    // 9. Validate response status
     if (!response.ok) {
       return NextResponse.json({ error: 'Fetch failed' }, { status: response.status });
     }
 
-    // 9. Validate content-type
+    // 10. Validate content-type
     const contentType = response.headers.get('content-type');
     const mediaTypes = ['image', 'video', 'audio'];
     const foundMediaType = mediaTypes.find((type) => contentType?.startsWith(type));
@@ -157,7 +162,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Not HTML content' }, { status: 400 });
     }
 
-    // 10. Limit response size using stream reader (enforces REAL size limit)
+    // 11. Limit response size using stream reader (enforces REAL size limit)
     // Note: content-length header can be spoofed, so we read the stream manually
     const reader = response.body?.getReader();
     if (!reader) {
@@ -186,10 +191,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to read response body' }, { status: 500 });
     }
 
-    // 11. Decode HTML
+    // 12. Decode HTML
     const html = new TextDecoder().decode(Buffer.concat(chunks));
 
-    // 12. Parse metadata using regex (lighter than cheerio)
+    // 13. Parse metadata using regex (lighter than cheerio)
     const ogTitle = extractFromHtml(html, OG_PATTERNS.TITLE);
     const titleTag = html.match(OG_PATTERNS.TITLE_TAG)?.[1] || null;
     const rawTitle = ogTitle || titleTag;
@@ -198,7 +203,7 @@ export async function GET(request: NextRequest) {
     // Extract og:image
     const image = extractFromHtml(html, OG_PATTERNS.IMAGE);
 
-    // 13. Normalize and validate image URL (must also be safe)
+    // 14. Normalize and validate image URL (must also be safe)
     let normalizedImage: string | null = null;
     if (image) {
       try {
@@ -235,7 +240,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 14. Return normalized metadata with truncation and cache headers
+    // 15. Return normalized metadata with truncation and cache headers
     return NextResponse.json(
       {
         url: truncateMiddle(url, 40), // Truncate URL with "..." in the middle (max 40 chars)

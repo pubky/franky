@@ -146,9 +146,10 @@ vi.mock('@/libs/icons', () => ({
 }));
 
 // Mock @/libs/utils
-vi.mock('@/libs/utils', () => ({
-  cn: (...args: (string | boolean | undefined | null)[]) => args.filter(Boolean).join(' '),
-}));
+vi.mock('@/libs/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs/utils')>();
+  return { ...actual };
+});
 
 const createMockFile = (name: string, type: string): File => {
   return new File(['test content'], name, { type });

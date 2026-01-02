@@ -15,15 +15,15 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-describe('NotificationSettings', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseSettingsStore.mockReturnValue({
-      notifications: defaultNotificationPreferences,
-      setNotificationPreference: mockSetNotificationPreference,
-    });
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockUseSettingsStore.mockReturnValue({
+    notifications: defaultNotificationPreferences,
+    setNotificationPreference: mockSetNotificationPreference,
   });
+});
 
+describe('NotificationSettings', () => {
   it('renders all notification switches', () => {
     render(<NotificationSettings />);
 
@@ -88,14 +88,6 @@ describe('NotificationSettings', () => {
 });
 
 describe('NotificationSettings - Snapshots', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseSettingsStore.mockReturnValue({
-      notifications: defaultNotificationPreferences,
-      setNotificationPreference: mockSetNotificationPreference,
-    });
-  });
-
   it('matches snapshot', () => {
     const { container } = render(<NotificationSettings />);
     expect(container.firstChild).toMatchSnapshot();

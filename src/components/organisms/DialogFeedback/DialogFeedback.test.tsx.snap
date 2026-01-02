@@ -1,5 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`DialogFeedback - Snapshots > matches snapshot for closed state 1`] = `
+<div
+  data-open="false"
+  data-testid="dialog"
+>
+  <div
+    aria-label="Provide Feedback"
+    class="w-2xl"
+    data-testid="dialog-content"
+  >
+    <div
+      data-testid="dialog-feedback-success"
+    >
+      DialogFeedbackSuccess
+    </div>
+  </div>
+</div>
+`;
+
 exports[`DialogFeedback - Snapshots > matches snapshot for default state 1`] = `
 <div
   data-open="true"

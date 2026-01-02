@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PostTagInput } from './PostTagInput';
 
 // Mock @/libs with partial mock
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
   };

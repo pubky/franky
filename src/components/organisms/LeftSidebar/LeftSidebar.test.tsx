@@ -41,9 +41,10 @@ vi.mock('@/molecules', () => ({
 }));
 
 // Mock the libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-}));
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
+});
 
 describe('LeftSidebar', () => {
   it('renders with default props', () => {

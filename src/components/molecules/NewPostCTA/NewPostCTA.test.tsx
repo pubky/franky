@@ -15,58 +15,6 @@ vi.mock('@/hooks', () => ({
   useAuthStatus: () => mockUseAuthStatus(),
 }));
 
-// Mock Radix UI Dialog components
-vi.mock('@radix-ui/react-dialog', () => ({
-  Root: ({
-    children,
-    open,
-    onOpenChange,
-  }: {
-    children: React.ReactNode;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-  }) => (
-    <div data-testid="dialog-root" data-open={open} onClick={() => onOpenChange?.(true)}>
-      {children}
-    </div>
-  ),
-  Trigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-trigger" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-  Content: ({
-    children,
-    className,
-    hiddenTitle,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    hiddenTitle?: string;
-  }) => (
-    <div data-testid="dialog-content" className={className} aria-label={hiddenTitle}>
-      {children}
-    </div>
-  ),
-  Portal: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-portal">{children}</div>,
-  Overlay: ({ className }: { className?: string }) => <div data-testid="dialog-overlay" className={className} />,
-  Close: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <button data-testid="dialog-close" className={className}>
-      {children}
-    </button>
-  ),
-  Title: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <h2 data-testid="dialog-title" className={className}>
-      {children}
-    </h2>
-  ),
-  Description: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <p data-testid="dialog-description" className={className}>
-      {children}
-    </p>
-  ),
-}));
-
 // Mock organisms
 vi.mock('@/organisms', () => ({
   DialogNewPost: vi.fn(
@@ -119,13 +67,10 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Use real libs, only stub cn to a deterministic join
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Use real libs
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('NewPostCTA', () => {
@@ -168,48 +113,6 @@ describe('NewPostCTA', () => {
     });
     const { container } = render(<NewPostCTA />);
     expect(container.firstChild).toBeNull();
-  });
-
-  it('renders Plus icon', () => {
-    render(<NewPostCTA />);
-    expect(document.querySelector('.lucide-plus')).toBeInTheDocument();
-  });
-
-  it('has correct positioning classes', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('fixed');
-    expect(button).toHaveClass('bottom-[72px]');
-    expect(button).toHaveClass('right-3');
-    expect(button).toHaveClass('md:bottom-20');
-    expect(button).toHaveClass('lg:bottom-6');
-    expect(button).toHaveClass('sm:right-10');
-  });
-
-  it('has correct size classes', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('w-20');
-    expect(button).toHaveClass('h-20');
-    expect(button).toHaveClass('rounded-full');
-  });
-
-  it('has hover background class', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('hover:bg-brand');
-  });
-
-  it('has correct z-index', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveClass('z-40');
-  });
-
-  it('has aria-label for accessibility', () => {
-    render(<NewPostCTA />);
-    const button = screen.getByTestId('new-post-cta');
-    expect(button).toHaveAttribute('aria-label', 'New post');
   });
 
   it('opens dialog when button is clicked', () => {

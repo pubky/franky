@@ -83,19 +83,17 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
-  truncateString: (str: string, max: number) => (str.length > max ? `${str.slice(0, max)}...` : str),
-  generateRandomColor: () => '#ff0000',
-  getDisplayTags: (labels: string[]) => labels,
-}));
+// Mock libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
+});
 
 describe('ClickableTagsList', () => {
   const mockTags: Core.NexusTag[] = [
     { label: 'bitcoin', taggers_count: 5, taggers: ['user1', 'user2'], relationship: true },
     { label: 'ethereum', taggers_count: 3, taggers: ['user3'], relationship: false },
-    { label: 'crypto', taggers_count: 10, taggers: [], relationship: false },
+    { label: 'web3', taggers_count: 10, taggers: [], relationship: false },
   ];
 
   beforeEach(() => {
@@ -109,7 +107,7 @@ describe('ClickableTagsList', () => {
 
       expect(screen.getByTestId('post-tag-bitcoin')).toBeInTheDocument();
       expect(screen.getByTestId('post-tag-ethereum')).toBeInTheDocument();
-      expect(screen.getByTestId('post-tag-crypto')).toBeInTheDocument();
+      expect(screen.getByTestId('post-tag-web3')).toBeInTheDocument();
     });
 
     it('returns null when no tags and no input/button', () => {
@@ -145,6 +143,23 @@ describe('ClickableTagsList', () => {
       );
 
       expect(screen.getByTestId('close-bitcoin')).toBeInTheDocument();
+    });
+
+    it('filters out tags when total character count exceeds maxTotalChars', () => {
+      const tagsExceedingLimit: Core.NexusTag[] = [
+        { label: 'bitcoin', taggers_count: 5, taggers: ['user1'], relationship: true },
+        { label: 'ethereum', taggers_count: 3, taggers: ['user2'], relationship: false },
+        { label: 'crypto', taggers_count: 10, taggers: [], relationship: false },
+      ];
+
+      render(<ClickableTagsList taggedId="post-123" taggedKind={Core.TagKind.POST} tags={tagsExceedingLimit} />);
+
+      // First two tags should render (7 + 8 = 15 chars, within 20 limit)
+      expect(screen.getByTestId('post-tag-bitcoin')).toBeInTheDocument();
+      expect(screen.getByTestId('post-tag-ethereum')).toBeInTheDocument();
+
+      // Third tag should be filtered out (would make total 21 chars, exceeding 20)
+      expect(screen.queryByTestId('post-tag-crypto')).not.toBeInTheDocument();
     });
   });
 

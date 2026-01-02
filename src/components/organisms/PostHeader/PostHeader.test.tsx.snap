@@ -7,66 +7,26 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
   data-testid="container"
 >
   <div
-    class="flex min-w-0 flex-1 gap-3"
-    data-override-defaults="true"
-    data-testid="container"
+    data-testid="post-header-user-info"
   >
     <div
-      data-size="default"
       data-testid="avatar"
-    >
-      <img
-        alt="Snapshot User"
-        data-testid="avatar-image"
-        src="https://example.com/avatar/snapshotUserKey.png"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
+    />
+    <div>
+      Snapshot User
     </div>
-    <div
-      class="min-w-0 flex-1"
-      data-override-defaults="true"
-      data-testid="container"
-    >
-      <p
-        class="block truncate text-base font-bold text-foreground"
-        data-testid="typography"
-      >
-        Snapshot User
-      </p>
-      <div
-        class="flex min-w-0 items-center gap-2"
-        data-override-defaults="true"
-        data-testid="container"
-      >
-        <span
-          class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
-          data-as="span"
-          data-testid="typography"
-        >
-          @
-          snapshot
-        </span>
-      </div>
+    <div>
+      @
+      snapshot
     </div>
   </div>
   <div
-    class="flex flex-shrink-0 items-center gap-1"
-    data-override-defaults="true"
-    data-testid="container"
+    data-testid="post-header-timestamp"
   >
     <svg
-      class="size-4 text-muted-foreground"
       data-testid="clock-icon"
     />
-    <span
-      class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-      data-as="span"
-      data-testid="typography"
-    >
+    <span>
       2h
     </span>
   </div>

@@ -32,8 +32,8 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     LogIn: ({ className }: { className?: string }) => <span data-testid="log-in-icon" className={className} />,

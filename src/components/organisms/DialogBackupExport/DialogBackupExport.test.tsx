@@ -29,8 +29,8 @@ vi.mock('qrcode.react', () => ({
 }));
 
 // Mock @/libs - use actual implementations (no icon stubs)
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return { ...actual };
 });
 
