@@ -16,3 +16,9 @@ export type THomeserverAuthenticateParams = Core.TKeypairParams & TSecretKey;
 export type TLogoutParams = TSecretKey & {
   pubky: Core.Pubky;
 };
+
+export interface TRestoreSessionParams {
+  authStore: Core.AuthStore;
+}
+
+export type TRestoreSessionResult = Promise<Core.THomeserverSessionResult | null>;

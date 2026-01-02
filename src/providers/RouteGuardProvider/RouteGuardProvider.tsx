@@ -32,16 +32,16 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
-  const hasHydrated = Core.useAuthStore((state) => state.hasHydrated);
-  const session = Core.useAuthStore((state) => state.session);
-  const sessionExport = Core.useAuthStore((state) => state.sessionExport);
-
+  const { hasHydrated, session, sessionExport } = Core.useAuthStore((state) => state);
+  console.log('session', session);
+  console.log('sessionExport', sessionExport);
+  console.log('hasHydrated', hasHydrated);
   // Attempt to restore an existing session snapshot on fresh loads.
   useEffect(() => {
     if (!hasHydrated) return;
     if (session) return;
     if (!sessionExport) return;
-    void Core.AuthController.restoreSessionIfAvailable();
+    void Core.AuthController.restorePersistedSession();
   }, [hasHydrated, session, sessionExport]);
 
   // Determine if the current route is accessible based on authentication status

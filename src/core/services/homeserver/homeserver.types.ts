@@ -23,7 +23,10 @@ export type TGenerateAuthUrlResult = {
 
 export enum HomeserverAction {
   GET = 'GET',
-  POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
+
+export type THomeserverRestoreSessionParams = {
+  sessionExport: string;
+};

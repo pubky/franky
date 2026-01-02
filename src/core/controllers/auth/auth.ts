@@ -4,7 +4,6 @@ import * as Libs from '@/libs';
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
-  private static restoreSessionPromise: Promise<boolean> | null = null;
   private static activeAuthFlow: { token: symbol; cancel: (() => void) | null } | null = null;
 
   private static freeActiveAuthFlow() {
@@ -18,40 +17,20 @@ export class AuthController {
     this.freeActiveAuthFlow();
   }
 
-  static async restoreSessionIfAvailable(): Promise<boolean> {
+  /**
+   * Restores a persisted session from the auth store.
+   * @returns Promise resolving to true if the session was restored successfully, false otherwise
+   */
+  static async restorePersistedSession(): Promise<boolean> {
     const authStore = Core.useAuthStore.getState();
-
-    if (!authStore.hasHydrated) return false;
-    if (authStore.session) return true;
-    if (!authStore.sessionExport) {
-      if (authStore.isRestoringSession) authStore.setIsRestoringSession(false);
-      return false;
-    }
-
-    if (this.restoreSessionPromise) {
-      return await this.restoreSessionPromise;
-    }
-
-    this.restoreSessionPromise = (async () => {
-      authStore.setIsRestoringSession(true);
-      try {
-        const { session } = await Core.AuthApplication.restoreSession(authStore.sessionExport!);
-        await this.initializeAuthenticatedSession({ session });
-        return true;
-      } catch (error) {
-        Libs.Logger.error('Failed to restore session from persisted export', error);
-        Core.HomeserverService.setSession(null);
-        authStore.setSession(null);
-        authStore.setCurrentUserPubky(null);
-        authStore.setHasProfile(false);
-        return false;
-      } finally {
-        authStore.setIsRestoringSession(false);
-        this.restoreSessionPromise = null;
-      }
-    })();
-
-    return await this.restoreSessionPromise;
+    const result = await Core.AuthApplication.restorePersistedSession({ authStore });
+    if (!result) return false;
+    const { session } = result;
+    authStore.setSession(result.session);
+    authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session: result.session }));
+    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: true };
+    authStore.init(initialState);
+    return true;
   }
 
   /**
@@ -93,7 +72,6 @@ export class AuthController {
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
     this.cancelActiveAuthFlow();
-    Core.HomeserverService.setSession(session);
     const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
     const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
@@ -102,9 +80,8 @@ export class AuthController {
       // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
       await this.hydrateMeImAlive({ pubky });
     }
-    authStore.setSession(session);
-    authStore.setCurrentUserPubky(pubky);
-    authStore.setHasProfile(isSignedUp);
+    const initialState = { session, currentUserPubky: pubky, hasProfile: false };
+    authStore.init(initialState);
   }
 
   /**
@@ -119,10 +96,8 @@ export class AuthController {
     const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    Core.HomeserverService.setSession(session);
-    authStore.setSession(session);
-    authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session }));
-    authStore.setHasProfile(false);
+    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };
+    authStore.init(initialState);
   }
 
   /**
@@ -200,7 +175,6 @@ export class AuthController {
     authStore.setSession(null);
     onboardingStore.reset();
     authStore.reset();
-    Core.HomeserverService.setSession(null);
     this.cancelActiveAuthFlow();
     Libs.clearCookies();
     await Core.clearDatabase();

@@ -29,6 +29,7 @@ export interface AuthActions {
 export interface AuthSelectors {
   selectCurrentUserPubky: () => Core.Pubky;
   selectIsAuthenticated: () => boolean;
+  selectSession: () => Session | null;
 }
 
 export type AuthStore = AuthState & AuthActions & AuthSelectors;

@@ -116,16 +116,7 @@ const createCancelableAuthApproval = (
 export class HomeserverService {
   private constructor() {}
 
-  private static currentSession: Session | null = null;
   private static pubkySdk: Pubky | null = null;
-
-  /**
-   * Sets the authenticated Session used for session-scoped storage IO.
-   * Controllers should call this whenever auth state changes.
-   */
-  static setSession(session: Session | null) {
-    this.currentSession = session;
-  }
 
   /**
    * Gets the Pubky SDK singleton.
@@ -135,10 +126,6 @@ export class HomeserverService {
       this.pubkySdk = TESTNET ? Pubky.testnet() : new Pubky();
     }
     return this.pubkySdk;
-  }
-
-  private static getSession() {
-    return this.currentSession;
   }
 
   private static isHttpUrl(url: string): boolean {
@@ -196,7 +183,7 @@ export class HomeserverService {
   }
 
   private static resolveOwnedSessionPath(url: string): { session: Session; path: `/pub/${string}` } | null {
-    const session = this.getSession();
+    const session = Core.useAuthStore.getState().selectSession();
     if (!session) return null;
 
     const pathname = this.toPathname(url);
@@ -737,7 +724,7 @@ export class HomeserverService {
   /**
    * Restore an authenticated Session from a previous `session.export()` snapshot.
    */
-  static async restoreSession(sessionExport: string): Promise<Session> {
+  static async restoreSession({ sessionExport }: Core.THomeserverRestoreSessionParams): Promise<Session> {
     try {
       const pubkySdk = this.getPubkySdk();
       return await pubkySdk.restoreSession(sessionExport);
