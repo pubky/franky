@@ -24,27 +24,26 @@ describe('AuthStore', () => {
       const pubky = 'test-pubky-key';
       const store = useAuthStore.getState();
 
-      // Set pubky - should not automatically set authenticated (no session)
+      // Set pubky - should not automatically set authenticated (no session export)
       store.setCurrentUserPubky(pubky);
       expect(useAuthStore.getState().currentUserPubky).toBe(pubky);
       expect(store.selectIsAuthenticated()).toBe(false);
 
-      // Add session - now authenticated is derived from session
-      const mockSession = {} as SignupResult['session'];
+      // Add session export via setSession
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
       store.setSession(mockSession);
       expect(store.selectIsAuthenticated()).toBe(true);
     });
 
-    it('should derive authentication state from session', () => {
-      const mockSession = {} as SignupResult['session'];
+    it('should derive authentication state from session export', () => {
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
       const store = useAuthStore.getState();
 
-      // No session - not authenticated
+      // No session export - not authenticated
       expect(store.selectIsAuthenticated()).toBe(false);
 
-      // Set session - automatically authenticated
+      // Set session export - automatically authenticated
       store.setSession(mockSession);
-      expect(useAuthStore.getState().session).toBe(mockSession);
       expect(store.selectIsAuthenticated()).toBe(true);
 
       // Add pubky - still authenticated
@@ -54,32 +53,31 @@ describe('AuthStore', () => {
 
     it('should clear session and authentication state together', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
 
       // Set up authenticated state
       store.setCurrentUserPubky('test-pubky');
       store.setSession(mockSession);
       expect(store.selectIsAuthenticated()).toBe(true);
 
-      // Clear session - authentication is automatically derived as false
+      // Clear session export - authentication is automatically derived as false
       store.setSession(null);
-      expect(useAuthStore.getState().session).toBeNull();
       expect(store.selectIsAuthenticated()).toBe(false);
       expect(useAuthStore.getState().currentUserPubky).toBe('test-pubky'); // Should remain
     });
 
-    it('should derive authentication state from session presence', () => {
+    it('should derive authentication state from session export presence', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
 
       // Initially not authenticated
       expect(store.selectIsAuthenticated()).toBe(false);
 
-      // Set session - authenticated
+      // Set session export - authenticated
       store.setSession(mockSession);
       expect(store.selectIsAuthenticated()).toBe(true);
 
-      // Clear session - not authenticated
+      // Clear session export - not authenticated
       store.setSession(null);
       expect(store.selectIsAuthenticated()).toBe(false);
     });
@@ -88,7 +86,7 @@ describe('AuthStore', () => {
   describe('Store Reset', () => {
     it('should reset store to default state', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
 
       // Set some state
       store.setCurrentUserPubky('test-pubky');
@@ -96,7 +94,6 @@ describe('AuthStore', () => {
 
       // Verify state is set
       expect(useAuthStore.getState().currentUserPubky).toBe('test-pubky');
-      expect(useAuthStore.getState().session).toBe(mockSession);
       expect(store.selectIsAuthenticated()).toBe(true);
 
       // Reset store
@@ -104,7 +101,6 @@ describe('AuthStore', () => {
 
       // Verify state is reset
       expect(useAuthStore.getState().currentUserPubky).toBeNull();
-      expect(useAuthStore.getState().session).toBeNull();
       expect(store.selectIsAuthenticated()).toBe(false);
     });
   });
@@ -148,9 +144,9 @@ describe('AuthStore', () => {
 
     it('should still throw error even when authenticated but pubky is null', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
 
-      // Set authenticated (via session) but no pubky (edge case)
+      // Set authenticated (via session export) but no pubky (edge case)
       store.setSession(mockSession);
       store.setCurrentUserPubky(null);
 
@@ -165,7 +161,7 @@ describe('AuthStore', () => {
 
     it('should compute authentication state based on session', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = { export: () => 'export' } as SignupResult['session'];
 
       // Initially not authenticated (no session)
       expect(store.selectIsAuthenticated()).toBe(false);

@@ -45,7 +45,7 @@ interface HomeStoreSetup {
 /** Sets up authentication for a user */
 function setupAuth(userId = 'user123'): string {
   Core.useAuthStore.getState().init({
-    session: {} as any,
+    session: { export: () => 'export' } as any,
     currentUserPubky: userId as unknown as Core.Pubky,
     hasProfile: true,
   });
@@ -327,7 +327,7 @@ describe('StreamCoordinator', () => {
       } as unknown as Core.HomeStore;
 
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -360,7 +360,7 @@ describe('StreamCoordinator', () => {
       coordinator.destroy();
 
       Core.useAuthStore.getState().init({
-        session: null as any,
+        session: { export: () => null } as any,
         currentUserPubky: null as any,
         hasProfile: false,
       });
@@ -942,7 +942,7 @@ describe('StreamCoordinator', () => {
       expect(pollsWhileAuthenticated).toBeGreaterThan(0);
 
       Core.useAuthStore.getState().init({
-        session: null as any,
+        session: { export: () => null } as any,
         currentUserPubky: null as any,
         hasProfile: false,
       });
@@ -951,7 +951,7 @@ describe('StreamCoordinator', () => {
       expect(getOrFetchStreamSliceSpy.mock.calls.length).toBe(pollsWhileAuthenticated);
 
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });

@@ -25,7 +25,7 @@ function setupAuthenticatedTest(userId = 'user123') {
     .mockResolvedValue(undefined as unknown as never);
   // Use init() to set up authenticated state with hasProfile: true (required for polling)
   Core.useAuthStore.getState().init({
-    session: {} as any,
+    session: { export: () => 'export' } as any,
     currentUserPubky: userId as unknown as Core.Pubky,
     hasProfile: true,
   });
@@ -73,7 +73,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -115,7 +115,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -201,7 +201,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -232,7 +232,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -267,7 +267,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -299,7 +299,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -347,7 +347,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -364,7 +364,7 @@ describe('NotificationCoordinator', () => {
 
       // Change auth state (should not trigger polling) - clear session
       Core.useAuthStore.getState().init({
-        session: null,
+        session: { export: () => null } as any,
         currentUserPubky: null,
         hasProfile: false,
       });
@@ -380,7 +380,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -436,7 +436,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -469,7 +469,7 @@ describe('NotificationCoordinator', () => {
 
       // Don't set userId (will be null) - just set session without pubky
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: null,
         hasProfile: false,
       });
@@ -498,7 +498,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up state with undefined pubky (should not poll)
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: undefined as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -523,7 +523,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up state with empty string pubky (should not poll)
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: '' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -548,7 +548,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -564,7 +564,7 @@ describe('NotificationCoordinator', () => {
 
       // Clear userId mid-session - polling should stop
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: null,
         hasProfile: true,
       });
@@ -582,7 +582,7 @@ describe('NotificationCoordinator', () => {
       Core.useAuthStore.getState().setSession({} as any);
       // Start with null userId (should not poll)
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: null,
         hasProfile: true,
       });
@@ -598,7 +598,7 @@ describe('NotificationCoordinator', () => {
 
       // Set valid userId and trigger re-evaluation via route change
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user456' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -616,7 +616,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user1' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -631,7 +631,7 @@ describe('NotificationCoordinator', () => {
 
       // Change userId - polling continues with new value
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user2' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -640,7 +640,7 @@ describe('NotificationCoordinator', () => {
 
       // Change again
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user3' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -904,7 +904,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -933,7 +933,7 @@ describe('NotificationCoordinator', () => {
 
       // Use init() to set up authenticated state with hasProfile: true
       Core.useAuthStore.getState().init({
-        session: {} as any,
+        session: { export: () => 'export' } as any,
         currentUserPubky: 'user123' as unknown as Core.Pubky,
         hasProfile: true,
       });
@@ -963,7 +963,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -989,7 +989,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1015,7 +1015,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1068,7 +1068,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1101,7 +1101,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1116,7 +1116,7 @@ describe('NotificationCoordinator', () => {
 
     // De-authenticate -> should stop (clear session)
     Core.useAuthStore.getState().init({
-      session: null,
+      session: { export: () => null } as any,
       currentUserPubky: null,
       hasProfile: false,
     });
@@ -1125,7 +1125,7 @@ describe('NotificationCoordinator', () => {
 
     // Re-authenticate -> must also have a pubky set before polling can succeed
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1140,7 +1140,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1169,7 +1169,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'userABC' as unknown as Core.Pubky,
       hasProfile: true,
     });
@@ -1193,7 +1193,7 @@ describe('NotificationCoordinator', () => {
 
     // Use init() to set up authenticated state with hasProfile: true
     Core.useAuthStore.getState().init({
-      session: {} as any,
+      session: { export: () => 'export' } as any,
       currentUserPubky: 'user123' as unknown as Core.Pubky,
       hasProfile: true,
     });

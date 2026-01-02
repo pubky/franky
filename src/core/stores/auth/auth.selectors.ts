@@ -17,6 +17,6 @@ export const createAuthSelectors = (get: ZustandGet<AuthStore>) => ({
    */
   selectIsAuthenticated: () => {
     const state = get();
-    return state.session !== null;
+    return state.sessionExport !== null;
   },
 });

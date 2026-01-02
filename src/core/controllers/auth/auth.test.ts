@@ -72,6 +72,7 @@ const storeMocks = vi.hoisted(() => {
     initAuthStore,
     getAuthState: vi.fn(() => ({
       init: initAuthStore,
+      sessionExport: null,
       setSession: vi.fn(),
       setCurrentUserPubky: vi.fn(),
       setHasProfile: vi.fn(),
@@ -147,7 +148,7 @@ describe('AuthController', () => {
 
       const authStoreState: Core.AuthStore = {
         currentUserPubky: TEST_PUBKY,
-        session: null,
+        sessionExport: null,
         hasProfile: false,
         hasHydrated: false,
         selectIsAuthenticated: vi.fn(() => false),
@@ -529,7 +530,6 @@ describe('AuthController', () => {
       const authStore = {
         ...storeMocks.getAuthState(),
         hasHydrated: true,
-        session: null,
         sessionExport: 'session-export',
         isRestoringSession: false,
         setIsRestoringSession: vi.fn(),
@@ -554,7 +554,6 @@ describe('AuthController', () => {
       const authStore = {
         ...storeMocks.getAuthState(),
         hasHydrated: true,
-        session: null,
         sessionExport: null,
         isRestoringSession: false,
         setIsRestoringSession: vi.fn(),
@@ -645,10 +644,11 @@ describe('AuthController', () => {
   });
 
   describe('logout', () => {
+    const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
     const createAuthStore = (): Core.AuthStore => ({
       ...storeMocks.getAuthState(),
       currentUserPubky: 'test-pubky' as Core.Pubky,
-      session: {} as unknown as import('@synonymdev/pubky').Session,
+      sessionExport: 'export',
       hasProfile: false,
       hasHydrated: false,
       selectCurrentUserPubky: vi.fn(() => 'test-pubky' as Core.Pubky),
@@ -666,9 +666,11 @@ describe('AuthController', () => {
       Object.defineProperty(window, 'location', { writable: true, value: { href: '' } });
       storeMocks.resetAuthStore.mockClear();
       storeMocks.resetOnboardingStore.mockClear();
+      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
     });
 
     it('should successfully logout user, clear stores, cookies and redirect', async () => {
+      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
@@ -689,6 +691,7 @@ describe('AuthController', () => {
     });
 
     it('should throw error when homeserver logout fails and not clear local state', async () => {
+      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockRejectedValue(new Error('Network error'));
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
@@ -706,6 +709,7 @@ describe('AuthController', () => {
     });
 
     it('should clear all existing cookies', async () => {
+      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
@@ -725,6 +729,7 @@ describe('AuthController', () => {
     });
 
     it('should throw error if clearing the database fails', async () => {
+      vi.spyOn(Core.AuthApplication, 'restoreSession').mockResolvedValue({ session: mockSession });
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockRejectedValue(new Error('clear failed'));
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});

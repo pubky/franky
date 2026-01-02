@@ -26,8 +26,8 @@ vi.mock('@/core', () => ({
     initializeAuthenticatedSession: (...args: unknown[]) => mockInitializeAuthenticatedSession(...args),
     cancelActiveAuthFlow: (...args: unknown[]) => mockCancelActiveAuthFlow(...args),
   },
-  useAuthStore: (selector?: (state: { session: Session | null }) => unknown) => {
-    const state = { session: null };
+  useAuthStore: (selector?: (state: { sessionExport: string | null }) => unknown) => {
+    const state = { sessionExport: null };
     return selector ? selector(state) : state;
   },
 }));

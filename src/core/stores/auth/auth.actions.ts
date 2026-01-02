@@ -21,7 +21,6 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
     set(
       (state) => ({
         ...state,
-        session,
         sessionExport: safeSessionExport(session),
         currentUserPubky,
         hasProfile,
@@ -47,7 +46,7 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
   },
 
   setSession: (session: Session | null) => {
-    set({ session, sessionExport: safeSessionExport(session) }, false, AuthActionTypes.SET_SESSION);
+    set({ sessionExport: safeSessionExport(session) }, false, AuthActionTypes.SET_SESSION);
   },
 
   setIsRestoringSession: (isRestoringSession: boolean) => {

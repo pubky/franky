@@ -14,7 +14,7 @@ export function useAuthStatus(): AuthStatusResult {
     const isLoading = !onboardingStore.hasHydrated || !authStore.hasHydrated || authStore.isRestoringSession;
 
     // Check if user has keypair (session)
-    const hasKeypair = authStore.session !== null;
+    const hasKeypair = authStore.sessionExport !== null;
 
     // Check if user has profile data
     const hasProfile = authStore.hasProfile;
@@ -46,7 +46,7 @@ export function useAuthStatus(): AuthStatusResult {
     onboardingStore.hasHydrated,
     authStore.hasHydrated,
     authStore.isRestoringSession,
-    authStore.session,
+    authStore.sessionExport,
     authStore.hasProfile,
   ]);
 

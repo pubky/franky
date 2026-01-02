@@ -3,7 +3,6 @@ import { Session } from '@synonymdev/pubky';
 
 export interface AuthState {
   currentUserPubky: Core.Pubky | null;
-  session: Session | null;
   sessionExport: string | null;
   hasProfile: boolean;
   hasHydrated: boolean;
@@ -35,7 +34,6 @@ export type AuthStore = AuthState & AuthActions & AuthSelectors;
 
 export const authInitialState: AuthState = {
   currentUserPubky: null,
-  session: null,
   sessionExport: null,
   hasProfile: false,
   hasHydrated: false,

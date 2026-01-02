@@ -116,16 +116,8 @@ const createCancelableAuthApproval = (
 export class HomeserverService {
   private constructor() {}
 
-  private static currentSession: Session | null = null;
   private static pubkySdk: Pubky | null = null;
-
-  /**
-   * Sets the authenticated Session used for session-scoped storage IO.
-   * Controllers should call this whenever auth state changes.
-   */
-  static setSession(session: Session | null) {
-    this.currentSession = session;
-  }
+  // No cacheamos Session; se rehidrata desde sessionExport cuando es necesario.
 
   /**
    * Gets the Pubky SDK singleton.
@@ -137,12 +129,19 @@ export class HomeserverService {
     return this.pubkySdk;
   }
 
-  private static getSession() {
-    return this.currentSession;
-  }
-
   private static isHttpUrl(url: string): boolean {
     return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  private static async getSessionFromExport(): Promise<Session | null> {
+    const authStore = Core.useAuthStore.getState?.();
+    const sessionExport = authStore?.sessionExport;
+    if (!sessionExport) return null;
+    try {
+      return await this.restoreSession(sessionExport);
+    } catch {
+      return null;
+    }
   }
 
   private static toPathname(url: string): string | null {
@@ -195,8 +194,10 @@ export class HomeserverService {
     return null;
   }
 
-  private static resolveOwnedSessionPath(url: string): { session: Session; path: `/pub/${string}` } | null {
-    const session = this.getSession();
+  private static async resolveOwnedSessionPath(
+    url: string,
+  ): Promise<{ session: Session; path: `/pub/${string}` } | null> {
+    const session = await this.getSessionFromExport();
     if (!session) return null;
 
     const pathname = this.toPathname(url);
@@ -554,7 +555,7 @@ export class HomeserverService {
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
   static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
-    const owned = this.resolveOwnedSessionPath(url);
+    const owned = await this.resolveOwnedSessionPath(url);
 
     if (owned) {
       const { session, path } = owned;
@@ -632,7 +633,7 @@ export class HomeserverService {
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
   static async putBlob(url: string, blob: Uint8Array) {
-    const owned = this.resolveOwnedSessionPath(url);
+    const owned = await this.resolveOwnedSessionPath(url);
     if (owned) {
       try {
         await owned.session.storage.putBytes(owned.path, blob);
@@ -677,7 +678,7 @@ export class HomeserverService {
   ): Promise<string[]> {
     const pubkySdk = this.getPubkySdk();
     try {
-      const owned = this.resolveOwnedSessionPath(baseDirectory);
+      const owned = await this.resolveOwnedSessionPath(baseDirectory);
       if (owned) {
         const dirPath = owned.path.endsWith('/') ? owned.path : (`${owned.path}/` as `/pub/${string}`);
         const files = await owned.session.storage.list(dirPath, cursor ?? null, reverse, limit, false);
@@ -720,7 +721,7 @@ export class HomeserverService {
         return await pubkySdk.client.fetch(url);
       }
 
-      const owned = this.resolveOwnedSessionPath(url);
+      const owned = await this.resolveOwnedSessionPath(url);
       if (owned) {
         return await this.getOwnedResponse(owned.session, owned.path, url);
       }

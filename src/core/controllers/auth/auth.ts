@@ -22,7 +22,6 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
 
     if (!authStore.hasHydrated) return false;
-    if (authStore.session) return true;
     if (!authStore.sessionExport) {
       if (authStore.isRestoringSession) authStore.setIsRestoringSession(false);
       return false;
@@ -40,7 +39,6 @@ export class AuthController {
         return true;
       } catch (error) {
         Libs.Logger.error('Failed to restore session from persisted export', error);
-        Core.HomeserverService.setSession(null);
         authStore.setSession(null);
         authStore.setCurrentUserPubky(null);
         authStore.setHasProfile(false);
@@ -93,7 +91,6 @@ export class AuthController {
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
     this.cancelActiveAuthFlow();
-    Core.HomeserverService.setSession(session);
     const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
     const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
@@ -119,7 +116,6 @@ export class AuthController {
     const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    Core.HomeserverService.setSession(session);
     authStore.setSession(session);
     authStore.setCurrentUserPubky(Libs.Identity.pubkyFromSession({ session }));
     authStore.setHasProfile(false);
@@ -193,14 +189,14 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
 
-    if (authStore.session) {
-      await Core.AuthApplication.logout({ session: authStore.session });
+    if (authStore.sessionExport) {
+      const { session } = await Core.AuthApplication.restoreSession(authStore.sessionExport);
+      await Core.AuthApplication.logout({ session });
     }
     // Always clear local state, even if homeserver logout fails
     authStore.setSession(null);
     onboardingStore.reset();
     authStore.reset();
-    Core.HomeserverService.setSession(null);
     this.cancelActiveAuthFlow();
     Libs.clearCookies();
     await Core.clearDatabase();

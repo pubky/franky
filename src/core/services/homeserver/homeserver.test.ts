@@ -12,6 +12,7 @@ const mockState = vi.hoisted(() => ({
   signup: vi.fn(),
   signin: vi.fn(),
   publishHomeserverForce: vi.fn(),
+  restoreSession: vi.fn(),
   // Session methods
   sessionSignout: vi.fn(),
   // Session storage
@@ -58,6 +59,7 @@ vi.mock('@synonymdev/pubky', () => {
   const createMockPubkyInstance = () => ({
     getHomeserverOf: (...args: unknown[]) => mockState.getHomeserverOf(...args),
     startAuthFlow: (...args: unknown[]) => mockState.startAuthFlow(...args),
+    restoreSession: (...args: unknown[]) => mockState.restoreSession(...args),
     client: {
       fetch: (...args: unknown[]) => mockState.clientFetch(...args),
     },
@@ -137,6 +139,8 @@ const createMockKeypair = (): Keypair =>
 
 describe('HomeserverService', () => {
   let HomeserverService: typeof import('@/core/services/homeserver/homeserver').HomeserverService;
+  let coreModule: typeof import('@/core');
+  let authStoreGetStateSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     // Reset all mocks
@@ -157,6 +161,7 @@ describe('HomeserverService', () => {
     mockState.sessionStoragePutBytes.mockResolvedValue(undefined);
     mockState.sessionStorageDelete.mockResolvedValue(undefined);
     mockState.sessionStorageList.mockResolvedValue([]);
+    mockState.restoreSession.mockResolvedValue(createMockSession());
     mockState.startAuthFlow.mockReturnValue({
       authorizationUrl: 'https://auth.example.com/authorize',
       tryPollOnce: vi.fn().mockResolvedValue(createMockSession()),
@@ -166,6 +171,10 @@ describe('HomeserverService', () => {
 
     // Reset module cache and re-import
     vi.resetModules();
+    coreModule = await import('@/core');
+    authStoreGetStateSpy = vi.spyOn(coreModule.useAuthStore, 'getState').mockReturnValue({
+      sessionExport: 'session-export',
+    } as unknown as Core.AuthStore);
     const homeserverModule = await import('@/core/services/homeserver/homeserver');
     HomeserverService = homeserverModule.HomeserverService;
   });
@@ -445,7 +454,6 @@ describe('HomeserverService', () => {
     describe('request', () => {
       describe('GET requests', () => {
         it('should return parsed JSON for successful GET', async () => {
-          HomeserverService.setSession(createMockSession());
           const testData = { name: 'test', value: 123 };
           mockState.sessionStorageGet.mockResolvedValue(new Response(JSON.stringify(testData), { status: 200 }));
 
@@ -459,7 +467,6 @@ describe('HomeserverService', () => {
         });
 
         it('should return undefined for empty GET response', async () => {
-          HomeserverService.setSession(createMockSession());
           mockState.sessionStorageGet.mockResolvedValue(new Response('', { status: 200 }));
 
           const result = await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/empty.json');
@@ -468,7 +475,6 @@ describe('HomeserverService', () => {
         });
 
         it('should return undefined for invalid JSON response', async () => {
-          HomeserverService.setSession(createMockSession());
           mockState.sessionStorageGet.mockResolvedValue(new Response('not-valid-json', { status: 200 }));
 
           const result = await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/invalid.json');
@@ -479,7 +485,6 @@ describe('HomeserverService', () => {
 
       describe('PUT requests', () => {
         it('should send JSON body for PUT request', async () => {
-          HomeserverService.setSession(createMockSession());
           const bodyData = { name: 'new-value' };
           await HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://user/pub/data.json', bodyData);
 
@@ -487,7 +492,7 @@ describe('HomeserverService', () => {
         });
 
         it('should throw INVALID_INPUT when PUT is attempted without a session on a pubky:// address', async () => {
-          HomeserverService.setSession(null);
+          authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
           await expect(
             HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://someone/pub/data.json', { ok: true }),
           ).rejects.toMatchObject({
@@ -497,8 +502,6 @@ describe('HomeserverService', () => {
         });
 
         it('should return undefined for successful PUT', async () => {
-          HomeserverService.setSession(createMockSession());
-
           const result = await HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://user/pub/data.json', {
             data: 'test',
           });
@@ -509,8 +512,6 @@ describe('HomeserverService', () => {
 
       describe('DELETE requests', () => {
         it('should send DELETE request without body', async () => {
-          HomeserverService.setSession(createMockSession());
-
           await HomeserverService.request(Core.HomeserverAction.DELETE, 'pubky://user/pub/data.json');
 
           expect(mockState.sessionStorageDelete).toHaveBeenCalledWith('/pub/data.json');
@@ -519,7 +520,6 @@ describe('HomeserverService', () => {
 
       describe('Error handling', () => {
         it('should throw FETCH_FAILED error for non-OK response', async () => {
-          HomeserverService.setSession(createMockSession());
           mockState.sessionStorageGet.mockResolvedValue(
             new Response('Not Found', { status: 404, statusText: 'Not Found' }),
           );
@@ -533,7 +533,6 @@ describe('HomeserverService', () => {
         });
 
         it('should throw SESSION_EXPIRED error for 401 response', async () => {
-          HomeserverService.setSession(createMockSession());
           mockState.sessionStorageGet.mockResolvedValue(
             new Response('Unauthorized', { status: 401, statusText: 'Unauthorized' }),
           );
@@ -547,7 +546,6 @@ describe('HomeserverService', () => {
         });
 
         it('should throw FETCH_FAILED error for network errors', async () => {
-          HomeserverService.setSession(createMockSession());
           mockState.sessionStorageGet.mockRejectedValue(new Error('Network error'));
 
           await expect(
@@ -562,7 +560,6 @@ describe('HomeserverService', () => {
 
     describe('putBlob', () => {
       it('should upload binary data successfully', async () => {
-        HomeserverService.setSession(createMockSession());
         const blobData = new Uint8Array([1, 2, 3, 4, 5]);
 
         await HomeserverService.putBlob('pubky://user/pub/avatar.png', blobData);
@@ -571,7 +568,6 @@ describe('HomeserverService', () => {
       });
 
       it('should throw PUT_FAILED error for non-OK response', async () => {
-        HomeserverService.setSession(createMockSession());
         const blobData = new Uint8Array([1, 2, 3]);
         mockState.sessionStoragePutBytes.mockRejectedValue({
           name: 'RequestError',
@@ -586,7 +582,6 @@ describe('HomeserverService', () => {
       });
 
       it('should throw SESSION_EXPIRED error for 401 response', async () => {
-        HomeserverService.setSession(createMockSession());
         const blobData = new Uint8Array([1, 2, 3]);
         mockState.sessionStoragePutBytes.mockRejectedValue({
           name: 'AuthenticationError',
@@ -601,7 +596,7 @@ describe('HomeserverService', () => {
       });
 
       it('should throw INVALID_INPUT when uploading blob without a session to a pubky:// address', async () => {
-        HomeserverService.setSession(null);
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
         const blobData = new Uint8Array([1, 2, 3]);
 
         await expect(HomeserverService.putBlob('pubky://someone/pub/avatar.png', blobData)).rejects.toMatchObject({
@@ -615,6 +610,7 @@ describe('HomeserverService', () => {
       it('should return array of file URLs', async () => {
         const mockFiles = ['file1.json', 'file2.json', 'file3.json'];
         mockState.publicStorageList.mockResolvedValue(mockFiles);
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
 
         const result = await HomeserverService.list('pubky://user/pub/posts/');
 
@@ -622,7 +618,6 @@ describe('HomeserverService', () => {
       });
 
       it('should use session.storage.list for owned directories when session is set', async () => {
-        HomeserverService.setSession(createMockSession());
         const mockFiles = ['pubky://user/pub/posts/file1.json', 'pubky://user/pub/posts/file2.json'];
         mockState.sessionStorageList.mockResolvedValue(mockFiles);
 
@@ -641,6 +636,7 @@ describe('HomeserverService', () => {
 
       it('should call list with default parameters', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
 
         await HomeserverService.list('pubky://user/pub/posts/');
 
@@ -655,6 +651,7 @@ describe('HomeserverService', () => {
 
       it('should pass pagination parameters to list', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
 
         await HomeserverService.list('pubky://user/pub/posts/', 'cursor123', true, 100);
 
@@ -669,6 +666,7 @@ describe('HomeserverService', () => {
 
       it('should throw FETCH_FAILED error on list failure', async () => {
         mockState.publicStorageList.mockRejectedValue(new Error('List failed'));
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
 
         await expect(HomeserverService.list('pubky://user/pub/posts/')).rejects.toMatchObject({
           type: Libs.HomeserverErrorType.FETCH_FAILED,
@@ -679,15 +677,12 @@ describe('HomeserverService', () => {
 
     describe('delete', () => {
       it('should call request with DELETE method', async () => {
-        HomeserverService.setSession(createMockSession());
-
         await HomeserverService.delete('pubky://user/pub/file.json');
 
         expect(mockState.sessionStorageDelete).toHaveBeenCalledWith('/pub/file.json');
       });
 
       it('should throw FETCH_FAILED error on delete failure', async () => {
-        HomeserverService.setSession(createMockSession());
         mockState.sessionStorageDelete.mockRejectedValue({
           name: 'RequestError',
           message: 'Forbidden',
@@ -709,6 +704,7 @@ describe('HomeserverService', () => {
           headers: { 'Content-Type': 'application/json' },
         });
         mockState.publicStorageGet.mockResolvedValue(mockResponse);
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
 
         const result = await HomeserverService.get(testUrl);
 
@@ -719,7 +715,6 @@ describe('HomeserverService', () => {
       });
 
       it('should use session.storage.get for owned paths when session is set', async () => {
-        HomeserverService.setSession(createMockSession());
         const testUrl = 'pubky://user/pub/private.json';
         const mockResponse = new Response(JSON.stringify({ data: 'private' }), {
           status: 200,
@@ -740,6 +735,7 @@ describe('HomeserverService', () => {
         const testUrl = 'pubky://user/pub/data.json';
         const networkError = new Error('Network request failed');
         mockState.publicStorageGet.mockRejectedValue(networkError);
+        authStoreGetStateSpy.mockReturnValue({ sessionExport: null } as unknown as Core.AuthStore);
 
         await expect(HomeserverService.get(testUrl)).rejects.toMatchObject({
           type: Libs.HomeserverErrorType.FETCH_FAILED,
@@ -783,7 +779,6 @@ describe('HomeserverService', () => {
     describe('Session expiration handling', () => {
       it('should include URL in SESSION_EXPIRED error details', async () => {
         const testUrl = 'pubky://user/pub/data.json';
-        HomeserverService.setSession(createMockSession());
         mockState.sessionStorageGet.mockResolvedValue(new Response('Session expired', { status: 401 }));
 
         try {
@@ -798,7 +793,6 @@ describe('HomeserverService', () => {
 
       it('should use custom error message from 401 response body', async () => {
         const customMessage = 'Your session has expired, please login again';
-        HomeserverService.setSession(createMockSession());
         mockState.sessionStorageGet.mockResolvedValue(new Response(customMessage, { status: 401 }));
 
         try {
@@ -858,7 +852,6 @@ describe('HomeserverService', () => {
 
     describe('URL resolution', () => {
       it('should use session storage paths for pubky URLs', async () => {
-        HomeserverService.setSession(createMockSession());
         mockState.sessionStorageGet.mockResolvedValue(new Response('{}', { status: 200 }));
 
         await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/data.json');
