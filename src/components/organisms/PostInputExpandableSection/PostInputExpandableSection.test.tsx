@@ -4,8 +4,8 @@ import { PostInputExpandableSection } from './PostInputExpandableSection';
 import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar/PostInputActionBar.constants';
 
 // Use real libs - use actual implementations
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return { ...actual };
 });
 

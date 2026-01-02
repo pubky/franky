@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PostTag } from './PostTag';
 
 // Mock @/libs with partial mock
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     generateRandomColor: vi.fn((str: string) => {
