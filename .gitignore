@@ -60,3 +60,7 @@ public/sw.js.map
 
 # Cursor
 /.cursor/plans
+/.cursor/commands
+
+# AI generated reviews
+.ai-reviews/
