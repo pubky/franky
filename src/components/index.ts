@@ -14,7 +14,6 @@ export {
   DialogRestoreRecoveryPhrase,
   DialogWelcome,
   Header,
-  HomeserverCard,
   LeftSidebar,
   PostActionsBar,
   PostContent as OrganismPostContent,

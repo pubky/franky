@@ -9,7 +9,6 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as App from '@/app';
-import * as Core from '@/core';
 
 export const InstallCard = () => {
   return (
@@ -69,11 +68,10 @@ export const InstallHeader = () => {
 
 export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   const router = useRouter();
-  const { reset } = Core.useOnboardingStore();
 
   const handleCreate = () => {
     // Reset any existing keypair to ensure a fresh one is generated
-    reset();
+
     router.push(App.ONBOARDING_ROUTES.PUBKY);
   };
 

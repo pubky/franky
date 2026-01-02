@@ -34,4 +34,8 @@ export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): Onboa
   setShowWelcomeDialog: (showWelcomeDialog: boolean) => {
     set({ showWelcomeDialog }, false, OnboardingActionTypes.SET_SHOW_WELCOME_DIALOG);
   },
+
+  setInviteCode: (inviteCode: string) => {
+    set({ inviteCode }, false, OnboardingActionTypes.SET_INVITE_CODE);
+  },
 });
