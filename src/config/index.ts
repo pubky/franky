@@ -9,5 +9,6 @@ export * from './logs';
 export * from './metadata';
 export * from './tags';
 export * from './theme';
+export * from './ui';
 export * from './urls';
 export * from './user';

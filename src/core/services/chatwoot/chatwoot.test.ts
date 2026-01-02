@@ -6,6 +6,7 @@ import type {
   TChatwootContactSearchResponse,
   TChatwootCreateContactResponse,
 } from './chatwoot.types';
+import { CHATWOOT_INBOX_IDS, CHATWOOT_SUBMISSION_TYPES, CHATWOOT_REPORT_MESSAGE_PREFIX } from './chatwoot.constants';
 
 const testData = {
   userPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
@@ -295,6 +296,156 @@ describe('ChatwootService', () => {
 
       // Should use existing contact despite case difference
       expect(global.fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should use reports inbox when type is report', async () => {
+      const input = createChatwootInput({ type: CHATWOOT_SUBMISSION_TYPES.REPORT });
+
+      // Mock contact search - no existing contact
+      const searchResponse: TChatwootContactSearchResponse = {
+        payload: [],
+      };
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => searchResponse,
+      });
+
+      // Mock contact creation
+      const newContact = createMockContact();
+      const createResponse: TChatwootCreateContactResponse = {
+        payload: {
+          contact: newContact,
+        },
+      };
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => createResponse,
+      });
+
+      // Mock conversation creation
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+      });
+
+      await ChatwootService.submit(input);
+
+      // Verify contact creation uses reports inbox
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('/contacts'),
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({
+            inbox_id: CHATWOOT_INBOX_IDS.REPORTS,
+            name: testData.userName,
+            email: `${testData.userPubky}@pubky.app`,
+          }),
+        }),
+      );
+    });
+
+    it('should include report prefix in conversation message when type is report', async () => {
+      const input = createChatwootInput({
+        comment: 'This post contains harmful content',
+        type: CHATWOOT_SUBMISSION_TYPES.REPORT,
+      });
+      const existingContact = createMockContact();
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ payload: [existingContact] }),
+      });
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+      });
+
+      await ChatwootService.submit(input);
+
+      const conversationCall = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.find((call) =>
+        call[0].toString().includes('/conversations'),
+      );
+      expect(conversationCall).toBeDefined();
+
+      const body = JSON.parse(conversationCall![1].body as string);
+      expect(body.message.content).toContain(CHATWOOT_REPORT_MESSAGE_PREFIX);
+      expect(body.message.content).toContain('This post contains harmful content');
+    });
+
+    it('should use custom source as message prefix when provided for reports', async () => {
+      const customSource = 'Report Post - Personal Info Leak';
+      const input = createChatwootInput({
+        comment: 'This post leaks personal information',
+        type: CHATWOOT_SUBMISSION_TYPES.REPORT,
+        source: customSource,
+      });
+      const existingContact = createMockContact();
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ payload: [existingContact] }),
+      });
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+      });
+
+      await ChatwootService.submit(input);
+
+      const conversationCall = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.find((call) =>
+        call[0].toString().includes('/conversations'),
+      );
+      expect(conversationCall).toBeDefined();
+
+      const body = JSON.parse(conversationCall![1].body as string);
+      expect(body.message.content).toContain(customSource);
+      expect(body.message.content).toContain('This post leaks personal information');
+    });
+
+    it('should default to feedback type when type is not provided', async () => {
+      const input = createChatwootInput(); // No type specified
+
+      // Mock contact search - no existing contact
+      const searchResponse: TChatwootContactSearchResponse = {
+        payload: [],
+      };
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => searchResponse,
+      });
+
+      // Mock contact creation
+      const newContact = createMockContact();
+      const createResponse: TChatwootCreateContactResponse = {
+        payload: {
+          contact: newContact,
+        },
+      };
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+        json: async () => createResponse,
+      });
+
+      // Mock conversation creation
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        ok: true,
+      });
+
+      await ChatwootService.submit(input);
+
+      // Verify contact creation uses feedback inbox (default)
+      expect(global.fetch).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('/contacts'),
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({
+            inbox_id: CHATWOOT_INBOX_IDS.FEEDBACK,
+            name: testData.userName,
+            email: `${testData.userPubky}@pubky.app`,
+          }),
+        }),
+      );
     });
   });
 });
