@@ -88,6 +88,7 @@ describe('useFeedback', () => {
 
       // In real browser usage, the textarea's maxLength attribute prevents input beyond the limit.
       // This test simulates a direct handleChange call bypassing browser restrictions to test hook behavior in isolation.
+      // Server-side validation exists in FeedbackValidators.validateComment to enforce the max length.
       expect(result.current.feedback.length).toBe(FEEDBACK_MAX_CHARACTER_LENGTH + 10);
     });
 

@@ -19,7 +19,6 @@ vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
   return {
     ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
   };
 });
 

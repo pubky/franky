@@ -98,12 +98,11 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-// Use real libs, only stub cn to a deterministic join (as in Header.test.tsx)
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
     timeAgo: vi.fn(() => '2h'),
     extractInitials: vi.fn(({ name }) => name?.substring(0, 2).toUpperCase() || ''),
     formatPublicKey: vi.fn(({ key, length }) => key?.substring(0, length) || ''),

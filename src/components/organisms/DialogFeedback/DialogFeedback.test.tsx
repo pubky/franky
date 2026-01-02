@@ -2,54 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogFeedback } from './DialogFeedback';
 
-// Mock Radix UI Dialog
-vi.mock('@radix-ui/react-dialog', () => ({
-  Root: ({
-    children,
-    open,
-    onOpenChange,
-  }: {
-    children: React.ReactNode;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-  }) => (
-    <div data-testid="dialog-root" data-open={open} onClick={() => onOpenChange?.(false)}>
-      {children}
-    </div>
-  ),
-  Trigger: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-trigger">{children}</div>,
-  Content: ({
-    children,
-    className,
-    hiddenTitle,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    hiddenTitle?: string;
-  }) => (
-    <div data-testid="dialog-content" className={className} aria-label={hiddenTitle}>
-      {children}
-    </div>
-  ),
-  Portal: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-portal">{children}</div>,
-  Overlay: ({ className }: { className?: string }) => <div data-testid="dialog-overlay" className={className} />,
-  Close: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <button data-testid="dialog-close" className={className}>
-      {children}
-    </button>
-  ),
-  Title: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <h2 data-testid="dialog-title" className={className}>
-      {children}
-    </h2>
-  ),
-  Description: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <p data-testid="dialog-description" className={className}>
-      {children}
-    </p>
-  ),
-}));
-
 // Mock hooks
 const mockUseCurrentUserProfile = vi.fn();
 const mockUseFeedback = vi.fn();
@@ -224,14 +176,9 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    Check: () => <span data-testid="check-icon">✓</span>,
-    Send: () => <span data-testid="send-icon">→</span>,
-    Loader2: () => <span data-testid="loader-icon">⟳</span>,
-  };
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('DialogFeedback', () => {
@@ -423,6 +370,11 @@ describe('DialogFeedback - Snapshots', () => {
     });
 
     const { container } = render(<DialogFeedback open={true} onOpenChange={mockOnOpenChange} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for closed state', () => {
+    const { container } = render(<DialogFeedback open={false} onOpenChange={mockOnOpenChange} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
