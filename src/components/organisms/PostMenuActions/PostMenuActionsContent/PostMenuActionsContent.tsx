@@ -17,10 +17,8 @@ export function PostMenuActionsContent({
 
   if (isLoading) {
     return (
-      <Atoms.Container overrideDefaults className="flex flex-col gap-2.5 p-4">
-        <Atoms.Typography as="span" overrideDefaults className="text-muted-foreground">
-          Loading...
-        </Atoms.Typography>
+      <Atoms.Container overrideDefaults className="flex items-center justify-center p-4">
+        <Libs.Loader2 className="size-5 animate-spin text-muted-foreground" />
       </Atoms.Container>
     );
   }
@@ -45,11 +43,11 @@ export function PostMenuActionsContent({
             variant="ghost"
             onClick={() => handleItemClick(item)}
             disabled={item.disabled}
-            className="justify-start"
+            className="justify-start overflow-hidden"
           >
-            <Atoms.Container overrideDefaults className="flex items-center gap-2">
-              <Icon className={Libs.cn('size-4', color)} />
-              <Atoms.Typography as="span" overrideDefaults className={Libs.cn('text-base font-medium', color)}>
+            <Atoms.Container overrideDefaults className="flex items-center gap-2 overflow-hidden">
+              <Icon className={Libs.cn('size-4 shrink-0', color)} />
+              <Atoms.Typography as="span" overrideDefaults className={Libs.cn('truncate text-base font-medium', color)}>
                 {item.label}
               </Atoms.Typography>
             </Atoms.Container>
@@ -61,12 +59,16 @@ export function PostMenuActionsContent({
             disabled={item.disabled}
             className="group p-0"
           >
-            <Atoms.Container overrideDefaults className="flex items-center gap-2 p-0">
-              <Icon className={Libs.cn('size-4 transition-colors', color, 'group-hover:text-foreground')} />
+            <Atoms.Container overrideDefaults className="flex items-center gap-2 overflow-hidden p-0">
+              <Icon className={Libs.cn('size-4 shrink-0 transition-colors', color, 'group-hover:text-foreground')} />
               <Atoms.Typography
                 as="span"
                 overrideDefaults
-                className={Libs.cn('text-base font-medium transition-colors', color, 'group-hover:text-foreground')}
+                className={Libs.cn(
+                  'truncate text-base font-medium transition-colors',
+                  color,
+                  'group-hover:text-foreground',
+                )}
               >
                 {item.label}
               </Atoms.Typography>
