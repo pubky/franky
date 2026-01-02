@@ -34,8 +34,10 @@ export function DialogReportPostReasonStep({
               <Organisms.PostHeader
                 postId={currentUserPubky}
                 isReplyInput={true}
-                characterCount={reason.length}
-                maxLength={REPORT_REASON_MAX_LENGTH}
+                characterLimit={{
+                  count: reason.length,
+                  max: REPORT_REASON_MAX_LENGTH,
+                }}
               />
             )}
 
