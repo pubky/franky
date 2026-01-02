@@ -30,7 +30,6 @@ const CAPABILITIES = '/pub/pubky.app/:rw';
 const PUB_PATH_PREFIX = '/pub/' as const;
 
 export class HomeserverService {
-
   private constructor() {}
 
   private static pubkySdk: Pubky | null = null;
@@ -45,12 +44,10 @@ export class HomeserverService {
     return this.pubkySdk;
   }
 
-
   private static resolveOwnedSessionPath(url: string): { session: Session; path: PubPath<string> } | null {
     const session = Core.useAuthStore.getState().selectSession();
     return resolveOwnedSessionPath(url, session, PUB_PATH_PREFIX);
   }
-
 
   /**
    * Gets a signer for the homeserver
@@ -61,7 +58,6 @@ export class HomeserverService {
     const pubkySdk = this.getPubkySdk();
     return pubkySdk.signer(keypair);
   }
-
 
   /**
    * Checks if the keypair has a homeserver
@@ -84,12 +80,17 @@ export class HomeserverService {
       Libs.Logger.debug('Homeserver successful', { homeserver });
       return homeserver;
     } catch (error) {
-      return handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get homeserver. Try again.', 401, {
-        publicKey: publicKey?.z32?.(),
-      });
+      return handleError(
+        error,
+        Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+        'Failed to get homeserver. Try again.',
+        401,
+        {
+          publicKey: publicKey?.z32?.(),
+        },
+      );
     }
   }
-
 
   /**
    * Signs up a new user in the homeserver
@@ -236,14 +237,18 @@ export class HomeserverService {
           return (await parseResponseOrUndefined<T>(response)) as T;
         }
         case Core.HomeserverAction.PUT:
-          await session.storage.putJson(path, bodyJson ?? {}).catch((error) =>
-            handleError(error, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT data', 500, { url, method }),
-          );
+          await session.storage
+            .putJson(path, bodyJson ?? {})
+            .catch((error) =>
+              handleError(error, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT data', 500, { url, method }),
+            );
           return undefined as T;
         case Core.HomeserverAction.DELETE:
-          await session.storage.delete(path).catch((error) =>
-            handleError(error, Libs.HomeserverErrorType.DELETE_FAILED, 'Failed to delete data', 500, { url, method }),
-          );
+          await session.storage
+            .delete(path)
+            .catch((error) =>
+              handleError(error, Libs.HomeserverErrorType.DELETE_FAILED, 'Failed to delete data', 500, { url, method }),
+            );
           return undefined as T;
       }
     }
