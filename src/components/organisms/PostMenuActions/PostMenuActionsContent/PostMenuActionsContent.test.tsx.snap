@@ -7,7 +7,7 @@ exports[`PostMenuActionsContent - Snapshots > matches snapshot for all menu item
   data-testid="dropdown-menu-item"
 >
   <div
-    data-class-name="flex items-center gap-2 p-0 overflow-hidden"
+    data-class-name="flex items-center gap-2 overflow-hidden p-0"
     data-override-defaults="true"
     data-testid="container"
   >
@@ -60,7 +60,7 @@ exports[`PostMenuActionsContent - Snapshots > matches snapshot for own post menu
   data-testid="dropdown-menu-item"
 >
   <div
-    data-class-name="flex items-center gap-2 p-0 overflow-hidden"
+    data-class-name="flex items-center gap-2 overflow-hidden p-0"
     data-override-defaults="true"
     data-testid="container"
   >
