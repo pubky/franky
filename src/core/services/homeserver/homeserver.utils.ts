@@ -3,14 +3,15 @@ import * as Libs from '@/libs';
 import { Session, type AuthFlow } from '@synonymdev/pubky';
 import type { CancelableAuthApproval, PubPath } from './homeserver.types';
 import { HomeserverAction } from './homeserver.types';
-import {
+import { createCanceledError, handleError, isRetryableRelayPollError } from './error.utils';
+
+// Re-export error utilities for backwards compatibility
+export {
+  AUTH_FLOW_CANCELED_ERROR_NAME,
   createCanceledError,
   handleError,
   isRetryableRelayPollError,
 } from './error.utils';
-
-// Re-export error utilities for backwards compatibility
-export { AUTH_FLOW_CANCELED_ERROR_NAME, createCanceledError, handleError, isRetryableRelayPollError } from './error.utils';
 
 // URL protocol constants
 const PUBKY_PROTOCOL = 'pubky://';
@@ -270,11 +271,7 @@ export const assertOk = async (
  * @returns The response from storage
  * @throws {HomeserverError} When response is not OK or storage.get fails
  */
-export const getOwnedResponse = async (
-  session: Session,
-  path: PubPath<string>,
-  url: string,
-): Promise<Response> => {
+export const getOwnedResponse = async (session: Session, path: PubPath<string>, url: string): Promise<Response> => {
   const response = await session.storage.get(path).catch((error) =>
     // Transforms the error into an AppError and re-throws to caller
     handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {

@@ -23,7 +23,7 @@ const _createMockPublicKey = () =>
     free: () => {},
     to_uint8array: () => new Uint8Array(),
     toUint8Array: () => new Uint8Array(),
-  }) as import('@synonymdev/pubky').PublicKey;
+  }) as unknown as import('@synonymdev/pubky').PublicKey;
 
 const createMockEncryptedFile = () =>
   new File([new Uint8Array([1, 2, 3, 4, 5])], 'recovery.bin', { type: 'application/octet-stream' });
@@ -150,15 +150,18 @@ describe('AuthController', () => {
         session: null,
         hasProfile: false,
         hasHydrated: false,
+        sessionExport: null,
+        isRestoringSession: false,
         selectIsAuthenticated: vi.fn(() => false),
         init: vi.fn(),
         setSession: vi.fn(),
         setCurrentUserPubky: vi.fn(),
         setHasProfile: vi.fn(),
         setHasHydrated: vi.fn(),
+        setIsRestoringSession: vi.fn(),
         reset: vi.fn(),
         selectCurrentUserPubky: vi.fn(() => TEST_PUBKY),
-      };
+      } as unknown as Core.AuthStore;
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStoreState);
 
       await AuthController.bootstrapWithDelay();
@@ -203,9 +206,11 @@ describe('AuthController', () => {
         signupToken,
       });
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
-      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
+      expect(authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: false,
+      });
       expect(result).toBeUndefined();
     });
 
@@ -265,9 +270,11 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl('test-pubky'),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
-      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
+      expect(_authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: true,
+      });
       expect(result).toBe(true);
     });
 
@@ -295,9 +302,11 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
+      expect(_authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: false,
+      });
       expect(result).toBe(true);
     });
 
@@ -368,9 +377,11 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl('test-pubky'),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
-      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
+      expect(_authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: true,
+      });
       expect(result).toBe(true);
     });
 
@@ -399,9 +410,11 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(_authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(_authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
+      expect(_authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: false,
+      });
       expect(result).toBe(true);
     });
 
@@ -525,6 +538,7 @@ describe('AuthController', () => {
   describe('restorePersistedSession', () => {
     it('should restore a session when sessionExport exists and store has hydrated', async () => {
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+      const mockPubky = TEST_PUBKY as Core.Pubky;
 
       const authStore = {
         ...storeMocks.getAuthState(),
@@ -533,21 +547,23 @@ describe('AuthController', () => {
         sessionExport: 'session-export',
         isRestoringSession: false,
         setIsRestoringSession: vi.fn(),
+        init: vi.fn(),
       } as unknown as Core.AuthStore;
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore);
-
       vi.spyOn(Core.AuthApplication, 'restorePersistedSession').mockResolvedValue({ session: mockSession });
-      const initializeSpy = vi
-        .spyOn(AuthController, 'initializeAuthenticatedSession')
-        .mockResolvedValue(undefined as unknown as void);
+      vi.spyOn(Libs.Identity, 'pubkyFromSession').mockReturnValue(mockPubky);
 
       const result = await AuthController.restorePersistedSession();
 
       expect(result).toBe(true);
-      expect(authStore.setIsRestoringSession).toHaveBeenCalledWith(true);
-      expect(initializeSpy).toHaveBeenCalledWith({ session: mockSession });
-      expect(authStore.setIsRestoringSession).toHaveBeenCalledWith(false);
+      expect(Core.AuthApplication.restorePersistedSession).toHaveBeenCalledWith({ authStore });
+      expect(Libs.Identity.pubkyFromSession).toHaveBeenCalledWith({ session: mockSession });
+      expect(authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: true,
+      });
     });
 
     it('should return false when no sessionExport exists', async () => {
@@ -558,13 +574,15 @@ describe('AuthController', () => {
         sessionExport: null,
         isRestoringSession: false,
         setIsRestoringSession: vi.fn(),
+        init: vi.fn(),
       } as unknown as Core.AuthStore;
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore);
+      vi.spyOn(Core.AuthApplication, 'restorePersistedSession').mockResolvedValue(null);
 
       const result = await AuthController.restorePersistedSession();
       expect(result).toBe(false);
-      expect(authStore.setIsRestoringSession).not.toHaveBeenCalledWith(true);
+      expect(authStore.init).not.toHaveBeenCalled();
     });
   });
 
@@ -617,9 +635,11 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
-      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(authStore.setHasProfile).toHaveBeenCalledWith(true);
+      expect(authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: true,
+      });
     });
 
     it('should initialize session without bootstrap if user is not signed up', async () => {
@@ -638,22 +658,28 @@ describe('AuthController', () => {
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
-      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
-      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(mockPubky);
-      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
+      expect(authStore.init).toHaveBeenCalledWith({
+        session: mockSession,
+        currentUserPubky: mockPubky,
+        hasProfile: false,
+      });
     });
   });
 
   describe('logout', () => {
-    const createAuthStore = (): Core.AuthStore => ({
-      ...storeMocks.getAuthState(),
-      currentUserPubky: 'test-pubky' as Core.Pubky,
-      session: {} as unknown as import('@synonymdev/pubky').Session,
-      hasProfile: false,
-      hasHydrated: false,
-      selectCurrentUserPubky: vi.fn(() => 'test-pubky' as Core.Pubky),
-      setHasHydrated: vi.fn(),
-    });
+    const createAuthStore = (): Core.AuthStore =>
+      ({
+        ...storeMocks.getAuthState(),
+        currentUserPubky: 'test-pubky' as Core.Pubky,
+        session: {} as unknown as import('@synonymdev/pubky').Session,
+        hasProfile: false,
+        hasHydrated: false,
+        sessionExport: null,
+        isRestoringSession: false,
+        selectCurrentUserPubky: vi.fn(() => 'test-pubky' as Core.Pubky),
+        setHasHydrated: vi.fn(),
+        setIsRestoringSession: vi.fn(),
+      }) as unknown as Core.AuthStore;
 
     const createOnboardingStore = () =>
       ({
@@ -688,21 +714,25 @@ describe('AuthController', () => {
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error when homeserver logout fails and not clear local state', async () => {
+    it('should log warning and clear local state even when homeserver logout fails', async () => {
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockRejectedValue(new Error('Network error'));
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+      const warnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
 
-      await expect(AuthController.logout()).rejects.toThrow('Network error');
+      await AuthController.logout();
       expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
-      // Local state should not be cleared if homeserver logout fails
-      expect(storeMocks.resetOnboardingStore).not.toHaveBeenCalled();
-      expect(storeMocks.resetAuthStore).not.toHaveBeenCalled();
-      expect(clearCookiesSpy).not.toHaveBeenCalled();
-      expect(clearDatabaseSpy).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledWith('Homeserver logout failed, clearing local state anyway', {
+        error: expect.any(Error),
+      });
+      // Local state should still be cleared even if homeserver logout fails
+      expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
+      expect(storeMocks.resetAuthStore).toHaveBeenCalled();
+      expect(clearCookiesSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
     });
 
     it('should clear all existing cookies', async () => {

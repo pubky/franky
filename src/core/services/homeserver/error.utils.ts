@@ -190,12 +190,26 @@ export const handleError = (
 
   // Handle Pubky SDK errors
   if (isPubkyErrorLike(error)) {
-    return handleTypedError(error.message, error.name, homeserverErrorType, message, resolvedStatusCode, additionalContext);
+    return handleTypedError(
+      error.message,
+      error.name,
+      homeserverErrorType,
+      message,
+      resolvedStatusCode,
+      additionalContext,
+    );
   }
 
   // Handle standard JavaScript errors
   if (error instanceof Error) {
-    return handleTypedError(error.message, undefined, homeserverErrorType, message, resolvedStatusCode, additionalContext);
+    return handleTypedError(
+      error.message,
+      undefined,
+      homeserverErrorType,
+      message,
+      resolvedStatusCode,
+      additionalContext,
+    );
   }
 
   // Handle unknown error types
@@ -210,4 +224,3 @@ export const handleError = (
     { error, ...additionalContext },
   );
 };
-

@@ -15,7 +15,6 @@ export class AuthApplication {
    * @returns The restored session, or null if restoration failed
    */
   static async restorePersistedSession({ authStore }: Core.TRestoreSessionParams): Core.TRestoreSessionResult {
-
     // If a restoration is already in progress, return the existing promise
     if (this.restoreSessionPromise) {
       return await this.restoreSessionPromise;
