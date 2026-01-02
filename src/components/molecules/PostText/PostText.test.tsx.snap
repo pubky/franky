@@ -249,7 +249,7 @@ exports[`PostText - Snapshots > matches snapshot for hashtag alongside link 1`] 
 
 exports[`PostText - Snapshots > matches snapshot for hashtag with hyphens 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -295,7 +295,7 @@ exports[`PostText - Snapshots > matches snapshot for hashtag with markdown forma
 
 exports[`PostText - Snapshots > matches snapshot for hashtag with mixed hyphens and underscores 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -340,7 +340,7 @@ exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
 
 exports[`PostText - Snapshots > matches snapshot for hashtag with underscores 1`] = `
 <div
-  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
   data-override-defaults="true"
   data-testid="container"
 >
