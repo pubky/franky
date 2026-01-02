@@ -6,7 +6,7 @@ exports[`PostContent - Snapshots > matches snapshot with repost 1`] = `
   data-testid="container"
 >
   <div
-    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+    class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
     data-cy="post-text"
     data-testid="container"
   >
@@ -23,7 +23,7 @@ exports[`PostContent - Snapshots > matches snapshot with single-line content 1`]
   data-testid="container"
 >
   <div
-    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+    class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
     data-cy="post-text"
     data-testid="container"
   >
