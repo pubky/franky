@@ -5,4 +5,5 @@ export interface PostHeaderProps {
     count: number;
     max: number;
   };
+  showPopover?: boolean;
 }
