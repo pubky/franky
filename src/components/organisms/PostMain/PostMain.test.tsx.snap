@@ -1,5 +1,257 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostMain - Snapshots > matches snapshot for quote repost by current user (with content) 1`] = `
+<div
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
+      data-testid="card-content"
+    >
+      <div
+        data-testid="post-header"
+      >
+        PostHeader 
+        me:quote-repost-1
+      </div>
+      <div
+        data-testid="post-content"
+      >
+        PostContent 
+        me:quote-repost-1
+      </div>
+      <div
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-tagged-id="me:quote-repost-1"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
+        >
+          ClickableTagsList 
+          me:quote-repost-1
+        </div>
+        <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
+        >
+          Actions 
+          me:quote-repost-1
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot for repost by another user 1`] = `
+<div
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
+      data-testid="card-content"
+    >
+      <div
+        data-testid="post-header"
+      >
+        PostHeader 
+        other-user:repost-1
+      </div>
+      <div
+        data-testid="post-content"
+      >
+        PostContent 
+        other-user:repost-1
+      </div>
+      <div
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-tagged-id="other-user:repost-1"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
+        >
+          ClickableTagsList 
+          other-user:repost-1
+        </div>
+        <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
+        >
+          Actions 
+          other-user:repost-1
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot for simple repost by current user (no content) 1`] = `
+<div
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
+      data-testid="card-content"
+    >
+      <div
+        data-testid="post-content"
+      >
+        PostContent 
+        me:simple-repost-1
+      </div>
+      <div
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-tagged-id="me:simple-repost-1"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
+        >
+          ClickableTagsList 
+          me:simple-repost-1
+        </div>
+        <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
+        >
+          Actions 
+          me:simple-repost-1
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot with default state 1`] = `
+<div
+  data-class-name="relative flex min-w-0 cursor-pointer"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
+      data-class-name="flex min-w-0 flex-col gap-4 p-6"
+      data-testid="card-content"
+    >
+      <div
+        data-testid="post-header"
+      >
+        PostHeader 
+        post-123
+      </div>
+      <div
+        data-testid="post-content"
+      >
+        PostContent 
+        post-123
+      </div>
+      <div
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-tagged-id="post-123"
+          data-tagged-kind="post"
+          data-testid="clickable-tags-list"
+        >
+          ClickableTagsList 
+          post-123
+        </div>
+        <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
+        >
+          Actions 
+          post-123
+          <button>
+            Reply
+          </button>
+          <button>
+            Repost
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`PostMain - Snapshots > matches snapshot with deleted post 1`] = `
 <div
   data-class-name="relative flex min-w-0 cursor-pointer"
@@ -153,140 +405,6 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         >
           Actions 
           post-reply-123
-          <button>
-            Reply
-          </button>
-          <button>
-            Repost
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
-<div
-  data-class-name="relative flex min-w-0 cursor-pointer"
-  data-override-defaults="true"
-  data-testid="container"
->
-  <div
-    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
-    data-testid="card"
-  >
-    <div
-      data-is-undoing="false"
-      data-testid="repost-header"
-    >
-      <button
-        data-testid="repost-undo"
-      >
-        Undo repost
-      </button>
-    </div>
-    <div
-      data-class-name="flex min-w-0 flex-col gap-4 p-6"
-      data-testid="card-content"
-    >
-      <div
-        data-testid="post-header"
-      >
-        PostHeader 
-        post-123
-      </div>
-      <div
-        data-testid="post-content"
-      >
-        PostContent 
-        post-123
-      </div>
-      <div
-        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
-        data-testid="container"
-      >
-        <div
-          data-tagged-id="post-123"
-          data-tagged-kind="post"
-          data-testid="clickable-tags-list"
-        >
-          ClickableTagsList 
-          post-123
-        </div>
-        <div
-          data-class-name="w-full flex-1 justify-start md:justify-end"
-          data-testid="post-actions"
-        >
-          Actions 
-          post-123
-          <button>
-            Reply
-          </button>
-          <button>
-            Repost
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
-<div
-  data-class-name="relative flex min-w-0 cursor-pointer"
-  data-override-defaults="true"
-  data-testid="container"
->
-  <div
-    data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
-    data-testid="card"
-  >
-    <div
-      data-is-undoing="false"
-      data-testid="repost-header"
-    >
-      <button
-        data-testid="repost-undo"
-      >
-        Undo repost
-      </button>
-    </div>
-    <div
-      data-class-name="flex min-w-0 flex-col gap-4 p-6"
-      data-testid="card-content"
-    >
-      <div
-        data-testid="post-header"
-      >
-        PostHeader 
-        post-789
-      </div>
-      <div
-        data-testid="post-content"
-      >
-        PostContent 
-        post-789
-      </div>
-      <div
-        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
-        data-testid="container"
-      >
-        <div
-          data-tagged-id="post-789"
-          data-tagged-kind="post"
-          data-testid="clickable-tags-list"
-        >
-          ClickableTagsList 
-          post-789
-        </div>
-        <div
-          data-class-name="w-full flex-1 justify-start md:justify-end"
-          data-testid="post-actions"
-        >
-          Actions 
-          post-789
           <button>
             Reply
           </button>

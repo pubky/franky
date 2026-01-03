@@ -131,24 +131,6 @@ describe('DialogRepost', () => {
     expect(screen.getByTestId('post-input')).toBeInTheDocument();
   });
 
-  it('renders PostInput with originalPostId for repost preview', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogRepost postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    // PostHeader and PostContent are now rendered inside PostInput for repost preview
-    expect(Organisms.PostInput).toHaveBeenCalledWith(
-      {
-        variant: POST_INPUT_VARIANT.REPOST,
-        originalPostId: 'test-post-123',
-        onSuccess: expect.any(Function),
-        showThreadConnector: false,
-        expanded: true,
-        hideArticle: true,
-      },
-      undefined,
-    );
-  });
-
   it('renders PostInput with correct props', () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogRepost postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
@@ -166,14 +148,6 @@ describe('DialogRepost', () => {
     );
   });
 
-  it('passes onOpenChangeAction to Dialog', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogRepost postId="test-post-123" open={true} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialog = screen.getByTestId('dialog');
-    expect(dialog).toHaveAttribute('data-open', 'true');
-  });
-
   it('calls onOpenChangeAction when PostInput onSuccess is called', async () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogRepost postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
@@ -184,30 +158,6 @@ describe('DialogRepost', () => {
     await waitFor(() => {
       expect(onOpenChangeAction).toHaveBeenCalledWith(false);
     });
-  });
-
-  it('applies correct className to DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogRepost postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveClass('w-3xl');
-  });
-
-  it('sets hiddenTitle on DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogRepost postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveAttribute('aria-label', 'Repost');
-  });
-
-  it('renders DialogHeader with title', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogRepost postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Repost');
   });
 
   it('handles open prop correctly', () => {

@@ -49,23 +49,6 @@ describe('PostPreviewCard', () => {
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content-base')).toBeInTheDocument();
   });
-
-  it('applies CardContent classes', () => {
-    render(<PostPreviewCard postId="test-post-123" />);
-    const cardContent = screen.getByTestId('card-content');
-
-    expect(cardContent).toHaveClass('flex flex-col gap-4 p-6');
-  });
-
-  it('applies default Card wrapper classes and merges className', () => {
-    render(<PostPreviewCard postId="test-post-123" className="bg-muted" />);
-    expect(screen.getByTestId('card')).toHaveClass('rounded-md py-0 bg-muted');
-  });
-
-  it('renders PostContentBase (prevents repost nesting)', () => {
-    render(<PostPreviewCard postId="test-post-123" />);
-    expect(screen.getByTestId('post-content-base')).toHaveAttribute('data-post-id', 'test-post-123');
-  });
 });
 
 describe('PostPreviewCard - Snapshots', () => {

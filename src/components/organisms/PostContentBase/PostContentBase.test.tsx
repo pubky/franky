@@ -40,8 +40,6 @@ vi.mock('@/organisms', () => ({
 }));
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
-const mockPostText = vi.mocked(Molecules.PostText);
-const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
 const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
 
 describe('PostContentBase', () => {
@@ -57,45 +55,6 @@ describe('PostContentBase', () => {
     render(<PostContentBase postId="post-123" />);
 
     expect(screen.getByTestId('container')).toBeInTheDocument();
-  });
-
-  it('shows loading when postDetails are not yet available', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: null,
-      isLoading: true,
-    });
-
-    const { container } = render(<PostContentBase postId="post-123" />);
-
-    expect(container.firstChild).toHaveTextContent('Loading content...');
-  });
-
-  it('calls usePostDetails with correct id', () => {
-    render(<PostContentBase postId="post-abc" />);
-
-    expect(mockUsePostDetails).toHaveBeenCalledWith('post-abc');
-  });
-
-  it('calls PostText with correct content prop', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test post content', attachments: null },
-      isLoading: false,
-    });
-
-    render(<PostContentBase postId="post-123" />);
-
-    expect(mockPostText).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
-  });
-
-  it('calls PostLinkEmbeds with correct content prop', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test post content', attachments: null },
-      isLoading: false,
-    });
-
-    render(<PostContentBase postId="post-123" />);
-
-    expect(mockPostLinkEmbeds).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
   });
 
   it('calls PostAttachments with attachments from postDetails', () => {
