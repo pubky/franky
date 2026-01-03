@@ -2,7 +2,7 @@
 
 This document captures the intent, boundaries, responsibilities, and operating model of `src/core/`
 
-> ![Core Structure Diagram](../docs/img/core_structure.png)
+> ![Core Structure Diagram](../assets/core_structure.png)
 
 ## Purpose and scope
 
@@ -135,7 +135,7 @@ Each ADR includes:
 - **Consequences** — Impact and trade-offs
 - **Alternatives** — Other options considered
 
-Stored in `docs/adr/` for traceability and collaboration.
+Stored in `.cursor/adr/` for traceability and collaboration.
 
 ### Key ADRs
 
