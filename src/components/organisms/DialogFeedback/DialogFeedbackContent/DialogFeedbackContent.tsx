@@ -26,7 +26,12 @@ export function DialogFeedbackContent({
       <Atoms.Container className="gap-3">
         <Atoms.Container overrideDefaults className="rounded-md border border-dashed border-input p-6">
           <Atoms.Container className="gap-4" overrideDefaults>
-            <Organisms.PostHeader postId={currentUserPubky} isReplyInput={true} characterLimit={characterLimit} />
+            <Organisms.PostHeader
+              postId={currentUserPubky}
+              isReplyInput={true}
+              characterLimit={characterLimit}
+              showPopover={false}
+            />
 
             <Atoms.Textarea
               placeholder="What do you think about Pubky? Any suggestions?"

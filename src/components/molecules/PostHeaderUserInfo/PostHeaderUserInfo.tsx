@@ -6,10 +6,16 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import type { PostHeaderUserInfoProps } from './PostHeaderUserInfo.types';
 
-export function PostHeaderUserInfo({ userId, userName, avatarUrl, characterLimit }: PostHeaderUserInfoProps) {
+export function PostHeaderUserInfo({
+  userId,
+  userName,
+  avatarUrl,
+  characterLimit,
+  showPopover = true,
+}: PostHeaderUserInfoProps) {
   const formattedPublicKey = Libs.formatPublicKey({ key: userId, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
 
-  return (
+  const content = (
     <Atoms.Container overrideDefaults className="flex min-w-0 items-center gap-3">
       <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
@@ -38,5 +44,20 @@ export function PostHeaderUserInfo({ userId, userName, avatarUrl, characterLimit
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>
+  );
+
+  if (!showPopover) {
+    return content;
+  }
+
+  return (
+    <Molecules.PostHeaderUserInfoPopoverWrapper
+      userId={userId}
+      userName={userName}
+      avatarUrl={avatarUrl}
+      formattedPublicKey={formattedPublicKey}
+    >
+      {content}
+    </Molecules.PostHeaderUserInfoPopoverWrapper>
   );
 }

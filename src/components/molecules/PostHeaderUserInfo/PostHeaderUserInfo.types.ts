@@ -6,4 +6,5 @@ export interface PostHeaderUserInfoProps {
     count: number;
     max: number;
   };
+  showPopover?: boolean;
 }
