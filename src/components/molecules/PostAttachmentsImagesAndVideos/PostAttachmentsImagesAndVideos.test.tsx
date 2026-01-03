@@ -177,7 +177,7 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    opts?: { startIndex?: number; loop?: boolean; watchDrag?: boolean };
+    opts?: { startIndex?: number; loop?: boolean; duration?: number; watchDrag?: boolean };
     setApi?: (api: unknown) => void;
     className?: string;
   }) => {
@@ -195,6 +195,7 @@ vi.mock('@/atoms', () => ({
         data-testid="carousel"
         data-start-index={opts?.startIndex}
         data-loop={opts?.loop}
+        data-duration={opts?.duration}
         data-watch-drag={opts?.watchDrag}
         className={className}
       >
@@ -483,6 +484,15 @@ describe('PostAttachmentsImagesAndVideos', () => {
 
       const carousel = screen.getByTestId('carousel');
       expect(carousel).toHaveAttribute('data-loop', 'true');
+    });
+
+    it('renders carousel with duration option', () => {
+      setDialogOpen(true);
+      const imagesAndVideos = [createMockImage(), createMockImage()];
+      render(<PostAttachmentsImagesAndVideos imagesAndVideos={imagesAndVideos} />);
+
+      const carousel = screen.getByTestId('carousel');
+      expect(carousel).toHaveAttribute('data-duration', '15');
     });
 
     it('renders carousel items for each media', () => {

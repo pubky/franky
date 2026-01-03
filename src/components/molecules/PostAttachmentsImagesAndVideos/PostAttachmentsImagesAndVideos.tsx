@@ -36,7 +36,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
       return;
     }
 
-    api.on('select', () => {
+    api.on('settle', () => {
       setCurrentIndex(api.selectedScrollSnap());
     });
   }, [api]);
@@ -117,6 +117,7 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
           opts={{
             startIndex: currentIndex,
             loop: true,
+            duration: 15,
             watchDrag: !isFullscreen,
           }}
           setApi={setApi}
