@@ -62,3 +62,5 @@ export * from './useTagSearch';
 export * from './usePostHeaderUserInfoPopoverData';
 export * from './usePostHeaderUserInfoPopoverActions';
 export * from './useReportPost';
+export * from './usePostHeaderUserInfoPopoverData';
+export * from './usePostHeaderUserInfoPopoverActions';
