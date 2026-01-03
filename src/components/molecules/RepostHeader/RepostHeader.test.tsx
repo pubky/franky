@@ -62,7 +62,6 @@ vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
   return {
     ...actual,
-    Repeat: ({ className }: { className?: string }) => <svg data-testid="repeat-icon" className={className} />,
   };
 });
 
@@ -71,14 +70,7 @@ describe('RepostHeader', () => {
     render(<RepostHeader onUndo={vi.fn()} />);
 
     expect(screen.getByTestId('repost-header')).toBeInTheDocument();
-    expect(screen.getByTestId('repeat-icon')).toBeInTheDocument();
     expect(screen.getByText('You reposted')).toBeInTheDocument();
-  });
-
-  it('shows undo button', () => {
-    render(<RepostHeader onUndo={vi.fn()} />);
-
-    expect(screen.getByRole('button', { name: 'Undo repost' })).toBeInTheDocument();
   });
 
   it('calls onUndo when undo button clicked', () => {
@@ -94,5 +86,17 @@ describe('RepostHeader', () => {
 
     const button = screen.getByRole('button', { name: 'Undoing repost...' });
     expect(button).toBeDisabled();
+  });
+});
+
+describe('RepostHeader - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<RepostHeader onUndo={vi.fn()} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when undoing', () => {
+    const { container } = render(<RepostHeader onUndo={vi.fn()} isUndoing={true} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
