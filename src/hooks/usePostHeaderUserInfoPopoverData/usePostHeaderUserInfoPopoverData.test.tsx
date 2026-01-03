@@ -21,18 +21,19 @@ describe('usePostHeaderUserInfoPopoverData', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'me' });
-    mockUseUserProfile.mockReturnValue({ profile: { bio: 'Bio', avatarUrl: 'avatar' } });
-    mockUseProfileStats.mockReturnValue({ stats: { followers: 10, following: 2 } });
+    mockUseUserProfile.mockReturnValue({ profile: { bio: 'Bio', avatarUrl: 'avatar' }, isLoading: false });
+    mockUseProfileStats.mockReturnValue({ stats: { followers: 10, following: 2 }, isLoading: false });
     mockUseIsFollowing.mockReturnValue({ isFollowing: false, isLoading: false });
     mockUseProfileConnections.mockImplementation((type: string) => {
-      if (type === 'followers') return { connections: [{ id: 'a' }], count: 1 };
-      return { connections: [{ id: 'b' }], count: 1 };
+      if (type === 'followers') return { connections: [{ id: 'a' }], count: 1, isLoading: false };
+      return { connections: [{ id: 'b' }], count: 1, isLoading: false };
     });
   });
 
   it('returns combined data for a non-current user', () => {
     const { result } = renderHook(() => usePostHeaderUserInfoPopoverData('other'));
     expect(result.current.isCurrentUser).toBe(false);
+    expect(result.current.isLoading).toBe(false);
     expect(result.current.profileBio).toBe('Bio');
     expect(result.current.profileAvatarUrl).toBe('avatar');
     expect(result.current.followersCount).toBe(1);
@@ -44,5 +45,17 @@ describe('usePostHeaderUserInfoPopoverData', () => {
   it('detects current user correctly', () => {
     const { result } = renderHook(() => usePostHeaderUserInfoPopoverData('me'));
     expect(result.current.isCurrentUser).toBe(true);
+  });
+
+  it('returns isLoading true when profile is loading', () => {
+    mockUseUserProfile.mockReturnValue({ profile: null, isLoading: true });
+    const { result } = renderHook(() => usePostHeaderUserInfoPopoverData('other'));
+    expect(result.current.isLoading).toBe(true);
+  });
+
+  it('returns isLoading true when stats is loading', () => {
+    mockUseProfileStats.mockReturnValue({ stats: { followers: 0, following: 0 }, isLoading: true });
+    const { result } = renderHook(() => usePostHeaderUserInfoPopoverData('other'));
+    expect(result.current.isLoading).toBe(true);
   });
 });

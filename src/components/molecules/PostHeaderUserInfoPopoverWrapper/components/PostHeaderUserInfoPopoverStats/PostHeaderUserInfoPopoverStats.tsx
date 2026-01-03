@@ -18,7 +18,7 @@ export function PostHeaderUserInfoPopoverStats({
           className="text-xs leading-4 font-medium tracking-[1.2px] whitespace-pre-wrap text-muted-foreground uppercase"
           overrideDefaults
         >
-          <Atoms.Typography as="span" className="text-white" overrideDefaults>
+          <Atoms.Typography as="span" className="text-foreground" overrideDefaults>
             {followersCount}
           </Atoms.Typography>{' '}
           FOLLOWERS
@@ -33,7 +33,7 @@ export function PostHeaderUserInfoPopoverStats({
           className="text-xs leading-4 font-medium tracking-[1.2px] whitespace-pre-wrap text-muted-foreground uppercase"
           overrideDefaults
         >
-          <Atoms.Typography as="span" className="text-white" overrideDefaults>
+          <Atoms.Typography as="span" className="text-foreground" overrideDefaults>
             {followingCount}
           </Atoms.Typography>{' '}
           FOLLOWING

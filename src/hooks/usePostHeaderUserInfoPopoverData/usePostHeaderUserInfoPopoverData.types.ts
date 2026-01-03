@@ -2,6 +2,7 @@ import type { UserConnectionData } from '@/hooks/useProfileConnections/useProfil
 
 export interface UsePostHeaderUserInfoPopoverDataResult {
   isCurrentUser: boolean;
+  isLoading: boolean;
   profileBio?: string;
   profileAvatarUrl?: string;
   followers: UserConnectionData[];

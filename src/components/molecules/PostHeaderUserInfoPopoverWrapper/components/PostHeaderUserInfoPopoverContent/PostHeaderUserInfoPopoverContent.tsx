@@ -8,6 +8,7 @@ import type { PostHeaderUserInfoPopoverContentProps } from './PostHeaderUserInfo
 import { PostHeaderUserInfoPopoverHeader } from '../PostHeaderUserInfoPopoverHeader';
 import { PostHeaderUserInfoPopoverStats } from '../PostHeaderUserInfoPopoverStats';
 import { PostHeaderUserInfoPopoverFollowButton } from '../PostHeaderUserInfoPopoverFollowButton';
+import { PostHeaderUserInfoPopoverSkeleton } from '../PostHeaderUserInfoPopoverSkeleton';
 import { usePostHeaderUserInfoPopoverData } from '@/hooks/usePostHeaderUserInfoPopoverData';
 import { usePostHeaderUserInfoPopoverActions } from '@/hooks/usePostHeaderUserInfoPopoverActions';
 
@@ -19,6 +20,7 @@ export function PostHeaderUserInfoPopoverContent({
 }: PostHeaderUserInfoPopoverContentProps) {
   const {
     isCurrentUser,
+    isLoading: isDataLoading,
     profileBio,
     profileAvatarUrl,
     followers,
@@ -31,12 +33,21 @@ export function PostHeaderUserInfoPopoverContent({
     isFollowingStatusLoading,
   } = usePostHeaderUserInfoPopoverData(userId);
 
-  const { isLoading, onEditClick, onFollowClick } = usePostHeaderUserInfoPopoverActions({
+  const {
+    isLoading: isActionLoading,
+    onEditClick,
+    onFollowClick,
+  } = usePostHeaderUserInfoPopoverActions({
     userId,
     isCurrentUser,
     isFollowing,
     isFollowingStatusLoading,
   });
+
+  // Show skeleton while data is loading
+  if (isDataLoading) {
+    return <PostHeaderUserInfoPopoverSkeleton />;
+  }
 
   const normalizedFollowers = normalizeStatsValue(statsFollowers, followersCount);
   const normalizedFollowing = normalizeStatsValue(statsFollowing, followingCount);
@@ -76,7 +87,7 @@ export function PostHeaderUserInfoPopoverContent({
       ) : (
         <PostHeaderUserInfoPopoverFollowButton
           isFollowing={isFollowing}
-          isLoading={isLoading}
+          isLoading={isActionLoading}
           onClick={onFollowClick}
         />
       )}

@@ -7,8 +7,8 @@ export function usePostHeaderUserInfoPopoverData(userId: string): UsePostHeaderU
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const isCurrentUser = currentUserPubky === userId;
 
-  const { profile } = Hooks.useUserProfile(userId);
-  const { stats } = Hooks.useProfileStats(userId);
+  const { profile, isLoading: isProfileLoading } = Hooks.useUserProfile(userId);
+  const { stats, isLoading: isStatsLoading } = Hooks.useProfileStats(userId);
   const { isFollowing, isLoading: isFollowingStatusLoading } = Hooks.useIsFollowing(userId);
 
   const { connections: followers, count: followersCount } = Hooks.useProfileConnections(
@@ -20,8 +20,12 @@ export function usePostHeaderUserInfoPopoverData(userId: string): UsePostHeaderU
     userId,
   );
 
+  // Consider loaded when profile and stats are ready (connections can load lazily)
+  const isLoading = isProfileLoading || isStatsLoading;
+
   return {
     isCurrentUser,
+    isLoading,
     profileBio: profile?.bio,
     profileAvatarUrl: profile?.avatarUrl,
     followers,

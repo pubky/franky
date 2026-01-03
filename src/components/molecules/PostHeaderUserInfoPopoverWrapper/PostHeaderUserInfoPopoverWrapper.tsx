@@ -43,9 +43,6 @@ export function PostHeaderUserInfoPopoverWrapper({
             formattedPublicKey={formattedPublicKey}
           />
         ) : null}
-        {/* TODO: Add skeleton loading state here to prevent blink/flash
-            when data is loading. Currently, there's a brief flash while
-            hooks fetch data after the popover opens. */}
       </Atoms.PopoverContent>
     </Atoms.Popover>
   );

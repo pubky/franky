@@ -5,6 +5,7 @@ import { PostHeaderUserInfoPopoverContent } from './PostHeaderUserInfoPopoverCon
 vi.mock('@/hooks/usePostHeaderUserInfoPopoverData', () => ({
   usePostHeaderUserInfoPopoverData: () => ({
     isCurrentUser: false,
+    isLoading: false,
     profileBio: 'Bio',
     profileAvatarUrl: 'profile-avatar',
     followers: [],
@@ -34,6 +35,9 @@ vi.mock('../PostHeaderUserInfoPopoverStats', () => ({
 }));
 vi.mock('../PostHeaderUserInfoPopoverFollowButton', () => ({
   PostHeaderUserInfoPopoverFollowButton: () => <div data-testid="follow-button" />,
+}));
+vi.mock('../PostHeaderUserInfoPopoverSkeleton', () => ({
+  PostHeaderUserInfoPopoverSkeleton: () => <div data-testid="skeleton" />,
 }));
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();

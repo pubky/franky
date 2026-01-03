@@ -14,7 +14,7 @@ exports[`PostHeaderUserInfoPopoverStats - Snapshots > matches snapshot 1`] = `
       data-testid="typography"
     >
       <span
-        class="text-white"
+        class="text-foreground"
         data-testid="typography"
       >
         10
@@ -37,7 +37,7 @@ exports[`PostHeaderUserInfoPopoverStats - Snapshots > matches snapshot 1`] = `
       data-testid="typography"
     >
       <span
-        class="text-white"
+        class="text-foreground"
         data-testid="typography"
       >
         3
