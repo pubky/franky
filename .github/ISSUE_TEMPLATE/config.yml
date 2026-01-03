@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/pubky/franky/discussions
+    about: Ask questions or share ideas in our discussions
+  - name: 📚 Documentation
+    url: https://github.com/pubky/franky/tree/master/.cursor
+    about: Check our documentation for architecture and guidelines

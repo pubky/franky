@@ -89,10 +89,10 @@ setTimeout(() => {
 
 ## Related Decisions
 
-- [ADR-0001: Local-First Writes](./0001-local-first-writes.md) — The pattern `useLiveQuery` supports
-  - [Controller Method Naming Pattern](./0001-local-first-writes.md#controller-method-naming-pattern) — `fetch*` vs `get*` vs `getOrFetch*` vs `commit*`
-- [ADR-0004: Layering and Dependency Rules](./0004-layering-and-dependency-rules.md) — Architectural layers
-- [ADR-0008: Coordinators Layer](./0008-coordinators-layer.md) — System-initiated workflows
+- [ADR-0001: Local-First Writes](0001-local-first-writes.md) — The pattern `useLiveQuery` supports
+  - [Controller Method Naming Pattern](0001-local-first-writes.md#controller-method-naming-pattern) — `fetch*` vs `get*` vs `getOrFetch*` vs `commit*`
+- [ADR-0004: Layering and Dependency Rules](0004-layering-and-dependency-rules.md) — Architectural layers
+- [ADR-0008: Coordinators Layer](0008-coordinators-layer.md) — System-initiated workflows
 
 ---
 

@@ -1,61 +1,146 @@
 name: Bug Report
-description: Create a report to help us improve
+description: Report a bug to help us improve
 title: '[Bug]: '
-labels: ['bug']
-projects: ['Pubky App']
+labels: ['bug', 'triage']
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out this bug report!
+        Thanks for taking the time to fill out this bug report! 🐛
+
+        The more details you provide, the faster we can fix it.
+
   - type: textarea
     id: describe-bug
     attributes:
-      label: Describe the bug
+      label: Bug Description
       description: A clear and concise description of what the bug is.
-      placeholder: The bug happened when I opened the app...
+      placeholder: |
+        What happened? What did you expect to happen instead?
     validations:
       required: true
+
   - type: textarea
     id: reproduce-bug
     attributes:
-      label: Reproduce
+      label: Steps to Reproduce
       description: How do you trigger this bug? Please walk us through it step by step.
       placeholder: |
         1. Go to '...'
-        2. Click on '....'
-        3. Scroll down to '....'
+        2. Click on '...'
+        3. Scroll down to '...'
         4. See error
     validations:
       required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected Area
+      description: Which part of the app is affected?
+      options:
+        - Feed / Timeline
+        - Post (create/edit/delete)
+        - Profile / User
+        - Authentication / Login
+        - Notifications
+        - Search
+        - Tags
+        - Bookmarks
+        - Settings
+        - Navigation / Routing
+        - Media (images/videos)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Suspected Layer (if known)
+      description: |
+        If you have technical knowledge, which layer seems affected?
+        See .cursor/docs/core-context.md for architecture details.
+      options:
+        - UI / Component (visual issue)
+        - Data not loading (network/cache)
+        - Data not saving (local-first sync)
+        - Data inconsistency (local vs server)
+        - Performance issue
+        - Unknown / Not sure
+    validations:
+      required: false
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequency
+      description: How often does this bug occur?
+      options:
+        - Always (100%)
+        - Often (>50%)
+        - Sometimes (<50%)
+        - Rarely (happened once or twice)
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen instead?
+      placeholder: |
+        I expected the post to appear in my feed immediately after creating it.
+    validations:
+      required: true
+
   - type: textarea
     id: screenshots
     attributes:
       label: Screenshots / Recording
       description: If applicable, add screenshots or a video recording to help explain your problem.
+      placeholder: |
+        Drag and drop images here, or paste a link to a video.
     validations:
       required: false
-  - type: input
-    id: browser
-    attributes:
-      label: Web Browser
-      description: What web browser and version are you using?
-      placeholder: e.g. Chrome Version 127.0.6533.120 (Official Build) (arm64)
-    validations:
-      required: false
-  - type: input
-    id: version
-    attributes:
-      label: Pubky App Version
-      description: What version of Pubky App were you running when the bug occurred? You can find the version number on the Settings page.
-      placeholder: e.g. v0.12
-    validations:
-      required: false
+
   - type: textarea
     id: logs
     attributes:
-      label: Console log output
-      description: Please copy and paste any relevant console log output. This will be automatically formatted into code, so no need for backticks.
+      label: Console Log Output
+      description: |
+        Open browser DevTools (F12) → Console tab → Copy any red error messages.
+        This will be automatically formatted as code.
       render: shell
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & Version
+      description: What browser are you using?
+      placeholder: e.g. Chrome 120, Safari 17, Firefox 121
+    validations:
+      required: false
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: What device are you using?
+      placeholder: e.g. iPhone 15, MacBook Pro M2, Windows Desktop
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information that might help us debug this issue.
+      placeholder: |
+        - Were you offline when this happened?
+        - Did you recently update the app?
+        - Does it happen with a specific post/user?
     validations:
       required: false
