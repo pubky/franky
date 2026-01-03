@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostContent } from './PostContent';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 
@@ -43,7 +42,6 @@ vi.mock('@/molecules', async (importOriginal) => {
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
 const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
-const mockPostPreviewCard = vi.mocked(Molecules.PostPreviewCard);
 
 describe('PostContent', () => {
   beforeEach(() => {
@@ -69,36 +67,11 @@ describe('PostContent', () => {
     expect(screen.getByTestId('post-content-base')).toHaveAttribute('data-post-id', 'post-123');
   });
 
-  it('calls usePostDetails with correct id', () => {
+  it('calls usePostDetails and useRepostInfo with correct id', () => {
     render(<PostContent postId="post-abc" />);
 
     expect(mockUsePostDetails).toHaveBeenCalledWith('post-abc');
-  });
-
-  it('calls useRepostInfo with correct id', () => {
-    render(<PostContent postId="post-abc" />);
-
     expect(mockUseRepostInfo).toHaveBeenCalledWith('post-abc');
-  });
-
-  it('renders repost preview when repost and originalPostId exist', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Quote', attachments: null },
-      isLoading: false,
-    });
-    mockUseRepostInfo.mockReturnValue({
-      isRepost: true,
-      repostAuthorId: 'author',
-      isCurrentUserRepost: false,
-      originalPostId: 'orig-post',
-      isLoading: false,
-      hasError: false,
-    });
-
-    render(<PostContent postId="repost-123" />);
-
-    expect(mockPostPreviewCard).toHaveBeenCalledWith({ postId: 'orig-post', className: 'bg-muted mt-4' }, undefined);
-    expect(screen.getByTestId('post-preview-card')).toBeInTheDocument();
   });
 
   it('does not render repost preview when not a repost', () => {
@@ -137,48 +110,6 @@ describe('PostContent', () => {
     render(<PostContent postId="repost-123" />);
 
     expect(screen.queryByTestId('post-preview-card')).not.toBeInTheDocument();
-  });
-
-  it('applies correct className to repost preview when content exists', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Quote', attachments: null },
-      isLoading: false,
-    });
-    mockUseRepostInfo.mockReturnValue({
-      isRepost: true,
-      repostAuthorId: 'author',
-      isCurrentUserRepost: false,
-      originalPostId: 'orig-post',
-      isLoading: false,
-      hasError: false,
-    });
-
-    render(<PostContent postId="repost-123" />);
-
-    const previewCard = screen.getByTestId('post-preview-card');
-    expect(previewCard).toHaveClass('bg-muted');
-    expect(previewCard).toHaveClass('mt-4');
-  });
-
-  it('applies correct className to repost preview when no content', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: null },
-      isLoading: false,
-    });
-    mockUseRepostInfo.mockReturnValue({
-      isRepost: true,
-      repostAuthorId: 'author',
-      isCurrentUserRepost: false,
-      originalPostId: 'orig-post',
-      isLoading: false,
-      hasError: false,
-    });
-
-    render(<PostContent postId="repost-123" />);
-
-    const previewCard = screen.getByTestId('post-preview-card');
-    expect(previewCard).toHaveClass('bg-muted');
-    expect(previewCard).not.toHaveClass('mt-4');
   });
 
   it('always renders PostContentBase even for plain reposts without content', () => {
@@ -231,7 +162,7 @@ describe('PostContent - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with repost', () => {
+  it('matches snapshot as repost with content', () => {
     mockUsePostDetails.mockReturnValue({
       postDetails: { content: 'Quote', attachments: null },
       isLoading: false,
@@ -246,6 +177,24 @@ describe('PostContent - Snapshots', () => {
     });
 
     const { container } = render(<PostContent postId="repost-1" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot as repost without content', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: { content: '', attachments: null },
+      isLoading: false,
+    });
+    mockUseRepostInfo.mockReturnValue({
+      isRepost: true,
+      repostAuthorId: 'author',
+      isCurrentUserRepost: false,
+      originalPostId: 'orig-post',
+      isLoading: false,
+      hasError: false,
+    });
+
+    const { container } = render(<PostContent postId="repost-2" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
