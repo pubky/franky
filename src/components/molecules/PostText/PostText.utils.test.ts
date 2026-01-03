@@ -127,7 +127,7 @@ describe('remarkHashtags', () => {
   });
 
   describe('Hashtag pattern validation', () => {
-    it('requires hashtag to start with a letter', () => {
+    it('allows hashtag to start with a letter', () => {
       const paragraph = createParagraph('#abc123 is valid');
       const tree = createRoot([paragraph]);
 
@@ -138,14 +138,15 @@ describe('remarkHashtags', () => {
       expect(links[0].url).toBe('/search?tags=abc123');
     });
 
-    it('does not match hashtags starting with a number', () => {
-      const paragraph = createParagraph('#123 is not a valid hashtag');
+    it('allows hashtags starting with a number', () => {
+      const paragraph = createParagraph('#123abc is a valid hashtag');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(0);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=123abc');
     });
 
     it('allows underscores in hashtags', () => {
@@ -157,6 +158,136 @@ describe('remarkHashtags', () => {
       const links = getLinks(paragraph);
       expect(links).toHaveLength(1);
       expect(links[0].url).toBe('/search?tags=hello_world');
+    });
+
+    it('allows multiple underscores separating words', () => {
+      const paragraph = createParagraph('#one_two_three is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=one_two_three');
+    });
+
+    it('allows hyphens in hashtags', () => {
+      const paragraph = createParagraph('#hello-world is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=hello-world');
+    });
+
+    it('allows multiple hyphens separating words', () => {
+      const paragraph = createParagraph('#one-two-three is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=one-two-three');
+    });
+
+    it('allows mixed hyphens and underscores separating words', () => {
+      const paragraph = createParagraph('#hello-world_test is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=hello-world_test');
+    });
+
+    it('does not match hashtags starting with underscore', () => {
+      const paragraph = createParagraph('#_invalid is not a hashtag');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('stops at trailing underscore', () => {
+      const paragraph = createParagraph('#hello_ world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at double underscore', () => {
+      const paragraph = createParagraph('#hello__world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('does not match hashtags starting with hyphen', () => {
+      const paragraph = createParagraph('#-invalid is not a hashtag');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('stops at trailing hyphen', () => {
+      const paragraph = createParagraph('#hello- world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at double hyphen', () => {
+      const paragraph = createParagraph('#hello--world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at mixed consecutive separators (hyphen-underscore)', () => {
+      const paragraph = createParagraph('#hello-_world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at mixed consecutive separators (underscore-hyphen)', () => {
+      const paragraph = createParagraph('#hello_-world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
     });
 
     it('allows numbers after the first letter', () => {
@@ -247,14 +378,15 @@ describe('remarkHashtags', () => {
       expect(links).toHaveLength(0);
     });
 
-    it('does not match hash followed by only numbers', () => {
+    it('matches hash followed by only numbers', () => {
       const paragraph = createParagraph('Issue #123 is fixed');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(0);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=123');
     });
 
     it('handles multiple hashes in sequence', () => {
@@ -326,15 +458,16 @@ describe('remarkHashtags', () => {
     });
 
     it('handles mixed valid and invalid hashtag patterns', () => {
-      const paragraph = createParagraph('#valid #123invalid no#match #also_valid');
+      const paragraph = createParagraph('#valid #123numeric no#match #also_valid');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(2);
+      expect(links).toHaveLength(3);
       expect(links[0].url).toBe('/search?tags=valid');
-      expect(links[1].url).toBe('/search?tags=also_valid');
+      expect(links[1].url).toBe('/search?tags=123numeric');
+      expect(links[2].url).toBe('/search?tags=also_valid');
     });
 
     it('handles newlines as whitespace', () => {
