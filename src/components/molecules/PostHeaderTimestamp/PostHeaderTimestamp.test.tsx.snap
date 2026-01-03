@@ -1,0 +1,81 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostHeaderTimestamp - Snapshots > matches snapshot with "just now" 1`] = `
+<div
+  class="flex flex-shrink-0 items-center gap-1"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <svg
+    class="size-4 text-muted-foreground"
+    data-testid="clock-icon"
+  />
+  <span
+    class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+    data-as="span"
+    data-testid="typography"
+  >
+    just now
+  </span>
+</div>
+`;
+
+exports[`PostHeaderTimestamp - Snapshots > matches snapshot with days 1`] = `
+<div
+  class="flex flex-shrink-0 items-center gap-1"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <svg
+    class="size-4 text-muted-foreground"
+    data-testid="clock-icon"
+  />
+  <span
+    class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+    data-as="span"
+    data-testid="typography"
+  >
+    3d
+  </span>
+</div>
+`;
+
+exports[`PostHeaderTimestamp - Snapshots > matches snapshot with hours 1`] = `
+<div
+  class="flex flex-shrink-0 items-center gap-1"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <svg
+    class="size-4 text-muted-foreground"
+    data-testid="clock-icon"
+  />
+  <span
+    class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+    data-as="span"
+    data-testid="typography"
+  >
+    2h
+  </span>
+</div>
+`;
+
+exports[`PostHeaderTimestamp - Snapshots > matches snapshot with minutes 1`] = `
+<div
+  class="flex flex-shrink-0 items-center gap-1"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <svg
+    class="size-4 text-muted-foreground"
+    data-testid="clock-icon"
+  />
+  <span
+    class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+    data-as="span"
+    data-testid="typography"
+  >
+    5m
+  </span>
+</div>
+`;

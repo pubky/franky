@@ -10,14 +10,10 @@ const { mockIsPostDeleted } = vi.hoisted(() => ({
   mockIsPostDeleted: vi.fn(() => false),
 }));
 
-// Use real libs, only stub cn for deterministic class joining and isPostDeleted for control
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-    isPostDeleted: mockIsPostDeleted,
-  };
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual, isPostDeleted: mockIsPostDeleted };
 });
 
 // Minimal atoms used by PostMain
@@ -279,7 +275,7 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
   });
 
-  it('shows PostHeader for repost by another user even without content', () => {
+  it('shows PostHeader and hides repost header for repost by another user even without content', () => {
     const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
     mockUsePostHeaderVisibility.mockReturnValue({
       showRepostHeader: false,
@@ -294,6 +290,12 @@ describe('PostMain', () => {
   });
 
   it('shows PostHeader for repost with attachments but no text by current user', () => {
+    const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
+    mockUsePostDetails.mockReturnValue({
+      postDetails: { content: '', attachments: ['attachment-1', 'attachment-2'] },
+      isLoading: false,
+    });
+
     const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
     mockUsePostHeaderVisibility.mockReturnValue({
       showRepostHeader: true,
@@ -303,20 +305,6 @@ describe('PostMain', () => {
     render(<PostMain postId="me:repost-with-attachments-1" />);
 
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
-    expect(screen.getByTestId('repost-header')).toBeInTheDocument();
-    expect(screen.getByTestId('post-content')).toBeInTheDocument();
-  });
-
-  it('hides PostHeader for repost with only whitespace content by current user', () => {
-    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
-    mockUsePostHeaderVisibility.mockReturnValue({
-      showRepostHeader: true,
-      shouldShowPostHeader: false,
-    });
-
-    render(<PostMain postId="me:whitespace-repost-1" />);
-
-    expect(screen.queryByTestId('post-header')).not.toBeInTheDocument();
     expect(screen.getByTestId('repost-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
   });
@@ -353,13 +341,13 @@ describe('PostMain', () => {
 });
 
 describe('PostMain - Snapshots', () => {
-  it('matches snapshot with tags', () => {
-    const { container } = render(<PostMain postId="post-123" />);
-    expect(container.firstChild).toMatchSnapshot();
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsPostDeleted.mockReturnValue(false);
   });
 
-  it('matches snapshot without tags', () => {
-    const { container } = render(<PostMain postId="post-789" />);
+  it('matches snapshot with default state', () => {
+    const { container } = render(<PostMain postId="post-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -376,6 +364,39 @@ describe('PostMain - Snapshots', () => {
   it('matches snapshot with deleted post', () => {
     mockIsPostDeleted.mockReturnValue(true);
     const { container } = render(<PostMain postId="post-deleted-123" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for simple repost by current user (no content)', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: false,
+    });
+
+    const { container } = render(<PostMain postId="me:simple-repost-1" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for quote repost by current user (with content)', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: true,
+      shouldShowPostHeader: true,
+    });
+
+    const { container } = render(<PostMain postId="me:quote-repost-1" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for repost by another user', () => {
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: false,
+      shouldShowPostHeader: true,
+    });
+
+    const { container } = render(<PostMain postId="other-user:repost-1" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

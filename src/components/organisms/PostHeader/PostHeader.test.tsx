@@ -15,55 +15,94 @@ vi.mock('@/hooks', async (importOriginal) => {
   };
 });
 
-vi.mock('@/atoms', () => ({
-  Container: ({
-    children,
-    className,
-    overrideDefaults,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    overrideDefaults?: boolean;
-  }) => (
-    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
-      {children}
-    </div>
-  ),
-  Typography: ({
-    children,
-    as,
-    size,
-    className,
-  }: {
-    children: React.ReactNode;
-    as?: string;
-    size?: string;
-    className?: string;
-  }) => {
-    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
-        {children}
-      </Tag>
-    );
-  },
-}));
-
-vi.mock('@/molecules', () => ({
-  AvatarWithFallback: ({ avatarUrl, name, size }: { avatarUrl?: string; name: string; size?: string }) => (
-    <div data-testid="avatar" data-size={size}>
-      {avatarUrl ? <img data-testid="avatar-image" src={avatarUrl} alt={name} /> : null}
-      <div data-testid="avatar-fallback">{name.substring(0, 2).toUpperCase()}</div>
-    </div>
-  ),
-}));
-
-// Use real libs, only stub cn to a deterministic join (as in Header.test.tsx)
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/atoms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/atoms')>();
   return {
     ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+    Container: vi.fn(
+      ({
+        children,
+        className,
+        overrideDefaults,
+      }: {
+        children: React.ReactNode;
+        className?: string;
+        overrideDefaults?: boolean;
+      }) => (
+        <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+          {children}
+        </div>
+      ),
+    ),
+    Typography: vi.fn(
+      ({
+        children,
+        as,
+        size,
+        className,
+      }: {
+        children: React.ReactNode;
+        as?: string;
+        size?: string;
+        className?: string;
+      }) => {
+        const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
+        return (
+          <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+            {children}
+          </Tag>
+        );
+      },
+    ),
+  };
+});
+
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    AvatarWithFallback: ({ avatarUrl, name, size }: { avatarUrl?: string; name: string; size?: string }) => (
+      <div data-testid="avatar" data-size={size}>
+        {avatarUrl ? <img data-testid="avatar-image" src={avatarUrl} alt={name} /> : null}
+        <div data-testid="avatar-fallback">{name.substring(0, 2).toUpperCase()}</div>
+      </div>
+    ),
+    PostHeaderUserInfo: vi.fn(
+      ({
+        userId,
+        userName,
+        characterLimit,
+      }: {
+        userId: string;
+        userName: string;
+        characterLimit?: { count: number; max: number };
+      }) => (
+        <div data-testid="post-header-user-info">
+          <div data-testid="avatar" />
+          <div>{userName}</div>
+          <div>@{userId.substring(0, 8)}</div>
+          {characterLimit && (
+            <div>
+              {characterLimit.count}/{characterLimit.max}
+            </div>
+          )}
+        </div>
+      ),
+    ),
+    PostHeaderTimestamp: vi.fn(({ timeAgo }: { timeAgo: string }) => (
+      <div data-testid="post-header-timestamp">
+        <svg data-testid="clock-icon" />
+        <span>{timeAgo}</span>
+      </div>
+    )),
+  };
+});
+
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return {
+    ...actual,
     timeAgo: vi.fn(() => '2h'),
     extractInitials: vi.fn(({ name }) => name?.substring(0, 2).toUpperCase() || ''),
     formatPublicKey: vi.fn(({ key, length }) => key?.substring(0, length) || ''),

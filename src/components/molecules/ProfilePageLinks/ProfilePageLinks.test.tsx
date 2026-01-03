@@ -64,13 +64,6 @@ describe('ProfilePageLinks', () => {
     expect(screen.getByText('Links')).toBeInTheDocument();
   });
 
-  it('renders all links', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    defaultLinks?.forEach((link) => {
-      expect(screen.getByText(link.title)).toBeInTheDocument();
-    });
-  });
-
   it('renders links with correct href attributes', () => {
     render(<ProfilePageLinks links={defaultLinks} />);
     defaultLinks?.forEach((link) => {
@@ -86,31 +79,9 @@ describe('ProfilePageLinks', () => {
     expect(screen.getByText('Example').closest('a')).toHaveAttribute('href', 'https://example.com');
   });
 
-  it('has correct container structure', () => {
-    const { container } = render(<ProfilePageLinks links={defaultLinks} />);
-    const rootElement = container.firstChild as HTMLElement;
-    expect(rootElement).toHaveClass('flex', 'flex-col');
-  });
-
-  it('applies correct link styling', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    const linkElement = screen.getByText('bitcoin.org').closest('a');
-    expect(linkElement).toHaveClass('flex', 'items-center', 'gap-2.5', 'py-1', 'cursor-pointer');
-  });
-
   it('renders no links message when links array is empty', () => {
     render(<ProfilePageLinks links={[]} />);
     expect(screen.getByText('No links added yet.')).toBeInTheDocument();
-  });
-
-  it('renders no links message when links is undefined', () => {
-    render(<ProfilePageLinks />);
-    expect(screen.getByText('No links added yet.')).toBeInTheDocument();
-  });
-
-  it('renders DialogCheckLink component', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    expect(screen.getByTestId('dialog-check-link')).toBeInTheDocument();
   });
 });
 
@@ -215,6 +186,11 @@ describe('ProfilePageLinks - Snapshots', () => {
 
   it('matches snapshot with empty links', () => {
     const { container } = render(<ProfilePageLinks links={[]} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with undefined links', () => {
+    const { container } = render(<ProfilePageLinks />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
