@@ -39,4 +39,4 @@ Constraints:
 
 ## Related Decisions
 
-- [ADR-0009: Application Cross-Domain Orchestration](./0009-application-cross-domain-orchestration.md)
+- [ADR-0009: Application Cross-Domain Orchestration](0009-application-cross-domain-orchestration.md)
