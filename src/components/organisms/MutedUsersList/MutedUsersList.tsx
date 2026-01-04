@@ -5,15 +5,37 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
-import type { MutedUser } from './MutedUsersList.types';
+import * as Hooks from '@/hooks';
 
 export function MutedUsersList() {
-  const { muted, removeMutedUser, clearMutedUsers } = Core.useSettingsStore();
-  const [isLoading] = React.useState(false);
+  const { muted } = Core.useSettingsStore();
+  const { unmuteUser, isLoading: isUnmuting, isUserLoading } = Hooks.useMuteUser();
+  const { mutedUsers, isLoading } = Hooks.useMutedUsers();
 
-  // Convert muted user IDs to MutedUser objects
-  // TODO: Fetch user details from database for muted IDs
-  const mutedUsers: MutedUser[] = muted.map((id) => ({ id }));
+  const handleUnmute = React.useCallback(
+    async (userId: Core.Pubky) => {
+      await unmuteUser(userId);
+    },
+    [unmuteUser],
+  );
+
+  const handleUnmuteAll = React.useCallback(async () => {
+    try {
+      // Unmute all users one by one (silent to avoid multiple toasts)
+      for (const userId of muted) {
+        await unmuteUser(userId, { silent: true });
+      }
+      Molecules.toast({
+        title: 'All users unmuted',
+        description: "You'll see posts from all users again",
+      });
+    } catch (error) {
+      Molecules.toast({
+        title: 'Error',
+        description: Libs.isAppError(error) ? error.message : 'Failed to unmute all users',
+      });
+    }
+  }, [muted, unmuteUser]);
 
   return (
     <Atoms.Container overrideDefaults className="inline-flex w-full flex-col gap-3">
@@ -30,11 +52,14 @@ export function MutedUsersList() {
               <Atoms.Container overrideDefaults className="inline-flex w-full flex-col justify-start gap-4 md:flex-row">
                 <Atoms.Container overrideDefaults className="flex w-full gap-2">
                   <Atoms.Avatar className="h-12 w-12">
-                    <Atoms.AvatarFallback>{mutedUser?.name?.[0] || 'U'}</Atoms.AvatarFallback>
+                    {mutedUser.avatarUrl && (
+                      <Atoms.AvatarImage src={mutedUser.avatarUrl} alt={mutedUser.name || 'User'} />
+                    )}
+                    <Atoms.AvatarFallback>{mutedUser.name?.[0] || 'U'}</Atoms.AvatarFallback>
                   </Atoms.Avatar>
                   <Atoms.Container overrideDefaults className="inline-flex flex-col items-start justify-center">
-                    <span className="text-base font-semibold">{mutedUser?.name || 'Unknown User'}</span>
-                    <span className="text-sm text-muted-foreground">{mutedUser?.id || ''}</span>
+                    <span className="text-base font-semibold">{mutedUser.name || 'Unknown User'}</span>
+                    <span className="text-sm text-muted-foreground">{mutedUser.id}</span>
                   </Atoms.Container>
                 </Atoms.Container>
                 <Atoms.Container overrideDefaults className="flex gap-4">
@@ -42,9 +67,14 @@ export function MutedUsersList() {
                     id="unmute-btn"
                     variant="secondary"
                     size="default"
-                    onClick={() => removeMutedUser(mutedUser.id)}
+                    onClick={() => handleUnmute(mutedUser.id)}
+                    disabled={isUnmuting || isUserLoading(mutedUser.id)}
                   >
-                    <Libs.VolumeX size={16} />
+                    {isUnmuting || isUserLoading(mutedUser.id) ? (
+                      <Libs.Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <Libs.VolumeX size={16} />
+                    )}
                     Unmute
                   </Atoms.Button>
                 </Atoms.Container>
@@ -57,10 +87,11 @@ export function MutedUsersList() {
               <Atoms.Button
                 variant="secondary"
                 size="default"
-                onClick={() => clearMutedUsers()}
+                onClick={handleUnmuteAll}
+                disabled={isUnmuting}
                 className="w-(--filter-bar-width)"
               >
-                <Libs.VolumeX size={16} />
+                {isUnmuting ? <Libs.Loader2 className="size-4 animate-spin" /> : <Libs.VolumeX size={16} />}
                 Unmute all users
               </Atoms.Button>
             </>

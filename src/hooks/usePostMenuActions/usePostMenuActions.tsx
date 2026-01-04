@@ -13,7 +13,7 @@ import type { UsePostMenuActionsResult, PostMenuActionItem } from './usePostMenu
  *
  * Hook for generating menu items for post actions menu.
  * Returns a list of menu items based on post ownership, post type, and user relationships.
- * Handles follow/unfollow, copy actions (pubky, link, text), mute (disabled), report, and delete.
+ * Handles follow/unfollow, copy actions (pubky, link, text), mute/unmute, report, and delete.
  *
  * @param postId - Composite post ID in format "author:postId"
  * @returns Menu items array and loading state
@@ -28,6 +28,8 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
   const { isFollowing, isLoading: isFollowingLoading } = Hooks.useIsFollowing(postAuthorId);
 
   const { toggleFollow, isLoading: isFollowLoading, isUserLoading } = Hooks.useFollowUser();
+  const { muteUser, unmuteUser, isLoading: isMuteLoading, isUserLoading: isUserMuteLoading } = Hooks.useMuteUser();
+  const { muted } = Core.useSettingsStore();
   const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
   const { copyToClipboard: copyPubky } = Hooks.useCopyToClipboard({
     successTitle: 'Pubky copied to clipboard',
@@ -43,6 +45,7 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
   const rawUsername = authorProfile?.name || postAuthorId;
   const username = Libs.truncateString(rawUsername, 15);
   const isArticle = postDetails?.kind === 'long';
+  const isMuted = muted.includes(postAuthorId);
   const isLoading = isPostLoading || isAuthorLoading || isFollowingLoading;
   const postUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}${POST_ROUTES.POST}/${parsedId.pubky}/${parsedId.id}`;
 
@@ -124,11 +127,17 @@ export function usePostMenuActions(postId: string): UsePostMenuActionsResult {
   if (!isOwnPost) {
     menuItems.push({
       id: POST_MENU_ACTION_IDS.MUTE,
-      label: `Mute ${username}`,
+      label: isMuted ? `Unmute ${username}` : `Mute ${username}`,
       icon: Libs.MegaphoneOff,
-      onClick: () => {},
+      onClick: async () => {
+        if (isMuted) {
+          await unmuteUser(postAuthorId);
+        } else {
+          await muteUser(postAuthorId);
+        }
+      },
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
-      disabled: true,
+      disabled: isMuteLoading || isUserMuteLoading(postAuthorId),
     });
 
     menuItems.push({
