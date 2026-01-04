@@ -1,6 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Utils from '@/libs/utils';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
@@ -113,6 +114,11 @@ export function PostInput({
           handleFilesAdded={handleFilesAdded}
           isSubmitting={isSubmitting}
         />
+
+        {/* Show original post preview for reposts */}
+        {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
+          <Molecules.PostPreviewCard postId={originalPostId} className="bg-muted" />
+        )}
 
         <PostInputExpandableSection
           isExpanded={isExpanded}
