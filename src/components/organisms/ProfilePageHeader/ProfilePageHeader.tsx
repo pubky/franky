@@ -120,7 +120,13 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                 Link
               </Atoms.Button>
               {/* Follow/Unfollow button */}
-              <Atoms.Button variant="secondary" size="sm" onClick={onFollowToggle} disabled={isFollowLoading}>
+              <Atoms.Button
+                data-cy="profile-follow-toggle-btn"
+                variant="secondary"
+                size="sm"
+                onClick={onFollowToggle}
+                disabled={isFollowLoading}
+              >
                 {isFollowLoading ? (
                   <>
                     <Icons.Loader2 className="size-4 animate-spin" />

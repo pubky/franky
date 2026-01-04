@@ -17,6 +17,7 @@ export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
       <IconComponent className="text-foreground" size={ICON_SIZE} />
       {showBadge && (
         <Atoms.Container
+          data-cy="notification-unread-dot"
           overrideDefaults={true}
           className="absolute right-0 bottom-0 rounded-full bg-brand"
           style={{

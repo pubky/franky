@@ -1,0 +1,134 @@
+import { backupDownloadFilePath } from '../support/auth';
+import { waitForFeedToLoad } from '../support/posts';
+import { slowCypressDown } from 'cypress-slow-down';
+import 'cypress-slow-down/commands';
+import { searchAndFollowProfile } from '../support/contacts';
+import {
+  clickFollowButton,
+  unfollowUserByUsername,
+  waitForNotificationDotToDisappear,
+  checkLatestNotification,
+} from '../support/profile';
+import { BackupType, HasBackedUp } from '../support/types/enums';
+import { verifyNotificationCounter } from '../support/common';
+import { goToProfilePageFromHeader } from '../support/header';
+
+const profile1 = { username: 'Notif #1', pubkyAlias: 'pubky_1' };
+const profile2 = { username: 'Notif #2', pubkyAlias: 'pubky_2' };
+
+describe('notifications', () => {
+  before(() => {
+    slowCypressDown();
+    cy.deleteDownloadsFolder();
+
+    // * create profile 1
+    cy.onboardAsNewUser(profile1.username, '', [BackupType.EncryptedFile], profile1.pubkyAlias);
+    cy.signOut(HasBackedUp.Yes);
+
+    // * create profile 2
+    cy.onboardAsNewUser(profile2.username, '', [BackupType.EncryptedFile], profile2.pubkyAlias);
+    cy.signOut(HasBackedUp.Yes);
+  });
+
+  beforeEach(() => {
+    // Re-create the aliases in beforeEach
+    cy.log('Re-creating aliases in beforeEach');
+    cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
+    cy.wrap(Cypress.env(profile2.pubkyAlias)).as(profile2.pubkyAlias);
+
+    // sign in if not already
+    cy.location('pathname').then((currentPath) => {
+      if (currentPath !== '/home') {
+        cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+      }
+    });
+  });
+
+  // todo: skip due to bug, see https://github.com/pubky/franky/issues/695
+  it('can be notified for new follower, friend, lost friend', () => {
+    // * profile 1 follows profile 2
+    cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
+      searchAndFollowProfile(`${pubky}`, profile2.username);
+    });
+
+    // * profile 2 checks notification for new follower
+    cy.signOut(HasBackedUp.Yes);
+
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    verifyNotificationCounter(0);
+    // check latest notification on profile page and navigate to profile 1 profile page
+    checkLatestNotification([profile1.username, 'followed you'], profile1.username);
+
+    // * profile 2 follows profile 1
+    clickFollowButton();
+
+    // * profile 1 checks notification for new follower and friend
+    cy.signOut(HasBackedUp.Yes);
+
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    //waitForFeedToLoad();
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    verifyNotificationCounter(0);
+    // check latest notification on profile page
+    checkLatestNotification([profile2.username, 'is now your friend']);
+
+    // * check that toggling profile page tabs clears notification counter for new notification
+    cy.get('[data-cy="profile-filter-item-posts"]').click();
+    // Wait for posts filter item to become active before clicking notifications
+    cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
+    cy.get('[data-cy="profile-filter-item-notifications"]').click();
+    waitForNotificationDotToDisappear();
+
+    // * profile 1 unfollows profile 2
+    // todo: fails here due to bug, button shows 'Follow' text bug, see https://github.com/pubky/franky/issues/695
+    unfollowUserByUsername(profile2.username);
+    cy.signOut(HasBackedUp.Yes);
+
+    // * profile 2 checks notification for lost friend
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    //waitForFeedToLoad();
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    verifyNotificationCounter(0);
+    // check latest notification on profile page
+    checkLatestNotification([profile1.username, 'is not your friend anymore']);
+
+    // * profile 2 unfollows profile 1
+    unfollowUserByUsername(profile1.username);
+    cy.signOut(HasBackedUp.Yes);
+
+    // * profile 1 checks absence of notifications
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    //waitForFeedToLoad();
+    cy.assertElementDoesNotExist('[data-cy="header-notification-counter"]');
+
+    // TODO: add checks for disabled notifications
+    // * profile 1 disables follow notifications
+    // * profile 2 disables friend notifications
+    // * profile 2 follows profile 1
+    // * profile 1 checks absence of notifications
+    // * profile 1 follows profile 2
+    // * profile 2 checks for follow notification? and absence of friend notification
+  });
+
+  it('can be notified for tagged post and profile');
+
+  it('can be notified for profile being mentioned in a post');
+
+  it('can be notified for your post being replied to');
+
+  it('can be notified for your post being reposted');
+
+  it('can be notified for a post being deleted that you replied to');
+
+  it('can be notified for a post being deleted that you reposted');
+
+  it('can be notified for a post being edited that you replied to');
+
+  it('can be notified for a post being edited that you reposted');
+
+  it('can display counter for multiple new notifications');
+});

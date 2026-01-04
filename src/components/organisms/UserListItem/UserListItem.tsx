@@ -49,6 +49,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
   // Text variant with hover states
   return (
     <Atoms.Button
+      data-cy="user-list-item-follow-toggle-btn"
       variant="secondary"
       size="sm"
       className="group w-[110px] justify-center"
@@ -284,7 +285,7 @@ function FullVariant({
         <Atoms.Link href={`/profile/${user.id}`} className="flex min-w-0 flex-1 items-center gap-2">
           <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" />
           <Atoms.Container overrideDefaults>
-            <Atoms.Typography size="sm" className="truncate font-bold">
+            <Atoms.Typography data-cy="user-list-item-name" size="sm" className="truncate font-bold">
               {displayName}
             </Atoms.Typography>
             <Atoms.Typography className="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
