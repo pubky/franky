@@ -15,7 +15,7 @@ export function NotificationsList({ notifications, unreadNotifications }: Notifi
   }, [unreadNotifications]);
 
   return (
-    <Atoms.Container className="gap-3 rounded-md bg-card p-6">
+    <Atoms.Container data-cy="notifications-list" className="gap-3 rounded-md bg-card p-6">
       {notifications.map((notification) => {
         // Use business key for unread lookup (to match unreadNotifications)
         const businessKey = getBusinessKey(notification);
