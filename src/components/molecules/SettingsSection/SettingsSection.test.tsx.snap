@@ -3,9 +3,13 @@
 exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1`] = `
 <div
   class="flex flex-col items-start justify-start"
+  data-override-defaults="true"
+  data-testid="container"
 >
   <div
     class="inline-flex items-center justify-start gap-2 pb-6"
+    data-override-defaults="true"
+    data-testid="container"
   >
     <svg
       class="custom-icon"
@@ -26,7 +30,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1
     </h2>
   </div>
   <p
-    class="text-base-secondary-foreground pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
+    class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
     data-size="md"
     data-testid="typography"
   >
@@ -54,9 +58,13 @@ exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1
 exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="flex flex-col items-start justify-start"
+  data-override-defaults="true"
+  data-testid="container"
 >
   <div
     class="inline-flex items-center justify-start gap-2 pb-6"
+    data-override-defaults="true"
+    data-testid="container"
   >
     <svg
       data-size="24"
@@ -75,7 +83,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] =
     </h2>
   </div>
   <p
-    class="text-base-secondary-foreground pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
+    class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
     data-size="md"
     data-testid="typography"
   >
@@ -103,9 +111,13 @@ exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] =
 exports[`SettingsSection - Snapshots > matches snapshot with destructive variant 1`] = `
 <div
   class="flex flex-col items-start justify-start"
+  data-override-defaults="true"
+  data-testid="container"
 >
   <div
     class="inline-flex items-center justify-start gap-2 pb-6"
+    data-override-defaults="true"
+    data-testid="container"
   >
     <svg
       data-size="24"
@@ -124,7 +136,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with destructive variant
     </h2>
   </div>
   <p
-    class="text-base-secondary-foreground pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
+    class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
     data-size="md"
     data-testid="typography"
   >
@@ -152,9 +164,13 @@ exports[`SettingsSection - Snapshots > matches snapshot with destructive variant
 exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`] = `
 <div
   class="flex flex-col items-start justify-start"
+  data-override-defaults="true"
+  data-testid="container"
 >
   <div
     class="inline-flex items-center justify-start gap-2 pb-6"
+    data-override-defaults="true"
+    data-testid="container"
   >
     <svg
       data-size="24"
@@ -173,7 +189,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`]
     </h2>
   </div>
   <p
-    class="text-base-secondary-foreground pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
+    class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
     data-size="md"
     data-testid="typography"
   >
