@@ -664,7 +664,7 @@ exports[`PostInput - Snapshots > matches snapshot for repost variant without con
       data-testid="post-input-attachments"
     />
     <div
-      class="bg-muted"
+      class="bg-card"
       data-post-id="test-post-123"
       data-testid="post-preview-card"
     >
