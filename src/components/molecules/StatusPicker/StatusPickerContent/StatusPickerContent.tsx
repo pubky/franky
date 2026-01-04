@@ -149,8 +149,6 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
         open={showEmojiPicker}
         onOpenChange={setShowEmojiPicker}
         onEmojiSelect={handleEmojiSelect}
-        maxLength={12}
-        currentInput={customStatus}
       />
     </Atoms.Container>
   );
