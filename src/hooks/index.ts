@@ -59,5 +59,7 @@ export * from './useStickyWhenFits';
 export * from './useSearchInput';
 export * from './useSearchAutocomplete';
 export * from './useTagSearch';
+export * from './useMuteUser';
+export * from './useMutedUsers';
 export * from './usePostHeaderUserInfoPopoverData';
 export * from './usePostHeaderUserInfoPopoverActions';
