@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { PostTagInput } from './PostTagInput';
 
 // Mock @/libs with partial mock
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
   };
@@ -17,6 +17,26 @@ describe('PostTagInput', () => {
 
     const input = screen.getByRole('textbox');
     fireEvent.change(input, { target: { value: 'bitcoin' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
+  });
+
+  it('converts uppercase input to lowercase', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'BITCOIN' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
+  });
+
+  it('converts mixed case input to lowercase', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'BitCoin' } });
 
     expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
   });

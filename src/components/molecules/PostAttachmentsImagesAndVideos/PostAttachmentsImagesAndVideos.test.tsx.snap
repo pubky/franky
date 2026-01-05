@@ -84,9 +84,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -245,9 +247,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -388,9 +392,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -471,9 +477,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -558,9 +566,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"

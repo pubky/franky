@@ -50,8 +50,8 @@ vi.mock('@/molecules', async (importOriginal) => {
 });
 
 // Mock Libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     Logger: {
@@ -232,7 +232,7 @@ describe('usePost', () => {
       expect(mockOnSuccess).toHaveBeenCalled();
     });
 
-    it('should not submit reply when content is empty', async () => {
+    it('should not submit reply when content is empty and no attachments', async () => {
       const { result } = renderHook(() => usePost());
 
       await act(async () => {
@@ -245,7 +245,7 @@ describe('usePost', () => {
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
     });
 
-    it('should not submit reply when content is only whitespace', async () => {
+    it('should not submit reply when content is only whitespace and no attachments', async () => {
       const { result } = renderHook(() => usePost());
 
       act(() => {
@@ -260,6 +260,35 @@ describe('usePost', () => {
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should create a reply with attachments but no content', async () => {
+      const { result } = renderHook(() => usePost());
+      const mockOnSuccess = vi.fn();
+      const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.setContent('');
+        result.current.setAttachments([mockFile]);
+      });
+
+      await act(async () => {
+        await result.current.reply({
+          postId: 'test-post-123',
+          onSuccess: mockOnSuccess,
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        parentPostId: 'test-post-123',
+        content: '',
+        authorId: 'test-user-id',
+        tags: undefined,
+        attachments: [mockFile],
+      });
+      expect(result.current.attachments).toEqual([]);
+      expect(result.current.content).toBe('');
+      expect(mockOnSuccess).toHaveBeenCalled();
     });
 
     it('should not submit reply when currentUserId is null', async () => {
@@ -448,7 +477,7 @@ describe('usePost', () => {
       expect(mockOnSuccess).toHaveBeenCalled();
     });
 
-    it('should not submit post when content is empty', async () => {
+    it('should not submit post when content is empty and no attachments', async () => {
       const { result } = renderHook(() => usePost());
 
       await act(async () => {
@@ -460,7 +489,7 @@ describe('usePost', () => {
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
     });
 
-    it('should not submit post when content is only whitespace', async () => {
+    it('should not submit post when content is only whitespace and no attachments', async () => {
       const { result } = renderHook(() => usePost());
 
       act(() => {
@@ -474,6 +503,33 @@ describe('usePost', () => {
       });
 
       expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should create a post with attachments but no content', async () => {
+      const { result } = renderHook(() => usePost());
+      const mockOnSuccess = vi.fn();
+      const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.setContent('');
+        result.current.setAttachments([mockFile]);
+      });
+
+      await act(async () => {
+        await result.current.post({
+          onSuccess: mockOnSuccess,
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        content: '',
+        authorId: 'test-user-id',
+        tags: undefined,
+        attachments: [mockFile],
+      });
+      expect(result.current.attachments).toEqual([]);
+      expect(result.current.content).toBe('');
+      expect(mockOnSuccess).toHaveBeenCalled();
     });
 
     it('should not submit post when currentUserId is null', async () => {

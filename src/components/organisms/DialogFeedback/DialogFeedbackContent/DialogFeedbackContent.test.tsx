@@ -5,12 +5,12 @@ import { DialogFeedbackContent } from './DialogFeedbackContent';
 // Mock organisms
 vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(
-    ({ postId, characterCount, maxLength }: { postId: string; characterCount?: number; maxLength?: number }) => (
+    ({ postId, characterLimit }: { postId: string; characterLimit?: { count: number; max: number } }) => (
       <div
         data-testid="post-header"
         data-post-id={postId}
-        data-character-count={characterCount}
-        data-max-length={maxLength}
+        data-character-count={characterLimit?.count}
+        data-max-length={characterLimit?.max}
       >
         PostHeader
       </div>
@@ -110,8 +110,8 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     Send: () => <span data-testid="send-icon">→</span>,
