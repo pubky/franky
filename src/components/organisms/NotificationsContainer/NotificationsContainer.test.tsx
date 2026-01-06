@@ -167,9 +167,9 @@ describe('NotificationsContainer', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
-  it('calls markAllAsRead on mount', () => {
+  it('calls markAllAsRead on unmount', () => {
     const markAllAsRead = vi.fn();
-    vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
+    vi.mocked(Hooks.useNotifications).mockReturnValue({
       notifications: [
         {
           type: 'follow' as const,
@@ -189,7 +189,9 @@ describe('NotificationsContainer', () => {
       markAllAsRead,
       isNotificationUnread: vi.fn(() => false),
     });
-    render(<NotificationsContainer />);
+    const { unmount } = render(<NotificationsContainer />);
+    expect(markAllAsRead).not.toHaveBeenCalled();
+    unmount();
     expect(markAllAsRead).toHaveBeenCalled();
   });
 
