@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, fastTagPost } from '../support/posts';
+import { createQuickPost, fastTagPost, replyToPost } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
@@ -183,9 +183,33 @@ describe('notifications', () => {
     // * profile 2 checks for absence of notifications
   });
 
+  // todo: blocked by bug, see https://github.com/pubky/franky/issues/717
   it('can be notified for profile being mentioned in a post');
 
-  it('can be notified for your post being replied to');
+  it('can be notified for your post being replied to', () => {
+    // * profile 1 creates a post (1)
+    const postContent = `I will be notified when this post is replied to! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // * profile 2 replies to profile 1's post (1)
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    replyToPost({ replyContent: 'I replied to your post!', filterText: postContent });
+
+    // * profile 1 checks for notification for being replied to
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    verifyNotificationCounter(0);
+    checkLatestNotification([profile2.username, 'replied to your post']);
+
+    // TODO: add checks for disabled notifications
+    // * profile 1 disables notifications for being replied to
+    // * profile 1 creates a post (2)
+    // * profile 2 replies to profile 1's post (2)
+    // * profile 1 checks for absence of notifications
+  });
 
   it('can be notified for your post being reposted');
 

@@ -80,6 +80,7 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
         ({ id, icon: Icon, count, onClick, ariaLabel, className: buttonClassName, iconProps, disabled }) => (
           <Atoms.Button
             key={id}
+            data-cy={`post-${id}-btn`}
             {...commonButtonProps}
             onClick={onClick}
             disabled={disabled}
