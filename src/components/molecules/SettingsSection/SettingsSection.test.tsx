@@ -5,6 +5,19 @@ import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock Atoms
 vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
   Heading: ({
     children,
     level,
