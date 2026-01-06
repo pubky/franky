@@ -1,34 +1,40 @@
 'use client';
 
 import * as React from 'react';
+import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-export interface SettingsSectionCardProps {
-  icon?: React.ComponentType<{ size?: number }>;
-  title?: string;
-  description?: string;
-  children: React.ReactNode;
-  className?: string;
-}
+import type { SettingsSectionCardProps } from './SettingsSectionCard.types';
 
 export function SettingsSectionCard({ icon: Icon, title, description, children, className }: SettingsSectionCardProps) {
   return (
-    <div
+    <Atoms.Container
+      overrideDefaults
       className={Libs.cn(
         'inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12',
         className,
       )}
     >
-      <div className="flex w-full flex-col items-start justify-start gap-3">
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start justify-start gap-3">
         {Icon && title && (
-          <div className="inline-flex items-center justify-start gap-2">
+          <Atoms.Container overrideDefaults className="inline-flex items-center justify-start gap-2">
             <Icon size={24} />
-            <h2 className="text-2xl leading-8 font-bold text-foreground">{title}</h2>
-          </div>
+            <Atoms.Heading level={2} size="lg" className="leading-8">
+              {title}
+            </Atoms.Heading>
+          </Atoms.Container>
         )}
-        {description && <p className="text-base leading-6 font-medium text-secondary-foreground">{description}</p>}
+        {description && (
+          <Atoms.Typography
+            as="p"
+            size="md"
+            overrideDefaults
+            className="text-base leading-6 font-medium text-secondary-foreground"
+          >
+            {description}
+          </Atoms.Typography>
+        )}
         {children}
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

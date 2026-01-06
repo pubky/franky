@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsDivider - Snapshots > matches snapshot 1`] = `
+<div
+  aria-hidden="true"
+  class="h-px w-full bg-white/10"
+  data-testid="container"
+/>
+`;
