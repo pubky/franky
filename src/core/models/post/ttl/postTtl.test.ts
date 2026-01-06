@@ -10,11 +10,11 @@ describe('PostTtlModel', () => {
   const testPostId2 = 'post-test-2';
 
   const MOCK_TTL_1 = {
-    ttl: Date.now() + 3600000, // 1 hour from now
+    lastUpdatedAt: Date.now() - 3600000, // 1 hour ago
   };
 
   const MOCK_TTL_2 = {
-    ttl: Date.now() + 7200000, // 2 hours from now
+    lastUpdatedAt: Date.now() - 7200000, // 2 hours ago
   };
 
   describe('Constructor', () => {
@@ -27,7 +27,7 @@ describe('PostTtlModel', () => {
       const model = new Core.PostTtlModel(mockData);
 
       expect(model.id).toBe(mockData.id);
-      expect(model.ttl).toBe(MOCK_TTL_1.ttl);
+      expect(model.lastUpdatedAt).toBe(MOCK_TTL_1.lastUpdatedAt);
     });
   });
 
@@ -53,7 +53,7 @@ describe('PostTtlModel', () => {
 
       expect(result).toBeInstanceOf(Core.PostTtlModel);
       expect(result?.id).toBe(testPostId1);
-      expect(result?.ttl).toBe(MOCK_TTL_1.ttl);
+      expect(result?.lastUpdatedAt).toBe(MOCK_TTL_1.lastUpdatedAt);
     });
 
     it('should return null for non-existent post ttl', async () => {
@@ -63,7 +63,7 @@ describe('PostTtlModel', () => {
     });
 
     it('should bulk save post ttl from tuples', async () => {
-      const mockTuples: Core.NexusModelTuple<{ ttl: number }>[] = [
+      const mockTuples: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [
         [testPostId1, MOCK_TTL_1],
         [testPostId2, MOCK_TTL_2],
       ];
@@ -73,8 +73,8 @@ describe('PostTtlModel', () => {
       const postTtl1 = await Core.PostTtlModel.findById(testPostId1);
       const postTtl2 = await Core.PostTtlModel.findById(testPostId2);
 
-      expect(postTtl1?.ttl).toBe(MOCK_TTL_1.ttl);
-      expect(postTtl2?.ttl).toBe(MOCK_TTL_2.ttl);
+      expect(postTtl1?.lastUpdatedAt).toBe(MOCK_TTL_1.lastUpdatedAt);
+      expect(postTtl2?.lastUpdatedAt).toBe(MOCK_TTL_2.lastUpdatedAt);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -83,11 +83,11 @@ describe('PostTtlModel', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should handle multiple tuples with different ttl values', async () => {
+    it('should handle multiple tuples with different lastUpdatedAt values', async () => {
       const currentTime = Date.now();
-      const mockTuples: Core.NexusModelTuple<{ ttl: number }>[] = [
-        [testPostId1, { ttl: currentTime + 1000 }],
-        [testPostId2, { ttl: currentTime + 5000 }],
+      const mockTuples: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [
+        [testPostId1, { lastUpdatedAt: currentTime - 1000 }],
+        [testPostId2, { lastUpdatedAt: currentTime - 5000 }],
       ];
 
       await Core.PostTtlModel.bulkSave(mockTuples);
@@ -95,41 +95,48 @@ describe('PostTtlModel', () => {
       const postTtl1 = await Core.PostTtlModel.findById(testPostId1);
       const postTtl2 = await Core.PostTtlModel.findById(testPostId2);
 
-      expect(postTtl1?.ttl).toBe(currentTime + 1000);
-      expect(postTtl2?.ttl).toBe(currentTime + 5000);
+      expect(postTtl1?.lastUpdatedAt).toBe(currentTime - 1000);
+      expect(postTtl2?.lastUpdatedAt).toBe(currentTime - 5000);
     });
 
-    it('should handle post-specific TTL scenarios', async () => {
-      // Test different TTL values for different post types
-      const shortTermPost = { id: testPostId1, ttl: Date.now() + 86400000 }; // 1 day
-      const longTermPost = { id: testPostId2, ttl: Date.now() + 31536000000 }; // 1 year
-
-      await Core.PostTtlModel.create(shortTermPost);
-      await Core.PostTtlModel.create(longTermPost);
-
-      const shortTtl = await Core.PostTtlModel.findById(testPostId1);
-      const longTtl = await Core.PostTtlModel.findById(testPostId2);
-
-      expect(shortTtl?.ttl).toBe(shortTermPost.ttl);
-      expect(longTtl?.ttl).toBe(longTermPost.ttl);
-
-      // Verify long term has longer TTL than short term
-      expect(longTtl?.ttl).toBeGreaterThan(shortTtl?.ttl ?? 0);
-    });
-
-    it('should handle expired and non-expired TTL values', async () => {
+    it('should handle staleness check scenarios', async () => {
       const currentTime = Date.now();
-      const expiredTtl = { id: testPostId1, ttl: currentTime - 1000 }; // 1 second ago (expired)
-      const validTtl = { id: testPostId2, ttl: currentTime + 1000 }; // 1 second from now (valid)
+      // recentlyUpdated: 1 minute ago (should be fresh with 5-minute TTL)
+      const recentlyUpdated = { id: testPostId1, lastUpdatedAt: currentTime - 60000 };
+      // staleUpdate: 10 minutes ago (should be stale with 5-minute TTL)
+      const staleUpdate = { id: testPostId2, lastUpdatedAt: currentTime - 600000 };
 
-      await Core.PostTtlModel.create(expiredTtl);
-      await Core.PostTtlModel.create(validTtl);
+      await Core.PostTtlModel.create(recentlyUpdated);
+      await Core.PostTtlModel.create(staleUpdate);
 
-      const expired = await Core.PostTtlModel.findById(testPostId1);
-      const valid = await Core.PostTtlModel.findById(testPostId2);
+      const recent = await Core.PostTtlModel.findById(testPostId1);
+      const stale = await Core.PostTtlModel.findById(testPostId2);
 
-      expect(expired?.ttl).toBeLessThan(currentTime);
-      expect(valid?.ttl).toBeGreaterThan(currentTime);
+      expect(recent?.lastUpdatedAt).toBe(recentlyUpdated.lastUpdatedAt);
+      expect(stale?.lastUpdatedAt).toBe(staleUpdate.lastUpdatedAt);
+
+      // Verify stale entry is older than recent
+      expect(stale?.lastUpdatedAt).toBeLessThan(recent?.lastUpdatedAt ?? 0);
+    });
+
+    it('should correctly update lastUpdatedAt on refresh', async () => {
+      const initialTime = Date.now() - 600000; // 10 minutes ago
+      const refreshTime = Date.now();
+
+      // Create initial record
+      await Core.PostTtlModel.create({ id: testPostId1, lastUpdatedAt: initialTime });
+
+      // Verify initial state
+      const before = await Core.PostTtlModel.findById(testPostId1);
+      expect(before?.lastUpdatedAt).toBe(initialTime);
+
+      // Simulate refresh by upserting with new lastUpdatedAt
+      await Core.PostTtlModel.upsert({ id: testPostId1, lastUpdatedAt: refreshTime });
+
+      // Verify updated state
+      const after = await Core.PostTtlModel.findById(testPostId1);
+      expect(after?.lastUpdatedAt).toBe(refreshTime);
+      expect(after?.lastUpdatedAt).toBeGreaterThan(before?.lastUpdatedAt ?? 0);
     });
   });
 });

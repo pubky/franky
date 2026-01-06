@@ -24,7 +24,7 @@ Without viewport-aware TTL management:
 2. **TTL-based**: Check freshness against TTL tables, refresh when stale
 3. **Batched requests**: Group multiple refresh requests to reduce network overhead
 4. **Dual entity support**: Handle both posts and users (with different TTL durations)
-5. **Automatic author tracking**: When tracking a post, automatically track its author
+5. **Explicit user tracking**: User TTL tracking is managed explicitly (e.g. profile pages), and is not coupled to post tracking
 
 ## Decision
 
@@ -102,8 +102,8 @@ The UI calls the TTL Coordinator directly (like existing coordinators managed by
 subscribePost({ compositePostId }: { compositePostId: CompositePostId }): void
 unsubscribePost({ compositePostId }: { compositePostId: CompositePostId }): void
 
-subscribeUser({ userId }: { userId: Pubky }): void
-unsubscribeUser({ userId }: { userId: Pubky }): void
+subscribeUser({ pubky }: { pubky: Pubky }): void
+unsubscribeUser({ pubky }: { pubky: Pubky }): void
 ```
 
 **Internal behavior:**
@@ -120,8 +120,8 @@ class TtlCoordinator {
   // UI entry points (viewport-driven)
   subscribePost(params: { compositePostId: CompositePostId }): void
   unsubscribePost(params: { compositePostId: CompositePostId }): void
-  subscribeUser(params: { userId: Pubky }): void
-  unsubscribeUser(params: { userId: Pubky }): void
+  subscribeUser(params: { pubky: Pubky }): void
+  unsubscribeUser(params: { pubky: Pubky }): void
 }
 ```
 
@@ -130,15 +130,15 @@ class TtlCoordinator {
 ```
 subscribePost(compositePostId)
     │
-    ├──► Extract authorId from compositePostId
-    │
     ├──► Add postId to subscribedPosts
     │    └──► Check post_ttl table
     │         ├── Not found → Add to postBatchQueue (cache miss)
     │         ├── Stale (now - lastUpdatedAt > config.POST_TTL_MS) → Add to postBatchQueue
     │         └── Valid → Will be checked on next batch tick
+
+subscribeUser(pubky)
     │
-    └──► Add authorId to subscribedUsers (increment refCount)
+    └──► Add pubky to subscribedUsers (increment refCount)
          └──► Check user_ttl table
               ├── Not found → Add to userBatchQueue (cache miss)
               ├── Stale (now - lastUpdatedAt > config.USER_TTL_MS) → Add to userBatchQueue
@@ -179,9 +179,9 @@ onBatchTick()
 
 Local-first `getOrFetch*` methods often short-circuit when data already exists locally. For TTL refresh we need a **force refresh** path that fetches from Nexus even if the entity is present in IndexedDB.
 
-**Methods to be created:**
-- Posts: `PostController.forceFetchDetails({ compositeId, viewerId })` (or similar)
-- Users: `UserController.forceFetchDetails({ userId })` (or similar)
+**Methods (implemented):**
+- Posts: `TtlController.forceRefreshPostsByIds({ postIds, viewerId })`
+- Users: `TtlController.forceRefreshUsersByIds({ userIds, viewerId? })`
 
 These methods should fetch **views** (not partial fragments):
 - **Post view**: `NexusPost` (details + counts + relationships + tags + bookmark)
@@ -219,15 +219,15 @@ Viewport signals can be noisy; the coordinator must be safe under repeated calls
 ```
 unsubscribePost(compositePostId)
     │
-    ├──► Extract authorId from compositePostId
-    │
     ├──► Remove postId from subscribedPosts
     │    └──► Remove from postBatchQueue if present
+
+unsubscribeUser(pubky)
     │
-    └──► Decrement userRefCount[authorId]
-         └──► If refCount === 0
-              ├──► Remove from subscribedUsers
-              └──► Remove from userBatchQueue if present
+    ├──► Decrement userRefCount[pubky]
+    └──► If refCount === 0
+         ├──► Remove from subscribedUsers
+         └──► Remove from userBatchQueue if present
 ```
 
 ### Reset Flow
@@ -249,21 +249,9 @@ reset()
 
 ## Edge Cases
 
-### 1. Same Author, Multiple Visible Posts
+### 1. Same User, Multiple Subscribers (Profiles / UI Surfaces)
 
-When the same author appears in multiple visible posts, we use reference counting to avoid redundant subscriptions and premature unsubscription.
-
-```
-Post A (author: Alice) → subscribePost → userRefCount[Alice] = 1
-Post B (author: Alice) → subscribePost → userRefCount[Alice] = 2
-Post C (author: Bob)   → subscribePost → userRefCount[Bob] = 1
-
-User scrolls, Post A leaves viewport:
-unsubscribePost(Post A) → userRefCount[Alice] = 1 (Alice still subscribed)
-
-User scrolls more, Post B leaves viewport:
-unsubscribePost(Post B) → userRefCount[Alice] = 0 (Alice now unsubscribed)
-```
+Multiple UI surfaces may subscribe to the same user (e.g. profile header + profile sidebar). Use reference counting (or another subscriber-tracking strategy) to avoid premature unsubscription.
 
 ### 2. Batch In Progress When Unsubscribe Happens
 
@@ -301,7 +289,6 @@ unsubscribePost(Post B) → userRefCount[Alice] = 0 (Alice now unsubscribed)
 
 - **Viewport-aware refresh**: Only refreshes data the user is viewing, not entire cache
 - **Batched efficiency**: Groups requests reducing network overhead (N items → ceil(N/batchSize) requests)
-- **Automatic author tracking**: UI subscribes to posts; author handling is internal
 - **Configurable TTLs**: Different freshness requirements for posts vs users
 - **Clean lifecycle**: Auto-reset on route change clears subscriptions cleanly
 - **Reference counting**: Handles shared authors correctly without redundant fetches
