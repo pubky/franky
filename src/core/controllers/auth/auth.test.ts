@@ -545,6 +545,7 @@ describe('AuthController', () => {
         hasHydrated: true,
         session: null,
         sessionExport: 'session-export',
+        hasProfile: true,
         isRestoringSession: false,
         setIsRestoringSession: vi.fn(),
         init: vi.fn(),

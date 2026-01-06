@@ -31,6 +31,7 @@ export class AuthApplication {
       authStore.setIsRestoringSession(true);
       try {
         const session = await Core.HomeserverService.restoreSession({ sessionExport: authStore.sessionExport! });
+        Libs.Logger.info('Session restored successfully');
         return { session };
       } catch (error) {
         Libs.Logger.error('Failed to restore session from persisted export', error);

@@ -21,7 +21,11 @@ export class AuthController {
     const result = await Core.AuthApplication.restorePersistedSession({ authStore });
     if (!result) return false;
     const { session } = result;
-    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: true };
+    const initialState = {
+      session,
+      currentUserPubky: Libs.Identity.pubkyFromSession({ session }),
+      hasProfile: authStore.hasProfile,
+    };
     authStore.init(initialState);
     return true;
   }
