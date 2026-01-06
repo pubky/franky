@@ -1,9 +1,8 @@
 import type * as React from 'react';
 
-import { POST_INPUT_ACTION_SUBMIT_MODE } from './PostInputActionBar.constants';
+import type { PostInputVariant } from '../PostInput/PostInput.types';
 
-export type PostInputActionSubmitMode =
-  (typeof POST_INPUT_ACTION_SUBMIT_MODE)[keyof typeof POST_INPUT_ACTION_SUBMIT_MODE];
+export type PostInputActionSubmitMode = PostInputVariant;
 
 export interface PostInputActionBarProps {
   onEmojiClick?: () => void;
