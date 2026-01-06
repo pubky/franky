@@ -1,14 +1,11 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 import type { ProfilePageLinksProps } from './ProfilePageLinks.types';
-
-// Protocol schemes that bypass the confirmation dialog
-const BYPASS_PROTOCOLS = ['mailto:', 'tel:'];
 
 export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
   const { privacy } = Core.useSettingsStore();
@@ -27,32 +24,19 @@ export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
     [links],
   );
 
-  const handleLinkClick = useCallback(
-    (url: string, e: React.MouseEvent) => {
-      e.preventDefault();
+  const handleLinkClick = (url: string, e: React.MouseEvent) => {
+    e.preventDefault();
 
-      // Protocol schemes that bypass the confirmation dialog (mailto, tel, etc.)
-      if (BYPASS_PROTOCOLS.some((protocol) => url.startsWith(protocol))) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-        return;
-      }
+    // If link should bypass confirmation or checkLink is disabled, open directly
+    if (Libs.shouldBypassLinkConfirmation(url) || !checkLinkEnabled) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
 
-      // If checkLink is disabled (false), open directly
-      if (checkLinkEnabled === false) {
-        window.open(url, '_blank', 'noopener,noreferrer');
-        return;
-      }
-
-      // Show dialog
-      setClickedLink(url);
-      setDialogOpen(true);
-    },
-    [checkLinkEnabled],
-  );
-
-  const handleDialogOpenChange = useCallback((open: boolean) => {
-    setDialogOpen(open);
-  }, []);
+    // Show dialog for external links
+    setClickedLink(url);
+    setDialogOpen(true);
+  };
 
   return (
     <>
@@ -88,7 +72,7 @@ export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
         </Atoms.Container>
       </Atoms.Container>
 
-      <Organisms.DialogCheckLink open={dialogOpen} onOpenChangeAction={handleDialogOpenChange} linkUrl={clickedLink} />
+      <Organisms.DialogCheckLink open={dialogOpen} onOpenChangeAction={setDialogOpen} linkUrl={clickedLink} />
     </>
   );
 }

@@ -496,3 +496,68 @@ export function getDisplayTags(tags: string[], options: GetDisplayTagsOptions = 
 
   return result;
 }
+
+/**
+ * Protocol schemes that bypass the confirmation dialog
+ */
+const BYPASS_PROTOCOLS = ['mailto:', 'tel:'];
+
+/**
+ * Checks if a URL is on the same domain as the current page.
+ * Compares hostnames while ignoring the 'www.' prefix.
+ *
+ * @param url - The URL to check
+ * @returns true if the URL is on the same domain, false otherwise
+ *
+ * @example
+ * ```ts
+ * // Current page: https://example.com
+ * isSameDomain('https://example.com/page') // true
+ * isSameDomain('https://www.example.com/page') // true
+ * isSameDomain('https://other-domain.com') // false
+ * ```
+ */
+export function isSameDomain(url: string): boolean {
+  try {
+    // Parse the URL to check
+    const urlObj = new URL(url);
+    const urlHostname = urlObj.hostname.toLowerCase().replace(/^www\./, '');
+
+    // Get current page hostname
+    const currentHostname = window.location.hostname.toLowerCase().replace(/^www\./, '');
+
+    // Compare hostnames (ignoring www prefix)
+    return urlHostname === currentHostname;
+  } catch {
+    // If URL parsing fails, assume it's not the same domain
+    return false;
+  }
+}
+
+/**
+ * Determines if a link should bypass the confirmation dialog and open directly.
+ * Returns true if:
+ * - The URL uses a bypass protocol (mailto, tel, etc.)
+ * - The URL is on the same domain as the current page
+ *
+ * @param url - The URL to check
+ * @returns true if the link should open directly without confirmation, false otherwise
+ *
+ * @example
+ * ```ts
+ * // Current page: https://example.com
+ * shouldBypassLinkConfirmation('mailto:test@example.com') // true
+ * shouldBypassLinkConfirmation('tel:+1234567890') // true
+ * shouldBypassLinkConfirmation('https://example.com/page') // true
+ * shouldBypassLinkConfirmation('https://other-domain.com') // false
+ * ```
+ */
+export function shouldBypassLinkConfirmation(url: string): boolean {
+  // Check if URL uses a bypass protocol (mailto, tel, etc.)
+  if (BYPASS_PROTOCOLS.some((protocol) => url.startsWith(protocol))) {
+    return true;
+  }
+
+  // Check if URL is on the same domain
+  return isSameDomain(url);
+}
