@@ -405,7 +405,7 @@ describe('ProviderVimeo', () => {
         urlsWithBoundaries.forEach((url) => {
           const result = Vimeo.parseEmbed(url.trim());
           expect(result).toBeDefined();
-          expect(result?.value).toContain('123456');
+          expect(result && 'value' in result ? result.value : '').toContain('123456');
         });
       });
 

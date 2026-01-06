@@ -73,7 +73,7 @@ describe('useRepostInfo', () => {
   });
 
   it('returns isRepost false when post is not a repost', () => {
-    setMockRelationships({ id: mockPostId, reposted: null, replied: null });
+    setMockRelationships({ id: mockPostId, reposted: null, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 
@@ -85,7 +85,7 @@ describe('useRepostInfo', () => {
   });
 
   it('returns isRepost true when post is a repost', () => {
-    setMockRelationships({ id: mockPostId, reposted: mockRepostedUri, replied: null });
+    setMockRelationships({ id: mockPostId, reposted: mockRepostedUri, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 
@@ -97,7 +97,7 @@ describe('useRepostInfo', () => {
 
   it('returns repostAuthorId correctly from postId', () => {
     const repostPostId = 'repost-author:repost-post';
-    setMockRelationships({ id: repostPostId, reposted: mockRepostedUri, replied: null });
+    setMockRelationships({ id: repostPostId, reposted: mockRepostedUri, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(repostPostId));
 
@@ -106,7 +106,7 @@ describe('useRepostInfo', () => {
 
   it('returns isCurrentUserRepost true when current user reposted', () => {
     const currentUserPostId = `${mockCurrentUserPubky}:post-123`;
-    setMockRelationships({ id: currentUserPostId, reposted: mockRepostedUri, replied: null });
+    setMockRelationships({ id: currentUserPostId, reposted: mockRepostedUri, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(currentUserPostId));
 
@@ -116,7 +116,7 @@ describe('useRepostInfo', () => {
 
   it('returns isCurrentUserRepost false when different user reposted', () => {
     const otherUserPostId = 'other-user:post-123';
-    setMockRelationships({ id: otherUserPostId, reposted: mockRepostedUri, replied: null });
+    setMockRelationships({ id: otherUserPostId, reposted: mockRepostedUri, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(otherUserPostId));
 
@@ -125,7 +125,7 @@ describe('useRepostInfo', () => {
   });
 
   it('returns originalPostId null when relationships.reposted is null', () => {
-    setMockRelationships({ id: mockPostId, reposted: null, replied: null });
+    setMockRelationships({ id: mockPostId, reposted: null, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 
@@ -134,7 +134,7 @@ describe('useRepostInfo', () => {
 
   it('returns originalPostId when relationships.reposted exists', () => {
     const originalPostId = 'original-author:original-post';
-    setMockRelationships({ id: mockPostId, reposted: mockRepostedUri, replied: null });
+    setMockRelationships({ id: mockPostId, reposted: mockRepostedUri, replied: null, mentioned: [] });
     mockBuildCompositeIdFromPubkyUri.mockReturnValueOnce(originalPostId);
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
@@ -144,7 +144,7 @@ describe('useRepostInfo', () => {
 
   it('handles postId with multiple colons correctly', () => {
     const complexPostId = 'author:post:with:colons';
-    setMockRelationships({ id: complexPostId, reposted: mockRepostedUri, replied: null });
+    setMockRelationships({ id: complexPostId, reposted: mockRepostedUri, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(complexPostId));
 
@@ -153,7 +153,7 @@ describe('useRepostInfo', () => {
   });
 
   it('returns isLoading false when relationships are loaded', () => {
-    setMockRelationships({ id: mockPostId, reposted: null, replied: null });
+    setMockRelationships({ id: mockPostId, reposted: null, replied: null, mentioned: [] });
 
     const { result } = renderHook(() => useRepostInfo(mockPostId));
 

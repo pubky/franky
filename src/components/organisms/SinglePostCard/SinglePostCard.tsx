@@ -19,9 +19,14 @@ import type { SinglePostCardProps } from './SinglePostCard.types';
  */
 export function SinglePostCard({ postId, className }: SinglePostCardProps) {
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
+  const [repostDialogOpen, setRepostDialogOpen] = useState(false);
 
   const handleReplyClick = () => {
     setReplyDialogOpen(true);
+  };
+
+  const handleRepostClick = () => {
+    setRepostDialogOpen(true);
   };
 
   const handleInteractiveClick = (e: React.MouseEvent) => {
@@ -58,7 +63,11 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
               </Atoms.Container>
 
               <Atoms.Container overrideDefaults onClick={handleInteractiveClick} onKeyDown={handleInteractiveKeyDown}>
-                <Organisms.PostActionsBar postId={postId} onReplyClick={handleReplyClick} />
+                <Organisms.PostActionsBar
+                  postId={postId}
+                  onReplyClick={handleReplyClick}
+                  onRepostClick={handleRepostClick}
+                />
               </Atoms.Container>
             </Atoms.Container>
 
@@ -75,6 +84,7 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
       </Atoms.Card>
 
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />
+      <Organisms.DialogRepost postId={postId} open={repostDialogOpen} onOpenChangeAction={setRepostDialogOpen} />
     </>
   );
 }

@@ -43,22 +43,32 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
-    const Tag = as || 'p';
-    return (
-      <Tag data-testid="typography" className={className}>
-        {children}
-      </Tag>
-    );
-  },
-  List: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
-    const Tag = as || 'ul';
-    return (
-      <Tag data-testid="list" className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  Typography: ({
+    children,
+    as: Tag = 'p',
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: React.ElementType;
+    className?: string;
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
+  List: ({
+    children,
+    as: Tag = 'ul',
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: React.ElementType;
+    className?: string;
+  }) => (
+    <Tag data-testid="list" className={className}>
+      {children}
+    </Tag>
+  ),
 }));
 
 describe('DialogTerms', () => {

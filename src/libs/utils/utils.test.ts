@@ -16,6 +16,8 @@ import {
   daysAgo,
   formatNotificationTime,
   isPostDeleted,
+  isSameDomain,
+  shouldBypassLinkConfirmation,
 } from './utils';
 
 describe('Utils', () => {
@@ -955,6 +957,169 @@ describe('Utils', () => {
     it('should return false for content containing "[DELETED]"', () => {
       expect(isPostDeleted('This post is [DELETED]')).toBe(false);
       expect(isPostDeleted('[DELETED] post')).toBe(false);
+    });
+  });
+
+  describe('isSameDomain', () => {
+    const originalLocation = window.location;
+
+    afterEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: originalLocation,
+      });
+    });
+
+    it('should return true for same domain URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://example.com/page')).toBe(true);
+      expect(isSameDomain('https://example.com/another/page')).toBe(true);
+      expect(isSameDomain('http://example.com/page')).toBe(true);
+    });
+
+    it('should return true when comparing www and non-www versions', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://www.example.com/page')).toBe(true);
+    });
+
+    it('should return true when current page has www and URL does not', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'www.example.com' },
+      });
+
+      expect(isSameDomain('https://example.com/page')).toBe(true);
+    });
+
+    it('should return false for different domains', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://other-domain.com/page')).toBe(false);
+      expect(isSameDomain('https://subdomain.example.com/page')).toBe(false);
+    });
+
+    it('should return false for invalid URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('not-a-valid-url')).toBe(false);
+      expect(isSameDomain('')).toBe(false);
+    });
+
+    it('should handle case-insensitive domain comparison', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'EXAMPLE.COM' },
+      });
+
+      expect(isSameDomain('https://example.com/page')).toBe(true);
+    });
+
+    it('should return false for subdomains', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://subdomain.example.com/page')).toBe(false);
+      expect(isSameDomain('https://blog.example.com/page')).toBe(false);
+    });
+
+    it('should handle URLs with query params and hash', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://example.com/page?query=1')).toBe(true);
+      expect(isSameDomain('https://example.com/page#hash')).toBe(true);
+      expect(isSameDomain('https://example.com/page?query=1#hash')).toBe(true);
+    });
+
+    it('should handle URLs with ports correctly', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      // URLs with ports should still match if hostname matches
+      expect(isSameDomain('https://example.com:8080/page')).toBe(true);
+      expect(isSameDomain('https://www.example.com:3000/page')).toBe(true);
+    });
+  });
+
+  describe('shouldBypassLinkConfirmation', () => {
+    const originalLocation = window.location;
+
+    afterEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: originalLocation,
+      });
+    });
+
+    it('should return true for mailto links', () => {
+      expect(shouldBypassLinkConfirmation('mailto:test@example.com')).toBe(true);
+      expect(shouldBypassLinkConfirmation('mailto:user@domain.com')).toBe(true);
+    });
+
+    it('should return true for tel links', () => {
+      expect(shouldBypassLinkConfirmation('tel:+1234567890')).toBe(true);
+      expect(shouldBypassLinkConfirmation('tel:123-456-7890')).toBe(true);
+    });
+
+    it('should return true for same domain URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(shouldBypassLinkConfirmation('https://example.com/page')).toBe(true);
+      expect(shouldBypassLinkConfirmation('https://www.example.com/page')).toBe(true);
+    });
+
+    it('should return false for different domain URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(shouldBypassLinkConfirmation('https://other-domain.com/page')).toBe(false);
+      expect(shouldBypassLinkConfirmation('https://subdomain.example.com/page')).toBe(false);
+    });
+
+    it('should return false for invalid URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(shouldBypassLinkConfirmation('not-a-valid-url')).toBe(false);
+      expect(shouldBypassLinkConfirmation('')).toBe(false);
+    });
+
+    it('should prioritize protocol bypass over domain check', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      // Even if it's a different domain, mailto/tel should bypass
+      expect(shouldBypassLinkConfirmation('mailto:test@other-domain.com')).toBe(true);
+      expect(shouldBypassLinkConfirmation('tel:+1234567890')).toBe(true);
     });
   });
 });

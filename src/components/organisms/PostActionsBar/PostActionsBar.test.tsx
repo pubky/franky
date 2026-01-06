@@ -67,17 +67,14 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     className?: string;
     overrideDefaults?: boolean;
-  }) => {
-    const Component = Tag as keyof JSX.IntrinsicElements;
-    return (
-      <Component data-testid="typography" data-as={Tag} className={className}>
-        {children}
-      </Component>
-    );
-  },
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
 }));
 
 describe('PostActionsBar', () => {

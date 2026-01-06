@@ -37,22 +37,19 @@ vi.mock('@/atoms', async (importOriginal) => {
     Typography: vi.fn(
       ({
         children,
-        as,
+        as: Tag = 'p',
         size,
         className,
       }: {
         children: React.ReactNode;
-        as?: string;
+        as?: React.ElementType;
         size?: string;
         className?: string;
-      }) => {
-        const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
-        return (
-          <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
-            {children}
-          </Tag>
-        );
-      },
+      }) => (
+        <Tag data-testid="typography" data-size={size} className={className}>
+          {children}
+        </Tag>
+      ),
     ),
   };
 });
@@ -131,7 +128,14 @@ describe('PostHeader', () => {
   it('renders user name, handle and time', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
-      postDetails: { indexed_at: '2024-01-01T00:00:00.000Z' } as Core.PostDetailsModelSchema,
+      postDetails: {
+        id: 'userpubkykey:post456',
+        indexed_at: Date.now(),
+        kind: 'short' as const,
+        uri: 'pubky://userpubkykey/pub/pubky.app/posts/post456',
+        content: '',
+        attachments: null,
+      } as Core.PostDetailsModelSchema,
       isLoading: false,
     });
     mockUseUserDetails.mockReturnValue({
@@ -184,7 +188,14 @@ describe('PostHeader - Snapshots', () => {
   it('matches snapshot in loaded state', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
-      postDetails: { indexed_at: '2024-01-01T00:00:00.000Z' } as Core.PostDetailsModelSchema,
+      postDetails: {
+        id: 'userpubkykey:post456',
+        indexed_at: Date.now(),
+        kind: 'short' as const,
+        uri: 'pubky://userpubkykey/pub/pubky.app/posts/post456',
+        content: '',
+        attachments: null,
+      } as Core.PostDetailsModelSchema,
       isLoading: false,
     });
     mockUseUserDetails.mockReturnValue({

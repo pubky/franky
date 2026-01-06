@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import * as Core from '@/core';
 import { useBookmarksStreamId } from './useBookmarksStreamId';

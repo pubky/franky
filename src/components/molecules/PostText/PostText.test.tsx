@@ -185,43 +185,92 @@ describe('PostText', () => {
   });
 
   describe('Links', () => {
-    it('renders links with correct attributes', () => {
-      render(<PostText content="Check out [example](https://example.com)" />);
+    describe('GFM autolinks (preserved)', () => {
+      it('renders auto-linked URLs from GFM', () => {
+        render(<PostText content="Visit https://example.com for more info" />);
 
-      const link = screen.getByRole('link', { name: 'example' });
-      expect(link).toHaveAttribute('href', 'https://example.com');
-      expect(link).toHaveAttribute('target', '_blank');
-      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'https://example.com');
+      });
+
+      it('renders www autolinks from GFM', () => {
+        render(<PostText content="Visit www.example.com for more info" />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'http://www.example.com');
+      });
+
+      it('renders email autolinks from GFM', () => {
+        render(<PostText content="Contact user@example.com for help" />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'mailto:user@example.com');
+      });
+
+      it('renders autolinks with brand color and hover classes', () => {
+        render(<PostText content="Visit https://example.com" />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveClass('text-brand');
+        expect(link).toHaveClass('cursor-pointer');
+        expect(link).toHaveClass('transition-colors');
+      });
+
+      it('stops event propagation on autolink click', () => {
+        const handleParentClick = vi.fn();
+        render(
+          <div onClick={handleParentClick}>
+            <PostText content="Click https://example.com" />
+          </div>,
+        );
+
+        const link = screen.getByRole('link');
+        fireEvent.click(link);
+
+        expect(handleParentClick).not.toHaveBeenCalled();
+      });
     });
 
-    it('renders links with brand color and hover classes', () => {
-      render(<PostText content="Visit [site](https://site.com)" />);
+    describe('Markdown links (disallowed)', () => {
+      it('converts markdown link to plaintext', () => {
+        render(<PostText content="Check out [example](https://example.com)" />);
 
-      const link = screen.getByRole('link', { name: 'site' });
-      expect(link).toHaveClass('text-brand');
-      expect(link).toHaveClass('cursor-pointer');
-      expect(link).toHaveClass('transition-colors');
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[example\]\(https:\/\/example\.com\)/)).toBeInTheDocument();
+      });
+
+      it('converts deceptive markdown link to plaintext', () => {
+        render(<PostText content="Visit [facebook.com](https://badsite.com)" />);
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[facebook\.com\]\(https:\/\/badsite\.com\)/)).toBeInTheDocument();
+      });
+
+      it('converts markdown link with title to plaintext including title', () => {
+        render(<PostText content='Click [here](https://example.com "My Title")' />);
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[here\]\(https:\/\/example\.com "My Title"\)/)).toBeInTheDocument();
+      });
+
+      it('preserves surrounding text when converting markdown links', () => {
+        render(<PostText content="Before [link](https://example.com) after" />);
+
+        expect(screen.getByText(/Before/)).toBeInTheDocument();
+        expect(screen.getByText(/after/)).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      });
     });
 
-    it('stops event propagation on link click', () => {
-      const handleParentClick = vi.fn();
-      render(
-        <div onClick={handleParentClick}>
-          <PostText content="Click [here](https://example.com)" />
-        </div>,
-      );
+    describe('Mixed autolinks and markdown links', () => {
+      it('preserves autolinks while converting markdown links', () => {
+        render(<PostText content="Visit https://good.com or [click](https://other.com)" />);
 
-      const link = screen.getByRole('link', { name: 'here' });
-      fireEvent.click(link);
-
-      expect(handleParentClick).not.toHaveBeenCalled();
-    });
-
-    it('renders auto-linked URLs from GFM', () => {
-      render(<PostText content="Visit https://example.com for more info" />);
-
-      const link = screen.getByRole('link');
-      expect(link).toHaveAttribute('href', 'https://example.com');
+        const links = screen.getAllByRole('link');
+        expect(links).toHaveLength(1);
+        expect(links[0]).toHaveAttribute('href', 'https://good.com');
+        expect(screen.getByText(/\[click\]\(https:\/\/other\.com\)/)).toBeInTheDocument();
+      });
     });
   });
 
@@ -326,10 +375,12 @@ describe('PostText', () => {
       expect(hashtags[2]).toHaveTextContent('#three');
     });
 
-    it('renders hashtags alongside regular links', () => {
-      render(<PostText content="Visit [site](https://example.com) and check #topic" />);
+    it('renders hashtags alongside autolinks', () => {
+      render(<PostText content="Visit https://example.com and check #topic" />);
 
-      expect(screen.getByRole('link', { name: 'site' })).toBeInTheDocument();
+      const links = screen.getAllByRole('link');
+      const autolink = links.find((link) => link.getAttribute('href') === 'https://example.com');
+      expect(autolink).toBeInTheDocument();
       expect(screen.getByTestId('post-hashtag')).toHaveTextContent('#topic');
     });
 
@@ -420,10 +471,12 @@ describe('PostText', () => {
       expect(mentions[1]).toHaveTextContent(secondMention);
     });
 
-    it('renders mentions alongside regular links', () => {
-      render(<PostText content={`Visit [site](https://example.com) and follow ${validPkMention}`} />);
+    it('renders mentions alongside autolinks', () => {
+      render(<PostText content={`Visit https://example.com and follow ${validPkMention}`} />);
 
-      expect(screen.getByRole('link', { name: 'site' })).toBeInTheDocument();
+      const links = screen.getAllByRole('link');
+      const autolink = links.find((link) => link.getAttribute('href') === 'https://example.com');
+      expect(autolink).toBeInTheDocument();
       expect(screen.getByTestId('post-mention')).toHaveTextContent(validPkMention);
     });
 
@@ -617,8 +670,18 @@ plain code block
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for links', () => {
-    const { container } = render(<PostText content="Visit [Example Site](https://example.com) for more" />);
+  it('matches snapshot for autolinked URL', () => {
+    const { container } = render(<PostText content="Check out https://example.com for more" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for markdown link converted to plaintext', () => {
+    const { container } = render(<PostText content="Check out [Example](https://example.com) for more" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for deceptive link converted to plaintext', () => {
+    const { container } = render(<PostText content="Visit [facebook.com](https://badsite.com) now" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -652,7 +715,7 @@ plain code block
       <PostText
         content={`# Welcome
 
-This is **bold** and *italic* text with a [link](https://example.com).
+This is **bold** and *italic* text with a link https://example.com here.
 
 > A meaningful quote
 
@@ -690,8 +753,18 @@ Third line`}
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for autolinked URL', () => {
+  it('matches snapshot for autolinked URL with path and query', () => {
     const { container } = render(<PostText content="Check out https://example.com/path?query=value" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for www autolink', () => {
+    const { container } = render(<PostText content="Visit www.example.com today" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for email autolink', () => {
+    const { container } = render(<PostText content="Contact user@example.com for help" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -735,8 +808,8 @@ Third line`}
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for hashtag alongside link', () => {
-    const { container } = render(<PostText content="Visit [Example](https://example.com) and follow #trending" />);
+  it('matches snapshot for hashtag alongside autolink', () => {
+    const { container } = render(<PostText content="Visit https://example.com and follow #trending" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -802,9 +875,9 @@ Third line`}
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for mention alongside link', () => {
+  it('matches snapshot for mention alongside autolink', () => {
     const { container } = render(
-      <PostText content="Visit [Example](https://example.com) and follow pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo" />,
+      <PostText content={`Check pk:o1gg96ewuojmopcjbz8895478wench6tjmjh6kiwgbwycb35ory and https://example.com`} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });

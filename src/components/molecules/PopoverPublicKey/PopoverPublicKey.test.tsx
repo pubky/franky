@@ -42,7 +42,7 @@ vi.mock('@/atoms', () => ({
   ),
   Heading: ({
     children,
-    level,
+    level = 1,
     size,
     className,
   }: {
@@ -51,16 +51,17 @@ vi.mock('@/atoms', () => ({
     size?: string;
     className?: string;
   }) => {
-    const Tag = `h${level || 1}` as keyof JSX.IntrinsicElements;
     const sizeClasses = size === 'sm' ? 'text-lg font-semibold' : '';
     return (
-      <Tag
-        data-testid={`heading-${level || 1}`}
+      <div
+        role="heading"
+        aria-level={level}
+        data-testid={`heading-${level}`}
         data-size={size}
         className={`${sizeClasses} text-foreground ${className}`}
       >
         {children}
-      </Tag>
+      </div>
     );
   },
   Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => {

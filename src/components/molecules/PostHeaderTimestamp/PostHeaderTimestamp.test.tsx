@@ -16,14 +16,19 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
-    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid="typography" data-as={as} className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  Typography: ({
+    children,
+    as: Tag = 'p',
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: React.ElementType;
+    className?: string;
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
 }));
 
 vi.mock('@/libs', () => ({

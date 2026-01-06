@@ -19,9 +19,8 @@ vi.mock('@/atoms', () => ({
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>{children}</div>
   ),
-  Typography: ({ children, as: Tag = 'span' }: { children: React.ReactNode; as?: string }) => {
-    const Component = Tag as keyof JSX.IntrinsicElements;
-    return <Component>{children}</Component>;
+  Typography: ({ children, as: Tag = 'span' }: { children: React.ReactNode; as?: React.ElementType }) => {
+    return <Tag>{children}</Tag>;
   },
   Spinner: ({ size }: { size: string }) => <div data-testid="spinner" data-size={size} />,
 }));

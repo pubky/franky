@@ -1582,6 +1582,7 @@ describe('PostStreamApplication', () => {
     const viewerId = 'viewer-user' as Core.Pubky;
 
     const setupMutedUsers = async (mutedUsers: Core.Pubky[]) => {
+      // @ts-expect-error - BaseStreamModel generic type constraint
       await Core.UserStreamModel.upsert(Core.UserStreamTypes.MUTED, mutedUsers);
     };
 

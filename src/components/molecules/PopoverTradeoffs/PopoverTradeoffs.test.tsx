@@ -22,7 +22,7 @@ vi.mock('@/atoms', () => ({
   ),
   Heading: ({
     children,
-    level,
+    level = 1,
     size,
     className,
   }: {
@@ -30,14 +30,11 @@ vi.mock('@/atoms', () => ({
     level?: number;
     size?: string;
     className?: string;
-  }) => {
-    const Tag = `h${level || 1}` as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid={`heading-${level || 1}`} data-size={size} className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  }) => (
+    <div role="heading" aria-level={level} data-testid={`heading-${level}`} data-size={size} className={className}>
+      {children}
+    </div>
+  ),
   Popover: ({ children }: { children: React.ReactNode }) => <div data-testid="popover">{children}</div>,
   PopoverTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
     <div data-testid="popover-trigger" data-as-child={asChild}>
