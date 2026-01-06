@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInputExpandableSection } from './PostInputExpandableSection';
-import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar/PostInputActionBar.constants';
+import { POST_INPUT_VARIANT } from '../PostInput/PostInput.constants';
 
 // Use real libs - use actual implementations
 vi.mock('@/libs', async () => {
@@ -109,10 +109,6 @@ vi.mock('../PostInputActionBar', () => ({
       </button>
     </div>
   ),
-  POST_INPUT_ACTION_SUBMIT_MODE: {
-    POST: 'post',
-    REPLY: 'reply',
-  },
 }));
 
 describe('PostInputExpandableSection', () => {
@@ -121,7 +117,7 @@ describe('PostInputExpandableSection', () => {
     content: 'Test content',
     tags: [],
     isSubmitting: false,
-    submitMode: POST_INPUT_ACTION_SUBMIT_MODE.POST,
+    submitMode: POST_INPUT_VARIANT.POST,
     setTags: vi.fn(),
     onSubmit: mockOnPostClick,
     showEmojiPicker: false,
@@ -283,7 +279,7 @@ describe('PostInputExpandableSection - Snapshots', () => {
     content: 'Test content',
     tags: [],
     isSubmitting: false,
-    submitMode: POST_INPUT_ACTION_SUBMIT_MODE.POST,
+    submitMode: POST_INPUT_VARIANT.POST,
     setTags: vi.fn(),
     onSubmit: vi.fn(),
     showEmojiPicker: false,
@@ -314,7 +310,7 @@ describe('PostInputExpandableSection - Snapshots', () => {
 
   it('matches snapshot with REPLY submit mode', () => {
     const { container } = render(
-      <PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_ACTION_SUBMIT_MODE.REPLY} />,
+      <PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.REPLY} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });

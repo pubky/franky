@@ -133,7 +133,6 @@ vi.mock('../PostInputActionBar', () => ({
       </button>
     </div>
   )),
-  POST_INPUT_ACTION_SUBMIT_MODE: { POST: 'post', REPLY: 'reply' },
 }));
 
 vi.mock('@/molecules', () => ({
