@@ -1,2 +1,2 @@
 export { FAQAccordion } from './FAQAccordion';
-export type { FAQAccordionProps, FAQAccordionItem } from './FAQAccordion';
+export type { FAQAccordionItem, FAQAccordionProps } from './FAQAccordion.types';
