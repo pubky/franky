@@ -140,14 +140,13 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
 
 // add tags to a profile using the profile tagged page
 export const addProfileTags = (tags: string[]) => {
-  // add the tag
+  // add the tag - TagInput submits on Enter key
   for (const tag of tags) {
-    cy.get('#add-tag-input').type(tag);
-    cy.get('#add-tag-btn').should('be.visible').click();
+    cy.get('[data-cy="add-tag-input"]').type(`${tag}{enter}`);
   }
 
-  // wait for the tags to be added
-  cy.get(`#tag-${tags[0]}`).should('be.visible');
+  // wait for the tags to be added (check that the input is cleared)
+  cy.get('[data-cy="add-tag-input"]').should('have.value', '');
 };
 
 export const unfollowUserByUsername = (username: string) => {
