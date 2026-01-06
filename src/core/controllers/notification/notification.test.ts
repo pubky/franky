@@ -48,8 +48,8 @@ describe('NotificationController', () => {
 
   describe('getOrFetchNotifications', () => {
     const mockResponse: Core.TGetOrFetchNotificationsResponse = {
-      notifications: [
-        { type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
+      flatNotifications: [
+        { id: 'follow:3000:user-1', type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
       ] as Core.FlatNotification[],
       olderThan: 3000,
     };
@@ -83,13 +83,13 @@ describe('NotificationController', () => {
 
     it('should return empty response when no notifications', async () => {
       vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue({
-        notifications: [],
+        flatNotifications: [],
         olderThan: undefined,
       });
 
       const result = await NotificationController.getOrFetchNotifications({});
 
-      expect(result.notifications).toHaveLength(0);
+      expect(result.flatNotifications).toHaveLength(0);
       expect(result.olderThan).toBeUndefined();
     });
 

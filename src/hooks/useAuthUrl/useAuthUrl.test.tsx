@@ -90,7 +90,7 @@ describe('useAuthUrl', () => {
   });
 
   it('initializes session when approval succeeds', async () => {
-    const mockSession = { token: 'test-token' } as Session;
+    const mockSession = { token: 'test-token' } as unknown as Session;
 
     let resolveApproval: (session: Session) => void;
     const mockAwaitApproval = new Promise<Session>((resolve) => {
@@ -171,7 +171,7 @@ describe('useAuthUrl', () => {
   });
 
   it('shows toast when session initialization fails', async () => {
-    const mockSession = { token: 'test-token' } as Session;
+    const mockSession = { token: 'test-token' } as unknown as Session;
 
     let resolveApproval: (session: Session) => void;
     const mockAwaitApproval = new Promise<Session>((resolve) => {

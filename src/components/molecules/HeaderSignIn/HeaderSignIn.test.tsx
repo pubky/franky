@@ -4,8 +4,8 @@ import { HeaderSignIn } from './HeaderSignIn';
 
 // Mock hooks
 const mockUseCurrentUserProfile = vi.fn(() => ({
-  userDetails: { name: 'Test User', image: 'test-image.jpg' },
-  currentUserPubky: 'test-pubky-123',
+  userDetails: { name: 'Test User', image: 'test-image.jpg' } as { name: string; image: string } | null,
+  currentUserPubky: 'test-pubky-123' as string | null,
 }));
 
 vi.mock('@/hooks', () => ({

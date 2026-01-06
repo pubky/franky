@@ -187,7 +187,7 @@ describe('usePostMenuActions', () => {
     });
 
     it('shows error toast when follow fails with AppError', async () => {
-      const error = { type: 'AppError', message: 'Follow failed' } as Error;
+      const error = { type: 'AppError', message: 'Follow failed' } as unknown as Error;
       vi.mocked(Libs.isAppError).mockReturnValue(true);
       defaultMocks.toggleFollow.mockRejectedValue(error);
 

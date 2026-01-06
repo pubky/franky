@@ -12,13 +12,12 @@ describe('AuthApplication', () => {
   });
 
   describe('signUp', () => {
-    const createParams = (): Core.TAuthenticateKeypairParams => ({
+    const createParams = (): Core.THomeserverSignUpParams => ({
       keypair: {
         publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
         secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
       } as unknown as Keypair,
       signupToken: 'test-signup-token',
-      secretKey: 'test-secret-key',
     });
 
     it('should sign up successfully', async () => {

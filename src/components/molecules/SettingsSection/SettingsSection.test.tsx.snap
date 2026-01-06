@@ -20,14 +20,16 @@ exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1
         Mock Icon
       </title>
     </svg>
-    <h2
+    <div
+      aria-level="2"
       class="custom-title"
       data-level="2"
       data-size="lg"
       data-testid="heading"
+      role="heading"
     >
       Account Settings
-    </h2>
+    </div>
   </div>
   <p
     class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
@@ -74,13 +76,15 @@ exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] =
         Mock Icon
       </title>
     </svg>
-    <h2
+    <div
+      aria-level="2"
       data-level="2"
       data-size="lg"
       data-testid="heading"
+      role="heading"
     >
       Account Settings
-    </h2>
+    </div>
   </div>
   <p
     class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
@@ -127,13 +131,15 @@ exports[`SettingsSection - Snapshots > matches snapshot with destructive variant
         Mock Icon
       </title>
     </svg>
-    <h2
+    <div
+      aria-level="2"
       data-level="2"
       data-size="lg"
       data-testid="heading"
+      role="heading"
     >
       Account Settings
-    </h2>
+    </div>
   </div>
   <p
     class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
@@ -180,13 +186,15 @@ exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`]
         Mock Icon
       </title>
     </svg>
-    <h2
+    <div
+      aria-level="2"
       data-level="2"
       data-size="lg"
       data-testid="heading"
+      role="heading"
     >
       Account Settings
-    </h2>
+    </div>
   </div>
   <p
     class="pb-6 text-base leading-6 font-medium text-secondary-foreground"

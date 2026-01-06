@@ -13,7 +13,7 @@ let mockStats: ProfileStats = {
   followers: 0,
   following: 0,
   friends: 0,
-  tagged: 0,
+  uniqueTags: 0,
 };
 let mockStatsLoading = false;
 let mockActions: ProfileActions = {
@@ -21,7 +21,8 @@ let mockActions: ProfileActions = {
   onCopyPublicKey: vi.fn(),
   onCopyLink: vi.fn(),
   onSignOut: vi.fn(),
-  onStatusClick: vi.fn(),
+  onStatusChange: vi.fn(),
+  isLoggingOut: false,
 };
 
 // Mock direct imports (used by useProfileHeader)
@@ -74,7 +75,7 @@ describe('useProfileHeader', () => {
       followers: 0,
       following: 0,
       friends: 0,
-      tagged: 0,
+      uniqueTags: 0,
     };
     mockStatsLoading = false;
     mockActions = {
@@ -82,7 +83,8 @@ describe('useProfileHeader', () => {
       onCopyPublicKey: vi.fn(),
       onCopyLink: vi.fn(),
       onSignOut: vi.fn(),
-      onStatusClick: vi.fn(),
+      onStatusChange: vi.fn(),
+      isLoggingOut: false,
     };
   });
 
@@ -104,7 +106,7 @@ describe('useProfileHeader', () => {
         followers: 20,
         following: 15,
         friends: 8,
-        tagged: 3,
+        uniqueTags: 3,
       };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
@@ -163,7 +165,7 @@ describe('useProfileHeader', () => {
         followers: 20,
         following: 15,
         friends: 8,
-        tagged: 3,
+        uniqueTags: 3,
       };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
@@ -173,7 +175,7 @@ describe('useProfileHeader', () => {
       expect(result.current.stats.followers).toBe(20);
       expect(result.current.stats.following).toBe(15);
       expect(result.current.stats.friends).toBe(8);
-      expect(result.current.stats.tagged).toBe(3);
+      expect(result.current.stats.uniqueTags).toBe(3);
     });
 
     it('returns zero stats when not available', () => {
@@ -184,7 +186,7 @@ describe('useProfileHeader', () => {
         followers: 0,
         following: 0,
         friends: 0,
-        tagged: 0,
+        uniqueTags: 0,
       };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
@@ -194,7 +196,7 @@ describe('useProfileHeader', () => {
       expect(result.current.stats.followers).toBe(0);
       expect(result.current.stats.following).toBe(0);
       expect(result.current.stats.friends).toBe(0);
-      expect(result.current.stats.tagged).toBe(0);
+      expect(result.current.stats.uniqueTags).toBe(0);
     });
   });
 
@@ -207,7 +209,7 @@ describe('useProfileHeader', () => {
       expect(result.current.actions.onCopyLink).toBeDefined();
       expect(result.current.actions.onSignOut).toBeDefined();
       expect(result.current.actions.onEdit).toBeDefined();
-      expect(result.current.actions.onStatusClick).toBeDefined();
+      expect(result.current.actions.onStatusChange).toBeDefined();
     });
 
     it('calls action handlers', () => {
@@ -217,13 +219,13 @@ describe('useProfileHeader', () => {
       result.current.actions.onCopyLink();
       result.current.actions.onSignOut();
       result.current.actions.onEdit();
-      result.current.actions.onStatusClick();
+      result.current.actions.onStatusChange('active');
 
       expect(mockActions.onCopyPublicKey).toHaveBeenCalled();
       expect(mockActions.onCopyLink).toHaveBeenCalled();
       expect(mockActions.onSignOut).toHaveBeenCalled();
       expect(mockActions.onEdit).toHaveBeenCalled();
-      expect(mockActions.onStatusClick).toHaveBeenCalled();
+      expect(mockActions.onStatusChange).toHaveBeenCalled();
     });
 
     it('passes correct props to useProfileActions when profile exists', () => {
@@ -348,7 +350,7 @@ describe('useProfileHeader', () => {
         followers: 0,
         following: 0,
         friends: 0,
-        tagged: 0,
+        uniqueTags: 0,
       };
 
       expect(stats).toBeDefined();
@@ -376,7 +378,8 @@ describe('useProfileHeader', () => {
         onCopyPublicKey: vi.fn(),
         onCopyLink: vi.fn(),
         onSignOut: vi.fn(),
-        onStatusClick: vi.fn(),
+        onStatusChange: vi.fn(),
+        isLoggingOut: false,
       };
 
       expect(actions).toBeDefined();

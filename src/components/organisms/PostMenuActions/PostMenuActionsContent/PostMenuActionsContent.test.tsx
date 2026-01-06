@@ -3,14 +3,19 @@ import { render, screen } from '@testing-library/react';
 import { MENU_VARIANT } from '@/config/ui';
 import { PostMenuActionsContent } from './PostMenuActionsContent';
 import { normaliseRadixIds } from '@/libs/utils/utils';
+import {
+  POST_MENU_ACTION_IDS,
+  POST_MENU_ACTION_VARIANTS,
+} from '@/hooks/usePostMenuActions/usePostMenuActions.constants';
+import type { PostMenuActionItem } from '@/hooks/usePostMenuActions/usePostMenuActions.types';
 
 const mockUsePostMenuActions = vi.fn(() => ({
-  menuItems: [],
+  menuItems: [] as PostMenuActionItem[],
   isLoading: false,
 }));
 
 vi.mock('@/hooks', () => ({
-  usePostMenuActions: (postId: string) => mockUsePostMenuActions(postId),
+  usePostMenuActions: (_postId: string) => mockUsePostMenuActions(),
 }));
 
 vi.mock('@/core', async (importOriginal) => {
@@ -88,8 +93,8 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => (
-    <span data-testid="typography" data-as={as} className={className}>
+  Typography: ({ children, className }: { children: React.ReactNode; as?: React.ElementType; className?: string }) => (
+    <span data-testid="typography" className={className}>
       {children}
     </span>
   ),
@@ -104,15 +109,46 @@ describe('PostMenuActionsContent', () => {
     const Libs = await import('@/libs');
     mockUsePostMenuActions.mockReturnValue({
       menuItems: [
-        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
-        { id: 'delete', label: 'Delete post', icon: Libs.Trash, onClick: vi.fn(), variant: 'destructive' },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_PUBKY,
+          label: 'Copy pubky',
+          icon: Libs.Key,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_LINK,
+          label: 'Copy link to post',
+          icon: Libs.Link,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_TEXT,
+          label: 'Copy text of post',
+          icon: Libs.FileText,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.DELETE,
+          label: 'Delete post',
+          icon: Libs.Trash,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DESTRUCTIVE,
+        },
       ],
       isLoading: false,
     });
 
-    render(<PostMenuActionsContent postId="pk:test123:post456" variant={MENU_VARIANT.DROPDOWN} />);
+    render(
+      <PostMenuActionsContent
+        postId="pk:test123:post456"
+        variant={MENU_VARIANT.DROPDOWN}
+        onActionComplete={vi.fn()}
+        onReportClick={vi.fn()}
+      />,
+    );
 
     expect(screen.getByText('Copy pubky')).toBeInTheDocument();
     expect(screen.getByText('Copy link to post')).toBeInTheDocument();
@@ -125,17 +161,60 @@ describe('PostMenuActionsContent', () => {
     const Libs = await import('@/libs');
     mockUsePostMenuActions.mockReturnValue({
       menuItems: [
-        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
-        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
-        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+        {
+          id: POST_MENU_ACTION_IDS.FOLLOW,
+          label: 'Follow Test User',
+          icon: Libs.UserRoundPlus,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_PUBKY,
+          label: 'Copy pubky',
+          icon: Libs.Key,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_LINK,
+          label: 'Copy link to post',
+          icon: Libs.Link,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_TEXT,
+          label: 'Copy text of post',
+          icon: Libs.FileText,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.MUTE,
+          label: 'Mute Test User',
+          icon: Libs.MegaphoneOff,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.REPORT,
+          label: 'Report post',
+          icon: Libs.Flag,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
       ],
       isLoading: false,
     });
 
-    render(<PostMenuActionsContent postId="pk:test123:post456" variant={MENU_VARIANT.DROPDOWN} />);
+    render(
+      <PostMenuActionsContent
+        postId="pk:test123:post456"
+        variant={MENU_VARIANT.DROPDOWN}
+        onActionComplete={vi.fn()}
+        onReportClick={vi.fn()}
+      />,
+    );
 
     expect(screen.getByText(/Follow/)).toBeInTheDocument();
     expect(screen.getByText(/Mute/)).toBeInTheDocument();
@@ -147,16 +226,53 @@ describe('PostMenuActionsContent', () => {
     const Libs = await import('@/libs');
     mockUsePostMenuActions.mockReturnValue({
       menuItems: [
-        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
-        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
-        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+        {
+          id: POST_MENU_ACTION_IDS.FOLLOW,
+          label: 'Follow Test User',
+          icon: Libs.UserRoundPlus,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_PUBKY,
+          label: 'Copy pubky',
+          icon: Libs.Key,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_LINK,
+          label: 'Copy link to post',
+          icon: Libs.Link,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.MUTE,
+          label: 'Mute Test User',
+          icon: Libs.MegaphoneOff,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.REPORT,
+          label: 'Report post',
+          icon: Libs.Flag,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
       ],
       isLoading: false,
     });
 
-    render(<PostMenuActionsContent postId="pk:test123:post456" variant={MENU_VARIANT.DROPDOWN} />);
+    render(
+      <PostMenuActionsContent
+        postId="pk:test123:post456"
+        variant={MENU_VARIANT.DROPDOWN}
+        onActionComplete={vi.fn()}
+        onReportClick={vi.fn()}
+      />,
+    );
 
     expect(screen.queryByText('Copy text of post')).not.toBeInTheDocument();
   });
@@ -171,18 +287,59 @@ describe('PostMenuActionsContent - Snapshots', () => {
     const Libs = await import('@/libs');
     mockUsePostMenuActions.mockReturnValue({
       menuItems: [
-        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
-        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
-        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+        {
+          id: POST_MENU_ACTION_IDS.FOLLOW,
+          label: 'Follow Test User',
+          icon: Libs.UserRoundPlus,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_PUBKY,
+          label: 'Copy pubky',
+          icon: Libs.Key,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_LINK,
+          label: 'Copy link to post',
+          icon: Libs.Link,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_TEXT,
+          label: 'Copy text of post',
+          icon: Libs.FileText,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.MUTE,
+          label: 'Mute Test User',
+          icon: Libs.MegaphoneOff,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.REPORT,
+          label: 'Report post',
+          icon: Libs.Flag,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
       ],
       isLoading: false,
     });
 
     const { container } = render(
-      <PostMenuActionsContent postId="pk:test123:post456" variant={MENU_VARIANT.DROPDOWN} />,
+      <PostMenuActionsContent
+        postId="pk:test123:post456"
+        variant={MENU_VARIANT.DROPDOWN}
+        onActionComplete={vi.fn()}
+        onReportClick={vi.fn()}
+      />,
     );
     const normalizedContainer = normaliseRadixIds(container);
     expect(normalizedContainer.firstChild).toMatchSnapshot();
@@ -192,16 +349,45 @@ describe('PostMenuActionsContent - Snapshots', () => {
     const Libs = await import('@/libs');
     mockUsePostMenuActions.mockReturnValue({
       menuItems: [
-        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
-        { id: 'delete', label: 'Delete post', icon: Libs.Trash, onClick: vi.fn(), variant: 'destructive' },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_PUBKY,
+          label: 'Copy pubky',
+          icon: Libs.Key,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_LINK,
+          label: 'Copy link to post',
+          icon: Libs.Link,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_TEXT,
+          label: 'Copy text of post',
+          icon: Libs.FileText,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.DELETE,
+          label: 'Delete post',
+          icon: Libs.Trash,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DESTRUCTIVE,
+        },
       ],
       isLoading: false,
     });
 
     const { container } = render(
-      <PostMenuActionsContent postId="pk:test123:post456" variant={MENU_VARIANT.DROPDOWN} />,
+      <PostMenuActionsContent
+        postId="pk:test123:post456"
+        variant={MENU_VARIANT.DROPDOWN}
+        onActionComplete={vi.fn()}
+        onReportClick={vi.fn()}
+      />,
     );
     const normalizedContainer = normaliseRadixIds(container);
     expect(normalizedContainer.firstChild).toMatchSnapshot();
@@ -211,17 +397,60 @@ describe('PostMenuActionsContent - Snapshots', () => {
     const Libs = await import('@/libs');
     mockUsePostMenuActions.mockReturnValue({
       menuItems: [
-        { id: 'follow', label: 'Follow Test User', icon: Libs.UserRoundPlus, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-pubky', label: 'Copy pubky', icon: Libs.Key, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-link', label: 'Copy link to post', icon: Libs.Link, onClick: vi.fn(), variant: 'default' },
-        { id: 'copy-text', label: 'Copy text of post', icon: Libs.FileText, onClick: vi.fn(), variant: 'default' },
-        { id: 'mute', label: 'Mute Test User', icon: Libs.MegaphoneOff, onClick: vi.fn(), variant: 'default' },
-        { id: 'report', label: 'Report post', icon: Libs.Flag, onClick: vi.fn(), variant: 'default' },
+        {
+          id: POST_MENU_ACTION_IDS.FOLLOW,
+          label: 'Follow Test User',
+          icon: Libs.UserRoundPlus,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_PUBKY,
+          label: 'Copy pubky',
+          icon: Libs.Key,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_LINK,
+          label: 'Copy link to post',
+          icon: Libs.Link,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.COPY_TEXT,
+          label: 'Copy text of post',
+          icon: Libs.FileText,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.MUTE,
+          label: 'Mute Test User',
+          icon: Libs.MegaphoneOff,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
+          id: POST_MENU_ACTION_IDS.REPORT,
+          label: 'Report post',
+          icon: Libs.Flag,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
       ],
       isLoading: false,
     });
 
-    const { container } = render(<PostMenuActionsContent postId="pk:test123:post456" variant={MENU_VARIANT.SHEET} />);
+    const { container } = render(
+      <PostMenuActionsContent
+        postId="pk:test123:post456"
+        variant={MENU_VARIANT.SHEET}
+        onActionComplete={vi.fn()}
+        onReportClick={vi.fn()}
+      />,
+    );
     const normalizedContainer = normaliseRadixIds(container);
     expect(normalizedContainer.firstChild).toMatchSnapshot();
   });

@@ -5,8 +5,8 @@ import { PostMenuActions } from './PostMenuActions';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
 const mockUseIsMobile = vi.fn(() => false);
-const mockUsePostMenuActions = vi.fn(() => ({
-  menuItems: [],
+const mockUsePostMenuActions = vi.fn((_postId: string) => ({
+  menuItems: [] as unknown[],
   isLoading: false,
 }));
 

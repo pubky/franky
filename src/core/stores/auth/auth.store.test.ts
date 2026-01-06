@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { SignupResult } from '@/core';
+import type { THomeserverSessionResult } from '@/core';
 import { useAuthStore } from './auth.store';
 
 // Mock the logger
@@ -30,13 +30,13 @@ describe('AuthStore', () => {
       expect(store.selectIsAuthenticated()).toBe(false);
 
       // Add session - now authenticated is derived from session
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
       store.setSession(mockSession);
       expect(store.selectIsAuthenticated()).toBe(true);
     });
 
     it('should derive authentication state from session', () => {
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
       const store = useAuthStore.getState();
 
       // No session - not authenticated
@@ -54,7 +54,7 @@ describe('AuthStore', () => {
 
     it('should clear session and authentication state together', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
 
       // Set up authenticated state
       store.setCurrentUserPubky('test-pubky');
@@ -70,7 +70,7 @@ describe('AuthStore', () => {
 
     it('should derive authentication state from session presence', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
 
       // Initially not authenticated
       expect(store.selectIsAuthenticated()).toBe(false);
@@ -88,7 +88,7 @@ describe('AuthStore', () => {
   describe('Store Reset', () => {
     it('should reset store to default state', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
 
       // Set some state
       store.setCurrentUserPubky('test-pubky');
@@ -148,7 +148,7 @@ describe('AuthStore', () => {
 
     it('should still throw error even when authenticated but pubky is null', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
 
       // Set authenticated (via session) but no pubky (edge case)
       store.setSession(mockSession);
@@ -165,7 +165,7 @@ describe('AuthStore', () => {
 
     it('should compute authentication state based on session', () => {
       const store = useAuthStore.getState();
-      const mockSession = {} as SignupResult['session'];
+      const mockSession = {} as THomeserverSessionResult['session'];
 
       // Initially not authenticated (no session)
       expect(store.selectIsAuthenticated()).toBe(false);

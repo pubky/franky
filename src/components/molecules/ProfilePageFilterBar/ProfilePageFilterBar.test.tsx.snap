@@ -709,7 +709,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
         data-cy="profile-filter-item-tagged-count"
         data-testid="typography"
       >
-        0
+        5
       </span>
     </button>
   </div>

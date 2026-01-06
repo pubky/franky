@@ -12,7 +12,7 @@ const mockStats: Hooks.ProfileStats = {
   followers: 115,
   following: 27,
   friends: 10,
-  tagged: 5,
+  uniqueTags: 5,
 };
 
 describe('ProfilePageFilterBar', () => {
@@ -27,7 +27,7 @@ describe('ProfilePageFilterBar', () => {
     const defaultItems = getDefaultItems(mockStats);
     defaultItems.forEach((item) => {
       expect(screen.getByText(item.label)).toBeInTheDocument();
-      expect(screen.getByText(item.count.toString())).toBeInTheDocument();
+      expect(screen.getByText((item.count ?? 0).toString())).toBeInTheDocument();
     });
   });
 
@@ -76,7 +76,7 @@ describe('ProfilePageFilterBar', () => {
       followers: 0,
       following: 0,
       friends: 0,
-      tagged: 0,
+      uniqueTags: 0,
     };
     render(
       <ProfilePageFilterBar
@@ -203,7 +203,7 @@ describe('ProfilePageFilterBar - Snapshots', () => {
       followers: 0,
       following: 0,
       friends: 0,
-      tagged: 0,
+      uniqueTags: 0,
     };
     const { container } = render(
       <ProfilePageFilterBar

@@ -12,6 +12,17 @@ vi.mock('@/hooks/useRepostInfo', () => ({
   useRepostInfo: vi.fn(),
 }));
 
+// Helper to create complete PostDetails mock
+const createMockPostDetails = (overrides: Partial<{ content: string; attachments: string[] | null }> = {}) => ({
+  id: 'test-author:test-post',
+  indexed_at: Date.now(),
+  kind: 'short' as const,
+  uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
+  content: '',
+  attachments: null as string[] | null,
+  ...overrides,
+});
+
 describe('usePostHeaderVisibility', () => {
   const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
   const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
@@ -22,7 +33,7 @@ describe('usePostHeaderVisibility', () => {
 
   it('shows both headers for regular post (not a repost)', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Regular post content', attachments: null },
+      postDetails: createMockPostDetails({ content: 'Regular post content' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -42,7 +53,7 @@ describe('usePostHeaderVisibility', () => {
 
   it('hides PostHeader for simple repost (no content) by current user', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: null },
+      postDetails: createMockPostDetails({ content: '' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -62,7 +73,7 @@ describe('usePostHeaderVisibility', () => {
 
   it('shows PostHeader for quote repost (with text content) by current user', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'This is a quote repost', attachments: null },
+      postDetails: createMockPostDetails({ content: 'This is a quote repost' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -82,7 +93,14 @@ describe('usePostHeaderVisibility', () => {
 
   it('shows PostHeader for repost with attachments but no text by current user', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: ['attachment-1', 'attachment-2'] },
+      postDetails: {
+        id: 'me:repost-with-attachments-1',
+        content: '',
+        attachments: ['attachment-1', 'attachment-2'],
+        indexed_at: Date.now(),
+        kind: 'short',
+        uri: 'https://example.com/post/me:repost-with-attachments-1',
+      },
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -102,7 +120,14 @@ describe('usePostHeaderVisibility', () => {
 
   it('hides PostHeader for repost with only whitespace content by current user', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '   \n\t  ', attachments: null },
+      postDetails: {
+        id: 'me:repost-whitespace-1',
+        content: '   \n\t  ',
+        attachments: null,
+        indexed_at: Date.now(),
+        kind: 'short',
+        uri: 'https://example.com/post/me:repost-whitespace-1',
+      },
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -122,7 +147,7 @@ describe('usePostHeaderVisibility', () => {
 
   it('shows PostHeader for repost by another user even without content', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: null },
+      postDetails: createMockPostDetails({ content: '' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({

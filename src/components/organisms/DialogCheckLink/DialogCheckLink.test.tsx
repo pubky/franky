@@ -76,7 +76,7 @@ vi.mock('@/atoms', () => ({
   }: {
     children: React.ReactNode;
     className?: string;
-    as?: string;
+    as?: React.ElementType;
     [key: string]: unknown;
   }) => (
     <Tag data-testid="typography" className={className} {...props}>
