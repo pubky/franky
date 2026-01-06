@@ -169,34 +169,35 @@ export const createPostFromDialog = (postContent: string, expectedPostLength?: n
   cy.get('[data-cy="dialog-content"]').should('not.exist');
 };
 
-// // reply to any post in the feed that contains the filterText by index
-// export const replyToPost = ({
-//   replyContent,
-//   postContent,
-//   filterText = '',
-//   postIdx = 0,
-//   waitForIndexed = CheckIndexed.Yes
-// }: {
-//   replyContent: string;
-//   postContent?: string;
-//   filterText?: string;
-//   postIdx?: number;
-//   waitForIndexed?: CheckIndexed;
-// }) => {
-//   cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {
-//     cy.get('#reply-btn').click();
-//   });
-//   cy.get('#modal-root')
-//     .should('be.visible')
-//     .within(($modal) => {
-//       cy.get('h1').contains('Reply');
-//       // check that the post content is displayed in the reply modal
-//       if (postContent) cy.wrap($modal).contains(postContent);
-//       cy.get('textarea').should('have.value', '');
-//       cy.get('textarea').type(replyContent);
-//       cy.get('#reply-btn').click();
-//     });
-// };
+// reply to any post in the feed that contains the filterText
+export const replyToPost = ({ replyContent, filterText }: { replyContent: string; filterText: string }) => {
+  // Find the post by its content text
+  cy.get('[data-cy="timeline-posts"]')
+    .children()
+    .then(($posts) => {
+      // Filter posts by text content
+      const matchingPosts = $posts.filter((_idx, element) => {
+        const postText = Cypress.$(element).find('[data-cy="post-text"]').text();
+        return postText.includes(filterText);
+      });
+      return cy.wrap(matchingPosts.first());
+    })
+    .within(() => {
+      // Click the reply button
+      cy.get('[data-cy="post-reply-btn"]').click();
+    });
+
+  // Wait for dialog to open and type reply
+  cy.get('[data-cy="reply-post-input"]').should('be.visible');
+  cy.get('[data-cy="reply-post-input"]').within(() => {
+    cy.get('textarea').should('have.value', '').type(replyContent);
+    // Submit the reply - button aria-label is "Post reply" so data-cy is "post-input-action-bar-post-reply"
+    cy.get('[data-cy="post-input-action-bar-reply"]').click();
+  });
+
+  // Wait for dialog to close
+  cy.get('[data-cy="reply-post-input"]').should('not.exist');
+};
 
 // // repost any post in the feed that contains the filterText by index
 // // if no arguments or just repostContent is provided then it reposts the latest post in the feed
