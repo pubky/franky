@@ -22,7 +22,11 @@ export class NotificationController {
    * Should be called when the user enters the notifications page.
    */
   static markAllAsRead() {
-    const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
+    const authStore = Core.useAuthStore.getState();
+    const pubky = authStore.currentUserPubky;
+
+    // Skip if user is not authenticated (e.g., during logout)
+    if (!pubky) return;
 
     // Create new lastRead with current timestamp using normalizer
     const lastRead = Core.LastReadNormalizer.to(pubky);
