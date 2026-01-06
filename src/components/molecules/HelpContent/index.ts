@@ -1,2 +1,2 @@
-export * from './HelpContent';
-export { FAQ_QUESTIONS, SUPPORT_LINKS } from './HelpContent.constants';
+export { HelpContent } from './HelpContent';
+export type { FAQSection } from './HelpContent.types';

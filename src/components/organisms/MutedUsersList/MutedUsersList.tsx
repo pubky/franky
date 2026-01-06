@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import type { MutedUser } from './MutedUsersList.types';
@@ -52,8 +51,7 @@ export function MutedUsersList() {
             </Atoms.Container>
           ))}
           {mutedUsers.length > 1 && (
-            <>
-              <Molecules.SettingsDivider className="my-6 h-px w-full bg-white/10" />
+            <Atoms.Container overrideDefaults className="mt-6">
               <Atoms.Button
                 variant="secondary"
                 size="default"
@@ -63,7 +61,7 @@ export function MutedUsersList() {
                 <Libs.VolumeX size={16} />
                 Unmute all users
               </Atoms.Button>
-            </>
+            </Atoms.Container>
           )}
         </>
       ) : (

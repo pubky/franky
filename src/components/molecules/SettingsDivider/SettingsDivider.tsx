@@ -1,9 +1,5 @@
-import * as React from 'react';
+import * as Atoms from '@/atoms';
 
-export interface SettingsDividerProps {
-  className?: string;
+export function SettingsDivider() {
+  return <Atoms.Container overrideDefaults className="h-px w-full bg-white/10" aria-hidden="true" />;
 }
-
-export const SettingsDivider = React.memo(function SettingsDivider({ className }: SettingsDividerProps) {
-  return <div className={className || 'my-6 h-px w-full bg-white/10'} aria-hidden="true" />;
-});
