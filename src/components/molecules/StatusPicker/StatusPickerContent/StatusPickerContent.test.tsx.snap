@@ -185,7 +185,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
         />
         <button
           aria-label="Change emoji"
-          class="h-9 w-9 shrink-0 p-0 inline-flex cursor-pointer items-center justify-center hover:opacity-80"
+          class="size-9 shrink-0 rounded-full bg-secondary p-1 inline-flex cursor-pointer items-center justify-center hover:bg-secondary/80"
           data-slot="button"
         >
           <span
@@ -385,7 +385,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
         />
         <button
           aria-label="Open emoji picker"
-          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center hover:shadow-xs-dark"
+          class="size-9 shrink-0 rounded-full bg-secondary p-1 inline-flex cursor-pointer items-center justify-center hover:bg-secondary/80"
           data-slot="button"
         >
           <svg
@@ -631,7 +631,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
         />
         <button
           aria-label="Open emoji picker"
-          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center hover:shadow-xs-dark"
+          class="size-9 shrink-0 rounded-full bg-secondary p-1 inline-flex cursor-pointer items-center justify-center hover:bg-secondary/80"
           data-slot="button"
         >
           <svg

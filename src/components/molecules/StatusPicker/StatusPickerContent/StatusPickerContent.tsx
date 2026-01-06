@@ -118,9 +118,9 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
                 overrideDefaults={true}
                 onClick={() => setShowEmojiPicker(true)}
                 className={Libs.cn(
-                  'h-9 w-9 shrink-0 p-0',
+                  'size-9 shrink-0 rounded-full bg-secondary p-1',
                   'inline-flex cursor-pointer items-center justify-center',
-                  'hover:opacity-80',
+                  'hover:bg-secondary/80',
                 )}
                 aria-label="Change emoji"
               >
@@ -131,9 +131,9 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
                 overrideDefaults={true}
                 onClick={() => setShowEmojiPicker(true)}
                 className={Libs.cn(
-                  'size-9 shrink-0 rounded-full p-1 shadow-xs-dark',
+                  'size-9 shrink-0 rounded-full bg-secondary p-1',
                   'inline-flex cursor-pointer items-center justify-center',
-                  'hover:shadow-xs-dark',
+                  'hover:bg-secondary/80',
                 )}
                 aria-label="Open emoji picker"
               >
