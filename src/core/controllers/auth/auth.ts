@@ -6,15 +6,10 @@ export class AuthController {
 
   private static activeAuthFlow: { token: symbol; cancel: (() => void) | null } | null = null;
 
-  private static freeActiveAuthFlow() {
+  static cancelActiveAuthFlow() {
     const cancel = this.activeAuthFlow?.cancel;
     this.activeAuthFlow = null;
-    if (!cancel) return;
-    cancel();
-  }
-
-  static cancelActiveAuthFlow() {
-    this.freeActiveAuthFlow();
+    cancel?.();
   }
 
   /**
@@ -22,7 +17,6 @@ export class AuthController {
    * @returns Promise resolving to true if the session was restored successfully, false otherwise
    */
   static async restorePersistedSession(): Promise<boolean> {
-    console.log('restorePersistedSession');
     const authStore = Core.useAuthStore.getState();
     const result = await Core.AuthApplication.restorePersistedSession({ authStore });
     if (!result) return false;
@@ -132,7 +126,7 @@ export class AuthController {
   static async getAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
     await Core.clearDatabase();
     const token = Symbol('auth-flow');
-    this.freeActiveAuthFlow();
+    this.cancelActiveAuthFlow();
     this.activeAuthFlow = { token, cancel: null };
     const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthApplication.generateAuthUrl();
 

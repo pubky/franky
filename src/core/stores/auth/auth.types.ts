@@ -1,19 +1,16 @@
 import * as Core from '@/core';
 import { Session } from '@synonymdev/pubky';
 
-export interface AuthState {
+export interface AuthInitParams {
   currentUserPubky: Core.Pubky | null;
   session: Session | null;
-  sessionExport: string | null;
   hasProfile: boolean;
-  hasHydrated: boolean;
-  isRestoringSession: boolean;
 }
 
-export interface AuthInitParams {
-  session: Session;
-  currentUserPubky: Core.Pubky;
-  hasProfile: boolean;
+export interface AuthState extends AuthInitParams {
+  sessionExport: string | null;
+  hasHydrated: boolean;
+  isRestoringSession: boolean;
 }
 
 export interface AuthActions {

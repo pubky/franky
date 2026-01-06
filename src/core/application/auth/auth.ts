@@ -34,9 +34,8 @@ export class AuthApplication {
         return { session };
       } catch (error) {
         Libs.Logger.error('Failed to restore session from persisted export', error);
-        authStore.setSession(null);
-        authStore.setCurrentUserPubky(null);
-        authStore.setHasProfile(false);
+        const initialState = { session: null, currentUserPubky: null, hasProfile: false };
+        authStore.init(initialState);
         return null;
       } finally {
         authStore.setIsRestoringSession(false);

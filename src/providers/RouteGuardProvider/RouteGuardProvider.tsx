@@ -33,9 +33,6 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
   const { hasHydrated, session, sessionExport } = Core.useAuthStore((state) => state);
-  console.log('session', session);
-  console.log('sessionExport', sessionExport);
-  console.log('hasHydrated', hasHydrated);
   // Attempt to restore an existing session snapshot on fresh loads.
   useEffect(() => {
     if (!hasHydrated) return;
