@@ -46,7 +46,10 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
           <Atoms.Button id="backup-recovery-phrase-btn">Continue</Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="max-w-sm md:max-w-2xl" hiddenTitle="Backup recovery phrase">
+      <Atoms.DialogContent
+        className="max-h-[calc(100dvh-2rem)] max-w-sm overflow-y-auto md:max-w-2xl"
+        hiddenTitle="Backup recovery phrase"
+      >
         {step === 1 && (
           <RecoveryStep1
             recoveryWords={recoveryWords}
