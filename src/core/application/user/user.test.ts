@@ -341,4 +341,22 @@ describe('UserApplication.getCounts', () => {
 
     await expect(UserApplication.getCounts({ userId })).rejects.toThrow('Local database error');
   });
+
+  it('should propagate errors from Nexus service when local cache is empty', async () => {
+    vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(null);
+    vi.spyOn(Core.NexusUserService, 'counts').mockRejectedValue(new Error('Network error'));
+    const upsertSpy = vi.spyOn(Core.LocalUserService, 'upsertCounts').mockResolvedValue(undefined);
+
+    await expect(UserApplication.getCounts({ userId })).rejects.toThrow('Network error');
+
+    expect(upsertSpy).not.toHaveBeenCalled();
+  });
+
+  it('should propagate errors from upsert when caching Nexus data', async () => {
+    vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(null);
+    vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
+    vi.spyOn(Core.LocalUserService, 'upsertCounts').mockRejectedValue(new Error('Cache write error'));
+
+    await expect(UserApplication.getCounts({ userId })).rejects.toThrow('Cache write error');
+  });
 });
