@@ -7,7 +7,6 @@ import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Utils from '@/libs/utils';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
-import { POST_INPUT_ACTION_SUBMIT_MODE } from '@/organisms/PostInputActionBar';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
 import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
@@ -146,7 +145,7 @@ export function QuickReply({
             onEmojiSelect={handleEmojiSelect}
             onFileClick={handleFileClick}
             onImageClick={handleFileClick}
-            submitMode={POST_INPUT_ACTION_SUBMIT_MODE.REPLY}
+            submitMode={POST_INPUT_VARIANT.REPLY}
             className={isExpanded ? 'mt-4' : ''}
           />
         </Atoms.Container>
