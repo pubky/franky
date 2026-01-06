@@ -64,33 +64,34 @@ UI (stream viewport)
 
 All values are configurable via environment variables in `src/config/`. The values below are **examples**:
 
-| Config | Example Value | Rationale |
-|--------|---------------|-----------|
-| `POST_TTL_MS` | ~5 minutes | Engagement counts change frequently |
-| `USER_TTL_MS` | ~10 minutes | Profile data changes less often |
-| `BATCH_INTERVAL_MS` | ~5 seconds | Balance between freshness and network efficiency |
-| `POST_MAX_BATCH_SIZE` | ~20 | Reasonable batch size for Nexus API |
-| `USER_MAX_BATCH_SIZE` | ~20 | Reasonable batch size for Nexus API |
+| Config                | Example Value | Rationale                                        |
+| --------------------- | ------------- | ------------------------------------------------ |
+| `POST_TTL_MS`         | ~5 minutes    | Engagement counts change frequently              |
+| `USER_TTL_MS`         | ~10 minutes   | Profile data changes less often                  |
+| `BATCH_INTERVAL_MS`   | ~5 seconds    | Balance between freshness and network efficiency |
+| `POST_MAX_BATCH_SIZE` | ~20           | Reasonable batch size for Nexus API              |
+| `USER_MAX_BATCH_SIZE` | ~20           | Reasonable batch size for Nexus API              |
 
 ### TTL Tables Schema
 
 ```typescript
 // post_ttl table
-{ 
+{
   id: CompositePostId,      // "authorPubky:postId"
   lastUpdatedAt: number     // timestamp when data was last fetched
 }
 
 // user_ttl table
-{ 
+{
   id: Pubky,                // user public key
   lastUpdatedAt: number     // timestamp when data was last fetched
 }
 ```
 
 Staleness check:
+
 ```typescript
-const isStale = !record || (Date.now() - record.lastUpdatedAt > TTL_MS);
+const isStale = !record || Date.now() - record.lastUpdatedAt > TTL_MS;
 ```
 
 ### API
@@ -98,6 +99,7 @@ const isStale = !record || (Date.now() - record.lastUpdatedAt > TTL_MS);
 The UI calls the TTL Coordinator directly (like existing coordinators managed by `CoordinatorsManager`). This provides a typed contract and keeps the control flow easy to trace.
 
 **Methods (UI → Coordinator):**
+
 ```typescript
 subscribePost({ compositePostId }: { compositePostId: CompositePostId }): void
 unsubscribePost({ compositePostId }: { compositePostId: CompositePostId }): void
@@ -107,21 +109,23 @@ unsubscribeUser({ pubky }: { pubky: Pubky }): void
 ```
 
 **Internal behavior:**
+
 - `CoordinatorsManager` (UI) informs coordinators of route changes via `setRoute(pathname)`
 - TTL Coordinator clears subscriptions on route changes by calling `reset()` (triggered from `setRoute`)
 
 **Coordinator Lifecycle:**
+
 ```typescript
 class TtlCoordinator {
-  start(): void   // Start batch tick
-  stop(): void    // Stop listening + clear state
-  setRoute(route: string): void // Called by CoordinatorsManager; triggers reset() when route changes
+  start(): void; // Start batch tick
+  stop(): void; // Stop listening + clear state
+  setRoute(route: string): void; // Called by CoordinatorsManager; triggers reset() when route changes
 
   // UI entry points (viewport-driven)
-  subscribePost(params: { compositePostId: CompositePostId }): void
-  unsubscribePost(params: { compositePostId: CompositePostId }): void
-  subscribeUser(params: { pubky: Pubky }): void
-  unsubscribeUser(params: { pubky: Pubky }): void
+  subscribePost(params: { compositePostId: CompositePostId }): void;
+  unsubscribePost(params: { compositePostId: CompositePostId }): void;
+  subscribeUser(params: { pubky: Pubky }): void;
+  unsubscribeUser(params: { pubky: Pubky }): void;
 }
 ```
 
@@ -180,10 +184,12 @@ onBatchTick()
 Local-first `getOrFetch*` methods often short-circuit when data already exists locally. For TTL refresh we need a **force refresh** path that fetches from Nexus even if the entity is present in IndexedDB.
 
 **Methods (implemented):**
+
 - Posts: `TtlController.forceRefreshPostsByIds({ postIds, viewerId })`
 - Users: `TtlController.forceRefreshUsersByIds({ userIds, viewerId? })`
 
 These methods should fetch **views** (not partial fragments):
+
 - **Post view**: `NexusPost` (details + counts + relationships + tags + bookmark)
 - **User view**: `NexusUser` (details + counts + relationship + tags)
 
@@ -194,6 +200,7 @@ The TTL Coordinator uses these methods when `(now - lastUpdatedAt) > TTL_MS` to 
 ### Lifecycle Gating (auth + page visibility)
 
 The TTL Coordinator must be lifecycle-aware like other coordinators:
+
 - Only run refresh ticks when the user is authenticated (derive `viewerId` from auth store)
 - If unauthenticated, skip ticks and do not enqueue refresh work
 - Pause refresh when the page is hidden (unless explicitly configured otherwise)
@@ -202,6 +209,7 @@ The TTL Coordinator must be lifecycle-aware like other coordinators:
 ### Idempotency & Refcount Invariants
 
 Viewport signals can be noisy; the coordinator must be safe under repeated calls:
+
 - `subscribePost` is idempotent for the same `compositePostId` (does not double-increment author refcount)
 - `unsubscribePost` is safe if called multiple times or for unknown IDs (no negative refcounts)
 - `subscribeUser`/`unsubscribeUser` follow the same rule: refcounts never drop below 0
@@ -242,7 +250,7 @@ reset()
     ├──► Clear userRefCount map
     ├──► Clear postBatchQueue
     └──► Clear userBatchQueue
-    
+
     Note: In-flight batch requests complete (data still useful for cache)
           but results won't be re-queued since subscriptions are cleared
 ```
@@ -272,10 +280,12 @@ Multiple UI surfaces may subscribe to the same user (e.g. profile header + profi
 **Description**: Each subscribed item has its own timer that fires exactly when its TTL expires. Timer is created on subscribe, cancelled on unsubscribe, and restarted after refresh.
 
 **Pros**:
+
 - Precise TTL expiration (fires exactly when stale)
 - No unnecessary checks on valid items
 
 **Cons**:
+
 - High complexity: create, cancel, track timers per item
 - Many edge cases: orphaned timers, race conditions, timer cleanup
 - Memory overhead: timer references for each subscribed item

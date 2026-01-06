@@ -23,10 +23,11 @@ import type {
  *
  * Architecture:
  * - Posts: subscribedPosts Set + postBatchQueue Set
- * - Users: subscribedUsers Set + userRefCount Map + userBatchQueue Set
+ * - Users: subscribedUsers Set + userBatchQueue Set (ref-counted for multiple subscribers)
  *
- * Note: Post subscriptions do NOT automatically subscribe users.
- * User subscriptions are managed explicitly via subscribeUser/unsubscribeUser.
+ * Note: Post and user subscriptions are independent.
+ * User subscriptions are managed explicitly via subscribeUser/unsubscribeUser,
+ * with reference counting to handle multiple subscribers to the same user.
  */
 export class TtlCoordinator {
   private static instance: TtlCoordinator | null = null;
@@ -56,7 +57,6 @@ export class TtlCoordinator {
   // Store unsubscribers
   private authStoreUnsubscribe: (() => void) | null = null;
   private visibilityChangeHandler: (() => void) | null = null;
-  private isTickInFlight = false;
   private isTickLoopActive = false;
 
   private constructor() {
@@ -460,18 +460,12 @@ export class TtlCoordinator {
    * Checks all subscriptions for staleness and fires batch refreshes
    */
   private async onBatchTick(): Promise<void> {
-    if (this.isTickInFlight) {
-      return;
-    }
-
     // Skip if not authenticated
     const authState = Core.useAuthStore.getState();
     if (!authState.selectIsAuthenticated()) {
       return;
     }
 
-    this.isTickInFlight = true;
-    try {
     const viewerId = authState.currentUserPubky;
 
     // Check all subscribed posts for staleness
@@ -485,9 +479,6 @@ export class TtlCoordinator {
 
     // Fire batch refresh for users
     await this.refreshStaleUsers(viewerId);
-    } finally {
-      this.isTickInFlight = false;
-    }
   }
 
   /**
@@ -594,4 +585,3 @@ export class TtlCoordinator {
     }
   }
 }
-

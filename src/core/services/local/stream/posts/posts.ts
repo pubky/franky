@@ -197,9 +197,11 @@ export class LocalStreamPostsService {
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
     const postBookmarks: Core.BookmarkModelSchema[] = [];
+    const postTtl: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [];
 
     const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
     const postAttachments: string[] = [];
+    const now = Date.now();
 
     for (const post of posts) {
       // Build composite ID to ensure uniqueness (authorId:postId)
@@ -236,6 +238,9 @@ export class LocalStreamPostsService {
       const { author, ...detailsWithoutAuthor } = post.details;
       postDetails.push({ ...detailsWithoutAuthor, id: postId });
 
+      // Record TTL for freshness tracking
+      postTtl.push([postId, { lastUpdatedAt: now }]);
+
       // Add reply to the post replies map if this post is a reply
       this.addReplyToStream({ repliedUri: post.relationships.replied, replyPostId: postId, postReplies });
     }
@@ -245,6 +250,7 @@ export class LocalStreamPostsService {
       Core.PostCountsModel.bulkSave(postCounts),
       Core.PostTagsModel.bulkSave(postTags),
       Core.PostRelationshipsModel.bulkSave(postRelationships),
+      Core.PostTtlModel.bulkSave(postTtl),
       // Persist bookmarks from Nexus (viewer's bookmark status for each post)
       postBookmarks.length > 0 ? Core.BookmarkModel.bulkSave(postBookmarks) : Promise.resolve(),
     ]);

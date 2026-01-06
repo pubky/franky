@@ -19,5 +19,3 @@ export class TtlController {
     return await Core.TtlApplication.forceRefreshUsersByIds(params);
   }
 }
-
-

@@ -154,4 +154,3 @@ export interface TtlUnsubscribeUserParams {
    */
   pubky: Core.Pubky;
 }
-

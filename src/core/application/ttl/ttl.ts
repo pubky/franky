@@ -42,6 +42,9 @@ export class TtlApplication {
     }
   }
 
+  /**
+   * Force refresh posts by fetching fresh data from Nexus.
+   */
   static async forceRefreshPostsByIds(params: { postIds: string[]; viewerId: Core.Pubky }): Promise<void> {
     const uniqueIds = Array.from(new Set(params.postIds));
     if (uniqueIds.length === 0) return;
@@ -53,27 +56,16 @@ export class TtlApplication {
 
     const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
 
-    // TODO: That function has to update the TTL as well
     const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
     await Core.FileApplication.fetchFiles(postAttachments);
 
-    // Opportunistic cache warm: fetch missing authors (but do NOT update user TTL here).
+    // Opportunistic cache warm: fetch missing authors
     await this.fetchAndPersistMissingAuthors({ posts: postBatch, viewerId: params.viewerId });
-
-    const now = Date.now();
-    const refreshedPostIds = postBatch.map((post) =>
-      Core.buildCompositeId({ pubky: post.details.author, id: post.details.id }),
-    );
-
-    if (refreshedPostIds.length === 0) return;
-
-    const ttlRecords: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = refreshedPostIds.map((id) => [
-      id,
-      { lastUpdatedAt: now },
-    ]);
-    await Core.PostTtlModel.bulkSave(ttlRecords);
   }
 
+  /**
+   * Force refresh users by fetching fresh data from Nexus.
+   */
   static async forceRefreshUsersByIds(params: { userIds: Core.Pubky[]; viewerId?: Core.Pubky }): Promise<void> {
     const uniqueIds = Array.from(new Set(params.userIds));
     if (uniqueIds.length === 0) return;
@@ -84,20 +76,13 @@ export class TtlApplication {
     });
 
     const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
-    // TODO: That function has to update the TTL as well
+
     await Core.LocalStreamUsersService.persistUsers(userBatch);
-
-    const now = Date.now();
-    const refreshedUserIds = userBatch.map((user) => user.details.id as Core.Pubky);
-    if (refreshedUserIds.length === 0) return;
-
-    const ttlRecords: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = refreshedUserIds.map((id) => [
-      id,
-      { lastUpdatedAt: now },
-    ]);
-    await Core.UserTtlModel.bulkSave(ttlRecords);
   }
 
+  /**
+   * Fetch and persist missing post authors for cache warming.
+   */
   private static async fetchAndPersistMissingAuthors(params: {
     posts: Core.NexusPost[];
     viewerId: Core.Pubky;
@@ -117,5 +102,3 @@ export class TtlApplication {
     await Core.LocalStreamUsersService.persistUsers(userBatch);
   }
 }
-
-
