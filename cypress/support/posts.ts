@@ -229,14 +229,15 @@ export const createPostFromDialog = (postContent: string, expectedPostLength?: n
 //     });
 // };
 
-// // find a post first and use within it. Useful for fast tagging posts not in the feed.
-// export const fastTagPost = (tags: string[]) => {
-//   tags.forEach((tag) => {
-//     cy.get('#show-add-tag-input-btn').click();
-//     cy.get('input').type(tag);
-//     cy.get('#add-tag-btn').click();
-//   });
-// };
+// tag a post by clicking the add button, typing the tag, and pressing Enter
+export const fastTagPost = (tags: string[]) => {
+  tags.forEach((tag) => {
+    // Click the add tag button to show the input
+    cy.get('[data-cy="post-tag-add-button"]').first().click();
+    // Type the tag and press Enter to submit
+    cy.get('[data-cy="add-tag-input"]').first().type(`${tag}{enter}`);
+  });
+};
 
 // // tag whilst creating post
 // export const fastTagWhilstCreatingPost = (tags: string[]) => {
