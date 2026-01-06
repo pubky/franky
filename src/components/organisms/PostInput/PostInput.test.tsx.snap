@@ -664,6 +664,14 @@ exports[`PostInput - Snapshots > matches snapshot for repost variant without con
       data-testid="post-input-attachments"
     />
     <div
+      class="bg-card"
+      data-post-id="test-post-123"
+      data-testid="post-preview-card"
+    >
+      Original Post: 
+      test-post-123
+    </div>
+    <div
       class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
       data-override-defaults="true"
       data-testid="container"

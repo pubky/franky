@@ -35,7 +35,6 @@ vi.mock('@/molecules/PostInputAttachments/PostInputAttachments', () => ({
 
 vi.mock('@/organisms/PostInputActionBar', () => ({
   PostInputActionBar: ({ ...props }: { [key: string]: unknown }) => <div data-testid="action-bar" {...props} />,
-  POST_INPUT_ACTION_SUBMIT_MODE: { POST: 'post', REPLY: 'reply' },
 }));
 
 vi.mock('@/organisms/PostInputTags', () => ({
