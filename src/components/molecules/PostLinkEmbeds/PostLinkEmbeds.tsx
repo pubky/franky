@@ -38,9 +38,13 @@ const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
 /**
  * Strip Markdown link syntax from content
  * Removes [text](url) entirely so URLs inside Markdown links aren't detected
+ * Handles URLs with nested parentheses (e.g., Wikipedia links like /wiki/Foo_(bar))
  */
 const stripMarkdownLinks = (content: string): string => {
-  return content.replace(/\[([^\]]*)\]\([^)]*\)/g, '<stripped-link>');
+  // Pattern handles one level of nested parentheses in URLs
+  // [^()]* matches chars that aren't parentheses
+  // (?:\([^()]*\)[^()]*)* matches (content) groups and text after them
+  return content.replace(/\[([^\]]*)\]\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, '<stripped-link>');
 };
 
 /**

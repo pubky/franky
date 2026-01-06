@@ -35,8 +35,10 @@ export const remarkDisallowMarkdownLinks = () => (tree: Root) => {
     // - Exact match (e.g. https://example.com as both text and URL)
     // - www autolinks where GFM adds http:// prefix (e.g. www.example.com -> http://www.example.com)
     // - Email autolinks where GFM adds mailto: prefix (e.g. user@example.com -> mailto:user@example.com)
-    if (textContent === node.url || node.url === `http://${textContent}` || node.url === `mailto:${textContent}`)
-      return;
+    const isAutolink =
+      textContent === node.url || node.url === `http://${textContent}` || node.url === `mailto:${textContent}`;
+
+    if (isAutolink) return;
 
     // Markdown-style link detected - convert back to plaintext
     // Include title if present: [text](url "title")

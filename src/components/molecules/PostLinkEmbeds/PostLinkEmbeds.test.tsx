@@ -641,6 +641,15 @@ describe('PostLinkEmbeds', () => {
         expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
       });
     });
+
+    it('handles Markdown links with nested parentheses in URL (Wikipedia)', async () => {
+      render(
+        <PostLinkEmbeds content="[Wiki](https://en.wikipedia.org/wiki/Foo_(bar)) and https://youtube.com/watch?v=dQw4w9WgXcQ" />,
+      );
+
+      const iframe = await screen.findByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+    });
   });
 
   describe('Edge cases', () => {
