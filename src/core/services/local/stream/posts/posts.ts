@@ -234,6 +234,7 @@ export class LocalStreamPostsService {
       if (isModerated) {
         postModerations.push({
           id: postId,
+          type: Core.ModerationType.POST,
           is_blurred: true,
           created_at: Date.now(),
         });

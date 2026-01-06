@@ -4,47 +4,60 @@ import * as Libs from '@/libs';
 export class LocalModerationService {
   private constructor() {}
 
-  static async setUnblur(postId: string): Promise<void> {
+  /**
+   * Sets an item as unblurred by the user.
+   */
+  static async setUnblur(id: string): Promise<void> {
     try {
-      const record = await Core.ModerationModel.findById(postId);
+      const record = await Core.ModerationModel.findById(id);
       if (!record) {
         return;
       }
-      await Core.ModerationModel.update(postId, { is_blurred: false });
+      await Core.ModerationModel.update(id, { is_blurred: false });
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to unblur post', 500, {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to unblur item', 500, {
         error,
-        postId,
+        id,
       });
     }
   }
 
   /**
-   * Gets the moderation state for a post.
-   * Returns null if the post is not moderated.
+   * Gets the moderation state for an item.
+   * Returns null if the item is not moderated.
+   * Optionally filters by type.
    */
-  static async getModerationRecord(postId: string): Promise<Core.ModerationModelSchema | null> {
+  static async getModerationRecord(id: string, type?: Core.ModerationType): Promise<Core.ModerationModelSchema | null> {
     try {
-      const record = await Core.ModerationModel.findById(postId);
-      return record ?? null;
+      const record = await Core.ModerationModel.findById(id);
+      if (!record) return null;
+      if (type && record.type !== type) return null;
+      return record;
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get moderation record', 500, {
         error,
-        postId,
+        id,
+        type,
       });
     }
   }
 
   /**
-   * Gets the moderation records for multiple posts.
+   * Gets the moderation records for multiple items.
+   * Optionally filters by type.
    */
-  static async getModerationRecords(postIds: string[]): Promise<Core.ModerationModelSchema[]> {
+  static async getModerationRecords(ids: string[], type?: Core.ModerationType): Promise<Core.ModerationModelSchema[]> {
     try {
-      return await Core.ModerationModel.findByIds(postIds);
+      const records = await Core.ModerationModel.findByIds(ids);
+      if (type) {
+        return records.filter((r) => r.type === type);
+      }
+      return records;
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get moderation records', 500, {
         error,
-        postIds,
+        ids,
+        type,
       });
     }
   }

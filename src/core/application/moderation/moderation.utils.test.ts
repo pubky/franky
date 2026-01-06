@@ -78,22 +78,22 @@ describe('moderation.utils', () => {
 
   describe('shouldBlur', () => {
     it('should return false when blur is disabled globally', () => {
-      const result = shouldBlur(true, true, true);
+      const result = shouldBlur(true, true);
       expect(result).toBe(false);
     });
 
-    it('should return false when post is not moderated', () => {
-      const result = shouldBlur(false, true, false);
-      expect(result).toBe(false);
-    });
-
-    it('should return true when post is moderated and blurred', () => {
-      const result = shouldBlur(true, true, false);
+    it('should return true when item is blurred and blur is enabled globally', () => {
+      const result = shouldBlur(true, false);
       expect(result).toBe(true);
     });
 
-    it('should return false when post is moderated but not blurred', () => {
-      const result = shouldBlur(true, false, false);
+    it('should return false when item is not blurred', () => {
+      const result = shouldBlur(false, false);
+      expect(result).toBe(false);
+    });
+
+    it('should return false when item is not blurred even if blur enabled globally', () => {
+      const result = shouldBlur(false, false);
       expect(result).toBe(false);
     });
   });
