@@ -1,19 +1,9 @@
 'use client';
 
-import * as React from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
+import Markdown from 'react-markdown';
 import * as Libs from '@/libs';
-
-export interface FAQAccordionItem {
-  id: string;
-  question: string;
-  answer: React.ReactNode;
-}
-
-export interface FAQAccordionProps {
-  items: FAQAccordionItem[];
-  className?: string;
-}
+import type { FAQAccordionProps } from './FAQAccordion.types';
 
 export function FAQAccordion({ items, className }: FAQAccordionProps) {
   return (
@@ -25,28 +15,27 @@ export function FAQAccordion({ items, className }: FAQAccordionProps) {
           className="w-full overflow-hidden rounded-lg border border-border"
         >
           <AccordionPrimitive.Header>
-            <AccordionPrimitive.Trigger
-              className={Libs.cn(
-                'flex w-full items-center justify-between px-6 py-4',
-                'cursor-pointer transition-colors hover:bg-white/5',
-                'group',
-              )}
-            >
+            <AccordionPrimitive.Trigger className="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5">
               <span className="text-left text-base font-semibold">{item.question}</span>
-              <Libs.ChevronDown
-                size={20}
-                className={Libs.cn('ml-4 flex-shrink-0 transition-transform', 'group-data-[state=open]:rotate-180')}
+              <Libs.ChevronRight
+                size={16}
+                className="ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
               />
             </AccordionPrimitive.Trigger>
           </AccordionPrimitive.Header>
-          <AccordionPrimitive.Content
-            className={Libs.cn(
-              'overflow-hidden',
-              'data-[state=closed]:animate-accordion-up',
-              'data-[state=open]:animate-accordion-down',
-            )}
-          >
-            <div className="px-6 pt-2 pb-4 text-base leading-6 font-medium text-muted-foreground">{item.answer}</div>
+          <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
+            <div className="px-6 pt-2 pb-4 text-base leading-6 font-medium text-muted-foreground">
+              <Markdown
+                components={{
+                  p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
+                  ul: ({ children }) => <ul className="mt-2 mb-3 ml-6 list-disc last:mb-0">{children}</ul>,
+                  ol: ({ children }) => <ol className="mt-2 mb-3 ml-6 list-decimal last:mb-0">{children}</ol>,
+                  li: ({ children }) => <li>{children}</li>,
+                }}
+              >
+                {item.answer}
+              </Markdown>
+            </div>
           </AccordionPrimitive.Content>
         </AccordionPrimitive.Item>
       ))}

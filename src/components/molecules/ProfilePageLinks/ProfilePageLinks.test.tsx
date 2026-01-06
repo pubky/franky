@@ -160,6 +160,81 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
     const dialog = screen.getByTestId('dialog-check-link');
     expect(dialog).toHaveAttribute('data-open', 'false');
   });
+
+  it('opens same-domain links directly without dialog even when checkLink is enabled', () => {
+    // Mock window.location.hostname
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { hostname: 'example.com' },
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const sameDomainLinks: Core.NexusUserDetails['links'] = [{ title: 'Same Domain', url: 'https://example.com/page' }];
+    render(<ProfilePageLinks links={sameDomainLinks} />);
+
+    const linkElement = screen.getByText('Same Domain').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/page', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
+
+  it('opens same-domain links with www prefix directly without dialog', () => {
+    // Mock window.location.hostname
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { hostname: 'www.example.com' },
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const sameDomainLinks: Core.NexusUserDetails['links'] = [{ title: 'Same Domain', url: 'https://example.com/page' }];
+    render(<ProfilePageLinks links={sameDomainLinks} />);
+
+    const linkElement = screen.getByText('Same Domain').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/page', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
+
+  it('shows dialog for different domain links even when checkLink is enabled', () => {
+    // Mock window.location.hostname
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { hostname: 'example.com' },
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const differentDomainLinks: Core.NexusUserDetails['links'] = [
+      { title: 'Different Domain', url: 'https://other-domain.com/page' },
+    ];
+    render(<ProfilePageLinks links={differentDomainLinks} />);
+
+    const linkElement = screen.getByText('Different Domain').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).not.toHaveBeenCalled();
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'true');
+    expect(dialog).toHaveAttribute('data-link-url', 'https://other-domain.com/page');
+  });
 });
 
 describe('ProfilePageLinks - Snapshots', () => {
