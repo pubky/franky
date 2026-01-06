@@ -167,3 +167,11 @@ export const unfollowUserByUsername = (username: string) => {
     .find('[data-cy="user-list-item-follow-toggle-btn"]')
     .should('contain.text', 'Follow');
 };
+
+export const waitForPutLastRead = () => {
+  cy.intercept({
+    method: 'PUT',
+    url: '/pub/pubky.app/last_read',
+  }).as('putLastRead');
+  cy.wait('@putLastRead').should('have.property', 'response').its('statusCode').should('eq', 201);
+};
