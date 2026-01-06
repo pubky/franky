@@ -41,7 +41,13 @@ export class UserApplication {
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     // TODO: Throw an error and do not return null
-    return await Core.LocalUserService.readCounts({ userId });
+    const userCounts = await Core.LocalUserService.readCounts({ userId });
+    if (userCounts) {
+      return userCounts;
+    }
+    const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
+    await Core.LocalUserService.upsertCounts({ userId }, nexusUserCounts);
+    return nexusUserCounts;
   }
 
   /**

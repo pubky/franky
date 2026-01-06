@@ -323,13 +323,17 @@ describe('UserApplication.getCounts', () => {
     expect(localSpy).toHaveBeenCalledWith({ userId });
   });
 
-  it('should return null when user counts not found in local cache', async () => {
+  it('should fetch from Nexus and cache locally when not in local cache', async () => {
     const localSpy = vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(null);
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
+    const upsertSpy = vi.spyOn(Core.LocalUserService, 'upsertCounts').mockResolvedValue(undefined);
 
     const result = await UserApplication.getCounts({ userId });
 
-    expect(result).toBeNull();
+    expect(result).toEqual(mockUserCounts);
     expect(localSpy).toHaveBeenCalledWith({ userId });
+    expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
+    expect(upsertSpy).toHaveBeenCalledWith({ userId }, mockUserCounts);
   });
 
   it('should propagate errors from local service', async () => {
