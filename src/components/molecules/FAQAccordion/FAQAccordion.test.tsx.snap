@@ -1,67 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content 1`] = `
-<div
-  class="flex w-full flex-col gap-4"
-  data-orientation="vertical"
->
-  <div
-    class="w-full overflow-hidden rounded-lg border border-border"
-    data-orientation="vertical"
-    data-state="closed"
-  >
-    <h3
-      data-orientation="vertical"
-      data-state="closed"
-    >
-      <button
-        aria-controls="radix-_r_0_"
-        aria-expanded="false"
-        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
-        data-orientation="vertical"
-        data-radix-collection-item=""
-        data-state="closed"
-        id="radix-_r_0_"
-        type="button"
-      >
-        <span
-          class="text-left text-base font-semibold"
-        >
-          Complex question
-        </span>
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
-          fill="none"
-          height="20"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="m6 9 6 6 6-6"
-          />
-        </svg>
-      </button>
-    </h3>
-    <div
-      aria-labelledby="radix-_r_0_"
-      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
-      data-orientation="vertical"
-      data-state="closed"
-      hidden=""
-      id="radix-_r_0_"
-      role="region"
-      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
-    />
-  </div>
-</div>
-`;
-
 exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="flex w-full flex-col gap-4 custom-faq-class"
@@ -79,7 +17,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       <button
         aria-controls="radix-_r_0_"
         aria-expanded="false"
-        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
+        class="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -93,19 +31,19 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-right ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
           fill="none"
-          height="20"
+          height="16"
           stroke="currentColor"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           viewBox="0 0 24 24"
-          width="20"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="m6 9 6 6 6-6"
+            d="m9 18 6-6-6-6"
           />
         </svg>
       </button>
@@ -133,7 +71,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       <button
         aria-controls="radix-_r_0_"
         aria-expanded="false"
-        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
+        class="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -147,19 +85,19 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-right ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
           fill="none"
-          height="20"
+          height="16"
           stroke="currentColor"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           viewBox="0 0 24 24"
-          width="20"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="m6 9 6 6 6-6"
+            d="m9 18 6-6-6-6"
           />
         </svg>
       </button>
@@ -195,7 +133,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-controls="radix-_r_0_"
         aria-expanded="false"
-        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
+        class="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -209,19 +147,19 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-right ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
           fill="none"
-          height="20"
+          height="16"
           stroke="currentColor"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           viewBox="0 0 24 24"
-          width="20"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="m6 9 6 6 6-6"
+            d="m9 18 6-6-6-6"
           />
         </svg>
       </button>
@@ -249,7 +187,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-controls="radix-_r_0_"
         aria-expanded="false"
-        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
+        class="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -263,19 +201,19 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-right ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
           fill="none"
-          height="20"
+          height="16"
           stroke="currentColor"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           viewBox="0 0 24 24"
-          width="20"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="m6 9 6 6 6-6"
+            d="m9 18 6-6-6-6"
           />
         </svg>
       </button>
@@ -299,4 +237,66 @@ exports[`FAQAccordion - Snapshots > matches snapshot with empty items 1`] = `
   class="flex w-full flex-col gap-4"
   data-orientation="vertical"
 />
+`;
+
+exports[`FAQAccordion - Snapshots > matches snapshot with markdown answer content 1`] = `
+<div
+  class="flex w-full flex-col gap-4"
+  data-orientation="vertical"
+>
+  <div
+    class="w-full overflow-hidden rounded-lg border border-border"
+    data-orientation="vertical"
+    data-state="closed"
+  >
+    <h3
+      data-orientation="vertical"
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-_r_0_"
+        aria-expanded="false"
+        class="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-_r_0_"
+        type="button"
+      >
+        <span
+          class="text-left text-base font-semibold"
+        >
+          Complex question
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-right ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m9 18 6-6-6-6"
+          />
+        </svg>
+      </button>
+    </h3>
+    <div
+      aria-labelledby="radix-_r_0_"
+      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-orientation="vertical"
+      data-state="closed"
+      hidden=""
+      id="radix-_r_0_"
+      role="region"
+      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+    />
+  </div>
+</div>
 `;

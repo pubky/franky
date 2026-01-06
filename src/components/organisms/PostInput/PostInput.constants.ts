@@ -11,13 +11,7 @@ export const POST_INPUT_PLACEHOLDER = {
 } as const;
 
 export const POST_INPUT_BUTTON_LABEL = {
-  [POST_INPUT_VARIANT.REPLY]: 'Post',
-  [POST_INPUT_VARIANT.POST]: 'Post',
-  [POST_INPUT_VARIANT.REPOST]: 'Repost',
-} as const;
-
-export const POST_INPUT_BUTTON_ARIA_LABEL = {
-  [POST_INPUT_VARIANT.REPLY]: 'Post reply',
+  [POST_INPUT_VARIANT.REPLY]: 'Reply',
   [POST_INPUT_VARIANT.POST]: 'Post',
   [POST_INPUT_VARIANT.REPOST]: 'Repost',
 } as const;

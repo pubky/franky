@@ -10,13 +10,21 @@ describe('Help', () => {
     expect(screen.getByText('FAQ')).toBeInTheDocument();
   });
 
-  it('renders FAQ questions', () => {
+  it('renders FAQ sections', () => {
     render(<Help />);
-    expect(screen.getByText('How can I update my profile information?')).toBeInTheDocument();
-    expect(screen.getByText('How can I delete my posts?')).toBeInTheDocument();
-    expect(screen.getByText('How can I mute someone?')).toBeInTheDocument();
+    expect(screen.getByText('1. Getting Started & Onboarding')).toBeInTheDocument();
+    expect(screen.getByText('2. Backups & Account Recovery')).toBeInTheDocument();
+    expect(screen.getByText('3. Profile & Social Features')).toBeInTheDocument();
+    expect(screen.getByText('4. How Pubky App Works')).toBeInTheDocument();
+  });
+
+  it('renders FAQ questions from all sections', () => {
+    render(<Help />);
+    expect(screen.getByText('Why does Pubky require invite codes?')).toBeInTheDocument();
+    expect(screen.getByText('How do I use Pubky Ring with the web app?')).toBeInTheDocument();
     expect(screen.getByText('How can I restore my account?')).toBeInTheDocument();
-    expect(screen.getByText('How is Pubky different from other social platforms?')).toBeInTheDocument();
+    expect(screen.getByText('How can I update my profile information?')).toBeInTheDocument();
+    expect(screen.getByText('How is Pubky different from other social media platforms?')).toBeInTheDocument();
   });
 
   it('renders User Guide section', () => {
