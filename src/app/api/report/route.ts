@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Logger } from '@/libs';
 
 /**
  * API Route for post report submission
@@ -17,11 +18,11 @@ export async function POST(request: NextRequest) {
     }
 
     // TODO: Replace with Core.ReportController.submit() in next PR
-    console.log('[STUB] Report received:', { pubky, postUrl, issueType, name });
+    Logger.info('[STUB] Report received:', { pubky, postUrl, issueType, name });
 
     return NextResponse.json({ message: 'Success' });
   } catch (error) {
-    console.error('[STUB] Error in report API handler:', error);
+    Logger.error('[STUB] Error in report API handler:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
