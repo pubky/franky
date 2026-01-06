@@ -133,7 +133,6 @@ vi.mock('../PostInputActionBar', () => ({
       </button>
     </div>
   )),
-  POST_INPUT_ACTION_SUBMIT_MODE: { POST: 'post', REPLY: 'reply' },
 }));
 
 vi.mock('@/molecules', () => ({
@@ -144,6 +143,11 @@ vi.mock('@/molecules', () => ({
   )),
   TagInput: vi.fn(() => <div data-testid="tag-input" />),
   PostTag: vi.fn(({ label }) => <div data-testid={`post-tag-${label}`}>{label}</div>),
+  PostPreviewCard: vi.fn(({ postId, className }: { postId: string; className?: string }) => (
+    <div data-testid="post-preview-card" data-post-id={postId} className={className}>
+      Original Post: {postId}
+    </div>
+  )),
   PostLinkEmbeds: vi.fn(({ content }: { content: string }) => {
     // Only render if content contains a URL-like pattern
     if (content.includes('http') || content.includes('youtube') || content.includes('youtu.be')) {

@@ -1,6 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { PostPreviewCard } from './PostPreviewCard';
+
+// Mock hooks
+const mockNavigateToPost = vi.fn();
+vi.mock('@/hooks', () => ({
+  usePostNavigation: () => ({
+    navigateToPost: mockNavigateToPost,
+  }),
+}));
 
 // Mock organisms
 vi.mock('@/organisms', async (importOriginal) => {
@@ -22,8 +30,32 @@ vi.mock('@/organisms', async (importOriginal) => {
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>
+  Card: ({
+    children,
+    className,
+    onClick,
+    onKeyDown,
+    role,
+    tabIndex,
+    'aria-label': ariaLabel,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    onClick?: (e: React.MouseEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
+    role?: string;
+    tabIndex?: number;
+    'aria-label'?: string;
+  }) => (
+    <div
+      data-testid="card"
+      className={className}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      role={role}
+      tabIndex={tabIndex}
+      aria-label={ariaLabel}
+    >
       {children}
     </div>
   ),
@@ -41,6 +73,10 @@ vi.mock('@/libs', async () => {
 });
 
 describe('PostPreviewCard', () => {
+  beforeEach(() => {
+    mockNavigateToPost.mockClear();
+  });
+
   it('renders with required props', () => {
     render(<PostPreviewCard postId="test-post-123" />);
 
@@ -48,6 +84,51 @@ describe('PostPreviewCard', () => {
     expect(screen.getByTestId('card-content')).toBeInTheDocument();
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content-base')).toBeInTheDocument();
+  });
+
+  it('has correct accessibility attributes', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    expect(card).toHaveAttribute('role', 'link');
+    expect(card).toHaveAttribute('tabIndex', '0');
+    expect(card).toHaveAttribute('aria-label', 'View original post');
+  });
+
+  it('navigates to post page on click', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.click(card);
+
+    expect(mockNavigateToPost).toHaveBeenCalledWith('test-post-123');
+  });
+
+  it('navigates to post page on Enter key', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.keyDown(card, { key: 'Enter' });
+
+    expect(mockNavigateToPost).toHaveBeenCalledWith('test-post-123');
+  });
+
+  it('navigates to post page on Space key', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.keyDown(card, { key: ' ' });
+
+    expect(mockNavigateToPost).toHaveBeenCalledWith('test-post-123');
+  });
+
+  it('does not navigate on other keys', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.keyDown(card, { key: 'Tab' });
+
+    expect(mockNavigateToPost).not.toHaveBeenCalled();
   });
 });
 

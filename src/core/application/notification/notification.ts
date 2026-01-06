@@ -176,7 +176,7 @@ export class NotificationApplication {
     }
 
     if (notPersistedUserIds.length > 0) {
-      await Core.UserStreamApplication.fetchMissingUsersFromNexus({ cacheMissUserIds: notPersistedUserIds });
+      await Core.UserStreamApplication.fetchMissingUsersFromNexus({ cacheMissUserIds: notPersistedUserIds, viewerId });
     }
     return flatNotifications;
   }

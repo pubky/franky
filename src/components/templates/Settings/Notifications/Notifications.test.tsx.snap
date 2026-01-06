@@ -3,12 +3,15 @@
 exports[`Notifications - Snapshots > matches snapshot 1`] = `
 <div
   class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
+  data-testid="container"
 >
   <div
     class="flex w-full flex-col items-start justify-start gap-3"
+    data-testid="container"
   >
     <div
       class="inline-flex items-center justify-start gap-2"
+      data-testid="container"
     >
       <svg
         aria-hidden="true"
@@ -31,13 +34,15 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
         />
       </svg>
       <h2
-        class="text-2xl leading-8 font-bold text-foreground"
+        class="text-2xl font-bold text-foreground leading-8"
+        data-testid="heading-2"
       >
         Platform notifications
       </h2>
     </div>
     <p
       class="text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
     >
       Please select which notifications you want to receive on Pubky.
     </p>
