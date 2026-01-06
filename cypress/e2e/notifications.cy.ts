@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, fastTagPost, replyToPost } from '../support/posts';
+import { createQuickPost, fastTagPost, replyToPost, repostPost } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
@@ -9,6 +9,7 @@ import {
   waitForNotificationDotToDisappear,
   checkLatestNotification,
   addProfileTags,
+  waitForPutLastRead,
 } from '../support/profile';
 import { BackupType, HasBackedUp } from '../support/types/enums';
 import { verifyNotificationCounter } from '../support/common';
@@ -58,6 +59,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
+    waitForPutLastRead();
     verifyNotificationCounter(0);
     // check latest notification on profile page and navigate to profile 1 profile page
     checkLatestNotification([profile1.username, 'followed you'], profile1.username);
@@ -71,6 +73,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
+    waitForPutLastRead();
     verifyNotificationCounter(0);
     // check latest notification on profile page
     checkLatestNotification([profile2.username, 'is now your friend']);
@@ -91,6 +94,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
+    waitForPutLastRead();
     verifyNotificationCounter(0);
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'is not your friend anymore']);
@@ -101,7 +105,6 @@ describe('notifications', () => {
 
     // * profile 1 checks absence of notifications
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
-    //waitForFeedToLoad();
     cy.assertElementDoesNotExist('[data-cy="header-notification-counter"]');
 
     // TODO: add checks for disabled notifications
@@ -134,6 +137,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
+    waitForPutLastRead();
     verifyNotificationCounter(0);
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
@@ -170,6 +174,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
+    waitForPutLastRead();
     verifyNotificationCounter(0);
     checkLatestNotification([profile2.username, 'tagged your post', postTag]);
 
@@ -201,8 +206,10 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
+    waitForPutLastRead();
     verifyNotificationCounter(0);
     checkLatestNotification([profile2.username, 'replied to your post']);
+    //cy.wait(1000);
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables notifications for being replied to
@@ -211,7 +218,30 @@ describe('notifications', () => {
     // * profile 1 checks for absence of notifications
   });
 
-  it('can be notified for your post being reposted');
+  it('can be notified for your post being reposted', () => {
+    // * profile 1 creates a post (1)
+    createQuickPost(`I will be notified when this post is reposted! ${Date.now()}`);
+
+    // * profile 2 reposts profile 1's post (1)
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    repostPost({ repostContent: 'I reposted your post!' });
+
+    // * profile 1 checks for notification for being reposted
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    waitForPutLastRead();
+    verifyNotificationCounter(0);
+    checkLatestNotification([profile2.username, 'reposted your post']);
+
+    // TODO: add checks for disabled notifications
+    // * profile 1 disables notifications for being reposted
+    // * profile 1 creates a post (2)
+    // * profile 2 reposts profile 1's post (2)
+    // * profile 1 checks for absence of notifications
+  });
 
   it('can be notified for a post being deleted that you replied to');
 

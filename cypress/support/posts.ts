@@ -169,29 +169,24 @@ export const createPostFromDialog = (postContent: string, expectedPostLength?: n
   cy.get('[data-cy="dialog-content"]').should('not.exist');
 };
 
-// reply to any post in the feed that contains the filterText
-export const replyToPost = ({ replyContent, filterText }: { replyContent: string; filterText: string }) => {
-  // Find the post by its content text
-  cy.get('[data-cy="timeline-posts"]')
-    .children()
-    .then(($posts) => {
-      // Filter posts by text content
-      const matchingPosts = $posts.filter((_idx, element) => {
-        const postText = Cypress.$(element).find('[data-cy="post-text"]').text();
-        return postText.includes(filterText);
-      });
-      return cy.wrap(matchingPosts.first());
-    })
-    .within(() => {
-      // Click the reply button
-      cy.get('[data-cy="post-reply-btn"]').click();
-    });
+// reply to any post in the feed that contains the filterText by index
+export const replyToPost = ({
+  replyContent,
+  filterText,
+  postIdx = 0,
+}: {
+  replyContent: string;
+  filterText?: string;
+  postIdx?: number;
+}) => {
+  cy.findPostInFeed(postIdx, filterText).within(() => {
+    cy.get('[data-cy="post-reply-btn"]').click();
+  });
 
   // Wait for dialog to open and type reply
   cy.get('[data-cy="reply-post-input"]').should('be.visible');
   cy.get('[data-cy="reply-post-input"]').within(() => {
     cy.get('textarea').should('have.value', '').type(replyContent);
-    // Submit the reply - button aria-label is "Post reply" so data-cy is "post-input-action-bar-post-reply"
     cy.get('[data-cy="post-input-action-bar-reply"]').click();
   });
 
@@ -199,36 +194,34 @@ export const replyToPost = ({ replyContent, filterText }: { replyContent: string
   cy.get('[data-cy="reply-post-input"]').should('not.exist');
 };
 
-// // repost any post in the feed that contains the filterText by index
-// // if no arguments or just repostContent is provided then it reposts the latest post in the feed
-// // TODO: default filterText value to filter out the quick post area then can change default index to 0
-// export const repostPost = ({
-//   repostContent,
-//   waitForIndexed,
-//   postContent,
-//   filterText,
-//   postIdx
-// }: {
-//   repostContent?: string;
-//   waitForIndexed?: CheckIndexed;
-//   postContent?: string;
-//   filterText?: string;
-//   postIdx?: number;
-// }) => {
-//   cy.findPostInFeed(postIdx, filterText, waitForIndexed).within(() => {
-//     cy.get('#repost-btn').click();
-//   });
-//   cy.get('#modal-root')
-//     .should('be.visible')
-//     .within(($modal) => {
-//       cy.get('h1').contains('Repost');
-//       // optionally check that the post content is displayed in the repost modal
-//       if (postContent) cy.wrap($modal).contains(postContent);
-//       cy.get('textarea').should('have.value', '');
-//       if (repostContent) cy.get('textarea').type(repostContent);
-//       cy.get('#repost-btn').click();
-//     });
-// };
+// repost any post in the feed that contains the filterText by index
+export const repostPost = ({
+  repostContent,
+  filterText,
+  postIdx = 0,
+}: {
+  repostContent?: string;
+  filterText?: string;
+  postIdx?: number;
+} = {}) => {
+  cy.findPostInFeed(postIdx, filterText).within(() => {
+    cy.get('[data-cy="post-repost-btn"]').click();
+  });
+
+  // Wait for dialog to open
+  cy.get('[data-cy="repost-post-input"]').should('be.visible');
+  cy.get('[data-cy="repost-post-input"]').within(() => {
+    // Optionally type repost content
+    if (repostContent) {
+      cy.get('textarea').should('have.value', '').type(repostContent);
+    }
+    // Submit the repost
+    cy.get('[data-cy="post-input-action-bar-post"]').click();
+  });
+
+  // Wait for dialog to close
+  cy.get('[data-cy="repost-post-input"]').should('not.exist');
+};
 
 // tag a post by clicking the add button, typing the tag, and pressing Enter
 export const fastTagPost = (tags: string[]) => {
@@ -417,8 +410,7 @@ export const waitForFeedToLoad = (postContent?: string) => {
         "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'",
       );
 
-    cy.get('#posts-feed')
-      .find('#timeline')
+    cy.get('[data-cy="timeline-posts"]')
       .invoke('text')
       .then((text) => {
         // handle whitespace consistently
@@ -433,8 +425,7 @@ export const waitForFeedToLoad = (postContent?: string) => {
   const checkExistingPostContentRecursively = (postContent: string, attempts: number, firstCheck: boolean = true) => {
     if (attempts <= 0) assert(false, "Timeline doesn't contain expected post with text: " + postContent);
 
-    cy.get('#posts-feed')
-      .find('#timeline')
+    cy.get('[data-cy="timeline-posts"]')
       .invoke('text')
       .then((text) => {
         // trim whitespace and normalise spaces to compare
