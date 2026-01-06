@@ -7,6 +7,7 @@ import type {
   TtlUnsubscribePostParams,
   TtlSubscribeUserParams,
   TtlUnsubscribeUserParams,
+  EntityOps,
 } from './ttl.types';
 
 /**
@@ -96,7 +97,7 @@ export class TtlCoordinator {
       return;
     }
 
-    this.state.isStarted = true;
+    this.setStarted(true);
     this.evaluateAndStartTicking();
     Logger.debug('TtlCoordinator started');
   }
@@ -106,7 +107,7 @@ export class TtlCoordinator {
    * Stops the batch tick interval and clears state
    */
   public stop(): void {
-    this.state.isStarted = false;
+    this.setStarted(false);
     this.stopTicking();
     this.reset();
     Logger.debug('TtlCoordinator stopped');
@@ -117,15 +118,16 @@ export class TtlCoordinator {
    * Triggers reset when route changes to clear stale subscriptions
    */
   public setRoute(route: string): void {
-    if (this.state.currentRoute !== route) {
-      const previousRoute = this.state.currentRoute;
-      this.state.currentRoute = route;
+    if (this.state.currentRoute === route) {
+      return;
+    }
 
-      // Reset subscriptions on route change
-      if (previousRoute !== '') {
-        this.reset();
-        Logger.debug('TtlCoordinator reset on route change', { from: previousRoute, to: route });
-      }
+    const previousRoute = this.updateRoute(route);
+
+    // Reset subscriptions on route change (skip initial mount)
+    if (previousRoute !== '') {
+      this.reset();
+      Logger.debug('TtlCoordinator reset on route change', { from: previousRoute, to: route });
     }
   }
 
@@ -134,15 +136,14 @@ export class TtlCoordinator {
    */
   public subscribePost({ compositePostId }: TtlSubscribePostParams): void {
     // Idempotent: don't double-subscribe
-    if (this.state.subscribedPosts.has(compositePostId)) {
+    if (this.hasPostSubscription(compositePostId)) {
       return;
     }
 
-    // Add to subscribed posts
-    this.state.subscribedPosts.add(compositePostId);
+    this.addPostSubscription(compositePostId);
 
     // Check if post is stale and queue for refresh
-    void this.checkAndQueuePost(compositePostId);
+    void this.checkAndQueueEntity(compositePostId, this.getPostOps());
   }
 
   /**
@@ -150,13 +151,11 @@ export class TtlCoordinator {
    */
   public unsubscribePost({ compositePostId }: TtlUnsubscribePostParams): void {
     // Safe if called multiple times or for unknown IDs
-    if (!this.state.subscribedPosts.has(compositePostId)) {
+    if (!this.hasPostSubscription(compositePostId)) {
       return;
     }
 
-    // Remove from subscribed posts
-    this.state.subscribedPosts.delete(compositePostId);
-    this.state.postBatchQueue.delete(compositePostId);
+    this.removePostSubscription(compositePostId);
   }
 
   /**
@@ -164,15 +163,15 @@ export class TtlCoordinator {
    * Use this for user profiles not associated with posts
    */
   public subscribeUser({ pubky }: TtlSubscribeUserParams): void {
-    this.incrementUserRefCount(pubky);
-    void this.checkAndQueueUser(pubky);
+    this.addUserSubscription(pubky);
+    void this.checkAndQueueEntity(pubky, this.getUserOps());
   }
 
   /**
    * Unsubscribe from a user's TTL tracking directly
    */
   public unsubscribeUser({ pubky }: TtlUnsubscribeUserParams): void {
-    this.decrementUserRefCount(pubky);
+    this.removeUserSubscription(pubky);
   }
 
   /**
@@ -254,7 +253,7 @@ export class TtlCoordinator {
   private handleVisibilityChange(): void {
     const isVisible = document.visibilityState === 'visible';
     if (this.state.isPageVisible !== isVisible) {
-      this.state.isPageVisible = isVisible;
+      this.setPageVisible(isVisible);
       Logger.debug('TtlCoordinator: Page visibility changed', { isVisible });
       this.evaluateAndStartTicking();
     }
@@ -367,87 +366,197 @@ export class TtlCoordinator {
   }
 
   // ============================================================================
-  // Private: Reference Counting
+  // Private: State Transitions - Subscriptions
   // ============================================================================
 
   /**
-   * Increment user reference count
+   * Add a post to the subscription set
    */
-  private incrementUserRefCount(userId: Core.Pubky): void {
+  private addPostSubscription(compositePostId: string): void {
+    this.state.subscribedPosts.add(compositePostId);
+  }
+
+  /**
+   * Remove a post from subscription and any pending refresh queue
+   */
+  private removePostSubscription(compositePostId: string): void {
+    this.state.subscribedPosts.delete(compositePostId);
+    this.state.postBatchQueue.delete(compositePostId);
+  }
+
+  /**
+   * Check if a post is currently subscribed
+   */
+  private hasPostSubscription(compositePostId: string): boolean {
+    return this.state.subscribedPosts.has(compositePostId);
+  }
+
+  /**
+   * Add a user subscription with reference counting
+   * Increments ref count; adds to subscribed set on first reference
+   */
+  private addUserSubscription(userId: Core.Pubky): void {
     const currentCount = this.state.userRefCount.get(userId) ?? 0;
     this.state.userRefCount.set(userId, currentCount + 1);
 
-    // Add to subscribed users if first reference
     if (currentCount === 0) {
       this.state.subscribedUsers.add(userId);
     }
   }
 
   /**
-   * Decrement user reference count
-   * Removes from subscription when count reaches 0
+   * Remove a user subscription with reference counting
+   * Decrements ref count; removes from subscribed set when count reaches 0
    */
-  private decrementUserRefCount(userId: Core.Pubky): void {
+  private removeUserSubscription(userId: Core.Pubky): void {
     const currentCount = this.state.userRefCount.get(userId) ?? 0;
 
     if (currentCount <= 1) {
-      // Last reference - unsubscribe
       this.state.userRefCount.delete(userId);
       this.state.subscribedUsers.delete(userId);
       this.state.userBatchQueue.delete(userId);
     } else {
-      // Decrement
       this.state.userRefCount.set(userId, currentCount - 1);
     }
   }
 
   // ============================================================================
-  // Private: Staleness Checks
+  // Private: State Transitions - Lifecycle
   // ============================================================================
 
   /**
-   * Check if a post is stale and add to batch queue
+   * Mark coordinator as started
    */
-  private async checkAndQueuePost(compositePostId: string): Promise<void> {
+  private setStarted(started: boolean): void {
+    this.state.isStarted = started;
+  }
+
+  /**
+   * Update the current route, returning the previous route
+   */
+  private updateRoute(route: string): string {
+    const previousRoute = this.state.currentRoute;
+    this.state.currentRoute = route;
+    return previousRoute;
+  }
+
+  /**
+   * Update page visibility state
+   */
+  private setPageVisible(visible: boolean): void {
+    this.state.isPageVisible = visible;
+  }
+
+  // ============================================================================
+  // Private: Entity Config Factories
+  // ============================================================================
+
+  /**
+   * Get entity operations config for posts
+   */
+  private getPostOps(): EntityOps<string> {
+    return {
+      entityName: 'post',
+      subscribed: this.state.subscribedPosts,
+      batchQueue: this.state.postBatchQueue,
+      ttlMs: this.config.postTtlMs,
+      maxBatchSize: this.config.postMaxBatchSize,
+      requiresViewerId: true,
+      findStaleByIds: (ids) => Core.TtlController.findStalePostsByIds({ postIds: ids, ttlMs: this.config.postTtlMs }),
+      forceRefresh: (ids, viewerId) => Core.TtlController.forceRefreshPostsByIds({ postIds: ids, viewerId: viewerId! }),
+    };
+  }
+
+  /**
+   * Get entity operations config for users
+   */
+  private getUserOps(): EntityOps<Core.Pubky> {
+    return {
+      entityName: 'user',
+      subscribed: this.state.subscribedUsers,
+      batchQueue: this.state.userBatchQueue,
+      ttlMs: this.config.userTtlMs,
+      maxBatchSize: this.config.userMaxBatchSize,
+      requiresViewerId: false,
+      findStaleByIds: (ids) => Core.TtlController.findStaleUsersByIds({ userIds: ids, ttlMs: this.config.userTtlMs }),
+      forceRefresh: (ids, viewerId) =>
+        Core.TtlController.forceRefreshUsersByIds({ userIds: ids, viewerId: viewerId ?? undefined }),
+    };
+  }
+
+  // ============================================================================
+  // Private: Generic Entity Helpers
+  // ============================================================================
+
+  /**
+   * Check if an entity is stale and add to batch queue
+   */
+  private async checkAndQueueEntity<T extends string>(id: T, ops: EntityOps<T>): Promise<void> {
     try {
-      const staleIds = await Core.TtlController.findStalePostsByIds({
-        postIds: [compositePostId],
-        ttlMs: this.config.postTtlMs,
-      });
+      const staleIds = await ops.findStaleByIds([id]);
 
       // Guard against async race: only enqueue if still subscribed
-      if (staleIds.includes(compositePostId) && this.state.subscribedPosts.has(compositePostId)) {
-        this.state.postBatchQueue.add(compositePostId);
+      if (staleIds.includes(id) && ops.subscribed.has(id)) {
+        ops.batchQueue.add(id);
       }
     } catch (error) {
       // On error, assume stale and queue for refresh
-      if (this.state.subscribedPosts.has(compositePostId)) {
-        this.state.postBatchQueue.add(compositePostId);
+      if (ops.subscribed.has(id)) {
+        ops.batchQueue.add(id);
       }
-      Logger.warn('TtlCoordinator: Error checking post TTL', { compositePostId, error });
+      Logger.warn(`TtlCoordinator: Error checking ${ops.entityName} TTL`, { id, error });
     }
   }
 
   /**
-   * Check if a user is stale and add to batch queue
+   * Check all subscribed entities and queue stale ones
    */
-  private async checkAndQueueUser(userId: Core.Pubky): Promise<void> {
-    try {
-      const staleIds = await Core.TtlController.findStaleUsersByIds({
-        userIds: [userId],
-        ttlMs: this.config.userTtlMs,
-      });
+  private async checkAllEntitiesForStaleness<T extends string>(ops: EntityOps<T>): Promise<void> {
+    const ids = Array.from(ops.subscribed);
+    if (ids.length === 0) return;
 
-      // Guard against async race: only enqueue if still subscribed
-      if (staleIds.includes(userId) && this.state.subscribedUsers.has(userId)) {
-        this.state.userBatchQueue.add(userId);
+    try {
+      const staleIds = await ops.findStaleByIds(ids);
+
+      for (const id of staleIds) {
+        // Guard: don't enqueue if unsubscribed mid-flight
+        if (ops.subscribed.has(id)) {
+          ops.batchQueue.add(id);
+        }
       }
     } catch (error) {
-      // On error, assume stale and queue for refresh
-      if (this.state.subscribedUsers.has(userId)) {
-        this.state.userBatchQueue.add(userId);
+      Logger.warn(`TtlCoordinator: Error checking ${ops.entityName}s for staleness`, { error });
+    }
+  }
+
+  /**
+   * Refresh stale entities in batches
+   */
+  private async refreshStaleEntities<T extends string>(ops: EntityOps<T>, viewerId: Core.Pubky | null): Promise<void> {
+    if (ops.batchQueue.size === 0) return;
+
+    // viewerId may be required for certain entity types
+    if (ops.requiresViewerId && !viewerId) {
+      Logger.warn(`TtlCoordinator: Cannot refresh ${ops.entityName}s without viewerId`);
+      return;
+    }
+
+    // Take up to maxBatchSize entities
+    const ids = Array.from(ops.batchQueue).slice(0, ops.maxBatchSize);
+
+    try {
+      Logger.debug(`TtlCoordinator: Refreshing stale ${ops.entityName}s`, { count: ids.length });
+
+      // Fetch and persist entities
+      await ops.forceRefresh(ids, viewerId);
+
+      // SUCCESS: Remove from queue
+      for (const id of ids) {
+        ops.batchQueue.delete(id);
       }
-      Logger.warn('TtlCoordinator: Error checking user TTL', { userId, error });
+    } catch (error) {
+      // FAILURE: Leave in queue for retry on next tick
+      Logger.warn(`TtlCoordinator: Error refreshing stale ${ops.entityName}s`, { ids, error });
     }
   }
 
@@ -467,121 +576,15 @@ export class TtlCoordinator {
     }
 
     const viewerId = authState.currentUserPubky;
+    const postOps = this.getPostOps();
+    const userOps = this.getUserOps();
 
-    // Check all subscribed posts for staleness
-    await this.checkAllPostsForStaleness();
+    // Check all subscribed entities for staleness
+    await this.checkAllEntitiesForStaleness(postOps);
+    await this.checkAllEntitiesForStaleness(userOps);
 
-    // Check all subscribed users for staleness
-    await this.checkAllUsersForStaleness();
-
-    // Fire batch refresh for posts
-    await this.refreshStalePosts(viewerId);
-
-    // Fire batch refresh for users
-    await this.refreshStaleUsers(viewerId);
-  }
-
-  /**
-   * Check all subscribed posts and queue stale ones
-   */
-  private async checkAllPostsForStaleness(): Promise<void> {
-    const postIds = Array.from(this.state.subscribedPosts);
-    if (postIds.length === 0) return;
-
-    try {
-      const staleIds = await Core.TtlController.findStalePostsByIds({
-        postIds,
-        ttlMs: this.config.postTtlMs,
-      });
-
-      for (const id of staleIds) {
-        // Guard: don't enqueue if unsubscribed mid-flight
-        if (this.state.subscribedPosts.has(id)) {
-          this.state.postBatchQueue.add(id);
-        }
-      }
-    } catch (error) {
-      Logger.warn('TtlCoordinator: Error checking posts for staleness', { error });
-    }
-  }
-
-  /**
-   * Check all subscribed users and queue stale ones
-   */
-  private async checkAllUsersForStaleness(): Promise<void> {
-    const userIds = Array.from(this.state.subscribedUsers);
-    if (userIds.length === 0) return;
-
-    try {
-      const staleIds = await Core.TtlController.findStaleUsersByIds({
-        userIds,
-        ttlMs: this.config.userTtlMs,
-      });
-
-      for (const id of staleIds) {
-        // Guard: don't enqueue if unsubscribed mid-flight
-        if (this.state.subscribedUsers.has(id)) {
-          this.state.userBatchQueue.add(id);
-        }
-      }
-    } catch (error) {
-      Logger.warn('TtlCoordinator: Error checking users for staleness', { error });
-    }
-  }
-
-  /**
-   * Refresh stale posts in batches
-   */
-  private async refreshStalePosts(viewerId: Core.Pubky | null): Promise<void> {
-    if (this.state.postBatchQueue.size === 0) return;
-
-    // viewerId is required for fetching posts - skip if not authenticated
-    if (!viewerId) {
-      Logger.warn('TtlCoordinator: Cannot refresh posts without viewerId');
-      return;
-    }
-
-    // Take up to maxBatchSize posts
-    const postIds = Array.from(this.state.postBatchQueue).slice(0, this.config.postMaxBatchSize);
-
-    try {
-      Logger.debug('TtlCoordinator: Refreshing stale posts', { count: postIds.length });
-
-      // Fetch and persist posts
-      await Core.TtlController.forceRefreshPostsByIds({ postIds, viewerId });
-
-      // SUCCESS: Remove from queue and update TTL
-      for (const id of postIds) {
-        this.state.postBatchQueue.delete(id);
-      }
-    } catch (error) {
-      // FAILURE: Leave in queue for retry on next tick
-      Logger.warn('TtlCoordinator: Error refreshing stale posts', { postIds, error });
-    }
-  }
-
-  /**
-   * Refresh stale users in batches
-   */
-  private async refreshStaleUsers(viewerId: Core.Pubky | null): Promise<void> {
-    if (this.state.userBatchQueue.size === 0) return;
-
-    // Take up to maxBatchSize users
-    const userIds = Array.from(this.state.userBatchQueue).slice(0, this.config.userMaxBatchSize);
-
-    try {
-      Logger.debug('TtlCoordinator: Refreshing stale users', { count: userIds.length });
-
-      // Fetch and persist users
-      await Core.TtlController.forceRefreshUsersByIds({ userIds, viewerId: viewerId ?? undefined });
-
-      // SUCCESS: Remove from queue and update TTL
-      for (const id of userIds) {
-        this.state.userBatchQueue.delete(id);
-      }
-    } catch (error) {
-      // FAILURE: Leave in queue for retry on next tick
-      Logger.warn('TtlCoordinator: Error refreshing stale users', { userIds, error });
-    }
+    // Fire batch refreshes
+    await this.refreshStaleEntities(postOps, viewerId);
+    await this.refreshStaleEntities(userOps, viewerId);
   }
 }

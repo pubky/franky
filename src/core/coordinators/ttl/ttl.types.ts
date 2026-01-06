@@ -154,3 +154,30 @@ export interface TtlUnsubscribeUserParams {
    */
   pubky: Core.Pubky;
 }
+
+// =============================================================================
+// Generic Entity Operations
+// =============================================================================
+
+/**
+ * Generic configuration for entity-type operations (post or user)
+ * Used internally to reduce duplication in staleness checks and refresh logic
+ */
+export interface EntityOps<T extends string> {
+  /** Name for logging purposes */
+  entityName: 'post' | 'user';
+  /** Set of currently subscribed entity IDs */
+  subscribed: Set<T>;
+  /** Queue of entity IDs pending refresh */
+  batchQueue: Set<T>;
+  /** TTL in milliseconds for this entity type */
+  ttlMs: number;
+  /** Maximum entities per batch request */
+  maxBatchSize: number;
+  /** Whether this entity type requires viewerId for refresh (posts do, users don't) */
+  requiresViewerId: boolean;
+  /** Find stale entities by IDs */
+  findStaleByIds: (ids: T[]) => Promise<T[]>;
+  /** Force refresh entities by IDs */
+  forceRefresh: (ids: T[], viewerId: Core.Pubky | null) => Promise<void>;
+}
