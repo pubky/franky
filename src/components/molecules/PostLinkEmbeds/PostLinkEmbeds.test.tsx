@@ -589,6 +589,60 @@ describe('PostLinkEmbeds', () => {
     });
   });
 
+  describe('Markdown link stripping', () => {
+    it('does not render embed for URL wrapped in Markdown link syntax', async () => {
+      render(<PostLinkEmbeds content="Check out [this video](https://www.youtube.com/watch?v=dQw4w9WgXcQ)" />);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
+      });
+    });
+
+    it('renders embed for plain URL when Markdown link is also present', async () => {
+      render(
+        <PostLinkEmbeds content="[click here](https://example.com) but also https://www.youtube.com/watch?v=dQw4w9WgXcQ" />,
+      );
+
+      const iframe = await screen.findByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('does not render embed when only URL is inside Markdown link', async () => {
+      render(<PostLinkEmbeds content="Visit [Twitter](https://twitter.com/user/status/123456789)" />);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+      });
+    });
+
+    it('handles empty brackets in Markdown link syntax', async () => {
+      render(<PostLinkEmbeds content="Empty text [](https://www.youtube.com/watch?v=dQw4w9WgXcQ)" />);
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
+      });
+    });
+
+    it('handles empty parentheses in Markdown link syntax', async () => {
+      render(<PostLinkEmbeds content="Empty URL [click here]() and https://vimeo.com/123456789" />);
+
+      const iframe = await screen.findByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+    });
+
+    it('handles multiple Markdown links in content', async () => {
+      render(
+        <PostLinkEmbeds content="[link1](https://youtube.com/watch?v=abc) and [link2](https://twitter.com/user/status/123)" />,
+      );
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+      });
+    });
+  });
+
   describe('Edge cases', () => {
     it('does not render embed for content without URLs', async () => {
       render(<PostLinkEmbeds content="Just some regular text without any links" />);

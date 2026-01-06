@@ -36,6 +36,14 @@ const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
 };
 
 /**
+ * Strip Markdown link syntax from content
+ * Removes [text](url) entirely so URLs inside Markdown links aren't detected
+ */
+const stripMarkdownLinks = (content: string): string => {
+  return content.replace(/\[([^\]]*)\]\([^)]*\)/g, '<stripped-link>');
+};
+
+/**
  * Parse content for URLs
  * Returns the first URL
  */
@@ -45,7 +53,9 @@ const parseContentForUrl = (content: string) => {
   // Disable unwanted protocol types
   IGNORED_PROTOCOLS.forEach((protocol) => linkify.add(protocol, null));
 
-  const match = linkify.match(content);
+  // Strip Markdown link syntax before parsing
+  const strippedContent = stripMarkdownLinks(content);
+  const match = linkify.match(strippedContent);
 
   return match?.[0].url;
 };

@@ -1,4 +1,4 @@
-import type { Root, Paragraph, Text, Link, PhrasingContent } from 'mdast';
+import type { Root, Paragraph, Text, Link, PhrasingContent, Parent, RootContent } from 'mdast';
 import { ReactNode } from 'react';
 import { visit } from 'unist-util-visit';
 
@@ -6,6 +6,48 @@ import { visit } from 'unist-util-visit';
 export const remarkPlaintextCodeblock = () => (tree: Root) => {
   visit(tree, 'code', (node) => {
     node.lang = node.lang ?? 'plaintext';
+  });
+};
+
+// Recursively extract text from a node and all its descendants.
+// Handles nested formatting like [**bold** and _italic_](url) -> "bold and italic"
+const extractText = (node: RootContent | PhrasingContent): string => {
+  if (node.type === 'text') return (node as Text).value;
+  if ('children' in node) {
+    return (node.children as (RootContent | PhrasingContent)[]).map(extractText).join('');
+  }
+  return '';
+};
+
+// Disallow markdown link syntax [text](url) to prevent deceptive links.
+// Example attack: [facebook.com](https://badsite.com) looks legitimate but links elsewhere.
+// This plugin converts markdown-style links back to plaintext, showing the raw syntax.
+// Must run AFTER remarkGfm since GFM is a syntax extension that runs at parse time.
+// Autolinks (where text matches URL) are preserved since they're not deceptive.
+export const remarkDisallowMarkdownLinks = () => (tree: Root) => {
+  visit(tree, 'link', (node: Link, index: number | undefined, parent: Parent | undefined) => {
+    if (parent === undefined || index === undefined) return;
+
+    // Recursively extract text content from link children (handles nested formatting)
+    const textContent = node.children.map(extractText).join('');
+
+    // Preserve GFM autolinks (not deceptive):
+    // - Exact match (e.g. https://example.com as both text and URL)
+    // - www autolinks where GFM adds http:// prefix (e.g. www.example.com -> http://www.example.com)
+    // - Email autolinks where GFM adds mailto: prefix (e.g. user@example.com -> mailto:user@example.com)
+    if (textContent === node.url || node.url === `http://${textContent}` || node.url === `mailto:${textContent}`)
+      return;
+
+    // Markdown-style link detected - convert back to plaintext
+    // Include title if present: [text](url "title")
+    const titlePart = node.title ? ` "${node.title}"` : '';
+    const plaintext: Text = {
+      type: 'text',
+      value: `[${textContent}](${node.url}${titlePart})`,
+    };
+
+    // Replace the link node with plaintext
+    (parent.children as PhrasingContent[]).splice(index, 1, plaintext);
   });
 };
 
