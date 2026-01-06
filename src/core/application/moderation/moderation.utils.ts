@@ -11,8 +11,11 @@ export const detectModerationFromTags = (tags: { label: string; taggers: string[
   return tags.some((tag) => MODERATED_TAG_SET.has(tag.label) && tag.taggers.includes(Config.MODERATION_ID));
 };
 
-export const shouldBlur = (isModerated: boolean, isBlurred: boolean, isBlurDisabledGlobally: boolean): boolean => {
+/**
+ * Determines if content should be blurred based on moderation state and user preferences.
+ * Only called when a moderation record exists (item is moderated).
+ */
+export const shouldBlur = (isBlurred: boolean, isBlurDisabledGlobally: boolean): boolean => {
   if (isBlurDisabledGlobally) return false;
-  if (!isModerated) return false;
   return isBlurred;
 };
