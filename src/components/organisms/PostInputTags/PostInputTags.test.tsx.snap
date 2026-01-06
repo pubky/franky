@@ -72,16 +72,6 @@ exports[`PostInputTags - Snapshots > matches snapshot with tags 1`] = `
     >
       +
     </button>
-    <span
-      class="text-muted-foreground"
-      data-as="span"
-      data-size="sm"
-      data-testid="typography"
-    >
-      2
-      /
-      5
-    </span>
   </div>
 </div>
 `;

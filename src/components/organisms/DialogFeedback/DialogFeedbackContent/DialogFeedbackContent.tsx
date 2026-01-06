@@ -35,7 +35,7 @@ export function DialogFeedbackContent({
 
             <Atoms.Textarea
               placeholder="What do you think about Pubky? Any suggestions?"
-              className="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="min-h-6 resize-none border-none bg-transparent px-0 py-2 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
               value={feedback}
               onChange={handleChange}
               maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}

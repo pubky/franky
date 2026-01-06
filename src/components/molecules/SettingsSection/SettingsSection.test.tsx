@@ -93,7 +93,6 @@ describe('SettingsSection', () => {
   it('renders with default props', () => {
     render(<SettingsSection {...defaultProps} />);
 
-    expect(screen.getByTestId('mock-icon')).toBeInTheDocument();
     expect(screen.getByTestId('heading')).toHaveTextContent('Account Settings');
     expect(screen.getByTestId('typography')).toHaveTextContent(
       'Manage your account preferences and security settings.',

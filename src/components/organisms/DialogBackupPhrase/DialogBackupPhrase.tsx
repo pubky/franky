@@ -263,33 +263,18 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
         <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="h-48 w-48" />
       </Atoms.Container>
 
-      <Atoms.DialogFooter>
-        <div className="contents md:hidden">
-          <Atoms.DialogClose asChild>
-            <Atoms.Button id="backup-recovery-phrase-finish-btn-mobile" onClick={handleClose}>
-              <Libs.ArrowRight className="h-4 w-4" />
-              Finish
-            </Atoms.Button>
-          </Atoms.DialogClose>
-          <Atoms.DialogClose asChild>
-            <Atoms.Button variant="outline" onClick={handleClose}>
-              Cancel
-            </Atoms.Button>
-          </Atoms.DialogClose>
-        </div>
-        <div className="hidden md:contents">
-          <Atoms.DialogClose asChild>
-            <Atoms.Button variant="outline" onClick={handleClose}>
-              Cancel
-            </Atoms.Button>
-          </Atoms.DialogClose>
-          <Atoms.DialogClose asChild>
-            <Atoms.Button id="backup-recovery-phrase-finish-btn-desktop" onClick={handleClose}>
-              <Libs.ArrowRight className="h-4 w-4" />
-              Finish
-            </Atoms.Button>
-          </Atoms.DialogClose>
-        </div>
+      <Atoms.DialogFooter className="flex-col gap-3">
+        <Atoms.DialogClose asChild>
+          <Atoms.Button id="backup-recovery-phrase-finish-btn" size="lg" className="w-full" onClick={handleClose}>
+            <Libs.ArrowRight className="h-4 w-4" />
+            Finish
+          </Atoms.Button>
+        </Atoms.DialogClose>
+        <Atoms.DialogClose asChild>
+          <Atoms.Button variant="outline" size="lg" className="w-full" onClick={handleClose}>
+            Cancel
+          </Atoms.Button>
+        </Atoms.DialogClose>
       </Atoms.DialogFooter>
     </>
   );
