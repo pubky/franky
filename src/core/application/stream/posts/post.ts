@@ -208,15 +208,19 @@ export class PostStreamApplication {
 
     if (repostedUris.length === 0) return;
 
-    // Convert URIs to composite IDs
-    const originalPostIds = repostedUris
-      .map((uri) =>
-        Core.buildCompositeIdFromPubkyUri({
-          uri,
-          domain: Core.CompositeIdDomain.POSTS,
-        }),
-      )
-      .filter((id): id is string => id !== null);
+    // Convert URIs to composite IDs and deduplicate (multiple reposts may reference the same original)
+    const originalPostIds = Array.from(
+      new Set(
+        repostedUris
+          .map((uri) =>
+            Core.buildCompositeIdFromPubkyUri({
+              uri,
+              domain: Core.CompositeIdDomain.POSTS,
+            }),
+          )
+          .filter((id): id is string => id !== null),
+      ),
+    );
 
     if (originalPostIds.length === 0) return;
 
@@ -226,7 +230,8 @@ export class PostStreamApplication {
     if (missingOriginalPostIds.length === 0) return;
 
     Libs.Logger.debug('Fetching original posts for reposts', {
-      repostCount: posts.length,
+      repostCount: repostedUris.length,
+      originalCount: originalPostIds.length,
       missingOriginalCount: missingOriginalPostIds.length,
     });
 
