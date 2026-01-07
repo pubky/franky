@@ -69,7 +69,7 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
   ];
 
   const moreButton = (
-    <Atoms.Button {...commonButtonProps} aria-label="More options">
+    <Atoms.Button {...commonButtonProps} aria-label="More options" data-cy="post-more-btn">
       <Libs.Ellipsis />
     </Atoms.Button>
   );

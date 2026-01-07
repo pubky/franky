@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, fastTagPost, replyToPost, repostPost } from '../support/posts';
+import { createQuickPost, fastTagPost, replyToPost, repostPost, deletePost } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
@@ -191,7 +191,7 @@ describe('notifications', () => {
   // todo: blocked by bug, see https://github.com/pubky/franky/issues/717
   it('can be notified for profile being mentioned in a post');
 
-  it('can be notified for your post being replied to', () => {
+  it.only('can be notified for your post being replied to', () => {
     // * profile 1 creates a post (1)
     const postContent = `I will be notified when this post is replied to! ${Date.now()}`;
     createQuickPost(postContent);
@@ -243,7 +243,37 @@ describe('notifications', () => {
     // * profile 1 checks for absence of notifications
   });
 
-  it('can be notified for a post being deleted that you replied to');
+  it.only('can be notified for a post being deleted that you replied to', () => {
+    // * profile 1 creates a post (1) that will be replied to and then deleted
+    const postContent = `The one who replies to this post will be notified when it is deleted! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // * profile 2 replies to profile 1's post (1)
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    replyToPost({ replyContent: 'I replied to your post!', filterText: postContent });
+
+    // * profile 1 deletes own post (1)
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    deletePost({ postIdx: 0, filterText: postContent });
+
+    // * profile 2 checks for notification for post (1) being deleted
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    waitForPutLastRead();
+    verifyNotificationCounter(0);
+    checkLatestNotification([profile1.username, 'deleted a post you replied to']);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for being replied to
+    // * profile 1 creates a post that will be replied to and then deleted
+    // * profile 2 replies to profile 1's post
+    // * profile 1 deletes own post
+    // * profile 2 checks for absence of notifications
+  });
 
   it('can be notified for a post being deleted that you reposted');
 

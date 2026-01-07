@@ -40,6 +40,7 @@ export function PostMenuActionsContent({
         return variant === MENU_VARIANT.SHEET ? (
           <Atoms.Button
             key={item.id}
+            data-cy={`post-menu-action-${item.id}`}
             variant="ghost"
             onClick={() => handleItemClick(item)}
             disabled={item.disabled}
@@ -55,6 +56,7 @@ export function PostMenuActionsContent({
         ) : (
           <Atoms.DropdownMenuItem
             key={item.id}
+            data-cy={`post-menu-action-${item.id}`}
             onClick={() => handleItemClick(item)}
             disabled={item.disabled}
             className="group p-0"
