@@ -19,7 +19,9 @@ export const HeaderSignIn = ({ ...props }: React.HTMLAttributes<HTMLDivElement>)
       <Organisms.SearchInput />
       <Molecules.HeaderNavigationButtons
         avatarImage={
-          currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails?.indexed_at) : undefined
+          currentUserPubky && userDetails?.image
+            ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)
+            : undefined
         }
         avatarInitial={avatarInitial}
         counter={unreadNotifications}
