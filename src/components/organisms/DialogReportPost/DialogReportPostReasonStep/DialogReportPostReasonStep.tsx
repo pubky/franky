@@ -35,7 +35,7 @@ export function DialogReportPostReasonStep({
                 postId={currentUserPubky}
                 isReplyInput={true}
                 characterLimit={{
-                  count: reason.length,
+                  count: Libs.getCharacterCount(reason),
                   max: REPORT_REASON_MAX_LENGTH,
                 }}
               />

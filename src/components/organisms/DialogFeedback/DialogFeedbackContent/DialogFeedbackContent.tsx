@@ -15,7 +15,7 @@ export function DialogFeedbackContent({
   currentUserPubky,
 }: DialogFeedbackContentProps) {
   const characterLimit =
-    feedback.length > 0 ? { count: feedback.length, max: FEEDBACK_MAX_CHARACTER_LENGTH } : undefined;
+    feedback.length > 0 ? { count: Libs.getCharacterCount(feedback), max: FEEDBACK_MAX_CHARACTER_LENGTH } : undefined;
 
   return (
     <>

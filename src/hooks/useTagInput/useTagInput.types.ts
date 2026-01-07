@@ -32,6 +32,8 @@ export interface UseTagInputReturn {
   handleTagSubmit: () => void;
   /** Handle emoji selection */
   handleEmojiSelect: (emoji: { native: string }) => void;
+  /** Handle paste event - sanitizes and validates pasted content */
+  handlePaste: (e: React.ClipboardEvent) => void;
   /** Clear the input */
   clearInput: () => void;
   /** Whether input is disabled (from prop or limit) */
