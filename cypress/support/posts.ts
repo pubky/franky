@@ -2,6 +2,14 @@
 
 export const MAX_POST_LENGTH = 2000;
 
+/**
+ * Post or Reply type for delete operations
+ */
+export enum PostOrReply {
+  Post = 0,
+  Reply = 1,
+}
+
 // select an emoji using the emoji picker by its data-full-name attribute
 // export const selectEmojis = (emojiName: string[]) => {
 //   // open emoji picker
@@ -292,42 +300,32 @@ export const fastTagPost = (tags: string[]) => {
 //     });
 // };
 
-// // menuBtnIdx: 0 for original post, 1 for reply
-// export const deletePost = ({
-//   filterText = '',
-//   postIdx = 0,
-//   menuBtnIdx = 0
-// }: {
-//   filterText?: string;
-//   postIdx?: number;
-//   menuBtnIdx?: number;
-// }) => {
-//   // find post and click menu button
-//   cy.findPostInFeed(postIdx, filterText).within(() => {
-//     // '[id="menu-btn"]' finds all with id
-//     cy.get('[id="menu-btn"]').eq(menuBtnIdx).should('be.visible').click();
-//     cy.get('#post-tooltip-menu')
-//       .should('be.visible')
-//       .within(() => {
-//         cy.get('#delete-post').should('be.visible').innerTextShouldEq('Delete post').get('#delete-post').click();
-//       });
-//   });
+// delete any post or reply in the feed that contains the filterText by index
+// type: PostOrReply.Post (0) for original post, PostOrReply.Reply (1) for reply
+export const deletePost = ({
+  filterText,
+  postIdx = 0,
+  type = PostOrReply.Post,
+}: {
+  filterText?: string;
+  postIdx?: number;
+  type?: PostOrReply;
+}) => {
+  // find post or reply and click more menu button
+  // use type enum value (0 for post, 1 for reply) to select the correct menu button
+  cy.findPostInFeed(postIdx, filterText).within(() => {
+    cy.get('[data-cy="post-more-btn"]').eq(type).should('be.visible').click();
+  });
 
-// confirm delete in modal
-//   cy.get('#modal-root')
-//     .should('be.visible')
-//     .within(() => {
-//       cy.get('h1').contains('Delete Post');
-//       cy.get('#delete-post-btn').click();
-//     });
-// };
+  // click delete menu item (no confirmation dialog needed)
+  cy.get('[data-cy="post-menu-action-delete"]').should('be.visible').click();
+};
 
 // reloads the page until the post is no longer displayed in the feed
 const waitForPostToBeDeleted = (postContent: string, attempts: number = 5, firstCheck: boolean = true) => {
   if (attempts <= 0) assert(false, 'Post still exists with content: ' + postContent);
 
-  cy.get('#posts-feed')
-    .find('#timeline')
+  cy.get('[data-cy="timeline-posts"]')
     .invoke('text')
     .then((text) => {
       // handle whitespace consistently
