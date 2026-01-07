@@ -12,14 +12,24 @@ import * as Core from '@/core';
 export class SettingsController {
   private constructor() {} // Prevent instantiation
 
+  private static pendingCommit: Promise<void> = Promise.resolve();
+
   /**
-   * Commits a settings update to the homeserver.
-   * Updates local store first, then syncs to homeserver.
+   * Commits settings to homeserver.
    */
   private static async commitUpdate(): Promise<void> {
-    const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
-    const settings = Core.SettingsNormalizer.extractState(Core.useSettingsStore.getState());
-    await Core.SettingsApplication.commitUpdate(settings, pubky);
+    // Uses promise chaining to prevent race conditions: if multiple settings change rapidly,
+    // each commit waits for the previous one to finish, then reads the latest state.
+    // The chaining MUST happen synchronously (before any await) so that concurrent calls
+    // immediately queue behind the current pendingCommit rather than racing to overwrite it.
+    this.pendingCommit = this.pendingCommit
+      .catch(() => {})
+      .then(async () => {
+        const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
+        const settings = Core.SettingsNormalizer.extractState(Core.useSettingsStore.getState());
+        await Core.SettingsApplication.commitUpdate(settings, pubky);
+      });
+    await this.pendingCommit;
   }
 
   /**
@@ -82,26 +92,24 @@ export class SettingsController {
   }
 
   /**
-   * Muted users management with homeserver sync.
+   * Muted users management (local-only, not synced to homeserver).
+   * These methods update the local store directly without triggering
+   * a homeserver sync since muted users are device-specific.
    */
-  static async addMutedUser(userId: string): Promise<void> {
+  static addMutedUser(userId: string): void {
     Core.useSettingsStore.getState().addMutedUser(userId);
-    await this.commitUpdate();
   }
 
-  static async removeMutedUser(userId: string): Promise<void> {
+  static removeMutedUser(userId: string): void {
     Core.useSettingsStore.getState().removeMutedUser(userId);
-    await this.commitUpdate();
   }
 
-  static async setMutedUsers(userIds: string[]): Promise<void> {
+  static setMutedUsers(userIds: string[]): void {
     Core.useSettingsStore.getState().setMutedUsers(userIds);
-    await this.commitUpdate();
   }
 
-  static async clearMutedUsers(): Promise<void> {
+  static clearMutedUsers(): void {
     Core.useSettingsStore.getState().clearMutedUsers();
-    await this.commitUpdate();
   }
 
   /**
