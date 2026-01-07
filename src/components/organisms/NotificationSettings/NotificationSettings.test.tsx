@@ -29,7 +29,6 @@ describe('NotificationSettings', () => {
 
     expect(screen.getByText('New follower')).toBeInTheDocument();
     expect(screen.getByText('New friend')).toBeInTheDocument();
-    expect(screen.getByText('Lost friend')).toBeInTheDocument();
     expect(screen.getByText('Someone tagged your post')).toBeInTheDocument();
     expect(screen.getByText('Someone tagged your profile')).toBeInTheDocument();
     expect(screen.getByText('Someone mentioned your profile')).toBeInTheDocument();

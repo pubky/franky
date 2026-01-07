@@ -6,6 +6,7 @@ import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import * as Config from '@/config';
 import * as Types from './index';
 
 export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.StatusPickerContentProps) {
@@ -102,7 +103,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
               type="text"
               value={customStatus}
               placeholder="Add status"
-              maxLength={12}
+              maxLength={Config.USER_STATUS_MAX_LENGTH}
               onChange={(e) => setCustomStatus(e.target.value)}
               onKeyDown={handleKeyDown}
               className={Libs.cn(
