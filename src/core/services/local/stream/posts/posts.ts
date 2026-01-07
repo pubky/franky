@@ -137,7 +137,7 @@ export class LocalStreamPostsService {
   }
 
   /**
-   * Merge the unread stream with the post stream
+   * Merge the unread stream with the post stream, sorted by timestamp
    * @param streamId - The stream ID to merge the unread stream with the post stream
    * @returns void
    */
@@ -152,7 +152,15 @@ export class LocalStreamPostsService {
     const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
     const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
 
-    await Core.PostStreamModel.upsert(streamId, combinedStream);
+    // Sort by timestamp (indexed_at) in descending order (most recent first)
+    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
+    const postTimestamps = combinedStream.map((postId, index) => ({
+      postId,
+      timestamp: posts[index]?.indexed_at || 0,
+    }));
+    const sortedStream = postTimestamps.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.postId);
+
+    await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
 
   /**
