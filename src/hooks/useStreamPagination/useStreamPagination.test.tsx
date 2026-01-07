@@ -12,6 +12,9 @@ vi.mock('@/core', async () => {
       getCachedLastPostTimestamp: vi.fn(),
       getOrFetchStreamSlice: vi.fn(),
     },
+    PostDetailsModel: {
+      findByIdsPreserveOrder: vi.fn(),
+    },
   };
 });
 
@@ -42,6 +45,15 @@ describe('useStreamPagination', () => {
     vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
       nextPageIds: mockPostIds,
       timestamp: Date.now(),
+    });
+    // Mock PostDetailsModel to return posts with timestamps that preserve input order
+    // (newer posts first = higher timestamps)
+    vi.mocked(Core.PostDetailsModel.findByIdsPreserveOrder).mockImplementation(async (ids: string[]) => {
+      const now = Date.now();
+      return ids.map((id, index) => ({
+        id,
+        indexed_at: now - index * 1000, // Each post 1 second older than previous
+      }));
     });
   });
 
@@ -401,8 +413,8 @@ describe('useStreamPagination', () => {
       const initialPostIds = result.current.postIds;
       const newPostId = 'new-post-1';
 
-      act(() => {
-        result.current.prependPosts(newPostId);
+      await act(async () => {
+        await result.current.prependPosts(newPostId);
       });
 
       expect(result.current.postIds[0]).toBe(newPostId);
@@ -424,8 +436,8 @@ describe('useStreamPagination', () => {
       const initialPostIds = result.current.postIds;
       const newPostIds = ['new-post-1', 'new-post-2', 'new-post-3'];
 
-      act(() => {
-        result.current.prependPosts(newPostIds);
+      await act(async () => {
+        await result.current.prependPosts(newPostIds);
       });
 
       expect(result.current.postIds.slice(0, 3)).toEqual(newPostIds);
@@ -447,8 +459,8 @@ describe('useStreamPagination', () => {
       const initialPostIds = result.current.postIds;
       const duplicatePostId = initialPostIds[0];
 
-      act(() => {
-        result.current.prependPosts(duplicatePostId);
+      await act(async () => {
+        await result.current.prependPosts(duplicatePostId);
       });
 
       // Should not have added duplicate
@@ -469,8 +481,8 @@ describe('useStreamPagination', () => {
 
       const initialPostIds = result.current.postIds;
 
-      act(() => {
-        result.current.prependPosts([]);
+      await act(async () => {
+        await result.current.prependPosts([]);
       });
 
       expect(result.current.postIds).toEqual(initialPostIds);
