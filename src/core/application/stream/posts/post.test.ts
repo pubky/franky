@@ -1081,6 +1081,182 @@ describe('PostStreamApplication', () => {
 
       expect(Core.UserDetailsModel.findByIdsPreserveOrder).toHaveBeenCalled();
     });
+
+    it('should fetch original posts for reposts', async () => {
+      const repostAuthor = 'reposter-user';
+      const originalAuthor = 'original-author';
+      const originalPostUri = `pubky://${originalAuthor}/pub/pubky.app/posts/original-post`;
+      const originalPostCompositeId = `${originalAuthor}:original-post`;
+
+      // Create a repost that references an original post
+      const repostNexusPost = createMockNexusPost('repost-1', repostAuthor, BASE_TIMESTAMP, {
+        relationships: {
+          replied: null,
+          reposted: originalPostUri,
+          mentioned: [],
+        },
+      });
+
+      // Original post that will be fetched
+      const originalNexusPost = createMockNexusPost('original-post', originalAuthor, BASE_TIMESTAMP - 1000);
+
+      const mocks = setupDefaultMocks();
+      mocks.getUserDetails.mockResolvedValue([{ id: repostAuthor } as Core.UserDetailsModelSchema]);
+
+      // First call: fetch repost, second call: fetch original post, third call: fetch original post's users
+      const queryNexusSpy = vi
+        .spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce([repostNexusPost]) // fetchMissingPostsFromNexus: posts
+        .mockResolvedValueOnce([originalNexusPost]) // fetchRepostedOriginalPosts: original posts
+        .mockResolvedValueOnce([createMockNexusUser(originalAuthor)]); // fetchMissingUsersFromNexus for original post
+
+      // Mock that original post is NOT in cache (needs to be fetched)
+      vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValueOnce([
+        originalPostCompositeId,
+      ]);
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds: [`${repostAuthor}:repost-1`],
+        viewerId,
+      });
+
+      // Should have called queryNexus to fetch original post
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        expect.stringContaining(originalPostCompositeId),
+      );
+    });
+
+    it('should not fetch original posts when they are already in local DB', async () => {
+      const repostAuthor = 'reposter-user';
+      const originalAuthor = 'original-author';
+      const originalPostUri = `pubky://${originalAuthor}/pub/pubky.app/posts/original-post`;
+
+      // Create a repost that references an original post
+      const repostNexusPost = createMockNexusPost('repost-1', repostAuthor, BASE_TIMESTAMP, {
+        relationships: {
+          replied: null,
+          reposted: originalPostUri,
+          mentioned: [],
+        },
+      });
+
+      const mocks = setupDefaultMocks();
+      mocks.getUserDetails.mockResolvedValue([{ id: repostAuthor } as Core.UserDetailsModelSchema]);
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValueOnce([repostNexusPost]);
+
+      // Mock that original post IS in cache (no need to fetch)
+      vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValueOnce([]);
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds: [`${repostAuthor}:repost-1`],
+        viewerId,
+      });
+
+      // Should only have called queryNexus once (for the repost, not for original)
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not fetch original posts when there are no reposts', async () => {
+      const { cacheMissPostIds, mockNexusPosts } = createTestData(2);
+
+      const mocks = setupDefaultMocks();
+      mocks.getUserDetails.mockResolvedValue(mockAllUsersCached(2));
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValueOnce(mockNexusPosts);
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Should only have called queryNexus once (for the posts, not for any originals)
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle error gracefully when fetching original posts fails', async () => {
+      const repostAuthor = 'reposter-user';
+      const originalAuthor = 'original-author';
+      const originalPostUri = `pubky://${originalAuthor}/pub/pubky.app/posts/original-post`;
+      const originalPostCompositeId = `${originalAuthor}:original-post`;
+
+      const repostNexusPost = createMockNexusPost('repost-1', repostAuthor, BASE_TIMESTAMP, {
+        relationships: {
+          replied: null,
+          reposted: originalPostUri,
+          mentioned: [],
+        },
+      });
+
+      const mocks = setupDefaultMocks();
+      mocks.getUserDetails.mockResolvedValue([{ id: repostAuthor } as Core.UserDetailsModelSchema]);
+
+      vi.spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce([repostNexusPost]) // fetchMissingPostsFromNexus: posts
+        .mockRejectedValueOnce(new Error('Failed to fetch original posts')); // fetchRepostedOriginalPosts fails
+
+      vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValueOnce([
+        originalPostCompositeId,
+      ]);
+
+      // Should not throw - error should be handled gracefully
+      await expect(
+        Core.PostStreamApplication.fetchMissingPostsFromNexus({
+          cacheMissPostIds: [`${repostAuthor}:repost-1`],
+          viewerId,
+        }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should handle multiple reposts with different original posts', async () => {
+      const repostAuthor = 'reposter-user';
+      const originalAuthor1 = 'original-author-1';
+      const originalAuthor2 = 'original-author-2';
+      const originalPostUri1 = `pubky://${originalAuthor1}/pub/pubky.app/posts/original-1`;
+      const originalPostUri2 = `pubky://${originalAuthor2}/pub/pubky.app/posts/original-2`;
+
+      const repostNexusPosts = [
+        createMockNexusPost('repost-1', repostAuthor, BASE_TIMESTAMP, {
+          relationships: { replied: null, reposted: originalPostUri1, mentioned: [] },
+        }),
+        createMockNexusPost('repost-2', repostAuthor, BASE_TIMESTAMP + 1, {
+          relationships: { replied: null, reposted: originalPostUri2, mentioned: [] },
+        }),
+      ];
+
+      const originalNexusPosts = [
+        createMockNexusPost('original-1', originalAuthor1, BASE_TIMESTAMP - 1000),
+        createMockNexusPost('original-2', originalAuthor2, BASE_TIMESTAMP - 2000),
+      ];
+
+      const mocks = setupDefaultMocks();
+      mocks.getUserDetails.mockResolvedValue([{ id: repostAuthor } as Core.UserDetailsModelSchema]);
+
+      const queryNexusSpy = vi
+        .spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce(repostNexusPosts)
+        .mockResolvedValueOnce(originalNexusPosts)
+        .mockResolvedValueOnce([createMockNexusUser(originalAuthor1), createMockNexusUser(originalAuthor2)]);
+
+      vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValueOnce([
+        `${originalAuthor1}:original-1`,
+        `${originalAuthor2}:original-2`,
+      ]);
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds: [`${repostAuthor}:repost-1`, `${repostAuthor}:repost-2`],
+        viewerId,
+      });
+
+      // Should have fetched both original posts
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        expect.stringMatching(/original-1.*original-2|original-2.*original-1/),
+      );
+    });
   });
 
   describe('getStreamHead', () => {

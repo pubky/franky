@@ -745,4 +745,66 @@ describe('NexusPostStreamService', () => {
       expect(result.last_post_score).toBe(123456);
     });
   });
+
+  describe('fetchByIds', () => {
+    it('should fetch posts by IDs with viewer_id', async () => {
+      // Arrange
+      const mockPostIds = ['author1:post1', 'author1:post2', 'author2:post3'];
+      const mockPosts: Core.NexusPost[] = [
+        { details: { id: 'post1', author: 'author1' } } as Core.NexusPost,
+        { details: { id: 'post2', author: 'author1' } } as Core.NexusPost,
+        { details: { id: 'post3', author: 'author2' } } as Core.NexusPost,
+      ];
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockPosts);
+
+      // Act
+      const result = await NexusPostStreamService.fetchByIds({
+        post_ids: mockPostIds,
+        viewer_id: mockViewerId,
+      });
+
+      // Assert
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        JSON.stringify({ post_ids: mockPostIds, viewer_id: mockViewerId }),
+      );
+      expect(result).toEqual(mockPosts);
+    });
+
+    it('should fetch posts by IDs without viewer_id', async () => {
+      // Arrange
+      const mockPostIds = ['author1:post1'];
+      const mockPosts: Core.NexusPost[] = [{ details: { id: 'post1', author: 'author1' } } as Core.NexusPost];
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockPosts);
+
+      // Act
+      const result = await NexusPostStreamService.fetchByIds({ post_ids: mockPostIds });
+
+      // Assert
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        JSON.stringify({ post_ids: mockPostIds }),
+      );
+      expect(result).toEqual(mockPosts);
+    });
+
+    it('should return empty array when fetching empty post IDs', async () => {
+      // Arrange
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      // Act
+      const result = await NexusPostStreamService.fetchByIds({ post_ids: [] });
+
+      // Assert
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        JSON.stringify({ post_ids: [] }),
+      );
+      expect(result).toEqual([]);
+    });
+  });
 });
