@@ -182,8 +182,10 @@ export class PostStreamApplication {
    */
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
     try {
-      const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
-      const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
+      const postBatch = await Core.NexusPostStreamService.fetchByIds({
+        post_ids: cacheMissPostIds,
+        viewer_id: viewerId,
+      });
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
       // Persist the post attachments metadata
       await Core.FileApplication.fetchFiles(postAttachments);
@@ -237,11 +239,10 @@ export class PostStreamApplication {
 
     // Fetch the missing original posts (non-recursive to avoid infinite loops)
     try {
-      const { url, body } = Core.postStreamApi.postsByIds({
+      const originalPosts = await Core.NexusPostStreamService.fetchByIds({
         post_ids: missingOriginalPostIds,
         viewer_id: viewerId,
       });
-      const originalPosts = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: originalPosts });
       await Core.FileApplication.fetchFiles(postAttachments);
       await this.fetchMissingUsersFromNexus({ posts: originalPosts, viewerId });
