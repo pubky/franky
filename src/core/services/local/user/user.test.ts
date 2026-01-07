@@ -147,24 +147,20 @@ describe('LocalUserService', () => {
       expect(result!.following).toBe(50);
     });
 
-    it('should create default record when user counts do not exist', async () => {
+    it('should do nothing when user counts do not exist', async () => {
       // Verify user doesn't exist
       const before = await Core.UserCountsModel.findById(userId);
       expect(before).toBeNull();
 
-      // Update counts - should create record with defaults first
+      // Update counts - should silently return since record doesn't exist
       await LocalUserService.updateCounts({
         userId,
         countChanges: { posts: 1 },
       });
 
+      // Record should still not exist
       const after = await Core.UserCountsModel.findById(userId);
-      expect(after).not.toBeNull();
-      expect(after!.posts).toBe(1); // 0 + 1
-      // All other fields should be 0 (defaults)
-      expect(after!.followers).toBe(0);
-      expect(after!.following).toBe(0);
-      expect(after!.friends).toBe(0);
+      expect(after).toBeNull();
     });
 
     it('should preserve existing counts when updating only some fields', async () => {

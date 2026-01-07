@@ -160,31 +160,22 @@ describe('UserCountsModel', () => {
       expect(result!.posts).toBe(0); // Math.max(0, 15-100) = 0
     });
 
-    it('should create default record when user counts do not exist', async () => {
+    it('should do nothing when user counts do not exist', async () => {
       const newUserId = Core.generateTestUserId(999);
 
       // Verify user doesn't exist
       const before = await Core.UserCountsModel.findById(newUserId);
       expect(before).toBeNull();
 
-      // Update counts - should create record with defaults first
+      // Update counts - should silently return since record doesn't exist
       await Core.UserCountsModel.updateCounts({
         userId: newUserId,
         countChanges: { posts: 1, replies: 1 },
       });
 
+      // Record should still not exist
       const after = await Core.UserCountsModel.findById(newUserId);
-      expect(after).not.toBeNull();
-      expect(after!.posts).toBe(1); // 0 + 1
-      expect(after!.replies).toBe(1); // 0 + 1
-      // All other fields should be 0 (defaults)
-      expect(after!.followers).toBe(0);
-      expect(after!.following).toBe(0);
-      expect(after!.friends).toBe(0);
-      expect(after!.bookmarks).toBe(0);
-      expect(after!.tagged).toBe(0);
-      expect(after!.tags).toBe(0);
-      expect(after!.unique_tags).toBe(0);
+      expect(after).toBeNull();
     });
 
     it('should preserve existing counts when updating only some fields', async () => {
