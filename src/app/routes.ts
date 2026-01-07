@@ -49,7 +49,14 @@ export enum POST_ROUTES {
   POST = '/post',
 }
 
-export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
+// Public routes are accessible regardless of authentication status.
+// This includes routes that need to be accessible during auth transitions (like logout).
+export const PUBLIC_ROUTES: string[] = [
+  AUTH_ROUTES.LOGOUT,
+  // Profile is public to prevent RouteGuard redirect during logout.
+  // The profile page components handle unauthenticated state gracefully.
+  APP_ROUTES.PROFILE,
+];
 
 export const ALLOWED_ROUTES = [
   ONBOARDING_ROUTES.PROFILE,

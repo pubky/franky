@@ -254,6 +254,99 @@ describe('NotificationApplication.markAllAsRead', () => {
   });
 });
 
+describe('NotificationApplication.fetchMissingEntities', () => {
+  const viewerId = 'viewer-user' as Core.Pubky;
+  const relatedUserId = 'related-user' as Core.Pubky;
+  const relatedPostId = 'related-post';
+
+  beforeEach(() => vi.clearAllMocks());
+
+  it('should pass viewerId when fetching missing users to ensure correct relationship data', async () => {
+    // This test verifies the fix for the bug where users in the Following list
+    // showed "Follow" button instead of "Following" after logout/login cycles.
+    //
+    // Bug scenario:
+    // 1. Profile 1 follows Profile 2
+    // 2. Profile 1 signs out
+    // 3. Profile 2 logs in and follows Profile 1
+    // 4. Profile 2 signs out
+    // 5. Profile 1 logs in, notifications are fetched
+    // 6. Profile 2 is fetched WITHOUT viewerId -> relationship.following = false (wrong!)
+    // 7. Profile 1 views Following list -> Profile 2 shows "Follow" instead of "Following"
+    //
+    // The fix: Pass viewerId to fetchMissingUsersFromNexus so Nexus returns
+    // the correct relationship from the viewer's perspective.
+    const notifications = [createNexus(1000)];
+
+    vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) => createFlat(n.timestamp));
+    vi.spyOn(Core.LocalNotificationService, 'parseNotifications').mockReturnValue({
+      relatedPostIds: [],
+      relatedUserIds: [relatedUserId],
+    });
+    vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValue([]);
+    vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([relatedUserId]);
+    vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus').mockResolvedValue(undefined);
+    const fetchUsersSpy = vi
+      .spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus')
+      .mockResolvedValue(undefined);
+
+    await NotificationApplication.fetchMissingEntities({ notifications, viewerId });
+
+    // CRITICAL: viewerId must be passed to get correct relationship data
+    expect(fetchUsersSpy).toHaveBeenCalledWith({
+      cacheMissUserIds: [relatedUserId],
+      viewerId, // This was missing before the fix!
+    });
+  });
+
+  it('should pass viewerId when fetching missing posts', async () => {
+    const notifications = [createNexus(1000)];
+
+    vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) => createFlat(n.timestamp));
+    vi.spyOn(Core.LocalNotificationService, 'parseNotifications').mockReturnValue({
+      relatedPostIds: [relatedPostId],
+      relatedUserIds: [],
+    });
+    vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValue([relatedPostId]);
+    vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([]);
+    const fetchPostsSpy = vi
+      .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+      .mockResolvedValue(undefined);
+    vi.spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus').mockResolvedValue(undefined);
+
+    await NotificationApplication.fetchMissingEntities({ notifications, viewerId });
+
+    expect(fetchPostsSpy).toHaveBeenCalledWith({
+      cacheMissPostIds: [relatedPostId],
+      viewerId,
+    });
+  });
+
+  it('should not fetch when all entities are already cached', async () => {
+    const notifications = [createNexus(1000)];
+
+    vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation((n) => createFlat(n.timestamp));
+    vi.spyOn(Core.LocalNotificationService, 'parseNotifications').mockReturnValue({
+      relatedPostIds: [relatedPostId],
+      relatedUserIds: [relatedUserId],
+    });
+    // All entities are already cached
+    vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValue([]);
+    vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([]);
+    const fetchPostsSpy = vi
+      .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+      .mockResolvedValue(undefined);
+    const fetchUsersSpy = vi
+      .spyOn(Core.UserStreamApplication, 'fetchMissingUsersFromNexus')
+      .mockResolvedValue(undefined);
+
+    await NotificationApplication.fetchMissingEntities({ notifications, viewerId });
+
+    expect(fetchPostsSpy).not.toHaveBeenCalled();
+    expect(fetchUsersSpy).not.toHaveBeenCalled();
+  });
+});
+
 describe('NotificationApplication.getAllFromCache', () => {
   const createFlat = (timestamp: number): Core.FlatNotification =>
     ({ type: Core.NotificationType.Follow, timestamp, followed_by: `user-${timestamp}` }) as Core.FlatNotification;

@@ -12,7 +12,6 @@ exports[`PostHeaderTimestamp - Snapshots > matches snapshot with "just now" 1`] 
   />
   <span
     class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-    data-as="span"
     data-testid="typography"
   >
     just now
@@ -32,7 +31,6 @@ exports[`PostHeaderTimestamp - Snapshots > matches snapshot with days 1`] = `
   />
   <span
     class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-    data-as="span"
     data-testid="typography"
   >
     3d
@@ -52,7 +50,6 @@ exports[`PostHeaderTimestamp - Snapshots > matches snapshot with hours 1`] = `
   />
   <span
     class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-    data-as="span"
     data-testid="typography"
   >
     2h
@@ -72,7 +69,6 @@ exports[`PostHeaderTimestamp - Snapshots > matches snapshot with minutes 1`] = `
   />
   <span
     class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
-    data-as="span"
     data-testid="typography"
   >
     5m

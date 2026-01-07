@@ -11,7 +11,7 @@ export function useAuthStatus(): AuthStatusResult {
 
   const authStatusResult = useMemo((): AuthStatusResult => {
     // Check if stores are still hydrating
-    const isLoading = !onboardingStore.hasHydrated || !authStore.hasHydrated;
+    const isLoading = !onboardingStore.hasHydrated || !authStore.hasHydrated || authStore.isRestoringSession;
 
     // Check if user has keypair (session)
     const hasKeypair = authStore.session !== null;
@@ -42,7 +42,13 @@ export function useAuthStatus(): AuthStatusResult {
       hasProfile,
       isFullyAuthenticated: status === AuthStatus.AUTHENTICATED,
     };
-  }, [onboardingStore.hasHydrated, authStore.hasHydrated, authStore.session, authStore.hasProfile]);
+  }, [
+    onboardingStore.hasHydrated,
+    authStore.hasHydrated,
+    authStore.isRestoringSession,
+    authStore.session,
+    authStore.hasProfile,
+  ]);
 
   return authStatusResult;
 }

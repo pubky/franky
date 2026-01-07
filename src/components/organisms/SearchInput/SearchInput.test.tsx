@@ -16,7 +16,6 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock hooks
-const mockSearchByTag = vi.fn();
 const mockAddTagToSearch = vi.fn();
 const mockRemoveTagFromSearch = vi.fn();
 vi.mock('@/hooks', () => ({
@@ -31,6 +30,10 @@ vi.mock('@/hooks', () => ({
   })),
   useHotTags: vi.fn(() => ({
     tags: [{ name: 'pubky', count: 10 }],
+    rawTags: [],
+    isLoading: false,
+    error: null,
+    refetch: vi.fn(),
   })),
   useSearchAutocomplete: vi.fn(() => ({
     tags: [],
@@ -38,7 +41,6 @@ vi.mock('@/hooks', () => ({
     isLoading: false,
   })),
   useTagSearch: vi.fn(() => ({
-    searchByTag: mockSearchByTag,
     addTagToSearch: mockAddTagToSearch,
     removeTagFromSearch: mockRemoveTagFromSearch,
     activeTags: [],
@@ -217,6 +219,10 @@ describe('SearchInput', () => {
     });
     vi.mocked(useHotTags).mockReturnValue({
       tags: [{ name: 'pubky', count: 10 }],
+      rawTags: [],
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
     });
     vi.mocked(useSearchAutocomplete).mockReturnValue({
       tags: [],
@@ -224,7 +230,6 @@ describe('SearchInput', () => {
       isLoading: false,
     });
     vi.mocked(useTagSearch).mockReturnValue({
-      searchByTag: mockSearchByTag,
       addTagToSearch: mockAddTagToSearch,
       removeTagFromSearch: mockRemoveTagFromSearch,
       activeTags: [],
@@ -284,7 +289,6 @@ describe('SearchInput', () => {
     it('renders active tags when present', async () => {
       const { useTagSearch } = await import('@/hooks');
       vi.mocked(useTagSearch).mockReturnValue({
-        searchByTag: mockSearchByTag,
         addTagToSearch: mockAddTagToSearch,
         removeTagFromSearch: mockRemoveTagFromSearch,
         activeTags: ['bitcoin', 'pubky'],
@@ -300,7 +304,6 @@ describe('SearchInput', () => {
     it('renders empty placeholder when active tags present', async () => {
       const { useTagSearch } = await import('@/hooks');
       vi.mocked(useTagSearch).mockReturnValue({
-        searchByTag: mockSearchByTag,
         addTagToSearch: mockAddTagToSearch,
         removeTagFromSearch: mockRemoveTagFromSearch,
         activeTags: ['bitcoin'],
@@ -316,7 +319,6 @@ describe('SearchInput', () => {
     it('renders active tags list with aria-label', async () => {
       const { useTagSearch } = await import('@/hooks');
       vi.mocked(useTagSearch).mockReturnValue({
-        searchByTag: mockSearchByTag,
         addTagToSearch: mockAddTagToSearch,
         removeTagFromSearch: mockRemoveTagFromSearch,
         activeTags: ['bitcoin'],
@@ -337,10 +339,12 @@ describe('SearchInput', () => {
         inputValue: '',
         isFocused: false,
         containerRef: { current: null },
+        inputRef: { current: null },
         handleInputChange: vi.fn(),
         handleKeyDown: vi.fn(),
         handleFocus: vi.fn(),
         clearInputValue: vi.fn(),
+        setFocus: vi.fn(),
       });
 
       render(<SearchInput />);
@@ -354,13 +358,19 @@ describe('SearchInput', () => {
         inputValue: '',
         isFocused: true,
         containerRef: { current: null },
+        inputRef: { current: null },
         handleInputChange: vi.fn(),
         handleKeyDown: vi.fn(),
         handleFocus: vi.fn(),
         clearInputValue: vi.fn(),
+        setFocus: vi.fn(),
       });
       vi.mocked(useHotTags).mockReturnValue({
         tags: [{ name: 'pubky', count: 10 }],
+        rawTags: [],
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
       });
 
       render(<SearchInput />);
@@ -374,13 +384,19 @@ describe('SearchInput', () => {
         inputValue: '',
         isFocused: true,
         containerRef: { current: null },
+        inputRef: { current: null },
         handleInputChange: vi.fn(),
         handleKeyDown: vi.fn(),
         handleFocus: vi.fn(),
         clearInputValue: vi.fn(),
+        setFocus: vi.fn(),
       });
       vi.mocked(useHotTags).mockReturnValue({
         tags: [{ name: 'pubky', count: 10 }],
+        rawTags: [],
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
       });
 
       render(<SearchInput />);
@@ -396,13 +412,19 @@ describe('SearchInput', () => {
         inputValue: '',
         isFocused: false,
         containerRef: { current: null },
+        inputRef: { current: null },
         handleInputChange: vi.fn(),
         handleKeyDown: vi.fn(),
         handleFocus: vi.fn(),
         clearInputValue: vi.fn(),
+        setFocus: vi.fn(),
       });
       vi.mocked(useHotTags).mockReturnValue({
         tags: [],
+        rawTags: [],
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
       });
 
       render(<SearchInput />);
@@ -429,6 +451,10 @@ describe('SearchInput', () => {
       });
       vi.mocked(useHotTags).mockReturnValue({
         tags: [{ name: 'pubky', count: 10 }],
+        rawTags: [],
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
       });
 
       render(<SearchInput />);
@@ -443,7 +469,6 @@ describe('SearchInput', () => {
     it('calls removeTagFromSearch when close button clicked', async () => {
       const { useTagSearch } = await import('@/hooks');
       vi.mocked(useTagSearch).mockReturnValue({
-        searchByTag: mockSearchByTag,
         addTagToSearch: mockAddTagToSearch,
         removeTagFromSearch: mockRemoveTagFromSearch,
         activeTags: ['bitcoin', 'pubky'],
@@ -462,7 +487,6 @@ describe('SearchInput', () => {
     it('sets input to readOnly when at max tags', async () => {
       const { useTagSearch } = await import('@/hooks');
       vi.mocked(useTagSearch).mockReturnValue({
-        searchByTag: mockSearchByTag,
         addTagToSearch: mockAddTagToSearch,
         removeTagFromSearch: mockRemoveTagFromSearch,
         activeTags: ['tag1', 'tag2', 'tag3'],
@@ -485,7 +509,6 @@ describe('SearchInput', () => {
     it('matches snapshot - with active tags', async () => {
       const { useTagSearch } = await import('@/hooks');
       vi.mocked(useTagSearch).mockReturnValue({
-        searchByTag: mockSearchByTag,
         addTagToSearch: mockAddTagToSearch,
         removeTagFromSearch: mockRemoveTagFromSearch,
         activeTags: ['bitcoin', 'pubky'],
@@ -502,16 +525,22 @@ describe('SearchInput', () => {
         inputValue: '',
         isFocused: true,
         containerRef: { current: null },
+        inputRef: { current: null },
         handleInputChange: vi.fn(),
         handleKeyDown: vi.fn(),
         handleFocus: vi.fn(),
         clearInputValue: vi.fn(),
+        setFocus: vi.fn(),
       });
       vi.mocked(useHotTags).mockReturnValue({
         tags: [
           { name: 'pubky', count: 10 },
           { name: 'bitcoin', count: 5 },
         ],
+        rawTags: [],
+        isLoading: false,
+        error: null,
+        refetch: vi.fn(),
       });
 
       const { container } = render(<SearchInput />);

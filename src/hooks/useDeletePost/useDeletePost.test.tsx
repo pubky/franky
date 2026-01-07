@@ -66,7 +66,7 @@ describe('useDeletePost', () => {
     });
 
     expect(mockRemovePosts).toHaveBeenCalledWith(mockPostId);
-    expect(mockRemovePosts).toHaveBeenCalledBefore(mockDelete as unknown as () => Promise<void>);
+    expect(mockRemovePosts).toHaveBeenCalledBefore(mockDelete);
   });
 
   it('calls PostController.commitDelete with correct postId', async () => {

@@ -19,12 +19,11 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-const mockOnTagAdd = vi.fn(() => ({ success: true }));
+const mockOnTagAdd = vi.fn<(tag: string) => void>();
 
 describe('TagInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOnTagAdd.mockReturnValue({ success: true });
   });
 
   it('renders input with placeholder', () => {
@@ -65,7 +64,6 @@ describe('TagInput', () => {
 describe('TagInput - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOnTagAdd.mockReturnValue({ success: true });
   });
 
   it('matches snapshot', () => {

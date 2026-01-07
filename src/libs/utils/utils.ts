@@ -496,3 +496,108 @@ export function getDisplayTags(tags: string[], options: GetDisplayTagsOptions = 
 
   return result;
 }
+
+/**
+ * Protocol schemes that bypass the confirmation dialog
+ */
+const BYPASS_PROTOCOLS = ['mailto:', 'tel:'];
+
+/**
+ * Checks if a URL is on the same domain as the current page.
+ * Compares hostnames while ignoring the 'www.' prefix.
+ *
+ * @param url - The URL to check
+ * @returns true if the URL is on the same domain, false otherwise
+ *
+ * @example
+ * ```ts
+ * // Current page: https://example.com
+ * isSameDomain('https://example.com/page') // true
+ * isSameDomain('https://www.example.com/page') // true
+ * isSameDomain('https://other-domain.com') // false
+ * ```
+ */
+export function isSameDomain(url: string): boolean {
+  try {
+    // Parse the URL to check
+    const urlObj = new URL(url);
+    const urlHostname = urlObj.hostname.toLowerCase().replace(/^www\./, '');
+
+    // Get current page hostname
+    const currentHostname = window.location.hostname.toLowerCase().replace(/^www\./, '');
+
+    // Compare hostnames (ignoring www prefix)
+    return urlHostname === currentHostname;
+  } catch {
+    // If URL parsing fails, assume it's not the same domain
+    return false;
+  }
+}
+
+/**
+ * Determines if a link should bypass the confirmation dialog and open directly.
+ * Returns true if:
+ * - The URL uses a bypass protocol (mailto, tel, etc.)
+ * - The URL is on the same domain as the current page
+ *
+ * @param url - The URL to check
+ * @returns true if the link should open directly without confirmation, false otherwise
+ *
+ * @example
+ * ```ts
+ * // Current page: https://example.com
+ * shouldBypassLinkConfirmation('mailto:test@example.com') // true
+ * shouldBypassLinkConfirmation('tel:+1234567890') // true
+ * shouldBypassLinkConfirmation('https://example.com/page') // true
+ * shouldBypassLinkConfirmation('https://other-domain.com') // false
+ * ```
+ */
+export function shouldBypassLinkConfirmation(url: string): boolean {
+  // Check if URL uses a bypass protocol (mailto, tel, etc.)
+  if (BYPASS_PROTOCOLS.some((protocol) => url.startsWith(protocol))) {
+    return true;
+  }
+
+  // Check if URL is on the same domain
+  return isSameDomain(url);
+}
+
+/**
+ * Count characters properly (grapheme-aware)
+ * Uses Array.from() to handle emojis and Unicode correctly.
+ * Standard string.length counts UTF-16 code units, which makes
+ * emojis like 👍 count as 2 instead of 1.
+ *
+ * @param text - The string to count characters in
+ * @returns The number of grapheme characters
+ *
+ * @example
+ * getCharacterCount('Hello') // 5
+ * getCharacterCount('👍') // 1 (instead of 2 with .length)
+ * getCharacterCount('Hello 👍') // 7
+ */
+export function getCharacterCount(text: string): number {
+  return Array.from(text).length;
+}
+
+/**
+ * Banned characters for tags per pubky-app-specs
+ * Colons, commas, and spaces are not allowed in tags
+ */
+export const TAG_BANNED_CHARS = /[:, ]/g;
+
+/**
+ * Remove banned characters from tag input
+ * Used to sanitize tag input on every keystroke and paste
+ *
+ * @param value - The raw input value
+ * @returns The sanitized value with banned characters removed
+ *
+ * @example
+ * sanitizeTagInput('hello:world') // 'helloworld'
+ * sanitizeTagInput('tag, test') // 'tagtest'
+ * sanitizeTagInput('valid-tag') // 'valid-tag'
+ */
+export function sanitizeTagInput(value: string): string {
+  return value.replace(TAG_BANNED_CHARS, '');
+}

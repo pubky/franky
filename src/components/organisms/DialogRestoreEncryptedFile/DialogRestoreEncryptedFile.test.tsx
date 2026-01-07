@@ -305,7 +305,7 @@ describe('DialogRestoreEncryptedFile', () => {
   });
 
   it('handles Enter key on password input to trigger restore', async () => {
-    mockLoginWithEncryptedFile.mockResolvedValue();
+    mockLoginWithEncryptedFile.mockResolvedValue(true);
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -346,7 +346,7 @@ describe('DialogRestoreEncryptedFile', () => {
   });
 
   it('handles successful restore', async () => {
-    mockLoginWithEncryptedFile.mockResolvedValue();
+    mockLoginWithEncryptedFile.mockResolvedValue(true);
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -370,10 +370,10 @@ describe('DialogRestoreEncryptedFile', () => {
   });
 
   it('shows loading state during restore', async () => {
-    let resolveRestore: () => void;
+    let resolveRestore: (value: boolean) => void;
     mockLoginWithEncryptedFile.mockImplementation(
       () =>
-        new Promise((resolve) => {
+        new Promise<boolean>((resolve) => {
           resolveRestore = resolve;
         }),
     );
@@ -397,7 +397,7 @@ describe('DialogRestoreEncryptedFile', () => {
     expect(passwordInput).toBeDisabled();
 
     // Resolve the promise to complete restore
-    resolveRestore!();
+    resolveRestore!(true);
   });
 
   it('handles aead errors gracefully', async () => {
@@ -567,7 +567,7 @@ describe('DialogRestoreEncryptedFile', () => {
   });
 
   it('handles Enter key to trigger restore when form is valid', async () => {
-    mockLoginWithEncryptedFile.mockResolvedValue({});
+    mockLoginWithEncryptedFile.mockResolvedValue(true);
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 

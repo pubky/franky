@@ -22,26 +22,29 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('NotificationsList', () => {
-  const mockNotifications = [
+  const mockNotifications: FlatNotification[] = [
     {
+      id: 'follow:123:user1',
       type: NotificationType.Follow,
       timestamp: Date.now() - 1000 * 60 * 30,
       followed_by: 'user1',
-    },
+    } as FlatNotification,
     {
+      id: 'reply:123:user2',
       type: NotificationType.Reply,
       timestamp: Date.now() - 1000 * 60 * 60,
       replied_by: 'user2',
       parent_post_uri: 'user1:post123',
       reply_uri: 'user2:reply456',
-    },
+    } as FlatNotification,
     {
+      id: 'tagpost:123:user3',
       type: NotificationType.TagPost,
       timestamp: Date.now() - 1000 * 60 * 60 * 2,
       tagged_by: 'user3',
       tag_label: 'bitcoin',
       post_uri: 'user3:post789',
-    },
+    } as FlatNotification,
   ];
 
   it('renders list of notifications', () => {
@@ -67,19 +70,21 @@ describe('NotificationsList', () => {
 
 describe('NotificationsList - Snapshots', () => {
   it('matches snapshot with notifications', () => {
-    const notifications = [
+    const notifications: FlatNotification[] = [
       {
+        id: 'follow:123:user1',
         type: NotificationType.Follow,
         timestamp: Date.now() - 1000 * 60 * 30,
         followed_by: 'user1',
-      },
+      } as FlatNotification,
       {
+        id: 'reply:123:user2',
         type: NotificationType.Reply,
         timestamp: Date.now() - 1000 * 60 * 60,
         replied_by: 'user2',
         parent_post_uri: 'user1:post123',
         reply_uri: 'user2:reply456',
-      },
+      } as FlatNotification,
     ];
     const { container } = render(<NotificationsList notifications={notifications} unreadNotifications={[]} />);
     expect(container.firstChild).toMatchSnapshot();

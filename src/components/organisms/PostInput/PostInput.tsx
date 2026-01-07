@@ -1,13 +1,13 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-import * as Utils from '@/libs/utils';
+import * as Libs from '@/libs';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { usePostInput } from '@/hooks';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
-import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar';
 import type { PostInputProps } from './PostInput.types';
 import { PostInputExpandableSection } from '../PostInputExpandableSection';
 import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
@@ -63,7 +63,7 @@ export function PostInput({
     <Atoms.Container
       data-cy={dataCy}
       ref={containerRef}
-      className={Utils.cn(
+      className={Libs.cn(
         'relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
         isDragging ? 'border-brand' : 'border-input',
       )}
@@ -89,7 +89,7 @@ export function PostInput({
           <Organisms.PostHeader
             postId={currentUserPubky}
             isReplyInput={true}
-            characterLimit={{ count: content.length, max: POST_MAX_CHARACTER_LENGTH }}
+            characterLimit={{ count: Libs.getCharacterCount(content), max: POST_MAX_CHARACTER_LENGTH }}
             showPopover={false}
           />
         )}
@@ -114,6 +114,11 @@ export function PostInput({
           isSubmitting={isSubmitting}
         />
 
+        {/* Show original post preview for reposts */}
+        {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
+          <Molecules.PostPreviewCard postId={originalPostId} className="bg-card" />
+        )}
+
         <PostInputExpandableSection
           isExpanded={isExpanded}
           content={content}
@@ -132,11 +137,7 @@ export function PostInput({
               ? isSubmitting
               : (!content.trim() && attachments.length === 0) || isSubmitting
           }
-          submitMode={
-            variant === POST_INPUT_VARIANT.REPLY
-              ? POST_INPUT_ACTION_SUBMIT_MODE.REPLY
-              : POST_INPUT_ACTION_SUBMIT_MODE.POST
-          }
+          submitMode={variant}
         />
       </Atoms.Container>
     </Atoms.Container>

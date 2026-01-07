@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
@@ -17,8 +17,6 @@ export function NotificationsContainer() {
   const { notifications, unreadNotifications, isLoading, isLoadingMore, hasMore, error, loadMore, markAllAsRead } =
     Hooks.useNotifications();
 
-  const hasMarkedAsReadRef = useRef(false);
-
   // Infinite scroll sentinel
   const { sentinelRef } = Hooks.useInfiniteScroll({
     onLoadMore: loadMore,
@@ -26,12 +24,12 @@ export function NotificationsContainer() {
     isLoading: isLoadingMore,
   });
 
-  // Mark all notifications as read when entering the notifications page
+  // Mark all notifications as read when leaving the notifications page
+  // This allows the tab counter to show accurate unread count while viewing
   useEffect(() => {
-    if (!hasMarkedAsReadRef.current) {
-      hasMarkedAsReadRef.current = true;
+    return () => {
       markAllAsRead();
-    }
+    };
   }, [markAllAsRead]);
 
   // Loading state

@@ -45,7 +45,6 @@ exports[`PostActionsBar - Snapshots > matches snapshot with counts 1`] = `
     </svg>
     <span
       class="text-xs leading-4 font-bold text-muted-foreground"
-      data-as="span"
       data-testid="typography"
     >
       7
@@ -76,7 +75,6 @@ exports[`PostActionsBar - Snapshots > matches snapshot with counts 1`] = `
     </svg>
     <span
       class="text-xs leading-4 font-bold text-muted-foreground"
-      data-as="span"
       data-testid="typography"
     >
       8
@@ -116,7 +114,6 @@ exports[`PostActionsBar - Snapshots > matches snapshot with counts 1`] = `
     </svg>
     <span
       class="text-xs leading-4 font-bold text-muted-foreground"
-      data-as="span"
       data-testid="typography"
     >
       9

@@ -60,6 +60,7 @@ describe('SearchSuggestions', () => {
   const defaultProps = {
     hotTags,
     hasInput: false,
+    inputValue: '',
     onTagClick: vi.fn(),
     onUserClick: vi.fn(),
     onRecentUserClick: vi.fn(),
