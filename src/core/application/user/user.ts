@@ -42,12 +42,7 @@ export class UserApplication {
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     // TODO: Throw an error instead of returning null when Nexus API returns null/undefined
     const userCounts = await Core.LocalUserService.readCounts({ userId });
-    if (userCounts) {
-      return userCounts;
-    }
-    const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
-    await Core.LocalUserService.upsertCounts({ userId }, nexusUserCounts);
-    return nexusUserCounts;
+    return userCounts;
   }
 
   /**
