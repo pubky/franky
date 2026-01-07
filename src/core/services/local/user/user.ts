@@ -44,8 +44,12 @@ export class LocalUserService {
   /**
    * Upserts user counts into local database.
    * Creates a new record if it doesn't exist, or replaces it if it does.
+   *
+   * WARNING: This method replaces the entire record. For incremental updates
+   * (e.g., incrementing posts by 1), use updateCounts() instead.
+   *
    * @param params - Parameters containing user ID
-   * @param userCounts - The user counts to upsert
+   * @param userCounts - The complete user counts to upsert
    * @returns Promise resolving to void
    */
   static async upsertCounts(params: Core.TReadProfileParams, userCounts: Core.NexusUserCounts): Promise<void> {
@@ -54,6 +58,17 @@ export class LocalUserService {
       id: params.userId,
       ...userCounts,
     });
+  }
+
+  /**
+   * Incrementally updates user counts in local database.
+   * Only modifies the specified fields, preserving all other counts.
+   *
+   * @param params - Parameters containing user ID and count changes to apply
+   * @returns Promise resolving to void
+   */
+  static async updateCounts(params: Core.TUserCountsParams): Promise<void> {
+    await Core.UserCountsModel.updateCounts(params);
   }
 
   /**
