@@ -41,7 +41,6 @@ exports[`PostMenuActionsContent - Snapshots > matches snapshot for all menu item
     </svg>
     <span
       class="truncate text-base font-medium transition-colors text-muted-foreground group-hover:text-foreground"
-      data-as="span"
       data-testid="typography"
     >
       Follow Test User
@@ -90,7 +89,6 @@ exports[`PostMenuActionsContent - Snapshots > matches snapshot for mobile sheet 
     </svg>
     <span
       class="truncate text-base font-medium text-muted-foreground"
-      data-as="span"
       data-testid="typography"
     >
       Follow Test User
@@ -137,7 +135,6 @@ exports[`PostMenuActionsContent - Snapshots > matches snapshot for own post menu
     </svg>
     <span
       class="truncate text-base font-medium transition-colors text-muted-foreground group-hover:text-foreground"
-      data-as="span"
       data-testid="typography"
     >
       Copy pubky

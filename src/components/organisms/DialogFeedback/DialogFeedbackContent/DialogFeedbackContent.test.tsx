@@ -94,16 +94,16 @@ vi.mock('@/atoms', () => ({
   ),
   Typography: ({
     children,
-    as,
+    as: _as,
     size,
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => (
-    <p data-testid="typography" data-as={as} data-size={size} className={className}>
+    <p data-testid="typography" data-size={size} className={className}>
       {children}
     </p>
   ),
@@ -192,7 +192,9 @@ describe('DialogFeedbackContent', () => {
     render(<DialogFeedbackContent {...defaultProps} hasContent={true} isSubmitting={true} />);
 
     const buttons = screen.getAllByTestId('button');
-    const sendButton = buttons.find((btn) => btn.getAttribute('data-variant') === 'secondary' && btn.disabled);
+    const sendButton = buttons.find(
+      (btn) => btn.getAttribute('data-variant') === 'secondary' && (btn as HTMLButtonElement).disabled,
+    );
     expect(sendButton).toBeDefined();
     expect(sendButton).toBeDisabled();
   });

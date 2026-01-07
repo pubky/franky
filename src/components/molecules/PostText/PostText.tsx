@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
+  remarkDisallowMarkdownLinks,
   remarkHashtags,
   remarkMentions,
   remarkPlaintextCodeblock,
@@ -31,6 +32,7 @@ export const PostText = ({ content }: PostTextProps) => {
   const remarkPlugins = useMemo(
     () => [
       remarkGfm,
+      remarkDisallowMarkdownLinks,
       remarkPlaintextCodeblock,
       remarkHashtags,
       remarkMentions,

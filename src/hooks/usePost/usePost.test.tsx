@@ -51,7 +51,7 @@ vi.mock('@/molecules', async (importOriginal) => {
 
 // Mock Libs
 vi.mock('@/libs', async () => {
-  const actual = await vi.importActual('@/libs');
+  const actual = await vi.importActual<typeof import('@/libs')>('@/libs');
   return {
     ...actual,
     Logger: {

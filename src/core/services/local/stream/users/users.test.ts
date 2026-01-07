@@ -218,13 +218,13 @@ describe('LocalStreamUsersService', () => {
           label: 'developer',
           taggers: ['tagger-1', 'tagger-2'],
           taggers_count: 2,
-          relationship: { tagged: true, tagged_by_viewer: false },
+          relationship: true,
         },
         {
           label: 'designer',
           taggers: ['tagger-3'],
           taggers_count: 1,
-          relationship: { tagged: false, tagged_by_viewer: true },
+          relationship: false,
         },
       ];
 
@@ -262,7 +262,7 @@ describe('LocalStreamUsersService', () => {
           label: 'expert',
           taggers: ['tagger-1'],
           taggers_count: 1,
-          relationship: { tagged: true, tagged_by_viewer: false },
+          relationship: true,
         },
       ];
 

@@ -50,6 +50,28 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Build stream ID: userId:connectionType (e.g., 'user123:followers')
   const streamId = targetUserId ? (`${targetUserId}:${type}` as Core.UserStreamCompositeId) : null;
 
+  // Subscribe to stream changes for reactive updates (follow/unfollow)
+  const cachedStream = useLiveQuery(
+    async () => {
+      if (!streamId) return null;
+      return (await Core.LocalStreamUsersService.findById(streamId))?.stream ?? null;
+    },
+    [streamId],
+    null,
+  );
+
+  // Sync userIds when stream changes in cache (e.g., after follow/unfollow)
+  useEffect(() => {
+    if (cachedStream !== null && !isLoading) {
+      // Only sync if we haven't paginated (user is still on first page)
+      const hasPaginated = skip > Config.NEXUS_USERS_PER_PAGE;
+      if (!hasPaginated) {
+        userIdsRef.current = cachedStream;
+        setUserIds(cachedStream);
+      }
+    }
+  }, [cachedStream, isLoading, skip]);
+
   // Subscribe to user details from local database (reactive via Controller)
   const userDetailsMap = useLiveQuery(
     async () => {

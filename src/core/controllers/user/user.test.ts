@@ -353,7 +353,7 @@ describe('UserController', () => {
   describe('taggers', () => {
     it('should delegate to UserApplication with correct params', async () => {
       const userId = 'pubky-user' as unknown as Core.Pubky;
-      const mockTaggers = [] as Core.NexusUser[];
+      const mockTaggers: Core.NexusTaggers[] = [];
 
       const taggersSpy = vi.spyOn(Core.UserApplication, 'fetchTaggers').mockResolvedValue(mockTaggers);
 

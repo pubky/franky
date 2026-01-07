@@ -61,11 +61,11 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {
-    const Tag = (as || 'p') as React.ElementType;
+    const Tag = as || 'p';
     return (
       <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
         {children}

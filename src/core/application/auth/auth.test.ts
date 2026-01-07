@@ -12,13 +12,12 @@ describe('AuthApplication', () => {
   });
 
   describe('signUp', () => {
-    const createParams = (): Core.TAuthenticateKeypairParams => ({
+    const createParams = (): Core.THomeserverSignUpParams => ({
       keypair: {
         publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
         secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
       } as unknown as Keypair,
       signupToken: 'test-signup-token',
-      secretKey: 'test-secret-key',
     });
 
     it('should sign up successfully', async () => {
@@ -89,9 +88,11 @@ describe('AuthApplication', () => {
   describe('generateAuthUrl', () => {
     it('should generate and return auth URL', async () => {
       const mockSession = { token: 'test-token' } as unknown as Session;
+      const cancelAuthFlow = vi.fn();
       const expectedResult = {
         authorizationUrl: 'https://example.com/auth?token=test-token',
         awaitApproval: Promise.resolve(mockSession),
+        cancelAuthFlow,
       };
 
       const generateAuthUrlSpy = vi.spyOn(Core.HomeserverService, 'generateAuthUrl').mockResolvedValue(expectedResult);
@@ -114,8 +115,9 @@ describe('AuthApplication', () => {
 
   describe('logout', () => {
     it('should successfully logout and reset PubkySpecsSingleton', async () => {
-      const params = { pubky: 'test-pubky' as Core.Pubky };
-      const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(new Response());
+      const mockSession = { signout: vi.fn() } as unknown as Session;
+      const params = { session: mockSession };
+      const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(undefined);
       const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await Core.AuthApplication.logout(params);
@@ -125,7 +127,8 @@ describe('AuthApplication', () => {
     });
 
     it('should propagate error when logout fails and not reset PubkySpecsSingleton', async () => {
-      const params = { pubky: 'test-pubky' as Core.Pubky };
+      const mockSession = { signout: vi.fn() } as unknown as Session;
+      const params = { session: mockSession };
       const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockRejectedValue(new Error('Logout failed'));
       const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 

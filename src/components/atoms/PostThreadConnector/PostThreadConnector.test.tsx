@@ -1,3 +1,4 @@
+import { vi, describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { PostThreadConnector } from './PostThreadConnector';
 import { POST_THREAD_CONNECTOR_VARIANTS } from './PostThreadConnector.constants';

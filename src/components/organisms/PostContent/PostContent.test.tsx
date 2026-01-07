@@ -43,11 +43,22 @@ vi.mock('@/molecules', async (importOriginal) => {
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
 const mockUseRepostInfo = vi.mocked(Hooks.useRepostInfo);
 
+// Helper to create complete PostDetails mock
+const createMockPostDetails = (overrides: Partial<{ content: string; attachments: string[] | null }> = {}) => ({
+  id: 'test-author:test-post',
+  indexed_at: Date.now(),
+  kind: 'short' as const,
+  uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
+  content: 'Mock content',
+  attachments: null as string[] | null,
+  ...overrides,
+});
+
 describe('PostContent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Mock content', attachments: null },
+      postDetails: createMockPostDetails(),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -76,7 +87,7 @@ describe('PostContent', () => {
 
   it('does not render repost preview when not a repost', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Regular post', attachments: null },
+      postDetails: createMockPostDetails({ content: 'Regular post' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -95,7 +106,7 @@ describe('PostContent', () => {
 
   it('does not render repost preview when originalPostId is missing', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Quote', attachments: null },
+      postDetails: createMockPostDetails({ content: 'Quote' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -114,7 +125,7 @@ describe('PostContent', () => {
 
   it('always renders PostContentBase even for plain reposts without content', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: null },
+      postDetails: createMockPostDetails({ content: '' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -146,7 +157,7 @@ describe('PostContent - Snapshots', () => {
 
   it('matches snapshot with single-line content', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'One liner', attachments: null },
+      postDetails: createMockPostDetails({ content: 'One liner' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -164,7 +175,7 @@ describe('PostContent - Snapshots', () => {
 
   it('matches snapshot as repost with content', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Quote', attachments: null },
+      postDetails: createMockPostDetails({ content: 'Quote' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({
@@ -182,7 +193,7 @@ describe('PostContent - Snapshots', () => {
 
   it('matches snapshot as repost without content', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: null },
+      postDetails: createMockPostDetails({ content: '' }),
       isLoading: false,
     });
     mockUseRepostInfo.mockReturnValue({

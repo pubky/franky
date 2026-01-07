@@ -5,6 +5,19 @@ import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock Atoms
 vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
   Heading: ({
     children,
     level,
@@ -15,14 +28,18 @@ vi.mock('@/atoms', () => ({
     level: number;
     size: string;
     className?: string;
-  }) => {
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid="heading" data-level={level} data-size={size} className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  }) => (
+    <div
+      role="heading"
+      aria-level={level}
+      data-testid="heading"
+      data-level={level}
+      data-size={size}
+      className={className}
+    >
+      {children}
+    </div>
+  ),
   Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
     <p data-testid="typography" data-size={size} className={className}>
       {children}

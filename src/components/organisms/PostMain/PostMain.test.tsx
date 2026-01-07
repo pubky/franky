@@ -292,7 +292,14 @@ describe('PostMain', () => {
   it('shows PostHeader for repost with attachments but no text by current user', () => {
     const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: '', attachments: ['attachment-1', 'attachment-2'] },
+      postDetails: {
+        id: 'me:repost-with-attachments-1',
+        indexed_at: Date.now(),
+        kind: 'short' as const,
+        uri: 'pubky://me/pub/pubky.app/posts/repost-with-attachments-1',
+        content: '',
+        attachments: ['attachment-1', 'attachment-2'],
+      },
       isLoading: false,
     });
 

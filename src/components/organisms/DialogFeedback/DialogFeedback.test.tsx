@@ -160,16 +160,16 @@ vi.mock('@/atoms', () => ({
   ),
   Typography: ({
     children,
-    as,
+    as: _as,
     size,
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => (
-    <p data-testid="typography" data-as={as} data-size={size} className={className}>
+    <p data-testid="typography" data-size={size} className={className}>
       {children}
     </p>
   ),

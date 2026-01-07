@@ -36,6 +36,18 @@ const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
 };
 
 /**
+ * Strip Markdown link syntax from content
+ * Removes [text](url) entirely so URLs inside Markdown links aren't detected
+ * Handles URLs with nested parentheses (e.g., Wikipedia links like /wiki/Foo_(bar))
+ */
+const stripMarkdownLinks = (content: string): string => {
+  // Pattern handles one level of nested parentheses in URLs
+  // [^()]* matches chars that aren't parentheses
+  // (?:\([^()]*\)[^()]*)* matches (content) groups and text after them
+  return content.replace(/\[([^\]]*)\]\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, '<stripped-link>');
+};
+
+/**
  * Parse content for URLs
  * Returns the first URL
  */
@@ -45,7 +57,9 @@ const parseContentForUrl = (content: string) => {
   // Disable unwanted protocol types
   IGNORED_PROTOCOLS.forEach((protocol) => linkify.add(protocol, null));
 
-  const match = linkify.match(content);
+  // Strip Markdown link syntax before parsing
+  const strippedContent = stripMarkdownLinks(content);
+  const match = linkify.match(strippedContent);
 
   return match?.[0].url;
 };

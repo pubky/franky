@@ -48,7 +48,7 @@ describe('API Route: /api/chatwoot', () => {
     });
 
     it('should handle AppError from application layer with correct status code', async () => {
-      const appError = new Libs.AppError('INVALID_INPUT', 'Validation failed', 400);
+      const appError = new Libs.AppError(Libs.CommonErrorType.INVALID_INPUT, 'Validation failed', 400);
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest({
@@ -65,7 +65,7 @@ describe('API Route: /api/chatwoot', () => {
     });
 
     it('should handle AppError with different status codes', async () => {
-      const appError = new Libs.AppError('INTERNAL_ERROR', 'Server error', 500);
+      const appError = new Libs.AppError(Libs.CommonErrorType.INTERNAL_ERROR, 'Server error', 500);
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest({
@@ -135,7 +135,11 @@ describe('API Route: /api/chatwoot', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError('INVALID_INPUT', 'Pubky is required and must be a non-empty string', 400);
+      const appError = new Libs.AppError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Pubky is required and must be a non-empty string',
+        400,
+      );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -152,7 +156,11 @@ describe('API Route: /api/chatwoot', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError('INVALID_INPUT', 'Comment is required and must be a non-empty string', 400);
+      const appError = new Libs.AppError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Comment is required and must be a non-empty string',
+        400,
+      );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -169,7 +177,11 @@ describe('API Route: /api/chatwoot', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError('INVALID_INPUT', 'Name is required and must be a non-empty string', 400);
+      const appError = new Libs.AppError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Name is required and must be a non-empty string',
+        400,
+      );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -189,7 +201,7 @@ describe('API Route: /api/chatwoot', () => {
 
       // The controller will validate and throw AppError
       const appError = new Libs.AppError(
-        'INVALID_INPUT',
+        Libs.CommonErrorType.INVALID_INPUT,
         `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
         400,
       );
