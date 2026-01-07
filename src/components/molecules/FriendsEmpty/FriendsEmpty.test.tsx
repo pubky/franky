@@ -9,14 +9,19 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
-    const Tag = as || 'p';
-    return (
-      <Tag data-testid="typography" className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  Typography: ({
+    children,
+    as: Tag = 'p',
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: React.ElementType;
+    className?: string;
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
   Button: ({ children, className, variant }: { children: React.ReactNode; className?: string; variant?: string }) => (
     <button data-testid="button" className={className} data-variant={variant}>
       {children}

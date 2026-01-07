@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
@@ -95,8 +95,8 @@ vi.mock('@/molecules', () => ({
 
 // Mock libs
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return { ...actual };
 });
 
@@ -128,7 +128,7 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {
@@ -152,7 +152,7 @@ describe('ScanContent', () => {
   beforeAll(() => {
     Object.defineProperty(window, 'open', {
       configurable: true,
-      value: vi.fn(() => ({ location: { href: '' } })) as typeof window.open,
+      value: vi.fn(() => ({ location: { href: '' } })) as unknown as typeof window.open,
     });
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,

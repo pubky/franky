@@ -4,8 +4,8 @@ import { PopoverBackup } from './PopoverBackup';
 
 // Mock libs
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return { ...actual };
 });
 
@@ -44,7 +44,7 @@ vi.mock('@/atoms', () => ({
   ),
   Heading: ({
     children,
-    level,
+    level = 1,
     size,
     className,
   }: {
@@ -52,14 +52,11 @@ vi.mock('@/atoms', () => ({
     level?: number;
     size?: string;
     className?: string;
-  }) => {
-    const Tag = `h${level || 1}` as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid={`heading-${level || 1}`} data-size={size} className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  }) => (
+    <div role="heading" aria-level={level} data-testid={`heading-${level}`} data-size={size} className={className}>
+      {children}
+    </div>
+  ),
   Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
     <p data-testid="typography" data-size={size} className={className}>
       {children}

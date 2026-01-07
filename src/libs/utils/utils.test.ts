@@ -16,6 +16,11 @@ import {
   daysAgo,
   formatNotificationTime,
   isPostDeleted,
+  isSameDomain,
+  shouldBypassLinkConfirmation,
+  getCharacterCount,
+  sanitizeTagInput,
+  TAG_BANNED_CHARS,
 } from './utils';
 
 describe('Utils', () => {
@@ -955,6 +960,284 @@ describe('Utils', () => {
     it('should return false for content containing "[DELETED]"', () => {
       expect(isPostDeleted('This post is [DELETED]')).toBe(false);
       expect(isPostDeleted('[DELETED] post')).toBe(false);
+    });
+  });
+
+  describe('isSameDomain', () => {
+    const originalLocation = window.location;
+
+    afterEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: originalLocation,
+      });
+    });
+
+    it('should return true for same domain URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://example.com/page')).toBe(true);
+      expect(isSameDomain('https://example.com/another/page')).toBe(true);
+      expect(isSameDomain('http://example.com/page')).toBe(true);
+    });
+
+    it('should return true when comparing www and non-www versions', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://www.example.com/page')).toBe(true);
+    });
+
+    it('should return true when current page has www and URL does not', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'www.example.com' },
+      });
+
+      expect(isSameDomain('https://example.com/page')).toBe(true);
+    });
+
+    it('should return false for different domains', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://other-domain.com/page')).toBe(false);
+      expect(isSameDomain('https://subdomain.example.com/page')).toBe(false);
+    });
+
+    it('should return false for invalid URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('not-a-valid-url')).toBe(false);
+      expect(isSameDomain('')).toBe(false);
+    });
+
+    it('should handle case-insensitive domain comparison', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'EXAMPLE.COM' },
+      });
+
+      expect(isSameDomain('https://example.com/page')).toBe(true);
+    });
+
+    it('should return false for subdomains', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://subdomain.example.com/page')).toBe(false);
+      expect(isSameDomain('https://blog.example.com/page')).toBe(false);
+    });
+
+    it('should handle URLs with query params and hash', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(isSameDomain('https://example.com/page?query=1')).toBe(true);
+      expect(isSameDomain('https://example.com/page#hash')).toBe(true);
+      expect(isSameDomain('https://example.com/page?query=1#hash')).toBe(true);
+    });
+
+    it('should handle URLs with ports correctly', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      // URLs with ports should still match if hostname matches
+      expect(isSameDomain('https://example.com:8080/page')).toBe(true);
+      expect(isSameDomain('https://www.example.com:3000/page')).toBe(true);
+    });
+  });
+
+  describe('shouldBypassLinkConfirmation', () => {
+    const originalLocation = window.location;
+
+    afterEach(() => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: originalLocation,
+      });
+    });
+
+    it('should return true for mailto links', () => {
+      expect(shouldBypassLinkConfirmation('mailto:test@example.com')).toBe(true);
+      expect(shouldBypassLinkConfirmation('mailto:user@domain.com')).toBe(true);
+    });
+
+    it('should return true for tel links', () => {
+      expect(shouldBypassLinkConfirmation('tel:+1234567890')).toBe(true);
+      expect(shouldBypassLinkConfirmation('tel:123-456-7890')).toBe(true);
+    });
+
+    it('should return true for same domain URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(shouldBypassLinkConfirmation('https://example.com/page')).toBe(true);
+      expect(shouldBypassLinkConfirmation('https://www.example.com/page')).toBe(true);
+    });
+
+    it('should return false for different domain URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(shouldBypassLinkConfirmation('https://other-domain.com/page')).toBe(false);
+      expect(shouldBypassLinkConfirmation('https://subdomain.example.com/page')).toBe(false);
+    });
+
+    it('should return false for invalid URLs', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      expect(shouldBypassLinkConfirmation('not-a-valid-url')).toBe(false);
+      expect(shouldBypassLinkConfirmation('')).toBe(false);
+    });
+
+    it('should prioritize protocol bypass over domain check', () => {
+      Object.defineProperty(window, 'location', {
+        writable: true,
+        value: { hostname: 'example.com' },
+      });
+
+      // Even if it's a different domain, mailto/tel should bypass
+      expect(shouldBypassLinkConfirmation('mailto:test@other-domain.com')).toBe(true);
+      expect(shouldBypassLinkConfirmation('tel:+1234567890')).toBe(true);
+    });
+  });
+
+  describe('getCharacterCount', () => {
+    it('should count ASCII characters correctly', () => {
+      expect(getCharacterCount('hello')).toBe(5);
+      expect(getCharacterCount('Hello World')).toBe(11);
+      expect(getCharacterCount('')).toBe(0);
+    });
+
+    it('should count single emoji as 1 character', () => {
+      expect(getCharacterCount('👍')).toBe(1);
+      expect(getCharacterCount('🚀')).toBe(1);
+      expect(getCharacterCount('❤️')).toBe(2); // Note: ❤️ is a composite emoji (heart + variation selector)
+    });
+
+    it('should count text with emojis correctly', () => {
+      expect(getCharacterCount('Hello 👍')).toBe(7);
+      expect(getCharacterCount('🚀🌟💫')).toBe(3);
+      expect(getCharacterCount('Test 🎉 emoji')).toBe(12);
+    });
+
+    it('should count 4-byte Unicode characters correctly', () => {
+      // Mathematical symbols and rare characters
+      expect(getCharacterCount('𝕳𝖊𝖑𝖑𝖔')).toBe(5); // Mathematical Fraktur
+      expect(getCharacterCount('𠀀')).toBe(1); // CJK extension B character
+    });
+
+    it('should count flag emojis correctly', () => {
+      // Flag emojis are composed of 2 regional indicator symbols
+      expect(getCharacterCount('🇺🇸')).toBe(2); // US flag = 2 regional indicators
+      expect(getCharacterCount('🇧🇷')).toBe(2); // Brazil flag
+    });
+
+    it('should handle mixed content', () => {
+      expect(getCharacterCount('Hello 世界 👋')).toBe(10);
+      // '123 🎉 abc' = 1,2,3,space,emoji,space,a,b,c = 9 characters
+      expect(getCharacterCount('123 🎉 abc')).toBe(9);
+    });
+
+    it('should count newlines and special characters', () => {
+      expect(getCharacterCount('Hello\nWorld')).toBe(11);
+      expect(getCharacterCount('Tab\tHere')).toBe(8);
+      expect(getCharacterCount('!@#$%^&*()')).toBe(10);
+    });
+  });
+
+  describe('sanitizeTagInput', () => {
+    it('should remove colons from input', () => {
+      expect(sanitizeTagInput('hello:world')).toBe('helloworld');
+      expect(sanitizeTagInput('tag:with:colons')).toBe('tagwithcolons');
+    });
+
+    it('should remove commas from input', () => {
+      expect(sanitizeTagInput('hello,world')).toBe('helloworld');
+      expect(sanitizeTagInput('tag,with,commas')).toBe('tagwithcommas');
+    });
+
+    it('should remove spaces from input', () => {
+      expect(sanitizeTagInput('hello world')).toBe('helloworld');
+      expect(sanitizeTagInput('tag with spaces')).toBe('tagwithspaces');
+    });
+
+    it('should remove all banned characters at once', () => {
+      expect(sanitizeTagInput('hello: world, test')).toBe('helloworldtest');
+      expect(sanitizeTagInput(':, mixed:, chars')).toBe('mixedchars');
+    });
+
+    it('should preserve valid characters', () => {
+      expect(sanitizeTagInput('valid-tag')).toBe('valid-tag');
+      expect(sanitizeTagInput('tag123')).toBe('tag123');
+      expect(sanitizeTagInput('emoji👍tag')).toBe('emoji👍tag');
+      expect(sanitizeTagInput('CamelCase')).toBe('CamelCase');
+    });
+
+    it('should handle empty string', () => {
+      expect(sanitizeTagInput('')).toBe('');
+    });
+
+    it('should handle string with only banned characters', () => {
+      expect(sanitizeTagInput(': , :')).toBe('');
+      expect(sanitizeTagInput('   ')).toBe('');
+    });
+
+    it('should handle Unicode characters', () => {
+      expect(sanitizeTagInput('日本語')).toBe('日本語');
+      expect(sanitizeTagInput('日本語: test')).toBe('日本語test');
+    });
+  });
+
+  describe('TAG_BANNED_CHARS', () => {
+    it('should be a valid regex', () => {
+      expect(TAG_BANNED_CHARS).toBeInstanceOf(RegExp);
+    });
+
+    it('should have global flag', () => {
+      expect(TAG_BANNED_CHARS.global).toBe(true);
+    });
+
+    it('should match colons', () => {
+      expect(':'.match(TAG_BANNED_CHARS)).not.toBeNull();
+    });
+
+    it('should match commas', () => {
+      expect(','.match(TAG_BANNED_CHARS)).not.toBeNull();
+    });
+
+    it('should match spaces', () => {
+      expect(' '.match(TAG_BANNED_CHARS)).not.toBeNull();
+    });
+
+    it('should not match valid characters', () => {
+      expect('a'.match(TAG_BANNED_CHARS)).toBeNull();
+      expect('-'.match(TAG_BANNED_CHARS)).toBeNull();
+      expect('_'.match(TAG_BANNED_CHARS)).toBeNull();
     });
   });
 });

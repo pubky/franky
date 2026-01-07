@@ -118,7 +118,7 @@ vi.mock('@/atoms', () => ({
     size,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     className?: string;
     size?: string;
   }) => {

@@ -5,8 +5,8 @@ import { PostMenuActions } from './PostMenuActions';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
 const mockUseIsMobile = vi.fn(() => false);
-const mockUsePostMenuActions = vi.fn(() => ({
-  menuItems: [],
+const mockUsePostMenuActions = vi.fn((_postId: string) => ({
+  menuItems: [] as unknown[],
   isLoading: false,
 }));
 
@@ -15,11 +15,19 @@ vi.mock('@/hooks', () => ({
   usePostMenuActions: (postId: string) => mockUsePostMenuActions(postId),
 }));
 
+// Mock DialogReportPost
+vi.mock('@/organisms', () => ({
+  DialogReportPost: ({ open, postId }: { open: boolean; onOpenChange: (open: boolean) => void; postId: string }) => (
+    <div data-testid="dialog-report-post" data-open={open.toString()} data-post-id={postId}>
+      DialogReportPost
+    </div>
+  ),
+}));
+
 vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
   return {
     ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
   };
 });
 
@@ -28,13 +36,18 @@ vi.mock('./PostMenuActionsContent', () => ({
     postId,
     variant,
     onActionComplete,
+    onReportClick,
   }: {
     postId: string;
     variant: string;
     onActionComplete?: () => void;
+    onReportClick?: () => void;
   }) => (
     <div data-testid="post-menu-actions-content" data-post-id={postId} data-variant={variant}>
       <button onClick={onActionComplete}>Close</button>
+      <button onClick={onReportClick} data-testid="report-button">
+        Report
+      </button>
     </div>
   ),
 }));

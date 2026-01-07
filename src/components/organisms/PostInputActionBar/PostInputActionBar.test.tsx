@@ -2,13 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInputActionBar } from './PostInputActionBar';
 
-// Use real libs, only stub cn for deterministic class joining
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 // Minimal atoms used by PostInputActionBar
@@ -64,11 +61,11 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {
-    const Tag = (as || 'p') as React.ElementType;
+    const Tag = as || 'p';
     return (
       <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
         {children}

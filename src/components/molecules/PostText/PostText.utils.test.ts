@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import type { Root, Paragraph, Text, Code, Link } from 'mdast';
 import {
   remarkPlaintextCodeblock,
+  remarkDisallowMarkdownLinks,
   remarkHashtags,
   remarkMentions,
   remarkShowMoreButton,
@@ -59,6 +60,274 @@ describe('remarkPlaintextCodeblock', () => {
     expect(codeBlock1.lang).toBe('plaintext');
     expect(codeBlock2.lang).toBe('python');
     expect(codeBlock3.lang).toBe('plaintext');
+  });
+});
+
+describe('remarkDisallowMarkdownLinks', () => {
+  // Helper to create a link node (simulating what the markdown parser creates)
+  const createLink = (text: string, url: string, title?: string): Link => ({
+    type: 'link',
+    url,
+    title: title ?? null,
+    children: [{ type: 'text', value: text } as Text],
+  });
+
+  // Helper to create a paragraph with a link
+  const createParagraphWithLink = (text: string, url: string, title?: string): Paragraph => ({
+    type: 'paragraph',
+    children: [createLink(text, url, title)],
+  });
+
+  describe('Preserves GFM autolinks', () => {
+    it('preserves autolinks where text matches URL exactly', () => {
+      const paragraph = createParagraphWithLink('https://example.com', 'https://example.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('https://example.com');
+    });
+
+    it('preserves www autolinks where GFM adds http:// prefix', () => {
+      const paragraph = createParagraphWithLink('www.example.com', 'http://www.example.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('http://www.example.com');
+    });
+
+    it('preserves email autolinks where GFM adds mailto: prefix', () => {
+      const paragraph = createParagraphWithLink('user@example.com', 'mailto:user@example.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('mailto:user@example.com');
+    });
+
+    it('preserves http:// autolinks', () => {
+      const paragraph = createParagraphWithLink('http://example.com', 'http://example.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+    });
+  });
+
+  describe('Converts markdown links to plaintext', () => {
+    it('converts markdown link with different text and URL to plaintext', () => {
+      const paragraph = createParagraphWithLink('click here', 'https://example.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      const textNodes = getTextNodes(paragraph);
+      expect(links).toHaveLength(0);
+      expect(textNodes).toHaveLength(1);
+      expect(textNodes[0].value).toBe('[click here](https://example.com)');
+    });
+
+    it('converts deceptive link where text looks like a URL', () => {
+      const paragraph = createParagraphWithLink('facebook.com', 'https://badsite.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      const textNodes = getTextNodes(paragraph);
+      expect(links).toHaveLength(0);
+      expect(textNodes[0].value).toBe('[facebook.com](https://badsite.com)');
+    });
+
+    it('converts markdown link with title to plaintext including title', () => {
+      const paragraph = createParagraphWithLink('click here', 'https://example.com', 'My Title');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes[0].value).toBe('[click here](https://example.com "My Title")');
+    });
+
+    it('converts link where text is URL but different from href', () => {
+      const paragraph = createParagraphWithLink('https://safe.com', 'https://evil.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      const textNodes = getTextNodes(paragraph);
+      expect(links).toHaveLength(0);
+      expect(textNodes[0].value).toBe('[https://safe.com](https://evil.com)');
+    });
+
+    it('converts www link with https URL (not matching http:// prefix)', () => {
+      const paragraph = createParagraphWithLink('www.example.com', 'https://www.example.com');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const links = getLinks(paragraph);
+      const textNodes = getTextNodes(paragraph);
+      expect(links).toHaveLength(0);
+      expect(textNodes[0].value).toBe('[www.example.com](https://www.example.com)');
+    });
+  });
+
+  describe('Handles nested formatting in links', () => {
+    it('extracts text from bold formatted link text', () => {
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'link',
+            url: 'https://evil.com',
+            children: [
+              {
+                type: 'strong',
+                children: [{ type: 'text', value: 'bold text' } as Text],
+              },
+            ],
+          } as Link,
+        ],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes[0].value).toBe('[bold text](https://evil.com)');
+    });
+
+    it('extracts text from italic formatted link text', () => {
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'link',
+            url: 'https://evil.com',
+            children: [
+              {
+                type: 'emphasis',
+                children: [{ type: 'text', value: 'italic text' } as Text],
+              },
+            ],
+          } as Link,
+        ],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes[0].value).toBe('[italic text](https://evil.com)');
+    });
+
+    it('extracts text from mixed formatted link text', () => {
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'link',
+            url: 'https://evil.com',
+            children: [
+              { type: 'text', value: 'normal ' } as Text,
+              {
+                type: 'strong',
+                children: [{ type: 'text', value: 'bold' } as Text],
+              },
+              { type: 'text', value: ' and ' } as Text,
+              {
+                type: 'emphasis',
+                children: [{ type: 'text', value: 'italic' } as Text],
+              },
+            ],
+          } as Link,
+        ],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes[0].value).toBe('[normal bold and italic](https://evil.com)');
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('handles multiple links in one paragraph', () => {
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [
+          { type: 'text', value: 'Check ' } as Text,
+          createLink('https://example.com', 'https://example.com'),
+          { type: 'text', value: ' and ' } as Text,
+          createLink('click here', 'https://other.com'),
+        ],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      // First link should be preserved (autolink), second converted to text
+      const links = getLinks(paragraph);
+      const textNodes = getTextNodes(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('https://example.com');
+      expect(textNodes.some((t) => t.value === '[click here](https://other.com)')).toBe(true);
+    });
+
+    it('handles empty link text', () => {
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'link',
+            url: 'https://example.com',
+            children: [],
+          } as Link,
+        ],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes[0].value).toBe('[](https://example.com)');
+    });
+
+    it('does not modify tree when no links exist', () => {
+      const paragraph = createParagraph('Just some text without links');
+      const tree = createRoot([paragraph]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes).toHaveLength(1);
+      expect(textNodes[0].value).toBe('Just some text without links');
+    });
+
+    it('handles links in multiple paragraphs', () => {
+      const paragraph1 = createParagraphWithLink('click', 'https://example.com');
+      const paragraph2 = createParagraphWithLink('https://auto.com', 'https://auto.com');
+      const tree = createRoot([paragraph1, paragraph2]);
+
+      remarkDisallowMarkdownLinks()(tree);
+
+      // First paragraph link converted, second preserved
+      expect(getLinks(paragraph1)).toHaveLength(0);
+      expect(getLinks(paragraph2)).toHaveLength(1);
+    });
   });
 });
 
@@ -127,7 +396,7 @@ describe('remarkHashtags', () => {
   });
 
   describe('Hashtag pattern validation', () => {
-    it('requires hashtag to start with a letter', () => {
+    it('allows hashtag to start with a letter', () => {
       const paragraph = createParagraph('#abc123 is valid');
       const tree = createRoot([paragraph]);
 
@@ -138,14 +407,15 @@ describe('remarkHashtags', () => {
       expect(links[0].url).toBe('/search?tags=abc123');
     });
 
-    it('does not match hashtags starting with a number', () => {
-      const paragraph = createParagraph('#123 is not a valid hashtag');
+    it('allows hashtags starting with a number', () => {
+      const paragraph = createParagraph('#123abc is a valid hashtag');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(0);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=123abc');
     });
 
     it('allows underscores in hashtags', () => {
@@ -157,6 +427,136 @@ describe('remarkHashtags', () => {
       const links = getLinks(paragraph);
       expect(links).toHaveLength(1);
       expect(links[0].url).toBe('/search?tags=hello_world');
+    });
+
+    it('allows multiple underscores separating words', () => {
+      const paragraph = createParagraph('#one_two_three is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=one_two_three');
+    });
+
+    it('allows hyphens in hashtags', () => {
+      const paragraph = createParagraph('#hello-world is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=hello-world');
+    });
+
+    it('allows multiple hyphens separating words', () => {
+      const paragraph = createParagraph('#one-two-three is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=one-two-three');
+    });
+
+    it('allows mixed hyphens and underscores separating words', () => {
+      const paragraph = createParagraph('#hello-world_test is valid');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=hello-world_test');
+    });
+
+    it('does not match hashtags starting with underscore', () => {
+      const paragraph = createParagraph('#_invalid is not a hashtag');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('stops at trailing underscore', () => {
+      const paragraph = createParagraph('#hello_ world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at double underscore', () => {
+      const paragraph = createParagraph('#hello__world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('does not match hashtags starting with hyphen', () => {
+      const paragraph = createParagraph('#-invalid is not a hashtag');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('stops at trailing hyphen', () => {
+      const paragraph = createParagraph('#hello- world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at double hyphen', () => {
+      const paragraph = createParagraph('#hello--world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at mixed consecutive separators (hyphen-underscore)', () => {
+      const paragraph = createParagraph('#hello-_world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
+    });
+
+    it('stops at mixed consecutive separators (underscore-hyphen)', () => {
+      const paragraph = createParagraph('#hello_-world');
+      const tree = createRoot([paragraph]);
+
+      remarkHashtags()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe('#hello');
     });
 
     it('allows numbers after the first letter', () => {
@@ -247,14 +647,15 @@ describe('remarkHashtags', () => {
       expect(links).toHaveLength(0);
     });
 
-    it('does not match hash followed by only numbers', () => {
+    it('matches hash followed by only numbers', () => {
       const paragraph = createParagraph('Issue #123 is fixed');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(0);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe('/search?tags=123');
     });
 
     it('handles multiple hashes in sequence', () => {
@@ -326,15 +727,16 @@ describe('remarkHashtags', () => {
     });
 
     it('handles mixed valid and invalid hashtag patterns', () => {
-      const paragraph = createParagraph('#valid #123invalid no#match #also_valid');
+      const paragraph = createParagraph('#valid #123numeric no#match #also_valid');
       const tree = createRoot([paragraph]);
 
       remarkHashtags()(tree);
 
       const links = getLinks(paragraph);
-      expect(links).toHaveLength(2);
+      expect(links).toHaveLength(3);
       expect(links[0].url).toBe('/search?tags=valid');
-      expect(links[1].url).toBe('/search?tags=also_valid');
+      expect(links[1].url).toBe('/search?tags=123numeric');
+      expect(links[2].url).toBe('/search?tags=also_valid');
     });
 
     it('handles newlines as whitespace', () => {

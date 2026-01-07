@@ -48,8 +48,8 @@ describe('NotificationController', () => {
 
   describe('getOrFetchNotifications', () => {
     const mockResponse: Core.TGetOrFetchNotificationsResponse = {
-      notifications: [
-        { type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
+      flatNotifications: [
+        { id: 'follow:3000:user-1', type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
       ] as Core.FlatNotification[],
       olderThan: 3000,
     };
@@ -83,13 +83,13 @@ describe('NotificationController', () => {
 
     it('should return empty response when no notifications', async () => {
       vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue({
-        notifications: [],
+        flatNotifications: [],
         olderThan: undefined,
       });
 
       const result = await NotificationController.getOrFetchNotifications({});
 
-      expect(result.notifications).toHaveLength(0);
+      expect(result.flatNotifications).toHaveLength(0);
       expect(result.olderThan).toBeUndefined();
     });
 
@@ -109,7 +109,11 @@ describe('NotificationController', () => {
       const setUnread = vi.fn();
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
-        selectCurrentUserPubky: () => pubky,
+        currentUserPubky: pubky,
+        selectCurrentUserPubky: () => {
+          if (!pubky) throw new Error('No pubky');
+          return pubky;
+        },
       } as unknown as ReturnType<typeof Core.useAuthStore.getState>);
 
       vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
@@ -144,28 +148,19 @@ describe('NotificationController', () => {
       expect(setUnread).toHaveBeenCalledWith(0);
     });
 
-    it('should not call application when no user is authenticated', () => {
+    it('should skip processing when no user is authenticated', () => {
       const { setLastRead, setUnread } = setupStores(null);
 
-      const mockLastReadResult = {
-        last_read: {
-          timestamp: BigInt(mockTimestamp),
-          toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
-        },
-        meta: { url: mockLastReadUrl },
-      };
-
-      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
-        mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
-      );
+      const normalizerSpy = vi.spyOn(Core.LastReadNormalizer, 'to');
       const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead');
 
       NotificationController.markAllAsRead();
 
-      // When pubky is null, LastReadNormalizer.to is still called but application should handle it
-      expect(applicationSpy).toHaveBeenCalled();
-      expect(setLastRead).toHaveBeenCalledWith(mockTimestamp);
-      expect(setUnread).toHaveBeenCalledWith(0);
+      // When pubky is null, function returns early without calling application
+      expect(normalizerSpy).not.toHaveBeenCalled();
+      expect(applicationSpy).not.toHaveBeenCalled();
+      expect(setLastRead).not.toHaveBeenCalled();
+      expect(setUnread).not.toHaveBeenCalled();
     });
   });
 

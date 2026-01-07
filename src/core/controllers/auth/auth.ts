@@ -4,6 +4,32 @@ import * as Libs from '@/libs';
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
+  private static activeAuthFlow: { token: symbol; cancel: (() => void) | null } | null = null;
+
+  static cancelActiveAuthFlow() {
+    const cancel = this.activeAuthFlow?.cancel;
+    this.activeAuthFlow = null;
+    cancel?.();
+  }
+
+  /**
+   * Restores a persisted session from the auth store.
+   * @returns Promise resolving to true if the session was restored successfully, false otherwise
+   */
+  static async restorePersistedSession(): Promise<boolean> {
+    const authStore = Core.useAuthStore.getState();
+    const result = await Core.AuthApplication.restorePersistedSession({ authStore });
+    if (!result) return false;
+    const { session } = result;
+    const initialState = {
+      session,
+      currentUserPubky: Libs.Identity.pubkyFromSession({ session }),
+      hasProfile: authStore.hasProfile,
+    };
+    authStore.init(initialState);
+    return true;
+  }
+
   /**
    * Gets a homeserver service instance using the secret key from the onboarding store.
    * @param params - The authentication parameters
@@ -42,6 +68,7 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
+    this.cancelActiveAuthFlow();
     const pubky = Libs.Identity.pubkyFromSession({ session });
     const authStore = Core.useAuthStore.getState();
     const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
@@ -102,7 +129,33 @@ export class AuthController {
    */
   static async getAuthUrl(): Promise<Core.TGenerateAuthUrlResult> {
     await Core.clearDatabase();
-    return await Core.AuthApplication.generateAuthUrl();
+    const token = Symbol('auth-flow');
+    this.cancelActiveAuthFlow();
+    this.activeAuthFlow = { token, cancel: null };
+    const { authorizationUrl, awaitApproval, cancelAuthFlow } = await Core.AuthApplication.generateAuthUrl();
+
+    if (!this.activeAuthFlow || this.activeAuthFlow.token !== token) {
+      // Stale request (e.g. React StrictMode overlap): cancel immediately so we don't keep polling forever.
+      cancelAuthFlow();
+      return {
+        authorizationUrl,
+        awaitApproval,
+        cancelAuthFlow,
+      };
+    }
+
+    this.activeAuthFlow.cancel = cancelAuthFlow;
+
+    // Ensure the polling flow is always dropped once the promise resolves/rejects,
+    // even if the caller forgets to free it.
+    const wrappedAwaitApproval = awaitApproval.finally(() => {
+      if (this.activeAuthFlow?.token === token) {
+        this.activeAuthFlow = null;
+      }
+      cancelAuthFlow();
+    });
+
+    return { authorizationUrl, awaitApproval: wrappedAwaitApproval, cancelAuthFlow };
   }
 
   /**
@@ -112,12 +165,14 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
 
-    const pubky = authStore.selectCurrentUserPubky();
-
     if (authStore.session) {
-      await Core.AuthApplication.logout({ pubky });
+      try {
+        await Core.AuthApplication.logout({ session: authStore.session });
+      } catch (error) {
+        Libs.Logger.warn('Homeserver logout failed, clearing local state anyway', { error });
+      }
     }
-    // Always clear local state, even if homeserver logout fails
+    this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();
     Libs.clearCookies();

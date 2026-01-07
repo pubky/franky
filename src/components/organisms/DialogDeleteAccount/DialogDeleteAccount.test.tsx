@@ -64,7 +64,7 @@ vi.mock('@/atoms', () => ({
   }: {
     children: React.ReactNode;
     className?: string;
-    as?: string;
+    as?: React.ElementType;
     'data-testid'?: string;
     [key: string]: unknown;
   }) => (
@@ -101,8 +101,8 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return { ...actual };
 });
 

@@ -14,6 +14,9 @@ export function DialogFeedbackContent({
   hasContent,
   currentUserPubky,
 }: DialogFeedbackContentProps) {
+  const characterLimit =
+    feedback.length > 0 ? { count: Libs.getCharacterCount(feedback), max: FEEDBACK_MAX_CHARACTER_LENGTH } : undefined;
+
   return (
     <>
       <Atoms.DialogHeader>
@@ -26,8 +29,8 @@ export function DialogFeedbackContent({
             <Organisms.PostHeader
               postId={currentUserPubky}
               isReplyInput={true}
-              characterCount={feedback.length > 0 ? feedback.length : undefined}
-              maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}
+              characterLimit={characterLimit}
+              showPopover={false}
             />
 
             <Atoms.Textarea

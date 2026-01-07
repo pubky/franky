@@ -21,8 +21,7 @@ export class UserController {
   }
 
   /**
-   * Get user counts from local database
-   * This is a read-only operation that queries the local cache
+   * Get user counts from local database, fetching from Nexus API if not found
    */
   static async getCounts(params: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     return await Core.UserApplication.getCounts(params);

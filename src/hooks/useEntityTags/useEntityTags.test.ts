@@ -5,7 +5,16 @@ import * as Core from '@/core';
 import type { TagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.types';
 
 // Mock the underlying hooks
-const mockUseTaggedResult = {
+const mockUseTaggedResult: {
+  tags: Core.NexusTag[];
+  count: number;
+  isLoading: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  loadMore: ReturnType<typeof vi.fn>;
+  handleTagAdd: ReturnType<typeof vi.fn>;
+  handleTagToggle: ReturnType<typeof vi.fn>;
+} = {
   tags: [],
   count: 0,
   isLoading: false,
@@ -16,7 +25,16 @@ const mockUseTaggedResult = {
   handleTagToggle: vi.fn().mockResolvedValue(undefined),
 };
 
-const mockUsePostTagsResult = {
+const mockUsePostTagsResult: {
+  tags: Core.NexusTag[];
+  count: number;
+  isLoading: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  loadMore: ReturnType<typeof vi.fn>;
+  handleTagAdd: ReturnType<typeof vi.fn>;
+  handleTagToggle: ReturnType<typeof vi.fn>;
+} = {
   tags: [],
   count: 0,
   isLoading: false,
@@ -138,9 +156,11 @@ describe('useEntityTags', () => {
   // =============================================================================
 
   it('uses providedTags when available instead of fetched tags', () => {
-    const providedTags: Core.NexusTag[] = [{ label: 'provided-tag', taggers_count: 5, taggers: [] }];
+    const providedTags: Core.NexusTag[] = [
+      { label: 'provided-tag', taggers_count: 5, taggers: [], relationship: false },
+    ];
 
-    mockUseTaggedResult.tags = [{ label: 'fetched-tag', taggers_count: 10, taggers: [] }];
+    mockUseTaggedResult.tags = [{ label: 'fetched-tag', taggers_count: 10, taggers: [], relationship: false }];
 
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER, { providedTags }));
 
@@ -149,7 +169,7 @@ describe('useEntityTags', () => {
   });
 
   it('uses fetched tags when providedTags is undefined', () => {
-    mockUseTaggedResult.tags = [{ label: 'fetched-tag', taggers_count: 10, taggers: [] }];
+    mockUseTaggedResult.tags = [{ label: 'fetched-tag', taggers_count: 10, taggers: [], relationship: false }];
 
     const { result } = renderHook(() => useEntityTags('user-123', Core.TagKind.USER));
 
@@ -193,6 +213,7 @@ describe('useEntityTags', () => {
       label: 'test',
       taggers_count: 1,
       taggers: [{ id: 'mock-viewer-id', avatarUrl: '' }],
+      relationship: true, // viewer is a tagger, so relationship should be true
     };
 
     expect(result.current.isViewerTagger(tag)).toBe(true);
@@ -205,6 +226,7 @@ describe('useEntityTags', () => {
       label: 'test',
       taggers_count: 1,
       taggers: [{ id: 'other-user', avatarUrl: '' }],
+      relationship: false,
     };
 
     expect(result.current.isViewerTagger(tag)).toBe(false);

@@ -11,13 +11,10 @@ vi.mock('@/hooks', () => ({
   useBookmark: (postId: string) => mockUseBookmark(postId),
 }));
 
-// Use real libs, only stub cn for deterministic class joining
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 // Mock PostMenuActions
@@ -70,17 +67,14 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     className?: string;
     overrideDefaults?: boolean;
-  }) => {
-    const Component = Tag as keyof JSX.IntrinsicElements;
-    return (
-      <Component data-testid="typography" data-as={Tag} className={className}>
-        {children}
-      </Component>
-    );
-  },
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
 }));
 
 describe('PostActionsBar', () => {
