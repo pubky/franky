@@ -45,6 +45,21 @@ export class UserApplication {
   }
 
   /**
+   * Retrieves user counts from local database. If not found, fetches from Nexus API and persists to local database.
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user counts or null if fetch fails
+   */
+  static async getOrFetchCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    const localCounts = await Core.LocalUserService.readCounts({ userId });
+    if (localCounts) {
+      return localCounts;
+    }
+    const nexusCounts = await Core.NexusUserService.counts({ user_id: userId });
+    await Core.LocalUserService.upsertCounts({ userId }, nexusCounts);
+    return await Core.LocalUserService.readCounts({ userId });
+  }
+
+  /**
    * Bulk read multiple user counts from local database.
    * Returns a Map for efficient lookup by user ID.
    */

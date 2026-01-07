@@ -37,9 +37,37 @@ export class UserCountsModel
     return { id: data[0], ...data[1] };
   }
 
+  private static readonly DEFAULT_COUNTS: Omit<Core.UserCountsModelSchema, 'id'> = {
+    tagged: 0,
+    tags: 0,
+    unique_tags: 0,
+    posts: 0,
+    replies: 0,
+    following: 0,
+    followers: 0,
+    friends: 0,
+    bookmarks: 0,
+  };
+
+  /**
+   * Incrementally update user counts. If the user doesn't have a counts record yet,
+   * one will be created with default values (0) before applying the changes.
+   *
+   * @param userId - The user ID to update counts for
+   * @param countChanges - Partial counts to increment/decrement (e.g., { posts: 1 } adds 1 to posts)
+   */
   static async updateCounts({ userId, countChanges }: Core.TUserCountsParams): Promise<void> {
-    const userCounts = await Core.UserCountsModel.findById(userId);
-    if (!userCounts) return;
+    let userCounts = await Core.UserCountsModel.findById(userId);
+
+    // If user counts don't exist, create a default record first
+    if (!userCounts) {
+      const defaultRecord: Core.UserCountsModelSchema = {
+        id: userId,
+        ...this.DEFAULT_COUNTS,
+      };
+      await this.upsert(defaultRecord);
+      userCounts = new UserCountsModel(defaultRecord);
+    }
 
     const updates: Partial<Core.UserCountsModelSchema> = {};
 

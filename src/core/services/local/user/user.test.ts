@@ -7,6 +7,7 @@ describe('LocalUserService', () => {
     vi.clearAllMocks();
     await Core.UserDetailsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
+    await Core.UserCountsModel.table.clear();
   });
 
   describe('readDetails', () => {
@@ -110,6 +111,95 @@ describe('LocalUserService', () => {
       expect(result!.following).toBe(false);
       expect(result!.followed_by).toBe(false);
       expect(result!.muted).toBe(false);
+    });
+  });
+
+  describe('updateCounts', () => {
+    const userId = 'test-user-id' as Core.Pubky;
+
+    it('should incrementally update existing counts', async () => {
+      // Create initial counts
+      await Core.UserCountsModel.create({
+        id: userId,
+        tagged: 0,
+        tags: 0,
+        unique_tags: 0,
+        posts: 10,
+        replies: 5,
+        following: 50,
+        followers: 100,
+        friends: 20,
+        bookmarks: 15,
+      });
+
+      // Update counts incrementally
+      await LocalUserService.updateCounts({
+        userId,
+        countChanges: { posts: 1, replies: 1 },
+      });
+
+      const result = await Core.UserCountsModel.findById(userId);
+      expect(result).not.toBeNull();
+      expect(result!.posts).toBe(11); // 10 + 1
+      expect(result!.replies).toBe(6); // 5 + 1
+      // Other fields unchanged
+      expect(result!.followers).toBe(100);
+      expect(result!.following).toBe(50);
+    });
+
+    it('should create default record when user counts do not exist', async () => {
+      // Verify user doesn't exist
+      const before = await Core.UserCountsModel.findById(userId);
+      expect(before).toBeNull();
+
+      // Update counts - should create record with defaults first
+      await LocalUserService.updateCounts({
+        userId,
+        countChanges: { posts: 1 },
+      });
+
+      const after = await Core.UserCountsModel.findById(userId);
+      expect(after).not.toBeNull();
+      expect(after!.posts).toBe(1); // 0 + 1
+      // All other fields should be 0 (defaults)
+      expect(after!.followers).toBe(0);
+      expect(after!.following).toBe(0);
+      expect(after!.friends).toBe(0);
+    });
+
+    it('should preserve existing counts when updating only some fields', async () => {
+      // Create initial counts
+      await Core.UserCountsModel.create({
+        id: userId,
+        tagged: 3,
+        tags: 7,
+        unique_tags: 5,
+        posts: 10,
+        replies: 5,
+        following: 50,
+        followers: 100,
+        friends: 20,
+        bookmarks: 15,
+      });
+
+      // Only update posts
+      await LocalUserService.updateCounts({
+        userId,
+        countChanges: { posts: 1 },
+      });
+
+      const result = await Core.UserCountsModel.findById(userId);
+      expect(result).not.toBeNull();
+      expect(result!.posts).toBe(11); // 10 + 1
+      // All other fields must remain unchanged
+      expect(result!.tagged).toBe(3);
+      expect(result!.tags).toBe(7);
+      expect(result!.unique_tags).toBe(5);
+      expect(result!.replies).toBe(5);
+      expect(result!.following).toBe(50);
+      expect(result!.followers).toBe(100);
+      expect(result!.friends).toBe(20);
+      expect(result!.bookmarks).toBe(15);
     });
   });
 });

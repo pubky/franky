@@ -96,6 +96,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     UserController: {
       getCounts: vi.fn().mockImplementation(() => Promise.resolve(mockUserCounts.current)),
+      getOrFetchCounts: vi.fn().mockImplementation(() => Promise.resolve(mockUserCounts.current)),
     },
     NotificationController: {
       getNotificationsCountsNow: vi.fn(() => mockNotificationsCount.current),
