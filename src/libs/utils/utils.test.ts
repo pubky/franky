@@ -18,6 +18,9 @@ import {
   isPostDeleted,
   isSameDomain,
   shouldBypassLinkConfirmation,
+  getCharacterCount,
+  sanitizeTagInput,
+  TAG_BANNED_CHARS,
 } from './utils';
 
 describe('Utils', () => {
@@ -1120,6 +1123,121 @@ describe('Utils', () => {
       // Even if it's a different domain, mailto/tel should bypass
       expect(shouldBypassLinkConfirmation('mailto:test@other-domain.com')).toBe(true);
       expect(shouldBypassLinkConfirmation('tel:+1234567890')).toBe(true);
+    });
+  });
+
+  describe('getCharacterCount', () => {
+    it('should count ASCII characters correctly', () => {
+      expect(getCharacterCount('hello')).toBe(5);
+      expect(getCharacterCount('Hello World')).toBe(11);
+      expect(getCharacterCount('')).toBe(0);
+    });
+
+    it('should count single emoji as 1 character', () => {
+      expect(getCharacterCount('👍')).toBe(1);
+      expect(getCharacterCount('🚀')).toBe(1);
+      expect(getCharacterCount('❤️')).toBe(2); // Note: ❤️ is a composite emoji (heart + variation selector)
+    });
+
+    it('should count text with emojis correctly', () => {
+      expect(getCharacterCount('Hello 👍')).toBe(7);
+      expect(getCharacterCount('🚀🌟💫')).toBe(3);
+      expect(getCharacterCount('Test 🎉 emoji')).toBe(12);
+    });
+
+    it('should count 4-byte Unicode characters correctly', () => {
+      // Mathematical symbols and rare characters
+      expect(getCharacterCount('𝕳𝖊𝖑𝖑𝖔')).toBe(5); // Mathematical Fraktur
+      expect(getCharacterCount('𠀀')).toBe(1); // CJK extension B character
+    });
+
+    it('should count flag emojis correctly', () => {
+      // Flag emojis are composed of 2 regional indicator symbols
+      expect(getCharacterCount('🇺🇸')).toBe(2); // US flag = 2 regional indicators
+      expect(getCharacterCount('🇧🇷')).toBe(2); // Brazil flag
+    });
+
+    it('should handle mixed content', () => {
+      expect(getCharacterCount('Hello 世界 👋')).toBe(10);
+      // '123 🎉 abc' = 1,2,3,space,emoji,space,a,b,c = 9 characters
+      expect(getCharacterCount('123 🎉 abc')).toBe(9);
+    });
+
+    it('should count newlines and special characters', () => {
+      expect(getCharacterCount('Hello\nWorld')).toBe(11);
+      expect(getCharacterCount('Tab\tHere')).toBe(8);
+      expect(getCharacterCount('!@#$%^&*()')).toBe(10);
+    });
+  });
+
+  describe('sanitizeTagInput', () => {
+    it('should remove colons from input', () => {
+      expect(sanitizeTagInput('hello:world')).toBe('helloworld');
+      expect(sanitizeTagInput('tag:with:colons')).toBe('tagwithcolons');
+    });
+
+    it('should remove commas from input', () => {
+      expect(sanitizeTagInput('hello,world')).toBe('helloworld');
+      expect(sanitizeTagInput('tag,with,commas')).toBe('tagwithcommas');
+    });
+
+    it('should remove spaces from input', () => {
+      expect(sanitizeTagInput('hello world')).toBe('helloworld');
+      expect(sanitizeTagInput('tag with spaces')).toBe('tagwithspaces');
+    });
+
+    it('should remove all banned characters at once', () => {
+      expect(sanitizeTagInput('hello: world, test')).toBe('helloworldtest');
+      expect(sanitizeTagInput(':, mixed:, chars')).toBe('mixedchars');
+    });
+
+    it('should preserve valid characters', () => {
+      expect(sanitizeTagInput('valid-tag')).toBe('valid-tag');
+      expect(sanitizeTagInput('tag123')).toBe('tag123');
+      expect(sanitizeTagInput('emoji👍tag')).toBe('emoji👍tag');
+      expect(sanitizeTagInput('CamelCase')).toBe('CamelCase');
+    });
+
+    it('should handle empty string', () => {
+      expect(sanitizeTagInput('')).toBe('');
+    });
+
+    it('should handle string with only banned characters', () => {
+      expect(sanitizeTagInput(': , :')).toBe('');
+      expect(sanitizeTagInput('   ')).toBe('');
+    });
+
+    it('should handle Unicode characters', () => {
+      expect(sanitizeTagInput('日本語')).toBe('日本語');
+      expect(sanitizeTagInput('日本語: test')).toBe('日本語test');
+    });
+  });
+
+  describe('TAG_BANNED_CHARS', () => {
+    it('should be a valid regex', () => {
+      expect(TAG_BANNED_CHARS).toBeInstanceOf(RegExp);
+    });
+
+    it('should have global flag', () => {
+      expect(TAG_BANNED_CHARS.global).toBe(true);
+    });
+
+    it('should match colons', () => {
+      expect(':'.match(TAG_BANNED_CHARS)).not.toBeNull();
+    });
+
+    it('should match commas', () => {
+      expect(','.match(TAG_BANNED_CHARS)).not.toBeNull();
+    });
+
+    it('should match spaces', () => {
+      expect(' '.match(TAG_BANNED_CHARS)).not.toBeNull();
+    });
+
+    it('should not match valid characters', () => {
+      expect('a'.match(TAG_BANNED_CHARS)).toBeNull();
+      expect('-'.match(TAG_BANNED_CHARS)).toBeNull();
+      expect('_'.match(TAG_BANNED_CHARS)).toBeNull();
     });
   });
 });

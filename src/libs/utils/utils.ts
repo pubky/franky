@@ -561,3 +561,43 @@ export function shouldBypassLinkConfirmation(url: string): boolean {
   // Check if URL is on the same domain
   return isSameDomain(url);
 }
+
+/**
+ * Count characters properly (grapheme-aware)
+ * Uses Array.from() to handle emojis and Unicode correctly.
+ * Standard string.length counts UTF-16 code units, which makes
+ * emojis like 👍 count as 2 instead of 1.
+ *
+ * @param text - The string to count characters in
+ * @returns The number of grapheme characters
+ *
+ * @example
+ * getCharacterCount('Hello') // 5
+ * getCharacterCount('👍') // 1 (instead of 2 with .length)
+ * getCharacterCount('Hello 👍') // 7
+ */
+export function getCharacterCount(text: string): number {
+  return Array.from(text).length;
+}
+
+/**
+ * Banned characters for tags per pubky-app-specs
+ * Colons, commas, and spaces are not allowed in tags
+ */
+export const TAG_BANNED_CHARS = /[:, ]/g;
+
+/**
+ * Remove banned characters from tag input
+ * Used to sanitize tag input on every keystroke and paste
+ *
+ * @param value - The raw input value
+ * @returns The sanitized value with banned characters removed
+ *
+ * @example
+ * sanitizeTagInput('hello:world') // 'helloworld'
+ * sanitizeTagInput('tag, test') // 'tagtest'
+ * sanitizeTagInput('valid-tag') // 'valid-tag'
+ */
+export function sanitizeTagInput(value: string): string {
+  return value.replace(TAG_BANNED_CHARS, '');
+}
