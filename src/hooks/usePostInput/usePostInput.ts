@@ -3,7 +3,14 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
-import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import {
+  POST_MAX_CHARACTER_LENGTH,
+  SUPPORTED_ATTACHMENT_MIME_TYPES,
+  ATTACHMENT_MAX_IMAGE_SIZE,
+  ATTACHMENT_MAX_OTHER_SIZE,
+  ATTACHMENT_MAX_FILES,
+  SUPPORTED_FILE_EXTENSIONS,
+} from '@/config';
 import { useTimelineFeedContext } from '@/organisms/TimelineFeed/TimelineFeed';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
 import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.types';
@@ -153,18 +160,13 @@ export function usePostInput({
     (files: File[]) => {
       if (isSubmitting || files.length === 0) return;
 
-      const acceptedTypes = ['image/', 'video/', 'audio/', 'application/pdf'];
-      const maxImageSize = 5 * 1024 * 1024; // 5MB
-      const maxOtherSize = 20 * 1024 * 1024; // 20MB
-      const maxFiles = 4;
-
       const currentCount = attachments.length;
-      const availableSlots = maxFiles - currentCount;
+      const availableSlots = ATTACHMENT_MAX_FILES - currentCount;
 
       if (availableSlots <= 0) {
         toast({
           title: 'Error',
-          description: `Maximum of ${maxFiles} files allowed`,
+          description: `Maximum of ${ATTACHMENT_MAX_FILES} files allowed`,
         });
         return;
       }
@@ -174,18 +176,21 @@ export function usePostInput({
 
       for (const file of files) {
         if (validFiles.length >= availableSlots) {
-          errors.push(`Maximum of ${maxFiles} files allowed. Some files were not added.`);
+          errors.push(`Maximum of ${ATTACHMENT_MAX_FILES} files allowed. Some files were not added.`);
           break;
         }
 
-        const isAcceptedType = acceptedTypes.some((type) => file.type.startsWith(type));
+        // Check against specific supported MIME types from pubky-app-specs
+        const isAcceptedType = (SUPPORTED_ATTACHMENT_MIME_TYPES as readonly string[]).includes(file.type);
         if (!isAcceptedType) {
-          errors.push(`"${file.name}" is not an accepted file type.`);
+          errors.push(
+            `"${file.name}" has unsupported type "${file.type}". Supported formats: ${SUPPORTED_FILE_EXTENSIONS}.`,
+          );
           continue;
         }
 
         const isImage = file.type.startsWith('image/');
-        const maxSize = isImage ? maxImageSize : maxOtherSize;
+        const maxSize = isImage ? ATTACHMENT_MAX_IMAGE_SIZE : ATTACHMENT_MAX_OTHER_SIZE;
         const maxSizeLabel = isImage ? '5MB' : '20MB';
 
         if (file.size > maxSize) {

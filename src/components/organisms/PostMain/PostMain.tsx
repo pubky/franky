@@ -72,6 +72,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
                     maxTotalChars={POST_TAGS_MAX_TOTAL_CHARS}
                     showCount={true}
                     showInput={false}
+                    showAddButton={true}
                     addMode={true}
                   />
                   <Organisms.PostActionsBar
