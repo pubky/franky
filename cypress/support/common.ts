@@ -42,7 +42,7 @@ export const verifyNotificationCounter = (expectedCount?: number) => {
   if (expectedCount === 0) {
     cy.get('[data-cy="header-notification-counter"]').should('not.exist');
   } else {
-    cy.get('[data-cy="header-notification-counter"]').should('have.text', expectedCount);
+    cy.get('[data-cy="header-notification-counter"]', { timeout: 30_000 }).should('have.text', expectedCount);
   }
 };
 

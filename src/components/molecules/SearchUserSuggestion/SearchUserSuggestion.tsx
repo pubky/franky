@@ -15,6 +15,7 @@ export function SearchUserSuggestion({ user, onClick }: SearchUserSuggestionProp
       overrideDefaults
       className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
       onClick={handleClick}
+      data-cy={`search-user-suggestion-${user.id}`}
       data-testid={`search-user-suggestion-${user.id}`}
       aria-label={`User ${user.name} (${formattedPubky})`}
     >
