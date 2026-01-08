@@ -14,6 +14,12 @@ describe('File API', () => {
       const result = filesApi.getAvatarUrl(pubky);
       expect(result).toBe(`${Config.CDN_URL}/avatar/${encodedPubky}`);
     });
+
+    it('should append version query param when provided', () => {
+      const version = 12345;
+      const result = filesApi.getAvatarUrl(pubky, version);
+      expect(result).toBe(`${Config.CDN_URL}/avatar/${encodedPubky}?v=${version}`);
+    });
   });
 
   describe('filesApi.getFileUrl', () => {

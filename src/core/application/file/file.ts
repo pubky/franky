@@ -77,10 +77,11 @@ export class FileApplication {
   /**
    * Gets the avatar URL for a user.
    * @param pubky - The user's public key
+   * @param version - Optional version string/number for cache busting
    * @returns The avatar URL
    */
-  static getAvatarUrl(pubky: Core.Pubky): string {
-    return Core.filesApi.getAvatarUrl(pubky);
+  static getAvatarUrl(pubky: Core.Pubky, version?: string | number): string {
+    return Core.filesApi.getAvatarUrl(pubky, version);
   }
 
   /**
