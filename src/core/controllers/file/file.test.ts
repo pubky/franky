@@ -148,7 +148,7 @@ describe('FileController', () => {
 
       const result = FileController.getAvatarUrl(testPubky);
 
-      expect(mockFileApplication.getAvatarUrl).toHaveBeenCalledWith(testPubky);
+      expect(mockFileApplication.getAvatarUrl).toHaveBeenCalledWith(testPubky, undefined);
       expect(result).toBe(expectedUrl);
     });
   });

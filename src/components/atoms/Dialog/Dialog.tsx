@@ -82,7 +82,9 @@ function DialogContent({
             'duration-200',
             'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
             'm-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-            overrideDefaults ? '' : 'gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8',
+            overrideDefaults
+              ? ''
+              : 'max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8',
             className,
           )}
           {...props}
