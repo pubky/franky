@@ -141,11 +141,7 @@ function confirmRecoveryPhrase(recoveryPhrase: string): void {
     cy.get(`#backup-recovery-phrase-word-${word}-${alphaIndex + 1}`).click();
   });
   cy.get('#backup-recovery-phrase-validate-btn').click();
-  // Select button based on viewport (mobile or desktop)
-  const finishBtnId = Cypress.env('isMobile')
-    ? '#backup-recovery-phrase-finish-btn-mobile'
-    : '#backup-recovery-phrase-finish-btn-desktop';
-  cy.get(finishBtnId).click();
+  cy.get('#backup-recovery-phrase-finish-btn').click();
 }
 
 // Collect all 12 recovery phrase words
