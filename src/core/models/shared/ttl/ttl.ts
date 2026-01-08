@@ -5,16 +5,16 @@ import { Table } from 'dexie';
 
 // Each domain row will have its own TTL row. e.g. UserTtlModel, PostTtlModel, etc.
 export abstract class Ttl<Id, Schema extends Core.TtlModelSchema<Id>> extends ModelBase<Id, Schema> {
-  ttl: number;
+  lastUpdatedAt: number;
 
   constructor(data: Schema) {
     super(data);
-    this.ttl = data.ttl;
+    this.lastUpdatedAt = data.lastUpdatedAt;
   }
 
   static async bulkSave<TId, TSchema extends Core.TtlModelSchema<TId>>(
     this: { table: Table<TSchema> },
-    records: Core.NexusModelTuple<Pick<TSchema, 'ttl'>>[],
+    records: Core.NexusModelTuple<Pick<TSchema, 'lastUpdatedAt'>>[],
   ) {
     try {
       const toSave = records.map((tuple) => ({ id: tuple[0] as TId, ...tuple[1] }) as TSchema);

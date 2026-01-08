@@ -5,5 +5,5 @@ export type PostTtlModelSchema = TtlModelSchema<string>;
 // Primary and compound indexes for Dexie
 export const postTtlTableSchema = `
   &id,
-  ttl
+  lastUpdatedAt
 `;

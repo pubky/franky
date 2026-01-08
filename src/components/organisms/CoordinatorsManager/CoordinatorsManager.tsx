@@ -29,15 +29,18 @@ export function CoordinatorsManager() {
   useEffect(() => {
     const notificationCoordinator = Core.NotificationCoordinator.getInstance();
     const streamCoordinator = Core.StreamCoordinator.getInstance();
+    const ttlCoordinator = Core.TtlCoordinator.getInstance();
 
     // Start the coordinators
     notificationCoordinator.start();
     streamCoordinator.start();
+    ttlCoordinator.start();
 
     // Cleanup: stop coordinators when component unmounts
     return () => {
       notificationCoordinator.stop();
       streamCoordinator.stop();
+      ttlCoordinator.stop();
     };
   }, []);
 
@@ -45,9 +48,11 @@ export function CoordinatorsManager() {
   useEffect(() => {
     const notificationCoordinator = Core.NotificationCoordinator.getInstance();
     const streamCoordinator = Core.StreamCoordinator.getInstance();
+    const ttlCoordinator = Core.TtlCoordinator.getInstance();
 
     notificationCoordinator.setRoute(pathname);
     streamCoordinator.setRoute(pathname);
+    ttlCoordinator.setRoute(pathname);
   }, [pathname]);
 
   // This component has no UI - it only manages coordinator lifecycles
