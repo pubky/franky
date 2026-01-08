@@ -137,10 +137,15 @@ export class TtlCoordinator {
   public subscribePost({ compositePostId }: TtlSubscribePostParams): void {
     // Idempotent: don't double-subscribe
     if (this.hasPostSubscription(compositePostId)) {
+      Logger.debug('TtlCoordinator: Post already subscribed (skip)', { compositePostId });
       return;
     }
 
     this.addPostSubscription(compositePostId);
+    Logger.debug('TtlCoordinator: Post subscribed', {
+      compositePostId,
+      totalSubscribedPosts: this.state.subscribedPosts.size,
+    });
 
     // Check if post is stale and queue for refresh
     void this.checkAndQueueEntity(compositePostId, this.getPostOps());
@@ -152,10 +157,15 @@ export class TtlCoordinator {
   public unsubscribePost({ compositePostId }: TtlUnsubscribePostParams): void {
     // Safe if called multiple times or for unknown IDs
     if (!this.hasPostSubscription(compositePostId)) {
+      Logger.debug('TtlCoordinator: Post not subscribed (skip unsubscribe)', { compositePostId });
       return;
     }
 
     this.removePostSubscription(compositePostId);
+    Logger.debug('TtlCoordinator: Post unsubscribed', {
+      compositePostId,
+      totalSubscribedPosts: this.state.subscribedPosts.size,
+    });
   }
 
   /**
@@ -518,6 +528,14 @@ export class TtlCoordinator {
     try {
       const staleIds = await ops.findStaleByIds(ids);
 
+      if (staleIds.length > 0) {
+        Logger.debug(`TtlCoordinator: Found stale ${ops.entityName}s`, {
+          staleCount: staleIds.length,
+          totalSubscribed: ids.length,
+          staleIds: staleIds.slice(0, 5), // Log first 5 for brevity
+        });
+      }
+
       for (const id of staleIds) {
         // Guard: don't enqueue if unsubscribed mid-flight
         if (ops.subscribed.has(id)) {
@@ -545,10 +563,15 @@ export class TtlCoordinator {
     const ids = Array.from(ops.batchQueue).slice(0, ops.maxBatchSize);
 
     try {
-      Logger.debug(`TtlCoordinator: Refreshing stale ${ops.entityName}s`, { count: ids.length });
+      Logger.debug(`TtlCoordinator: Refreshing stale ${ops.entityName}s`, {
+        count: ids.length,
+        ids: ids.slice(0, 5), // Log first 5 for brevity
+      });
 
       // Fetch and persist entities
       await ops.forceRefresh(ids, viewerId);
+
+      Logger.debug(`TtlCoordinator: Successfully refreshed ${ops.entityName}s`, { count: ids.length });
 
       // SUCCESS: Remove from queue
       for (const id of ids) {
@@ -572,6 +595,7 @@ export class TtlCoordinator {
     // Skip if not authenticated
     const authState = Core.useAuthStore.getState();
     if (!authState.selectIsAuthenticated()) {
+      Logger.debug('TtlCoordinator: Batch tick skipped (not authenticated)');
       return;
     }
 
@@ -579,9 +603,21 @@ export class TtlCoordinator {
     const postOps = this.getPostOps();
     const userOps = this.getUserOps();
 
+    Logger.debug('TtlCoordinator: Batch tick started', {
+      subscribedPosts: this.state.subscribedPosts.size,
+      subscribedUsers: this.state.subscribedUsers.size,
+      postBatchQueue: this.state.postBatchQueue.size,
+      userBatchQueue: this.state.userBatchQueue.size,
+    });
+
     // Check all subscribed entities for staleness
     await this.checkAllEntitiesForStaleness(postOps);
     await this.checkAllEntitiesForStaleness(userOps);
+
+    Logger.debug('TtlCoordinator: After staleness check', {
+      postBatchQueue: this.state.postBatchQueue.size,
+      userBatchQueue: this.state.userBatchQueue.size,
+    });
 
     // Fire batch refreshes
     await this.refreshStaleEntities(postOps, viewerId);

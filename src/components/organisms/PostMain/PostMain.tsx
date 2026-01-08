@@ -31,6 +31,12 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   // Get post height for thread connector
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
+  // Subscribe to TTL coordinator based on viewport visibility
+  const { ref: ttlRef } = Hooks.useTtlViewportSubscription({
+    compositePostId: postId,
+    subscribeAuthor: true,
+  });
+
   // Determine thread connector variant based on reply status
   const connectorVariant = isLastReply ? POST_THREAD_CONNECTOR_VARIANTS.LAST : POST_THREAD_CONNECTOR_VARIANTS.REGULAR;
 
@@ -48,7 +54,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
 
   return (
     <>
-      <Atoms.Container overrideDefaults onClick={onClick} className="relative flex min-w-0 cursor-pointer">
+      <Atoms.Container ref={ttlRef} overrideDefaults onClick={onClick} className="relative flex min-w-0 cursor-pointer">
         {isReply && (
           <Atoms.Container overrideDefaults className="w-3 shrink-0">
             <Atoms.PostThreadConnector height={postHeight} variant={connectorVariant} />
