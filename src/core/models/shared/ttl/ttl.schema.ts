@@ -1,9 +1,9 @@
 export interface TtlModelSchema<Id> {
   id: Id;
-  ttl: number;
+  lastUpdatedAt: number;
 }
 
 export const ttlTableSchema = `
     &id,
-    ttl
+    lastUpdatedAt
 `;

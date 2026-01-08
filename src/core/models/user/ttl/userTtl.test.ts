@@ -10,11 +10,11 @@ describe('UserTtlModel', () => {
   const testUserId2 = Core.generateTestUserId(2);
 
   const MOCK_TTL_1 = {
-    ttl: Date.now() + 3600000, // 1 hour from now
+    lastUpdatedAt: Date.now() - 3600000, // 1 hour ago
   };
 
   const MOCK_TTL_2 = {
-    ttl: Date.now() + 7200000, // 2 hours from now
+    lastUpdatedAt: Date.now() - 7200000, // 2 hours ago
   };
 
   describe('Constructor', () => {
@@ -27,7 +27,7 @@ describe('UserTtlModel', () => {
       const model = new Core.UserTtlModel(mockData);
 
       expect(model.id).toBe(mockData.id);
-      expect(model.ttl).toBe(MOCK_TTL_1.ttl);
+      expect(model.lastUpdatedAt).toBe(MOCK_TTL_1.lastUpdatedAt);
     });
   });
 
@@ -53,7 +53,7 @@ describe('UserTtlModel', () => {
 
       expect(result).toBeInstanceOf(Core.UserTtlModel);
       expect(result?.id).toBe(testUserId1);
-      expect(result?.ttl).toBe(MOCK_TTL_1.ttl);
+      expect(result?.lastUpdatedAt).toBe(MOCK_TTL_1.lastUpdatedAt);
     });
 
     it('should return null for non-existent user ttl', async () => {
@@ -63,7 +63,7 @@ describe('UserTtlModel', () => {
     });
 
     it('should bulk save user ttl from tuples', async () => {
-      const mockTuples: Core.NexusModelTuple<{ ttl: number }>[] = [
+      const mockTuples: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [
         [testUserId1, MOCK_TTL_1],
         [testUserId2, MOCK_TTL_2],
       ];
@@ -75,8 +75,8 @@ describe('UserTtlModel', () => {
       const userTtl1 = await Core.UserTtlModel.findById(testUserId1);
       const userTtl2 = await Core.UserTtlModel.findById(testUserId2);
 
-      expect(userTtl1?.ttl).toBe(MOCK_TTL_1.ttl);
-      expect(userTtl2?.ttl).toBe(MOCK_TTL_2.ttl);
+      expect(userTtl1?.lastUpdatedAt).toBe(MOCK_TTL_1.lastUpdatedAt);
+      expect(userTtl2?.lastUpdatedAt).toBe(MOCK_TTL_2.lastUpdatedAt);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -85,11 +85,11 @@ describe('UserTtlModel', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should handle multiple tuples with different ttl values', async () => {
+    it('should handle multiple tuples with different lastUpdatedAt values', async () => {
       const currentTime = Date.now();
-      const mockTuples: Core.NexusModelTuple<{ ttl: number }>[] = [
-        [testUserId1, { ttl: currentTime + 1000 }],
-        [testUserId2, { ttl: currentTime + 5000 }],
+      const mockTuples: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [
+        [testUserId1, { lastUpdatedAt: currentTime - 1000 }],
+        [testUserId2, { lastUpdatedAt: currentTime - 5000 }],
       ];
 
       await Core.UserTtlModel.bulkSave(mockTuples);
@@ -97,8 +97,8 @@ describe('UserTtlModel', () => {
       const userTtl1 = await Core.UserTtlModel.findById(testUserId1);
       const userTtl2 = await Core.UserTtlModel.findById(testUserId2);
 
-      expect(userTtl1?.ttl).toBe(currentTime + 1000);
-      expect(userTtl2?.ttl).toBe(currentTime + 5000);
+      expect(userTtl1?.lastUpdatedAt).toBe(currentTime - 1000);
+      expect(userTtl2?.lastUpdatedAt).toBe(currentTime - 5000);
     });
   });
 });

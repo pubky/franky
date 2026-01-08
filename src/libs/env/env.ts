@@ -17,7 +17,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_DB_NAME: z.string().default('franky'),
   NEXT_PUBLIC_DB_VERSION: z
     .string()
-    .default('1')
+    .default('2')
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
@@ -84,6 +84,36 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
+  // TTL Coordinator configuration
+  NEXT_PUBLIC_TTL_POST_MS: z
+    .string()
+    .default('300000') // 5 minutes in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_USER_MS: z
+    .string()
+    .default('600000') // 10 minutes in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: z
+    .string()
+    .default('5000') // 5 seconds in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: z
+    .string()
+    .default('20')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: z
+    .string()
+    .default('20')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
   NEXT_PUBLIC_TESTNET: z
     .string()
     .default('false')
@@ -152,6 +182,7 @@ function parseEnv(): z.infer<typeof envSchema> {
   try {
     const parsed = envSchema.parse({
       NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_DB_NAME: process.env.NEXT_PUBLIC_DB_NAME,
       NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
       NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
@@ -166,6 +197,11 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
       NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
       NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: process.env.NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS,
+      NEXT_PUBLIC_TTL_POST_MS: process.env.NEXT_PUBLIC_TTL_POST_MS,
+      NEXT_PUBLIC_TTL_USER_MS: process.env.NEXT_PUBLIC_TTL_USER_MS,
+      NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: process.env.NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS,
+      NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE,
+      NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
