@@ -84,7 +84,6 @@ export function Account() {
           buttonText="Delete Account"
           buttonIcon={Libs.Trash2}
           buttonId="delete-account-btn"
-          buttonVariant="destructive"
           titleClassName="text-destructive"
           iconClassName="text-destructive"
           buttonOnClick={handleOpenDeleteDialog}

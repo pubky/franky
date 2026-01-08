@@ -2,7 +2,6 @@
 export enum NotificationType {
   Follow = 'follow',
   NewFriend = 'new_friend',
-  LostFriend = 'lost_friend',
   TagPost = 'tag_post',
   TagProfile = 'tag_profile',
   Reply = 'reply',
@@ -24,7 +23,6 @@ export enum PostChangedSource {
 export type NotificationVariantMap = {
   [NotificationType.Follow]: FollowNotification;
   [NotificationType.NewFriend]: NewFriendNotification;
-  [NotificationType.LostFriend]: LostFriendNotification;
   [NotificationType.TagPost]: TagPostNotification;
   [NotificationType.TagProfile]: TagProfileNotification;
   [NotificationType.Reply]: ReplyNotification;
@@ -46,10 +44,6 @@ export type FollowNotification = {
 
 export type NewFriendNotification = {
   followed_by: string;
-};
-
-export type LostFriendNotification = {
-  unfollowed_by: string;
 };
 
 export type TagPostNotification = {

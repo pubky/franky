@@ -27,7 +27,7 @@ export function Settings({ children }: SettingsProps) {
         rightSidebarContent={<SettingsRightSidebar />}
         leftDrawerContent={<SettingsLeftDrawer />}
         rightDrawerContent={<SettingsRightDrawer />}
-        className="pt-[145px] lg:pt-0"
+        className="pt-[118px] lg:pt-0"
       >
         {children}
       </Organisms.ContentLayout>

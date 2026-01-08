@@ -26,7 +26,7 @@ exports[`Tag - Snapshots > matches snapshot when clicked 1`] = `
 <div
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
-  style="background-color: rgba(255, 51, 0, 0.3); border: 1px solid rgb(255, 51, 0);"
+  style="background-color: rgba(255, 51, 0, 0.3); border: 1px solid rgba(255, 51, 0, 0.5);"
   title="been clicked"
 >
   <p
@@ -42,7 +42,7 @@ exports[`Tag - Snapshots > matches snapshot with all props combined 1`] = `
 <div
   class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 combined-tag"
   data-testid="combined-test"
-  style="background-color: rgba(255, 0, 4, 0.3); border: 1px solid rgb(255, 0, 4);"
+  style="background-color: rgba(255, 0, 4, 0.3); border: 1px solid rgba(255, 0, 4, 0.5);"
   title="defi"
 >
   <p

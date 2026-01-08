@@ -1,7 +1,6 @@
 export interface NotificationPreferences {
   follow: boolean;
   newFriend: boolean;
-  lostFriend: boolean;
   tagPost: boolean;
   tagProfile: boolean;
   mention: boolean;
@@ -62,7 +61,6 @@ export type SettingsStore = SettingsState & SettingsActions;
 export const defaultNotificationPreferences: NotificationPreferences = {
   follow: true,
   newFriend: true,
-  lostFriend: true,
   tagPost: true,
   tagProfile: true,
   mention: true,

@@ -3,7 +3,7 @@ import * as Atoms from '@/atoms';
 import type { SettingsSectionProps } from './SettingsSection.types';
 
 export const SettingsSection = React.memo(function SettingsSection({
-  icon: Icon,
+  icon: _Icon,
   title,
   description,
   buttonText,
@@ -13,12 +13,11 @@ export const SettingsSection = React.memo(function SettingsSection({
   buttonDisabled = false,
   buttonOnClick,
   titleClassName,
-  iconClassName,
+  iconClassName: _iconClassName,
 }: SettingsSectionProps) {
   return (
     <Atoms.Container overrideDefaults className="flex flex-col items-start justify-start">
-      <Atoms.Container overrideDefaults className="inline-flex items-center justify-start gap-2 pb-6">
-        <Icon size={24} className={iconClassName} />
+      <Atoms.Container overrideDefaults className="inline-flex items-center justify-start pb-6">
         <Atoms.Heading level={2} size="lg" className={titleClassName}>
           {title}
         </Atoms.Heading>

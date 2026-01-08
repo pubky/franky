@@ -7,19 +7,10 @@ exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start gap-2 pb-6"
+    class="inline-flex items-center justify-start pb-6"
     data-override-defaults="true"
     data-testid="container"
   >
-    <svg
-      class="custom-icon"
-      data-size="24"
-      data-testid="mock-icon"
-    >
-      <title>
-        Mock Icon
-      </title>
-    </svg>
     <div
       aria-level="2"
       class="custom-title"
@@ -64,18 +55,10 @@ exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] =
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start gap-2 pb-6"
+    class="inline-flex items-center justify-start pb-6"
     data-override-defaults="true"
     data-testid="container"
   >
-    <svg
-      data-size="24"
-      data-testid="mock-icon"
-    >
-      <title>
-        Mock Icon
-      </title>
-    </svg>
     <div
       aria-level="2"
       data-level="2"
@@ -119,18 +102,10 @@ exports[`SettingsSection - Snapshots > matches snapshot with destructive variant
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start gap-2 pb-6"
+    class="inline-flex items-center justify-start pb-6"
     data-override-defaults="true"
     data-testid="container"
   >
-    <svg
-      data-size="24"
-      data-testid="mock-icon"
-    >
-      <title>
-        Mock Icon
-      </title>
-    </svg>
     <div
       aria-level="2"
       data-level="2"
@@ -174,18 +149,10 @@ exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`]
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start gap-2 pb-6"
+    class="inline-flex items-center justify-start pb-6"
     data-override-defaults="true"
     data-testid="container"
   >
-    <svg
-      data-size="24"
-      data-testid="mock-icon"
-    >
-      <title>
-        Mock Icon
-      </title>
-    </svg>
     <div
       aria-level="2"
       data-level="2"
