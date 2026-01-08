@@ -78,6 +78,12 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
+  NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: z
+    .string()
+    .default('300000') // 5 minutes in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
   NEXT_PUBLIC_TESTNET: z
     .string()
     .default('false')
@@ -159,6 +165,7 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
       NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
       NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
+      NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: process.env.NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
