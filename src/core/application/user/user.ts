@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 export class UserApplication {
   /**
@@ -59,8 +60,9 @@ export class UserApplication {
       const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
       await Core.LocalProfileService.upsertCounts(userId, nexusUserCounts);
       return nexusUserCounts;
-    } catch {
+    } catch (error) {
       // Return null if user counts cannot be fetched (e.g., user not indexed yet)
+      Libs.Logger.warn('Failed to fetch user counts from Nexus', { userId, error });
       return null;
     }
   }

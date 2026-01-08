@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { ProfileStats, UseProfileStatsResult } from './useProfileStats.types';
 
 /**
@@ -21,13 +22,19 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
 
   // Fetch counts from Nexus if not in local cache
   useEffect(() => {
-    if (!userId) return;
-    // Only fetch if local query has run and returned null (not undefined = still loading)
-    if (userCounts === null) {
-      Core.UserController.getOrFetchCounts({ userId }).catch((error) => {
-        console.error('Failed to fetch user counts:', error);
-      });
-    }
+    if (!userId || userCounts !== null) return;
+
+    let cancelled = false;
+
+    Core.UserController.getOrFetchCounts({ userId }).catch((error) => {
+      if (!cancelled) {
+        Libs.Logger.error('Failed to fetch user counts:', { userId, error });
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId, userCounts]);
 
   // Get unread notifications count reactively from Zustand store
