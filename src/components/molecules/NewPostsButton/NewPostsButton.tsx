@@ -28,6 +28,7 @@ export function NewPostsButton({ count, onClick, visible, isScrolled = false }: 
     <Atoms.Button
       variant={isScrolled ? 'brand' : 'default'}
       onClick={onClick}
+      data-cy="new-posts-button"
       data-testid="new-posts-button"
       className={Libs.cn(
         'animate-in fade-in slide-in-from-left-2',

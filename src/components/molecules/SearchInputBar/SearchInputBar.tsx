@@ -53,6 +53,7 @@ export function SearchInputBar({
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         readOnly={isReadOnly}
+        data-cy="header-search-input"
         aria-label="Search input"
         aria-autocomplete="list"
         aria-controls={suggestionsId || undefined}

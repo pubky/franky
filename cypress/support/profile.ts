@@ -97,18 +97,9 @@ export const waitForNotificationsToLoad = (attempts: number = 5) => {
   });
 };
 
-// wait for notification dot to disappear from all listed notifications (useful to prevent 'no longer attached to the DOM' error when checking list of notifications)
-export const waitForNotificationDotToDisappear = (t: number = 25) => {
+// wait for notification dot to disappear from all listed notifications
+export const waitForNotificationDotsToDisappear = () => {
   cy.get('[data-cy="notifications-list"]').find('[data-cy="notification-unread-dot"]').should('not.exist');
-
-  // if (t === 0) assert(false, `waitForNotificationDotToDisappear: Notification dot did not disappear`);
-  // cy.get('[data-cy="notifications-list"]').then(($notifs) => {
-  //   if ($notifs.find('[data-cy="notification-unread-dot"]').length > 0) {
-  //     cy.log('waitForNotificationDotToDisappear: Notification dot is still visible; waiting 200ms and checking again');
-  //     cy.wait(200);
-  //     waitForNotificationDotToDisappear(t - 1);
-  //   }
-  // });
 };
 
 export const checkLatestNotification = (expectedContent: string[], profileToNavigateTo?: string) => {
@@ -174,4 +165,17 @@ export const waitForPutLastRead = () => {
     url: '/pub/pubky.app/last_read',
   }).as('putLastRead');
   cy.wait('@putLastRead').should('have.property', 'response').its('statusCode').should('eq', 201);
+};
+
+// cause last_read to be updated by clicking posts and notifications tabs
+export const causeLastReadToBeUpdated = () => {
+  cy.intercept({
+    method: 'PUT',
+    url: '/pub/pubky.app/last_read',
+  }).as('putLastRead');
+  cy.get('[data-cy="profile-filter-item-posts"]').click();
+  // Wait for posts filter item to become active before clicking notifications
+  cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
+  cy.wait('@putLastRead').should('have.property', 'response').its('statusCode').should('eq', 201);
+  cy.get('[data-cy="profile-filter-item-notifications"]').click();
 };

@@ -6,10 +6,10 @@ import { searchAndFollowProfile, searchForProfileByPubky } from '../support/cont
 import {
   clickFollowButton,
   unfollowUserByUsername,
-  waitForNotificationDotToDisappear,
   checkLatestNotification,
   addProfileTags,
-  waitForPutLastRead,
+  waitForNotificationDotsToDisappear,
+  causeLastReadToBeUpdated,
 } from '../support/profile';
 import { BackupType, HasBackedUp } from '../support/types/enums';
 import { verifyNotificationCounter } from '../support/common';
@@ -46,7 +46,7 @@ describe('notifications', () => {
     });
   });
 
-  // todo: skip due to bug, see https://github.com/pubky/franky/issues/695
+  // todo: skip due to bug, see https://github.com/pubky/franky/issues/740
   it.skip('can be notified for new follower, friend, lost friend', () => {
     // * profile 1 follows profile 2
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
@@ -59,8 +59,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     // check latest notification on profile page and navigate to profile 1 profile page
     checkLatestNotification([profile1.username, 'followed you'], profile1.username);
 
@@ -73,17 +72,14 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     // check latest notification on profile page
     checkLatestNotification([profile2.username, 'is now your friend']);
 
     // * check that toggling profile page tabs clears notification counter for new notification
-    cy.get('[data-cy="profile-filter-item-posts"]').click();
-    // Wait for posts filter item to become active before clicking notifications
-    cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
-    cy.get('[data-cy="profile-filter-item-notifications"]').click();
-    waitForNotificationDotToDisappear();
+    causeLastReadToBeUpdated();
+    verifyNotificationCounter(0);
+    waitForNotificationDotsToDisappear();
 
     // * profile 1 unfollows profile 2
     // todo: fails here due to bug, button shows 'Follow' text bug, see https://github.com/pubky/franky/issues/695
@@ -94,8 +90,7 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'is not your friend anymore']);
 
@@ -116,7 +111,7 @@ describe('notifications', () => {
     // * profile 2 checks for follow notification? and absence of friend notification
   });
 
-  // todo: skip due to bug, see https://github.com/pubky/franky/issues/716
+  // todo: skip due to bugs, see https://github.com/pubky/franky/issues/740
   it.skip('can be notified for tagged post and profile', () => {
     // * profile 1 creates a post
     createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
@@ -137,21 +132,20 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     // check latest notification on profile page
     checkLatestNotification([profile1.username, 'tagged your profile', profileTag]);
 
-    // * check that toggling profile page tabs clears notification counter for new notification
-    cy.get('[data-cy="profile-filter-item-posts"]').click();
-    cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
-    cy.get('[data-cy="profile-filter-item-notifications"]').click();
-    waitForNotificationDotToDisappear();
-
     // * profile 2 tags profile 1's post (from their profile page)
+    cy.intercept({
+      method: 'PUT',
+      url: '/pub/pubky.app/last_read',
+    }).as('putLastRead');
     cy.get(`@${profile1.pubkyAlias}`).then((pubky) => {
       searchForProfileByPubky(`${pubky}`, profile1.username);
     });
+    cy.wait('@putLastRead').should('have.property', 'response').its('statusCode').should('eq', 201);
+    verifyNotificationCounter(0);
     // click Posts tab to show profile 1's posts
     cy.get('[data-cy="profile-filter-item-posts"]').click();
     cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
@@ -174,9 +168,10 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     checkLatestNotification([profile2.username, 'tagged your post', postTag]);
+    causeLastReadToBeUpdated();
+    verifyNotificationCounter(0);
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables notifications for tagged profile
@@ -191,10 +186,12 @@ describe('notifications', () => {
   // todo: blocked by bug, see https://github.com/pubky/franky/issues/717
   it('can be notified for profile being mentioned in a post');
 
-  it.only('can be notified for your post being replied to', () => {
+  it('can be notified for your post being replied to', () => {
     // * profile 1 creates a post (1)
     const postContent = `I will be notified when this post is replied to! ${Date.now()}`;
+    //cy.intercept({method:'PUT', url:'/pub/pubky.app/posts/**'}).as('putPost');
     createQuickPost(postContent);
+    //cy.wait('@putPost').should('have.property', 'response').its('statusCode').should('eq', 201);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
@@ -206,10 +203,13 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     checkLatestNotification([profile2.username, 'replied to your post']);
-    //cy.wait(1000);
+    causeLastReadToBeUpdated();
+    verifyNotificationCounter(0);
+
+    // cause last_read to be updated
+
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables notifications for being replied to
@@ -232,9 +232,10 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
-    verifyNotificationCounter(0);
+    verifyNotificationCounter(1);
     checkLatestNotification([profile2.username, 'reposted your post']);
+    causeLastReadToBeUpdated();
+    verifyNotificationCounter(0);
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables notifications for being reposted
@@ -243,13 +244,14 @@ describe('notifications', () => {
     // * profile 1 checks for absence of notifications
   });
 
-  it.only('can be notified for a post being deleted that you replied to', () => {
+  it('can be notified for a post being deleted that you replied to', () => {
     // * profile 1 creates a post (1) that will be replied to and then deleted
     const postContent = `The one who replies to this post will be notified when it is deleted! ${Date.now()}`;
     createQuickPost(postContent);
 
     // * profile 2 replies to profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
+    //cy.clearAllSessionStorage();
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     replyToPost({ replyContent: 'I replied to your post!', filterText: postContent });
 
@@ -263,9 +265,10 @@ describe('notifications', () => {
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
     verifyNotificationCounter(1);
     goToProfilePageFromHeader();
-    waitForPutLastRead();
+    verifyNotificationCounter(1);
+    checkLatestNotification([profile1.username, 'deleted a post']);
+    causeLastReadToBeUpdated();
     verifyNotificationCounter(0);
-    checkLatestNotification([profile1.username, 'deleted a post you replied to']);
 
     // TODO: add checks for disabled notifications
     // * profile 2 disables notifications for being replied to

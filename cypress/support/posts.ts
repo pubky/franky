@@ -1,5 +1,7 @@
 // import { CheckIndexed } from '../support/types/enums';
 
+import { CheckForNewPosts } from "./types/enums";
+
 export const MAX_POST_LENGTH = 2000;
 
 /**
@@ -187,7 +189,7 @@ export const replyToPost = ({
   filterText?: string;
   postIdx?: number;
 }) => {
-  cy.findPostInFeed(postIdx, filterText).within(() => {
+  cy.findPostInFeed(postIdx, filterText, CheckForNewPosts.Yes).within(() => {
     cy.get('[data-cy="post-reply-btn"]').click();
   });
 
@@ -212,7 +214,7 @@ export const repostPost = ({
   filterText?: string;
   postIdx?: number;
 } = {}) => {
-  cy.findPostInFeed(postIdx, filterText).within(() => {
+  cy.findPostInFeed(postIdx, filterText, CheckForNewPosts.Yes).within(() => {
     cy.get('[data-cy="post-repost-btn"]').click();
   });
 
@@ -224,7 +226,7 @@ export const repostPost = ({
       cy.get('textarea').should('have.value', '').type(repostContent);
     }
     // Submit the repost
-    cy.get('[data-cy="post-input-action-bar-post"]').click();
+    cy.get('[data-cy="post-input-action-bar-repost"]').click();
   });
 
   // Wait for dialog to close
@@ -313,7 +315,7 @@ export const deletePost = ({
 }) => {
   // find post or reply and click more menu button
   // use type enum value (0 for post, 1 for reply) to select the correct menu button
-  cy.findPostInFeed(postIdx, filterText).within(() => {
+  cy.findPostInFeed(postIdx, filterText, CheckForNewPosts.Yes).within(() => {
     cy.get('[data-cy="post-more-btn"]').eq(type).should('be.visible').click();
   });
 
