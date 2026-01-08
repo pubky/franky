@@ -18,7 +18,11 @@ export const HeaderSignIn = ({ ...props }: React.HTMLAttributes<HTMLDivElement>)
     <Atoms.Container className="flex-1 flex-row items-center justify-end gap-3" {...props}>
       <Organisms.SearchInput />
       <Molecules.HeaderNavigationButtons
-        avatarImage={currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined}
+        avatarImage={
+          currentUserPubky && userDetails?.image
+            ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)
+            : undefined
+        }
         avatarInitial={avatarInitial}
         counter={unreadNotifications}
       />

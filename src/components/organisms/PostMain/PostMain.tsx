@@ -68,6 +68,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
                     taggedKind={Core.TagKind.POST}
                     showCount={true}
                     showInput={false}
+                    showAddButton={true}
                     addMode={true}
                   />
                   <Organisms.PostActionsBar

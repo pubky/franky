@@ -182,15 +182,72 @@ export class PostStreamApplication {
    */
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
     try {
-      const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
-      const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
+      const postBatch = await Core.NexusPostStreamService.fetchByIds({
+        post_ids: cacheMissPostIds,
+        viewer_id: viewerId,
+      });
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
       // Persist the post attachments metadata
       await Core.FileApplication.fetchFiles(postAttachments);
       // Persist the missing authors of the posts
       await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
+      // Fetch original posts for any reposts (to display embedded repost content)
+      await this.fetchRepostedOriginalPosts({ posts: postBatch, viewerId });
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
+    }
+  }
+
+  /**
+   * Fetch original posts that are referenced by reposts.
+   * This ensures that when a repost is displayed, the embedded original post content is available.
+   * @param posts - Array of posts that may contain reposts
+   * @param viewerId - ID of the viewer
+   */
+  private static async fetchRepostedOriginalPosts({ posts, viewerId }: Core.TFetchMissingUsersParams) {
+    // Collect all reposted URIs from the posts
+    const repostedUris = posts.map((post) => post.relationships.reposted).filter((uri): uri is string => uri !== null);
+
+    if (repostedUris.length === 0) return;
+
+    // Convert URIs to composite IDs and deduplicate (multiple reposts may reference the same original)
+    const originalPostIds = Array.from(
+      new Set(
+        repostedUris
+          .map((uri) =>
+            Core.buildCompositeIdFromPubkyUri({
+              uri,
+              domain: Core.CompositeIdDomain.POSTS,
+            }),
+          )
+          .filter((id): id is string => id !== null),
+      ),
+    );
+
+    if (originalPostIds.length === 0) return;
+
+    // Filter out posts already in local DB
+    const missingOriginalPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(originalPostIds);
+
+    if (missingOriginalPostIds.length === 0) return;
+
+    Libs.Logger.debug('Fetching original posts for reposts', {
+      repostCount: repostedUris.length,
+      originalCount: originalPostIds.length,
+      missingOriginalCount: missingOriginalPostIds.length,
+    });
+
+    // Fetch the missing original posts (non-recursive to avoid infinite loops)
+    try {
+      const originalPosts = await Core.NexusPostStreamService.fetchByIds({
+        post_ids: missingOriginalPostIds,
+        viewer_id: viewerId,
+      });
+      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: originalPosts });
+      await Core.FileApplication.fetchFiles(postAttachments);
+      await this.fetchMissingUsersFromNexus({ posts: originalPosts, viewerId });
+    } catch (error) {
+      Libs.Logger.warn('Failed to fetch original posts for reposts', { missingOriginalPostIds, error });
     }
   }
 
