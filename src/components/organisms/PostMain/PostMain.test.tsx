@@ -113,16 +113,23 @@ vi.mock('@/organisms', () => ({
     taggedKind,
     showCount: _showCount,
     showInput: _showInput,
+    showAddButton: _showAddButton,
     addMode: _addMode,
   }: {
     taggedId: string;
     taggedKind: unknown;
     showCount?: boolean;
     showInput?: boolean;
+    showAddButton?: boolean;
     addMode?: boolean;
     [key: string]: unknown;
   }) => (
-    <div data-testid="clickable-tags-list" data-tagged-id={taggedId} data-tagged-kind={String(taggedKind)}>
+    <div
+      data-testid="clickable-tags-list"
+      data-tagged-id={taggedId}
+      data-tagged-kind={String(taggedKind)}
+      data-show-add-button={String(_showAddButton)}
+    >
       ClickableTagsList {taggedId}
     </div>
   ),
@@ -166,6 +173,10 @@ vi.mock('@/hooks', () => ({
     showRepostHeader: false,
     shouldShowPostHeader: true,
   })),
+  useTtlViewportSubscription: vi.fn(() => ({
+    ref: vi.fn(),
+    isVisible: false,
+  })),
 }));
 
 describe('PostMain', () => {
@@ -180,6 +191,7 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-header')).toHaveTextContent('PostHeader post-123');
     expect(screen.getByTestId('post-content')).toHaveTextContent('PostContent post-123');
     expect(screen.getByTestId('clickable-tags-list')).toHaveTextContent('ClickableTagsList post-123');
+    expect(screen.getByTestId('clickable-tags-list')).toHaveAttribute('data-show-add-button', 'true');
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 

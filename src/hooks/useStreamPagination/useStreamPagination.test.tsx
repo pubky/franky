@@ -11,7 +11,12 @@ vi.mock('@/core', async () => {
     StreamPostsController: {
       getCachedLastPostTimestamp: vi.fn(),
       getOrFetchStreamSlice: vi.fn(),
+      clearStaleStreamCache: vi.fn(),
     },
+    PostDetailsModel: {
+      findByIdsPreserveOrder: vi.fn(),
+    },
+    sortPostIdsByTimestamp: vi.fn(),
   };
 });
 
@@ -38,11 +43,24 @@ describe('useStreamPagination', () => {
     vi.clearAllMocks();
 
     // Default mock implementations
+    vi.mocked(Core.StreamPostsController.clearStaleStreamCache).mockResolvedValue(undefined);
     vi.mocked(Core.StreamPostsController.getCachedLastPostTimestamp).mockResolvedValue(0);
     vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
       nextPageIds: mockPostIds,
       timestamp: Date.now(),
     });
+    // Mock PostDetailsModel to return posts with timestamps that preserve input order
+    // (newer posts first = higher timestamps)
+    vi.mocked(Core.PostDetailsModel.findByIdsPreserveOrder).mockImplementation(async (ids) => {
+      const now = Date.now();
+      return ids.map((id, index) => ({
+        id,
+        indexed_at: now - index * 1000, // Each post 1 second older than previous
+      }));
+    });
+    // Mock sortPostIdsByTimestamp to preserve input order by default
+    // (simulates already-sorted posts)
+    vi.mocked(Core.sortPostIdsByTimestamp).mockImplementation(async (ids: string[]) => ids);
   });
 
   describe('Initialization', () => {
@@ -349,6 +367,73 @@ describe('useStreamPagination', () => {
     });
   });
 
+  describe('Stale Cache Sanity Check', () => {
+    it('should call clearStaleStreamCache on initial load', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(Core.StreamPostsController.clearStaleStreamCache).toHaveBeenCalledWith({
+        streamId: mockStreamId,
+      });
+    });
+
+    it('should continue to fetch posts after stale cache check', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Cache check should have been called
+      expect(Core.StreamPostsController.clearStaleStreamCache).toHaveBeenCalled();
+
+      // Posts should still be fetched
+      expect(Core.StreamPostsController.getOrFetchStreamSlice).toHaveBeenCalled();
+      expect(result.current.postIds).toEqual(mockPostIds);
+    });
+
+    it('should not call clearStaleStreamCache on loadMore', async () => {
+      const limit = 30;
+      vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
+        nextPageIds: Array(limit).fill('post'),
+        timestamp: Date.now(),
+      });
+
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+          limit,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Clear the mock calls from initial load
+      vi.mocked(Core.StreamPostsController.clearStaleStreamCache).mockClear();
+
+      // Load more
+      await act(async () => {
+        await result.current.loadMore();
+      });
+
+      // clearStaleStreamCache should NOT be called on loadMore
+      expect(Core.StreamPostsController.clearStaleStreamCache).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle empty results', async () => {
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
@@ -401,8 +486,8 @@ describe('useStreamPagination', () => {
       const initialPostIds = result.current.postIds;
       const newPostId = 'new-post-1';
 
-      act(() => {
-        result.current.prependPosts(newPostId);
+      await act(async () => {
+        await result.current.prependPosts(newPostId);
       });
 
       expect(result.current.postIds[0]).toBe(newPostId);
@@ -424,8 +509,8 @@ describe('useStreamPagination', () => {
       const initialPostIds = result.current.postIds;
       const newPostIds = ['new-post-1', 'new-post-2', 'new-post-3'];
 
-      act(() => {
-        result.current.prependPosts(newPostIds);
+      await act(async () => {
+        await result.current.prependPosts(newPostIds);
       });
 
       expect(result.current.postIds.slice(0, 3)).toEqual(newPostIds);
@@ -447,8 +532,8 @@ describe('useStreamPagination', () => {
       const initialPostIds = result.current.postIds;
       const duplicatePostId = initialPostIds[0];
 
-      act(() => {
-        result.current.prependPosts(duplicatePostId);
+      await act(async () => {
+        await result.current.prependPosts(duplicatePostId);
       });
 
       // Should not have added duplicate
@@ -469,11 +554,59 @@ describe('useStreamPagination', () => {
 
       const initialPostIds = result.current.postIds;
 
-      act(() => {
-        result.current.prependPosts([]);
+      await act(async () => {
+        await result.current.prependPosts([]);
       });
 
       expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should sort prepended posts by timestamp', async () => {
+      // Mock sortPostIdsByTimestamp to return posts sorted by timestamp
+      vi.mocked(Core.sortPostIdsByTimestamp).mockImplementation(async (ids: string[]) => {
+        const timestampMap: Record<string, number> = {
+          'old-post': 1000, // oldest
+          'new-post': 3000, // newest
+          'middle-post': 2000, // middle
+          post1: 500,
+          post2: 400,
+          post3: 300,
+        };
+        return [...ids].sort((a, b) => (timestampMap[b] || 0) - (timestampMap[a] || 0));
+      });
+
+      const { result } = renderHook(() => useStreamPagination({ streamId: mockStreamId }));
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      // Prepend in wrong order
+      await act(async () => {
+        await result.current.prependPosts(['old-post', 'new-post', 'middle-post']);
+      });
+
+      // Should be sorted: newest first
+      expect(result.current.postIds[0]).toBe('new-post');
+      expect(result.current.postIds[1]).toBe('middle-post');
+      expect(result.current.postIds[2]).toBe('old-post');
+    });
+
+    it('should fallback to unsorted when sorting fails', async () => {
+      // Mock sortPostIdsByTimestamp to throw an error
+      vi.mocked(Core.sortPostIdsByTimestamp).mockRejectedValue(new Error('IndexedDB error'));
+
+      const { result } = renderHook(() => useStreamPagination({ streamId: mockStreamId }));
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      const initialPostIds = result.current.postIds;
+      const newPostIds = ['new-post-1', 'new-post-2'];
+
+      await act(async () => {
+        await result.current.prependPosts(newPostIds);
+      });
+
+      // Should fallback: new posts prepended without sorting
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 2);
+      expect(result.current.postIds[0]).toBe('new-post-1');
+      expect(result.current.postIds[1]).toBe('new-post-2');
     });
   });
 

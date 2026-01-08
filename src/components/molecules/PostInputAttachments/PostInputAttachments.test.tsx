@@ -197,7 +197,10 @@ describe('PostInputAttachments', () => {
       render(<PostInputAttachments {...defaultProps} />);
 
       const fileInput = screen.getByTestId('file-input');
-      expect(fileInput).toHaveAttribute('accept', 'image/*,video/*,audio/*,application/pdf');
+      expect(fileInput).toHaveAttribute(
+        'accept',
+        'image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf',
+      );
     });
 
     it('renders file input with multiple attribute', () => {

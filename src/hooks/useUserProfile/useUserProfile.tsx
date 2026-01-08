@@ -76,7 +76,9 @@ export function useUserProfile(userId: string): UseUserProfileResult {
     };
   }
 
-  const avatarUrl = userDetails.image ? Core.FileController.getAvatarUrl(userDetails.id) : undefined;
+  const avatarUrl = userDetails.image
+    ? Core.FileController.getAvatarUrl(userDetails.id, userDetails.indexed_at)
+    : undefined;
 
   // Build public key with proper format
   const publicKey = userId ? `pk:${userId}` : '';

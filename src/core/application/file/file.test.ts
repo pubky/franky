@@ -311,7 +311,7 @@ describe('FileApplication', () => {
 
       const result = FileApplication.getAvatarUrl(TEST_PUBKY);
 
-      expect(Core.filesApi.getAvatarUrl).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(Core.filesApi.getAvatarUrl).toHaveBeenCalledWith(TEST_PUBKY, undefined);
       expect(result).toBe(expectedUrl);
     });
   });
