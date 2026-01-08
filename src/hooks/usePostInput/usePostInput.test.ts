@@ -6,6 +6,22 @@ import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInpu
 // Mock config
 vi.mock('@/config', () => ({
   POST_MAX_CHARACTER_LENGTH: 100,
+  SUPPORTED_ATTACHMENT_MIME_TYPES: [
+    'image/gif',
+    'image/jpeg',
+    'image/png',
+    'image/svg+xml',
+    'image/webp',
+    'audio/mpeg',
+    'audio/wav',
+    'video/mp4',
+    'video/mpeg',
+    'application/pdf',
+  ],
+  ATTACHMENT_MAX_IMAGE_SIZE: 5 * 1024 * 1024,
+  ATTACHMENT_MAX_OTHER_SIZE: 20 * 1024 * 1024,
+  ATTACHMENT_MAX_FILES: 4,
+  SUPPORTED_FILE_EXTENSIONS: 'GIF, JPEG, PNG, SVG, WebP, MP3, WAV, MP4, MPEG, or PDF',
 }));
 
 // Mock usePost hook
@@ -766,7 +782,7 @@ describe('usePostInput', () => {
       expect(mockSetAttachments).not.toHaveBeenCalled();
       expect(mockToast).toHaveBeenCalledWith({
         title: 'Error',
-        description: expect.stringContaining('not an accepted file type'),
+        description: expect.stringContaining('has unsupported type'),
       });
     });
 

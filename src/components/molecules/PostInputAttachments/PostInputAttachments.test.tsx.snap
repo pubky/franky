@@ -3,7 +3,7 @@
 exports[`PostInputAttachments - Snapshots > matches snapshot when submitting 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -43,7 +43,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot when submitting 1`]
 exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attachments (4) 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -148,7 +148,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attach
 exports[`PostInputAttachments - Snapshots > matches snapshot with mixed attachment types 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -262,7 +262,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with mixed attachme
 exports[`PostInputAttachments - Snapshots > matches snapshot with multiple images 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -345,7 +345,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with multiple image
 exports[`PostInputAttachments - Snapshots > matches snapshot with no attachments 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -357,7 +357,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with no attachments
 exports[`PostInputAttachments - Snapshots > matches snapshot with single PDF attachment 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -406,7 +406,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with single PDF att
 exports[`PostInputAttachments - Snapshots > matches snapshot with single audio attachment 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -445,7 +445,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with single audio a
 exports[`PostInputAttachments - Snapshots > matches snapshot with single image attachment 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -484,7 +484,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with single image a
 exports[`PostInputAttachments - Snapshots > matches snapshot with single video attachment 1`] = `
 <div>
   <input
-    accept="image/*,video/*,audio/*,application/pdf"
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
     class="hidden"
     data-testid="file-input"
     multiple=""

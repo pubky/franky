@@ -137,7 +137,7 @@ export class LocalStreamPostsService {
   }
 
   /**
-   * Merge the unread stream with the post stream
+   * Merge the unread stream with the post stream, sorted by timestamp
    * @param streamId - The stream ID to merge the unread stream with the post stream
    * @returns void
    */
@@ -152,7 +152,10 @@ export class LocalStreamPostsService {
     const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
     const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
 
-    await Core.PostStreamModel.upsert(streamId, combinedStream);
+    // Sort by timestamp (indexed_at) in descending order (most recent first)
+    const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
+
+    await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
 
   /**
@@ -286,18 +289,7 @@ export class LocalStreamPostsService {
     // and if they are new posts, it does not exist in the cache
 
     // Sort by timestamp (indexed_at) in descending order (most recent first)
-    // Use bulk fetch to get all post details at once
-    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
-
-    // Map post IDs with their timestamps
-    const postTimestamps = combinedStream.map((postId, index) => ({
-      postId,
-      timestamp: posts[index]?.indexed_at || 0,
-    }));
-
-    const sortedStream = postTimestamps
-      .sort((a, b) => b.timestamp - a.timestamp) // Descending order
-      .map((item) => item.postId);
+    const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
