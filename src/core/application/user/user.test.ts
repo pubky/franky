@@ -371,20 +371,20 @@ describe('UserApplication.getOrFetchCounts', () => {
   it('should fetch from Nexus and cache locally when not in local cache', async () => {
     const localSpy = vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(null);
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(mockUserCounts);
-    const upsertSpy = vi.spyOn(Core.LocalUserService, 'upsertCounts').mockResolvedValue(undefined);
+    const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertCounts').mockResolvedValue(undefined);
 
     const result = await UserApplication.getOrFetchCounts({ userId });
 
     expect(result).toEqual(mockUserCounts);
     expect(localSpy).toHaveBeenCalledWith({ userId });
     expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-    expect(upsertSpy).toHaveBeenCalledWith({ userId }, mockUserCounts);
+    expect(upsertSpy).toHaveBeenCalledWith(userId, mockUserCounts);
   });
 
   it('should return null when Nexus service fails (e.g., user not indexed)', async () => {
     vi.spyOn(Core.LocalUserService, 'readCounts').mockResolvedValue(null);
     vi.spyOn(Core.NexusUserService, 'counts').mockRejectedValue(new Error('Bad Request'));
-    const upsertSpy = vi.spyOn(Core.LocalUserService, 'upsertCounts');
+    const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertCounts');
 
     const result = await UserApplication.getOrFetchCounts({ userId });
 

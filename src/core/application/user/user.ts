@@ -57,7 +57,7 @@ export class UserApplication {
 
     try {
       const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
-      await Core.LocalUserService.upsertCounts({ userId }, nexusUserCounts);
+      await Core.LocalProfileService.upsertCounts(userId, nexusUserCounts);
       return nexusUserCounts;
     } catch {
       // Return null if user counts cannot be fetched (e.g., user not indexed yet)
