@@ -96,6 +96,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     UserController: {
       getCounts: vi.fn().mockImplementation(() => Promise.resolve(mockUserCounts.current)),
+      getOrFetchCounts: vi.fn().mockImplementation(() => Promise.resolve(mockUserCounts.current)),
     },
     NotificationController: {
       getNotificationsCountsNow: vi.fn(() => mockNotificationsCount.current),
@@ -339,6 +340,49 @@ describe('useProfileStats', () => {
 
       // UserController.getCounts should be called with object parameter
       expect(Core.UserController.getCounts).toHaveBeenCalledWith({ userId: 'test-user-id' });
+    });
+  });
+
+  describe('Fetch fallback behavior', () => {
+    it('calls getOrFetchCounts when local cache returns null', () => {
+      setMockUserCounts(null);
+      renderHook(() => useProfileStats('test-user-id'));
+
+      expect(Core.UserController.getOrFetchCounts).toHaveBeenCalledWith({ userId: 'test-user-id' });
+    });
+
+    it('does not call getOrFetchCounts when local cache has data', () => {
+      setMockUserCounts({
+        id: 'test-user-id',
+        posts: 10,
+        replies: 5,
+        followers: 20,
+        following: 15,
+        friends: 8,
+        uniqueTags: 0,
+        tagged: 0,
+        tags: 0,
+        unique_tags: 3,
+        bookmarks: 0,
+      } as Core.UserCountsModelSchema);
+
+      renderHook(() => useProfileStats('test-user-id'));
+
+      expect(Core.UserController.getOrFetchCounts).not.toHaveBeenCalled();
+    });
+
+    it('does not call getOrFetchCounts when query is still loading (undefined)', () => {
+      setMockUserCounts(undefined);
+      renderHook(() => useProfileStats('test-user-id'));
+
+      expect(Core.UserController.getOrFetchCounts).not.toHaveBeenCalled();
+    });
+
+    it('does not call getOrFetchCounts when userId is empty', () => {
+      setMockUserCounts(null);
+      renderHook(() => useProfileStats(''));
+
+      expect(Core.UserController.getOrFetchCounts).not.toHaveBeenCalled();
     });
   });
 });
