@@ -392,7 +392,7 @@ export class PostStreamApplication {
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
           countChanges.replies = 1;
         }
-        return Core.UserCountsModel.updateCounts({ userId: authorId, countChanges });
+        return Core.LocalUserService.updateCounts({ userId: authorId, countChanges });
       });
       await Promise.all(countUpdates);
     }
