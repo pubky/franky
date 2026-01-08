@@ -152,11 +152,11 @@ export function useStreamPagination({
   }, [loadingMore, hasMore, fetchStreamSlice]);
 
   /**
-   * Optimistically add post(s) to the top of the timeline
-   * This avoids a full refresh when creating new posts
+   * Add post(s) to the timeline, sorted by timestamp
+   * Maintains chronological order (most recent first) when adding posts
    * @param postIds - A single post ID or array of post IDs to add
    */
-  const prependPosts = useCallback((postIds: string | string[]) => {
+  const prependPosts = useCallback(async (postIds: string | string[]) => {
     const idsToAdd = Array.isArray(postIds) ? postIds : [postIds];
 
     // Filter out posts that already exist to avoid duplicates
@@ -167,9 +167,20 @@ export function useStreamPagination({
       return;
     }
 
-    const updatedPostIds = [...newIds, ...postIdsRef.current];
-    postIdsRef.current = updatedPostIds;
-    setPostIds(updatedPostIds);
+    // Combine new and existing posts
+    const allIds = [...newIds, ...postIdsRef.current];
+
+    try {
+      // Fetch post details to get timestamps and sort
+      const sortedIds = await Core.sortPostIdsByTimestamp(allIds);
+      postIdsRef.current = sortedIds;
+      setPostIds(sortedIds);
+    } catch (err) {
+      Libs.Logger.error('Failed to prepend posts:', err);
+      // Fallback: add without sorting
+      postIdsRef.current = allIds;
+      setPostIds(allIds);
+    }
   }, []);
 
   /**
