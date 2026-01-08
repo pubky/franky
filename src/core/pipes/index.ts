@@ -15,4 +15,5 @@ export * from './notification';
 export * from './lastRead';
 export * from './feed';
 export * from './feedback';
+export * from './settings';
 export * from './report';
