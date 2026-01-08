@@ -78,8 +78,9 @@ export class PostStreamApplication {
   static async clearStaleStreamCache({ streamId }: Core.TStreamIdParams): Promise<void> {
     const headTimestamp = await Core.LocalStreamPostsService.getStreamHead({ streamId });
 
-    // No cache exists or head is 0 (SKIP_FETCH_NEW_POSTS sentinel)
-    if (headTimestamp <= 0) {
+    // Skip sentinel values: SKIP_FETCH_NEW_POSTS (0) when post not found, FORCE_FETCH_NEW_POSTS (1) when stream empty
+    // Without this check, sentinel value 1 would calculate age ≈ Date.now() and trigger unnecessary deleteById
+    if (headTimestamp === Core.SKIP_FETCH_NEW_POSTS || headTimestamp === Core.FORCE_FETCH_NEW_POSTS) {
       return;
     }
 
