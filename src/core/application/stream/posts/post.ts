@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Config from '@/config';
 import * as Libs from '@/libs';
 import { postStreamQueue } from './muting/post-stream-queue';
 import { MuteFilter } from './muting/mute-filter';
@@ -66,6 +67,32 @@ export class PostStreamApplication {
 
   static async clearUnreadStream(params: Core.TStreamIdParams): Promise<string[]> {
     return await Core.LocalStreamPostsService.clearUnreadStream(params);
+  }
+
+  /**
+   * Checks if the stream cache is stale (first post older than configured max age) and clears it if so.
+   * Only clears the stream index, keeping posts and users in IndexedDB.
+   *
+   * @param streamId - The ID of the stream to check
+   */
+  static async clearStaleStreamCache({ streamId }: Core.TStreamIdParams): Promise<void> {
+    const headTimestamp = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+    // No cache exists or head is 0 (SKIP_FETCH_NEW_POSTS sentinel)
+    if (headTimestamp <= 0) {
+      return;
+    }
+
+    const ageMs = Date.now() - headTimestamp;
+    if (ageMs > Config.STREAM_CACHE_MAX_AGE_MS) {
+      Libs.Logger.debug('[PostStreamApplication] Stream cache is stale, clearing', {
+        streamId,
+        headTimestamp,
+        ageMs,
+        maxAgeMs: Config.STREAM_CACHE_MAX_AGE_MS,
+      });
+      await Core.LocalStreamPostsService.deleteById({ streamId });
+    }
   }
 
   /**
