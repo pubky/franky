@@ -79,7 +79,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
       // Set avatar if exists
       if (userDetails.image && pubky) {
-        const avatarUrl = Core.FileController.getAvatarUrl(pubky);
+        const avatarUrl = Core.FileController.getAvatarUrl(pubky, userDetails.indexed_at);
         setOriginalAvatarUrl(avatarUrl);
         setAvatarPreview(avatarUrl);
       }
