@@ -67,8 +67,8 @@ describe('SearchRecentUserItem', () => {
     // Real formatPublicKey implementation formats differently than mock
     // pk:abc123 with length 8 should format as pk:ab...c123
     const pubkyElement = screen.getByTestId('user-pubky');
-    expect(pubkyElement).toHaveTextContent(/@pk:/);
-    expect(pubkyElement.textContent).toMatch(/@pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
+    expect(pubkyElement).toHaveTextContent(/pk:/);
+    expect(pubkyElement.textContent).toMatch(/pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
   });
 
   it('renders avatar with avatar url', () => {

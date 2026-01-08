@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Libs from '@/libs';
 import { POST_MAX_TAGS } from '@/config';
 import type { PostInputTagsProps } from './PostInputTags.types';
 
@@ -43,7 +42,6 @@ export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, dis
               disabled={disabled}
               maxTags={maxTags}
               currentTagsCount={tags.length}
-              limitReachedPlaceholder="limit reached"
               onBlur={disabled ? undefined : handleInputBlur}
             />
           )}
@@ -56,17 +54,6 @@ export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, dis
               }}
               disabled={isDisabled}
             />
-          )}
-
-          {/* Tag count indicator */}
-          {tags.length > 0 && (
-            <Atoms.Typography
-              as="span"
-              size="sm"
-              className={Libs.cn('text-muted-foreground', isAtLimit && 'text-destructive')}
-            >
-              {tags.length}/{maxTags}
-            </Atoms.Typography>
           )}
         </Atoms.Container>
       </Atoms.Container>
