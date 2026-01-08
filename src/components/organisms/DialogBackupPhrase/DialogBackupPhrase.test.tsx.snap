@@ -15,7 +15,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
     </button>
   </div>
   <div
-    class="max-h-[calc(100dvh-2rem)] max-w-sm overflow-y-auto md:max-w-2xl"
+    class="max-w-sm md:max-w-2xl"
     data-hidden-title="Backup recovery phrase"
     data-testid="dialog-content"
   >

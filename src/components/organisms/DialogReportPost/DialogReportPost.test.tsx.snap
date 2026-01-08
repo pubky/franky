@@ -6,7 +6,7 @@ exports[`DialogReportPost - Snapshots > matches snapshot for issue selection ste
 >
   <div
     aria-labelledby="radix-_r_0_"
-    class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
+    class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
     data-cy="dialog-content"
     data-slot="dialog-content"
     data-state="open"
@@ -90,7 +90,7 @@ exports[`DialogReportPost - Snapshots > matches snapshot for reason step 1`] = `
 >
   <div
     aria-labelledby="radix-_r_0_"
-    class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
+    class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
     data-cy="dialog-content"
     data-slot="dialog-content"
     data-state="open"
@@ -184,7 +184,7 @@ exports[`DialogReportPost - Snapshots > matches snapshot for success state 1`] =
 >
   <div
     aria-labelledby="radix-_r_0_"
-    class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 gap-6 rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
+    class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
     data-cy="dialog-content"
     data-slot="dialog-content"
     data-state="open"

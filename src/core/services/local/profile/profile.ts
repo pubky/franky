@@ -25,6 +25,7 @@ export class LocalProfileService {
       bio: user.bio,
       image: user.image,
       links: user.links ? user.links.map((link) => ({ title: link.title, url: link.url })) : [],
+      indexed_at: Date.now(),
     });
   }
 

@@ -41,6 +41,7 @@ exports[`PostMain - Snapshots > matches snapshot for quote repost by current use
         data-testid="container"
       >
         <div
+          data-show-add-button="true"
           data-tagged-id="me:quote-repost-1"
           data-tagged-kind="post"
           data-testid="clickable-tags-list"
@@ -98,6 +99,7 @@ exports[`PostMain - Snapshots > matches snapshot for repost by another user 1`] 
         data-testid="container"
       >
         <div
+          data-show-add-button="true"
           data-tagged-id="other-user:repost-1"
           data-tagged-kind="post"
           data-testid="clickable-tags-list"
@@ -159,6 +161,7 @@ exports[`PostMain - Snapshots > matches snapshot for simple repost by current us
         data-testid="container"
       >
         <div
+          data-show-add-button="true"
           data-tagged-id="me:simple-repost-1"
           data-tagged-kind="post"
           data-testid="clickable-tags-list"
@@ -226,6 +229,7 @@ exports[`PostMain - Snapshots > matches snapshot with default state 1`] = `
         data-testid="container"
       >
         <div
+          data-show-add-button="true"
           data-tagged-id="post-123"
           data-tagged-kind="post"
           data-testid="clickable-tags-list"
@@ -312,6 +316,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
         data-testid="container"
       >
         <div
+          data-show-add-button="true"
           data-tagged-id="post-no-reply-456"
           data-tagged-kind="post"
           data-testid="clickable-tags-list"
@@ -392,6 +397,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         data-testid="container"
       >
         <div
+          data-show-add-button="true"
           data-tagged-id="post-reply-123"
           data-tagged-kind="post"
           data-testid="clickable-tags-list"
