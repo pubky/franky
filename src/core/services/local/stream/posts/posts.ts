@@ -153,12 +153,7 @@ export class LocalStreamPostsService {
     const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
 
     // Sort by timestamp (indexed_at) in descending order (most recent first)
-    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
-    const postTimestamps = combinedStream.map((postId, index) => ({
-      postId,
-      timestamp: posts[index]?.indexed_at || 0,
-    }));
-    const sortedStream = postTimestamps.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.postId);
+    const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
@@ -294,18 +289,7 @@ export class LocalStreamPostsService {
     // and if they are new posts, it does not exist in the cache
 
     // Sort by timestamp (indexed_at) in descending order (most recent first)
-    // Use bulk fetch to get all post details at once
-    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
-
-    // Map post IDs with their timestamps
-    const postTimestamps = combinedStream.map((postId, index) => ({
-      postId,
-      timestamp: posts[index]?.indexed_at || 0,
-    }));
-
-    const sortedStream = postTimestamps
-      .sort((a, b) => b.timestamp - a.timestamp) // Descending order
-      .map((item) => item.postId);
+    const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
   }

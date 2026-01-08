@@ -167,16 +167,17 @@ export function useStreamPagination({
     // Combine new and existing posts
     const allIds = [...newIds, ...postIdsRef.current];
 
-    // Fetch post details to get timestamps and sort
-    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(allIds);
-    const postTimestamps = allIds.map((postId, index) => ({
-      postId,
-      timestamp: posts[index]?.indexed_at || 0,
-    }));
-    const sortedIds = postTimestamps.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.postId);
-
-    postIdsRef.current = sortedIds;
-    setPostIds(sortedIds);
+    try {
+      // Fetch post details to get timestamps and sort
+      const sortedIds = await Core.sortPostIdsByTimestamp(allIds);
+      postIdsRef.current = sortedIds;
+      setPostIds(sortedIds);
+    } catch (err) {
+      Libs.Logger.error('Failed to prepend posts:', err);
+      // Fallback: add without sorting
+      postIdsRef.current = allIds;
+      setPostIds(allIds);
+    }
   }, []);
 
   /**

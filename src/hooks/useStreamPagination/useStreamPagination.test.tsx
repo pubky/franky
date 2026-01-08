@@ -15,6 +15,7 @@ vi.mock('@/core', async () => {
     PostDetailsModel: {
       findByIdsPreserveOrder: vi.fn(),
     },
+    sortPostIdsByTimestamp: vi.fn(),
   };
 });
 
@@ -48,13 +49,16 @@ describe('useStreamPagination', () => {
     });
     // Mock PostDetailsModel to return posts with timestamps that preserve input order
     // (newer posts first = higher timestamps)
-    vi.mocked(Core.PostDetailsModel.findByIdsPreserveOrder).mockImplementation(async (ids: string[]) => {
+    vi.mocked(Core.PostDetailsModel.findByIdsPreserveOrder).mockImplementation(async (ids) => {
       const now = Date.now();
       return ids.map((id, index) => ({
         id,
         indexed_at: now - index * 1000, // Each post 1 second older than previous
       }));
     });
+    // Mock sortPostIdsByTimestamp to preserve input order by default
+    // (simulates already-sorted posts)
+    vi.mocked(Core.sortPostIdsByTimestamp).mockImplementation(async (ids: string[]) => ids);
   });
 
   describe('Initialization', () => {
@@ -486,6 +490,54 @@ describe('useStreamPagination', () => {
       });
 
       expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should sort prepended posts by timestamp', async () => {
+      // Mock sortPostIdsByTimestamp to return posts sorted by timestamp
+      vi.mocked(Core.sortPostIdsByTimestamp).mockImplementation(async (ids: string[]) => {
+        const timestampMap: Record<string, number> = {
+          'old-post': 1000, // oldest
+          'new-post': 3000, // newest
+          'middle-post': 2000, // middle
+          post1: 500,
+          post2: 400,
+          post3: 300,
+        };
+        return [...ids].sort((a, b) => (timestampMap[b] || 0) - (timestampMap[a] || 0));
+      });
+
+      const { result } = renderHook(() => useStreamPagination({ streamId: mockStreamId }));
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      // Prepend in wrong order
+      await act(async () => {
+        await result.current.prependPosts(['old-post', 'new-post', 'middle-post']);
+      });
+
+      // Should be sorted: newest first
+      expect(result.current.postIds[0]).toBe('new-post');
+      expect(result.current.postIds[1]).toBe('middle-post');
+      expect(result.current.postIds[2]).toBe('old-post');
+    });
+
+    it('should fallback to unsorted when sorting fails', async () => {
+      // Mock sortPostIdsByTimestamp to throw an error
+      vi.mocked(Core.sortPostIdsByTimestamp).mockRejectedValue(new Error('IndexedDB error'));
+
+      const { result } = renderHook(() => useStreamPagination({ streamId: mockStreamId }));
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      const initialPostIds = result.current.postIds;
+      const newPostIds = ['new-post-1', 'new-post-2'];
+
+      await act(async () => {
+        await result.current.prependPosts(newPostIds);
+      });
+
+      // Should fallback: new posts prepended without sorting
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 2);
+      expect(result.current.postIds[0]).toBe('new-post-1');
+      expect(result.current.postIds[1]).toBe('new-post-2');
     });
   });
 
