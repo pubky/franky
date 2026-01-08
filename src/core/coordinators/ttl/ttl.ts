@@ -610,17 +610,15 @@ export class TtlCoordinator {
       userBatchQueue: this.state.userBatchQueue.size,
     });
 
-    // Check all subscribed entities for staleness
-    await this.checkAllEntitiesForStaleness(postOps);
-    await this.checkAllEntitiesForStaleness(userOps);
+    // Check all subscribed entities for staleness (parallel)
+    await Promise.all([this.checkAllEntitiesForStaleness(postOps), this.checkAllEntitiesForStaleness(userOps)]);
 
     Logger.debug('TtlCoordinator: After staleness check', {
       postBatchQueue: this.state.postBatchQueue.size,
       userBatchQueue: this.state.userBatchQueue.size,
     });
 
-    // Fire batch refreshes
-    await this.refreshStaleEntities(postOps, viewerId);
-    await this.refreshStaleEntities(userOps, viewerId);
+    // Fire batch refreshes (parallel)
+    await Promise.all([this.refreshStaleEntities(postOps, viewerId), this.refreshStaleEntities(userOps, viewerId)]);
   }
 }

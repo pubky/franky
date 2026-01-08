@@ -182,6 +182,7 @@ function parseEnv(): z.infer<typeof envSchema> {
   try {
     const parsed = envSchema.parse({
       NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_DB_NAME: process.env.NEXT_PUBLIC_DB_NAME,
       NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
       NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,

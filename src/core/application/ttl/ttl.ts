@@ -56,14 +56,8 @@ export class TtlApplication {
 
     const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
 
-    // Debug: Log the response to see if tags are included
     Logger.debug('TtlApplication: Fetched posts from Nexus', {
       postCount: postBatch.length,
-      postsWithTags: postBatch.map((p) => ({
-        id: `${p.details.author}:${p.details.id}`,
-        tagsCount: p.tags?.length ?? 0,
-        tags: p.tags?.map((t) => t.label) ?? [],
-      })),
     });
 
     const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
