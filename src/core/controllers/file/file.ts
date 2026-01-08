@@ -30,10 +30,11 @@ export class FileController {
    * Gets the CDN URL for a user's avatar.
    *
    * @param pubky - User's public key
+   * @param version - Optional version string/number for cache busting
    * @returns CDN URL string for the avatar
    */
-  static getAvatarUrl(pubky: Core.Pubky): string {
-    return Core.FileApplication.getAvatarUrl(pubky);
+  static getAvatarUrl(pubky: Core.Pubky, version?: string | number): string {
+    return Core.FileApplication.getAvatarUrl(pubky, version);
   }
 
   /**
