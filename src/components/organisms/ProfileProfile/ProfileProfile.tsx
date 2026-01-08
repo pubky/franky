@@ -7,6 +7,7 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import { ProfilePageHeader } from '@/organisms';
+import { MAX_SIDEBAR_TAGS } from '../ProfilePageSidebar/ProfilePageSidebar.constants';
 
 /**
  * ProfileProfile
@@ -28,13 +29,18 @@ export function ProfileProfile() {
 
   // Get tags for the user
   const {
-    tags,
+    tags: allTags,
     isLoading: isLoadingTags,
     handleTagToggle,
   } = Hooks.useTagged(pubky, {
     enablePagination: false,
     enableStats: false,
   });
+
+  // Show only top 3 most popular tags (sorted by taggers_count)
+  const tags = React.useMemo(() => {
+    return [...allTags].sort((a, b) => (b.taggers_count ?? 0) - (a.taggers_count ?? 0)).slice(0, MAX_SIDEBAR_TAGS);
+  }, [allTags]);
 
   // Create follow toggle handler
   const handleFollowToggle = React.useCallback(async () => {
