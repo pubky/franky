@@ -81,12 +81,7 @@ exports[`Home - Snapshots > matches snapshot for HomeSectionTitle with default p
     data-size="md"
     data-testid="typography"
   >
-    Pubky requires an invite code
+    Your keys, your content, your rules.
   </p>
-  <div
-    data-testid="popover-invite"
-  >
-    Invite Popover
-  </div>
 </div>
 `;

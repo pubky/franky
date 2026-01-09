@@ -57,6 +57,7 @@ export * from './useNestedReplies';
 export * from './useEntityTags';
 export * from './useStickyWhenFits';
 export * from './useSearchInput';
+export * from './useLnVerificationPrice';
 export * from './useSearchAutocomplete';
 export * from './useTagSearch';
 export * from './usePostHeaderUserInfoPopoverData';

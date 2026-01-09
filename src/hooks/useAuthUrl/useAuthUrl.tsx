@@ -13,7 +13,7 @@ import type { UseAuthUrlOptions, UseAuthUrlReturn } from './useAuthUrl.types';
  * Manages the authentication URL lifecycle for Pubky Ring authorization.
  */
 export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
-  const { autoFetch = true } = options;
+  const { autoFetch = true, type = 'signin', inviteCode } = options;
 
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(autoFetch);
@@ -24,7 +24,11 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     setUrl('');
 
     try {
-      const { authorizationUrl, awaitApproval } = await Core.AuthController.getAuthUrl();
+      // Request auth URL from controller
+      const { authorizationUrl, awaitApproval } =
+        type === 'signup' && inviteCode
+          ? await Core.HomegateController.getSignupAuthUrl(inviteCode)
+          : await Core.AuthController.getAuthUrl();
 
       awaitApproval
         .then(async (session: Session) => {
@@ -73,7 +77,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [type, inviteCode]);
 
   useEffect(() => {
     isMountedRef.current = true;
