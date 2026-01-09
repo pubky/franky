@@ -314,14 +314,15 @@ describe('PostNormalizer', () => {
 
       describe('validation with real library', () => {
         /**
-         * Note: The pubky-app-specs library is permissive with content validation.
-         * Empty content is allowed at the specs level.
+         * Note: The pubky-app-specs library requires content, embed, or attachments.
+         * Empty content alone is not allowed.
          */
-        it('should accept empty content (library is permissive)', async () => {
+        it('should reject empty content without embed or attachments', async () => {
           const post = createBasicPost({ content: '' });
-          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(result).toBeDefined();
+          await expect(Core.PostNormalizer.to(post, TEST_PUBKY.USER_1)).rejects.toThrow(
+            'Post must have content, an embed, or attachments',
+          );
         });
 
         it('should throw error for null content', async () => {
@@ -342,24 +343,23 @@ describe('PostNormalizer', () => {
         });
 
         /**
-         * Note: The pubky-app-specs library truncates Short posts to 2000 characters.
+         * Note: The pubky-app-specs library validates max length and throws an error
+         * when content exceeds the limit for the post kind.
          */
-        it('should truncate very long Short post (10,000 characters) to 2000 characters', async () => {
+        it('should reject Short post exceeding max length (2000 characters)', async () => {
           const longContent = 'B'.repeat(10_000);
           const post = createBasicPost({ content: longContent, kind: PubkyAppPostKind.Short });
-          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(result).toBeDefined();
-          const returnedContent = result.post.toJson().content;
-          expect(returnedContent.length).toBe(2000);
-          expect(returnedContent).toBe('B'.repeat(2000));
+          await expect(Core.PostNormalizer.to(post, TEST_PUBKY.USER_1)).rejects.toThrow(
+            'Post content exceeds maximum length for Short kind',
+          );
         });
 
         /**
          * Note: pubky-app-specs counts emoji units as 1 character, unlike how JavaScript counts string length.
          */
-        it('should truncate Short post with unicode characters exceeding limit', async () => {
-          const unicodeContent = '🎉'.repeat(2000); // 4,000 string length (2 chars per emoji)
+        it('should accept Short post with unicode characters at the limit', async () => {
+          const unicodeContent = '🎉'.repeat(2000); // 4,000 string length but 2,000 emoji units
           const post = createBasicPost({ content: unicodeContent, kind: PubkyAppPostKind.Short });
           const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
@@ -379,24 +379,23 @@ describe('PostNormalizer', () => {
         });
 
         /**
-         * Note: The pubky-app-specs library truncates Long posts to 50000 characters.
+         * Note: The pubky-app-specs library validates max length and throws an error
+         * when content exceeds the limit for Long posts (50,000 characters).
          */
-        it('should truncate extremely long Long post (100,000 characters) to 50000 characters', async () => {
+        it('should reject Long post exceeding max length (50,000 characters)', async () => {
           const extremelyLongContent = 'F'.repeat(100_000);
           const post = createBasicPost({ content: extremelyLongContent, kind: PubkyAppPostKind.Long });
-          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(result).toBeDefined();
-          const returnedContent = result.post.toJson().content;
-          expect(returnedContent.length).toBe(50_000);
-          expect(returnedContent).toBe('F'.repeat(50_000));
+          await expect(Core.PostNormalizer.to(post, TEST_PUBKY.USER_1)).rejects.toThrow(
+            'Post content exceeds maximum length for Long kind',
+          );
         });
 
         /**
          * Note: pubky-app-specs counts emoji units as 1 character, unlike how JavaScript counts string length.
          */
-        it('should handle Long post with unicode characters (library may not truncate unicode)', async () => {
-          const unicodeContent = '🚀'.repeat(30_000); // 60,000 string length (2 chars per emoji)
+        it('should accept Long post with unicode characters within limit', async () => {
+          const unicodeContent = '🚀'.repeat(30_000); // 60,000 string length but 30,000 emoji units
           const post = createBasicPost({ content: unicodeContent, kind: PubkyAppPostKind.Long });
           const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
