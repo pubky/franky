@@ -324,7 +324,8 @@ describe('PostStreamApplication', () => {
       expect(result.nextPageIds).toHaveLength(10);
       expect(result.nextPageIds).toEqual(postIds);
       expect(result.cacheMissPostIds).toEqual([]);
-      expect(result.timestamp).toBeUndefined();
+      // Full cache hit returns timestamp of last post for pagination cursor advancement
+      expect(result.timestamp).toBe(BASE_TIMESTAMP + 9);
       // Full cache hit should not fetch from Nexus
       expect(nexusFetchSpy).not.toHaveBeenCalled();
     });
