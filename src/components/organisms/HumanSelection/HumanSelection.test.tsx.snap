@@ -1,0 +1,47 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HumanSelection > matches snapshot 1`] = `
+<div>
+  <div
+    class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
+    data-testid="container"
+  >
+    <h1
+      class="font-bold text-foreground text-5xl lg:text-6xl"
+      data-testid="heading-1"
+    >
+      Proof of 
+      <span
+        class="text-brand"
+      >
+        Human.
+      </span>
+    </h1>
+    <h2
+      class="text-xl leading-normal font-light text-muted-foreground lg:text-2xl"
+    >
+      Prove your humanity. This keeps the arena real and fair for everyone.
+    </h2>
+  </div>
+  <div
+    class="mx-auto w-full flex-col flex gap-6 lg:flex-row lg:items-stretch lg:gap-8"
+    data-testid="human-verification-cards"
+  >
+    <div
+      data-testid="mock-sms-card"
+    >
+      SMS Verification Card
+    </div>
+    <div
+      data-testid="mock-bitcoin-card"
+    >
+      Bitcoin Payment Card
+    </div>
+  </div>
+  <div
+    data-testid="mock-human-footer"
+  >
+    Human Footer
+  </div>
+</div>
+`;

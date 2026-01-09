@@ -21,6 +21,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
           secretKey: state.secretKey,
           mnemonic: state.mnemonic,
           showWelcomeDialog: state.showWelcomeDialog,
+          inviteCode: state.inviteCode,
           hasHydrated: false, // Will be set by rehydration handler
         }),
 

@@ -2,11 +2,11 @@ export const ROOT_ROUTES = '/';
 
 export enum ONBOARDING_ROUTES {
   BACKUP = '/onboarding/backup',
-  HOMESERVER = '/onboarding/homeserver',
   INSTALL = '/onboarding/install',
   PROFILE = '/onboarding/profile',
   PUBKY = '/onboarding/pubky',
   SCAN = '/onboarding/scan',
+  HUMAN = '/onboarding/human',
 }
 
 export enum AUTH_ROUTES {
@@ -79,7 +79,7 @@ export const UNAUTHENTICATED_ROUTES = {
     ONBOARDING_ROUTES.SCAN,
     ONBOARDING_ROUTES.PUBKY,
     ONBOARDING_ROUTES.BACKUP,
-    ONBOARDING_ROUTES.HOMESERVER,
+    ONBOARDING_ROUTES.HUMAN,
     AUTH_ROUTES.LOGOUT,
   ],
   redirectTo: ROOT_ROUTES,

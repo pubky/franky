@@ -32,12 +32,15 @@ vi.mock('qrcode.react', () => ({
 vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: vi.fn().mockResolvedValue({
-      authorizationUrl: 'mock-auth-url',
+      authorizationUrl: 'pubkyauth://',
       awaitApproval: Promise.resolve({ mockKeypair: true }),
     }),
     initializeAuthenticatedSession: vi.fn().mockResolvedValue({}),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
+  useOnboardingStore: vi.fn(() => ({
+    inviteCode: 'mock-invite-code',
+  })),
 }));
 
 // Mock useAuthUrl hook
@@ -225,7 +228,7 @@ describe('ScanContent', () => {
     });
 
     expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
-    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
+    expect(window.open).toHaveBeenCalledWith('mock-auth-url', '_blank');
   });
 });
 
