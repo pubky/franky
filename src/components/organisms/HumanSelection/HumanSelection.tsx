@@ -6,14 +6,16 @@ import React from 'react';
 interface HumanSelectionProps {
   onClick: (card: 'sms' | 'payment') => void;
   // Callback to be called when the user clicks the dev mode options
-  // These are only available in development mode
+  // These are only available in development mode or E2E testing
   // - inviteCode: Enter an invite code to continue the onboarding process
   // - skipHumanProof: Skip the human proof and continue the onboarding process
   onDevMode: (variant: 'inviteCode' | 'skip') => void;
 }
 
 export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
-  const isDevMode = process.env.NODE_ENV === 'development'; // Show dev mode options if in development mode
+  // Show dev mode options if in development mode or Cypress is running (for E2E tests)
+  const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
+  const isDevMode = process.env.NODE_ENV === 'development' || isCypressRunning;
   return (
     <React.Fragment>
       <Atoms.PageHeader>
@@ -36,10 +38,20 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
             Dev Mode
           </Atoms.Typography>
           <Atoms.Container className="flex flex-row gap-2">
-            <Atoms.Button variant="secondary" onClick={() => onDevMode('skip')} className="">
+            <Atoms.Button
+              data-testid="human-dev-skip-btn"
+              variant="secondary"
+              onClick={() => onDevMode('skip')}
+              className=""
+            >
               Skip
             </Atoms.Button>
-            <Atoms.Button variant="secondary" onClick={() => onDevMode('inviteCode')} className="">
+            <Atoms.Button
+              data-testid="human-dev-invite-code-btn"
+              variant="secondary"
+              onClick={() => onDevMode('inviteCode')}
+              className=""
+            >
               Enter invite code
             </Atoms.Button>
           </Atoms.Container>

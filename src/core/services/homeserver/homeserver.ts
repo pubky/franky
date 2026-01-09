@@ -432,7 +432,11 @@ export class HomeserverService {
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
   static async generateSignupToken() {
-    if (process.env.NODE_ENV === 'production') {
+    // Allow in development or when Cypress is running (for E2E tests in production builds)
+    const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction && !isCypressRunning) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
         'generateSignupToken is only available in non-production environments.',
