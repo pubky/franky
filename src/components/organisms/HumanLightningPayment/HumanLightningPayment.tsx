@@ -87,7 +87,8 @@ class VerificationHandler {
         continue;
       }
       if ('notFound' in result && result.notFound) {
-        throw new Error('Verification not found');
+        // Verification not found - stop polling (this shouldn't happen in normal flow)
+        return undefined;
       }
     }
     return undefined;

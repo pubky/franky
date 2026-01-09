@@ -478,7 +478,7 @@ describe('Header', () => {
         App.ONBOARDING_ROUTES.SCAN,
         App.ONBOARDING_ROUTES.PUBKY,
         App.ONBOARDING_ROUTES.BACKUP,
-        App.ONBOARDING_ROUTES.HOMESERVER,
+        App.ONBOARDING_ROUTES.HUMAN,
         App.ROOT_ROUTES,
         App.AUTH_ROUTES.LOGOUT,
       ];
