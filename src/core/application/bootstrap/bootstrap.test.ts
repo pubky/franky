@@ -619,6 +619,68 @@ describe('BootstrapApplication', () => {
     });
   });
 
+  describe('non-indexed user handling', () => {
+    it('should subscribe to TTL coordinator and write TTL record when user is not indexed', async () => {
+      const bootstrapData = emptyBootstrap();
+      bootstrapData.indexed = false;
+
+      const mocks = setupMocks({ bootstrapData });
+
+      const upsertTtlSpy = vi.spyOn(Core.LocalUserService, 'upsertTtlWithDelay').mockResolvedValue(undefined);
+      const mockSubscribeUser = vi.fn();
+      const mockGetInstance = vi.spyOn(Core.TtlCoordinator, 'getInstance').mockReturnValue({
+        subscribeUser: mockSubscribeUser,
+      } as unknown as Core.TtlCoordinator);
+      const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+
+      await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Verify warning was logged
+      expect(loggerWarnSpy).toHaveBeenCalledWith('User is not indexed in Nexus. Scheduling TTL retry in 1 minute', {
+        pubky: TEST_PUBKY,
+      });
+
+      // Verify TTL record was written with 1 minute delay
+      expect(upsertTtlSpy).toHaveBeenCalledWith(TEST_PUBKY, 60_000);
+
+      // Verify TTL coordinator subscription
+      expect(mockGetInstance).toHaveBeenCalled();
+      expect(mockSubscribeUser).toHaveBeenCalledWith({ pubky: TEST_PUBKY });
+
+      // Verify bootstrap still completed normally
+      expect(mocks.persistUsers).toHaveBeenCalled();
+      expect(mocks.persistPosts).toHaveBeenCalled();
+    });
+
+    it('should not subscribe to TTL coordinator when user is indexed', async () => {
+      const bootstrapData = emptyBootstrap();
+      bootstrapData.indexed = true;
+
+      setupMocks({ bootstrapData });
+
+      const upsertTtlSpy = vi.spyOn(Core.LocalUserService, 'upsertTtlWithDelay').mockResolvedValue(undefined);
+      const mockSubscribeUser = vi.fn();
+      vi.spyOn(Core.TtlCoordinator, 'getInstance').mockReturnValue({
+        subscribeUser: mockSubscribeUser,
+      } as unknown as Core.TtlCoordinator);
+      const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+
+      await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Verify no warning was logged
+      expect(loggerWarnSpy).not.toHaveBeenCalledWith(
+        'User is not indexed in Nexus. Scheduling TTL retry in 1 minute',
+        expect.any(Object),
+      );
+
+      // Verify TTL record was NOT written
+      expect(upsertTtlSpy).not.toHaveBeenCalled();
+
+      // Verify TTL coordinator subscription was NOT called
+      expect(mockSubscribeUser).not.toHaveBeenCalled();
+    });
+  });
+
   describe('settings initialization', () => {
     it('should call initializeSettings during bootstrap', async () => {
       const bootstrapData = emptyBootstrap();
