@@ -51,6 +51,7 @@
     "embla-carousel-react": "8.6.0",
     "emoji-mart": "5.6.0",
     "jszip": "3.10.1",
+    "libphonenumber-js": "^1.12.30",
     "linkify-it": "5.0.0",
     "lodash-es": "^4.17.22",
     "lucide-react": "0.562.0",
