@@ -137,7 +137,7 @@ export class LocalStreamPostsService {
   }
 
   /**
-   * Merge the unread stream with the post stream
+   * Merge the unread stream with the post stream, sorted by timestamp
    * @param streamId - The stream ID to merge the unread stream with the post stream
    * @returns void
    */
@@ -152,7 +152,10 @@ export class LocalStreamPostsService {
     const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
     const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
 
-    await Core.PostStreamModel.upsert(streamId, combinedStream);
+    // Sort by timestamp (indexed_at) in descending order (most recent first)
+    const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
+
+    await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
 
   /**
@@ -194,9 +197,11 @@ export class LocalStreamPostsService {
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
     const postBookmarks: Core.BookmarkModelSchema[] = [];
+    const postTtl: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [];
 
     const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
     const postAttachments: string[] = [];
+    const now = Date.now();
 
     for (const post of posts) {
       // Build composite ID to ensure uniqueness (authorId:postId)
@@ -233,6 +238,9 @@ export class LocalStreamPostsService {
       const { author, ...detailsWithoutAuthor } = post.details;
       postDetails.push({ ...detailsWithoutAuthor, id: postId });
 
+      // Record TTL for freshness tracking
+      postTtl.push([postId, { lastUpdatedAt: now }]);
+
       // Add reply to the post replies map if this post is a reply
       this.addReplyToStream({ repliedUri: post.relationships.replied, replyPostId: postId, postReplies });
     }
@@ -242,6 +250,7 @@ export class LocalStreamPostsService {
       Core.PostCountsModel.bulkSave(postCounts),
       Core.PostTagsModel.bulkSave(postTags),
       Core.PostRelationshipsModel.bulkSave(postRelationships),
+      Core.PostTtlModel.bulkSave(postTtl),
       // Persist bookmarks from Nexus (viewer's bookmark status for each post)
       postBookmarks.length > 0 ? Core.BookmarkModel.bulkSave(postBookmarks) : Promise.resolve(),
     ]);
@@ -286,18 +295,7 @@ export class LocalStreamPostsService {
     // and if they are new posts, it does not exist in the cache
 
     // Sort by timestamp (indexed_at) in descending order (most recent first)
-    // Use bulk fetch to get all post details at once
-    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
-
-    // Map post IDs with their timestamps
-    const postTimestamps = combinedStream.map((postId, index) => ({
-      postId,
-      timestamp: posts[index]?.indexed_at || 0,
-    }));
-
-    const sortedStream = postTimestamps
-      .sort((a, b) => b.timestamp - a.timestamp) // Descending order
-      .map((item) => item.postId);
+    const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
   }

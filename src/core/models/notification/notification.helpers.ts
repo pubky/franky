@@ -8,8 +8,6 @@ export const getBusinessKey = (n: Core.FlatNotification): string => {
     case Core.NotificationType.Follow:
     case Core.NotificationType.NewFriend:
       return `${base}:${n.followed_by}`;
-    case Core.NotificationType.LostFriend:
-      return `${base}:${n.unfollowed_by}`;
     case Core.NotificationType.TagPost:
       return `${base}:${n.tagged_by}:${n.post_uri}`;
     case Core.NotificationType.TagProfile:

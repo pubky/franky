@@ -57,6 +57,15 @@ export class LocalUserService {
   }
 
   /**
+   * Updates user counts in local database by applying count changes.
+   * @param params - Parameters containing user ID and count changes
+   * @returns Promise resolving to void
+   */
+  static async updateCounts(params: Core.TUserCountsParams): Promise<void> {
+    await Core.UserCountsModel.updateCounts(params);
+  }
+
+  /**
    * Bulk reads multiple user counts from local database.
    * @param userIds - Array of user IDs to read counts for
    * @returns Promise resolving to Map of user ID to user counts

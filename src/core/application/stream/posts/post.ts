@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Config from '@/config';
 import * as Libs from '@/libs';
 import { postStreamQueue } from './muting/post-stream-queue';
 import { MuteFilter } from './muting/mute-filter';
@@ -66,6 +67,33 @@ export class PostStreamApplication {
 
   static async clearUnreadStream(params: Core.TStreamIdParams): Promise<string[]> {
     return await Core.LocalStreamPostsService.clearUnreadStream(params);
+  }
+
+  /**
+   * Checks if the stream cache is stale (first post older than configured max age) and clears it if so.
+   * Only clears the stream index, keeping posts and users in IndexedDB.
+   *
+   * @param streamId - The ID of the stream to check
+   */
+  static async clearStaleStreamCache({ streamId }: Core.TStreamIdParams): Promise<void> {
+    const headTimestamp = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+    // Skip sentinel values: SKIP_FETCH_NEW_POSTS (0) when post not found, FORCE_FETCH_NEW_POSTS (1) when stream empty
+    // Without this check, sentinel value 1 would calculate age ≈ Date.now() and trigger unnecessary deleteById
+    if (headTimestamp === Core.SKIP_FETCH_NEW_POSTS || headTimestamp === Core.FORCE_FETCH_NEW_POSTS) {
+      return;
+    }
+
+    const ageMs = Date.now() - headTimestamp;
+    if (ageMs > Config.STREAM_CACHE_MAX_AGE_MS) {
+      Libs.Logger.debug('[PostStreamApplication] Stream cache is stale, clearing', {
+        streamId,
+        headTimestamp,
+        ageMs,
+        maxAgeMs: Config.STREAM_CACHE_MAX_AGE_MS,
+      });
+      await Core.LocalStreamPostsService.deleteById({ streamId });
+    }
   }
 
   /**
@@ -388,12 +416,11 @@ export class PostStreamApplication {
     if (invokeEndpoint === Core.StreamSource.REPLIES || invokeEndpoint === Core.StreamSource.ALL) {
       const countUpdates = compositePostIds.map(async (postId) => {
         const { pubky: authorId } = Core.parseCompositeId(postId);
-        // TODO: Comming refactor to use the correct type. New PR
-        const countChanges: Partial<Core.NexusUserCounts> = { posts: 1 };
+        const countChanges: Core.TUserCountsCountChanges = { posts: 1 };
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
           countChanges.replies = 1;
         }
-        return Core.LocalUserService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
+        return Core.LocalUserService.updateCounts({ userId: authorId, countChanges });
       });
       await Promise.all(countUpdates);
     }
