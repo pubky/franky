@@ -116,7 +116,6 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
         verification.abort();
       }
       const onPaymentConfirmed = async (signupCode: string, homeserverPubky: string) => {
-        console.log('Payment confirmed', signupCode, homeserverPubky);
         toast({
           title: 'Payment successful',
         });
