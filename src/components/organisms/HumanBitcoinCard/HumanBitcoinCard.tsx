@@ -5,10 +5,7 @@ import { useBtcRate } from '@/hooks/useSatUsdRate';
 import { useLnVerificationPrice } from '@/hooks/useLnVerificationPrice';
 import * as Libs from '@/libs';
 import React from 'react';
-
-interface HumanBitcoinCardProps {
-  onClick?: () => void;
-}
+import type { HumanBitcoinCardProps } from './HumanBitcoinCard.types';
 
 export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
   const satUsdRate = useBtcRate()?.satUsd;

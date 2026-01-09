@@ -5,11 +5,7 @@ import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
 import * as Core from '@/core';
-
-interface HumanInviteCodeProps {
-  onBack: () => void;
-  onSuccess: (inviteCode: string) => void;
-}
+import type { HumanInviteCodeProps } from './HumanInviteCode.types';
 
 /**
  * Dev component only, might be removed later.

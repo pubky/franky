@@ -3,25 +3,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-// Number of digits in the verification code
-const DIGITS = 6;
-
-export interface HumanPhoneCodeInputProps {
-  /**
-   * Current verification code as an array of digits.
-   */
-  value: string[];
-  /**
-   * Callback fired when the code changes.
-   */
-  onChange: (value: string[]) => void;
-
-  /**
-   * Callback fired when the user presses enter and the code is complete.
-   */
-  onEnter?: () => void;
-}
+import { DIGITS } from './HumanPhoneCodeInput.constants';
+import type { HumanPhoneCodeInputProps } from './HumanPhoneCodeInput.types';
 
 /**
  * HumanPhoneCodeInput component. Takes a 6 digit verification code and displays it as a grid of input fields.

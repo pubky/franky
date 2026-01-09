@@ -2,15 +2,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import React from 'react';
-
-interface HumanSelectionProps {
-  onClick: (card: 'sms' | 'payment') => void;
-  // Callback to be called when the user clicks the dev mode options
-  // These are only available in development mode or E2E testing
-  // - inviteCode: Enter an invite code to continue the onboarding process
-  // - skipHumanProof: Skip the human proof and continue the onboarding process
-  onDevMode: (variant: 'inviteCode' | 'skip') => void;
-}
+import type { HumanSelectionProps } from './HumanSelection.types';
 
 export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
   // Show dev mode options if in development mode or Cypress is running (for E2E tests)

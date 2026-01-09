@@ -2,10 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-interface HumanSmsCardProps {
-  onClick?: () => void;
-}
+import type { HumanSmsCardProps } from './HumanSmsCard.types';
 
 export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
   return (

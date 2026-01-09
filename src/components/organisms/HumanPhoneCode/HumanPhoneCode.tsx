@@ -1,16 +1,11 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import { HomegateController } from '@/core';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
-
-interface HumanPhoneCodeProps {
-  phoneNumber: string;
-  onBack: () => void;
-  onSuccess: (inviteCode: string) => void;
-}
+import type { HumanPhoneCodeProps } from './HumanPhoneCode.types';
 
 export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCodeProps) => {
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
@@ -37,7 +32,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
     const codeValue = code.join('');
     try {
       setIsVerifyingCode(true);
-      const result = await HomegateController.verifySmsCode(phoneNumber, codeValue);
+      const result = await Core.HomegateController.verifySmsCode(phoneNumber, codeValue);
       if (result.valid && result.signupCode) {
         toast({
           title: 'Verification Code Valid',

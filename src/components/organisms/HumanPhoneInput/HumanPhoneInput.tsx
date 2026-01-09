@@ -1,45 +1,11 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import { HomegateController } from '@/core';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
-import parsePhoneNumberFromString, { PhoneNumber } from 'libphonenumber-js/mobile';
 import React, { useState } from 'react';
-
-/**
- * Validates an international phone number in E.164 format.
- * @param phoneNumber - The phone number to validate (e.g., "+316XXXXXXXX")
- * @returns The parsed phone number if valid, undefined otherwise
- */
-export function parsePhoneNumber(phoneNumber: string): PhoneNumber | undefined {
-  const trimmed = phoneNumber.trim().replaceAll(' ', '');
-
-  // Check if there are any non-digit characters other than the plus sign
-  const regex = /^\+(\d)*$/;
-  if (!regex.test(trimmed)) {
-    return;
-  }
-
-  // Use libphonenumber-js to parse and validate the number
-  const parsed = parsePhoneNumberFromString(trimmed);
-
-  if (!parsed) {
-    return;
-  }
-
-  if (!parsed.isValid()) {
-    return;
-  }
-
-  return parsed;
-}
-
-interface HumanPhoneInputProps {
-  onBack: () => void;
-  onCodeSent: (phoneNumber: string) => void;
-  initialPhoneNumber?: string;
-}
+import type { HumanPhoneInputProps } from './HumanPhoneInput.types';
 
 export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: HumanPhoneInputProps) => {
   const [phoneNumberInput, setPhoneNumberInput] = useState(initialPhoneNumber || '');
@@ -49,7 +15,7 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
     setPhoneNumberInput(e.target.value);
   };
 
-  const isValidNumber = !!parsePhoneNumber(phoneNumberInput);
+  const isValidNumber = !!Libs.parsePhoneNumber(phoneNumberInput);
 
   async function onSendCode(phoneNumber: string) {
     if (isSendingCode) {
@@ -58,7 +24,7 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
 
     try {
       setIsSendingCode(true);
-      const result = await HomegateController.sendSmsCode(phoneNumber);
+      const result = await Core.HomegateController.sendSmsCode(phoneNumber);
 
       if (!result.success) {
         if (result.errorType === 'blocked') {
