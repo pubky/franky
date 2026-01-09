@@ -31,7 +31,7 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
         <Atoms.Container className="relative mt-6 flex items-start rounded border px-4 py-6">
           <Atoms.Typography
             as="p"
-            className="absolute top-[-14px] left-[-6px] ml-4 bg-black px-2 text-base leading-6 font-medium text-secondary-foreground/80"
+            className="absolute top-[-14px] left-[-6px] ml-4 bg-background px-2 text-base leading-6 font-medium text-secondary-foreground/80"
           >
             Dev Mode
           </Atoms.Typography>

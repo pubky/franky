@@ -38,11 +38,11 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
     try {
       setIsVerifyingCode(true);
       const result = await HomegateController.verifySmsCode(phoneNumber, codeValue);
-      if (result.valid) {
+      if (result.valid && result.signupCode) {
         toast({
           title: 'Verification Code Valid',
         });
-        onSuccess(result.signupCode!);
+        onSuccess(result.signupCode);
       } else {
         toast({
           title: 'Verification Code Invalid. Try again.',

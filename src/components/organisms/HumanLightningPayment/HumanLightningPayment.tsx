@@ -38,7 +38,7 @@ class VerificationHandler {
   }
 
   /**
-   * If the verification and the lightnign invoice have expired.
+   * If the verification and the lightning invoice have expired.
    */
   get isExpired(): boolean {
     return this.data.expiresAt < Date.now();
@@ -138,12 +138,6 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     } finally {
       setIsLoading(false);
     }
-
-    return () => {
-      if (verification) {
-        verification.abort();
-      }
-    };
   };
 
   React.useEffect(() => {
@@ -151,6 +145,13 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     if (!verification || verification.isExpired) {
       requestLightningInvoice();
     }
+
+    // Cleanup: abort verification polling when component unmounts
+    return () => {
+      if (verification) {
+        verification.abort();
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally run only on mount
   }, []);
 

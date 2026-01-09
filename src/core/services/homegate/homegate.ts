@@ -8,6 +8,7 @@ import {
 } from './homegate.types';
 import { homegateApi } from './homegate.api';
 import { homegateQueryClient } from './homegate.query-client';
+import { Logger, createNexusError, NexusErrorType } from '@/libs';
 
 async function logRequestError(response: Response, url: string) {
   let body = undefined;
@@ -20,7 +21,11 @@ async function logRequestError(response: Response, url: string) {
     } catch {} // Not JSON, use the raw body
   } catch {}
 
-  console.error(`Failed to send request to ${url}`, response.status, response.statusText, body);
+  Logger.error(`Failed to send request to ${url}`, {
+    status: response.status,
+    statusText: response.statusText,
+    body,
+  });
   return {
     status: response.status,
     statusText: response.statusText,
@@ -114,8 +119,11 @@ export class HomegateService {
         homeserverPubky: json.homeserverPubky,
       };
     }
-    logRequestError(response, url);
-    throw new Error('Failed to validate sms code');
+    await logRequestError(response, url);
+    throw createNexusError(NexusErrorType.SERVICE_UNAVAILABLE, 'Failed to validate SMS code', response.status, {
+      url,
+      action: 'verifySmsCode',
+    });
   }
 
   /**
@@ -136,7 +144,12 @@ export class HomegateService {
         }
 
         await logRequestError(response, url);
-        throw new Error('Failed to get Lightning verification price');
+        throw createNexusError(
+          NexusErrorType.SERVICE_UNAVAILABLE,
+          'Failed to get Lightning verification price',
+          response.status,
+          { url, action: 'getLnVerificationPrice' },
+        );
       },
     });
   }
@@ -165,7 +178,12 @@ export class HomegateService {
     }
 
     await logRequestError(response, url);
-    throw new Error('Failed to create Lightning verification');
+    throw createNexusError(
+      NexusErrorType.SERVICE_UNAVAILABLE,
+      'Failed to create Lightning verification',
+      response.status,
+      { url, action: 'createLnVerification' },
+    );
   }
 
   /**
@@ -185,7 +203,12 @@ export class HomegateService {
     }
 
     await logRequestError(response, url);
-    throw new Error('Failed to get Lightning verification status');
+    throw createNexusError(
+      NexusErrorType.SERVICE_UNAVAILABLE,
+      'Failed to get Lightning verification status',
+      response.status,
+      { url, action: 'getLnVerification' },
+    );
   }
 
   /**
@@ -216,6 +239,11 @@ export class HomegateService {
     }
 
     await logRequestError(response, url);
-    throw new Error('Failed to await Lightning verification');
+    throw createNexusError(
+      NexusErrorType.SERVICE_UNAVAILABLE,
+      'Failed to await Lightning verification',
+      response.status,
+      { url, action: 'awaitLnVerification' },
+    );
   }
 }
