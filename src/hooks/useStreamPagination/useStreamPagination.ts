@@ -96,9 +96,10 @@ export function useStreamPagination({
           setStreamTail(result.timestamp);
         }
 
-        // Check hasMore based on original response length
-        // If server returns fewer posts than requested, we've reached the end
-        const hasMorePosts = result.nextPageIds.length >= limit;
+        // Check hasMore based on reachedEnd flag from the response
+        // This correctly handles cases where we hit MAX_FETCH_ITERATIONS due to mute filtering
+        // vs actually reaching the end of the stream
+        const hasMorePosts = result.reachedEnd !== true;
         setHasMore(hasMorePosts);
 
         // If all posts were duplicates, don't update the UI but keep hasMore state

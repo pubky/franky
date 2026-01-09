@@ -54,7 +54,7 @@ describe('PostStreamQueue', () => {
       expect(queue.get(streamId)).toBeDefined();
 
       // Finalize with empty toSave should delete the entry
-      queue['finalize'](streamId, ['post1', 'post2'], 2, BASE_TIMESTAMP, []);
+      queue['finalize'](streamId, ['post1', 'post2'], 2, BASE_TIMESTAMP, [], undefined, false);
       expect(queue.get(streamId)).toBeUndefined();
     });
   });

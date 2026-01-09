@@ -18,4 +18,7 @@ export type TStreamIdParams = {
 export type TReadPostStreamChunkResponse = {
   nextPageIds: string[];
   timestamp: number | undefined;
+  /** True only if we've reached the actual end of the stream.
+   * False if we hit MAX_FETCH_ITERATIONS or filled the limit. */
+  reachedEnd?: boolean;
 };

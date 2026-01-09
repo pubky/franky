@@ -151,6 +151,7 @@ describe('useStreamPagination', () => {
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
         nextPageIds: Array(25).fill('post'),
         timestamp: Date.now(),
+        reachedEnd: true, // Less than limit (30) means end of stream
       });
 
       const { result } = renderHook(() =>
@@ -164,7 +165,7 @@ describe('useStreamPagination', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      // Less than limit means no more posts
+      // reachedEnd: true means no more posts
       expect(result.current.hasMore).toBe(false);
     });
 
@@ -208,12 +209,13 @@ describe('useStreamPagination', () => {
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
         nextPageIds: ['post1', 'post2'],
         timestamp: Date.now(),
+        reachedEnd: true, // Less than limit (10) means end of stream
       });
 
       const { result } = renderHook(() =>
         useStreamPagination({
           streamId: mockStreamId,
-          limit: 10, // Less than limit means no more
+          limit: 10,
         }),
       );
 
@@ -221,6 +223,7 @@ describe('useStreamPagination', () => {
         expect(result.current.loading).toBe(false);
       });
 
+      // reachedEnd: true means no more posts
       expect(result.current.hasMore).toBe(false);
 
       const callCountBefore = vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mock.calls.length;
