@@ -244,16 +244,11 @@ export class PostStreamApplication {
   /**
    * Core logic for fetching original posts by their URIs.
    * Converts URIs to IDs, checks cache, fetches missing posts from Nexus, and persists them.
+   * This method is public to allow reuse by TtlApplication for refreshing repost originals.
    * @param repostedUris - Array of pubky URIs pointing to original posts
    * @param viewerId - ID of the viewer
    */
-  private static async fetchOriginalPostsByUris({
-    repostedUris,
-    viewerId,
-  }: {
-    repostedUris: string[];
-    viewerId: Core.Pubky;
-  }) {
+  static async fetchOriginalPostsByUris({ repostedUris, viewerId }: { repostedUris: string[]; viewerId: Core.Pubky }) {
     if (repostedUris.length === 0) return;
 
     // Convert URIs to composite IDs and deduplicate

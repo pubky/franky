@@ -4,9 +4,14 @@ import { PostPreviewCard } from './PostPreviewCard';
 
 // Mock hooks
 const mockNavigateToPost = vi.fn();
+const mockTtlRef = vi.fn();
 vi.mock('@/hooks', () => ({
   usePostNavigation: () => ({
     navigateToPost: mockNavigateToPost,
+  }),
+  useTtlViewportSubscription: () => ({
+    ref: mockTtlRef,
+    isVisible: false,
   }),
 }));
 
@@ -38,6 +43,7 @@ vi.mock('@/atoms', () => ({
     role,
     tabIndex,
     'aria-label': ariaLabel,
+    ref,
   }: {
     children: React.ReactNode;
     className?: string;
@@ -46,6 +52,7 @@ vi.mock('@/atoms', () => ({
     role?: string;
     tabIndex?: number;
     'aria-label'?: string;
+    ref?: React.Ref<HTMLDivElement>;
   }) => (
     <div
       data-testid="card"
@@ -55,6 +62,7 @@ vi.mock('@/atoms', () => ({
       role={role}
       tabIndex={tabIndex}
       aria-label={ariaLabel}
+      ref={ref}
     >
       {children}
     </div>

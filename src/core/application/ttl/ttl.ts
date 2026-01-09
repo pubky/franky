@@ -65,6 +65,12 @@ export class TtlApplication {
 
     // Opportunistic cache warm: fetch missing authors
     await this.fetchAndPersistMissingAuthors({ posts: postBatch, viewerId: params.viewerId });
+
+    // Fetch original posts for any reposts (to display embedded repost content)
+    const repostedUris = postBatch
+      .map((post) => post.relationships.reposted)
+      .filter((uri): uri is string => uri !== null);
+    await Core.PostStreamApplication.fetchOriginalPostsByUris({ repostedUris, viewerId: params.viewerId });
   }
 
   /**
