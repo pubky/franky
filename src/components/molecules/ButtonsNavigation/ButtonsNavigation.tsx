@@ -11,6 +11,7 @@ interface ButtonsNavigationProps {
   backButtonDisabled?: boolean;
   continueButtonDisabled?: boolean;
   hiddenContinueButton?: boolean;
+  loadingContinueButton?: boolean;
 }
 
 export function ButtonsNavigation({
@@ -23,6 +24,7 @@ export function ButtonsNavigation({
   backButtonDisabled = false,
   continueButtonDisabled = false,
   hiddenContinueButton = false,
+  loadingContinueButton = false,
 }: ButtonsNavigationProps) {
   return (
     <Atoms.Container className={Libs.cn('flex-row justify-between gap-3 lg:gap-6', className)}>
@@ -43,10 +45,19 @@ export function ButtonsNavigation({
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           onClick={onHandleContinueButton}
-          disabled={continueButtonDisabled}
+          disabled={loadingContinueButton || continueButtonDisabled}
         >
-          <Libs.ArrowRight className="mr-2 h-4 w-4" />
-          {continueText}
+          {loadingContinueButton ? (
+            <>
+              <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {continueText}
+            </>
+          ) : (
+            <>
+              <Libs.ArrowRight className="mr-2 h-4 w-4" />
+              {continueText}
+            </>
+          )}
         </Atoms.Button>
       )}
     </Atoms.Container>

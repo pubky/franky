@@ -4,6 +4,15 @@ export interface UseAuthUrlOptions {
    * @default true
    */
   autoFetch?: boolean;
+  /**
+   * The type of auth URL to generate.
+   * @default 'signin'
+   */
+  type?: 'signin' | 'signup';
+  /**
+   * The invite code for signup. Required when type is 'signup'.
+   */
+  inviteCode?: string;
 }
 
 export interface UseAuthUrlReturn {
