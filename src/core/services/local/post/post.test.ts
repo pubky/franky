@@ -943,4 +943,55 @@ describe('LocalPostService', () => {
       findByIdSpy.mockRestore();
     });
   });
+
+  describe('readRelationshipsByIds', () => {
+    it('should return post relationships for multiple posts', async () => {
+      const postId1 = testData.fullPostId1;
+      const postId2 = Core.buildCompositeId({ pubky: testData.authorPubky, id: 'post-2' });
+      const parentUri = 'pubky://parent/pub/pubky.app/posts/parent123';
+      await setupExistingPost(postId1, 'Test post 1', parentUri);
+      await setupExistingPost(postId2, 'Test post 2', null);
+
+      const relationships = await Core.LocalPostService.readRelationshipsByIds([postId1, postId2]);
+
+      expect(relationships).toHaveLength(2);
+      expect(relationships[0]?.id).toBe(postId1);
+      expect(relationships[0]?.replied).toBe(parentUri);
+      expect(relationships[1]?.id).toBe(postId2);
+      expect(relationships[1]?.replied).toBeNull();
+    });
+
+    it('should return undefined for posts that do not exist', async () => {
+      const postId1 = testData.fullPostId1;
+      const nonExistentPostId = 'nonexistent:post123';
+      await setupExistingPost(postId1, 'Test post 1', null);
+
+      const relationships = await Core.LocalPostService.readRelationshipsByIds([postId1, nonExistentPostId]);
+
+      expect(relationships).toHaveLength(2);
+      expect(relationships[0]?.id).toBe(postId1);
+      expect(relationships[1]).toBeUndefined();
+    });
+
+    it('should return empty array for empty input', async () => {
+      const relationships = await Core.LocalPostService.readRelationshipsByIds([]);
+
+      expect(relationships).toEqual([]);
+    });
+
+    it('should handle database errors gracefully', async () => {
+      const postId = testData.fullPostId1;
+
+      // Mock bulkGet to throw an error
+      const bulkGetSpy = vi
+        .spyOn(Core.PostRelationshipsModel.table, 'bulkGet')
+        .mockRejectedValue(new Error('DB error'));
+
+      await expect(Core.LocalPostService.readRelationshipsByIds([postId])).rejects.toThrow(
+        'Failed to read post relationships by ids',
+      );
+
+      bulkGetSpy.mockRestore();
+    });
+  });
 });
