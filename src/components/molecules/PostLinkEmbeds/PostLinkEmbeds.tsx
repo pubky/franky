@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { useMemo } from 'react';
 import LinkifyIt from 'linkify-it';
 
 import * as Atoms from '@/atoms';
@@ -65,11 +65,14 @@ const parseContentForUrl = (content: string) => {
 };
 
 /**
- * Parse URL for embeddable links
+ * Parse content for embeddable links
  * Returns the first embeddable link and its provider
  */
-const parseUrlForLinkEmbed = async (url: string): Promise<Types.ParseUrlForLinkEmbedResult> => {
+const parseContentForLinkEmbed = (content: string): Types.ParseUrlForLinkEmbedResult => {
   try {
+    const url = parseContentForUrl(content);
+    if (!url) return { embed: null, provider: null };
+
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
 
@@ -78,14 +81,14 @@ const parseUrlForLinkEmbed = async (url: string): Promise<Types.ParseUrlForLinkE
     const provider = providerMap.get(hostname);
 
     if (!provider) {
-      const embed = await Providers.Generic.parseEmbed(url);
+      const embed = Providers.Generic.parseEmbed(url);
       return { embed, provider: Providers.Generic };
     }
 
-    const embed = await provider.parseEmbed(url);
+    const embed = provider.parseEmbed(url);
 
     if (!embed) {
-      const embed = await Providers.Generic.parseEmbed(url);
+      const embed = Providers.Generic.parseEmbed(url);
       return { embed, provider: Providers.Generic };
     }
 
@@ -96,40 +99,7 @@ const parseUrlForLinkEmbed = async (url: string): Promise<Types.ParseUrlForLinkE
 };
 
 export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
-  const [embed, setEmbed] = React.useState<Types.ParseUrlForLinkEmbedResult['embed']>(null);
-  const [provider, setProvider] = React.useState<Types.ParseUrlForLinkEmbedResult['provider']>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  React.useEffect(() => {
-    let cancelled = false;
-
-    const getLinkEmbed = async () => {
-      const url = parseContentForUrl(content);
-      if (!url) return;
-
-      setIsLoading(true);
-      const result = await parseUrlForLinkEmbed(url);
-      if (!cancelled) {
-        setEmbed(result.embed);
-        setProvider(result.provider);
-        setIsLoading(false);
-      }
-    };
-
-    getLinkEmbed();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [content]);
-
-  if (isLoading) {
-    return (
-      <Atoms.Typography size="sm" className="text-muted-foreground">
-        Loading preview...
-      </Atoms.Typography>
-    );
-  }
+  const { embed, provider } = useMemo(() => parseContentForLinkEmbed(content), [content]);
 
   if (!embed || !provider) return null;
 

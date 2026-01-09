@@ -29,9 +29,9 @@ describe('ProviderGeneric', () => {
   });
 
   describe('parseEmbed', () => {
-    it('returns url embed data for any valid URL', async () => {
+    it('returns url embed data for any valid URL', () => {
       const url = 'https://example.com/article';
-      const result = await Generic.parseEmbed(url);
+      const result = Generic.parseEmbed(url);
 
       expect(result).toEqual({
         type: 'url',
@@ -39,9 +39,9 @@ describe('ProviderGeneric', () => {
       });
     });
 
-    it('handles URLs with query parameters', async () => {
+    it('handles URLs with query parameters', () => {
       const url = 'https://example.com/page?query=test&foo=bar';
-      const result = await Generic.parseEmbed(url);
+      const result = Generic.parseEmbed(url);
 
       expect(result).toEqual({
         type: 'url',
@@ -49,9 +49,9 @@ describe('ProviderGeneric', () => {
       });
     });
 
-    it('handles URLs with hash fragments', async () => {
+    it('handles URLs with hash fragments', () => {
       const url = 'https://example.com/page#section';
-      const result = await Generic.parseEmbed(url);
+      const result = Generic.parseEmbed(url);
 
       expect(result).toEqual({
         type: 'url',
@@ -59,9 +59,9 @@ describe('ProviderGeneric', () => {
       });
     });
 
-    it('handles URLs with subdomains', async () => {
+    it('handles URLs with subdomains', () => {
       const url = 'https://blog.example.com/post';
-      const result = await Generic.parseEmbed(url);
+      const result = Generic.parseEmbed(url);
 
       expect(result).toEqual({
         type: 'url',
@@ -69,9 +69,9 @@ describe('ProviderGeneric', () => {
       });
     });
 
-    it('handles URLs with paths and trailing slashes', async () => {
+    it('handles URLs with paths and trailing slashes', () => {
       const url = 'https://example.com/path/to/resource/';
-      const result = await Generic.parseEmbed(url);
+      const result = Generic.parseEmbed(url);
 
       expect(result).toEqual({
         type: 'url',
@@ -79,18 +79,18 @@ describe('ProviderGeneric', () => {
       });
     });
 
-    it('is fast and synchronous', async () => {
+    it('is fast and synchronous', () => {
       const start = Date.now();
-      await Generic.parseEmbed('https://example.com');
+      Generic.parseEmbed('https://example.com');
       const duration = Date.now() - start;
 
       // Should be near-instant since no fetch
       expect(duration).toBeLessThan(10);
     });
 
-    it('handles multiple rapid calls consistently', async () => {
+    it('handles multiple rapid calls consistently', () => {
       const url = 'https://example.com';
-      const results = await Promise.all([Generic.parseEmbed(url), Generic.parseEmbed(url), Generic.parseEmbed(url)]);
+      const results = [Generic.parseEmbed(url), Generic.parseEmbed(url), Generic.parseEmbed(url)];
 
       results.forEach((result) => {
         expect(result).toEqual({
@@ -100,10 +100,10 @@ describe('ProviderGeneric', () => {
       });
     });
 
-    it('is stateless and returns consistent results', async () => {
+    it('is stateless and returns consistent results', () => {
       const url = 'https://example.com';
-      const result1 = await Generic.parseEmbed(url);
-      const result2 = await Generic.parseEmbed(url);
+      const result1 = Generic.parseEmbed(url);
+      const result2 = Generic.parseEmbed(url);
 
       expect(result1).toEqual(result2);
     });
