@@ -34,22 +34,27 @@ vi.mock('@/molecules', () => ({
   PostLinkEmbeds: vi.fn(() => null),
 }));
 
-// Mock organisms - PostAttachments
+// Mock organisms - PostAttachments, PostContentBlurred
 vi.mock('@/organisms', () => ({
   PostAttachments: vi.fn(() => <div data-testid="post-attachments" />),
+  PostContentBlurred: vi.fn(() => <div data-testid="post-content-blurred" />),
 }));
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
 const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
+const mockPostContentBlurred = vi.mocked(Organisms.PostContentBlurred);
 
 // Helper to create complete PostDetails mock
-const createMockPostDetails = (overrides: Partial<{ content: string; attachments: string[] | null }> = {}) => ({
+const createMockPostDetails = (
+  overrides: Partial<{ content: string; attachments: string[] | null; is_blurred: boolean }> = {},
+) => ({
   id: 'test-author:test-post',
   indexed_at: Date.now(),
   kind: 'short' as const,
   uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
   content: 'Mock content',
   attachments: null as string[] | null,
+  is_blurred: false,
   ...overrides,
 });
 
@@ -100,6 +105,31 @@ describe('PostContentBase', () => {
     render(<PostContentBase postId="post-123" />);
 
     expect(mockPostAttachments).toHaveBeenCalledWith({ attachments: [] }, undefined);
+  });
+
+  it('renders PostContentBlurred when is_blurred is true', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: createMockPostDetails({ content: 'Test content', is_blurred: true }),
+      isLoading: false,
+    });
+
+    render(<PostContentBase postId="post-123" className="custom-class" />);
+
+    expect(screen.getByTestId('post-content-blurred')).toBeInTheDocument();
+    expect(mockPostContentBlurred).toHaveBeenCalledWith({ postId: 'post-123', className: 'custom-class' }, undefined);
+    expect(mockPostAttachments).not.toHaveBeenCalled();
+  });
+
+  it('renders normal content when is_blurred is false', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: createMockPostDetails({ content: 'Test content', is_blurred: false }),
+      isLoading: false,
+    });
+
+    render(<PostContentBase postId="post-123" />);
+
+    expect(screen.queryByTestId('post-content-blurred')).not.toBeInTheDocument();
+    expect(screen.getByTestId('container')).toBeInTheDocument();
   });
 });
 

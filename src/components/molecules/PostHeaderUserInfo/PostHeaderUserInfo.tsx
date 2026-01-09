@@ -4,6 +4,7 @@ import * as Config from '@/config';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import type { PostHeaderUserInfoProps } from './PostHeaderUserInfo.types';
 
 export function PostHeaderUserInfo({
@@ -17,7 +18,7 @@ export function PostHeaderUserInfo({
 
   const content = (
     <Atoms.Container overrideDefaults className="flex min-w-0 items-center gap-3">
-      <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" />
+      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
         <Atoms.Typography
           className="inline-block cursor-pointer truncate text-base leading-6 font-bold text-foreground hover:underline"

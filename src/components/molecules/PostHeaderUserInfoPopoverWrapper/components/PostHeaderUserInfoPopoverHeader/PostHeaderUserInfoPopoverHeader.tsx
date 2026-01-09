@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import type { PostHeaderUserInfoPopoverHeaderProps } from './PostHeaderUserInfoPopoverHeader.types';
 
 export function PostHeaderUserInfoPopoverHeader({
@@ -11,7 +11,7 @@ export function PostHeaderUserInfoPopoverHeader({
 }: PostHeaderUserInfoPopoverHeaderProps) {
   return (
     <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
-      <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="md" />
+      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="md" />
       <Atoms.Container className="min-w-0 flex-1 items-start overflow-hidden">
         <Atoms.Typography className="max-w-full truncate text-sm leading-5 font-bold" overrideDefaults>
           {userName}

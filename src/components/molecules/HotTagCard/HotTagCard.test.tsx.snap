@@ -299,7 +299,13 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
       >
         <span
           class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
-        />
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            A
+          </span>
+        </span>
       </div>
       <div
         class="relative rounded-full shadow-sm"
@@ -308,7 +314,13 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
       >
         <span
           class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
-        />
+        >
+          <span
+            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          >
+            B
+          </span>
+        </span>
       </div>
       <div
         class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
