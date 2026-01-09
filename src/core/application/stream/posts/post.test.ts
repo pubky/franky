@@ -767,8 +767,8 @@ describe('PostStreamApplication', () => {
       // This is a full cache hit, so cacheMissPostIds should be empty for the stream posts
       expect(result.cacheMissPostIds).toEqual([]);
 
-      // BUG: Currently, the original post is NOT fetched because cacheMissPostIds is empty
-      // EXPECTED: The original post SHOULD be fetched because it's referenced by the repost
+      // Verify that the original post is fetched even though cacheMissPostIds is empty
+      // (the repost was served from cache, but its original post was missing)
       expect(fetchByIdsSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           post_ids: expect.arrayContaining([originalPostCompositeId]),

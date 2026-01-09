@@ -149,9 +149,17 @@ export class PostStreamApplication {
       },
     });
 
-    // Ensure original posts are available for any reposts in the result
-    // This handles cases where reposts are served from cache but their originals were evicted
-    await this.ensureRepostOriginalsAvailable({ postIds: posts, viewerId });
+    // Fetch original posts for any reposts served from cache
+    // (handles case where repost is cached but original was evicted)
+    try {
+      const relationships = await Core.LocalPostService.readRelationshipsByIds(posts);
+      const repostedUris = relationships
+        .filter((rel): rel is Core.PostRelationshipsModelSchema => rel !== undefined && rel.reposted !== null)
+        .map((rel) => rel.reposted as string);
+      await this.fetchOriginalPostsByUris({ repostedUris, viewerId });
+    } catch (error) {
+      Libs.Logger.warn('Failed to fetch missing repost content', { postIds: posts, error });
+    }
 
     return {
       nextPageIds: posts,
@@ -224,25 +232,31 @@ export class PostStreamApplication {
       // Persist the missing authors of the posts
       await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
       // Fetch original posts for any reposts (to display embedded repost content)
-      await this.fetchRepostedOriginalPosts({ posts: postBatch, viewerId });
+      const repostedUris = postBatch
+        .map((post) => post.relationships.reposted)
+        .filter((uri): uri is string => uri !== null);
+      await this.fetchOriginalPostsByUris({ repostedUris, viewerId });
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
     }
   }
 
   /**
-   * Fetch original posts that are referenced by reposts.
-   * This ensures that when a repost is displayed, the embedded original post content is available.
-   * @param posts - Array of posts that may contain reposts
+   * Core logic for fetching original posts by their URIs.
+   * Converts URIs to IDs, checks cache, fetches missing posts from Nexus, and persists them.
+   * @param repostedUris - Array of pubky URIs pointing to original posts
    * @param viewerId - ID of the viewer
    */
-  private static async fetchRepostedOriginalPosts({ posts, viewerId }: Core.TFetchMissingUsersParams) {
-    // Collect all reposted URIs from the posts
-    const repostedUris = posts.map((post) => post.relationships.reposted).filter((uri): uri is string => uri !== null);
-
+  private static async fetchOriginalPostsByUris({
+    repostedUris,
+    viewerId,
+  }: {
+    repostedUris: string[];
+    viewerId: Core.Pubky;
+  }) {
     if (repostedUris.length === 0) return;
 
-    // Convert URIs to composite IDs and deduplicate (multiple reposts may reference the same original)
+    // Convert URIs to composite IDs and deduplicate
     const originalPostIds = Array.from(
       new Set(
         repostedUris
@@ -269,7 +283,6 @@ export class PostStreamApplication {
       missingOriginalCount: missingOriginalPostIds.length,
     });
 
-    // Fetch the missing original posts (non-recursive to avoid infinite loops)
     try {
       const originalPosts = await Core.NexusPostStreamService.fetchByIds({
         post_ids: missingOriginalPostIds,
@@ -280,68 +293,6 @@ export class PostStreamApplication {
       await this.fetchMissingUsersFromNexus({ posts: originalPosts, viewerId });
     } catch (error) {
       Libs.Logger.warn('Failed to fetch original posts for reposts', { missingOriginalPostIds, error });
-    }
-  }
-
-  /**
-   * Ensures that original posts for cached reposts are available.
-   * This handles the case where reposts are served from cache but their original posts
-   * were evicted or never fetched.
-   *
-   * @param postIds - Array of post IDs that may include reposts
-   * @param viewerId - ID of the viewer
-   */
-  static async ensureRepostOriginalsAvailable({ postIds, viewerId }: { postIds: string[]; viewerId: Core.Pubky }) {
-    if (postIds.length === 0) return;
-
-    try {
-      // Look up relationships for the given post IDs to find reposts
-      const relationships = await Core.PostRelationshipsModel.table.bulkGet(postIds);
-
-      // Collect reposted URIs from posts that are reposts
-      const repostedUris = relationships
-        .filter((rel): rel is Core.PostRelationshipsModelSchema => rel !== undefined && rel.reposted !== null)
-        .map((rel) => rel.reposted as string);
-
-      if (repostedUris.length === 0) return;
-
-      // Convert URIs to composite IDs
-      const originalPostIds = Array.from(
-        new Set(
-          repostedUris
-            .map((uri) =>
-              Core.buildCompositeIdFromPubkyUri({
-                uri,
-                domain: Core.CompositeIdDomain.POSTS,
-              }),
-            )
-            .filter((id): id is string => id !== null),
-        ),
-      );
-
-      if (originalPostIds.length === 0) return;
-
-      // Check which original posts are missing from cache
-      const missingOriginalPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(originalPostIds);
-
-      if (missingOriginalPostIds.length === 0) return;
-
-      Libs.Logger.debug('Fetching original posts for cached reposts', {
-        repostCount: repostedUris.length,
-        originalCount: originalPostIds.length,
-        missingOriginalCount: missingOriginalPostIds.length,
-      });
-
-      // Fetch the missing original posts
-      const originalPosts = await Core.NexusPostStreamService.fetchByIds({
-        post_ids: missingOriginalPostIds,
-        viewer_id: viewerId,
-      });
-      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: originalPosts });
-      await Core.FileApplication.fetchFiles(postAttachments);
-      await this.fetchMissingUsersFromNexus({ posts: originalPosts, viewerId });
-    } catch (error) {
-      Libs.Logger.warn('Failed to ensure repost originals available', { postIds, error });
     }
   }
 

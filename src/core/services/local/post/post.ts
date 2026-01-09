@@ -64,6 +64,28 @@ export class LocalPostService {
   }
 
   /**
+   * Reads post relationships for multiple posts
+   *
+   * @param postIds - Array of composite post IDs (author:postId)
+   * @returns Array of post relationships (undefined entries for posts not found)
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readRelationshipsByIds(postIds: string[]): Promise<(Core.PostRelationshipsModelSchema | undefined)[]> {
+    try {
+      return await Core.PostRelationshipsModel.table.bulkGet(postIds);
+    } catch (error) {
+      Libs.Logger.error('Failed to read post relationships by ids', { postIds, error });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Failed to read post relationships by ids',
+        500,
+        { error, postIds },
+      );
+    }
+  }
+
+  /**
    * Reads all posts that are replies to a specific post
    * @param postId - Composite post ID to read replies for
    * @returns Array of post relationships that replied to this post
