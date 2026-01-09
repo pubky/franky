@@ -2,6 +2,7 @@ name: Development Task
 description: Internal development task (for team use)
 title: '[Task]: '
 labels: ['task']
+type: task
 body:
   - type: markdown
     attributes:
