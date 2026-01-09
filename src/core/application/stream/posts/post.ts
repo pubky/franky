@@ -416,12 +416,11 @@ export class PostStreamApplication {
     if (invokeEndpoint === Core.StreamSource.REPLIES || invokeEndpoint === Core.StreamSource.ALL) {
       const countUpdates = compositePostIds.map(async (postId) => {
         const { pubky: authorId } = Core.parseCompositeId(postId);
-        // TODO: Comming refactor to use the correct type. New PR
-        const countChanges: Partial<Core.NexusUserCounts> = { posts: 1 };
+        const countChanges: Core.TUserCountsCountChanges = { posts: 1 };
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
           countChanges.replies = 1;
         }
-        return Core.LocalUserService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
+        return Core.LocalUserService.updateCounts({ userId: authorId, countChanges });
       });
       await Promise.all(countUpdates);
     }

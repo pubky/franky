@@ -77,6 +77,10 @@ describe('LocalStreamPostsService', () => {
 
     const tags = await Core.PostTagsModel.findById(compositePostId);
     expect(tags).toBeTruthy();
+
+    const ttl = await Core.PostTtlModel.findById(compositePostId);
+    expect(ttl).toBeTruthy();
+    expect(ttl?.lastUpdatedAt).toBeGreaterThan(0);
   };
 
   const persistAndVerifyPost = async (
@@ -108,6 +112,7 @@ describe('LocalStreamPostsService', () => {
     await Core.PostCountsModel.table.clear();
     await Core.PostRelationshipsModel.table.clear();
     await Core.PostTagsModel.table.clear();
+    await Core.PostTtlModel.table.clear();
   });
 
   describe('upsert', () => {

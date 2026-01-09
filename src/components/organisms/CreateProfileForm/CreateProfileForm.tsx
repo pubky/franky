@@ -6,6 +6,7 @@ import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
+import * as Config from '@/config';
 
 export const CreateProfileForm = () => {
   const { setShowWelcomeDialog } = Core.useOnboardingStore();
@@ -100,6 +101,7 @@ export const CreateProfileForm = () => {
                 onSave={(label, url) => {
                   handlers.setLinks([...state.links, { label, url }]);
                 }}
+                disabled={state.links.length >= Config.USER_MAX_LINKS}
               />
             </Atoms.Container>
           </Atoms.Container>

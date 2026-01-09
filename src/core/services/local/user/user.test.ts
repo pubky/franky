@@ -7,6 +7,7 @@ describe('LocalUserService', () => {
     vi.clearAllMocks();
     await Core.UserDetailsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
+    await Core.UserCountsModel.table.clear();
   });
 
   describe('readDetails', () => {
@@ -110,6 +111,76 @@ describe('LocalUserService', () => {
       expect(result!.following).toBe(false);
       expect(result!.followed_by).toBe(false);
       expect(result!.muted).toBe(false);
+    });
+  });
+
+  describe('updateCounts', () => {
+    const userId = 'test-user-id' as Core.Pubky;
+
+    it('should update user counts by applying count changes', async () => {
+      const initialCounts: Core.UserCountsModelSchema = {
+        id: userId,
+        tagged: 0,
+        tags: 0,
+        unique_tags: 0,
+        posts: 5,
+        replies: 2,
+        following: 10,
+        followers: 20,
+        friends: 5,
+        bookmarks: 3,
+      };
+
+      await Core.UserCountsModel.create(initialCounts);
+
+      await LocalUserService.updateCounts({
+        userId,
+        countChanges: { posts: 1, replies: 1 },
+      });
+
+      const result = await Core.UserCountsModel.findById(userId);
+
+      expect(result).not.toBeNull();
+      expect(result!.posts).toBe(6);
+      expect(result!.replies).toBe(3);
+      expect(result!.following).toBe(10);
+    });
+
+    it('should not go below zero when decrementing counts', async () => {
+      const initialCounts: Core.UserCountsModelSchema = {
+        id: userId,
+        tagged: 0,
+        tags: 0,
+        unique_tags: 0,
+        posts: 1,
+        replies: 0,
+        following: 0,
+        followers: 0,
+        friends: 0,
+        bookmarks: 0,
+      };
+
+      await Core.UserCountsModel.create(initialCounts);
+
+      await LocalUserService.updateCounts({
+        userId,
+        countChanges: { posts: -5 },
+      });
+
+      const result = await Core.UserCountsModel.findById(userId);
+
+      expect(result).not.toBeNull();
+      expect(result!.posts).toBe(0);
+    });
+
+    it('should do nothing if user does not exist', async () => {
+      await LocalUserService.updateCounts({
+        userId,
+        countChanges: { posts: 1 },
+      });
+
+      const result = await Core.UserCountsModel.findById(userId);
+      expect(result).toBeNull();
     });
   });
 });

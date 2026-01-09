@@ -4,6 +4,7 @@ import { ChangeEvent, Dispatch, SetStateAction, forwardRef, useEffect, useMemo }
 import * as Atoms from '@/atoms';
 import * as Icons from '@/libs/icons';
 import * as Utils from '@/libs/utils';
+import { ATTACHMENT_ACCEPT_STRING } from '@/config';
 
 type PostInputAttachmentsProps = {
   attachments: File[];
@@ -65,7 +66,7 @@ export const PostInputAttachments = forwardRef<HTMLInputElement, PostInputAttach
         <Atoms.Input
           ref={ref}
           type="file"
-          accept="image/*,video/*,audio/*,application/pdf"
+          accept={ATTACHMENT_ACCEPT_STRING}
           multiple
           onChange={handleFileChange}
           className="hidden"

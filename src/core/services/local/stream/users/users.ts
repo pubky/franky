@@ -69,7 +69,7 @@ export class LocalStreamUsersService {
 
   /**
    * Persist user data to normalized tables
-   * Separates user details, counts, tags, and relationships
+   * Separates user details, counts, tags, relationships, and TTL records
    * Also detects and persists moderation status for flagged profiles
    *
    * @param users - Array of users from Nexus API
@@ -81,8 +81,10 @@ export class LocalStreamUsersService {
     const userTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const userDetails: Core.UserDetailsModelSchema[] = [];
     const userModerations: Core.ModerationModelSchema[] = [];
+    const userTtl: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [];
 
     const userIds: Core.Pubky[] = [];
+    const now = Date.now();
 
     for (const user of users) {
       const userId = user.details.id;
@@ -91,6 +93,7 @@ export class LocalStreamUsersService {
       userRelationships.push([userId, user.relationship]);
       userTags.push([userId, user.tags]);
       userDetails.push(user.details);
+      userTtl.push([userId, { lastUpdatedAt: now }]);
 
       // Detect moderation from user tags
       const isModerated = Core.detectModerationFromTags(user.tags);
@@ -110,6 +113,7 @@ export class LocalStreamUsersService {
       Core.UserCountsModel.bulkSave(userCounts),
       Core.UserTagsModel.bulkSave(userTags),
       Core.UserRelationshipsModel.bulkSave(userRelationships),
+      Core.UserTtlModel.bulkSave(userTtl),
       // Persist moderation records for flagged profiles
       userModerations.length > 0 ? Core.ModerationModel.bulkSave(userModerations) : Promise.resolve(),
     ]);

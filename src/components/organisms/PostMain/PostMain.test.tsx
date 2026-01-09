@@ -173,6 +173,10 @@ vi.mock('@/hooks', () => ({
     showRepostHeader: false,
     shouldShowPostHeader: true,
   })),
+  useTtlViewportSubscription: vi.fn(() => ({
+    ref: vi.fn(),
+    isVisible: false,
+  })),
 }));
 
 describe('PostMain', () => {

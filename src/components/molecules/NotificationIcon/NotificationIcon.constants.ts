@@ -17,7 +17,6 @@ export const BADGE_SIZE = 11;
 export const NOTIFICATION_ICON_MAP = {
   [NotificationType.Follow]: Icons.UserRoundPlus,
   [NotificationType.NewFriend]: Icons.HeartHandshake,
-  [NotificationType.LostFriend]: Icons.UserRoundMinus,
   [NotificationType.TagPost]: Icons.Tag,
   [NotificationType.TagProfile]: Icons.Tag,
   [NotificationType.Reply]: Icons.MessageCircle,

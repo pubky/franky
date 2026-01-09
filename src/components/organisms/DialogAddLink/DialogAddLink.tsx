@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 import { useState } from 'react';
 import { z } from 'zod';
 
@@ -10,12 +11,21 @@ const labelSchema = z
   .string()
   .trim()
   .min(1, 'Label is required')
-  .max(30, 'Max 30 characters')
+  .max(Config.USER_LINK_LABEL_MAX_LENGTH, `Max ${Config.USER_LINK_LABEL_MAX_LENGTH} characters`)
   .regex(/^[a-zA-Z0-9]+$/, 'Alphanumeric only');
 
-const urlSchema = z.string().trim().url('Invalid URL');
+const urlSchema = z
+  .string()
+  .trim()
+  .url('Invalid URL')
+  .max(Config.USER_LINK_URL_MAX_LENGTH, `Max ${Config.USER_LINK_URL_MAX_LENGTH} characters`);
 
-export function DialogAddLink({ onSave }: { onSave: (label: string, url: string) => void }) {
+interface DialogAddLinkProps {
+  onSave: (label: string, url: string) => void;
+  disabled?: boolean;
+}
+
+export function DialogAddLink({ onSave, disabled = false }: DialogAddLinkProps) {
   const [label, setLabel] = useState('');
   const [url, setUrl] = useState('');
   const [labelError, setLabelError] = useState<string | null>(null);
@@ -61,6 +71,10 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
     labelSchema.safeParse(label.trim()).success &&
     urlSchema.safeParse(url.trim()).success;
 
+  if (disabled) {
+    return null;
+  }
+
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
@@ -90,7 +104,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
                 validateLabel(value);
               }}
               size="lg"
-              maxLength={30}
+              maxLength={Config.USER_LINK_LABEL_MAX_LENGTH}
               status={labelError ? 'error' : 'default'}
               message={labelError ?? undefined}
               messageType={labelError ? 'error' : 'default'}
@@ -109,6 +123,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
                 validateUrl(value);
               }}
               size="lg"
+              maxLength={Config.USER_LINK_URL_MAX_LENGTH}
               icon={<Libs.Clipboard className="h-4 w-4" />}
               iconPosition="right"
               onClickIcon={async () => {

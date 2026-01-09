@@ -33,7 +33,7 @@ export function SearchUserSuggestion({ user, onClick }: SearchUserSuggestionProp
           overrideDefaults
           data-testid="user-pubky"
         >
-          @{formattedPubky}
+          {formattedPubky}
         </Atoms.Typography>
       </Atoms.Container>
     </Atoms.Container>

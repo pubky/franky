@@ -44,7 +44,7 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
           overrideDefaults
           data-testid="user-pubky"
         >
-          @{Libs.formatPublicKey({ key: user.id, length: 8 })}
+          {Libs.formatPublicKey({ key: user.id, length: 8 })}
         </Atoms.Typography>
       </Atoms.Container>
     </Atoms.Container>

@@ -31,7 +31,7 @@ export function PostHeaderUserInfo({
             className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
             overrideDefaults
           >
-            @{formattedPublicKey}
+            {formattedPublicKey}
           </Atoms.Typography>
           {characterLimit && (
             <Atoms.Typography
