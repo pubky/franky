@@ -78,7 +78,6 @@ describe('InstallNavigation', () => {
     const createButton = screen.getByRole('button', { name: /Create keys in browser/i });
     fireEvent.click(createButton);
 
-    expect(mockReset).toHaveBeenCalled();
     expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.PUBKY);
   });
 

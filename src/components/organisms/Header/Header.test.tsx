@@ -53,11 +53,11 @@ vi.mock('@/app', () => ({
   HOME_ROUTES: { HOME: '/home' },
   ROOT_ROUTES: '/',
   ONBOARDING_ROUTES: {
+    HUMAN: '/onboarding/human',
     INSTALL: '/onboarding/install',
     SCAN: '/onboarding/scan',
     PUBKY: '/onboarding/pubky',
     BACKUP: '/onboarding/backup',
-    HOMESERVER: '/onboarding/homeserver',
     PROFILE: '/onboarding/profile',
   },
 }));
@@ -192,7 +192,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '1');
+    expect(onboardingHeader).toHaveAttribute('data-step', '2');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -202,7 +202,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '2');
+    expect(onboardingHeader).toHaveAttribute('data-step', '3');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -212,7 +212,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '2');
+    expect(onboardingHeader).toHaveAttribute('data-step', '3');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -222,7 +222,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '3');
+    expect(onboardingHeader).toHaveAttribute('data-step', '4');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -242,7 +242,7 @@ describe('Header', () => {
 
     expect(screen.getByTestId('onboarding-header')).toBeInTheDocument();
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '1');
+    expect(onboardingHeader).toHaveAttribute('data-step', '2');
 
     // Change pathname
     mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
@@ -386,13 +386,13 @@ describe('Header', () => {
   });
 
   describe('Path Configuration', () => {
-    it('displays correct step for homeserver path', () => {
-      mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.HOMESERVER);
+    it('displays correct step for human path', () => {
+      mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.HUMAN);
 
       render(<Header />);
 
       const onboardingHeader = screen.getByTestId('onboarding-header');
-      expect(onboardingHeader).toHaveAttribute('data-step', '4');
+      expect(onboardingHeader).toHaveAttribute('data-step', '1');
       expect(screen.getByTestId('logo')).toBeInTheDocument();
     });
 
@@ -439,11 +439,11 @@ describe('Header', () => {
 
     it('renders HeaderTitle with correct title for each onboarding step', () => {
       const testCases = [
+        { path: App.ONBOARDING_ROUTES.HUMAN, expectedTitle: 'Verify Humanity' },
         { path: App.ONBOARDING_ROUTES.INSTALL, expectedTitle: 'Identity keys' },
         { path: App.ONBOARDING_ROUTES.SCAN, expectedTitle: 'Use Pubky Ring' },
         { path: App.ONBOARDING_ROUTES.PUBKY, expectedTitle: 'Your pubky' },
         { path: App.ONBOARDING_ROUTES.BACKUP, expectedTitle: 'Backup' },
-        { path: App.ONBOARDING_ROUTES.HOMESERVER, expectedTitle: 'Homeserver' },
         { path: App.ONBOARDING_ROUTES.PROFILE, expectedTitle: 'Profile' },
         { path: App.AUTH_ROUTES.LOGOUT, expectedTitle: 'Signed out' },
       ];
@@ -454,6 +454,7 @@ describe('Header', () => {
 
         const { rerender } = render(<Header />);
 
+        console.log('path:', path, 'expectedTitle:', expectedTitle, testCases);
         expect(screen.getByTestId('header-title')).toHaveTextContent(expectedTitle);
 
         rerender(<></>); // Clear for next iteration
@@ -536,14 +537,14 @@ describe('Header', () => {
       const { rerender } = render(<Header />);
 
       let onboardingHeader = screen.getByTestId('onboarding-header');
-      expect(onboardingHeader).toHaveAttribute('data-step', '1');
+      expect(onboardingHeader).toHaveAttribute('data-step', '2');
 
       // Change pathname
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.BACKUP);
       rerender(<Header />);
 
       onboardingHeader = screen.getByTestId('onboarding-header');
-      expect(onboardingHeader).toHaveAttribute('data-step', '3');
+      expect(onboardingHeader).toHaveAttribute('data-step', '4');
     });
 
     it('updates HeaderTitle visibility when authentication state changes', () => {

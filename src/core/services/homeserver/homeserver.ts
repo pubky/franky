@@ -179,6 +179,27 @@ export class HomeserverService {
   }
 
   /**
+   * Generates an authentication signup URL for the homeserver.
+   *
+   * Temporary hack to create a signup deeplink from the signin url still using the old pubky sdk.
+   * The new sdk will handle the creation of the signup deeplink out of the box.
+   * But until then, we need to use this hack.
+   * @param inviteCode InviteCode to the homeserver
+   * @param caps - The capabilities to use
+   * @returns The authentication URL and approval promise
+   */
+  static async generateSignupAuthUrl(inviteCode: string, caps?: Capabilities): Promise<Core.TGenerateAuthUrlResult> {
+    const res = await this.generateAuthUrl(caps);
+    const url = URL.parse(res.authorizationUrl)!;
+    url.host = 'signup';
+    url.pathname = '';
+    url.searchParams.set('hs', Libs.Env.NEXT_PUBLIC_HOMESERVER);
+    url.searchParams.set('st', inviteCode);
+    res.authorizationUrl = url.toString();
+    return res;
+  }
+
+  /**
    * Logs out a user from the homeserver
    * @param session - The authenticated Session to sign out
    * @returns Void
