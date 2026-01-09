@@ -42,7 +42,7 @@ export const SignInContent = () => {
 
     await copyAuthUrlToClipboard();
 
-    const deeplink = Libs.generatePubkyRingDeeplink(url, { encode: false });
+    const deeplink = url;
 
     try {
       const openedWindow = window.open(deeplink, '_blank');

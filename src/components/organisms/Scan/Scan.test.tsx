@@ -225,7 +225,7 @@ describe('ScanContent', () => {
     });
 
     expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
-    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
+    expect(window.open).toHaveBeenCalledWith('mock-auth-url', '_blank');
   });
 });
 

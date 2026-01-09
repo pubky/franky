@@ -265,7 +265,7 @@ describe('SignInContent', () => {
     });
 
     expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
-    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
+    expect(window.open).toHaveBeenCalledWith('mock-auth-url', '_blank');
   });
 
   // Note: Retry logic and error handling for auth URL generation are now tested
