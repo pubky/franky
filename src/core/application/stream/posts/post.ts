@@ -162,6 +162,20 @@ export class PostStreamApplication {
   // ============================================================================
 
   /**
+   * Gets the indexed_at timestamp from a post for pagination cursor advancement.
+   * Returns undefined if the post details cannot be found.
+   */
+  private static async getPostTimestamp(postId: string): Promise<number | undefined> {
+    try {
+      const postDetails = await Core.LocalPostService.readDetails({ postId });
+      return postDetails?.indexed_at;
+    } catch (error) {
+      Libs.Logger.warn('Failed to get post timestamp', { postId, error });
+      return undefined;
+    }
+  }
+
+  /**
    * Internal method that performs the actual fetch without mute filtering.
    * This is the original getOrFetchStreamSlice logic, now used as a building block.
    */
@@ -183,15 +197,8 @@ export class PostStreamApplication {
 
         // Full cache hit, return with proper timestamp for pagination
         if (cachedStreamChunk.length === limit) {
-          // Get timestamp from last cached post for pagination (same as partialCacheHit)
           const lastCachedPostId = cachedStreamChunk[cachedStreamChunk.length - 1];
-          let timestamp: number | undefined;
-          try {
-            const lastPostDetails = await Core.LocalPostService.readDetails({ postId: lastCachedPostId });
-            timestamp = lastPostDetails?.indexed_at;
-          } catch (error) {
-            Libs.Logger.warn('Failed to get timestamp from last cached post', { lastCachedPostId, error });
-          }
+          const timestamp = await this.getPostTimestamp(lastCachedPostId);
           return { nextPageIds: cachedStreamChunk, cacheMissPostIds: [], timestamp };
         }
 
@@ -308,16 +315,8 @@ export class PostStreamApplication {
     const lastCachedPostId = cachedStreamChunk[cachedStreamChunk.length - 1];
     const remainingLimit = limit - cachedStreamChunk.length;
 
-    // Get timestamp from last cached post for pagination
-    let nextStreamTail = streamTail;
-    try {
-      const lastPostDetails = await Core.LocalPostService.readDetails({ postId: lastCachedPostId });
-      if (lastPostDetails) {
-        nextStreamTail = lastPostDetails.indexed_at;
-      }
-    } catch (error) {
-      Libs.Logger.warn('Failed to get timestamp from last cached post', { lastCachedPostId, error });
-    }
+    // Get timestamp from last cached post for pagination cursor
+    const nextStreamTail = (await this.getPostTimestamp(lastCachedPostId)) ?? streamTail;
 
     // Fetch remaining posts from Nexus
     const { nextPageIds, cacheMissPostIds, timestamp } = await this.fetchStreamFromNexus({
