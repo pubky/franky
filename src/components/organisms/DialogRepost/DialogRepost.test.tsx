@@ -137,6 +137,7 @@ describe('DialogRepost', () => {
 
     expect(Organisms.PostInput).toHaveBeenCalledWith(
       {
+        dataCy: 'repost-post-input',
         variant: POST_INPUT_VARIANT.REPOST,
         originalPostId: 'test-post-123',
         onSuccess: expect.any(Function),
