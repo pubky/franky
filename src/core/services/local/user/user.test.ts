@@ -8,6 +8,7 @@ describe('LocalUserService', () => {
     await Core.UserDetailsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
     await Core.UserCountsModel.table.clear();
+    await Core.UserTtlModel.table.clear();
   });
 
   describe('readDetails', () => {
@@ -181,6 +182,82 @@ describe('LocalUserService', () => {
 
       const result = await Core.UserCountsModel.findById(userId);
       expect(result).toBeNull();
+    });
+  });
+
+  describe('upsertTtlWithDelay', () => {
+    const userId = 'test-user-id' as Core.Pubky;
+
+    it('should create TTL record with calculated timestamp for 1 minute delay', async () => {
+      const retryDelayMs = 60_000; // 1 minute
+      const beforeTimestamp = Date.now();
+
+      await LocalUserService.upsertTtlWithDelay(userId, retryDelayMs);
+
+      const afterTimestamp = Date.now();
+      const result = await Core.UserTtlModel.findById(userId);
+
+      expect(result).not.toBeNull();
+      expect(result!.id).toBe(userId);
+
+      // Verify timestamp is calculated correctly: now - (userTtlMs - retryDelayMs)
+      const userTtlMs = 600_000; // Default 10 minutes
+      const expectedMin = beforeTimestamp - (userTtlMs - retryDelayMs);
+      const expectedMax = afterTimestamp - (userTtlMs - retryDelayMs);
+
+      expect(result!.lastUpdatedAt).toBeGreaterThanOrEqual(expectedMin);
+      expect(result!.lastUpdatedAt).toBeLessThanOrEqual(expectedMax);
+    });
+
+    it('should update existing TTL record with new delay', async () => {
+      // Create initial TTL record with 2 minute delay
+      await LocalUserService.upsertTtlWithDelay(userId, 120_000);
+
+      const beforeTimestamp = Date.now();
+
+      // Update with 1 minute delay
+      await LocalUserService.upsertTtlWithDelay(userId, 60_000);
+
+      const afterTimestamp = Date.now();
+      const result = await Core.UserTtlModel.findById(userId);
+
+      expect(result).not.toBeNull();
+
+      // Verify new timestamp is for 1 minute delay
+      const userTtlMs = 600_000;
+      const expectedMin = beforeTimestamp - (userTtlMs - 60_000);
+      const expectedMax = afterTimestamp - (userTtlMs - 60_000);
+
+      expect(result!.lastUpdatedAt).toBeGreaterThanOrEqual(expectedMin);
+      expect(result!.lastUpdatedAt).toBeLessThanOrEqual(expectedMax);
+    });
+
+    it('should handle multiple users with different delay values', async () => {
+      const userId1 = 'user-1' as Core.Pubky;
+      const userId2 = 'user-2' as Core.Pubky;
+
+      const beforeTimestamp = Date.now();
+
+      await LocalUserService.upsertTtlWithDelay(userId1, 60_000); // 1 min delay
+      await LocalUserService.upsertTtlWithDelay(userId2, 120_000); // 2 min delay
+
+      const afterTimestamp = Date.now();
+      const result1 = await Core.UserTtlModel.findById(userId1);
+      const result2 = await Core.UserTtlModel.findById(userId2);
+
+      const userTtlMs = 600_000;
+
+      // User 1: 1 minute delay
+      const expected1Min = beforeTimestamp - (userTtlMs - 60_000);
+      const expected1Max = afterTimestamp - (userTtlMs - 60_000);
+      expect(result1!.lastUpdatedAt).toBeGreaterThanOrEqual(expected1Min);
+      expect(result1!.lastUpdatedAt).toBeLessThanOrEqual(expected1Max);
+
+      // User 2: 2 minute delay
+      const expected2Min = beforeTimestamp - (userTtlMs - 120_000);
+      const expected2Max = afterTimestamp - (userTtlMs - 120_000);
+      expect(result2!.lastUpdatedAt).toBeGreaterThanOrEqual(expected2Min);
+      expect(result2!.lastUpdatedAt).toBeLessThanOrEqual(expected2Max);
     });
   });
 });
