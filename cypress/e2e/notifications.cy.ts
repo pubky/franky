@@ -278,7 +278,40 @@ describe('notifications', () => {
     // * profile 2 checks for absence of notifications
   });
 
-  it('can be notified for a post being deleted that you reposted');
+  it.only('can be notified for a post being deleted that you reposted', () => {
+    // * profile 1 creates a post (1) that will be reposted and then deleted
+    const postContent = `The one who reposts this post will be notified when it is deleted! ${Date.now()}`;
+    createQuickPost(postContent);
+
+    // * profile 2 reposts profile 1's post
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    cy.findFirstPostInFeed().innerTextContains(postContent);
+    repostPost({ repostContent: 'I reposted your post!', filterText: postContent });
+
+    // * profile 1 deletes own post (1)
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    // After reposting, the original post will be at index 1 (repost is at index 0)
+    deletePost({ postIdx: 1, filterText: postContent });
+
+    // * profile 2 checks for notification for post being deleted
+    cy.signOut(HasBackedUp.Yes);
+    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
+    verifyNotificationCounter(1);
+    goToProfilePageFromHeader();
+    verifyNotificationCounter(1);
+    checkLatestNotification([profile1.username, 'deleted a post']);
+    causeLastReadToBeUpdated();
+    verifyNotificationCounter(0);
+
+    // TODO: add checks for disabled notifications
+    // * profile 2 disables notifications for post being deleted that you reposted
+    // * profile 1 creates a post (2) that will be reposted and then deleted
+    // * profile 2 reposts profile 1's post (2)
+    // * profile 1 deletes own post (2)
+    // * profile 2 checks for absence of notifications
+  });
 
   it('can be notified for a post being edited that you replied to');
 
