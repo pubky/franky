@@ -13,6 +13,11 @@ export enum CheckIndexed {
   Yes = 1,
 }
 
+export enum CheckForNewPosts {
+  No = 0,
+  Yes = 1,
+}
+
 // can use only one of RecoveryPhraseWithConfirmation or RecoveryPhraseWithoutConfirmation
 export enum BackupType {
   EncryptedFile = 'encryptedFile',

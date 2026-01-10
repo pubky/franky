@@ -125,6 +125,7 @@ export function TagInput({
         className="relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
       >
         <Atoms.Input
+          data-cy="add-tag-input"
           ref={inputRef}
           type="text"
           value={inputValue}

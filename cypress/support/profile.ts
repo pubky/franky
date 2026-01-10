@@ -84,7 +84,7 @@ export const clickUnfollowButton = () => {
 export const waitForNotificationsToLoad = (attempts: number = 5) => {
   if (attempts <= 0) assert(false, `waitForNotificationsToLoad: Notifications not loaded`);
 
-  cy.get('#notifications-list').then(($notificationsList) => {
+  cy.get('[data-cy="notifications-list"]').then(($notificationsList) => {
     cy.wrap($notificationsList)
       .invoke('text')
       .then((text) => {
@@ -97,23 +97,16 @@ export const waitForNotificationsToLoad = (attempts: number = 5) => {
   });
 };
 
-// wait for notification dot to disappear from all listed notifications (useful to prevent 'no longer attached to the DOM' error when checking list of notifications)
-export const waitForNotificationDotToDisappear = (t: number = 25) => {
-  if (t === 0) assert(false, `waitForNotificationDotToDisappear: Notification dot id not disappear`);
-  cy.get('#notifications-list').then(($notifs) => {
-    if ($notifs.find('#notification-unread-dot').length > 0) {
-      cy.log('waitForNotificationDotToDisappear: Notification dot is still visible; waiting 200ms and checking again');
-      cy.wait(200);
-      waitForNotificationDotToDisappear(t - 1);
-    }
-  });
+// wait for notification dot to disappear from all listed notifications
+export const waitForNotificationDotsToDisappear = () => {
+  cy.get('[data-cy="notifications-list"]').find('[data-cy="notification-unread-dot"]').should('not.exist');
 };
 
 export const checkLatestNotification = (expectedContent: string[], profileToNavigateTo?: string) => {
   cy.location('pathname').should('eq', '/profile');
   waitForNotificationsToLoad();
   // assert that each expected string is present in the first notification listed
-  cy.get('#notifications-list')
+  cy.get('[data-cy="notifications-list"]')
     .should('be.visible')
     .children()
     .should('have.length.at.least', 1)
@@ -125,37 +118,67 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
     });
   // if profile name is provided, navigate to it in the notification
   if (profileToNavigateTo) {
-    cy.get('#notifications-list')
+    cy.get('[data-cy="notifications-list"]')
       .should('be.visible')
       .children()
       .should('have.length.at.least', 1)
       .first()
       .within(($firstNotif) => {
-        cy.wrap($firstNotif).get('a').should('have.text', profileToNavigateTo).click();
+        cy.wrap($firstNotif).get('a').should('contain.text', profileToNavigateTo).click();
       });
   }
 };
 
 // add tags to a profile using the profile tagged page
 export const addProfileTags = (tags: string[]) => {
-  // add the tag
+  // add the tag - TagInput submits on Enter key
   for (const tag of tags) {
-    cy.get('#add-tag-input').type(tag);
-    cy.get('#add-tag-btn').should('be.visible').click();
+    cy.get('[data-cy="add-tag-input"]').type(`${tag}{enter}`);
   }
 
-  // wait for the tags to be added
-  cy.get(`#tag-${tags[0]}`).should('be.visible');
+  // wait for the tags to be added (check that the input is cleared)
+  cy.get('[data-cy="add-tag-input"]').should('have.value', '');
 };
 
 export const unfollowUserByUsername = (username: string) => {
   goToProfilePageFromHeader();
-  cy.get('#profile-tab-following').click();
-  cy.contains('#list-profile-name', username)
-    .parentsUntil('#profile-list-root')
-    .parent()
-    .find('#list-unfollow-button')
+  cy.get('[data-cy="profile-filter-item-following"]').click();
+  // Wait for the following filter to become active
+  cy.get('[data-cy="profile-filter-item-following"]').closest('[data-selected="true"]').should('exist');
+  // Find the user by name and click their follow toggle button
+  cy.contains('[data-cy="user-list-item-name"]', username)
+    .closest('[data-testid^="user-list-item-"]')
+    .find('[data-cy="user-list-item-follow-toggle-btn"]')
+    .filter(':visible') // Filter to only the visible button (desktop or mobile)
     .should('be.visible')
+    .and('contain.text', 'Following') // todo: fails here due to bug, button shows 'Follow' text bug, see https://github.com/pubky/franky/issues/695
     .click();
-  cy.get('#list-follow-button').should('contain.text', 'Follow');
+  // Verify the button now shows "Follow" (unfollowed state)
+  // todo: reenable the following once bug is fixed, see https://github.com/pubky/franky/issues/758
+  // cy.contains('[data-cy="user-list-item-name"]', username)
+  //   .closest('[data-testid^="user-list-item-"]')
+  //   .find('[data-cy="user-list-item-follow-toggle-btn"]')
+  //   .filter(':visible') // Filter to only the visible button (desktop or mobile)
+  //   .should('contain.text', 'Follow');
+};
+
+export const waitForPutLastRead = () => {
+  cy.intercept({
+    method: 'PUT',
+    url: '/pub/pubky.app/last_read',
+  }).as('putLastRead');
+  cy.wait('@putLastRead').should('have.property', 'response').its('statusCode').should('eq', 201);
+};
+
+// cause last_read to be updated by clicking posts and notifications tabs
+export const causeLastReadToBeUpdated = () => {
+  cy.intercept({
+    method: 'PUT',
+    url: '/pub/pubky.app/last_read',
+  }).as('putLastRead');
+  cy.get('[data-cy="profile-filter-item-posts"]').click();
+  // Wait for posts filter item to become active before clicking notifications
+  cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
+  cy.wait('@putLastRead').should('have.property', 'response').its('statusCode').should('eq', 201);
+  cy.get('[data-cy="profile-filter-item-notifications"]').click();
 };

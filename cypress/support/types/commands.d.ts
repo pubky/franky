@@ -1,4 +1,4 @@
-import { CheckIndexed, HasBackedUp, BackupType } from './enums';
+import { HasBackedUp, BackupType, CheckForNewPosts } from './enums';
 
 declare global {
   namespace Cypress {
@@ -30,12 +30,15 @@ declare global {
       findPostInBookmarks(postIdx: number, expectedCount?: number): Chainable<JQuery<HTMLElement>>;
       countPostsInBookmarks(expectedCount: number): Chainable<void>;
       findPostInSearchResults(filterText?: string, postIdx?: number): Chainable<JQuery<HTMLElement>>;
-      findFirstPostInFeed(checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
-      findFirstPostInFeedFiltered(filterText: string, checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
+      findFirstPostInFeed(checkForNewPosts?: CheckForNewPosts): Chainable<JQuery<HTMLElement>>;
+      findFirstPostInFeedFiltered(
+        filterText: string,
+        checkForNewPosts?: CheckForNewPosts,
+      ): Chainable<JQuery<HTMLElement>>;
       findPostInFeed(
         postIdx?: number,
         filterText?: string,
-        checkIndexed?: CheckIndexed,
+        checkForNewPosts?: CheckForNewPosts,
       ): Chainable<JQuery<HTMLElement>>;
     }
   }

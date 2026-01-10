@@ -2,8 +2,7 @@
 
 import { backupDownloadFilePath, extendedTimeout } from './common';
 import { goToProfilePageFromHeader } from './header';
-//import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
-import { BackupType } from './types/enums';
+import { BackupType, CheckForNewPosts } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -356,65 +355,54 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-// const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIndexed.Yes) => {
-//   waitForFeedToLoad(filterText);
+const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = CheckForNewPosts.No) => {
+  var filteredPosts: JQuery<HTMLElement>;
+  // find the post in the timeline
+  return cy
+    .get('[data-cy="timeline-posts"]')
+    .children()
+    .should('have.length.gte', 1)
+    .then(($posts): Cypress.Chainable<JQuery<HTMLElement>> => {
+      // optionally filter posts by contained text
+      filteredPosts = filterText ? $posts.filter((_idx, element) => element.innerText.includes(filterText)) : $posts;
 
-//   // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
-//   // this is needed because the container element is rerendered when the post is indexed
-//   cy.wrap(checkIndexed).then(($checkIndexed) => {
-//     if ($checkIndexed === CheckIndexed.Yes) checkPostIsIndexed(postIdx);
-//   });
+      // Check if the requested post index exists
+      if (filteredPosts.length > postIdx) {
+        cy.log(`findPostInFeed: Post found at index ${postIdx}`);
+        return cy.wrap(filteredPosts.eq(postIdx));
+      }
+      cy.log(`findPostInFeed: Post not found at index ${postIdx}`);
 
-//   // find the post in the timeline
-//   cy.get('#posts-feed')
-//     .find('#timeline')
-//     .children()
-//     .should('have.length.gte', 1)
-//     .then(($posts) => {
-//       // optionally filter posts by contained text
-//       return filterText
-//         ? // cannot use :contains due to additional space inserted between each word in the post content
-//           $posts.filter((_idx, element) => element.innerText.includes(filterText))
-//         : $posts;
-//     })
-//     .eq(postIdx);
+      // Post not found - if checkForNewPosts is enabled, try clicking "See new posts" button
+      if (checkForNewPosts) {
+        cy.log(`Clicking 'See new posts' button to check for new posts`);
+        // Check if "See new posts" button exists and click it
+        cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
+        // Recursively call findPostInFeed without checking for new posts
+        return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
+      }
 
-// TODO: this implementation is more robust when "Show n new posts" appears unexpectedly, see https://github.com/pubky/pubky-app/issues/1033
-// cy.get('#posts-feed')
-//   .find('#timeline')
-//   .should('have.descendants', '*')
-//   .children()
-//   .then(($posts) => {
-//     // Filter out "Show new posts" element
-//     const actualPosts = $posts.filter((_, el) => {
-//       const text = Cypress.$(el).text();
-//       // Match "Show n new posts" pattern where n is a number
-//       return !/Show\s+\d+\s+new posts/i.test(text);
-//     });
-
-//     // optionally filter posts by contained text
-//     return filterText
-//       ? // cannot use :contains due to additional space inserted between each word in the post content
-//         actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
-//       : actualPosts;
-//   })
-//   .eq(postIdx);
-// };
+      // fail the test if the post cannot be found
+      assert(false, `findPostInFeed: Post not found at index ${postIdx} and checkForNewPosts is disabled`);
+      // return unfound post to satisfy return type
+      return cy.wrap(filteredPosts.eq(postIdx));
+    });
+};
 
 // useful to find your latest new post
-// Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = CheckIndexed.Yes) => {
-//   findPostInFeed(0, '', checkIndexed);
-// });
+Cypress.Commands.add('findFirstPostInFeed', (checkForNewPosts = CheckForNewPosts.No) => {
+  return findPostInFeed(0, undefined, checkForNewPosts);
+});
 
-// // useful for finding a specific post by text
-// Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = CheckIndexed.Yes) => {
-//   findPostInFeed(0, filterText, checkIndexed);
-// });
+// useful for finding a specific post by text
+Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkForNewPosts = CheckForNewPosts.No) => {
+  return findPostInFeed(0, filterText, checkForNewPosts);
+});
 
-// // useful for finding a specific post by index with optional filter text
-// Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
-//   findPostInFeed(postIdx, filterText, checkIndexed);
-// });
+// useful for finding a specific post by index with optional filter text
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkForNewPosts = CheckForNewPosts.No) => {
+  return findPostInFeed(postIdx, filterText, checkForNewPosts);
+});
 
 // useful for finding a specific post by text in search results
 Cypress.Commands.add('findPostInSearchResults', (filterText?: string, postIdx = 0) => {
