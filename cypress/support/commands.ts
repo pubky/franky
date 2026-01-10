@@ -355,11 +355,7 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-const findPostInFeed = (
-  postIdx = 0,
-  filterText?: string,
-  checkForNewPosts = CheckForNewPosts.No,
-) => {
+const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = CheckForNewPosts.No) => {
   var filteredPosts: JQuery<HTMLElement>;
   // find the post in the timeline
   return cy
@@ -368,9 +364,7 @@ const findPostInFeed = (
     .should('have.length.gte', 1)
     .then(($posts): Cypress.Chainable<JQuery<HTMLElement>> => {
       // optionally filter posts by contained text
-      filteredPosts = filterText
-        ? $posts.filter((_idx, element) => element.innerText.includes(filterText))
-        : $posts;
+      filteredPosts = filterText ? $posts.filter((_idx, element) => element.innerText.includes(filterText)) : $posts;
 
       // Check if the requested post index exists
       if (filteredPosts.length > postIdx) {
@@ -386,7 +380,7 @@ const findPostInFeed = (
         cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
         // Recursively call findPostInFeed without checking for new posts
         return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
-      };
+      }
 
       // fail the test if the post cannot be found
       assert(false, `findPostInFeed: Post not found at index ${postIdx} and checkForNewPosts is disabled`);

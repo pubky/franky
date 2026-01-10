@@ -1,6 +1,6 @@
 // import { CheckIndexed } from '../support/types/enums';
 
-import { CheckForNewPosts } from "./types/enums";
+import { CheckForNewPosts } from './types/enums';
 
 export const MAX_POST_LENGTH = 2000;
 

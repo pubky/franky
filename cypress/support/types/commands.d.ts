@@ -31,8 +31,15 @@ declare global {
       countPostsInBookmarks(expectedCount: number): Chainable<void>;
       findPostInSearchResults(filterText?: string, postIdx?: number): Chainable<JQuery<HTMLElement>>;
       findFirstPostInFeed(checkForNewPosts?: CheckForNewPosts): Chainable<JQuery<HTMLElement>>;
-      findFirstPostInFeedFiltered(filterText: string, checkForNewPosts?: CheckForNewPosts): Chainable<JQuery<HTMLElement>>;
-      findPostInFeed(postIdx?: number, filterText?: string, checkForNewPosts?: CheckForNewPosts): Chainable<JQuery<HTMLElement>>;
+      findFirstPostInFeedFiltered(
+        filterText: string,
+        checkForNewPosts?: CheckForNewPosts,
+      ): Chainable<JQuery<HTMLElement>>;
+      findPostInFeed(
+        postIdx?: number,
+        filterText?: string,
+        checkForNewPosts?: CheckForNewPosts,
+      ): Chainable<JQuery<HTMLElement>>;
     }
   }
 }
