@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Utils from '@/libs/utils';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
@@ -107,7 +107,7 @@ export function QuickReply({
         <Atoms.Container ref={cardRef} className="gap-4" overrideDefaults>
           {/* Collapsed header row (avatar + input) */}
           <Atoms.Container className="flex items-center gap-4" overrideDefaults>
-            <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
+            <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
 
             <Atoms.Textarea
               ref={textareaRef}

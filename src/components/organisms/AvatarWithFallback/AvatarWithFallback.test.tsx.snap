@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot when avatarUrl is not provided 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <div
+    class="text-2xl"
+    data-testid="avatar-fallback"
+  >
+    JS
+  </div>
+</div>
+`;
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot when avatarUrl is provided 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <img
+    alt="John Doe"
+    class=""
+    data-testid="avatar-image"
+    src="https://cdn.example.com/avatar/6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy"
+  />
+</div>
+`;
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot when image is blurred 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <img
+    alt="John Doe"
+    class="blur-xs"
+    data-testid="avatar-image"
+    src="https://cdn.example.com/avatar/6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy"
+  />
+  <button
+    class="absolute inset-0 flex cursor-pointer items-center justify-center"
+    data-testid="unblur-button"
+  >
+    <span
+      class="size-1/2 max-h-10 max-w-10"
+      data-testid="eye-off-icon"
+    />
+  </button>
+</div>
+`;
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot with custom alt text 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <img
+    alt="Custom alt"
+    class=""
+    data-testid="avatar-image"
+    src="https://cdn.example.com/avatar/6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy"
+  />
+</div>
+`;
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot with custom data-testid 1`] = `
+<div
+  class="size-16"
+  data-testid="custom-avatar"
+>
+  <img
+    alt="John Doe"
+    class=""
+    data-testid="avatar-image"
+    src="https://cdn.example.com/avatar/6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy"
+  />
+</div>
+`;

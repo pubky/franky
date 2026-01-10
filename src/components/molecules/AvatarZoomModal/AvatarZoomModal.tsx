@@ -2,11 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
-// Direct import to avoid circular dependency with @/molecules barrel export
-// Since AvatarZoomModal is exported from @/molecules, importing from the barrel
-// would create a circular reference that could cause undefined imports
-import { AvatarWithFallback } from '../AvatarWithFallback/AvatarWithFallback';
 
 export interface AvatarZoomModalProps {
   open: boolean;
@@ -79,7 +76,7 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
         onClick={(e) => e.stopPropagation()}
         data-testid="avatar-zoom-modal-content"
       >
-        <AvatarWithFallback
+        <Organisms.AvatarWithFallback
           avatarUrl={avatarUrl}
           name={name}
           className="size-(--avatar-zoom-size) transition-transform hover:scale-105"

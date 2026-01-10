@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/app/routes';
@@ -49,7 +49,7 @@ export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideA
       {!hideAvatars && (
         <Atoms.Container overrideDefaults={true} className="flex items-center pr-2 pl-0">
           {visibleTaggers.map((tagger, index) => (
-            <Molecules.AvatarWithFallback
+            <Organisms.AvatarWithFallback
               key={tagger.id}
               name={tagger.id}
               avatarUrl={tagger.avatarUrl}

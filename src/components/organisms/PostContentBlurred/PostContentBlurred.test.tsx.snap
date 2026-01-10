@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostContentBlurred - Snapshots > matches snapshot with custom className 1`] = `
+<button
+  class="group relative w-full cursor-pointer mt-4 rounded-lg"
+  data-override-defaults="true"
+  data-testid="blurred-content-button"
+>
+  <p
+    aria-hidden="true"
+    class="p-4 text-base leading-6 font-medium text-secondary-foreground blur-2xl select-none"
+    data-override-defaults="true"
+    data-testid="typography"
+  >
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  </p>
+  <div
+    class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground transition-colors group-hover:text-secondary-foreground"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <svg
+      class="size-6"
+      data-testid="eye-off-icon"
+    />
+    <p
+      class="text-sm"
+      data-override-defaults="true"
+      data-testid="typography"
+    >
+      Post content moderated.
+    </p>
+  </div>
+</button>
+`;
+
+exports[`PostContentBlurred - Snapshots > matches snapshot with default props 1`] = `
+<button
+  class="group relative w-full cursor-pointer"
+  data-override-defaults="true"
+  data-testid="blurred-content-button"
+>
+  <p
+    aria-hidden="true"
+    class="p-4 text-base leading-6 font-medium text-secondary-foreground blur-2xl select-none"
+    data-override-defaults="true"
+    data-testid="typography"
+  >
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  </p>
+  <div
+    class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground transition-colors group-hover:text-secondary-foreground"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <svg
+      class="size-6"
+      data-testid="eye-off-icon"
+    />
+    <p
+      class="text-sm"
+      data-override-defaults="true"
+      data-testid="typography"
+    >
+      Post content moderated.
+    </p>
+  </div>
+</button>
+`;

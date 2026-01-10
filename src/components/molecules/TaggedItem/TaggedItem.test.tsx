@@ -30,8 +30,8 @@ vi.mock('@/atoms', async (importOriginal) => {
 });
 
 // Mock AvatarWithFallback
-vi.mock('@/molecules', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/molecules')>();
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
   return {
     ...actual,
     AvatarWithFallback: ({ name }: { name: string }) => (

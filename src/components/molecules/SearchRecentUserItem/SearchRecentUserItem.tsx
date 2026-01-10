@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import type { SearchRecentUserItemProps } from './SearchRecentUserItem.types';
@@ -29,7 +29,7 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
       role="button"
       aria-label={`View profile for ${userDetails?.name || user.id}`}
     >
-      <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
+      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1 flex-col items-start">
         <Atoms.Typography
           className="block truncate text-sm font-bold text-foreground"

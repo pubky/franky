@@ -118,9 +118,9 @@ vi.mock('@/atoms', async (importOriginal) => {
   };
 });
 
-// Mock molecules
-vi.mock('@/molecules', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/molecules')>();
+// Mock organisms
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
   return {
     ...actual,
     AvatarWithFallback: ({ avatarUrl, name, size }: { avatarUrl?: string; name: string; size?: string }) => (
@@ -129,6 +129,14 @@ vi.mock('@/molecules', async (importOriginal) => {
         <div data-testid="avatar-fallback">{name.substring(0, 2).toUpperCase()}</div>
       </div>
     ),
+  };
+});
+
+// Mock molecules
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
     PostHeaderUserInfoPopoverWrapper: ({
       children,
       userId: _userId,

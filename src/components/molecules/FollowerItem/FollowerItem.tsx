@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
 import type { FollowerItemProps } from './FollowerItem.types';
@@ -27,7 +27,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
         className="flex flex-wrap items-center justify-between gap-6 lg:flex-nowrap"
       >
         <Atoms.Link href={`/profile/${follower.id}`} className="flex min-w-0 flex-1 items-center gap-2">
-          <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" />
+          <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" />
 
           <Atoms.Container overrideDefaults={true}>
             <Atoms.Typography data-cy="profile-follower-item-name" size="sm" className="truncate font-bold">

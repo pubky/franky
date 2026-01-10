@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import type { AvatarGroupProps } from './AvatarGroup.types';
 import { MAX_OVERFLOW_DISPLAY } from './AvatarGroup.constants';
@@ -49,7 +49,7 @@ export function AvatarGroup({
           className="relative rounded-full shadow-sm"
           style={{ marginLeft: index === 0 ? 0 : '-8px', zIndex: visibleItems.length - index }}
         >
-          <Molecules.AvatarWithFallback avatarUrl={item.avatarUrl} name={item.name || 'User'} size="md" />
+          <Organisms.AvatarWithFallback avatarUrl={item.avatarUrl} name={item.name || 'User'} size="md" />
         </Atoms.Container>
       ))}
       {overflowCount > 0 && (

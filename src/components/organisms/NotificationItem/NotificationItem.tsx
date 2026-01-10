@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
@@ -86,7 +87,7 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
     <>
       <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
         {/* Avatar - navigation handled by parent notificationLink wrapper */}
-        <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="lg:size-8" />
+        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="lg:size-8" />
 
         <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
           <Atoms.Typography

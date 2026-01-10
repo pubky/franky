@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as App from '@/app';
 import * as Core from '@/core';
@@ -20,7 +20,7 @@ export function MobileFooter({ className }: MobileFooterProps) {
 
   // Get avatar URL and fallback initial - same logic as desktop header
   const avatarUrl = currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined;
-  const avatarInitial = Libs.extractInitials({ name: userDetails?.name || '' }) || 'U';
+  const avatarName = userDetails?.name || 'U';
 
   const navItems = [
     { href: App.APP_ROUTES.HOME, icon: Libs.Home, label: 'Home' },
@@ -55,10 +55,13 @@ export function MobileFooter({ className }: MobileFooterProps) {
           aria-label="Profile"
           className="relative flex-shrink-0"
         >
-          <Atoms.Avatar className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}>
-            <Atoms.AvatarImage src={avatarUrl} alt="Profile" />
-            <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
-          </Atoms.Avatar>
+          <Organisms.AvatarWithFallback
+            avatarUrl={avatarUrl}
+            name={avatarName}
+            size="lg"
+            className={Libs.cn(isActive(App.APP_ROUTES.PROFILE) && 'ring-2 ring-primary')}
+            alt="Profile"
+          />
         </Link>
       </div>
     </div>

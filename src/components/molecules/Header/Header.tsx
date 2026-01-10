@@ -4,6 +4,7 @@ import * as React from 'react';
 import { usePathname } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as App from '@/app';
@@ -83,7 +84,7 @@ type NavigationItem = {
 type HeaderNavigationButtonsProps = {
   counter?: number;
   avatarImage?: string;
-  avatarInitial?: string;
+  avatarName?: string;
 };
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
@@ -106,11 +107,7 @@ const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isA
   </Atoms.Link>
 );
 
-export function HeaderNavigationButtons({
-  counter = 0,
-  avatarImage,
-  avatarInitial = 'U',
-}: HeaderNavigationButtonsProps) {
+export function HeaderNavigationButtons({ counter = 0, avatarImage, avatarName = 'U' }: HeaderNavigationButtonsProps) {
   const pathname = usePathname();
   const counterString = counter > 21 ? '21+' : counter.toString();
 
@@ -121,10 +118,13 @@ export function HeaderNavigationButtons({
       ))}
 
       <Atoms.Link data-cy="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
-        <Atoms.Avatar className="h-12 w-12 cursor-pointer">
-          <Atoms.AvatarImage src={avatarImage} alt="Profile" />
-          <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
-        </Atoms.Avatar>
+        <Organisms.AvatarWithFallback
+          avatarUrl={avatarImage}
+          name={avatarName}
+          size="lg"
+          className="cursor-pointer"
+          alt="Profile"
+        />
         {counter > 0 && (
           <Atoms.Badge className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand" variant="secondary">
             <Atoms.Typography className={Libs.cn('text-primary-foreground', counter > 21 && 'text-xs')} size="sm">

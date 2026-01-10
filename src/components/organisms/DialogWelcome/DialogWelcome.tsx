@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
@@ -31,7 +32,6 @@ export function DialogWelcome() {
   }
 
   const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10 });
-  const initials = Libs.extractInitials({ name: userDetails.name, maxLength: 2 });
   const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
 
   const handleCopyToClipboard = () => {
@@ -55,10 +55,12 @@ export function DialogWelcome() {
         <Atoms.Container className="max-h-[420px] overflow-y-auto">
           <Atoms.Container className="flex flex-col gap-6">
             <Atoms.Card className="flex flex-col items-center justify-center gap-6 self-stretch overflow-hidden rounded-lg bg-card p-6 sm:flex-row sm:items-start sm:justify-start">
-              <Atoms.Avatar className="h-24 w-24">
-                <Atoms.AvatarImage src={avatarImage} />
-                <Atoms.AvatarFallback className="text-4xl">{initials}</Atoms.AvatarFallback>
-              </Atoms.Avatar>
+              <Organisms.AvatarWithFallback
+                avatarUrl={avatarImage}
+                name={userDetails.name}
+                className="h-24 w-24"
+                fallbackClassName="text-4xl"
+              />
               <Atoms.Container className="flex flex-col items-center justify-center sm:items-start sm:justify-start">
                 <Atoms.Typography size="lg">{userDetails.name}</Atoms.Typography>
                 <Atoms.Typography size="sm" className="text-center font-medium text-muted-foreground sm:text-left">

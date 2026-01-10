@@ -110,6 +110,27 @@ vi.mock('@/components', () => ({
   ),
 }));
 
+// Mock the organisms
+vi.mock('@/organisms', () => ({
+  AvatarWithFallback: ({
+    name,
+    avatarUrl,
+    alt,
+    className,
+  }: {
+    name: string;
+    avatarUrl?: string;
+    alt?: string;
+    size?: string;
+    className?: string;
+  }) => (
+    <div data-testid="avatar-with-fallback" data-name={name} data-url={avatarUrl} data-alt={alt} className={className}>
+      {name}
+    </div>
+  ),
+  SearchInput: () => <div data-testid="search-input">Search Input</div>,
+}));
+
 // Mock the molecules
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
@@ -369,46 +390,46 @@ describe('Header Components', () => {
 
   describe('HeaderNavigationButtons', () => {
     it('renders with default props', () => {
-      render(<HeaderNavigationButtons avatarImage="/images/default-avatar.png" avatarInitial="U" />);
+      render(<HeaderNavigationButtons avatarImage="/images/default-avatar.png" avatarName="U" />);
 
       expect(screen.getByText('U')).toBeInTheDocument();
     });
 
-    it('renders with custom avatar image and initial', () => {
-      render(<HeaderNavigationButtons avatarImage="test.jpg" avatarInitial="TU" counter={5} />);
+    it('renders with custom avatar image and name', () => {
+      render(<HeaderNavigationButtons avatarImage="test.jpg" avatarName="TU" counter={5} />);
 
       expect(screen.getByText('TU')).toBeInTheDocument();
       expect(screen.getByText('5')).toBeInTheDocument();
     });
 
     it('renders counter badge when counter > 0', () => {
-      render(<HeaderNavigationButtons avatarInitial="TU" counter={5} />);
+      render(<HeaderNavigationButtons avatarName="TU" counter={5} />);
 
       const badge = screen.getByText('5');
       expect(badge).toBeInTheDocument();
     });
 
     it('renders 21+ when counter > 21', () => {
-      render(<HeaderNavigationButtons avatarInitial="TU" counter={25} />);
+      render(<HeaderNavigationButtons avatarName="TU" counter={25} />);
 
       const badge = screen.getByText('21+');
       expect(badge).toBeInTheDocument();
     });
 
     it('does not render badge when counter is 0', () => {
-      render(<HeaderNavigationButtons avatarInitial="TU" counter={0} />);
+      render(<HeaderNavigationButtons avatarName="TU" counter={0} />);
 
       expect(screen.queryByText('0')).not.toBeInTheDocument();
     });
 
-    it('uses fallback initial when none provided', () => {
+    it('uses fallback name when none provided', () => {
       render(<HeaderNavigationButtons />);
 
       expect(screen.getByText('U')).toBeInTheDocument();
     });
 
     it('renders navigation links', () => {
-      render(<HeaderNavigationButtons avatarInitial="TU" />);
+      render(<HeaderNavigationButtons avatarName="TU" />);
 
       const homeLink = document.querySelector('.lucide-house')?.closest('a');
       const hotLink = document.querySelector('.lucide-flame')?.closest('a');
@@ -424,7 +445,7 @@ describe('Header Components', () => {
     });
 
     it('applies correct button classes', () => {
-      render(<HeaderNavigationButtons avatarInitial="TU" />);
+      render(<HeaderNavigationButtons avatarName="TU" />);
 
       const buttons = screen.getAllByRole('button');
       buttons.forEach((button) => {
@@ -438,55 +459,63 @@ describe('Header Components', () => {
       vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
     });
 
-    it('displays correct initial for valid name', () => {
+    it('passes name to AvatarWithFallback for valid name', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: null });
       render(<HeaderSignIn />);
 
-      expect(screen.getByText('TU')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      expect(avatar).toHaveAttribute('data-name', 'Test User');
     });
 
-    it('displays fallback initial for undefined name', () => {
+    it('uses default fallback name when name is undefined', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: undefined, image: null });
       render(<HeaderSignIn />);
 
-      expect(screen.getByText('U')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      // When name is undefined, HeaderNavigationButtons uses its default value 'U'
+      expect(avatar).toHaveAttribute('data-name', 'U');
     });
 
-    it('displays fallback initial for empty name', () => {
+    it('passes empty name to AvatarWithFallback for empty name', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: '', image: null });
       render(<HeaderSignIn />);
 
-      expect(screen.getByText('U')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      expect(avatar).toHaveAttribute('data-name', '');
     });
 
-    it('displays fallback initial for whitespace-only name', () => {
+    it('passes whitespace-only name to AvatarWithFallback', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: '   ', image: null });
       render(<HeaderSignIn />);
 
-      expect(screen.getByText('U')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      expect(avatar).toHaveAttribute('data-name', '   ');
     });
 
-    it('trims name and gets correct initial', () => {
+    it('passes name with whitespace to AvatarWithFallback', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: '  Sarah Jones  ', image: null });
       render(<HeaderSignIn />);
 
-      expect(screen.getByText('SJ')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      expect(avatar).toHaveAttribute('data-name', '  Sarah Jones  ');
     });
 
-    it('uses default avatar image when none provided', () => {
+    it('renders AvatarWithFallback when no image provided', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: null });
       render(<HeaderSignIn />);
 
-      // The avatar fallback should be rendered since image is null
-      expect(screen.getByText('TU')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      expect(avatar).toBeInTheDocument();
+      expect(avatar).toHaveAttribute('data-name', 'Test User');
     });
 
-    it('uses provided avatar image', () => {
+    it('renders AvatarWithFallback with name when image is provided', () => {
       vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'custom-avatar.jpg' });
       render(<HeaderSignIn />);
 
-      // The avatar fallback should still be rendered (since we're using mocked AvatarImage)
-      expect(screen.getByText('TU')).toBeInTheDocument();
+      const avatar = screen.getByTestId('avatar-with-fallback');
+      expect(avatar).toBeInTheDocument();
+      expect(avatar).toHaveAttribute('data-name', 'Test User');
     });
   });
 });
@@ -549,12 +578,12 @@ describe('Header Components - Snapshots', () => {
   });
 
   it('matches snapshot for HeaderNavigationButtons', () => {
-    const { container } = render(<HeaderNavigationButtons avatarInitial="TU" />);
+    const { container } = render(<HeaderNavigationButtons avatarName="TU" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for HeaderNavigationButtons with counter', () => {
-    const { container } = render(<HeaderNavigationButtons avatarInitial="TU" counter={5} />);
+    const { container } = render(<HeaderNavigationButtons avatarName="TU" counter={5} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

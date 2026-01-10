@@ -11,7 +11,7 @@ exports[`HeaderSignIn - Snapshots > matches snapshot for default HeaderSignIn 1`
   </div>
   <div
     data-avatar-image="https://cdn.example.com/avatar/test-pubky-123"
-    data-avatar-initial="T"
+    data-avatar-name="Test User"
     data-counter="5"
     data-testid="header-navigation-buttons"
   >
@@ -31,7 +31,7 @@ exports[`HeaderSignIn - Snapshots > matches snapshot with custom className 1`] =
   </div>
   <div
     data-avatar-image="https://cdn.example.com/avatar/test-pubky-123"
-    data-avatar-initial="T"
+    data-avatar-name="Test User"
     data-counter="5"
     data-testid="header-navigation-buttons"
   >

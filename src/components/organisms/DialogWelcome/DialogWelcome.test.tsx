@@ -53,13 +53,6 @@ vi.mock('@/hooks', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   formatPublicKey: vi.fn(({ key, length }) => `${key.slice(0, 4)}...${key.slice(-length + 4)}`),
-  extractInitials: vi.fn(({ name }) =>
-    name
-      .split(' ')
-      .map((n: string) => n[0])
-      .join('')
-      .toUpperCase(),
-  ),
   Key: ({ className }: { className?: string }) => <svg data-testid="key-icon" className={className} />,
   ArrowRight: ({ className }: { className?: string }) => <svg data-testid="arrow-right-icon" className={className} />,
 }));
@@ -159,16 +152,28 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="avatar" className={className}>
-      {children}
-    </div>
-  ),
-  AvatarImage: ({ src }: { src?: string }) => <img data-testid="avatar-image" src={src} alt="avatar" />,
-  AvatarFallback: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="avatar-fallback" className={className}>
-      {children}
-    </div>
+}));
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  AvatarWithFallback: ({
+    avatarUrl,
+    name,
+    className,
+    fallbackClassName,
+  }: {
+    avatarUrl?: string;
+    name?: string;
+    className?: string;
+    fallbackClassName?: string;
+  }) => (
+    <div
+      data-testid="avatar-with-fallback"
+      data-avatar-url={avatarUrl}
+      data-name={name}
+      className={className}
+      data-fallback-class={fallbackClassName}
+    />
   ),
 }));
 

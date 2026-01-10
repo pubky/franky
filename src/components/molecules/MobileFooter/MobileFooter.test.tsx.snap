@@ -37,19 +37,20 @@ exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
   href="/profile"
 >
   <div
-    class="h-12 w-12"
-    data-testid="avatar"
+    class=""
+    data-size="lg"
+    data-testid="avatar-with-fallback"
   >
     <img
       alt="Profile"
       data-testid="avatar-image"
       src="https://example.com/avatar/pk:test-user-pubky"
     />
-    <div
-      data-testid="avatar-fallback"
+    <span
+      data-testid="avatar-name"
     >
-      TU
-    </div>
+      Test User
+    </span>
   </div>
 </a>
 `;
@@ -196,19 +197,20 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
       href="/profile"
     >
       <div
-        class="h-12 w-12"
-        data-testid="avatar"
+        class=""
+        data-size="lg"
+        data-testid="avatar-with-fallback"
       >
         <img
           alt="Profile"
           data-testid="avatar-image"
           src="https://example.com/avatar/pk:test-user-pubky"
         />
-        <div
-          data-testid="avatar-fallback"
+        <span
+          data-testid="avatar-name"
         >
-          TU
-        </div>
+          Test User
+        </span>
       </div>
     </a>
   </div>
@@ -357,19 +359,20 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
       href="/profile"
     >
       <div
-        class="h-12 w-12"
-        data-testid="avatar"
+        class=""
+        data-size="lg"
+        data-testid="avatar-with-fallback"
       >
         <img
           alt="Profile"
           data-testid="avatar-image"
           src="https://example.com/avatar/pk:test-user-pubky"
         />
-        <div
-          data-testid="avatar-fallback"
+        <span
+          data-testid="avatar-name"
         >
-          TU
-        </div>
+          Test User
+        </span>
       </div>
     </a>
   </div>
@@ -518,19 +521,20 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
       href="/profile"
     >
       <div
-        class="h-12 w-12"
-        data-testid="avatar"
+        class=""
+        data-size="lg"
+        data-testid="avatar-with-fallback"
       >
         <img
           alt="Profile"
           data-testid="avatar-image"
           src="https://example.com/avatar/pk:test-user-pubky"
         />
-        <div
-          data-testid="avatar-fallback"
+        <span
+          data-testid="avatar-name"
         >
-          TU
-        </div>
+          Test User
+        </span>
       </div>
     </a>
   </div>

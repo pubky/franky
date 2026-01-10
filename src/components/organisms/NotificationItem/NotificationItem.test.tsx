@@ -70,13 +70,17 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-// Mock molecules
-vi.mock('@/molecules', () => ({
+// Mock organisms
+vi.mock('@/organisms', () => ({
   AvatarWithFallback: ({ name, avatarUrl, className }: { name: string; avatarUrl?: string; className?: string }) => (
     <div data-testid="avatar-with-fallback" data-name={name} data-avatar={avatarUrl} className={className}>
       {avatarUrl ? <img src={avatarUrl} alt={name} /> : <span>{name[0]}</span>}
     </div>
   ),
+}));
+
+// Mock molecules
+vi.mock('@/molecules', () => ({
   PostTag: ({ label }: { label: string }) => <span data-testid="post-tag">{label}</span>,
   NotificationIcon: ({ type, showBadge }: { type: NotificationType; showBadge?: boolean }) => (
     <div data-testid="notification-icon" data-type={type} data-badge={showBadge ? 'true' : 'false'}>

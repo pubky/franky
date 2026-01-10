@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import * as Config from '@/config';
 
 describe('LocalStreamUsersService', () => {
   const targetUserId = 'user-target' as Core.Pubky;
@@ -93,6 +94,7 @@ describe('LocalStreamUsersService', () => {
     await Core.UserCountsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
     await Core.UserTagsModel.table.clear();
+    await Core.ModerationModel.table.clear();
     await Core.UserTtlModel.table.clear();
   });
 
@@ -364,6 +366,91 @@ describe('LocalStreamUsersService', () => {
       expect(counts!.replies).toBe(50);
       expect(counts!.followers).toBe(300);
       expect(counts!.following).toBe(200);
+    });
+
+    describe('moderation detection', () => {
+      it('should create moderation record for user with moderation tag', async () => {
+        const userId = 'user-moderated' as Core.Pubky;
+        const moderatedTags: Core.NexusTag[] = [
+          {
+            label: Config.MODERATED_TAGS[0],
+            taggers: [Config.MODERATION_ID],
+            taggers_count: 1,
+            relationship: { tagged: true, tagged_by_viewer: false },
+          },
+        ];
+
+        const mockUser = createMockNexusUser(userId, { tags: moderatedTags });
+        await Core.LocalStreamUsersService.persistUsers([mockUser]);
+
+        const moderationRecord = await Core.ModerationModel.findById(userId);
+        expect(moderationRecord).toBeTruthy();
+        expect(moderationRecord!.type).toBe(Core.ModerationType.PROFILE);
+        expect(moderationRecord!.is_blurred).toBe(true);
+      });
+
+      it('should not create moderation record for user without moderation tag', async () => {
+        const userId = 'user-normal' as Core.Pubky;
+        const normalTags: Core.NexusTag[] = [
+          {
+            label: 'developer',
+            taggers: ['tagger-1'],
+            taggers_count: 1,
+            relationship: { tagged: true, tagged_by_viewer: false },
+          },
+        ];
+
+        const mockUser = createMockNexusUser(userId, { tags: normalTags });
+        await Core.LocalStreamUsersService.persistUsers([mockUser]);
+
+        const moderationRecord = await Core.ModerationModel.findById(userId);
+        expect(moderationRecord).toBeNull();
+      });
+
+      it('should not create moderation record when tag has wrong tagger', async () => {
+        const userId = 'user-wrong-tagger' as Core.Pubky;
+        const tagsWithWrongTagger: Core.NexusTag[] = [
+          {
+            label: Config.MODERATED_TAGS[0],
+            taggers: ['wrong-tagger-id'],
+            taggers_count: 1,
+            relationship: { tagged: true, tagged_by_viewer: false },
+          },
+        ];
+
+        const mockUser = createMockNexusUser(userId, { tags: tagsWithWrongTagger });
+        await Core.LocalStreamUsersService.persistUsers([mockUser]);
+
+        const moderationRecord = await Core.ModerationModel.findById(userId);
+        expect(moderationRecord).toBeNull();
+      });
+
+      it('should handle mixed moderated and non-moderated users', async () => {
+        const moderatedUserId = 'user-moderated' as Core.Pubky;
+        const normalUserId = 'user-normal' as Core.Pubky;
+
+        const moderatedUser = createMockNexusUser(moderatedUserId, {
+          tags: [
+            {
+              label: Config.MODERATED_TAGS[0],
+              taggers: [Config.MODERATION_ID],
+              taggers_count: 1,
+              relationship: { tagged: true, tagged_by_viewer: false },
+            },
+          ],
+        });
+
+        const normalUser = createMockNexusUser(normalUserId, { tags: [] });
+
+        await Core.LocalStreamUsersService.persistUsers([moderatedUser, normalUser]);
+
+        const moderatedRecord = await Core.ModerationModel.findById(moderatedUserId);
+        expect(moderatedRecord).toBeTruthy();
+        expect(moderatedRecord!.type).toBe(Core.ModerationType.PROFILE);
+
+        const normalRecord = await Core.ModerationModel.findById(normalUserId);
+        expect(normalRecord).toBeNull();
+      });
     });
   });
 });
