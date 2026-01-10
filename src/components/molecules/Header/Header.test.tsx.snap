@@ -476,6 +476,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </div>
     <div
       class="inline-flex items-center justify-center border px-2 py-0.5 text-xs font-medium whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
+      data-cy="header-notification-counter"
       data-slot="badge"
       data-variant="secondary"
     >
@@ -508,7 +509,44 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
   <div
     data-testid="search-input"
   >
-    Search Input
+    <div
+      class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
+      data-testid="search-input-bar"
+    >
+      <input
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-label="Search input"
+        class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full rounded-md border bg-transparent px-3 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+        data-cy="header-search-input"
+        data-testid="input"
+        placeholder="Search"
+        type="text"
+        value=""
+      />
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-search pointer-events-none size-4 shrink-0 text-muted-foreground"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m21 21-4.34-4.34"
+        />
+        <circle
+          cx="11"
+          cy="11"
+          r="8"
+        />
+      </svg>
+    </div>
   </div>
   <div
     class="mx-auto hidden w-auto flex-row items-center justify-start gap-3 lg:flex"
