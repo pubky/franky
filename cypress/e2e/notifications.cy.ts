@@ -46,7 +46,7 @@ describe('notifications', () => {
     });
   });
 
-  // todo: skip due to bug, see https://github.com/pubky/franky/issues/740
+  // todo: skip due to lost friend showing 'New Notification', see https://github.com/pubky/franky/issues/471
   it.skip('can be notified for new follower, friend, lost friend', () => {
     // * profile 1 follows profile 2
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
@@ -82,7 +82,6 @@ describe('notifications', () => {
     waitForNotificationDotsToDisappear();
 
     // * profile 1 unfollows profile 2
-    // todo: fails here due to bug, button shows 'Follow' text bug, see https://github.com/pubky/franky/issues/695
     unfollowUserByUsername(profile2.username);
     cy.signOut(HasBackedUp.Yes);
 
@@ -100,7 +99,7 @@ describe('notifications', () => {
 
     // * profile 1 checks absence of notifications
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
-    cy.assertElementDoesNotExist('[data-cy="header-notification-counter"]');
+    verifyNotificationCounter(0);
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables follow notifications
@@ -111,8 +110,7 @@ describe('notifications', () => {
     // * profile 2 checks for follow notification? and absence of friend notification
   });
 
-  // todo: skip due to bugs, see https://github.com/pubky/franky/issues/740
-  it.skip('can be notified for tagged post and profile', () => {
+  it('can be notified for tagged post and profile', () => {
     // * profile 1 creates a post
     createQuickPost(`I will be notified when this post is tagged! ${Date.now()}`);
 
@@ -157,7 +155,6 @@ describe('notifications', () => {
       .first()
       .within(() => {
         // Click the add tag button to show the input, then type and submit
-        // todo: fails here due to bug, see https://github.com/pubky/franky/issues/716
         cy.get('[data-cy="post-tag-add-button"]').click();
         cy.get('[data-cy="add-tag-input"]').type(`${postTag}{enter}`);
       });
@@ -209,7 +206,6 @@ describe('notifications', () => {
     verifyNotificationCounter(0);
 
     // cause last_read to be updated
-
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables notifications for being replied to
@@ -278,7 +274,7 @@ describe('notifications', () => {
     // * profile 2 checks for absence of notifications
   });
 
-  it.only('can be notified for a post being deleted that you reposted', () => {
+  it('can be notified for a post being deleted that you reposted', () => {
     // * profile 1 creates a post (1) that will be reposted and then deleted
     const postContent = `The one who reposts this post will be notified when it is deleted! ${Date.now()}`;
     createQuickPost(postContent);
@@ -313,8 +309,10 @@ describe('notifications', () => {
     // * profile 2 checks for absence of notifications
   });
 
+  // blocked by inability to edit, see https://github.com/pubky/franky/issues/751
   it('can be notified for a post being edited that you replied to');
 
+  // blocked by inability to edit, see https://github.com/pubky/franky/issues/751
   it('can be notified for a post being edited that you reposted');
 
   it('can display counter for multiple new notifications');
