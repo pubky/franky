@@ -140,6 +140,8 @@ const envSchema = z.object({
     .default('["nudity"]')
     .transform((val) => JSON.parse(val))
     .pipe(z.array(z.string().min(1)).min(1)),
+  NEXT_PUBLIC_EXCHANGE_RATE_API: z.url().default('https://api1.blocktank.to/api/fx/rates/btc'),
+  NEXT_PUBLIC_HOMEGATE_URL: z.url().default('http://localhost:5000/'),
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
@@ -217,6 +219,8 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
       NEXT_PUBLIC_MODERATION_ID: process.env.NEXT_PUBLIC_MODERATION_ID,
       NEXT_PUBLIC_MODERATED_TAGS: process.env.NEXT_PUBLIC_MODERATED_TAGS,
+      NEXT_PUBLIC_EXCHANGE_RATE_API: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API,
+      NEXT_PUBLIC_HOMEGATE_URL: process.env.NEXT_PUBLIC_HOMEGATE_URL,
       VITEST: process.env.VITEST,
       BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
       SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,

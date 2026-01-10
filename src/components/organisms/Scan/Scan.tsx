@@ -10,9 +10,11 @@ import * as Molecules from '@/molecules';
 import * as Config from '@/config';
 import * as App from '@/app';
 import * as Hooks from '@/hooks';
+import * as Core from '@/core';
 
 export const ScanContent = () => {
-  const { url, isLoading, fetchUrl } = Hooks.useAuthUrl();
+  const inviteCode = Core.useOnboardingStore((state) => state.inviteCode);
+  const { url, isLoading, fetchUrl } = Hooks.useAuthUrl({ type: 'signup', inviteCode });
 
   const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
@@ -37,13 +39,11 @@ export const ScanContent = () => {
 
     await copyAuthUrlToClipboard();
 
-    const deeplink = Libs.generatePubkyRingDeeplink(url, { encode: false });
-
     try {
-      const openedWindow = window.open(deeplink, '_blank');
+      const openedWindow = window.open(url, '_blank');
 
       if (!openedWindow) {
-        window.location.href = deeplink;
+        window.location.href = url;
         return;
       }
 
