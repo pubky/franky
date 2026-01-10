@@ -1,0 +1,84 @@
+import * as Core from '@/core';
+
+/**
+ * Controller for homegate operations.
+ * Entry point for homegate features, called from UI components.
+ */
+export class HomegateController {
+  private constructor() {}
+
+  /**
+   * Generates a signup authentication URL for external authentication flows. It will generate enough metadata to signup a key in the homeserver with pubky ring app.
+   * @param inviteCode - The invite code for signup
+   * @returns Promise resolving to the generated signup authentication URL
+   */
+  static async getSignupAuthUrl(inviteCode: string): Promise<Core.TGenerateAuthUrlResult> {
+    await Core.clearDatabase();
+    return await Core.HomegateApplication.generateSignupAuthUrl(inviteCode);
+  }
+
+  /**
+   * Get the Lightning Network verification price.
+   *
+   * @returns The price in satoshis
+   * @throws AppError if retrieval fails
+   */
+  static async getLnVerificationPrice(): Promise<Core.TGetLnVerificationPriceResult> {
+    return await Core.HomegateApplication.getLnVerificationPrice();
+  }
+
+  /**
+   * Create a new Lightning Network verification request.
+   *
+   * @returns The verification details including the BOLT11 invoice
+   * @throws AppError if creation fails
+   */
+  static async createLnVerification(): Promise<Core.THomegateCreateLnVerificationResult> {
+    return await Core.HomegateApplication.createLnVerification();
+  }
+
+  /**
+   * Await Lightning Network payment confirmation.
+   * Long-polling endpoint that waits for payment to be confirmed.
+   *
+   * @param paymentHash - The payment hash from createLnVerification
+   * @returns The verification result
+   * @throws AppError if awaiting fails
+   */
+  static async awaitLnVerification(paymentHash: string): Promise<Core.THomegateAwaitLnVerificationResult> {
+    return await Core.HomegateApplication.awaitLnVerification(paymentHash);
+  }
+
+  /**
+   * Verify an SMS code for a given phone number.
+   *
+   * @param phoneNumber - The phone number to verify
+   * @param code - The SMS code to verify
+   * @returns The verification result with signup code if valid
+   * @throws AppError if verification fails
+   */
+  static async verifySmsCode(phoneNumber: string, code: string): Promise<Core.THomegateVerifySmsCodeResult> {
+    return await Core.HomegateApplication.verifySmsCode(phoneNumber, code);
+  }
+
+  /**
+   * Send an SMS verification code to a phone number.
+   *
+   * @param phoneNumber - The phone number to send the code to
+   * @returns The result of the SMS send request
+   * @throws AppError if sending fails
+   */
+  static async sendSmsCode(phoneNumber: string): Promise<Core.THomegateSendSmsCodeResult> {
+    return await Core.HomegateApplication.sendSmsCode(phoneNumber);
+  }
+
+  /**
+   * Get the current BTC/USD and SAT/USD exchange rate.
+   *
+   * @returns The BTC rate with satUsd, btcUsd, and lastUpdatedAt
+   * @throws AppError if retrieval fails
+   */
+  static async getBtcRate(): Promise<Core.BtcRate> {
+    return await Core.HomegateApplication.getBtcRate();
+  }
+}

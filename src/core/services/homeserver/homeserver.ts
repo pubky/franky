@@ -179,6 +179,27 @@ export class HomeserverService {
   }
 
   /**
+   * Generates an authentication signup URL for the homeserver.
+   *
+   * Temporary hack to create a signup deeplink from the signin url still using the old pubky sdk.
+   * The new sdk will handle the creation of the signup deeplink out of the box.
+   * But until then, we need to use this hack.
+   * @param inviteCode InviteCode to the homeserver
+   * @param caps - The capabilities to use
+   * @returns The authentication URL and approval promise
+   */
+  static async generateSignupAuthUrl(inviteCode: string, caps?: Capabilities): Promise<Core.TGenerateAuthUrlResult> {
+    const res = await this.generateAuthUrl(caps);
+    const url = URL.parse(res.authorizationUrl)!;
+    url.host = 'signup';
+    url.pathname = '';
+    url.searchParams.set('hs', Libs.Env.NEXT_PUBLIC_HOMESERVER);
+    url.searchParams.set('st', inviteCode);
+    res.authorizationUrl = url.toString();
+    return res;
+  }
+
+  /**
    * Logs out a user from the homeserver
    * @param session - The authenticated Session to sign out
    * @returns Void
@@ -411,7 +432,11 @@ export class HomeserverService {
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
   static async generateSignupToken() {
-    if (process.env.NODE_ENV === 'production') {
+    // Allow in development or when Cypress is running (for E2E tests in production builds)
+    const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction && !isCypressRunning) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
         'generateSignupToken is only available in non-production environments.',
