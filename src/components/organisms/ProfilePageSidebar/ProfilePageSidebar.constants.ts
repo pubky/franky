@@ -1,1 +1,1 @@
-export const MAX_SIDEBAR_TAGS = 5;
+export const MAX_SIDEBAR_TAGS = 3;

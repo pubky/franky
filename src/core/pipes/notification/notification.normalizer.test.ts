@@ -129,9 +129,6 @@ describe('NotificationNormalizer', () => {
       newFriend: createNexusNotification(Core.NotificationType.NewFriend, {
         followed_by: TEST_PUBKY.USER_2,
       }),
-      lostFriend: createNexusNotification(Core.NotificationType.LostFriend, {
-        unfollowed_by: TEST_PUBKY.USER_2,
-      }),
       reply: createNexusNotification(Core.NotificationType.Reply, {
         replied_by: TEST_PUBKY.USER_2,
         reply_uri: 'pubky://author/pub/pubky.app/posts/reply123',
@@ -173,7 +170,6 @@ describe('NotificationNormalizer', () => {
       it.each([
         ['Follow', sampleNotifications.follow, Core.NotificationType.Follow],
         ['NewFriend', sampleNotifications.newFriend, Core.NotificationType.NewFriend],
-        ['LostFriend', sampleNotifications.lostFriend, Core.NotificationType.LostFriend],
         ['Reply', sampleNotifications.reply, Core.NotificationType.Reply],
         ['Repost', sampleNotifications.repost, Core.NotificationType.Repost],
         ['Mention', sampleNotifications.mention, Core.NotificationType.Mention],

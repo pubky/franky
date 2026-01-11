@@ -119,11 +119,11 @@ describe('StatusPickerContent', () => {
       expect(input.value).toBe('Working hard');
     });
 
-    it('respects maxLength of 12 characters', () => {
+    it('respects maxLength of 50 characters', () => {
       render(<StatusPickerContent onStatusSelect={mockOnStatusSelect} />);
 
       const input = screen.getByPlaceholderText('Add status') as HTMLInputElement;
-      expect(input).toHaveAttribute('maxLength', '12');
+      expect(input).toHaveAttribute('maxLength', '50');
     });
 
     it('shows emoji button when emoji is selected', async () => {

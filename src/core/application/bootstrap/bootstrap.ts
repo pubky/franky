@@ -8,9 +8,9 @@ export class BootstrapApplication {
   /**
    * Initialize application state from Nexus and notifications in parallel.
    *
-   * @param params - Bootstrap parameters
-   * @param params.pubky - The user's public key identifier
-   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
+   * @param params, Bootstrap parameters
+   * @param params.pubky, The user's public key identifier
+   * @param params.lastReadUrl, URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
@@ -33,6 +33,10 @@ export class BootstrapApplication {
         streamId: Core.UserStreamTypes.RECOMMENDED,
         stream: data.ids.recommended,
       }),
+      Core.LocalStreamUsersService.upsert({
+        streamId: Core.UserStreamTypes.MUTED,
+        stream: data.ids.muted,
+      }),
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.ids.hot_tags),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
@@ -43,9 +47,35 @@ export class BootstrapApplication {
       // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
       Core.FileApplication.fetchFiles(results[1].postAttachments),
       this.fetchNotifications(params),
+      // Initialize settings from homeserver (non-blocking, errors are logged but don't fail bootstrap)
+      this.initializeSettings(params.pubky),
     ]);
 
     return { notification };
+  }
+
+  /**
+   * Initializes user settings from homeserver.
+   * If remote settings are newer, updates the local store.
+   * If local settings are newer, syncs to homeserver.
+   * Errors are logged but don't fail bootstrap.
+   *
+   * @private
+   * @param pubky, The user's public key identifier
+   */
+  private static async initializeSettings(pubky: Core.Pubky): Promise<void> {
+    try {
+      const remoteSettings = await Core.SettingsApplication.initializeSettings(pubky);
+
+      // If remote settings were returned and are newer, update the local store
+      if (remoteSettings) {
+        Core.useSettingsStore.getState().loadFromHomeserver(remoteSettings);
+        Libs.Logger.info('Settings loaded from homeserver', { pubky });
+      }
+    } catch (error) {
+      // Log but don't throw, settings sync failure shouldn't block bootstrap
+      Libs.Logger.error('Failed to initialize settings during bootstrap', { error, pubky });
+    }
   }
 
   /**
@@ -53,9 +83,9 @@ export class BootstrapApplication {
    * and persists the notifications to the cache.
    *
    * @private
-   * @param params - Bootstrap parameters
-   * @param params.pubky - The user's public key identifier
-   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
+   * @param params, Bootstrap parameters
+   * @param params.pubky, The user's public key identifier
+   * @param params.lastReadUrl, URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification list and last read timestamp
    */
   private static async fetchNotifications({
@@ -70,7 +100,7 @@ export class BootstrapApplication {
       );
       userLastRead = timestamp;
     } catch (error) {
-      // Only handle 404 errors (resource not found) - rethrow everything else
+      // Only handle 404 errors (resource not found), rethrow everything else
       if (error instanceof Libs.AppError && error.statusCode === 404) {
         Libs.Logger.info('Last read file not found, creating new one', { pubky });
         const lastRead = Core.LastReadNormalizer.to(pubky);

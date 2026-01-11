@@ -180,7 +180,7 @@ describe('FeedController', () => {
     });
 
     it('should return undefined when not found', async () => {
-      vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(undefined);
+      vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(undefined as unknown as Core.FeedModelSchema);
 
       const result = await FeedController.get({ feedId: 999 });
 

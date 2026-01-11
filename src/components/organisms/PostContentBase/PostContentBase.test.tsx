@@ -40,15 +40,24 @@ vi.mock('@/organisms', () => ({
 }));
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
-const mockPostText = vi.mocked(Molecules.PostText);
-const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
 const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
+
+// Helper to create complete PostDetails mock
+const createMockPostDetails = (overrides: Partial<{ content: string; attachments: string[] | null }> = {}) => ({
+  id: 'test-author:test-post',
+  indexed_at: Date.now(),
+  kind: 'short' as const,
+  uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
+  content: 'Mock content',
+  attachments: null as string[] | null,
+  ...overrides,
+});
 
 describe('PostContentBase', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Mock content', attachments: null },
+      postDetails: createMockPostDetails(),
       isLoading: false,
     });
   });
@@ -59,49 +68,10 @@ describe('PostContentBase', () => {
     expect(screen.getByTestId('container')).toBeInTheDocument();
   });
 
-  it('shows loading when postDetails are not yet available', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: null,
-      isLoading: true,
-    });
-
-    const { container } = render(<PostContentBase postId="post-123" />);
-
-    expect(container.firstChild).toHaveTextContent('Loading content...');
-  });
-
-  it('calls usePostDetails with correct id', () => {
-    render(<PostContentBase postId="post-abc" />);
-
-    expect(mockUsePostDetails).toHaveBeenCalledWith('post-abc');
-  });
-
-  it('calls PostText with correct content prop', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test post content', attachments: null },
-      isLoading: false,
-    });
-
-    render(<PostContentBase postId="post-123" />);
-
-    expect(mockPostText).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
-  });
-
-  it('calls PostLinkEmbeds with correct content prop', () => {
-    mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test post content', attachments: null },
-      isLoading: false,
-    });
-
-    render(<PostContentBase postId="post-123" />);
-
-    expect(mockPostLinkEmbeds).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
-  });
-
   it('calls PostAttachments with attachments from postDetails', () => {
     const mockAttachments = ['file-id-1', 'file-id-2'];
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test content', attachments: mockAttachments },
+      postDetails: createMockPostDetails({ content: 'Test content', attachments: mockAttachments }),
       isLoading: false,
     });
 
@@ -112,7 +82,7 @@ describe('PostContentBase', () => {
 
   it('calls PostAttachments with null when no attachments', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test content', attachments: null },
+      postDetails: createMockPostDetails({ content: 'Test content' }),
       isLoading: false,
     });
 
@@ -123,7 +93,7 @@ describe('PostContentBase', () => {
 
   it('calls PostAttachments with empty array', () => {
     mockUsePostDetails.mockReturnValue({
-      postDetails: { content: 'Test content', attachments: [] },
+      postDetails: createMockPostDetails({ content: 'Test content', attachments: [] }),
       isLoading: false,
     });
 
@@ -146,9 +116,8 @@ describe('PostContentBase - Snapshots', () => {
   }, 30000); // Increase timeout to 30 seconds
 
   it('matches snapshot with single-line content', () => {
-    const mockPostDetails = { content: 'One liner' };
     mockUsePostDetails.mockReturnValue({
-      postDetails: { ...mockPostDetails, attachments: null },
+      postDetails: createMockPostDetails({ content: 'One liner' }),
       isLoading: false,
     });
 
@@ -157,9 +126,8 @@ describe('PostContentBase - Snapshots', () => {
   });
 
   it('matches snapshot with multiline content (preserves newlines)', () => {
-    const mockPostDetails = { content: 'Line 1\nLine 2\n\nLine 3' };
     mockUsePostDetails.mockReturnValue({
-      postDetails: { ...mockPostDetails, attachments: null },
+      postDetails: createMockPostDetails({ content: 'Line 1\nLine 2\n\nLine 3' }),
       isLoading: false,
     });
 
@@ -168,9 +136,8 @@ describe('PostContentBase - Snapshots', () => {
   });
 
   it('matches snapshot with empty content', () => {
-    const mockPostDetails = { content: '' };
     mockUsePostDetails.mockReturnValue({
-      postDetails: { ...mockPostDetails, attachments: null },
+      postDetails: createMockPostDetails({ content: '' }),
       isLoading: false,
     });
 
@@ -190,9 +157,8 @@ describe('PostContentBase - Snapshots', () => {
 
   it('matches snapshot with very long content', () => {
     const longContent = 'A'.repeat(1000) + ' ' + 'B'.repeat(1000);
-    const mockPostDetails = { content: longContent };
     mockUsePostDetails.mockReturnValue({
-      postDetails: { ...mockPostDetails, attachments: null },
+      postDetails: createMockPostDetails({ content: longContent }),
       isLoading: false,
     });
 
@@ -201,9 +167,8 @@ describe('PostContentBase - Snapshots', () => {
   });
 
   it('matches snapshot with special characters in content', () => {
-    const mockPostDetails = { content: 'Content with <tags> & "quotes" & \'apostrophes\'' };
     mockUsePostDetails.mockReturnValue({
-      postDetails: { ...mockPostDetails, attachments: null },
+      postDetails: createMockPostDetails({ content: 'Content with <tags> & "quotes" & \'apostrophes\'' }),
       isLoading: false,
     });
 

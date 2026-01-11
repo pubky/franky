@@ -1,8 +1,175 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
+exports[`PostInput - Snapshots > matches snapshot for post variant when dragging 1`] = `
 <div
-  class="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-brand"
+  data-testid="container"
+>
+  <div
+    class="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-brand/10"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <p
+      class="text-brand"
+      data-testid="typography"
+    >
+      Drop files here
+    </p>
+  </div>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="What's on your mind?"
+    />
+    <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+                disabled=""
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for post variant when submitting 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      disabled=""
+      placeholder="What's on your mind?"
+    />
+    <div
+      data-submitting="true"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="true"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Posting..."
+                data-testid="post-button"
+                disabled=""
+              >
+                Posting...
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for post variant with attachments 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
   data-testid="container"
 >
   <div
@@ -21,6 +188,16 @@ exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
       placeholder="What's on your mind?"
     />
     <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    >
+      <div
+        data-testid="attachment-test-image.png"
+      >
+        test-image.png
+      </div>
+    </div>
+    <div
       class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
       data-override-defaults="true"
       data-testid="container"
@@ -52,6 +229,166 @@ exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
                 Emoji
               </button>
               <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for post variant with content 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="12"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="What's on your mind?"
+    >
+      Test content
+    </textarea>
+    <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for post variant with custom placeholder 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Custom placeholder"
+    />
+    <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
                 aria-label="Post"
                 data-testid="post-button"
                 disabled=""
@@ -67,9 +404,86 @@ exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
 </div>
 `;
 
-exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
+exports[`PostInput - Snapshots > matches snapshot for post variant without content or attachments 1`] = `
 <div
-  class="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="What's on your mind?"
+    />
+    <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+                disabled=""
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for reply variant without content or attachments 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
   data-testid="container"
 >
   <div
@@ -88,6 +502,10 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
       placeholder="Write a reply..."
     />
     <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
       class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
       data-override-defaults="true"
       data-testid="container"
@@ -119,9 +537,180 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
                 Emoji
               </button>
               <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
                 aria-label="Post"
                 data-testid="post-button"
                 disabled=""
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for reply with thread connector 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    data-testid="thread-connector"
+    data-variant="dialog-reply"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+    <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+                disabled=""
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for repost variant without content or attachments 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Optional comment"
+    />
+    <div
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      class="bg-card"
+      data-post-id="test-post-123"
+      data-testid="post-preview-card"
+    >
+      Original Post: 
+      test-post-123
+    </div>
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
               >
                 Post
               </button>

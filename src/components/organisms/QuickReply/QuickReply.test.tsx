@@ -27,9 +27,14 @@ vi.mock('@/molecules', () => ({
   EmojiPickerDialog: ({ ...props }: { [key: string]: unknown }) => <div data-testid="emoji-dialog" {...props} />,
 }));
 
+vi.mock('@/molecules/PostInputAttachments/PostInputAttachments', () => ({
+  PostInputAttachments: ({ ...props }: { [key: string]: unknown }) => (
+    <div data-testid="post-input-attachments" {...props} />
+  ),
+}));
+
 vi.mock('@/organisms/PostInputActionBar', () => ({
   PostInputActionBar: ({ ...props }: { [key: string]: unknown }) => <div data-testid="action-bar" {...props} />,
-  POST_INPUT_ACTION_SUBMIT_MODE: { POST: 'post', REPLY: 'reply' },
 }));
 
 vi.mock('@/organisms/PostInputTags', () => ({
@@ -57,8 +62,12 @@ describe('QuickReply', () => {
     mockUsePostInput.mockImplementation((options: unknown) => ({
       textareaRef: { current: null },
       containerRef: { current: null },
+      fileInputRef: { current: null },
       content: '',
       tags: [],
+      attachments: [],
+      setAttachments: vi.fn(),
+      isDragging: false,
       isExpanded: false,
       isSubmitting: false,
       showEmojiPicker: false,
@@ -70,6 +79,12 @@ describe('QuickReply', () => {
       handleSubmit: vi.fn(),
       handleChange: vi.fn(),
       handleEmojiSelect: vi.fn(),
+      handleFilesAdded: vi.fn(),
+      handleFileClick: vi.fn(),
+      handleDragEnter: vi.fn(),
+      handleDragLeave: vi.fn(),
+      handleDragOver: vi.fn(),
+      handleDrop: vi.fn(),
       setTags: vi.fn(),
     }));
   });

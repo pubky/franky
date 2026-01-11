@@ -15,21 +15,20 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-describe('NotificationSettings', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseSettingsStore.mockReturnValue({
-      notifications: defaultNotificationPreferences,
-      setNotificationPreference: mockSetNotificationPreference,
-    });
+beforeEach(() => {
+  vi.clearAllMocks();
+  mockUseSettingsStore.mockReturnValue({
+    notifications: defaultNotificationPreferences,
+    setNotificationPreference: mockSetNotificationPreference,
   });
+});
 
+describe('NotificationSettings', () => {
   it('renders all notification switches', () => {
     render(<NotificationSettings />);
 
     expect(screen.getByText('New follower')).toBeInTheDocument();
     expect(screen.getByText('New friend')).toBeInTheDocument();
-    expect(screen.getByText('Lost friend')).toBeInTheDocument();
     expect(screen.getByText('Someone tagged your post')).toBeInTheDocument();
     expect(screen.getByText('Someone tagged your profile')).toBeInTheDocument();
     expect(screen.getByText('Someone mentioned your profile')).toBeInTheDocument();
@@ -88,14 +87,6 @@ describe('NotificationSettings', () => {
 });
 
 describe('NotificationSettings - Snapshots', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockUseSettingsStore.mockReturnValue({
-      notifications: defaultNotificationPreferences,
-      setNotificationPreference: mockSetNotificationPreference,
-    });
-  });
-
   it('matches snapshot', () => {
     const { container } = render(<NotificationSettings />);
     expect(container.firstChild).toMatchSnapshot();

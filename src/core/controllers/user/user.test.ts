@@ -120,6 +120,48 @@ describe('UserController', () => {
     });
   });
 
+  describe('getOrFetchCounts', () => {
+    it('should delegate to UserApplication.getOrFetchCounts', async () => {
+      const userId = 'test-user-id';
+      const mockUserCounts: Core.NexusUserCounts = {
+        posts: 10,
+        replies: 5,
+        followers: 20,
+        following: 15,
+        friends: 8,
+        tagged: 3,
+        tags: 2,
+        unique_tags: 1,
+        bookmarks: 7,
+      };
+
+      const countsSpy = vi.spyOn(Core.UserApplication, 'getOrFetchCounts').mockResolvedValue(mockUserCounts);
+
+      const result = await UserController.getOrFetchCounts({ userId });
+
+      expect(result).toEqual(mockUserCounts);
+      expect(countsSpy).toHaveBeenCalledWith({ userId });
+    });
+
+    it('should return null when user counts not found', async () => {
+      const userId = 'non-existent-user';
+
+      vi.spyOn(Core.UserApplication, 'getOrFetchCounts').mockResolvedValue(null);
+
+      const result = await UserController.getOrFetchCounts({ userId });
+
+      expect(result).toBeNull();
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const userId = 'test-user-id';
+
+      vi.spyOn(Core.UserApplication, 'getOrFetchCounts').mockRejectedValue(new Error('Database error'));
+
+      await expect(UserController.getOrFetchCounts({ userId })).rejects.toThrow('Database error');
+    });
+  });
+
   describe('getManyCounts', () => {
     it('should delegate to UserApplication.getManyCounts', async () => {
       const userIds = ['user1', 'user2'] as Core.Pubky[];
@@ -353,7 +395,7 @@ describe('UserController', () => {
   describe('taggers', () => {
     it('should delegate to UserApplication with correct params', async () => {
       const userId = 'pubky-user' as unknown as Core.Pubky;
-      const mockTaggers = [] as Core.NexusUser[];
+      const mockTaggers: Core.NexusTaggers[] = [];
 
       const taggersSpy = vi.spyOn(Core.UserApplication, 'fetchTaggers').mockResolvedValue(mockTaggers);
 

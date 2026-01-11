@@ -2,13 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInputActionBar } from './PostInputActionBar';
 
-// Use real libs, only stub cn for deterministic class joining
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 // Minimal atoms used by PostInputActionBar
@@ -64,11 +61,11 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {
-    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
+    const Tag = as || 'p';
     return (
       <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
         {children}
@@ -86,33 +83,33 @@ describe('PostInputActionBar', () => {
     render(<PostInputActionBar />);
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Add image' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add file' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add article' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Post' })).toBeInTheDocument();
   });
 
   it('invokes callbacks when buttons are clicked', () => {
     const onEmojiClick = vi.fn();
-    const onImageClick = vi.fn();
+    const onFileClick = vi.fn();
     const onArticleClick = vi.fn();
     const onPostClick = vi.fn();
 
     render(
       <PostInputActionBar
         onEmojiClick={onEmojiClick}
-        onImageClick={onImageClick}
+        onFileClick={onFileClick}
         onArticleClick={onArticleClick}
         onPostClick={onPostClick}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Add emoji' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Add image' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Add file' }));
     fireEvent.click(screen.getByRole('button', { name: 'Add article' }));
     fireEvent.click(screen.getByRole('button', { name: 'Post' }));
 
     expect(onEmojiClick).toHaveBeenCalledTimes(1);
-    expect(onImageClick).toHaveBeenCalledTimes(1);
+    expect(onFileClick).toHaveBeenCalledTimes(1);
     expect(onArticleClick).toHaveBeenCalledTimes(1);
     expect(onPostClick).toHaveBeenCalledTimes(1);
   });
@@ -136,7 +133,7 @@ describe('PostInputActionBar', () => {
     render(<PostInputActionBar />);
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Add image' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add file' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Add article' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Post' })).toBeDisabled();
   });
@@ -179,14 +176,14 @@ describe('PostInputActionBar - Snapshots', () => {
 
   it('matches snapshot with all callbacks', () => {
     const onEmojiClick = vi.fn();
-    const onImageClick = vi.fn();
+    const onFileClick = vi.fn();
     const onArticleClick = vi.fn();
     const onPostClick = vi.fn();
 
     const { container } = render(
       <PostInputActionBar
         onEmojiClick={onEmojiClick}
-        onImageClick={onImageClick}
+        onFileClick={onFileClick}
         onArticleClick={onArticleClick}
         onPostClick={onPostClick}
       />,

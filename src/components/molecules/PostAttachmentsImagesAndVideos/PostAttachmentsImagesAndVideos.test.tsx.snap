@@ -11,27 +11,21 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with GIF 
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="animated.gif"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/animated.gif"
-          />
-        </button>
-      </div>
+        <img
+          alt="animated.gif"
+          class="rounded-md max-h-96 w-fit object-contain"
+          data-fill="false"
+          data-testid="image"
+          src="https://example.com/animated.gif"
+        />
+      </button>
     </div>
   </div>
 </div>
@@ -48,39 +42,28 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="mixed-image.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/mixed-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="mixed-image.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/mixed-feed.jpg"
+        />
+      </button>
     </div>
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/mixed-video.mp4"
-      />
-    </div>
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/mixed-video.mp4"
+    />
   </div>
   <div
     data-hidden-title="Post Attachments Media Carousel"
@@ -101,9 +84,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -192,73 +177,55 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="carousel1.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/carousel1-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="carousel1.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/carousel1-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="carousel2.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/carousel2-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="carousel2.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/carousel2-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="carousel3.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/carousel3-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="carousel3.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/carousel3-feed.jpg"
+        />
+      </button>
     </div>
   </div>
   <div
@@ -280,9 +247,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -387,27 +356,21 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="dialog-image.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/dialog-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="dialog-image.jpg"
+          class="rounded-md max-h-96 w-fit object-contain"
+          data-fill="false"
+          data-testid="image"
+          src="https://example.com/dialog-feed.jpg"
+        />
+      </button>
     </div>
   </div>
   <div
@@ -429,9 +392,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -486,17 +451,12 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     data-display="grid"
     data-testid="container"
   >
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/single-carousel-video.mp4"
-      />
-    </div>
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/single-carousel-video.mp4"
+    />
   </div>
   <div
     data-hidden-title="Post Attachments Media Carousel"
@@ -517,9 +477,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -572,28 +534,18 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     data-display="grid"
     data-testid="container"
   >
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/carousel-video1.mp4"
-      />
-    </div>
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/carousel-video2.mp4"
-      />
-    </div>
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/carousel-video1.mp4"
+    />
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/carousel-video2.mp4"
+    />
   </div>
   <div
     data-hidden-title="Post Attachments Media Carousel"
@@ -614,9 +566,11 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with dial
     </button>
     <div
       class="w-full max-w-80 xsm:max-w-dvw sm:max-w-[75dvw] 2xl:max-w-[50dvw]"
+      data-duration="15"
       data-loop="true"
       data-start-index="0"
       data-testid="carousel"
+      data-watch-drag="true"
     >
       <div
         class="-ml-3 items-center"
@@ -716,96 +670,72 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with four
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="grid1.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/grid1-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="grid1.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/grid1-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="grid2.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/grid2-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="grid2.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/grid2-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="grid3.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/grid3-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="grid3.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/grid3-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="grid4.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/grid4-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="grid4.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/grid4-feed.jpg"
+        />
+      </button>
     </div>
   </div>
 </div>
@@ -822,61 +752,44 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with mixe
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="mixed-image.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/mixed-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="mixed-image.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/mixed-feed.jpg"
+        />
+      </button>
     </div>
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/mixed-video.mp4"
+    />
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/mixed-video.mp4"
-      />
-    </div>
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="mixed-gif.gif"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/mixed-gif.gif"
-          />
-        </button>
-      </div>
+        <img
+          alt="mixed-gif.gif"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/mixed-gif.gif"
+        />
+      </button>
     </div>
   </div>
 </div>
@@ -893,73 +806,55 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with mult
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="image1.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/image1-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="image1.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/image1-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="image2.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/image2-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="image2.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/image2-feed.jpg"
+        />
+      </button>
     </div>
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="image3.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/image3-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="image3.jpg"
+          class="rounded-md object-cover object-center"
+          data-fill="true"
+          data-testid="image"
+          src="https://example.com/image3-feed.jpg"
+        />
+      </button>
     </div>
   </div>
 </div>
@@ -975,39 +870,24 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with mult
     data-display="grid"
     data-testid="container"
   >
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/video1.mp4"
-      />
-    </div>
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/video2.mp4"
-      />
-    </div>
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/video3.mp4"
-      />
-    </div>
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/video1.mp4"
+    />
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/video2.mp4"
+    />
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/video3.mp4"
+    />
   </div>
 </div>
 `;
@@ -1023,27 +903,21 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with sing
     data-testid="container"
   >
     <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
+      data-aschild="true"
+      data-testid="dialog-trigger"
     >
-      <div
-        data-aschild="true"
-        data-testid="dialog-trigger"
+      <button
+        data-override-defaults="true"
+        data-testid="button"
       >
-        <button
-          class="relative h-full w-full cursor-pointer"
-          data-override-defaults="true"
-          data-testid="button"
-        >
-          <img
-            alt="snapshot-image.jpg"
-            class="rounded-md object-cover object-center"
-            data-fill="true"
-            data-testid="image"
-            src="https://example.com/snapshot-feed.jpg"
-          />
-        </button>
-      </div>
+        <img
+          alt="snapshot-image.jpg"
+          class="rounded-md max-h-96 w-fit object-contain"
+          data-fill="false"
+          data-testid="image"
+          src="https://example.com/snapshot-feed.jpg"
+        />
+      </button>
     </div>
   </div>
 </div>
@@ -1059,17 +933,12 @@ exports[`PostAttachmentsImagesAndVideos - Snapshots > matches snapshot with sing
     data-display="grid"
     data-testid="container"
   >
-    <div
-      class="h-52 only:h-96 sm:last:odd:col-span-2"
-      data-testid="container"
-    >
-      <video
-        class="h-full w-full cursor-auto"
-        data-pause-video="false"
-        data-testid="video"
-        src="https://example.com/snapshot-video.mp4"
-      />
-    </div>
+    <video
+      class="h-52 w-full cursor-auto only:h-auto only:max-h-96 only:w-fit sm:last:odd:col-span-2"
+      data-pause-video="false"
+      data-testid="video"
+      src="https://example.com/snapshot-video.mp4"
+    />
   </div>
 </div>
 `;

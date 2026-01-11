@@ -193,7 +193,7 @@ describe('useUserProfile', () => {
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.profile?.avatarUrl).toBe('https://example.com/avatar/test-user-id');
-      expect(mockMocks.mockGetAvatarUrl).toHaveBeenCalledWith('test-user-id');
+      expect(mockMocks.mockGetAvatarUrl).toHaveBeenCalledWith('test-user-id', expect.anything());
     });
 
     it('returns undefined avatar URL when user has no image', () => {

@@ -18,7 +18,7 @@ export const useAuthStore = create<AuthStore>()(
         // Only persist essential data
         partialize: (state) => ({
           currentUserPubky: state.currentUserPubky,
-          session: state.session,
+          sessionExport: state.sessionExport,
           hasProfile: state.hasProfile,
           hasHydrated: false, // Will be set by rehydration handler
         }),
@@ -27,6 +27,9 @@ export const useAuthStore = create<AuthStore>()(
         onRehydrateStorage: () => (state) => {
           if (state) {
             state.setHasHydrated(true);
+            if (state.sessionExport) {
+              state.setIsRestoringSession(true);
+            }
           }
         },
       },

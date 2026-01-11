@@ -20,9 +20,10 @@ export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
 }
 
 export const filesApi = {
-  getAvatarUrl: (pubky: Core.Pubky) => {
+  getAvatarUrl: (pubky: Core.Pubky, version?: string | number) => {
     const encodedPubky = Core.encodePathSegment(pubky);
-    return Core.buildCdnUrl(`avatar/${encodedPubky}`);
+    const url = Core.buildCdnUrl(`avatar/${encodedPubky}`);
+    return version ? `${url}?v=${version}` : url;
   },
   getFileUrl: ({ pubky, file_id, variant }: Core.TFileParams) => {
     const encodedPubky = Core.encodePathSegment(pubky);

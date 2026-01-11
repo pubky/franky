@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 export class UserApplication {
   /**
@@ -35,13 +36,35 @@ export class UserApplication {
   }
 
   /**
-   * Retrieves user counts from local database. If not found, fetches from Nexus API and persists to local database.
+   * Retrieves user counts from local database.
+   * Local-only read per ADR 0001 (get* methods don't call Nexus).
    * @param params - Parameters containing user ID
    * @returns Promise resolving to user counts or null if not found
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
-    // TODO: Throw an error and do not return null
     return await Core.LocalUserService.readCounts({ userId });
+  }
+
+  /**
+   * Retrieves user counts from local database. If not found, fetches from Nexus API and persists to local database.
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user counts or null if not found
+   */
+  static async getOrFetchCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    const userCounts = await Core.LocalUserService.readCounts({ userId });
+    if (userCounts) {
+      return userCounts;
+    }
+
+    try {
+      const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
+      await Core.LocalProfileService.upsertCounts(userId, nexusUserCounts);
+      return nexusUserCounts;
+    } catch (error) {
+      // Return null if user counts cannot be fetched (e.g., user not indexed yet)
+      Libs.Logger.warn('Failed to fetch user counts from Nexus', { userId, error });
+      return null;
+    }
   }
 
   /**

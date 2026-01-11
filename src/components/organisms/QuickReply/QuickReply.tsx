@@ -5,10 +5,11 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
+import * as Utils from '@/libs/utils';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
-import { POST_INPUT_ACTION_SUBMIT_MODE } from '@/organisms/PostInputActionBar';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
+import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
 
 import { pickRandomQuickReplyPrompt } from './QuickReply.utils';
 import { QUICK_REPLY_CONNECTOR_SPACER_HEIGHT } from './QuickReply.constants';
@@ -27,8 +28,12 @@ export function QuickReply({
   const {
     textareaRef,
     containerRef,
+    fileInputRef,
     content,
     tags,
+    attachments,
+    setAttachments,
+    isDragging,
     isExpanded,
     isSubmitting,
     showEmojiPicker,
@@ -38,6 +43,12 @@ export function QuickReply({
     handleSubmit,
     handleChange,
     handleEmojiSelect,
+    handleFilesAdded,
+    handleFileClick,
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver,
+    handleDrop,
     setTags,
   } = Hooks.usePostInput({
     variant: POST_INPUT_VARIANT.REPLY,
@@ -72,10 +83,27 @@ export function QuickReply({
 
       <Atoms.Container
         ref={containerRef}
-        className="relative w-full cursor-pointer rounded-md border border-dashed border-input p-6"
+        className={Utils.cn(
+          'relative w-full cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
+          isDragging ? 'border-brand' : 'border-input',
+        )}
         onClick={handleExpand}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         overrideDefaults
       >
+        {/* Drag overlay */}
+        {isDragging && (
+          <Atoms.Container
+            className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-brand/10"
+            overrideDefaults
+          >
+            <Atoms.Typography className="text-brand">Drop files here</Atoms.Typography>
+          </Atoms.Container>
+        )}
+
         <Atoms.Container ref={cardRef} className="gap-4" overrideDefaults>
           {/* Collapsed header row (avatar + input) */}
           <Atoms.Container className="flex items-center gap-4" overrideDefaults>
@@ -96,6 +124,14 @@ export function QuickReply({
             />
           </Atoms.Container>
 
+          <PostInputAttachments
+            ref={fileInputRef}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            handleFilesAdded={handleFilesAdded}
+            isSubmitting={isSubmitting}
+          />
+
           {/* Expandable section with animation (same transition as PostInput) */}
           <PostInputExpandableSection
             isExpanded={isExpanded}
@@ -107,7 +143,9 @@ export function QuickReply({
             showEmojiPicker={showEmojiPicker}
             setShowEmojiPicker={setShowEmojiPicker}
             onEmojiSelect={handleEmojiSelect}
-            submitMode={POST_INPUT_ACTION_SUBMIT_MODE.REPLY}
+            onFileClick={handleFileClick}
+            onImageClick={handleFileClick}
+            submitMode={POST_INPUT_VARIANT.REPLY}
             className={isExpanded ? 'mt-4' : ''}
           />
         </Atoms.Container>

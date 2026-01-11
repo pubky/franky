@@ -1,14 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
-// Mock @/libs - use actual implementations and only stub cn helper
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-  };
+// Mock @/libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 // Import the actual Dialog components after mocking
@@ -27,6 +25,40 @@ describe('Dialog', () => {
     render(<Dialog>Default Dialog</Dialog>);
     const dialog = screen.getByText('Default Dialog');
     expect(dialog).toBeInTheDocument();
+  });
+
+  it('closes dialog when overlay is clicked', async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn();
+
+    render(
+      <Dialog open={true} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <div>Dialog Content</div>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const overlay = document.querySelector('[data-slot="dialog-overlay"]');
+    expect(overlay).toBeInTheDocument();
+
+    await user.click(overlay as Element);
+
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('renders close button with hidden class when showCloseButton is false', () => {
+    render(
+      <Dialog open={true}>
+        <DialogContent showCloseButton={false}>
+          <div>Dialog Content</div>
+        </DialogContent>
+      </Dialog>,
+    );
+
+    const closeButton = document.querySelector('[data-slot="dialog-close"]');
+    expect(closeButton).toBeInTheDocument();
+    expect(closeButton).toHaveClass('hidden');
   });
 });
 

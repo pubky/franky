@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import type { PostPreviewCardProps } from './PostPreviewCard.types';
 
@@ -23,10 +24,32 @@ import type { PostPreviewCardProps } from './PostPreviewCard.types';
  * - Any nested context where a compact post preview is needed
  */
 export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
+  const { navigateToPost } = Hooks.usePostNavigation();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigateToPost(postId);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.stopPropagation();
+      e.preventDefault();
+      navigateToPost(postId);
+    }
+  };
+
   return (
-    <Atoms.Card className={Libs.cn('rounded-md py-0', className)}>
+    <Atoms.Card
+      className={Libs.cn('cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50', className)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="link"
+      tabIndex={0}
+      aria-label="View original post"
+    >
       <Atoms.CardContent className="flex flex-col gap-4 p-6">
-        <Organisms.PostHeader postId={postId} />
+        <Organisms.PostHeader postId={postId} showPopover={false} />
         <Organisms.PostContentBase postId={postId} />
       </Atoms.CardContent>
     </Atoms.Card>

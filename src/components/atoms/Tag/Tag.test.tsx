@@ -80,8 +80,8 @@ describe('Tag', () => {
     // Hover the tag
     fireEvent.mouseEnter(tag);
 
-    // Should show inset shadow
-    const expectedShadowColor = Libs.hexToRgba(Libs.generateRandomColor('bitcoin'), 1);
+    // Should show inset shadow (using borderColor which is 0.5 opacity)
+    const expectedShadowColor = Libs.hexToRgba(Libs.generateRandomColor('bitcoin'), 0.5);
     expect(tag.style.boxShadow).toBe(`inset 0 0 10px 2px ${expectedShadowColor}`);
 
     // Leave hover
@@ -115,18 +115,16 @@ describe('Tag', () => {
     const { container } = render(<Tag name="bitcoin" clicked={true} />);
     const tag = container.firstChild as HTMLElement;
 
-    // Should have border when clicked
-    const expectedBorderColor = Libs.hexToRgba(Libs.generateRandomColor('bitcoin'), 1);
-    // Convert rgba to rgb for comparison (browser converts rgba(255,153,0,1) to rgb(255,153,0))
-    const rgbColor = expectedBorderColor.replace('rgba', 'rgb').replace(', 1)', ')');
-    expect(tag.style.border).toBe(`1px solid ${rgbColor}`);
+    // Should have border when clicked (using 0.5 opacity)
+    const expectedBorderColor = Libs.hexToRgba(Libs.generateRandomColor('bitcoin'), 0.5);
+    expect(tag.style.border).toBe(`1px solid ${expectedBorderColor}`);
 
     // Hover and leave
     fireEvent.mouseEnter(tag);
     fireEvent.mouseLeave(tag);
 
     // Should still have border
-    expect(tag.style.border).toBe(`1px solid ${rgbColor}`);
+    expect(tag.style.border).toBe(`1px solid ${expectedBorderColor}`);
   });
 });
 

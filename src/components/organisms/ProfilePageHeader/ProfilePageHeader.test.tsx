@@ -79,8 +79,9 @@ const mockProps: ProfilePageHeaderProps = {
     onCopyPublicKey: vi.fn(),
     onCopyLink: vi.fn(),
     onSignOut: vi.fn(),
-    onStatusClick: vi.fn(),
+    onStatusChange: vi.fn(),
     onAvatarClick: vi.fn(),
+    isLoggingOut: false,
   },
   isOwnProfile: true,
 };

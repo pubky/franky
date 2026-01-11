@@ -1,34 +1,139 @@
 name: Feature Request
-description: Suggest an idea for Pubky App
+description: Suggest a new feature or improvement
 title: '[Feature]: '
-labels: ['enhancement']
-projects: ['Pubky App']
+labels: ['📈 enhancement']
+type: feature
 body:
   - type: markdown
     attributes:
       value: |
-        We're always looking for suggestions on how we could improve Pubky App!
+        Thanks for suggesting a feature! 🚀
+        
+        Help us understand what you need and why it would be valuable.
+
   - type: textarea
     id: problem
     attributes:
-      label: Describe the problem
-      description: Is your feature request related to a problem? Please describe.
-      placeholder: A clear and concise description of what the problem is. Ex. I'm always frustrated when...
+      label: Problem Statement
+      description: |
+        What problem does this feature solve? Why is it needed?
+        A clear problem statement helps us prioritize and design the right solution.
+      placeholder: |
+        As a user, I want to [do something] so that [benefit].
+        
+        Currently, I have to [workaround], which is [frustrating/slow/impossible].
     validations:
-      required: false
+      required: true
+
   - type: textarea
     id: solution
     attributes:
-      label: Describe the solution
-      description: Add some details about the solution you'd like to see
-      placeholder: I want to be able to...
+      label: Proposed Solution
+      description: Describe what you'd like to happen. Be as specific as possible.
+      placeholder: |
+        I would like a button that...
+        When I click it, it should...
+        The result should show...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature Area
+      description: Which part of the app would this affect?
+      options:
+        - Feed / Timeline
+        - Post Creation / Editing
+        - Profile / User
+        - Authentication / Login
+        - Notifications
+        - Search
+        - Tags
+        - Bookmarks
+        - Settings
+        - Navigation
+        - Media (images/videos)
+        - New Feature Area
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Feature Type
+      description: What kind of feature is this?
+      options:
+        - New Feature (doesn't exist yet)
+        - Enhancement (improve existing feature)
+        - UX Improvement (better user experience)
+        - Performance (make something faster)
+        - Accessibility (make it more accessible)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: |
+        How will we know this feature is complete? List specific, testable criteria.
+      placeholder: |
+        - [ ] User can see a "Save Draft" button when composing a post
+        - [ ] Clicking the button saves the post locally
+        - [ ] Draft appears in a "Drafts" section
+        - [ ] User can resume editing the draft
+        - [ ] Draft is deleted after publishing
     validations:
       required: false
+
+  - type: textarea
+    id: design
+    attributes:
+      label: Design / Mockups
+      description: |
+        Do you have any visual ideas? Figma links, sketches, or screenshots of similar features in other apps.
+      placeholder: |
+        Figma: https://www.figma.com/...
+        
+        Or describe the UI:
+        - Button should be in the top-right of the compose modal
+        - Should match the existing button style (secondary variant)
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you thought of other ways to solve this problem?
+      placeholder: |
+        I also considered:
+        1. Auto-saving every 30 seconds (but this might be confusing)
+        2. Storing in browser localStorage (but loses sync across devices)
+    validations:
+      required: false
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Suggested Priority
+      description: How important is this feature to you?
+      options:
+        - Nice to have (would be cool)
+        - Important (would use frequently)
+        - Critical (can't use app effectively without it)
+    validations:
+      required: false
+
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: Add any other context or screenshots about the feature request here.
-      placeholder: 'This is how it should look: '
+      label: Additional Context
+      description: Any other information that might help us understand or implement this feature.
+      placeholder: |
+        - Similar feature in Twitter/Mastodon works like...
+        - This would help with accessibility because...
+        - Related to issue #123
     validations:
       required: false

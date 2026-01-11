@@ -35,12 +35,6 @@ describe('NotificationIcon', () => {
     expect(icon).toBeInTheDocument();
   });
 
-  it('renders LostFriend icon for LostFriend notification type', () => {
-    const { container } = render(<NotificationIcon type={NotificationType.LostFriend} showBadge={false} />);
-    const icon = container.querySelector('svg');
-    expect(icon).toBeInTheDocument();
-  });
-
   it('renders Tag icon for TagPost notification type', () => {
     const { container } = render(<NotificationIcon type={NotificationType.TagPost} showBadge={false} />);
     const icon = container.querySelector('svg');
@@ -130,11 +124,6 @@ describe('NotificationIcon - Snapshots', () => {
 
   it('matches snapshot for NewFriend notification without badge', () => {
     const { container } = render(<NotificationIcon type={NotificationType.NewFriend} showBadge={false} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for LostFriend notification without badge', () => {
-    const { container } = render(<NotificationIcon type={NotificationType.LostFriend} showBadge={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

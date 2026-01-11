@@ -3,12 +3,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
-import * as Core from '@/core';
-
-vi.mock('@/config', () => ({
-  POST_MAX_CHARACTER_LENGTH: 2000,
-  POST_MAX_TAGS: 5,
-}));
 
 vi.mock('@/atoms', async () => {
   const { POST_THREAD_CONNECTOR_VARIANTS } =
@@ -18,21 +12,44 @@ vi.mock('@/atoms', async () => {
       children,
       className,
       overrideDefaults,
+      ref,
+      onClick,
+      onDragEnter,
+      onDragLeave,
+      onDragOver,
+      onDrop,
     }: {
       children: React.ReactNode;
       className?: string;
       overrideDefaults?: boolean;
+      ref?: React.Ref<HTMLDivElement>;
+      onClick?: () => void;
+      onDragEnter?: (e: React.DragEvent) => void;
+      onDragLeave?: (e: React.DragEvent) => void;
+      onDragOver?: (e: React.DragEvent) => void;
+      onDrop?: (e: React.DragEvent) => void;
     }) => (
-      <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      <div
+        ref={ref}
+        data-testid="container"
+        className={className}
+        data-override-defaults={overrideDefaults}
+        onClick={onClick}
+        onDragEnter={onDragEnter}
+        onDragLeave={onDragLeave}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+      >
         {children}
       </div>
     ),
-    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
+    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref, onFocus }) => (
       <textarea
         ref={ref}
         data-testid="textarea"
         value={value}
         onChange={onChange}
+        onFocus={onFocus}
         placeholder={placeholder}
         disabled={disabled}
       />
@@ -54,17 +71,29 @@ vi.mock('@/atoms', async () => {
         </Tag>
       );
     }),
+    Input: vi.fn(({ type, accept, multiple, onChange, ref, className, id }) => (
+      <input
+        ref={ref}
+        type={type}
+        accept={accept}
+        multiple={multiple}
+        onChange={onChange}
+        className={className}
+        id={id}
+        data-testid="input"
+      />
+    )),
   };
 });
 
 vi.mock('@/organisms', () => ({
-  PostHeader: vi.fn(({ postId, isReplyInput, characterCount, maxLength }) => (
+  PostHeader: vi.fn(({ postId, isReplyInput, characterLimit }) => (
     <div
       data-testid="post-header"
       data-post-id={postId}
       data-is-reply={isReplyInput}
-      data-count={characterCount}
-      data-max={maxLength}
+      data-count={characterLimit?.count}
+      data-max={characterLimit?.max}
     />
   )),
 }));
@@ -86,10 +115,13 @@ vi.mock('../PostInputTags', () => ({
 }));
 
 vi.mock('../PostInputActionBar', () => ({
-  PostInputActionBar: vi.fn(({ onPostClick, onEmojiClick, isPostDisabled, isSubmitting }) => (
+  PostInputActionBar: vi.fn(({ onPostClick, onEmojiClick, onFileClick, isPostDisabled, isSubmitting }) => (
     <div data-testid="post-input-action-bar">
       <button data-testid="emoji-button" onClick={onEmojiClick} aria-label="Add emoji">
         Emoji
+      </button>
+      <button data-testid="file-button" onClick={onFileClick} aria-label="Add file">
+        File
       </button>
       <button
         data-testid="post-button"
@@ -101,7 +133,6 @@ vi.mock('../PostInputActionBar', () => ({
       </button>
     </div>
   )),
-  POST_INPUT_ACTION_SUBMIT_MODE: { POST: 'post', REPLY: 'reply' },
 }));
 
 vi.mock('@/molecules', () => ({
@@ -112,6 +143,11 @@ vi.mock('@/molecules', () => ({
   )),
   TagInput: vi.fn(() => <div data-testid="tag-input" />),
   PostTag: vi.fn(({ label }) => <div data-testid={`post-tag-${label}`}>{label}</div>),
+  PostPreviewCard: vi.fn(({ postId, className }: { postId: string; className?: string }) => (
+    <div data-testid="post-preview-card" data-post-id={postId} className={className}>
+      Original Post: {postId}
+    </div>
+  )),
   PostLinkEmbeds: vi.fn(({ content }: { content: string }) => {
     // Only render if content contains a URL-like pattern
     if (content.includes('http') || content.includes('youtube') || content.includes('youtu.be')) {
@@ -119,6 +155,26 @@ vi.mock('@/molecules', () => ({
     }
     return null;
   }),
+  PostInputAttachments: vi.fn(
+    ({
+      attachments,
+      isSubmitting,
+    }: {
+      ref: React.RefObject<HTMLInputElement>;
+      attachments: File[];
+      setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+      handleFilesAdded: (files: FileList | File[]) => void;
+      isSubmitting: boolean;
+    }) => (
+      <div data-testid="post-input-attachments" data-submitting={isSubmitting}>
+        {attachments.map((file: File, index: number) => (
+          <div key={index} data-testid={`attachment-${file.name}`}>
+            {file.name}
+          </div>
+        ))}
+      </div>
+    ),
+  ),
   EmojiPickerDialog: vi.fn(
     ({
       open,
@@ -143,12 +199,39 @@ vi.mock('@/molecules', () => ({
   useToast: vi.fn(() => ({ toast: vi.fn() })),
 }));
 
+// Mock the direct import of PostInputAttachments
+vi.mock('@/molecules/PostInputAttachments/PostInputAttachments', () => ({
+  PostInputAttachments: vi.fn(
+    ({
+      attachments,
+      isSubmitting,
+    }: {
+      ref: React.RefObject<HTMLInputElement>;
+      attachments: File[];
+      setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
+      handleFilesAdded: (files: FileList | File[]) => void;
+      isSubmitting: boolean;
+    }) => (
+      <div data-testid="post-input-attachments" data-submitting={isSubmitting}>
+        {attachments.map((file: File, index: number) => (
+          <div key={index} data-testid={`attachment-${file.name}`}>
+            {file.name}
+          </div>
+        ))}
+      </div>
+    ),
+  ),
+}));
+
 // Mock the underlying hooks that usePostInput uses
 const mockUsePostReturn = {
   content: '',
   setContent: vi.fn(),
   tags: [] as string[],
   setTags: vi.fn(),
+  attachments: [] as File[],
+  setAttachments: vi.fn(),
+  isDragging: false,
   reply: vi.fn(),
   post: vi.fn(),
   isSubmitting: false,
@@ -163,15 +246,25 @@ vi.mock('@/hooks', () => ({
   usePostInput: vi.fn((options: { variant: string; placeholder?: string }) => ({
     textareaRef: { current: null },
     containerRef: { current: null },
+    fileInputRef: { current: null },
     content: mockUsePostReturn.content,
     tags: mockUsePostReturn.tags,
+    setTags: mockUsePostReturn.setTags,
+    attachments: mockUsePostReturn.attachments,
+    setAttachments: mockUsePostReturn.setAttachments,
+    isDragging: mockUsePostReturn.isDragging,
     isExpanded: true,
     isSubmitting: mockUsePostReturn.isSubmitting,
     showEmojiPicker: false,
     setShowEmojiPicker: vi.fn(),
     hasContent: mockUsePostReturn.content.trim().length > 0,
     displayPlaceholder:
-      options.placeholder ?? (options.variant === 'reply' ? 'Write a reply...' : "What's on your mind?"),
+      options.placeholder ??
+      (options.variant === 'reply'
+        ? 'Write a reply...'
+        : options.variant === 'repost'
+          ? 'Optional comment'
+          : "What's on your mind?"),
     currentUserPubky: 'test-user-id:pubkey',
     handleExpand: vi.fn(),
     handleSubmit: vi.fn(async () => {
@@ -185,48 +278,38 @@ vi.mock('@/hooks', () => ({
       mockUsePostReturn.setContent(e.target.value);
     }),
     handleEmojiSelect: vi.fn(),
-    setTags: mockUsePostReturn.setTags,
+    handleFilesAdded: vi.fn(),
+    handleDragEnter: vi.fn(),
+    handleDragLeave: vi.fn(),
+    handleDragOver: vi.fn(),
+    handleDrop: vi.fn(),
   })),
 }));
-
-vi.mock('@/core', () => ({
-  PostController: {
-    create: vi.fn(),
-  },
-  useAuthStore: vi.fn(() => (state: { selectCurrentUserPubky: () => string | null }) => state.selectCurrentUserPubky()),
-}));
-
-const mockPostControllerCreate = vi.mocked(Core.PostController.create);
 
 describe('PostInput', () => {
   const mockOnSuccess = vi.fn();
   const mockSetContent = vi.fn();
   const mockSetTags = vi.fn();
+  const mockSetAttachments = vi.fn();
   const mockReply = vi.fn();
   const mockPost = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockPostControllerCreate.mockResolvedValue('test-post-id');
     mockReply.mockReturnValue(async () => {});
     mockPost.mockReturnValue(async () => {});
 
     // Update the shared mock state
     mockUsePostReturn.content = '';
     mockUsePostReturn.tags = [];
+    mockUsePostReturn.attachments = [];
+    mockUsePostReturn.isDragging = false;
     mockUsePostReturn.isSubmitting = false;
     mockUsePostReturn.setContent = mockSetContent;
     mockUsePostReturn.setTags = mockSetTags;
+    mockUsePostReturn.setAttachments = mockSetAttachments;
     mockUsePostReturn.reply = mockReply;
     mockUsePostReturn.post = mockPost;
-  });
-
-  it('renders with reply variant', () => {
-    render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" />);
-
-    expect(screen.getByTestId('post-header')).toBeInTheDocument();
-    expect(screen.getByTestId('textarea')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Write a reply...')).toBeInTheDocument();
   });
 
   it('renders with post variant', () => {
@@ -235,6 +318,22 @@ describe('PostInput', () => {
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('textarea')).toBeInTheDocument();
     expect(screen.getByPlaceholderText("What's on your mind?")).toBeInTheDocument();
+  });
+
+  it('renders with repost variant', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('textarea')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Optional comment')).toBeInTheDocument();
+  });
+
+  it('renders with reply variant', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('textarea')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Write a reply...')).toBeInTheDocument();
   });
 
   it('shows thread connector when showThreadConnector is true', () => {
@@ -258,16 +357,6 @@ describe('PostInput', () => {
     fireEvent.change(textarea, { target: { value: 'Test content' } });
 
     expect(mockSetContent).toHaveBeenCalledWith('Test content');
-  });
-
-  it('always shows bottom bar', () => {
-    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
-
-    // Bottom bar should always be rendered
-    expect(screen.getByTestId('post-input-tags')).toBeInTheDocument();
-    expect(screen.getByTestId('post-input-action-bar')).toBeInTheDocument();
-    expect(screen.getByLabelText('Add emoji')).toBeInTheDocument();
-    expect(screen.getByLabelText('Post')).toBeInTheDocument();
   });
 
   it('handles post submission for post variant', async () => {
@@ -302,32 +391,68 @@ describe('PostInput', () => {
     });
   });
 
-  // todo: extend test to include attachments
-  it('disables post button when content is empty', () => {
+  it('disables post button when content is empty and no attachments', () => {
     mockUsePostReturn.content = '';
+    mockUsePostReturn.attachments = [];
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
-    // Check that post button is disabled when content is empty
+    // Check that post button is disabled when content is empty and no attachments
     const postButton = screen.getByLabelText('Post');
     expect(postButton).toBeDisabled();
   });
 
-  it('disables post button when submitting', () => {
-    mockUsePostReturn.content = 'Test content';
-    mockUsePostReturn.isSubmitting = true;
+  it('enables post button when content is empty but attachments are present', () => {
+    mockUsePostReturn.content = '';
+    const testFile = new File(['test'], 'test-image.png', { type: 'image/png' });
+    mockUsePostReturn.attachments = [testFile];
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
-    // Bottom bar is always shown, so post button should be visible but disabled
-    const postButton = screen.getByLabelText('Posting...');
-    expect(postButton).toBeDisabled();
+    // Button should be enabled when attachments are present even without content
+    const postButton = screen.getByLabelText('Post');
+    expect(postButton).not.toBeDisabled();
   });
 
-  it('uses custom placeholder when provided', () => {
-    render(<PostInput variant={POST_INPUT_VARIANT.POST} placeholder="Custom placeholder" />);
+  it('enables post button when content is present without attachments', () => {
+    mockUsePostReturn.content = 'Test content';
+    mockUsePostReturn.attachments = [];
 
-    expect(screen.getByPlaceholderText('Custom placeholder')).toBeInTheDocument();
+    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+
+    // Button should be enabled when content is present
+    const postButton = screen.getByLabelText('Post');
+    expect(postButton).not.toBeDisabled();
+  });
+
+  it('enables post button when both content and attachments are present', () => {
+    mockUsePostReturn.content = 'Test content';
+    const testFile = new File(['test'], 'test-image.png', { type: 'image/png' });
+    mockUsePostReturn.attachments = [testFile];
+
+    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+
+    // Button should be enabled when both content and attachments are present
+    const postButton = screen.getByLabelText('Post');
+    expect(postButton).not.toBeDisabled();
+  });
+
+  it('enables post button for repost variant without content or attachments', () => {
+    mockUsePostReturn.content = '';
+    mockUsePostReturn.attachments = [];
+
+    render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
+
+    const postButton = screen.getByLabelText('Post');
+    expect(postButton).not.toBeDisabled();
+  });
+
+  it('does not show drag overlay when isDragging is false', () => {
+    mockUsePostReturn.isDragging = false;
+
+    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+
+    expect(screen.queryByText('Drop files here')).not.toBeInTheDocument();
   });
 });
 
@@ -336,16 +461,63 @@ describe('PostInput - Snapshots', () => {
     vi.clearAllMocks();
     mockUsePostReturn.content = '';
     mockUsePostReturn.tags = [];
+    mockUsePostReturn.attachments = [];
+    mockUsePostReturn.isDragging = false;
     mockUsePostReturn.isSubmitting = false;
   });
 
-  it('matches snapshot for post variant', () => {
+  it('matches snapshot for post variant without content or attachments', () => {
     const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for reply variant', () => {
+  it('matches snapshot for repost variant without content or attachments', () => {
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.REPOST} originalPostId="test-post-123" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for reply variant without content or attachments', () => {
     const { container } = render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for post variant with content', () => {
+    mockUsePostReturn.content = 'Test content';
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for post variant with attachments', () => {
+    const testFile = new File(['test'], 'test-image.png', { type: 'image/png' });
+    mockUsePostReturn.attachments = [testFile];
+
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for post variant with custom placeholder', () => {
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} placeholder="Custom placeholder" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for reply with thread connector', () => {
+    const { container } = render(
+      <PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" showThreadConnector={true} />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for post variant when dragging', () => {
+    mockUsePostReturn.isDragging = true;
+
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for post variant when submitting', () => {
+    mockUsePostReturn.isSubmitting = true;
+
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

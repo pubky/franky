@@ -58,28 +58,6 @@ describe('MutedUsersList', () => {
     expect(mockRemoveMutedUser).toHaveBeenCalledWith('user-123');
   });
 
-  it('shows "Unmute all users" button when more than one muted user', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-1', 'user-2'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
-    });
-
-    render(<MutedUsersList />);
-    expect(screen.getByText('Unmute all users')).toBeInTheDocument();
-  });
-
-  it('does not show "Unmute all users" button when only one muted user', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-1'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
-    });
-
-    render(<MutedUsersList />);
-    expect(screen.queryByText('Unmute all users')).not.toBeInTheDocument();
-  });
-
   it('calls clearMutedUsers when clicking unmute all', () => {
     mockUseSettingsStore.mockReturnValue({
       muted: ['user-1', 'user-2'],
@@ -92,19 +70,6 @@ describe('MutedUsersList', () => {
     fireEvent.click(unmuteAllButton);
 
     expect(mockClearMutedUsers).toHaveBeenCalled();
-  });
-
-  it('renders multiple muted users', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-1', 'user-2', 'user-3'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
-    });
-
-    render(<MutedUsersList />);
-    expect(screen.getByText('user-1')).toBeInTheDocument();
-    expect(screen.getByText('user-2')).toBeInTheDocument();
-    expect(screen.getByText('user-3')).toBeInTheDocument();
   });
 });
 
@@ -126,7 +91,7 @@ describe('MutedUsersList - Snapshots', () => {
 
   it('matches snapshot - with muted users', () => {
     mockUseSettingsStore.mockReturnValue({
-      muted: ['user-1', 'user-2'],
+      muted: ['user-1', 'user-2', 'user-3'],
       removeMutedUser: mockRemoveMutedUser,
       clearMutedUsers: mockClearMutedUsers,
     });

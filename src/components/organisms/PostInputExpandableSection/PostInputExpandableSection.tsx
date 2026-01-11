@@ -3,8 +3,8 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import { PostInputActionBar } from '../PostInputActionBar';
-import { POST_INPUT_ACTION_SUBMIT_MODE } from '../PostInputActionBar/PostInputActionBar.constants';
 import { PostInputTags } from '../PostInputTags';
+import { getButtonLabel } from './PostInputExpandableSection.utils';
 import type { PostInputExpandableSectionProps } from './PostInputExpandableSection.types';
 
 export function PostInputExpandableSection({
@@ -20,15 +20,17 @@ export function PostInputExpandableSection({
   showEmojiPicker,
   setShowEmojiPicker,
   onEmojiSelect,
+  onFileClick,
+  onImageClick,
   className,
 }: PostInputExpandableSectionProps) {
   const hasContent = content.trim().length > 0;
   const isUiDisabled = isSubmitting || isDisabled;
   // Use provided isPostDisabled or default to requiring content
   const isPostDisabled = isPostDisabledProp ?? (!hasContent || isUiDisabled);
-  const isReplyMode = submitMode === POST_INPUT_ACTION_SUBMIT_MODE.REPLY;
-  const postButtonLabel = isReplyMode ? 'Reply' : 'Post';
-  const postButtonAriaLabel = isReplyMode ? 'Reply' : 'Post';
+
+  const postButtonLabel = getButtonLabel(submitMode);
+  const postButtonAriaLabel = postButtonLabel;
 
   return (
     <>
@@ -62,6 +64,8 @@ export function PostInputExpandableSection({
               <PostInputActionBar
                 onPostClick={onSubmit}
                 onEmojiClick={() => setShowEmojiPicker(true)}
+                onFileClick={onFileClick}
+                onImageClick={onImageClick}
                 isPostDisabled={isPostDisabled}
                 isSubmitting={isSubmitting}
                 postButtonLabel={postButtonLabel}

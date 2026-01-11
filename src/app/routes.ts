@@ -2,11 +2,11 @@ export const ROOT_ROUTES = '/';
 
 export enum ONBOARDING_ROUTES {
   BACKUP = '/onboarding/backup',
-  HOMESERVER = '/onboarding/homeserver',
   INSTALL = '/onboarding/install',
   PROFILE = '/onboarding/profile',
   PUBKY = '/onboarding/pubky',
   SCAN = '/onboarding/scan',
+  HUMAN = '/onboarding/human',
 }
 
 export enum AUTH_ROUTES {
@@ -49,7 +49,14 @@ export enum POST_ROUTES {
   POST = '/post',
 }
 
-export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
+// Public routes are accessible regardless of authentication status.
+// This includes routes that need to be accessible during auth transitions (like logout).
+export const PUBLIC_ROUTES: string[] = [
+  AUTH_ROUTES.LOGOUT,
+  // Profile is public to prevent RouteGuard redirect during logout.
+  // The profile page components handle unauthenticated state gracefully.
+  APP_ROUTES.PROFILE,
+];
 
 export const ALLOWED_ROUTES = [
   ONBOARDING_ROUTES.PROFILE,
@@ -72,7 +79,7 @@ export const UNAUTHENTICATED_ROUTES = {
     ONBOARDING_ROUTES.SCAN,
     ONBOARDING_ROUTES.PUBKY,
     ONBOARDING_ROUTES.BACKUP,
-    ONBOARDING_ROUTES.HOMESERVER,
+    ONBOARDING_ROUTES.HUMAN,
     AUTH_ROUTES.LOGOUT,
   ],
   redirectTo: ROOT_ROUTES,

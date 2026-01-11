@@ -4,7 +4,7 @@ import * as Core from '@/core';
 
 describe('FeedModel', () => {
   const createFeedSchema = (overrides: Partial<Core.FeedModelSchema> = {}): Core.FeedModelSchema => ({
-    id: 'feed123',
+    id: 123,
     name: 'Bitcoin News',
     tags: ['bitcoin', 'lightning'],
     reach: PubkyAppFeedReach.All,
@@ -66,7 +66,7 @@ describe('FeedModel', () => {
     });
 
     it('should return null when feed not found', async () => {
-      const found = await Core.FeedModel.findById('nonexistent');
+      const found = await Core.FeedModel.findById(99999);
 
       expect(found).toBeNull();
     });
@@ -74,9 +74,9 @@ describe('FeedModel', () => {
 
   describe('findAll', () => {
     it('should return all feeds', async () => {
-      const feed1 = createFeedSchema({ id: 'feed1', name: 'Feed 1' });
-      const feed2 = createFeedSchema({ id: 'feed2', name: 'Feed 2' });
-      const feed3 = createFeedSchema({ id: 'feed3', name: 'Feed 3' });
+      const feed1 = createFeedSchema({ id: 1, name: 'Feed 1' });
+      const feed2 = createFeedSchema({ id: 2, name: 'Feed 2' });
+      const feed3 = createFeedSchema({ id: 3, name: 'Feed 3' });
 
       await Core.FeedModel.upsert(feed1);
       await Core.FeedModel.upsert(feed2);
@@ -97,9 +97,9 @@ describe('FeedModel', () => {
   describe('findAllSorted', () => {
     it('should return feeds sorted by created_at descending (most recent first)', async () => {
       const now = Date.now();
-      const feed1 = createFeedSchema({ id: 'feed1', name: 'Oldest', created_at: now - 2000 });
-      const feed2 = createFeedSchema({ id: 'feed2', name: 'Middle', created_at: now - 1000 });
-      const feed3 = createFeedSchema({ id: 'feed3', name: 'Newest', created_at: now });
+      const feed1 = createFeedSchema({ id: 1, name: 'Oldest', created_at: now - 2000 });
+      const feed2 = createFeedSchema({ id: 2, name: 'Middle', created_at: now - 1000 });
+      const feed3 = createFeedSchema({ id: 3, name: 'Newest', created_at: now });
 
       // Insert in random order
       await Core.FeedModel.upsert(feed2);
@@ -139,7 +139,7 @@ describe('FeedModel', () => {
   describe('schema fields', () => {
     it('should store all feed configuration fields', async () => {
       const feed = createFeedSchema({
-        id: 'complete-feed',
+        id: 1,
         name: 'Complete Feed',
         tags: ['tag1', 'tag2', 'tag3'],
         reach: PubkyAppFeedReach.Following,

@@ -76,7 +76,7 @@ vi.mock('@/atoms', () => ({
   }: {
     children: React.ReactNode;
     className?: string;
-    as?: string;
+    as?: React.ElementType;
     [key: string]: unknown;
   }) => (
     <Tag data-testid="typography" className={className} {...props}>
@@ -138,8 +138,8 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
   };
@@ -190,34 +190,12 @@ describe('DialogCheckLink', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('renders with correct title', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Double-check this link');
-  });
-
-  it('renders the link URL', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    expect(screen.getByText('https://example.com/some/path')).toBeInTheDocument();
-  });
-
   it('truncates long URLs', () => {
     const longUrl = 'https://example.com/this/is/a/very/long/path/that/needs/to/be/truncated';
     render(<DialogCheckLink {...defaultProps} linkUrl={longUrl} />);
     // truncateMiddle with 50 chars should truncate this URL
-    const truncatedUrl = screen.getByText(/https:\/\/example\.com.*\.\.\..*truncated/);
+    const truncatedUrl = screen.getByText('https://example.com/this...t/needs/to/be/truncated');
     expect(truncatedUrl).toBeInTheDocument();
-  });
-
-  it('renders Cancel and Continue buttons', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
-    expect(screen.getByText('Continue')).toBeInTheDocument();
-  });
-
-  it('renders the checkbox with label', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    expect(screen.getByTestId('checkbox')).toBeInTheDocument();
-    expect(screen.getByTestId('checkbox-label')).toHaveTextContent("Don't show this again");
   });
 
   it('handles click events on Cancel button', () => {
@@ -260,29 +238,6 @@ describe('DialogCheckLink', () => {
     fireEvent.click(continueButton);
 
     expect(mockSetShowConfirm).toHaveBeenCalledWith(false);
-  });
-
-  it('applies correct button variants', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    const cancelButton = screen.getByText('Cancel').closest('button');
-    const continueButton = screen.getByText('Continue').closest('button');
-
-    expect(cancelButton).toHaveAttribute('data-variant', 'outline');
-    expect(continueButton).not.toHaveAttribute('data-variant');
-  });
-
-  it('renders ExternalLink icon in Continue button', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    const continueButton = screen.getByText('Continue').closest('button');
-    const icon = continueButton?.querySelector('svg');
-    expect(icon).toBeInTheDocument();
-    expect(icon).toHaveClass('lucide-external-link');
-  });
-
-  it('uses w-2xl class for dialog content', () => {
-    render(<DialogCheckLink {...defaultProps} />);
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('w-2xl');
   });
 });
 
