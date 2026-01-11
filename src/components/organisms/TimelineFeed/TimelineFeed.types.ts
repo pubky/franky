@@ -29,8 +29,13 @@ export interface TimelineFeedProps {
 
 export interface TimelineFeedContextValue {
   /**
-   * Optimistically add post(s) to the top of the timeline
+   * Add post(s) to the timeline, sorted by timestamp
    * @param postIds - A single post ID or array of post IDs to add
    */
-  prependPosts: (postIds: string | string[]) => void;
+  prependPosts: (postIds: string | string[]) => Promise<void>;
+  /**
+   * Remove post(s) from the timeline
+   * @param postIds - A single post ID or array of post IDs to remove
+   */
+  removePosts: (postIds: string | string[]) => void;
 }

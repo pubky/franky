@@ -60,3 +60,10 @@ public/sw.js.map
 
 # Cursor
 /.cursor/plans
+/.cursor/commands
+
+# Claude
+CLAUDE.md
+
+# AI generated reviews
+.ai-reviews/

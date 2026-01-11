@@ -60,6 +60,11 @@ export class FileApplication {
     );
   }
 
+  /**
+   * Gets the metadata for a list of file attachments.
+   * @param fileAttachments - The file attachments to get the metadata for
+   * @returns The metadata for the file attachments
+   */
   static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
     const compositeFileIds = fileAttachments.flatMap((uri) => {
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
@@ -69,10 +74,22 @@ export class FileApplication {
     return files;
   }
 
-  static getAvatarUrl(pubky: Core.Pubky): string {
-    return Core.filesApi.getAvatarUrl(pubky);
+  /**
+   * Gets the avatar URL for a user.
+   * @param pubky - The user's public key
+   * @param version - Optional version string/number for cache busting
+   * @returns The avatar URL
+   */
+  static getAvatarUrl(pubky: Core.Pubky, version?: string | number): string {
+    return Core.filesApi.getAvatarUrl(pubky, version);
   }
 
+  /**
+   * Gets the file URL for a file.
+   * @param fileId - The file ID
+   * @param variant - The variant of the file
+   * @returns The file URL
+   */
   static getFileUrl({ fileId, variant }: Core.TGetFileUrlParams): string {
     const { pubky, id } = Core.parseCompositeId(fileId);
     return Core.filesApi.getFileUrl({ pubky, file_id: id, variant });

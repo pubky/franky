@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { NotificationsContainer } from './NotificationsContainer';
 import * as Hooks from '@/hooks';
+import { NotificationType } from '@/core/models/notification/notification.types';
 
 // Mock useNotifications hook
 vi.mock('@/hooks', async (importOriginal) => {
@@ -11,7 +12,8 @@ vi.mock('@/hooks', async (importOriginal) => {
     useNotifications: vi.fn(() => ({
       notifications: [
         {
-          type: 'follow' as const,
+          id: 'follow:123:user1',
+          type: NotificationType.Follow,
           timestamp: Date.now() - 1000 * 60 * 30,
           followed_by: 'user1',
         },
@@ -146,7 +148,8 @@ describe('NotificationsContainer', () => {
     vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
       notifications: [
         {
-          type: 'follow' as const,
+          id: 'follow:123:user1',
+          type: NotificationType.Follow,
           timestamp: Date.now() - 1000 * 60 * 30,
           followed_by: 'user1',
         },
@@ -167,12 +170,13 @@ describe('NotificationsContainer', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
-  it('calls markAllAsRead on mount', () => {
+  it('calls markAllAsRead on unmount', () => {
     const markAllAsRead = vi.fn();
-    vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
+    vi.mocked(Hooks.useNotifications).mockReturnValue({
       notifications: [
         {
-          type: 'follow' as const,
+          id: 'follow:123:user1',
+          type: NotificationType.Follow,
           timestamp: Date.now() - 1000 * 60 * 30,
           followed_by: 'user1',
         },
@@ -189,7 +193,9 @@ describe('NotificationsContainer', () => {
       markAllAsRead,
       isNotificationUnread: vi.fn(() => false),
     });
-    render(<NotificationsContainer />);
+    const { unmount } = render(<NotificationsContainer />);
+    expect(markAllAsRead).not.toHaveBeenCalled();
+    unmount();
     expect(markAllAsRead).toHaveBeenCalled();
   });
 

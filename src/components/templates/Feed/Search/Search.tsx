@@ -2,6 +2,7 @@
 
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.types';
 import { useSearchTags } from '@/hooks/useSearchStreamId';
@@ -17,6 +18,7 @@ import { useSearchTags } from '@/hooks/useSearchStreamId';
  * - Shows empty state when no tags in URL
  * - Reuses HomeFeedSidebar for sort/content filters
  * - Uses TimelineFeed with SEARCH variant for infinite scroll
+ * - Shows SearchInput on mobile (hidden on desktop where it's in the header)
  */
 export function Search() {
   // Reset to column layout on mount (this page doesn't support wide)
@@ -37,6 +39,11 @@ export function Search() {
         leftDrawerContentMobile={<Organisms.HomeFeedDrawerMobile hideReachFilter />}
         rightDrawerContentMobile={<Organisms.HomeFeedRightDrawerMobile />}
       >
+        {/* Mobile search input - hidden on desktop (shown in header there) */}
+        <Atoms.Container className="lg:hidden">
+          <Organisms.SearchInput />
+        </Atoms.Container>
+
         {hasTags ? (
           <>
             <Molecules.SearchHeader tags={tags} />

@@ -15,6 +15,19 @@ export class LocalProfileService {
   }
 
   /**
+   * Upserts user counts into local database.
+   * @param userId - The user ID to upsert counts for
+   * @param userCounts - The user counts to upsert
+   * @returns Promise resolving to void
+   */
+  static async upsertCounts(userId: Core.Pubky, userCounts: Core.NexusUserCounts): Promise<void> {
+    await Core.UserCountsModel.upsert({
+      id: userId,
+      ...userCounts,
+    });
+  }
+
+  /**
    * Updates user details into local database.
    * @param userDetails - The user details to update
    * @returns Promise resolving to void
@@ -25,6 +38,7 @@ export class LocalProfileService {
       bio: user.bio,
       image: user.image,
       links: user.links ? user.links.map((link) => ({ title: link.title, url: link.url })) : [],
+      indexed_at: Date.now(),
     });
   }
 

@@ -1,29 +1,30 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostActionsBar } from './PostActionsBar';
-import { useLiveQuery } from 'dexie-react-hooks';
 
-vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn(),
-}));
+// Mock hooks
+const mockUsePostCounts = vi.fn();
+const mockUseBookmark = vi.fn();
 
-// Mock useBookmark hook
 vi.mock('@/hooks', () => ({
-  useBookmark: vi.fn(() => ({
-    isBookmarked: false,
-    isLoading: false,
-    toggle: vi.fn(),
-  })),
+  usePostCounts: (postId: string) => mockUsePostCounts(postId),
+  useBookmark: (postId: string) => mockUseBookmark(postId),
 }));
 
-// Use real libs, only stub cn for deterministic class joining
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
+
+// Mock PostMenuActions
+vi.mock('@/organisms', () => ({
+  PostMenuActions: ({ postId, trigger }: { postId: string; trigger: React.ReactNode }) => (
+    <div data-testid="post-menu-actions" data-post-id={postId}>
+      {trigger}
+    </div>
+  ),
+}));
 
 // Minimal atoms used by PostActionsBar
 vi.mock('@/atoms', () => ({
@@ -32,7 +33,6 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  // Fix: Provide a minimal local type for ButtonProps to avoid TypeScript error
   Button: ({
     children,
     onClick,
@@ -61,24 +61,46 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   ),
+  Typography: ({
+    children,
+    as: Tag = 'span',
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: React.ElementType;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
 }));
-
-const mockUseLiveQuery = vi.mocked(useLiveQuery);
 
 describe('PostActionsBar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default mock implementations
+    mockUseBookmark.mockReturnValue({
+      isBookmarked: false,
+      isLoading: false,
+      isToggling: false,
+      toggle: vi.fn(),
+    });
   });
 
   it('shows loading state while counts are not available', () => {
-    mockUseLiveQuery.mockReturnValue(null);
+    mockUsePostCounts.mockReturnValue({ postCounts: null, isLoading: true });
 
     const { container } = render(<PostActionsBar postId="post-1" />);
     expect(container.firstChild).toHaveTextContent('Loading actions...');
   });
 
   it('renders all action buttons with counts and aria labels', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: 3, replies: 5, reposts: 2 });
+    mockUsePostCounts.mockReturnValue({
+      postCounts: { tags: 3, replies: 5, reposts: 2 },
+      isLoading: false,
+    });
 
     render(<PostActionsBar postId="post-2" />);
 
@@ -90,12 +112,14 @@ describe('PostActionsBar', () => {
   });
 
   it('invokes callbacks when buttons are clicked', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: 1, replies: 1, reposts: 1 });
+    mockUsePostCounts.mockReturnValue({
+      postCounts: { tags: 1, replies: 1, reposts: 1 },
+      isLoading: false,
+    });
 
     const onTagClick = vi.fn();
     const onReplyClick = vi.fn();
     const onRepostClick = vi.fn();
-    const onMoreClick = vi.fn();
 
     render(
       <PostActionsBar
@@ -103,30 +127,28 @@ describe('PostActionsBar', () => {
         onTagClick={onTagClick}
         onReplyClick={onReplyClick}
         onRepostClick={onRepostClick}
-        onMoreClick={onMoreClick}
       />,
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Tag post (1)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Reply to post (1)' }));
     fireEvent.click(screen.getByRole('button', { name: 'Repost (1)' }));
-    fireEvent.click(screen.getByRole('button', { name: 'More options' }));
 
     expect(onTagClick).toHaveBeenCalledTimes(1);
     expect(onReplyClick).toHaveBeenCalledTimes(1);
     expect(onRepostClick).toHaveBeenCalledTimes(1);
-    expect(onMoreClick).toHaveBeenCalledTimes(1);
   });
 
-  it('calls toggle when bookmark button is clicked', async () => {
-    mockUseLiveQuery.mockReturnValue({ tags: 1, replies: 1, reposts: 1 });
+  it('calls toggle when bookmark button is clicked', () => {
+    mockUsePostCounts.mockReturnValue({
+      postCounts: { tags: 1, replies: 1, reposts: 1 },
+      isLoading: false,
+    });
     const mockToggle = vi.fn();
-
-    // Re-mock with custom toggle function
-    const hooks = await import('@/hooks');
-    vi.mocked(hooks.useBookmark).mockReturnValue({
+    mockUseBookmark.mockReturnValue({
       isBookmarked: false,
       isLoading: false,
+      isToggling: false,
       toggle: mockToggle,
     });
 
@@ -138,15 +160,27 @@ describe('PostActionsBar', () => {
 });
 
 describe('PostActionsBar - Snapshots', () => {
+  beforeEach(() => {
+    mockUseBookmark.mockReturnValue({
+      isBookmarked: false,
+      isLoading: false,
+      isToggling: false,
+      toggle: vi.fn(),
+    });
+  });
+
   it('matches snapshot with counts', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: 7, replies: 8, reposts: 9 });
+    mockUsePostCounts.mockReturnValue({
+      postCounts: { tags: 7, replies: 8, reposts: 9 },
+      isLoading: false,
+    });
 
     const { container } = render(<PostActionsBar postId="post-4" className="extra" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot loading', () => {
-    mockUseLiveQuery.mockReturnValue(null);
+    mockUsePostCounts.mockReturnValue({ postCounts: null, isLoading: true });
 
     const { container } = render(<PostActionsBar postId="post-5" />);
     expect(container.firstChild).toMatchSnapshot();

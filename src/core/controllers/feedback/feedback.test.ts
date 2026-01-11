@@ -75,15 +75,6 @@ describe('FeedbackController', () => {
       );
     });
 
-    it('should throw when comment exceeds max length', async () => {
-      const longComment = 'a'.repeat(Config.FEEDBACK_MAX_CHARACTER_LENGTH + 1);
-      const params = createFeedbackParams({ comment: longComment });
-
-      await expect(FeedbackController.submit(params)).rejects.toThrow(
-        `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
-      );
-    });
-
     it('should throw when name is missing', async () => {
       const params = createFeedbackParams({ name: '' });
 
@@ -120,6 +111,15 @@ describe('FeedbackController', () => {
         comment: maxLengthComment,
         name: testData.userName,
       });
+    });
+
+    it('should throw when comment exceeds max length', async () => {
+      const longComment = 'a'.repeat(Config.FEEDBACK_MAX_CHARACTER_LENGTH + 1);
+      const params = createFeedbackParams({ comment: longComment });
+
+      await expect(FeedbackController.submit(params)).rejects.toThrow(
+        `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+      );
     });
   });
 });

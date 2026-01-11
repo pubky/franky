@@ -127,7 +127,7 @@ export class NotificationApplication {
         start: olderThan === Infinity ? undefined : olderThan,
       });
 
-      if (!notifications || notifications.length === 0) {
+      if (notifications.length === 0) {
         return { flatNotifications: [], olderThan: undefined };
       }
 
@@ -176,7 +176,7 @@ export class NotificationApplication {
     }
 
     if (notPersistedUserIds.length > 0) {
-      await Core.UserStreamApplication.fetchMissingUsersFromNexus({ cacheMissUserIds: notPersistedUserIds });
+      await Core.UserStreamApplication.fetchMissingUsersFromNexus({ cacheMissUserIds: notPersistedUserIds, viewerId });
     }
     return flatNotifications;
   }

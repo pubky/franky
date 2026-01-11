@@ -654,7 +654,11 @@ describe('NexusPostStreamService', () => {
         expectedInUrl: ['source=author_replies', 'author_id=author-pubky-id', 'tags=coding'],
       },
     ])('routes $name stream correctly', async ({ invokeEndpoint, params, extraParams, expectedInUrl }) => {
-      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+      const mockResponse: Core.NexusPostsKeyStream = {
+        post_keys: [],
+        last_post_score: 0,
+      };
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockResponse);
 
       const fetchParams: Core.TPostStreamFetchParams = {
         params,
@@ -737,22 +741,70 @@ describe('NexusPostStreamService', () => {
       const result = await NexusPostStreamService.fetch(params);
 
       expect(result).toEqual(mockResponse);
-      expect(result?.post_keys).toHaveLength(3);
-      expect(result?.last_post_score).toBe(123456);
+      expect(result.post_keys).toHaveLength(3);
+      expect(result.last_post_score).toBe(123456);
+    });
+  });
+
+  describe('fetchByIds', () => {
+    it('should fetch posts by IDs with viewer_id', async () => {
+      // Arrange
+      const mockPostIds = ['author1:post1', 'author1:post2', 'author2:post3'];
+      const mockPosts: Core.NexusPost[] = [
+        { details: { id: 'post1', author: 'author1' } } as Core.NexusPost,
+        { details: { id: 'post2', author: 'author1' } } as Core.NexusPost,
+        { details: { id: 'post3', author: 'author2' } } as Core.NexusPost,
+      ];
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockPosts);
+
+      // Act
+      const result = await NexusPostStreamService.fetchByIds({
+        post_ids: mockPostIds,
+        viewer_id: mockViewerId,
+      });
+
+      // Assert
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        JSON.stringify({ post_ids: mockPostIds, viewer_id: mockViewerId }),
+      );
+      expect(result).toEqual(mockPosts);
     });
 
-    it('should return undefined when queryNexus returns undefined', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+    it('should fetch posts by IDs without viewer_id', async () => {
+      // Arrange
+      const mockPostIds = ['author1:post1'];
+      const mockPosts: Core.NexusPost[] = [{ details: { id: 'post1', author: 'author1' } } as Core.NexusPost];
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockPosts);
 
-      const params: Core.TPostStreamFetchParams = {
-        params: { limit: 10, viewer_id: mockViewerId },
-        invokeEndpoint: Core.StreamSource.ALL,
-        extraParams: {},
-      };
+      // Act
+      const result = await NexusPostStreamService.fetchByIds({ post_ids: mockPostIds });
 
-      const result = await NexusPostStreamService.fetch(params);
+      // Assert
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        JSON.stringify({ post_ids: mockPostIds }),
+      );
+      expect(result).toEqual(mockPosts);
+    });
 
-      expect(result).toBeUndefined();
+    it('should return empty array when fetching empty post IDs', async () => {
+      // Arrange
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      // Act
+      const result = await NexusPostStreamService.fetchByIds({ post_ids: [] });
+
+      // Assert
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        JSON.stringify({ post_ids: [] }),
+      );
+      expect(result).toEqual([]);
     });
   });
 });

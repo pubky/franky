@@ -45,8 +45,13 @@ export interface UseStreamPaginationResult {
    */
   refresh: () => Promise<void>;
   /**
-   * Function to optimistically add post(s) to the top of the timeline
+   * Function to add post(s) to the timeline, sorted by timestamp
    * @param postIds - A single post ID or array of post IDs to add
    */
-  prependPosts: (postIds: string | string[]) => void;
+  prependPosts: (postIds: string | string[]) => Promise<void>;
+  /**
+   * Function to remove post(s) from the timeline
+   * @param postIds - A single post ID or array of post IDs to remove
+   */
+  removePosts: (postIds: string | string[]) => void;
 }

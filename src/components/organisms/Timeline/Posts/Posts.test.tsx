@@ -16,8 +16,8 @@ vi.mock('@/hooks', async (importOriginal) => {
     usePostNavigation: vi.fn(),
   };
 });
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     Logger: {
@@ -90,9 +90,9 @@ describe('TimelinePosts', () => {
       prefetch: vi.fn(),
     } as ReturnType<typeof useRouter>);
 
-    // Mock infinite scroll
+    // Mock infinite scroll - create a mock callback ref
     mockUseInfiniteScroll.mockReturnValue({
-      sentinelRef: { current: null },
+      sentinelRef: vi.fn(),
     });
 
     // Mock usePostNavigation
@@ -488,6 +488,10 @@ describe('TimelinePosts', () => {
     });
 
     it('should render sentinel element for infinite scroll', async () => {
+      mockUseInfiniteScroll.mockReturnValue({
+        sentinelRef: vi.fn(),
+      });
+
       const { container } = render(
         <TimelinePosts
           postIds={mockPostIds}
@@ -500,7 +504,7 @@ describe('TimelinePosts', () => {
       );
 
       await waitFor(() => {
-        const sentinel = container.querySelector('.h-\\[20px\\]');
+        const sentinel = container.querySelector('.h-5');
         expect(sentinel).toBeInTheDocument();
       });
     });

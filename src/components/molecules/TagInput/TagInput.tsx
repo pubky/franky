@@ -6,6 +6,7 @@ import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import { TAG_MAX_LENGTH } from '@/config';
 import type { TagInputProps } from './TagInput.types';
 
 export function TagInput({
@@ -54,6 +55,7 @@ export function TagInput({
     setShowEmojiPicker,
     handleTagSubmit,
     handleEmojiSelect,
+    handlePaste,
   } = Hooks.useTagInput({
     onTagAdd: handleTagAddWrapper,
     existingTags: existingTagLabels,
@@ -75,7 +77,7 @@ export function TagInput({
 
   const handleSuggestionClick = useCallback(
     (tagLabel: string) => {
-      setInputValue(tagLabel);
+      setInputValue(tagLabel.toLowerCase());
       setShowSuggestions(false);
       inputRef.current?.focus();
     },
@@ -86,7 +88,7 @@ export function TagInput({
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+      const value = e.target.value.toLowerCase();
       setInputValue(value);
       if (!hideSuggestions) {
         setShowSuggestions(value.trim().length > 0);
@@ -131,7 +133,9 @@ export function TagInput({
           onKeyDown={handleKeyDown}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
+          onPaste={handlePaste}
           disabled={isDisabled}
+          maxLength={TAG_MAX_LENGTH}
           className={Libs.cn(
             'flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white',
             'border-none shadow-none ring-0 outline-none hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',

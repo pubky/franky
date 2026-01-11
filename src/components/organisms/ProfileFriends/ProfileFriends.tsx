@@ -67,7 +67,6 @@ export function ProfileFriends() {
             key={connection.id}
             user={connection}
             variant="full"
-            isFollowing={true} // Friends are by definition mutual follows
             isLoading={isUserLoading(connection.id)}
             isStatusLoading={isLoading}
             isCurrentUser={currentUserPubky === connection.id}

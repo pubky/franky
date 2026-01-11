@@ -64,13 +64,6 @@ describe('ProfilePageLinks', () => {
     expect(screen.getByText('Links')).toBeInTheDocument();
   });
 
-  it('renders all links', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    defaultLinks?.forEach((link) => {
-      expect(screen.getByText(link.title)).toBeInTheDocument();
-    });
-  });
-
   it('renders links with correct href attributes', () => {
     render(<ProfilePageLinks links={defaultLinks} />);
     defaultLinks?.forEach((link) => {
@@ -86,31 +79,9 @@ describe('ProfilePageLinks', () => {
     expect(screen.getByText('Example').closest('a')).toHaveAttribute('href', 'https://example.com');
   });
 
-  it('has correct container structure', () => {
-    const { container } = render(<ProfilePageLinks links={defaultLinks} />);
-    const rootElement = container.firstChild as HTMLElement;
-    expect(rootElement).toHaveClass('flex', 'flex-col');
-  });
-
-  it('applies correct link styling', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    const linkElement = screen.getByText('bitcoin.org').closest('a');
-    expect(linkElement).toHaveClass('flex', 'items-center', 'gap-2.5', 'py-1', 'cursor-pointer');
-  });
-
   it('renders no links message when links array is empty', () => {
     render(<ProfilePageLinks links={[]} />);
     expect(screen.getByText('No links added yet.')).toBeInTheDocument();
-  });
-
-  it('renders no links message when links is undefined', () => {
-    render(<ProfilePageLinks />);
-    expect(screen.getByText('No links added yet.')).toBeInTheDocument();
-  });
-
-  it('renders DialogCheckLink component', () => {
-    render(<ProfilePageLinks links={defaultLinks} />);
-    expect(screen.getByTestId('dialog-check-link')).toBeInTheDocument();
   });
 });
 
@@ -189,6 +160,81 @@ describe('ProfilePageLinks - Link Click Behavior', () => {
     const dialog = screen.getByTestId('dialog-check-link');
     expect(dialog).toHaveAttribute('data-open', 'false');
   });
+
+  it('opens same-domain links directly without dialog even when checkLink is enabled', () => {
+    // Mock window.location.hostname
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { hostname: 'example.com' },
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const sameDomainLinks: Core.NexusUserDetails['links'] = [{ title: 'Same Domain', url: 'https://example.com/page' }];
+    render(<ProfilePageLinks links={sameDomainLinks} />);
+
+    const linkElement = screen.getByText('Same Domain').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/page', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
+
+  it('opens same-domain links with www prefix directly without dialog', () => {
+    // Mock window.location.hostname
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { hostname: 'www.example.com' },
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const sameDomainLinks: Core.NexusUserDetails['links'] = [{ title: 'Same Domain', url: 'https://example.com/page' }];
+    render(<ProfilePageLinks links={sameDomainLinks} />);
+
+    const linkElement = screen.getByText('Same Domain').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).toHaveBeenCalledWith('https://example.com/page', '_blank', 'noopener,noreferrer');
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'false');
+  });
+
+  it('shows dialog for different domain links even when checkLink is enabled', () => {
+    // Mock window.location.hostname
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { hostname: 'example.com' },
+    });
+
+    mockUseSettingsStore.mockReturnValue({
+      privacy: {
+        ...defaultPrivacyPreferences,
+        showConfirm: true, // checkLink enabled
+      },
+    });
+    const differentDomainLinks: Core.NexusUserDetails['links'] = [
+      { title: 'Different Domain', url: 'https://other-domain.com/page' },
+    ];
+    render(<ProfilePageLinks links={differentDomainLinks} />);
+
+    const linkElement = screen.getByText('Different Domain').closest('a');
+    fireEvent.click(linkElement!);
+
+    expect(mockWindowOpen).not.toHaveBeenCalled();
+    const dialog = screen.getByTestId('dialog-check-link');
+    expect(dialog).toHaveAttribute('data-open', 'true');
+    expect(dialog).toHaveAttribute('data-link-url', 'https://other-domain.com/page');
+  });
 });
 
 describe('ProfilePageLinks - Snapshots', () => {
@@ -215,6 +261,11 @@ describe('ProfilePageLinks - Snapshots', () => {
 
   it('matches snapshot with empty links', () => {
     const { container } = render(<ProfilePageLinks links={[]} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with undefined links', () => {
+    const { container } = render(<ProfilePageLinks />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

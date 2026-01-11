@@ -4,12 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import { HeaderContainer, HeaderTitle, HeaderOnboarding, HeaderSocialLinks, HeaderNavigationButtons } from './Header';
-import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
+import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/molecules';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
   usePathname: vi.fn(),
+  useSearchParams: vi.fn(() => ({
+    get: vi.fn(() => null),
+  })),
 }));
 
 // Mock dexie-react-hooks
@@ -24,6 +27,16 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     useAuthStore: vi.fn(),
     useNotificationStore: vi.fn(),
+    useSearchStore: vi.fn(() => ({
+      recentUsers: [],
+      recentTags: [],
+      activeTags: [],
+      addUser: vi.fn(),
+      addTag: vi.fn(),
+      setActiveTags: vi.fn(),
+      addActiveTag: vi.fn(),
+      removeActiveTag: vi.fn(),
+    })),
     ProfileController: {
       read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
     },
@@ -109,25 +122,25 @@ vi.mock('@/molecules', async (importOriginal) => {
     ),
     SearchInput: () => <div data-testid="search-input">Search Input</div>,
     HeaderSocialLinks: () => <div data-testid="header-social-links">Social Links</div>,
-    HeaderButtonSignIn: () => <div data-testid="header-button-sign-in">Sign In Button</div>,
   };
 });
 
 // Mock the libs - keep real implementations and only stub helpers we need
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 // Mock the config
-vi.mock('@/config', () => ({
-  GITHUB_URL: 'https://github.com',
-  TWITTER_GETPUBKY_URL: 'https://twitter.com/getpubky',
-  TELEGRAM_URL: 'https://t.me/getpubky',
-}));
+vi.mock('@/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config')>();
+  return {
+    ...actual,
+    GITHUB_URL: 'https://github.com',
+    TWITTER_GETPUBKY_URL: 'https://twitter.com/getpubky',
+    TELEGRAM_URL: 'https://t.me/getpubky',
+  };
+});
 
 // Mock the app routes
 vi.mock('@/app', async (importOriginal) => {

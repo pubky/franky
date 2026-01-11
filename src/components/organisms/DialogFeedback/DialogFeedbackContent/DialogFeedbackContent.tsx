@@ -14,6 +14,9 @@ export function DialogFeedbackContent({
   hasContent,
   currentUserPubky,
 }: DialogFeedbackContentProps) {
+  const characterLimit =
+    feedback.length > 0 ? { count: Libs.getCharacterCount(feedback), max: FEEDBACK_MAX_CHARACTER_LENGTH } : undefined;
+
   return (
     <>
       <Atoms.DialogHeader>
@@ -26,13 +29,13 @@ export function DialogFeedbackContent({
             <Organisms.PostHeader
               postId={currentUserPubky}
               isReplyInput={true}
-              characterCount={feedback.length > 0 ? feedback.length : undefined}
-              maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}
+              characterLimit={characterLimit}
+              showPopover={false}
             />
 
             <Atoms.Textarea
               placeholder="What do you think about Pubky? Any suggestions?"
-              className="min-h-6 resize-none border-none bg-transparent px-0 py-4 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="min-h-6 resize-none border-none bg-transparent px-0 py-2 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
               value={feedback}
               onChange={handleChange}
               maxLength={FEEDBACK_MAX_CHARACTER_LENGTH}

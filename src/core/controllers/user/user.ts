@@ -21,16 +21,23 @@ export class UserController {
   }
 
   /**
-   * Get user counts from local database
-   * This is a read-only operation that queries the local cache
+   * Get user counts from local database.
+   * This is a read-only operation that queries the local cache.
    */
   static async getCounts(params: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     return await Core.UserApplication.getCounts(params);
   }
 
   /**
-   * Get multiple user counts from local database (bulk operation)
-   * This is a read-only operation that queries the local cache
+   * Get user counts from local database, fetching from Nexus API if not found.
+   */
+  static async getOrFetchCounts(params: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    return await Core.UserApplication.getOrFetchCounts(params);
+  }
+
+  /**
+   * Get multiple user counts from local database (bulk operation).
+   * This is a read-only operation that queries the local cache.
    */
   static async getManyCounts(params: Core.TPubkyListParams): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
     return await Core.UserApplication.getManyCounts(params);
@@ -68,7 +75,7 @@ export class UserController {
    * @param params - The parameters for fetching taggers
    * @returns The taggers for the user
    */
-  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+  static async fetchTaggers(params: Core.TUserTaggersParams): Promise<Core.NexusTaggers[]> {
     return await Core.UserApplication.fetchTaggers(params);
   }
 

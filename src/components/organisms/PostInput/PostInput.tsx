@@ -3,16 +3,20 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Libs from '@/libs';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { usePostInput } from '@/hooks';
-import { PostInputTags } from '../PostInputTags';
-import { PostInputActionBar } from '../PostInputActionBar';
+import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
+import { PostInputExpandableSection } from '../PostInputExpandableSection';
+import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
 
 export function PostInput({
+  dataCy,
   variant,
   postId,
+  originalPostId,
   onSuccess,
   placeholder,
   showThreadConnector = false,
@@ -22,23 +26,33 @@ export function PostInput({
   const {
     textareaRef,
     containerRef,
+    fileInputRef,
     content,
     tags,
+    setTags,
+    attachments,
+    setAttachments,
+    isDragging,
     isExpanded,
     isSubmitting,
     showEmojiPicker,
     setShowEmojiPicker,
-    hasContent,
     displayPlaceholder,
     currentUserPubky,
     handleExpand,
     handleSubmit,
     handleChange,
     handleEmojiSelect,
-    setTags,
+    handleFilesAdded,
+    handleFileClick,
+    handleDragEnter,
+    handleDragLeave,
+    handleDragOver,
+    handleDrop,
   } = usePostInput({
     variant,
     postId,
+    originalPostId,
     onSuccess,
     placeholder,
     expanded,
@@ -47,18 +61,36 @@ export function PostInput({
 
   return (
     <Atoms.Container
+      data-cy={dataCy}
       ref={containerRef}
-      className="relative cursor-pointer rounded-md border border-dashed border-input p-6"
+      className={Libs.cn(
+        'relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
+        isDragging ? 'border-brand' : 'border-input',
+      )}
       onClick={handleExpand}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
     >
+      {/* Drag overlay */}
+      {isDragging && (
+        <Atoms.Container
+          className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-brand/10"
+          overrideDefaults
+        >
+          <Atoms.Typography className="text-brand">Drop files here</Atoms.Typography>
+        </Atoms.Container>
+      )}
+
       {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
       <Atoms.Container className="gap-4">
         {currentUserPubky && (
           <Organisms.PostHeader
             postId={currentUserPubky}
             isReplyInput={true}
-            characterCount={content.length}
-            maxLength={POST_MAX_CHARACTER_LENGTH}
+            characterLimit={{ count: Libs.getCharacterCount(content), max: POST_MAX_CHARACTER_LENGTH }}
+            showPopover={false}
           />
         )}
 
@@ -74,51 +106,38 @@ export function PostInput({
           disabled={isSubmitting}
         />
 
-        {/* Expandable section with animation */}
-        <Atoms.Container
-          className={`grid transition-all duration-300 ease-in-out ${
-            isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
-          }`}
-          overrideDefaults
-        >
-          <Atoms.Container className="overflow-hidden" overrideDefaults>
-            <Atoms.Container className="gap-4">
-              {/* Link preview - show when content has URLs */}
-              {hasContent && <Molecules.PostLinkEmbeds content={content} />}
+        <PostInputAttachments
+          ref={fileInputRef}
+          attachments={attachments}
+          setAttachments={setAttachments}
+          handleFilesAdded={handleFilesAdded}
+          isSubmitting={isSubmitting}
+        />
 
-              {/* Tags row */}
-              {tags.length > 0 && (
-                <Atoms.Container className="flex flex-wrap items-center gap-2" overrideDefaults>
-                  {tags.map((tag, index) => (
-                    <Molecules.PostTag
-                      key={`${tag}-${index}`}
-                      label={tag}
-                      showClose={!isSubmitting}
-                      onClose={() => {
-                        setTags((prevTags) => prevTags.filter((_, i) => i !== index));
-                      }}
-                    />
-                  ))}
-                </Atoms.Container>
-              )}
+        {/* Show original post preview for reposts */}
+        {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
+          <Molecules.PostPreviewCard postId={originalPostId} className="bg-card" />
+        )}
 
-              <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-                <PostInputTags tags={tags} onTagsChange={setTags} disabled={isSubmitting} />
-                <PostInputActionBar
-                  onPostClick={handleSubmit}
-                  onEmojiClick={() => setShowEmojiPicker(true)}
-                  isPostDisabled={!content.trim() || isSubmitting}
-                  isSubmitting={isSubmitting}
-                />
-              </Atoms.Container>
-            </Atoms.Container>
-          </Atoms.Container>
-        </Atoms.Container>
-
-        <Molecules.EmojiPickerDialog
-          open={showEmojiPicker && !isSubmitting}
-          onOpenChange={setShowEmojiPicker}
+        <PostInputExpandableSection
+          isExpanded={isExpanded}
+          content={content}
+          tags={tags}
+          isSubmitting={isSubmitting}
+          setTags={setTags}
+          onSubmit={handleSubmit}
+          showEmojiPicker={showEmojiPicker}
+          setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
+          onFileClick={handleFileClick}
+          onImageClick={handleFileClick}
+          // Reposts allow empty content, posts and replies require content or attachments
+          isPostDisabled={
+            variant === POST_INPUT_VARIANT.REPOST
+              ? isSubmitting
+              : (!content.trim() && attachments.length === 0) || isSubmitting
+          }
+          submitMode={variant}
         />
       </Atoms.Container>
     </Atoms.Container>

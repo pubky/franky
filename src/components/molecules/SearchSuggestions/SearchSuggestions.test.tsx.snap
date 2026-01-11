@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot with empty hot tags 1`] = `
+<div
+  class="absolute top-full right-0 left-0 z-50 overflow-y-auto rounded-b-2xl border-x border-b border-border"
+  data-override-defaults="true"
+  data-testid="search-suggestions"
+  role="region"
+  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%); max-height: 300px;"
+>
+  <div
+    class="flex flex-col space-y-6 px-6 pt-3 pb-6"
+    data-override-defaults="true"
+    data-testid="container"
+  />
+</div>
+`;
+
+exports[`SearchSuggestions > SearchSuggestions - Snapshots > matches snapshot with hot tags 1`] = `
+<div
+  class="absolute top-full right-0 left-0 z-50 overflow-y-auto rounded-b-2xl border-x border-b border-border"
+  data-override-defaults="true"
+  data-testid="search-suggestions"
+  role="region"
+  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%); max-height: 300px;"
+>
+  <div
+    class="flex flex-col space-y-6 px-6 pt-3 pb-6"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      data-testid="section-hot-tags"
+    >
+      <span>
+        Hot tags
+      </span>
+      <button
+        data-testid="tag-pubky"
+      >
+        pubky
+      </button>
+      <button
+        data-testid="tag-keys"
+      >
+        keys
+      </button>
+    </div>
+  </div>
+</div>
+`;

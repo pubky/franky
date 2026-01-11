@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostPreviewCard - Snapshots > matches snapshot with default props 1`] = `
+<div
+  aria-label="View original post"
+  class="cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50"
+  data-testid="card"
+  role="link"
+  tabindex="0"
+>
+  <div
+    class="flex flex-col gap-4 p-6"
+    data-testid="card-content"
+  >
+    <div
+      data-post-id="snapshot-post-id"
+      data-testid="post-header"
+    >
+      PostHeader 
+      snapshot-post-id
+    </div>
+    <div
+      data-post-id="snapshot-post-id"
+      data-testid="post-content-base"
+    >
+      PostContentBase 
+      snapshot-post-id
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostPreviewCard - Snapshots > matches snapshot with extra className 1`] = `
+<div
+  aria-label="View original post"
+  class="cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50 bg-muted"
+  data-testid="card"
+  role="link"
+  tabindex="0"
+>
+  <div
+    class="flex flex-col gap-4 p-6"
+    data-testid="card-content"
+  >
+    <div
+      data-post-id="snapshot-post-id"
+      data-testid="post-header"
+    >
+      PostHeader 
+      snapshot-post-id
+    </div>
+    <div
+      data-post-id="snapshot-post-id"
+      data-testid="post-content-base"
+    >
+      PostContentBase 
+      snapshot-post-id
+    </div>
+  </div>
+</div>
+`;

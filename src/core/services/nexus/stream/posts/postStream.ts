@@ -7,6 +7,17 @@ import * as Core from '@/core';
  */
 export class NexusPostStreamService {
   /**
+   * Fetches posts by their IDs from Nexus API
+   *
+   * @param params - Parameters containing post IDs and optional viewer ID
+   * @returns Array of posts
+   */
+  static async fetchByIds(params: Core.TStreamPostsByIdsParams): Promise<Core.NexusPost[]> {
+    const { url, body } = Core.postStreamApi.postsByIds(params);
+    return await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
+  }
+
+  /**
    * Fetches post stream data from Nexus API
    *
    * @param params - Parameters for fetching post stream data
@@ -16,7 +27,8 @@ export class NexusPostStreamService {
     params,
     invokeEndpoint,
     extraParams,
-  }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream | undefined> {
+  }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream> {
+    // TODO: Handle the error in application layer
     let nexusEndpoint: string;
     switch (invokeEndpoint) {
       case Core.StreamSource.ALL:

@@ -4,6 +4,15 @@ export interface UseAuthUrlOptions {
    * @default true
    */
   autoFetch?: boolean;
+  /**
+   * The type of auth URL to generate.
+   * @default 'signin'
+   */
+  type?: 'signin' | 'signup';
+  /**
+   * The invite code for signup. Required when type is 'signup'.
+   */
+  inviteCode?: string;
 }
 
 export interface UseAuthUrlReturn {
@@ -11,10 +20,6 @@ export interface UseAuthUrlReturn {
   url: string;
   /** Whether the auth URL is currently being generated */
   isLoading: boolean;
-  /** Whether a generation request is in progress (including retries) */
-  isGenerating: boolean;
   /** Manually trigger auth URL generation */
   fetchUrl: () => Promise<void>;
-  /** Current retry attempt count */
-  retryCount: number;
 }

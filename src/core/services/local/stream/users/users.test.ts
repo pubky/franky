@@ -72,6 +72,10 @@ describe('LocalStreamUsersService', () => {
 
     const tags = await Core.UserTagsModel.findById(userId);
     expect(tags).toBeTruthy();
+
+    const ttl = await Core.UserTtlModel.findById(userId);
+    expect(ttl).toBeTruthy();
+    expect(ttl?.lastUpdatedAt).toBeGreaterThan(0);
   };
 
   const persistAndVerifyUser = async (userId: Core.Pubky, overrides?: Partial<Core.NexusUser>) => {
@@ -89,6 +93,7 @@ describe('LocalStreamUsersService', () => {
     await Core.UserCountsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
     await Core.UserTagsModel.table.clear();
+    await Core.UserTtlModel.table.clear();
   });
 
   describe('upsert', () => {
@@ -195,7 +200,7 @@ describe('LocalStreamUsersService', () => {
   });
 
   describe('persistUsers', () => {
-    it('should persist users to normalized tables (details, counts, tags, relationships)', async () => {
+    it('should persist users to normalized tables (details, counts, tags, relationships, ttl)', async () => {
       const userId = 'user-1' as Core.Pubky;
       const { mockUser } = await persistAndVerifyUser(userId);
 
@@ -218,13 +223,13 @@ describe('LocalStreamUsersService', () => {
           label: 'developer',
           taggers: ['tagger-1', 'tagger-2'],
           taggers_count: 2,
-          relationship: { tagged: true, tagged_by_viewer: false },
+          relationship: true,
         },
         {
           label: 'designer',
           taggers: ['tagger-3'],
           taggers_count: 1,
-          relationship: { tagged: false, tagged_by_viewer: true },
+          relationship: false,
         },
       ];
 
@@ -262,7 +267,7 @@ describe('LocalStreamUsersService', () => {
           label: 'expert',
           taggers: ['tagger-1'],
           taggers_count: 1,
-          relationship: { tagged: true, tagged_by_viewer: false },
+          relationship: true,
         },
       ];
 
@@ -284,7 +289,7 @@ describe('LocalStreamUsersService', () => {
       expect(result).toEqual([]);
     });
 
-    it('should bulk save to all 4 tables in parallel', async () => {
+    it('should bulk save to all 5 tables in parallel (details, counts, tags, relationships, ttl)', async () => {
       const userIds: Core.Pubky[] = ['user-1', 'user-2', 'user-3'];
       const mockUsers = userIds.map((id) => createMockNexusUser(id));
 
@@ -303,6 +308,10 @@ describe('LocalStreamUsersService', () => {
 
         const tags = await Core.UserTagsModel.findById(userId);
         expect(tags).toBeTruthy();
+
+        const ttl = await Core.UserTtlModel.findById(userId);
+        expect(ttl).toBeTruthy();
+        expect(ttl?.lastUpdatedAt).toBeGreaterThan(0);
       }
     });
 

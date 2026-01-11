@@ -11,7 +11,12 @@ vi.mock('@/core', async () => {
     StreamPostsController: {
       getCachedLastPostTimestamp: vi.fn(),
       getOrFetchStreamSlice: vi.fn(),
+      clearStaleStreamCache: vi.fn(),
     },
+    PostDetailsModel: {
+      findByIdsPreserveOrder: vi.fn(),
+    },
+    sortPostIdsByTimestamp: vi.fn(),
   };
 });
 
@@ -38,11 +43,24 @@ describe('useStreamPagination', () => {
     vi.clearAllMocks();
 
     // Default mock implementations
+    vi.mocked(Core.StreamPostsController.clearStaleStreamCache).mockResolvedValue(undefined);
     vi.mocked(Core.StreamPostsController.getCachedLastPostTimestamp).mockResolvedValue(0);
     vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
       nextPageIds: mockPostIds,
       timestamp: Date.now(),
     });
+    // Mock PostDetailsModel to return posts with timestamps that preserve input order
+    // (newer posts first = higher timestamps)
+    vi.mocked(Core.PostDetailsModel.findByIdsPreserveOrder).mockImplementation(async (ids) => {
+      const now = Date.now();
+      return ids.map((id, index) => ({
+        id,
+        indexed_at: now - index * 1000, // Each post 1 second older than previous
+      }));
+    });
+    // Mock sortPostIdsByTimestamp to preserve input order by default
+    // (simulates already-sorted posts)
+    vi.mocked(Core.sortPostIdsByTimestamp).mockImplementation(async (ids: string[]) => ids);
   });
 
   describe('Initialization', () => {
@@ -349,6 +367,73 @@ describe('useStreamPagination', () => {
     });
   });
 
+  describe('Stale Cache Sanity Check', () => {
+    it('should call clearStaleStreamCache on initial load', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(Core.StreamPostsController.clearStaleStreamCache).toHaveBeenCalledWith({
+        streamId: mockStreamId,
+      });
+    });
+
+    it('should continue to fetch posts after stale cache check', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Cache check should have been called
+      expect(Core.StreamPostsController.clearStaleStreamCache).toHaveBeenCalled();
+
+      // Posts should still be fetched
+      expect(Core.StreamPostsController.getOrFetchStreamSlice).toHaveBeenCalled();
+      expect(result.current.postIds).toEqual(mockPostIds);
+    });
+
+    it('should not call clearStaleStreamCache on loadMore', async () => {
+      const limit = 30;
+      vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
+        nextPageIds: Array(limit).fill('post'),
+        timestamp: Date.now(),
+      });
+
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+          limit,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Clear the mock calls from initial load
+      vi.mocked(Core.StreamPostsController.clearStaleStreamCache).mockClear();
+
+      // Load more
+      await act(async () => {
+        await result.current.loadMore();
+      });
+
+      // clearStaleStreamCache should NOT be called on loadMore
+      expect(Core.StreamPostsController.clearStaleStreamCache).not.toHaveBeenCalled();
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle empty results', async () => {
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
@@ -383,6 +468,255 @@ describe('useStreamPagination', () => {
 
       expect(result.current.refresh).toBeDefined();
       expect(typeof result.current.refresh).toBe('function');
+    });
+  });
+
+  describe('prependPosts', () => {
+    it('should add single post to the beginning of the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const newPostId = 'new-post-1';
+
+      await act(async () => {
+        await result.current.prependPosts(newPostId);
+      });
+
+      expect(result.current.postIds[0]).toBe(newPostId);
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 1);
+      expect(result.current.postIds.slice(1)).toEqual(initialPostIds);
+    });
+
+    it('should add multiple posts to the beginning of the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const newPostIds = ['new-post-1', 'new-post-2', 'new-post-3'];
+
+      await act(async () => {
+        await result.current.prependPosts(newPostIds);
+      });
+
+      expect(result.current.postIds.slice(0, 3)).toEqual(newPostIds);
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 3);
+      expect(result.current.postIds.slice(3)).toEqual(initialPostIds);
+    });
+
+    it('should not add duplicate posts', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const duplicatePostId = initialPostIds[0];
+
+      await act(async () => {
+        await result.current.prependPosts(duplicatePostId);
+      });
+
+      // Should not have added duplicate
+      expect(result.current.postIds.length).toBe(initialPostIds.length);
+      expect(result.current.postIds[0]).toBe(duplicatePostId);
+    });
+
+    it('should handle empty array', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+
+      await act(async () => {
+        await result.current.prependPosts([]);
+      });
+
+      expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should sort prepended posts by timestamp', async () => {
+      // Mock sortPostIdsByTimestamp to return posts sorted by timestamp
+      vi.mocked(Core.sortPostIdsByTimestamp).mockImplementation(async (ids: string[]) => {
+        const timestampMap: Record<string, number> = {
+          'old-post': 1000, // oldest
+          'new-post': 3000, // newest
+          'middle-post': 2000, // middle
+          post1: 500,
+          post2: 400,
+          post3: 300,
+        };
+        return [...ids].sort((a, b) => (timestampMap[b] || 0) - (timestampMap[a] || 0));
+      });
+
+      const { result } = renderHook(() => useStreamPagination({ streamId: mockStreamId }));
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      // Prepend in wrong order
+      await act(async () => {
+        await result.current.prependPosts(['old-post', 'new-post', 'middle-post']);
+      });
+
+      // Should be sorted: newest first
+      expect(result.current.postIds[0]).toBe('new-post');
+      expect(result.current.postIds[1]).toBe('middle-post');
+      expect(result.current.postIds[2]).toBe('old-post');
+    });
+
+    it('should fallback to unsorted when sorting fails', async () => {
+      // Mock sortPostIdsByTimestamp to throw an error
+      vi.mocked(Core.sortPostIdsByTimestamp).mockRejectedValue(new Error('IndexedDB error'));
+
+      const { result } = renderHook(() => useStreamPagination({ streamId: mockStreamId }));
+      await waitFor(() => expect(result.current.loading).toBe(false));
+
+      const initialPostIds = result.current.postIds;
+      const newPostIds = ['new-post-1', 'new-post-2'];
+
+      await act(async () => {
+        await result.current.prependPosts(newPostIds);
+      });
+
+      // Should fallback: new posts prepended without sorting
+      expect(result.current.postIds.length).toBe(initialPostIds.length + 2);
+      expect(result.current.postIds[0]).toBe('new-post-1');
+      expect(result.current.postIds[1]).toBe('new-post-2');
+    });
+  });
+
+  describe('removePosts', () => {
+    it('should remove single post from the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const postToRemove = initialPostIds[1];
+
+      act(() => {
+        result.current.removePosts(postToRemove);
+      });
+
+      expect(result.current.postIds).not.toContain(postToRemove);
+      expect(result.current.postIds.length).toBe(initialPostIds.length - 1);
+    });
+
+    it('should remove multiple posts from the list', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const postsToRemove = [initialPostIds[0], initialPostIds[2]];
+
+      act(() => {
+        result.current.removePosts(postsToRemove);
+      });
+
+      expect(result.current.postIds).not.toContain(postsToRemove[0]);
+      expect(result.current.postIds).not.toContain(postsToRemove[1]);
+      expect(result.current.postIds.length).toBe(initialPostIds.length - 2);
+    });
+
+    it('should handle removing non-existent post', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const nonExistentPost = 'non-existent-post';
+
+      act(() => {
+        result.current.removePosts(nonExistentPost);
+      });
+
+      expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should handle empty array', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+
+      act(() => {
+        result.current.removePosts([]);
+      });
+
+      expect(result.current.postIds).toEqual(initialPostIds);
+    });
+
+    it('should maintain order after removal', async () => {
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      const initialPostIds = result.current.postIds;
+      const postToRemove = initialPostIds[1];
+      const expectedOrder = initialPostIds.filter((id) => id !== postToRemove);
+
+      act(() => {
+        result.current.removePosts(postToRemove);
+      });
+
+      expect(result.current.postIds).toEqual(expectedOrder);
     });
   });
 });

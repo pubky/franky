@@ -10,8 +10,13 @@ export function useAuthStatus(): AuthStatusResult {
   const authStore = Core.useAuthStore();
 
   const authStatusResult = useMemo((): AuthStatusResult => {
-    // Check if stores are still hydrating
-    const isLoading = !onboardingStore.hasHydrated || !authStore.hasHydrated;
+    // On page reload sessionExport (serialized credentials in localStorage) is restored
+    // before session (live auth object) is recreated. This flag prevents premature
+    // redirects by keeping isLoading true until session restoration is completed.
+    const isSessionRestorePending = authStore.sessionExport !== null && authStore.session === null;
+
+    const isLoading =
+      !onboardingStore.hasHydrated || !authStore.hasHydrated || authStore.isRestoringSession || isSessionRestorePending;
 
     // Check if user has keypair (session)
     const hasKeypair = authStore.session !== null;
@@ -42,7 +47,14 @@ export function useAuthStatus(): AuthStatusResult {
       hasProfile,
       isFullyAuthenticated: status === AuthStatus.AUTHENTICATED,
     };
-  }, [onboardingStore.hasHydrated, authStore.hasHydrated, authStore.session, authStore.hasProfile]);
+  }, [
+    onboardingStore.hasHydrated,
+    authStore.hasHydrated,
+    authStore.isRestoringSession,
+    authStore.sessionExport,
+    authStore.session,
+    authStore.hasProfile,
+  ]);
 
   return authStatusResult;
 }

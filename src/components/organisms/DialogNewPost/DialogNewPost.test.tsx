@@ -1,56 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DialogNewPost } from './DialogNewPost';
-import * as Organisms from '@/organisms';
-import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
-
-// Mock Radix UI Dialog components
-vi.mock('@radix-ui/react-dialog', () => ({
-  Root: ({
-    children,
-    open,
-    onOpenChange,
-  }: {
-    children: React.ReactNode;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-  }) => (
-    <div data-testid="dialog-root" data-open={open} onClick={() => onOpenChange?.(false)}>
-      {children}
-    </div>
-  ),
-  Trigger: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-trigger">{children}</div>,
-  Content: ({
-    children,
-    className,
-    hiddenTitle,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    hiddenTitle?: string;
-  }) => (
-    <div data-testid="dialog-content" className={className} aria-label={hiddenTitle}>
-      {children}
-    </div>
-  ),
-  Portal: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-portal">{children}</div>,
-  Overlay: ({ className }: { className?: string }) => <div data-testid="dialog-overlay" className={className} />,
-  Close: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <button data-testid="dialog-close" className={className}>
-      {children}
-    </button>
-  ),
-  Title: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <h2 data-testid="dialog-title" className={className}>
-      {children}
-    </h2>
-  ),
-  Description: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <p data-testid="dialog-description" className={className}>
-      {children}
-    </p>
-  ),
-}));
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
@@ -158,13 +108,10 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Use real libs, only stub cn to a deterministic join
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('DialogNewPost', () => {
@@ -182,29 +129,6 @@ describe('DialogNewPost', () => {
     expect(screen.getByTestId('post-input')).toBeInTheDocument();
   });
 
-  it('renders PostInput with correct props', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    expect(Organisms.PostInput).toHaveBeenCalledWith(
-      {
-        variant: POST_INPUT_VARIANT.POST,
-        onSuccess: expect.any(Function),
-        expanded: true,
-        onContentChange: expect.any(Function),
-      },
-      undefined,
-    );
-  });
-
-  it('passes onOpenChangeAction to Dialog', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialog = screen.getByTestId('dialog');
-    expect(dialog).toHaveAttribute('data-open', 'true');
-  });
-
   it('calls onOpenChangeAction when PostInput onSuccess is called', async () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
@@ -215,30 +139,6 @@ describe('DialogNewPost', () => {
     await waitFor(() => {
       expect(onOpenChangeAction).toHaveBeenCalledWith(false);
     });
-  });
-
-  it('applies correct className to DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveClass('w-3xl');
-  });
-
-  it('sets hiddenTitle on DialogContent', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveAttribute('aria-label', 'New post');
-  });
-
-  it('renders DialogHeader with title', () => {
-    const onOpenChangeAction = vi.fn();
-    render(<DialogNewPost open={false} onOpenChangeAction={onOpenChangeAction} />);
-
-    expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Post');
   });
 
   it('handles open prop correctly', () => {

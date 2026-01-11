@@ -5,6 +5,7 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
+import * as Config from '@/config';
 
 export const EditProfileForm = () => {
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
@@ -60,6 +61,9 @@ export const EditProfileForm = () => {
                   variant="dashed"
                   rows={40}
                   onChange={(e) => handlers.setBio(e.target.value)}
+                  status={errors.bioError ? 'error' : 'default'}
+                  message={errors.bioError ?? undefined}
+                  messageType={errors.bioError ? 'error' : 'default'}
                 />
               </Atoms.Container>
             </Atoms.Container>
@@ -103,6 +107,7 @@ export const EditProfileForm = () => {
                 onSave={(label, url) => {
                   handlers.setLinks([...state.links, { label, url }]);
                 }}
+                disabled={state.links.length >= Config.USER_MAX_LINKS}
               />
             </Atoms.Container>
           </Atoms.Container>

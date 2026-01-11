@@ -86,8 +86,8 @@ vi.mock('@/molecules', () => ({
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     Logger: {
@@ -124,7 +124,7 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {
@@ -163,7 +163,7 @@ describe('SignInContent', () => {
     });
     Object.defineProperty(window, 'open', {
       configurable: true,
-      value: vi.fn(() => ({ location: { href: '' } })) as typeof window.open,
+      value: vi.fn(() => ({ location: { href: '' } })) as unknown as typeof window.open,
     });
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
@@ -279,9 +279,7 @@ describe('SignInContent', () => {
     vi.mocked(Hooks.useAuthUrl).mockReturnValue({
       url: '',
       isLoading: true,
-      isGenerating: true,
       fetchUrl: mockFetchUrl,
-      retryCount: 0,
     });
 
     await act(async () => {

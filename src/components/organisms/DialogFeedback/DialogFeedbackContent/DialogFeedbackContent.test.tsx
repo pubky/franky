@@ -5,12 +5,12 @@ import { DialogFeedbackContent } from './DialogFeedbackContent';
 // Mock organisms
 vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(
-    ({ postId, characterCount, maxLength }: { postId: string; characterCount?: number; maxLength?: number }) => (
+    ({ postId, characterLimit }: { postId: string; characterLimit?: { count: number; max: number } }) => (
       <div
         data-testid="post-header"
         data-post-id={postId}
-        data-character-count={characterCount}
-        data-max-length={maxLength}
+        data-character-count={characterLimit?.count}
+        data-max-length={characterLimit?.max}
       >
         PostHeader
       </div>
@@ -94,24 +94,24 @@ vi.mock('@/atoms', () => ({
   ),
   Typography: ({
     children,
-    as,
+    as: _as,
     size,
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => (
-    <p data-testid="typography" data-as={as} data-size={size} className={className}>
+    <p data-testid="typography" data-size={size} className={className}>
       {children}
     </p>
   ),
 }));
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     Send: () => <span data-testid="send-icon">→</span>,
@@ -192,7 +192,9 @@ describe('DialogFeedbackContent', () => {
     render(<DialogFeedbackContent {...defaultProps} hasContent={true} isSubmitting={true} />);
 
     const buttons = screen.getAllByTestId('button');
-    const sendButton = buttons.find((btn) => btn.getAttribute('data-variant') === 'secondary' && btn.disabled);
+    const sendButton = buttons.find(
+      (btn) => btn.getAttribute('data-variant') === 'secondary' && (btn as HTMLButtonElement).disabled,
+    );
     expect(sendButton).toBeDefined();
     expect(sendButton).toBeDisabled();
   });

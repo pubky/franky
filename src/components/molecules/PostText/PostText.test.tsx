@@ -1,6 +1,12 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PostText } from './PostText';
+
+// Mock next/navigation
+const mockUsePathname = vi.fn();
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockUsePathname(),
+}));
 
 // Mock @/atoms
 vi.mock('@/atoms', () => ({
@@ -42,7 +48,21 @@ vi.mock('@/organisms', () => ({
   ),
 }));
 
+// Helper to generate content of specific length
+const generateContent = (length: number): string => {
+  const base = 'Lorem ipsum dolor sit amet. ';
+  let result = '';
+  while (result.length < length) {
+    result += base;
+  }
+  return result.slice(0, length);
+};
+
 describe('PostText', () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue('/home');
+  });
+
   describe('Basic rendering', () => {
     it('renders plain text content', () => {
       render(<PostText content="Hello, world!" />);
@@ -165,43 +185,92 @@ describe('PostText', () => {
   });
 
   describe('Links', () => {
-    it('renders links with correct attributes', () => {
-      render(<PostText content="Check out [example](https://example.com)" />);
+    describe('GFM autolinks (preserved)', () => {
+      it('renders auto-linked URLs from GFM', () => {
+        render(<PostText content="Visit https://example.com for more info" />);
 
-      const link = screen.getByRole('link', { name: 'example' });
-      expect(link).toHaveAttribute('href', 'https://example.com');
-      expect(link).toHaveAttribute('target', '_blank');
-      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'https://example.com');
+      });
+
+      it('renders www autolinks from GFM', () => {
+        render(<PostText content="Visit www.example.com for more info" />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'http://www.example.com');
+      });
+
+      it('renders email autolinks from GFM', () => {
+        render(<PostText content="Contact user@example.com for help" />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'mailto:user@example.com');
+      });
+
+      it('renders autolinks with brand color and hover classes', () => {
+        render(<PostText content="Visit https://example.com" />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveClass('text-brand');
+        expect(link).toHaveClass('cursor-pointer');
+        expect(link).toHaveClass('transition-colors');
+      });
+
+      it('stops event propagation on autolink click', () => {
+        const handleParentClick = vi.fn();
+        render(
+          <div onClick={handleParentClick}>
+            <PostText content="Click https://example.com" />
+          </div>,
+        );
+
+        const link = screen.getByRole('link');
+        fireEvent.click(link);
+
+        expect(handleParentClick).not.toHaveBeenCalled();
+      });
     });
 
-    it('renders links with brand color and hover classes', () => {
-      render(<PostText content="Visit [site](https://site.com)" />);
+    describe('Markdown links (disallowed)', () => {
+      it('converts markdown link to plaintext', () => {
+        render(<PostText content="Check out [example](https://example.com)" />);
 
-      const link = screen.getByRole('link', { name: 'site' });
-      expect(link).toHaveClass('text-brand');
-      expect(link).toHaveClass('cursor-pointer');
-      expect(link).toHaveClass('transition-colors');
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[example\]\(https:\/\/example\.com\)/)).toBeInTheDocument();
+      });
+
+      it('converts deceptive markdown link to plaintext', () => {
+        render(<PostText content="Visit [facebook.com](https://badsite.com)" />);
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[facebook\.com\]\(https:\/\/badsite\.com\)/)).toBeInTheDocument();
+      });
+
+      it('converts markdown link with title to plaintext including title', () => {
+        render(<PostText content='Click [here](https://example.com "My Title")' />);
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[here\]\(https:\/\/example\.com "My Title"\)/)).toBeInTheDocument();
+      });
+
+      it('preserves surrounding text when converting markdown links', () => {
+        render(<PostText content="Before [link](https://example.com) after" />);
+
+        expect(screen.getByText(/Before/)).toBeInTheDocument();
+        expect(screen.getByText(/after/)).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+      });
     });
 
-    it('stops event propagation on link click', () => {
-      const handleParentClick = vi.fn();
-      render(
-        <div onClick={handleParentClick}>
-          <PostText content="Click [here](https://example.com)" />
-        </div>,
-      );
+    describe('Mixed autolinks and markdown links', () => {
+      it('preserves autolinks while converting markdown links', () => {
+        render(<PostText content="Visit https://good.com or [click](https://other.com)" />);
 
-      const link = screen.getByRole('link', { name: 'here' });
-      fireEvent.click(link);
-
-      expect(handleParentClick).not.toHaveBeenCalled();
-    });
-
-    it('renders auto-linked URLs from GFM', () => {
-      render(<PostText content="Visit https://example.com for more info" />);
-
-      const link = screen.getByRole('link');
-      expect(link).toHaveAttribute('href', 'https://example.com');
+        const links = screen.getAllByRole('link');
+        expect(links).toHaveLength(1);
+        expect(links[0]).toHaveAttribute('href', 'https://good.com');
+        expect(screen.getByText(/\[click\]\(https:\/\/other\.com\)/)).toBeInTheDocument();
+      });
     });
   });
 
@@ -306,10 +375,12 @@ describe('PostText', () => {
       expect(hashtags[2]).toHaveTextContent('#three');
     });
 
-    it('renders hashtags alongside regular links', () => {
-      render(<PostText content="Visit [site](https://example.com) and check #topic" />);
+    it('renders hashtags alongside autolinks', () => {
+      render(<PostText content="Visit https://example.com and check #topic" />);
 
-      expect(screen.getByRole('link', { name: 'site' })).toBeInTheDocument();
+      const links = screen.getAllByRole('link');
+      const autolink = links.find((link) => link.getAttribute('href') === 'https://example.com');
+      expect(autolink).toBeInTheDocument();
       expect(screen.getByTestId('post-hashtag')).toHaveTextContent('#topic');
     });
 
@@ -320,6 +391,20 @@ describe('PostText', () => {
       expect(hashtag).toHaveTextContent('#hello_world');
     });
 
+    it('renders hashtags with hyphens', () => {
+      render(<PostText content="Check #hello-world tag" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#hello-world');
+    });
+
+    it('renders hashtags with mixed hyphens and underscores', () => {
+      render(<PostText content="Check #hello-world_test tag" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#hello-world_test');
+    });
+
     it('renders hashtags with numbers', () => {
       render(<PostText content="Check #web3 tag" />);
 
@@ -327,10 +412,11 @@ describe('PostText', () => {
       expect(hashtag).toHaveTextContent('#web3');
     });
 
-    it('does not parse hashtag starting with number', () => {
-      render(<PostText content="This is #123invalid" />);
+    it('parses hashtag starting with number', () => {
+      render(<PostText content="This is #123numeric" />);
 
-      expect(screen.queryByTestId('post-hashtag')).not.toBeInTheDocument();
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#123numeric');
     });
 
     it('renders hashtags mixed with markdown formatting', () => {
@@ -385,10 +471,12 @@ describe('PostText', () => {
       expect(mentions[1]).toHaveTextContent(secondMention);
     });
 
-    it('renders mentions alongside regular links', () => {
-      render(<PostText content={`Visit [site](https://example.com) and follow ${validPkMention}`} />);
+    it('renders mentions alongside autolinks', () => {
+      render(<PostText content={`Visit https://example.com and follow ${validPkMention}`} />);
 
-      expect(screen.getByRole('link', { name: 'site' })).toBeInTheDocument();
+      const links = screen.getAllByRole('link');
+      const autolink = links.find((link) => link.getAttribute('href') === 'https://example.com');
+      expect(autolink).toBeInTheDocument();
       expect(screen.getByTestId('post-mention')).toHaveTextContent(validPkMention);
     });
 
@@ -429,9 +517,116 @@ describe('PostText', () => {
       expect(link).toBeInTheDocument();
     });
   });
+
+  describe('Content truncation and Show more button', () => {
+    it('does not truncate content under 500 characters', () => {
+      const shortContent = generateContent(400);
+      render(<PostText content={shortContent} />);
+
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
+      expect(screen.queryByText(/\.\.\./)).not.toBeInTheDocument();
+    });
+
+    it('truncates content over 500 characters and shows "Show more" button', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      const showMoreButton = screen.getByRole('button', { name: 'Show full post content' });
+      expect(showMoreButton).toBeInTheDocument();
+    });
+
+    it('shows truncated content with ellipsis when over 500 characters', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      // The truncated content should be 500 chars + "..." + non-breaking space
+      // Original content beyond 500 chars should not be present
+      const originalEndText = longContent.slice(495, 505);
+      expect(screen.queryByText(originalEndText)).not.toBeInTheDocument();
+    });
+
+    it('does not truncate on post detail page', () => {
+      mockUsePathname.mockReturnValue('/post/some-post-id');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
+    });
+
+    it('does not truncate on nested post routes', () => {
+      mockUsePathname.mockReturnValue('/post/author/123');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
+    });
+
+    it('truncates on non-post pages like home', () => {
+      mockUsePathname.mockReturnValue('/home');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.getByRole('button', { name: 'Show full post content' })).toBeInTheDocument();
+    });
+
+    it('truncates on search page', () => {
+      mockUsePathname.mockReturnValue('/search');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.getByRole('button', { name: 'Show full post content' })).toBeInTheDocument();
+    });
+
+    it('truncates on profile page', () => {
+      mockUsePathname.mockReturnValue('/profile/some-user-id');
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      expect(screen.getByRole('button', { name: 'Show full post content' })).toBeInTheDocument();
+    });
+
+    it('renders "Show more" button with correct styling classes', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} />);
+
+      const showMoreButton = screen.getByRole('button', { name: 'Show full post content' });
+      expect(showMoreButton).toHaveClass('cursor-pointer');
+      expect(showMoreButton).toHaveClass('text-brand');
+    });
+
+    it('does not stop event propagation on "Show more" button click', () => {
+      const handleParentClick = vi.fn();
+      const longContent = generateContent(600);
+
+      render(
+        <div onClick={handleParentClick}>
+          <PostText content={longContent} />
+        </div>,
+      );
+
+      const showMoreButton = screen.getByRole('button', { name: 'Show full post content' });
+      fireEvent.click(showMoreButton);
+
+      // Click should propagate to parent (unlike regular links)
+      expect(handleParentClick).toHaveBeenCalled();
+    });
+
+    it('truncates content exactly at 500 characters plus ellipsis', () => {
+      const longContent = generateContent(600);
+      const { container } = render(<PostText content={longContent} />);
+
+      // The displayed text should contain the first 500 chars
+      const expectedStart = longContent.slice(0, 100);
+      expect(container.textContent).toContain(expectedStart);
+    });
+  });
 });
 
 describe('PostText - Snapshots', () => {
+  beforeEach(() => {
+    mockUsePathname.mockReturnValue('/home');
+  });
+
   it('matches snapshot for plain text', () => {
     const { container } = render(<PostText content="Simple plain text content" />);
     expect(container.firstChild).toMatchSnapshot();
@@ -475,8 +670,18 @@ plain code block
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for links', () => {
-    const { container } = render(<PostText content="Visit [Example Site](https://example.com) for more" />);
+  it('matches snapshot for autolinked URL', () => {
+    const { container } = render(<PostText content="Check out https://example.com for more" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for markdown link converted to plaintext', () => {
+    const { container } = render(<PostText content="Check out [Example](https://example.com) for more" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for deceptive link converted to plaintext', () => {
+    const { container } = render(<PostText content="Visit [facebook.com](https://badsite.com) now" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -510,7 +715,7 @@ plain code block
       <PostText
         content={`# Welcome
 
-This is **bold** and *italic* text with a [link](https://example.com).
+This is **bold** and *italic* text with a link https://example.com here.
 
 > A meaningful quote
 
@@ -548,8 +753,18 @@ Third line`}
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for autolinked URL', () => {
+  it('matches snapshot for autolinked URL with path and query', () => {
     const { container } = render(<PostText content="Check out https://example.com/path?query=value" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for www autolink', () => {
+    const { container } = render(<PostText content="Visit www.example.com today" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for email autolink', () => {
+    const { container } = render(<PostText content="Contact user@example.com for help" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -593,8 +808,8 @@ Third line`}
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for hashtag alongside link', () => {
-    const { container } = render(<PostText content="Visit [Example](https://example.com) and follow #trending" />);
+  it('matches snapshot for hashtag alongside autolink', () => {
+    const { container } = render(<PostText content="Visit https://example.com and follow #trending" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -607,6 +822,21 @@ Third line`}
     const { container } = render(
       <PostText content="Check out this #verylooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonghashtagwithlotsofcharactersandnumbers123456789 tag" />,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with underscores', () => {
+    const { container } = render(<PostText content="Check out #hello_world tag" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with hyphens', () => {
+    const { container } = render(<PostText content="Check out #hello-world tag" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with mixed hyphens and underscores', () => {
+    const { container } = render(<PostText content="Check out #hello-world_test-example tag" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -645,9 +875,9 @@ Third line`}
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for mention alongside link', () => {
+  it('matches snapshot for mention alongside autolink', () => {
     const { container } = render(
-      <PostText content="Visit [Example](https://example.com) and follow pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo" />,
+      <PostText content={`Check pk:o1gg96ewuojmopcjbz8895478wench6tjmjh6kiwgbwycb35ory and https://example.com`} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
@@ -656,6 +886,21 @@ Third line`}
     const { container } = render(
       <PostText content="This is **bold** with pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo and *italic* text" />,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for truncated content with Show more button', () => {
+    const longContent =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
+    const { container } = render(<PostText content={longContent} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for non-truncated long content on post page', () => {
+    mockUsePathname.mockReturnValue('/post/some-post-id');
+    const longContent =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
+    const { container } = render(<PostText content={longContent} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

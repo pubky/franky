@@ -50,40 +50,34 @@ const mockGetMetadata = vi.mocked(Core.FileController.getMetadata);
 const mockGetFileUrl = vi.mocked(Core.FileController.getFileUrl);
 
 // Helper to create mock metadata
-const createMockImageMetadata = (id: string, name = 'image.jpg') => ({
+const createMockFileBase = (id: string, name: string, content_type: string, size: number): Core.NexusFileDetails => ({
   id,
   name,
-  content_type: 'image/jpeg',
-  size: 1024,
+  content_type,
+  size,
+  src: `https://example.com/files/${id}`,
+  created_at: Date.now(),
+  indexed_at: Date.now(),
+  metadata: {},
+  owner_id: id.split(':')[0],
+  uri: `pubky://${id.split(':')[0]}/pub/pubky.app/files/${id.split(':')[1]}`,
+  urls: {
+    main: `https://example.com/files/${id}/main`,
+    feed: `https://example.com/files/${id}/feed`,
+    small: `https://example.com/files/${id}/small`,
+  },
 });
 
-const createMockVideoMetadata = (id: string, name = 'video.mp4') => ({
-  id,
-  name,
-  content_type: 'video/mp4',
-  size: 2048,
-});
+const createMockImageMetadata = (id: string, name = 'image.jpg') => createMockFileBase(id, name, 'image/jpeg', 1024);
 
-const createMockAudioMetadata = (id: string, name = 'audio.mp3') => ({
-  id,
-  name,
-  content_type: 'audio/mpeg',
-  size: 512,
-});
+const createMockVideoMetadata = (id: string, name = 'video.mp4') => createMockFileBase(id, name, 'video/mp4', 2048);
 
-const createMockPdfMetadata = (id: string, name = 'document.pdf') => ({
-  id,
-  name,
-  content_type: 'application/pdf',
-  size: 4096,
-});
+const createMockAudioMetadata = (id: string, name = 'audio.mp3') => createMockFileBase(id, name, 'audio/mpeg', 512);
 
-const createMockGifMetadata = (id: string, name = 'animation.gif') => ({
-  id,
-  name,
-  content_type: 'image/gif',
-  size: 768,
-});
+const createMockPdfMetadata = (id: string, name = 'document.pdf') =>
+  createMockFileBase(id, name, 'application/pdf', 4096);
+
+const createMockGifMetadata = (id: string, name = 'animation.gif') => createMockFileBase(id, name, 'image/gif', 768);
 
 describe('PostAttachments', () => {
   beforeEach(() => {
@@ -98,7 +92,7 @@ describe('PostAttachments', () => {
     });
 
     it('renders nothing when attachments is undefined', () => {
-      const { container } = render(<PostAttachments attachments={undefined} />);
+      const { container } = render(<PostAttachments attachments={undefined as unknown as string[] | null} />);
       expect(container.firstChild).toBeNull();
     });
 

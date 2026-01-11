@@ -53,7 +53,7 @@ const setupUserCounts = async (userId: Core.Pubky, bookmarks: number = 0) => {
 
 const setupPostDetails = async (
   kind: 'short' | 'long' | 'image' | 'video' | 'file' | 'link',
-  attachments?: string[],
+  attachments?: string[] | null,
   content?: string,
 ) => {
   await Core.PostDetailsModel.upsert({
@@ -61,7 +61,8 @@ const setupPostDetails = async (
     content: content || 'Test post content',
     kind,
     indexed_at: Date.now(),
-    attachments,
+    attachments: attachments ?? null,
+    uri: `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId}`,
   });
 };
 

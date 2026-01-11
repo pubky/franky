@@ -13,6 +13,8 @@ const mockOnboardingStore = {
 
 const mockAuthStore = {
   session: null,
+  sessionExport: null,
+  isRestoringSession: false,
   hasProfile: false,
   hasHydrated: true,
   selectIsAuthenticated: vi.fn(() => false),
@@ -35,6 +37,8 @@ describe('useAuthStatus', () => {
     mockOnboardingStore.pubky = '';
     mockOnboardingStore.secretKey = '';
     mockAuthStore.session = null;
+    mockAuthStore.sessionExport = null;
+    mockAuthStore.isRestoringSession = false;
     mockAuthStore.hasProfile = false;
     mockAuthStore.hasHydrated = true;
     mockAuthStore.selectIsAuthenticated = vi.fn(() => false);
@@ -77,6 +81,18 @@ describe('useAuthStatus', () => {
     const { result } = renderHook(() => useAuthStatus());
 
     expect(result.current.isLoading).toBe(false);
+  });
+
+  it('should return loading state when sessionExport exists but session is null (pending restoration)', () => {
+    mockOnboardingStore.hasHydrated = true;
+    mockAuthStore.hasHydrated = true;
+    mockAuthStore.sessionExport = 'some-exported-session';
+    mockAuthStore.session = null;
+
+    const { result } = renderHook(() => useAuthStatus());
+
+    // Should be loading because we have credentials to restore
+    expect(result.current.isLoading).toBe(true);
   });
 
   it('should return UNAUTHENTICATED status when no session and no profile', () => {

@@ -1,0 +1,57 @@
+'use client';
+
+import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
+import type { PostPreviewCardProps } from './PostPreviewCard.types';
+
+/**
+ * PostPreviewCard - Compact preview card for displaying a post in a nested context.
+ *
+ * **Purpose:**
+ * Renders a compact, read-only preview of a post within another post's context.
+ * Used primarily for displaying the original post when viewing a repost or reply.
+ *
+ * **Key Design Decision:**
+ * Uses PostContentBase instead of PostContent to prevent infinite repost nesting.
+ * If PostContent were used, it would detect the nested post as a repost and render
+ * another PostPreviewCard, creating an infinite loop.
+ *
+ * **Usage:**
+ * - Repost previews: Shows the original post being reposted (in PostContent)
+ * - Reply previews: Shows the post being replied to (in DialogReply)
+ * - Any nested context where a compact post preview is needed
+ */
+export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
+  const { navigateToPost } = Hooks.usePostNavigation();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigateToPost(postId);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.stopPropagation();
+      e.preventDefault();
+      navigateToPost(postId);
+    }
+  };
+
+  return (
+    <Atoms.Card
+      className={Libs.cn('cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50', className)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="link"
+      tabIndex={0}
+      aria-label="View original post"
+    >
+      <Atoms.CardContent className="flex flex-col gap-4 p-6">
+        <Organisms.PostHeader postId={postId} showPopover={false} />
+        <Organisms.PostContentBase postId={postId} />
+      </Atoms.CardContent>
+    </Atoms.Card>
+  );
+}

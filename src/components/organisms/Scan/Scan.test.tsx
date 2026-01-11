@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
@@ -32,12 +32,15 @@ vi.mock('qrcode.react', () => ({
 vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: vi.fn().mockResolvedValue({
-      authorizationUrl: 'mock-auth-url',
+      authorizationUrl: 'pubkyauth://',
       awaitApproval: Promise.resolve({ mockKeypair: true }),
     }),
     initializeAuthenticatedSession: vi.fn().mockResolvedValue({}),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
+  useOnboardingStore: vi.fn(() => ({
+    inviteCode: 'mock-invite-code',
+  })),
 }));
 
 // Mock useAuthUrl hook
@@ -95,8 +98,8 @@ vi.mock('@/molecules', () => ({
 
 // Mock libs
 // Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return { ...actual };
 });
 
@@ -128,7 +131,7 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {
@@ -152,7 +155,7 @@ describe('ScanContent', () => {
   beforeAll(() => {
     Object.defineProperty(window, 'open', {
       configurable: true,
-      value: vi.fn(() => ({ location: { href: '' } })) as typeof window.open,
+      value: vi.fn(() => ({ location: { href: '' } })) as unknown as typeof window.open,
     });
     Object.defineProperty(navigator, 'clipboard', {
       configurable: true,
@@ -225,7 +228,7 @@ describe('ScanContent', () => {
     });
 
     expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
-    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
+    expect(window.open).toHaveBeenCalledWith('mock-auth-url', '_blank');
   });
 });
 

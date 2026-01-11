@@ -6,5 +6,5 @@ export type UserTtlModelSchema = TtlModelSchema<Core.Pubky>;
 // Primary and compound indexes for Dexie
 export const userTtlTableSchema = `
   &id,
-  ttl
+  lastUpdatedAt
 `;

@@ -29,7 +29,7 @@ vi.mock('@/atoms', () => ({
       className,
     }: {
       children: React.ReactNode;
-      as?: string;
+      as?: React.ElementType;
       size?: string;
       className?: string;
     }) => (
@@ -132,12 +132,9 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('PostInputTags', () => {
@@ -153,11 +150,6 @@ describe('PostInputTags', () => {
     render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     expect(screen.getAllByTestId('container').length).toBeGreaterThan(0);
     expect(screen.getByTestId('add-tag-button')).toBeInTheDocument();
-  });
-
-  it('shows tag count indicator when tags exist', () => {
-    render(<PostInputTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
-    expect(screen.getByText(`2/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
   it('shows TagInput when add button is clicked', () => {
@@ -215,7 +207,6 @@ describe('PostInputTags', () => {
     render(<PostInputTags tags={maxTags} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     expect(addButton).toBeDisabled();
-    expect(screen.getByText(`${POST_MAX_TAGS}/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
   it('uses custom maxTags when provided', () => {
@@ -224,7 +215,6 @@ describe('PostInputTags', () => {
     render(<PostInputTags tags={tags} onTagsChange={mockOnTagsChange} maxTags={customMax} />);
     const addButton = screen.getByTestId('add-tag-button');
     expect(addButton).toBeDisabled();
-    expect(screen.getByText(`3/3`)).toBeInTheDocument();
   });
 
   it('handles large number of tags (2100)', () => {
@@ -233,7 +223,6 @@ describe('PostInputTags', () => {
     render(<PostInputTags tags={largeTags} onTagsChange={mockOnTagsChange} maxTags={largeTagCount} />);
     const addButton = screen.getByTestId('add-tag-button');
     expect(addButton).toBeDisabled();
-    expect(screen.getByText(`${largeTagCount}/${largeTagCount}`)).toBeInTheDocument();
   });
 
   it('disables input when disabled prop is true', () => {

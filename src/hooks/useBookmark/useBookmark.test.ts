@@ -33,7 +33,7 @@ describe('useBookmark', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(Core.useAuthStore).mockImplementation((selector) =>
-      selector({ currentUserPubky: mockUserId } as unknown as Core.AuthState),
+      selector({ currentUserPubky: mockUserId } as unknown as Core.AuthStore),
     );
   });
 
@@ -137,7 +137,7 @@ describe('useBookmark', () => {
 
   it('shows error toast when user is not logged in', async () => {
     vi.mocked(Core.useAuthStore).mockImplementation((selector) =>
-      selector({ currentUserPubky: null } as unknown as Core.AuthState),
+      selector({ currentUserPubky: null } as unknown as Core.AuthStore),
     );
     vi.mocked(Core.BookmarkController.exists).mockResolvedValue(false);
 

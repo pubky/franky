@@ -19,12 +19,11 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-const mockOnTagAdd = vi.fn(() => ({ success: true }));
+const mockOnTagAdd = vi.fn<(tag: string) => void>();
 
 describe('TagInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOnTagAdd.mockReturnValue({ success: true });
   });
 
   it('renders input with placeholder', () => {
@@ -46,12 +45,25 @@ describe('TagInput', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockOnTagAdd).toHaveBeenCalledWith('bitcoin');
   });
+
+  it('converts uppercase input to lowercase', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'BITCOIN' } });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(input.value).toBe('bitcoin');
+
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: false });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(mockOnTagAdd).toHaveBeenCalledWith('bitcoin');
+  });
 });
 
 describe('TagInput - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockOnTagAdd.mockReturnValue({ success: true });
   });
 
   it('matches snapshot', () => {

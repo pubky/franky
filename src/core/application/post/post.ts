@@ -8,6 +8,7 @@ export class PostApplication {
    * @returns Post details or null if not found
    */
   static async getDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
+    // TODO: Throw an error and do not return null
     return await Core.LocalPostService.readDetails({ postId: compositeId });
   }
 
@@ -35,6 +36,7 @@ export class PostApplication {
    * @returns Post relationships or null if not found
    */
   static async getRelationships({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
+    // TODO: Throw an error and do not return null
     return await Core.LocalPostService.readRelationships(compositeId);
   }
 
@@ -75,6 +77,7 @@ export class PostApplication {
     compositeId,
     viewerId,
   }: Core.TGetOrFetchPostParams): Promise<Core.PostDetailsModelSchema | null> {
+    // TODO: Throw an error and do not return null
     const localPost = await Core.LocalPostService.readDetails({ postId: compositeId });
     if (localPost) return localPost;
 

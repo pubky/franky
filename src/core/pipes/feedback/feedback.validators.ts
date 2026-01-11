@@ -44,7 +44,7 @@ export class FeedbackValidators {
     if (comment.length > Config.FEEDBACK_MAX_CHARACTER_LENGTH) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
-        `Comment must be at most ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
+        `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
         400,
       );
     }

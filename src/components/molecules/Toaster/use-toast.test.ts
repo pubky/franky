@@ -77,7 +77,7 @@ describe('useToast', () => {
       };
 
       const action = {
-        type: actionTypes.ADD_TOAST as const,
+        type: actionTypes.ADD_TOAST,
         toast: toastData,
       };
 
@@ -98,7 +98,7 @@ describe('useToast', () => {
       const stateWithToast = { toasts: [existingToast] };
 
       const action = {
-        type: actionTypes.UPDATE_TOAST as const,
+        type: actionTypes.UPDATE_TOAST,
         toast: { id: '1', title: 'Updated Title' },
       };
 
@@ -118,7 +118,7 @@ describe('useToast', () => {
       const stateWithToasts = { toasts: [toast1, toast2] };
 
       const action = {
-        type: actionTypes.DISMISS_TOAST as const,
+        type: actionTypes.DISMISS_TOAST,
         toastId: '1',
       };
 
@@ -135,7 +135,7 @@ describe('useToast', () => {
       const stateWithToasts = { toasts: [toast1, toast2] };
 
       const action = {
-        type: actionTypes.DISMISS_TOAST as const,
+        type: actionTypes.DISMISS_TOAST,
         toastId: undefined,
       };
 
@@ -152,7 +152,7 @@ describe('useToast', () => {
       const stateWithToasts = { toasts: [toast1, toast2] };
 
       const action = {
-        type: actionTypes.REMOVE_TOAST as const,
+        type: actionTypes.REMOVE_TOAST,
         toastId: '1',
       };
 
@@ -169,7 +169,7 @@ describe('useToast', () => {
       const stateWithToasts = { toasts: [toast1, toast2] };
 
       const action = {
-        type: actionTypes.REMOVE_TOAST as const,
+        type: actionTypes.REMOVE_TOAST,
         toastId: undefined,
       };
 
@@ -185,7 +185,7 @@ describe('useToast', () => {
       const newToast = { id: '2', title: 'Toast 2', open: true, onOpenChange: vi.fn() };
 
       const action = {
-        type: actionTypes.ADD_TOAST as const,
+        type: actionTypes.ADD_TOAST,
         toast: newToast,
       };
 

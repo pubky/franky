@@ -18,8 +18,6 @@ export function getNotificationText(notification: FlatNotification, userName: st
       return `${userName} followed you`;
     case NotificationType.NewFriend:
       return `${userName} is now your friend`;
-    case NotificationType.LostFriend:
-      return `${userName} unfollowed you`;
     case NotificationType.TagPost:
       return `${userName} tagged your post`;
     case NotificationType.TagProfile:
@@ -45,8 +43,6 @@ export function getUserIdFromNotification(notification: FlatNotification): strin
     case NotificationType.Follow:
     case NotificationType.NewFriend:
       return notification.followed_by;
-    case NotificationType.LostFriend:
-      return notification.unfollowed_by;
     case NotificationType.TagPost:
     case NotificationType.TagProfile:
       return notification.tagged_by;
@@ -137,7 +133,6 @@ function getPostLink(notification: FlatNotification): string | null {
 
     case NotificationType.Follow:
     case NotificationType.NewFriend:
-    case NotificationType.LostFriend:
       // User-centric notifications - no post link
       return null;
 

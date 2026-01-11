@@ -5,37 +5,47 @@ import * as Organisms from '@/organisms';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 
 // Mock organisms
-vi.mock('@/organisms', () => ({
-  PostHeader: vi.fn(({ postId }: { postId: string }) => (
-    <div data-testid="post-header" data-post-id={postId}>
-      PostHeader {postId}
-    </div>
-  )),
-  PostContent: vi.fn(({ postId }: { postId: string }) => (
-    <div data-testid="post-content" data-post-id={postId}>
-      PostContent {postId}
-    </div>
-  )),
-  PostInput: vi.fn(
-    ({
-      variant,
-      postId,
-      onSuccess,
-      showThreadConnector,
-    }: {
-      variant: string;
-      postId: string;
-      onSuccess?: () => void;
-      showThreadConnector?: boolean;
-    }) => (
-      <div data-testid="post-input" data-variant={variant} data-post-id={postId} data-show-thread={showThreadConnector}>
-        <button data-testid="mock-success-btn" onClick={onSuccess}>
-          Success
-        </button>
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
+  return {
+    ...actual,
+    PostHeader: vi.fn(({ postId }: { postId: string }) => (
+      <div data-testid="post-header" data-post-id={postId}>
+        PostHeader {postId}
       </div>
+    )),
+    PostContent: vi.fn(({ postId }: { postId: string }) => (
+      <div data-testid="post-content" data-post-id={postId}>
+        PostContent {postId}
+      </div>
+    )),
+    PostInput: vi.fn(
+      ({
+        variant,
+        postId,
+        onSuccess,
+        showThreadConnector,
+      }: {
+        variant: string;
+        postId: string;
+        onSuccess?: () => void;
+        showThreadConnector?: boolean;
+      }) => (
+        <div
+          data-testid="post-input"
+          data-variant={variant}
+          data-post-id={postId}
+          data-show-thread={showThreadConnector}
+        >
+          <button data-testid="mock-success-btn" onClick={onSuccess}>
+            Success
+          </button>
+        </div>
+      ),
     ),
-  ),
-}));
+    useTimelineFeedContext: vi.fn(() => null),
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -105,13 +115,19 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Use real libs, only stub cn to a deterministic join
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+// Mock molecules
+vi.mock('@/molecules', () => ({
+  PostPreviewCard: vi.fn(({ postId, className }: { postId: string; className?: string }) => (
+    <div data-testid="post-preview-card" data-post-id={postId} className={className}>
+      PostPreviewCard {postId}
+    </div>
+  )),
+}));
+
+// Use real libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('DialogReply', () => {
@@ -126,17 +142,15 @@ describe('DialogReply', () => {
     expect(screen.getByTestId('dialog')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Reply');
-    expect(screen.getByTestId('post-header')).toBeInTheDocument();
-    expect(screen.getByTestId('post-content')).toBeInTheDocument();
+    expect(screen.getByTestId('post-preview-card')).toBeInTheDocument();
     expect(screen.getByTestId('post-input')).toBeInTheDocument();
   });
 
-  it('renders PostHeader and PostContent with correct postId', () => {
+  it('renders PostPreviewCard with correct postId', () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
-    expect(Organisms.PostHeader).toHaveBeenCalledWith({ postId: 'test-post-123' }, undefined);
-    expect(Organisms.PostContent).toHaveBeenCalledWith({ postId: 'test-post-123' }, undefined);
+    expect(screen.getByTestId('post-preview-card')).toHaveAttribute('data-post-id', 'test-post-123');
   });
 
   it('renders PostInput with correct props', () => {
@@ -145,11 +159,13 @@ describe('DialogReply', () => {
 
     expect(Organisms.PostInput).toHaveBeenCalledWith(
       {
+        dataCy: 'reply-post-input',
         variant: POST_INPUT_VARIANT.REPLY,
         postId: 'test-post-123',
         onSuccess: expect.any(Function),
         showThreadConnector: true,
         expanded: true,
+        hideArticle: true,
       },
       undefined,
     );

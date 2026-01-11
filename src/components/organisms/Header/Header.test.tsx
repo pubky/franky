@@ -37,12 +37,9 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Keep real libs for icons and utilities; only stub helpers we rely on for deterministic tests
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 vi.mock('@/config', () => ({
@@ -56,11 +53,11 @@ vi.mock('@/app', () => ({
   HOME_ROUTES: { HOME: '/home' },
   ROOT_ROUTES: '/',
   ONBOARDING_ROUTES: {
+    HUMAN: '/onboarding/human',
     INSTALL: '/onboarding/install',
     SCAN: '/onboarding/scan',
     PUBKY: '/onboarding/pubky',
     BACKUP: '/onboarding/backup',
-    HOMESERVER: '/onboarding/homeserver',
     PROFILE: '/onboarding/profile',
   },
 }));
@@ -106,6 +103,18 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   SearchInput: () => <div data-testid="search-input">Search Input</div>,
+  HeaderHome: () => (
+    <div data-testid="header-home">
+      <div data-testid="header-social-links">Social Links</div>
+      <button>Sign in</button>
+    </div>
+  ),
+  HeaderSignIn: () => (
+    <div data-testid="header-sign-in">
+      <div data-testid="search-input">Search Input</div>
+      <div data-testid="header-navigation-buttons">Navigation Buttons</div>
+    </div>
+  ),
 }));
 
 // Mock hooks
@@ -183,7 +192,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '1');
+    expect(onboardingHeader).toHaveAttribute('data-step', '2');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -193,7 +202,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '2');
+    expect(onboardingHeader).toHaveAttribute('data-step', '3');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -203,7 +212,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '2');
+    expect(onboardingHeader).toHaveAttribute('data-step', '3');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -213,7 +222,7 @@ describe('Header', () => {
     render(<Header />);
 
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '3');
+    expect(onboardingHeader).toHaveAttribute('data-step', '4');
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -233,7 +242,7 @@ describe('Header', () => {
 
     expect(screen.getByTestId('onboarding-header')).toBeInTheDocument();
     const onboardingHeader = screen.getByTestId('onboarding-header');
-    expect(onboardingHeader).toHaveAttribute('data-step', '1');
+    expect(onboardingHeader).toHaveAttribute('data-step', '2');
 
     // Change pathname
     mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
@@ -377,13 +386,13 @@ describe('Header', () => {
   });
 
   describe('Path Configuration', () => {
-    it('displays correct step for homeserver path', () => {
-      mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.HOMESERVER);
+    it('displays correct step for human path', () => {
+      mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.HUMAN);
 
       render(<Header />);
 
       const onboardingHeader = screen.getByTestId('onboarding-header');
-      expect(onboardingHeader).toHaveAttribute('data-step', '4');
+      expect(onboardingHeader).toHaveAttribute('data-step', '1');
       expect(screen.getByTestId('logo')).toBeInTheDocument();
     });
 
@@ -430,11 +439,11 @@ describe('Header', () => {
 
     it('renders HeaderTitle with correct title for each onboarding step', () => {
       const testCases = [
+        { path: App.ONBOARDING_ROUTES.HUMAN, expectedTitle: 'Verify Humanity' },
         { path: App.ONBOARDING_ROUTES.INSTALL, expectedTitle: 'Identity keys' },
         { path: App.ONBOARDING_ROUTES.SCAN, expectedTitle: 'Use Pubky Ring' },
         { path: App.ONBOARDING_ROUTES.PUBKY, expectedTitle: 'Your pubky' },
         { path: App.ONBOARDING_ROUTES.BACKUP, expectedTitle: 'Backup' },
-        { path: App.ONBOARDING_ROUTES.HOMESERVER, expectedTitle: 'Homeserver' },
         { path: App.ONBOARDING_ROUTES.PROFILE, expectedTitle: 'Profile' },
         { path: App.AUTH_ROUTES.LOGOUT, expectedTitle: 'Signed out' },
       ];
@@ -445,6 +454,7 @@ describe('Header', () => {
 
         const { rerender } = render(<Header />);
 
+        console.log('path:', path, 'expectedTitle:', expectedTitle, testCases);
         expect(screen.getByTestId('header-title')).toHaveTextContent(expectedTitle);
 
         rerender(<></>); // Clear for next iteration
@@ -468,7 +478,7 @@ describe('Header', () => {
         App.ONBOARDING_ROUTES.SCAN,
         App.ONBOARDING_ROUTES.PUBKY,
         App.ONBOARDING_ROUTES.BACKUP,
-        App.ONBOARDING_ROUTES.HOMESERVER,
+        App.ONBOARDING_ROUTES.HUMAN,
         App.ROOT_ROUTES,
         App.AUTH_ROUTES.LOGOUT,
       ];
@@ -527,14 +537,14 @@ describe('Header', () => {
       const { rerender } = render(<Header />);
 
       let onboardingHeader = screen.getByTestId('onboarding-header');
-      expect(onboardingHeader).toHaveAttribute('data-step', '1');
+      expect(onboardingHeader).toHaveAttribute('data-step', '2');
 
       // Change pathname
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.BACKUP);
       rerender(<Header />);
 
       onboardingHeader = screen.getByTestId('onboarding-header');
-      expect(onboardingHeader).toHaveAttribute('data-step', '3');
+      expect(onboardingHeader).toHaveAttribute('data-step', '4');
     });
 
     it('updates HeaderTitle visibility when authentication state changes', () => {

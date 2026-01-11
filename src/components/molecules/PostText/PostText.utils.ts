@@ -1,4 +1,4 @@
-import type { Root, Paragraph, Text, Link, PhrasingContent } from 'mdast';
+import type { Root, Paragraph, Text, Link, PhrasingContent, Parent, RootContent } from 'mdast';
 import { ReactNode } from 'react';
 import { visit } from 'unist-util-visit';
 
@@ -6,6 +6,50 @@ import { visit } from 'unist-util-visit';
 export const remarkPlaintextCodeblock = () => (tree: Root) => {
   visit(tree, 'code', (node) => {
     node.lang = node.lang ?? 'plaintext';
+  });
+};
+
+// Recursively extract text from a node and all its descendants.
+// Handles nested formatting like [**bold** and _italic_](url) -> "bold and italic"
+const extractText = (node: RootContent | PhrasingContent): string => {
+  if (node.type === 'text') return (node as Text).value;
+  if ('children' in node) {
+    return (node.children as (RootContent | PhrasingContent)[]).map(extractText).join('');
+  }
+  return '';
+};
+
+// Disallow markdown link syntax [text](url) to prevent deceptive links.
+// Example attack: [facebook.com](https://badsite.com) looks legitimate but links elsewhere.
+// This plugin converts markdown-style links back to plaintext, showing the raw syntax.
+// Must run AFTER remarkGfm since GFM is a syntax extension that runs at parse time.
+// Autolinks (where text matches URL) are preserved since they're not deceptive.
+export const remarkDisallowMarkdownLinks = () => (tree: Root) => {
+  visit(tree, 'link', (node: Link, index: number | undefined, parent: Parent | undefined) => {
+    if (parent === undefined || index === undefined) return;
+
+    // Recursively extract text content from link children (handles nested formatting)
+    const textContent = node.children.map(extractText).join('');
+
+    // Preserve GFM autolinks (not deceptive):
+    // - Exact match (e.g. https://example.com as both text and URL)
+    // - www autolinks where GFM adds http:// prefix (e.g. www.example.com -> http://www.example.com)
+    // - Email autolinks where GFM adds mailto: prefix (e.g. user@example.com -> mailto:user@example.com)
+    const isAutolink =
+      textContent === node.url || node.url === `http://${textContent}` || node.url === `mailto:${textContent}`;
+
+    if (isAutolink) return;
+
+    // Markdown-style link detected - convert back to plaintext
+    // Include title if present: [text](url "title")
+    const titlePart = node.title ? ` "${node.title}"` : '';
+    const plaintext: Text = {
+      type: 'text',
+      value: `[${textContent}](${node.url}${titlePart})`,
+    };
+
+    // Replace the link node with plaintext
+    (parent.children as PhrasingContent[]).splice(index, 1, plaintext);
   });
 };
 
@@ -93,10 +137,10 @@ const createPatternPlugin = (config: PatternPluginConfig) => {
 };
 
 // Parse hashtags in paragraph text nodes and convert them to links with data-type="hashtag"
-// Hashtag pattern: # followed by a letter, then letters/numbers/underscores
+// Hashtag pattern: # followed by a letter or number, then letters/numbers, with underscores or hyphens allowed only between alphanumerics
 // Must be at start of text or preceded by whitespace (standalone)
 export const remarkHashtags = createPatternPlugin({
-  regex: /(^|\s)(#[a-zA-Z][a-zA-Z0-9_]*)/g,
+  regex: /(^|\s)(#[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*)/g,
   getUrl: (hashtag: string) => {
     // Extract tag name without the # symbol for the URL
     const tagName = hashtag.slice(1);
@@ -118,6 +162,42 @@ export const remarkMentions = createPatternPlugin({
   dataType: 'mention',
 });
 
+// Add a "Show more" button element inside the last paragraph for inline display.
+// Uses a Link node with data-type="show-more-button" so it can be rendered as a
+// button via react-markdown's components prop (same pattern as hashtags/mentions).
+// Placed inside the last paragraph to appear inline after text, but not inside
+// styled elements like code blocks, blockquotes, etc.
+export const remarkShowMoreButton = () => (tree: Root) => {
+  // Find the last paragraph in the document
+  const lastParagraph = tree.children.findLast((child) => child.type === 'paragraph');
+
+  // Create a link node with data-type for component routing in react-markdown
+  // Using href="#" as a placeholder since it will be rendered as a button
+  const showMoreNode: Link = {
+    type: 'link',
+    url: '#',
+    data: {
+      hProperties: {
+        'data-type': 'show-more-button',
+      },
+    },
+    children: [{ type: 'text', value: 'Show more' } as Text],
+  };
+
+  if (lastParagraph) {
+    // Append inside the last paragraph for inline display
+    lastParagraph.children.push(showMoreNode);
+  } else {
+    // Fallback: No paragraph found, wrap in a new paragraph
+    const newParagraph: Paragraph = {
+      type: 'paragraph',
+      children: [showMoreNode],
+    };
+
+    tree.children.push(newParagraph);
+  }
+};
+
 // Extract text safely - children from remark is typically a text node
 export const extractTextFromChildren = (children: ReactNode) =>
   typeof children === 'string'
@@ -125,3 +205,17 @@ export const extractTextFromChildren = (children: ReactNode) =>
     : Array.isArray(children) && typeof children[0] === 'string'
       ? children[0]
       : '';
+
+// Truncate text at word boundaries to avoid cutting mid-word, mid-markdown, or mid-URL.
+// Falls back to hard cut if no suitable word boundary is found within 80% of the limit.
+export const truncateAtWordBoundary = (text: string, limit: number): string => {
+  if (text.length <= limit) return text;
+
+  const truncated = text.slice(0, limit);
+  const lastSpace = truncated.lastIndexOf(' ');
+
+  // Only use word boundary if it's within 80% of the limit to avoid too-short truncation
+  const minBoundary = Math.floor(limit * 0.8);
+
+  return (lastSpace > minBoundary ? truncated.slice(0, lastSpace) : truncated) + '...\u00A0';
+};
