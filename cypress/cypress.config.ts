@@ -49,10 +49,6 @@ export default defineConfig({
           launchOptions.args.push('--clipboard-read-write'); // Enable clipboard read/write
           launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
         }
-        if(browser.family === 'webkit') {
-          launchOptions.args.push('--clipboard-read-write'); // Enable clipboard read/write
-          launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
-        }
         return launchOptions;
       });
 
