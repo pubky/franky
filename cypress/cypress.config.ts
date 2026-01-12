@@ -44,8 +44,12 @@ export default defineConfig({
           launchOptions.preferences['dom.events.asyncClipboard.readText'] = true;
         }
         // Enable clipboard for Chrome
-        if ((browser.family === 'chromium' && browser.name !== 'electron') || browser.family === 'webkit') {
+        if (browser.family === 'chromium' && browser.name !== 'electron') {
           launchOptions.args.push('--enable-experimental-web-platform-features');
+          launchOptions.args.push('--clipboard-read-write'); // Enable clipboard read/write
+          launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
+        }
+        if(browser.family === 'webkit') {
           launchOptions.args.push('--clipboard-read-write'); // Enable clipboard read/write
           launchOptions.args.push('--clipboard-sanitized-write'); // Enable sanitized write permissions
         }
