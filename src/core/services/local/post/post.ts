@@ -73,7 +73,7 @@ export class LocalPostService {
    */
   static async readRelationshipsByIds(postIds: string[]): Promise<(Core.PostRelationshipsModelSchema | undefined)[]> {
     try {
-      return await Core.PostRelationshipsModel.table.bulkGet(postIds);
+      return await Core.PostRelationshipsModel.findByIdsPreserveOrder(postIds);
     } catch (error) {
       Libs.Logger.error('Failed to read post relationships by ids', { postIds, error });
       throw Libs.createDatabaseError(
