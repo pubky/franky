@@ -42,6 +42,9 @@ Cypress.Commands.add(
     cy.get('#create-keys-in-browser-btn').click();
     cy.location('pathname').should('eq', '/onboarding/pubky');
 
+    cy.get('[data-cy="pubky-display"]').should('be.visible');
+    cy.get('[data-cy="pubky-display"]').invoke('val').should('not.eq', '').and('have.length.greaterThan', 0);
+
     // copy pubky to alias
     if (pubkyAlias) {
       cy.get('#copy-to-clipboard-action-btn').click();

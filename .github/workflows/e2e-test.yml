@@ -219,6 +219,15 @@ jobs:
           path: franky/cypress/videos/posts.cy.ts.mp4
           if-no-files-found: ignore
 
+      - name: Upload video for notifications test - ${{ matrix.browser }} - Desktop
+        if: always() && steps.test-desktop.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-desktop-notifications
+          path: franky/cypress/videos/notifications.cy.ts.mp4
+          if-no-files-found: ignore
+
       # TODO: Skipped due to bug https://github.com/pubky/franky/issues/372
       # - name: Run e2e tests - Mobile (${{ matrix.browser }})
       #   id: test-mobile
@@ -270,6 +279,15 @@ jobs:
         with:
           name: video-${{ matrix.browser }}-mobile-posts
           path: franky/cypress/videos/mobile/posts.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Upload video for notifications test - ${{ matrix.browser }} - Mobile
+        if: always() && steps.test-mobile.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-mobile-notifications
+          path: franky/cypress/videos/mobile/notifications.cy.ts.mp4
           if-no-files-found: ignore
 
       - name: Upload cypress.log
