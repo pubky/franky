@@ -29,6 +29,15 @@ Cypress.Commands.add(
     cy.location('pathname').should('eq', '/');
 
     cy.get('#create-account-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/human');
+
+    // Human verification step: Use dev mode skip button
+    // The Skip button is visible in dev mode or when Cypress is detected (window.Cypress)
+    cy.get('[data-testid="human-verification-cards"]').should('exist');
+
+    // Click the dev mode Skip button which generates an invite code automatically
+    cy.get('[data-testid="human-dev-skip-btn"]').should('exist').click();
+
     cy.location('pathname').should('eq', '/onboarding/install');
 
     cy.get('#create-keys-in-browser-btn').click();
@@ -80,23 +89,6 @@ Cypress.Commands.add(
     }
 
     cy.get('#backup-navigation-continue-btn').click();
-    cy.location('pathname').should('eq', '/onboarding/homeserver');
-
-    // request invite code from homeserver and input it
-    cy.request({
-      method: 'GET',
-      url: Cypress.env('homeserverAdminUrl'),
-      headers: {
-        'X-Admin-Password': Cypress.env('homeserverAdminPassword'),
-      },
-    }).then((response) => {
-      const inviteCode = response.body;
-      cy.wrap(inviteCode).as('inviteCode');
-      cy.get('#invite-code-input').type(inviteCode);
-    });
-
-    cy.get('#homeserver-navigation-continue-btn').click(extendedTimeout());
-
     cy.location('pathname').should('eq', '/onboarding/profile');
 
     cy.get('#profile-name-input').type(profileName);
@@ -141,11 +133,7 @@ function confirmRecoveryPhrase(recoveryPhrase: string): void {
     cy.get(`#backup-recovery-phrase-word-${word}-${alphaIndex + 1}`).click();
   });
   cy.get('#backup-recovery-phrase-validate-btn').click();
-  // Select button based on viewport (mobile or desktop)
-  const finishBtnId = Cypress.env('isMobile')
-    ? '#backup-recovery-phrase-finish-btn-mobile'
-    : '#backup-recovery-phrase-finish-btn-desktop';
-  cy.get(finishBtnId).click();
+  cy.get('#backup-recovery-phrase-finish-btn').click();
 }
 
 // Collect all 12 recovery phrase words

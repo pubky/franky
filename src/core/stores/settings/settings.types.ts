@@ -1,7 +1,6 @@
 export interface NotificationPreferences {
   follow: boolean;
   newFriend: boolean;
-  lostFriend: boolean;
   tagPost: boolean;
   tagProfile: boolean;
   mention: boolean;
@@ -53,6 +52,8 @@ export interface SettingsActions {
   setLanguage: (language: string) => void;
   // General actions
   reset: () => void;
+  // Homeserver sync action, used by bootstrap to load remote settings
+  loadFromHomeserver: (settings: SettingsState) => void;
 }
 
 export type SettingsStore = SettingsState & SettingsActions;
@@ -60,7 +61,6 @@ export type SettingsStore = SettingsState & SettingsActions;
 export const defaultNotificationPreferences: NotificationPreferences = {
   follow: true,
   newFriend: true,
-  lostFriend: true,
   tagPost: true,
   tagProfile: true,
   mention: true,
@@ -107,4 +107,5 @@ export enum SettingsActionTypes {
   CLEAR_MUTED_USERS = 'CLEAR_MUTED_USERS',
   SET_LANGUAGE = 'SET_LANGUAGE',
   RESET = 'RESET',
+  LOAD_FROM_HOMESERVER = 'LOAD_FROM_HOMESERVER',
 }

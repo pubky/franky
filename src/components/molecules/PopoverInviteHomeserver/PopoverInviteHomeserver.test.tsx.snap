@@ -53,13 +53,15 @@ exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for PopoverInvit
         class="flex-col gap-2"
         data-testid="container"
       >
-        <h4
+        <div
+          aria-level="4"
           class="text-popover-foreground"
           data-size="sm"
           data-testid="heading-4"
+          role="heading"
         >
           Don't have an invite yet?
-        </h4>
+        </div>
         <p
           class="font-medium text-muted-foreground"
           data-size="sm"
@@ -222,13 +224,15 @@ exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for default Popo
         class="flex-col gap-2"
         data-testid="container"
       >
-        <h4
+        <div
+          aria-level="4"
           class="text-popover-foreground"
           data-size="sm"
           data-testid="heading-4"
+          role="heading"
         >
           Don't have an invite yet?
-        </h4>
+        </div>
         <p
           class="font-medium text-muted-foreground"
           data-size="sm"

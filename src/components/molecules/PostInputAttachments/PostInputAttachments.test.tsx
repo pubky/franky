@@ -146,9 +146,10 @@ vi.mock('@/libs/icons', () => ({
 }));
 
 // Mock @/libs/utils
-vi.mock('@/libs/utils', () => ({
-  cn: (...args: (string | boolean | undefined | null)[]) => args.filter(Boolean).join(' '),
-}));
+vi.mock('@/libs/utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs/utils')>();
+  return { ...actual };
+});
 
 const createMockFile = (name: string, type: string): File => {
   return new File(['test content'], name, { type });
@@ -196,7 +197,10 @@ describe('PostInputAttachments', () => {
       render(<PostInputAttachments {...defaultProps} />);
 
       const fileInput = screen.getByTestId('file-input');
-      expect(fileInput).toHaveAttribute('accept', 'image/*,video/*,audio/*,application/pdf');
+      expect(fileInput).toHaveAttribute(
+        'accept',
+        'image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf',
+      );
     });
 
     it('renders file input with multiple attribute', () => {

@@ -1,6 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { PostPreviewCard } from './PostPreviewCard';
+
+// Mock hooks
+const mockNavigateToPost = vi.fn();
+vi.mock('@/hooks', () => ({
+  usePostNavigation: () => ({
+    navigateToPost: mockNavigateToPost,
+  }),
+}));
 
 // Mock organisms
 vi.mock('@/organisms', async (importOriginal) => {
@@ -22,8 +30,32 @@ vi.mock('@/organisms', async (importOriginal) => {
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>
+  Card: ({
+    children,
+    className,
+    onClick,
+    onKeyDown,
+    role,
+    tabIndex,
+    'aria-label': ariaLabel,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    onClick?: (e: React.MouseEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
+    role?: string;
+    tabIndex?: number;
+    'aria-label'?: string;
+  }) => (
+    <div
+      data-testid="card"
+      className={className}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      role={role}
+      tabIndex={tabIndex}
+      aria-label={ariaLabel}
+    >
       {children}
     </div>
   ),
@@ -35,15 +67,16 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  };
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
 });
 
 describe('PostPreviewCard', () => {
+  beforeEach(() => {
+    mockNavigateToPost.mockClear();
+  });
+
   it('renders with required props', () => {
     render(<PostPreviewCard postId="test-post-123" />);
 
@@ -53,21 +86,49 @@ describe('PostPreviewCard', () => {
     expect(screen.getByTestId('post-content-base')).toBeInTheDocument();
   });
 
-  it('applies CardContent classes', () => {
+  it('has correct accessibility attributes', () => {
     render(<PostPreviewCard postId="test-post-123" />);
-    const cardContent = screen.getByTestId('card-content');
 
-    expect(cardContent).toHaveClass('flex flex-col gap-4 p-6');
+    const card = screen.getByTestId('card');
+    expect(card).toHaveAttribute('role', 'link');
+    expect(card).toHaveAttribute('tabIndex', '0');
+    expect(card).toHaveAttribute('aria-label', 'View original post');
   });
 
-  it('applies default Card wrapper classes and merges className', () => {
-    render(<PostPreviewCard postId="test-post-123" className="bg-muted" />);
-    expect(screen.getByTestId('card')).toHaveClass('rounded-md py-0 bg-muted');
+  it('navigates to post page on click', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.click(card);
+
+    expect(mockNavigateToPost).toHaveBeenCalledWith('test-post-123');
   });
 
-  it('renders PostContentBase (prevents repost nesting)', () => {
+  it('navigates to post page on Enter key', () => {
     render(<PostPreviewCard postId="test-post-123" />);
-    expect(screen.getByTestId('post-content-base')).toHaveAttribute('data-post-id', 'test-post-123');
+
+    const card = screen.getByTestId('card');
+    fireEvent.keyDown(card, { key: 'Enter' });
+
+    expect(mockNavigateToPost).toHaveBeenCalledWith('test-post-123');
+  });
+
+  it('navigates to post page on Space key', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.keyDown(card, { key: ' ' });
+
+    expect(mockNavigateToPost).toHaveBeenCalledWith('test-post-123');
+  });
+
+  it('does not navigate on other keys', () => {
+    render(<PostPreviewCard postId="test-post-123" />);
+
+    const card = screen.getByTestId('card');
+    fireEvent.keyDown(card, { key: 'Tab' });
+
+    expect(mockNavigateToPost).not.toHaveBeenCalled();
   });
 });
 

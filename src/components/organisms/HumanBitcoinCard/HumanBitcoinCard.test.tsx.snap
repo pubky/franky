@@ -1,0 +1,109 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BitcoinPaymentCard > matches snapshot 1`] = `
+<div
+  class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm gap-0 p-6 md:p-12"
+  data-slot="card"
+  data-testid="bitcoin-payment-card"
+>
+  <div
+    class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start"
+    data-testid="container"
+  >
+    <div
+      class="mx-auto hidden w-full flex-1 flex-col items-center gap-3 lg:block lg:w-auto"
+      data-testid="container"
+    >
+      <img
+        alt="Lime Pubky coins representing Bitcoin payments"
+        class="h-auto w-[192px] max-w-full"
+        height="600"
+        src="/images/bitcoin-payment.png"
+        width="800"
+      />
+      <p
+        class="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase sm:text-left"
+        data-testid="typography"
+      >
+        (More private)
+      </p>
+    </div>
+    <div
+      class="mx-auto flex-col flex w-full flex-1 gap-6"
+      data-testid="container"
+    >
+      <div
+        class="mx-auto w-full flex-col flex gap-3"
+        data-testid="container"
+      >
+        <h3
+          class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
+          data-testid="typography"
+        >
+          Bitcoin Payment
+        </h3>
+        <p
+          class="text-5xl leading-none font-semibold whitespace-nowrap text-brand lg:text-6xl"
+          data-testid="typography"
+        >
+          ₿ 
+          1,000
+        </p>
+        <p
+          class="text-xs font-medium tracking-[0.1em] text-muted-foreground"
+          data-testid="typography"
+        >
+          ₿
+          1,000
+           = $
+          0.5
+        </p>
+        <div
+          class="mx-auto w-full flex-col flex gap-1"
+          data-testid="container"
+        >
+          <p
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
+            data-testid="typography"
+          >
+            1GB storage
+          </p>
+          <p
+            class="text-base leading-6 font-medium text-secondary-foreground/80"
+            data-testid="typography"
+          >
+            1MB/s speed limit
+          </p>
+        </div>
+      </div>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-brand border-brand hover:bg-brand/90 gap-1 has-[>svg]:px-4 h-12 w-full rounded-full px-5 py-3 text-sm font-semibold text-background sm:w-auto"
+        data-slot="button"
+        data-variant="brand"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-wallet mr-2 h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
+          />
+          <path
+            d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"
+          />
+        </svg>
+        Pay Once
+      </button>
+    </div>
+  </div>
+</div>
+`;

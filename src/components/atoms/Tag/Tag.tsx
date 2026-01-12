@@ -21,7 +21,7 @@ export const Tag = ({
     const base = Libs.generateRandomColor(name);
     return {
       backgroundColor: Libs.hexToRgba(base, 0.3),
-      borderColor: Libs.hexToRgba(base, 1),
+      borderColor: Libs.hexToRgba(base, 0.5),
     };
   }, [name]);
 

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { NotificationItem } from './NotificationItem';
 import { NotificationType } from '@/core/models/notification/notification.types';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 // Mock hooks
@@ -17,8 +18,8 @@ vi.mock('@/hooks', async (importOriginal) => {
 });
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     formatNotificationTime: vi.fn((timestamp: number) => {
@@ -91,14 +92,19 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
-    const Tag = as || 'p';
-    return (
-      <Tag data-testid="typography" className={className}>
-        {children}
-      </Tag>
-    );
-  },
+  Typography: ({
+    children,
+    as: Tag = 'p',
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: React.ElementType;
+    className?: string;
+  }) => (
+    <Tag data-testid="typography" className={className}>
+      {children}
+    </Tag>
+  ),
 }));
 
 describe('NotificationItem', () => {
@@ -107,10 +113,11 @@ describe('NotificationItem', () => {
   });
 
   const baseNotification = {
+    id: 'follow:1234567890:user1',
     type: NotificationType.Follow,
     timestamp: Date.now() - 1000 * 60 * 30, // 30 minutes ago
     followed_by: 'user1',
-  };
+  } as Core.FlatNotification;
 
   it('renders notification text correctly', () => {
     render(<NotificationItem notification={baseNotification} isUnread={false} />);
@@ -158,12 +165,13 @@ describe('NotificationItem', () => {
 
   it('renders tag badge for TagPost notifications', () => {
     const tagNotification = {
+      id: 'tagpost:123:user1',
       type: NotificationType.TagPost,
       timestamp: Date.now() - 1000 * 60 * 30,
       tagged_by: 'user1',
       tag_label: 'bitcoin',
       post_uri: 'user1:post123',
-    };
+    } as Core.FlatNotification;
     render(<NotificationItem notification={tagNotification} isUnread={false} />);
     expect(screen.getByTestId('post-tag')).toBeInTheDocument();
     expect(screen.getByText('bitcoin')).toBeInTheDocument();
@@ -172,11 +180,12 @@ describe('NotificationItem', () => {
   it('renders Mention notification without preview when post not loaded', () => {
     // Post preview is dynamically loaded - without post data, no preview is shown
     const mentionNotification = {
+      id: 'mention:123:user1',
       type: NotificationType.Mention,
       timestamp: Date.now() - 1000 * 60 * 30,
       mentioned_by: 'user1',
       post_uri: 'user1:post123',
-    };
+    } as Core.FlatNotification;
     render(<NotificationItem notification={mentionNotification} isUnread={false} />);
     // Should render the notification text
     expect(screen.getByText(/User mentioned you in post/i)).toBeInTheDocument();
@@ -196,33 +205,36 @@ describe('NotificationItem', () => {
 describe('NotificationItem - Snapshots', () => {
   it('matches snapshot for Follow notification', () => {
     const notification = {
+      id: 'follow:123:user1',
       type: NotificationType.Follow,
       timestamp: Date.now() - 1000 * 60 * 30,
       followed_by: 'user1',
-    };
+    } as Core.FlatNotification;
     const { container } = render(<NotificationItem notification={notification} isUnread={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for TagPost notification', () => {
     const notification = {
+      id: 'tagpost:123:user1',
       type: NotificationType.TagPost,
       timestamp: Date.now() - 1000 * 60 * 30,
       tagged_by: 'user1',
       tag_label: 'bitcoin',
       post_uri: 'user1:post123',
-    };
+    } as Core.FlatNotification;
     const { container } = render(<NotificationItem notification={notification} isUnread={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for Mention notification', () => {
     const notification = {
+      id: 'mention:123:user1',
       type: NotificationType.Mention,
       timestamp: Date.now() - 1000 * 60 * 30,
       mentioned_by: 'user1',
       post_uri: 'user1:post123',
-    };
+    } as Core.FlatNotification;
     const { container } = render(<NotificationItem notification={notification} isUnread={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });

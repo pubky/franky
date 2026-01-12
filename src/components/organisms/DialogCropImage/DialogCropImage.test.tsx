@@ -9,17 +9,13 @@ vi.mock('react-easy-crop/react-easy-crop.css', () => ({}));
 
 let latestCropComplete: ((area: Area, croppedAreaPixels: Area) => void) | null = null;
 
-vi.mock(
-  'react-easy-crop',
-  () => ({
-    __esModule: true,
-    default: ({ onCropComplete }: { onCropComplete: (area: Area, croppedAreaPixels: Area) => void }) => {
-      latestCropComplete = onCropComplete;
-      return <div data-testid="cropper" />;
-    },
-  }),
-  { virtual: true },
-);
+vi.mock('react-easy-crop', () => ({
+  __esModule: true,
+  default: ({ onCropComplete }: { onCropComplete: (area: Area, croppedAreaPixels: Area) => void }) => {
+    latestCropComplete = onCropComplete;
+    return <div data-testid="cropper" />;
+  },
+}));
 
 const triggerCropComplete = () => {
   if (latestCropComplete) {

@@ -69,7 +69,7 @@ export class LocalStreamUsersService {
 
   /**
    * Persist user data to normalized tables
-   * Separates user details, counts, tags, and relationships
+   * Separates user details, counts, tags, relationships, and TTL records
    *
    * @param users - Array of users from Nexus API
    * @returns Array of user IDs (Pubky)
@@ -79,8 +79,10 @@ export class LocalStreamUsersService {
     const userRelationships: Core.NexusModelTuple<Core.NexusUserRelationship>[] = [];
     const userTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const userDetails: Core.UserDetailsModelSchema[] = [];
+    const userTtl: Core.NexusModelTuple<{ lastUpdatedAt: number }>[] = [];
 
     const userIds: Core.Pubky[] = [];
+    const now = Date.now();
 
     for (const user of users) {
       const userId = user.details.id;
@@ -89,6 +91,7 @@ export class LocalStreamUsersService {
       userRelationships.push([userId, user.relationship]);
       userTags.push([userId, user.tags]);
       userDetails.push(user.details);
+      userTtl.push([userId, { lastUpdatedAt: now }]);
     }
 
     // Bulk save to normalized tables
@@ -97,6 +100,7 @@ export class LocalStreamUsersService {
       Core.UserCountsModel.bulkSave(userCounts),
       Core.UserTagsModel.bulkSave(userTags),
       Core.UserRelationshipsModel.bulkSave(userRelationships),
+      Core.UserTtlModel.bulkSave(userTtl),
     ]);
 
     return userIds;

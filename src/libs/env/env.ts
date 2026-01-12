@@ -17,7 +17,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_DB_NAME: z.string().default('franky'),
   NEXT_PUBLIC_DB_VERSION: z
     .string()
-    .default('1')
+    .default('2')
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
@@ -78,6 +78,42 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
+  NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: z
+    .string()
+    .default('300000') // 5 minutes in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  // TTL Coordinator configuration
+  NEXT_PUBLIC_TTL_POST_MS: z
+    .string()
+    .default('300000') // 5 minutes in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_USER_MS: z
+    .string()
+    .default('600000') // 10 minutes in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: z
+    .string()
+    .default('5000') // 5 seconds in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: z
+    .string()
+    .default('20')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: z
+    .string()
+    .default('20')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
   NEXT_PUBLIC_TESTNET: z
     .string()
     .default('false')
@@ -97,6 +133,9 @@ const envSchema = z.object({
   NEXT_PUBLIC_HOMESERVER_ADMIN_URL: z.string().url().default('http://localhost:6288/generate_signup_token'),
   NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
   NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://relay.pubky.app'),
+
+  NEXT_PUBLIC_EXCHANGE_RATE_API: z.url().default('https://api1.blocktank.to/api/fx/rates/btc'),
+  NEXT_PUBLIC_HOMEGATE_URL: z.url().default('http://localhost:5000/'),
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
@@ -146,6 +185,7 @@ function parseEnv(): z.infer<typeof envSchema> {
   try {
     const parsed = envSchema.parse({
       NODE_ENV: process.env.NODE_ENV,
+      NEXT_PUBLIC_DB_NAME: process.env.NEXT_PUBLIC_DB_NAME,
       NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
       NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
@@ -159,12 +199,20 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
       NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
       NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
+      NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: process.env.NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS,
+      NEXT_PUBLIC_TTL_POST_MS: process.env.NEXT_PUBLIC_TTL_POST_MS,
+      NEXT_PUBLIC_TTL_USER_MS: process.env.NEXT_PUBLIC_TTL_USER_MS,
+      NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: process.env.NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS,
+      NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE,
+      NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
       NEXT_PUBLIC_HOMESERVER_ADMIN_URL: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL,
       NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
       NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
+      NEXT_PUBLIC_EXCHANGE_RATE_API: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API,
+      NEXT_PUBLIC_HOMEGATE_URL: process.env.NEXT_PUBLIC_HOMEGATE_URL,
       VITEST: process.env.VITEST,
       BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
       SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,

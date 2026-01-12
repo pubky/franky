@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { FAQAccordion } from './FAQAccordion';
-import type { FAQAccordionItem } from './FAQAccordion';
+import type { FAQAccordionItem } from './FAQAccordion.types';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
 const mockItems: FAQAccordionItem[] = [
@@ -45,23 +45,21 @@ describe('FAQAccordion - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with complex answer content', () => {
-    const complexItems: FAQAccordionItem[] = [
+  it('matches snapshot with markdown answer content', () => {
+    const markdownItems: FAQAccordionItem[] = [
       {
         id: '1',
         question: 'Complex question',
-        answer: (
-          <div>
-            <p>First paragraph</p>
-            <ul>
-              <li>Item 1</li>
-              <li>Item 2</li>
-            </ul>
-          </div>
-        ),
+        answer: `First paragraph
+
+- Item 1
+- Item 2
+
+1. Ordered item 1
+2. Ordered item 2`,
       },
     ];
-    const { container } = render(<FAQAccordion items={complexItems} />);
+    const { container } = render(<FAQAccordion items={markdownItems} />);
     const normalizedContainer = normaliseRadixIds(container);
     expect(normalizedContainer.firstChild).toMatchSnapshot();
   });

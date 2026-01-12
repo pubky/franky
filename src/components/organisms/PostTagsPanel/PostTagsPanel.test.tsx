@@ -19,17 +19,17 @@ vi.mock('@/atoms', () => ({
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>{children}</div>
   ),
-  Typography: ({ children, as: Tag = 'span' }: { children: React.ReactNode; as?: string }) => {
-    const Component = Tag as keyof JSX.IntrinsicElements;
-    return <Component>{children}</Component>;
+  Typography: ({ children, as: Tag = 'span' }: { children: React.ReactNode; as?: React.ElementType }) => {
+    return <Tag>{children}</Tag>;
   },
   Spinner: ({ size }: { size: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual implementations
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
+  return { ...actual };
+});
 
 describe('PostTagsPanel', () => {
   beforeEach(() => {

@@ -101,6 +101,7 @@ const defaultPaginationResult = {
   loadMore: mockLoadMore,
   refresh: mockRefresh,
   prependPosts: mockPrependPosts,
+  removePosts: vi.fn(),
 };
 
 describe('TimelineFeed', () => {

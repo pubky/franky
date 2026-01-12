@@ -23,7 +23,7 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
   return (
     <Atoms.Container
       overrideDefaults
-      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
+      className="flex min-w-0 cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-secondary"
       onClick={handleClick}
       data-testid={`recent-user-${user.id}`}
       role="button"
@@ -44,7 +44,7 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
           overrideDefaults
           data-testid="user-pubky"
         >
-          @{Libs.formatPublicKey({ key: user.id, length: 8 })}
+          {Libs.formatPublicKey({ key: user.id, length: 8 })}
         </Atoms.Typography>
       </Atoms.Container>
     </Atoms.Container>

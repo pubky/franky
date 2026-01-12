@@ -4,8 +4,8 @@ import { HeaderSignIn } from './HeaderSignIn';
 
 // Mock hooks
 const mockUseCurrentUserProfile = vi.fn(() => ({
-  userDetails: { name: 'Test User', image: 'test-image.jpg' },
-  currentUserPubky: 'test-pubky-123',
+  userDetails: { name: 'Test User', image: 'test-image.jpg' } as { name: string; image: string } | null,
+  currentUserPubky: 'test-pubky-123' as string | null,
 }));
 
 vi.mock('@/hooks', () => ({
@@ -31,8 +31,8 @@ vi.mock('@/core', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     extractInitials: vi.fn(({ name }: { name: string }) => (name ? name.charAt(0).toUpperCase() : 'U')),

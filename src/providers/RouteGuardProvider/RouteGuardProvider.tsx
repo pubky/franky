@@ -8,6 +8,7 @@ import * as Providers from '@/providers';
 import * as App from '@/app';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 
 interface RouteGuardProviderProps {
   children: React.ReactNode;
@@ -31,6 +32,14 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
+  const { hasHydrated, session, sessionExport } = Core.useAuthStore((state) => state);
+  // Attempt to restore an existing session snapshot on fresh loads.
+  useEffect(() => {
+    if (!hasHydrated) return;
+    if (session) return;
+    if (!sessionExport) return;
+    void Core.AuthController.restorePersistedSession();
+  }, [hasHydrated, session, sessionExport]);
 
   // Determine if the current route is accessible based on authentication status
   const isRouteAccessible = useMemo(() => {

@@ -129,4 +129,14 @@ export class StreamPostsController {
   static async clearUnreadStream(params: Core.TStreamIdParams): Promise<string[]> {
     return await Core.PostStreamApplication.clearUnreadStream(params);
   }
+
+  /**
+   * Checks if the stream cache is stale and clears it if so.
+   * Only clears the stream index, keeping posts and users in IndexedDB.
+   *
+   * @param params.streamId - The ID of the stream to check
+   */
+  static async clearStaleStreamCache(params: Core.TStreamIdParams): Promise<void> {
+    await Core.PostStreamApplication.clearStaleStreamCache(params);
+  }
 }

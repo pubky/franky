@@ -41,8 +41,8 @@ const { mockCropImageToBlob, mockToast } = vi.hoisted(() => ({
   mockToast: vi.fn(),
 }));
 
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     cropImageToBlob: mockCropImageToBlob,
@@ -125,7 +125,7 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    as?: string;
+    as?: React.ElementType;
     size?: string;
     className?: string;
   }) => {

@@ -2,6 +2,8 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useEmojiInsert } from '../useEmojiInsert';
+import * as Libs from '@/libs';
+import { TAG_MAX_LENGTH } from '@/config';
 import type { UseTagInputOptions, UseTagInputReturn } from './useTagInput.types';
 
 /**
@@ -49,7 +51,16 @@ export function useTagInput({
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInputValue(e.target.value);
+      // Sanitize input: remove banned characters (colons, commas, spaces)
+      const sanitized = Libs.sanitizeTagInput(e.target.value);
+      const value = sanitized.toLowerCase();
+
+      // Check character count using grapheme-aware counting
+      const charCount = Libs.getCharacterCount(value);
+      if (charCount <= TAG_MAX_LENGTH) {
+        setInputValue(value);
+      }
+
       // Clear limit reached message when user starts typing
       if (limitReached) {
         setLimitReached(false);
@@ -83,10 +94,44 @@ export function useTagInput({
     clearInput();
   }, [inputValue, existingTags, isAtLimit, onTagAdd, clearInput]);
 
+  // Handle paste events: sanitize and validate pasted content
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent) => {
+      e.preventDefault();
+      const pasted = e.clipboardData.getData('text');
+      const sanitized = Libs.sanitizeTagInput(pasted).toLowerCase();
+
+      // Combine with existing value and check total length
+      const newValue = inputValue + sanitized;
+      const charCount = Libs.getCharacterCount(newValue);
+
+      if (charCount <= TAG_MAX_LENGTH) {
+        setInputValue(newValue);
+      } else {
+        // Truncate to max length using grapheme-aware slicing
+        const chars = Array.from(newValue);
+        setInputValue(chars.slice(0, TAG_MAX_LENGTH).join(''));
+      }
+
+      if (limitReached) {
+        setLimitReached(false);
+      }
+    },
+    [inputValue, limitReached],
+  );
+
   // Wrapper to handle emoji insertion with limit check
   const handleEmojiChange = useCallback(
     (newValue: string) => {
-      setInputValue(newValue);
+      // Sanitize and validate emoji insertion
+      const sanitized = Libs.sanitizeTagInput(newValue);
+      const value = sanitized.toLowerCase();
+      const charCount = Libs.getCharacterCount(value);
+
+      if (charCount <= TAG_MAX_LENGTH) {
+        setInputValue(value);
+      }
+
       if (limitReached) {
         setLimitReached(false);
       }
@@ -111,6 +156,7 @@ export function useTagInput({
     handleInputChange,
     handleTagSubmit,
     handleEmojiSelect,
+    handlePaste,
     clearInput,
     isDisabled,
   };

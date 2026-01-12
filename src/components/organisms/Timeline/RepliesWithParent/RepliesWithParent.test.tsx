@@ -87,6 +87,8 @@ describe('TimelineRepliesWithParent', () => {
       hasMore: true,
       loadMore: vi.fn(),
       refresh: vi.fn(),
+      prependPosts: vi.fn(),
+      removePosts: vi.fn(),
     });
 
     // Mock usePostNavigation
@@ -96,7 +98,7 @@ describe('TimelineRepliesWithParent', () => {
 
     // Mock useInfiniteScroll
     mockUseInfiniteScroll.mockReturnValue({
-      sentinelRef: { current: null },
+      sentinelRef: vi.fn(),
     });
 
     // Mock useLiveQuery
@@ -113,6 +115,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -129,6 +133,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -147,6 +153,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: false,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -163,6 +171,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: false,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -181,6 +191,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: false,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -198,6 +210,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: false,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -218,6 +232,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to return null (no parent)
@@ -244,6 +260,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to handle multiple calls:
@@ -272,6 +290,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to handle multiple calls:
@@ -301,6 +321,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to handle multiple calls:
@@ -331,6 +353,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to handle multiple calls:
@@ -362,6 +386,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: mockLoadMore,
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -382,7 +408,9 @@ describe('TimelineRepliesWithParent', () => {
       const mockParentId = 'author2:parent1';
 
       // Mock a pending fetch scenario
-      const mockGetOrFetchDetails = vi.fn(() => new Promise(() => {})); // Never resolves
+      const mockGetOrFetchDetails = vi.fn(
+        (): Promise<Core.PostDetailsModelSchema | null> => new Promise(() => {}), // Never resolves
+      );
       vi.spyOn(Core.PostController, 'getOrFetchDetails').mockImplementation(mockGetOrFetchDetails);
 
       mockUseStreamPagination.mockReturnValue({
@@ -393,6 +421,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to return parent ID but no parent post (triggers fetch)
@@ -428,6 +458,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       const { container } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -444,6 +476,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: false,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       const { container } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -460,6 +494,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: false,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       const { container } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
@@ -476,6 +512,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to handle multiple calls (2 replies × 2 queries each = 4 calls):
@@ -504,6 +542,8 @@ describe('TimelineRepliesWithParent', () => {
         hasMore: true,
         loadMore: vi.fn(),
         refresh: vi.fn(),
+        prependPosts: vi.fn(),
+        removePosts: vi.fn(),
       });
 
       // Mock useLiveQuery to handle multiple calls (2 replies × 2 queries each = 4 calls):

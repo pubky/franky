@@ -27,7 +27,7 @@ Object.defineProperty(global, 'IntersectionObserver', {
 });
 
 describe('useInfiniteScroll', () => {
-  let mockOnLoadMore: jest.MockedFunction<() => void>;
+  let mockOnLoadMore: ReturnType<typeof vi.fn<() => void>>;
 
   beforeEach(() => {
     mockOnLoadMore = vi.fn();

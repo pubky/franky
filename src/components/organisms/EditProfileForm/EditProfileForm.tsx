@@ -5,6 +5,7 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
+import * as Config from '@/config';
 
 export const EditProfileForm = () => {
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
@@ -106,6 +107,7 @@ export const EditProfileForm = () => {
                 onSave={(label, url) => {
                   handlers.setLinks([...state.links, { label, url }]);
                 }}
+                disabled={state.links.length >= Config.USER_MAX_LINKS}
               />
             </Atoms.Container>
           </Atoms.Container>

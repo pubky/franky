@@ -51,8 +51,8 @@ vi.mock('@/molecules', () => ({
 }));
 
 // Mock Libs
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
+vi.mock('@/libs', async () => {
+  const actual = await vi.importActual('@/libs');
   return {
     ...actual,
     UserRoundPlus: vi.fn(() => <span>UserRoundPlus</span>),
@@ -187,7 +187,7 @@ describe('usePostMenuActions', () => {
     });
 
     it('shows error toast when follow fails with AppError', async () => {
-      const error = { type: 'AppError', message: 'Follow failed' } as Error;
+      const error = { type: 'AppError', message: 'Follow failed' } as unknown as Error;
       vi.mocked(Libs.isAppError).mockReturnValue(true);
       defaultMocks.toggleFollow.mockRejectedValue(error);
 

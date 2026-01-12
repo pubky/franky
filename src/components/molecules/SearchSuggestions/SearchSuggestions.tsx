@@ -75,11 +75,11 @@ export function SearchSuggestions({
       role="region"
       aria-label={ariaLabel}
       data-testid="search-suggestions"
-      className="absolute top-full right-0 left-0 z-50 rounded-b-2xl border-x border-b border-border"
+      className="absolute top-full right-0 left-0 z-50 overflow-y-auto rounded-b-2xl border-x border-b border-border"
       style={SEARCH_EXPANDED_STYLE}
       overrideDefaults
     >
-      <Atoms.Container className="flex flex-col space-y-6 p-6" overrideDefaults>
+      <Atoms.Container className="flex flex-col space-y-6 px-6 pt-3 pb-6" overrideDefaults>
         {renderAutocompleteContent()}
         {renderRecentContent()}
       </Atoms.Container>

@@ -13,3 +13,6 @@ export * from './notification';
 export * from './search';
 export * from './feedback';
 export * from './report';
+export * from './homegate';
+export * from './settings';
+export * from './ttl';

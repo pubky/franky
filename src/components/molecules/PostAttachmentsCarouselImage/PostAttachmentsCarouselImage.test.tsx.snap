@@ -4,7 +4,7 @@ exports[`PostAttachmentsCarouselImage - Snapshots > matches snapshot after main 
 <div>
   <img
     alt="snapshot-loaded.jpg"
-    class="max-h-[75dvh] w-full rounded-md object-cover object-center"
+    class="max-h-[75dvh] w-full rounded-md object-contain"
     data-testid="image-main"
     id="snapshot-loaded-id"
     src="https://example.com/main-loaded.jpg"
@@ -16,7 +16,7 @@ exports[`PostAttachmentsCarouselImage - Snapshots > matches snapshot before main
 <div>
   <img
     alt="snapshot-test.jpg"
-    class="max-h-[75dvh] w-full rounded-md object-cover object-center"
+    class="max-h-[75dvh] w-full rounded-md object-contain"
     data-testid="image-feed"
     src="https://example.com/feed.jpg"
   />
@@ -33,7 +33,7 @@ exports[`PostAttachmentsCarouselImage - Snapshots > matches snapshot for GIF ima
 <div>
   <img
     alt="snapshot-animation.gif"
-    class="max-h-[75dvh] w-full rounded-md object-cover object-center"
+    class="max-h-[75dvh] w-full rounded-md object-contain"
     data-testid="image-main"
     id="snapshot-gif-id"
     src="https://example.com/main-animation.gif"
@@ -45,7 +45,7 @@ exports[`PostAttachmentsCarouselImage - Snapshots > matches snapshot for PNG ima
 <div>
   <img
     alt="snapshot-png.png"
-    class="max-h-[75dvh] w-full rounded-md object-cover object-center"
+    class="max-h-[75dvh] w-full rounded-md object-contain"
     data-testid="image-feed"
     src="https://example.com/feed-image.png"
   />
