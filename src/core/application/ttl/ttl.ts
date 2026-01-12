@@ -49,12 +49,10 @@ export class TtlApplication {
     const uniqueIds = Array.from(new Set(params.postIds));
     if (uniqueIds.length === 0) return;
 
-    const { url, body } = Core.postStreamApi.postsByIds({
+    const postBatch = await Core.NexusPostStreamService.fetchByIds({
       post_ids: uniqueIds,
       viewer_id: params.viewerId,
     });
-
-    const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
 
     Logger.debug('TtlApplication: Fetched posts from Nexus', {
       postCount: postBatch.length,
