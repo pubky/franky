@@ -10,6 +10,11 @@ describe('ReportValidators', () => {
       expect(result).toBe('https://example.com/post/123');
     });
 
+    it('should accept valid http URL', () => {
+      const result = ReportValidators.validatePostUrl('http://example.com/post/123');
+      expect(result).toBe('http://example.com/post/123');
+    });
+
     it('should throw AppError for empty string', () => {
       expect(() => ReportValidators.validatePostUrl('')).toThrow(Libs.AppError);
       expect(() => ReportValidators.validatePostUrl('')).toThrow('Post URL is required and must be a non-empty string');
@@ -25,6 +30,16 @@ describe('ReportValidators', () => {
 
     it('should throw AppError for undefined', () => {
       expect(() => ReportValidators.validatePostUrl(undefined)).toThrow(Libs.AppError);
+    });
+
+    it('should throw AppError for invalid URL format', () => {
+      expect(() => ReportValidators.validatePostUrl('not-a-valid-url')).toThrow(Libs.AppError);
+      expect(() => ReportValidators.validatePostUrl('not-a-valid-url')).toThrow('Post URL must be a valid URL');
+    });
+
+    it('should throw AppError for URL without protocol', () => {
+      expect(() => ReportValidators.validatePostUrl('example.com/post/123')).toThrow(Libs.AppError);
+      expect(() => ReportValidators.validatePostUrl('example.com/post/123')).toThrow('Post URL must be a valid URL');
     });
   });
 
@@ -108,6 +123,13 @@ describe('ReportValidators', () => {
       expect(() => ReportValidators.validateReason(longReason)).toThrow(
         `Reason must be no more than ${REPORT_REASON_MAX_LENGTH} characters`,
       );
+    });
+
+    it('should accept reason with whitespace that is within limit after trimming', () => {
+      // This tests that we check trimmed length, not original length
+      const reasonWithSpaces = '   ' + 'a'.repeat(REPORT_REASON_MAX_LENGTH) + '   ';
+      const result = ReportValidators.validateReason(reasonWithSpaces);
+      expect(result).toBe('a'.repeat(REPORT_REASON_MAX_LENGTH));
     });
   });
 

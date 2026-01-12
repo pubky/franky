@@ -16,7 +16,7 @@ export class ReportValidators {
    *
    * @param postUrl - URL of the post being reported
    * @returns Normalized post URL (trimmed)
-   * @throws AppError if postUrl is invalid
+   * @throws AppError if postUrl is invalid or not a valid URL
    */
   static validatePostUrl(postUrl: string | undefined | null): string {
     if (!postUrl || postUrl.trim() === '') {
@@ -26,7 +26,16 @@ export class ReportValidators {
         400,
       );
     }
-    return postUrl.trim();
+
+    const trimmedUrl = postUrl.trim();
+
+    try {
+      new URL(trimmedUrl);
+    } catch {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Post URL must be a valid URL', 400);
+    }
+
+    return trimmedUrl;
   }
 
   /**
@@ -74,7 +83,9 @@ export class ReportValidators {
       );
     }
 
-    if (reason.length > REPORT_REASON_MAX_LENGTH) {
+    const trimmedReason = reason.trim();
+
+    if (trimmedReason.length > REPORT_REASON_MAX_LENGTH) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
         `Reason must be no more than ${REPORT_REASON_MAX_LENGTH} characters`,
@@ -82,7 +93,7 @@ export class ReportValidators {
       );
     }
 
-    return reason.trim();
+    return trimmedReason;
   }
 
   /**

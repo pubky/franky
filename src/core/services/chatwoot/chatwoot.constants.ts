@@ -13,6 +13,7 @@
 export const CHATWOOT_INBOX_IDS = {
   FEEDBACK: 26,
   REPORTS: 27,
+  /** Reserved for future copyright infringement reports */
   COPYRIGHT: 28,
 } as const;
 
