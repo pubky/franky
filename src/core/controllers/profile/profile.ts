@@ -16,7 +16,7 @@ export class ProfileController {
       {
         name: profile.name,
         bio: profile.bio ?? '',
-        image: image ?? '',
+        image,
         links: Core.UserNormalizer.linksFromUi(profile.links),
         status: '', // default is blank
       },
