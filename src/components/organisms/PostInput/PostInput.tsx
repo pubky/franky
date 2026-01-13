@@ -97,7 +97,7 @@ export function PostInput({
         <Atoms.Textarea
           ref={textareaRef}
           placeholder={displayPlaceholder}
-          className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-words text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
           value={content}
           onChange={handleChange}
           onFocus={handleExpand}
