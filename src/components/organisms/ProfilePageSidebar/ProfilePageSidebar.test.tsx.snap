@@ -92,7 +92,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
     </div>
   </div>
   <div
-    class="flex flex-col gap-2"
+    class="flex w-full min-w-0 flex-col gap-2"
     data-testid="feedback-card"
   >
     <h2
@@ -102,15 +102,15 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
       Feedback
     </h2>
     <div
-      class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+      class="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
       data-testid="container"
     >
       <div
-        class="flex items-center gap-2"
+        class="flex w-full min-w-0 items-center gap-2"
         data-testid="container"
       >
         <div
-          class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+          class="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
           data-testid="container"
         >
           <span
@@ -124,7 +124,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
           </span>
         </div>
         <div
-          class="text-base font-bold text-foreground"
+          class="min-w-0 flex-1 truncate text-base font-bold text-foreground"
           data-testid="container"
         >
           Your Name
