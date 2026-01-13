@@ -6,7 +6,7 @@ import { PostContentBlurred } from './PostContentBlurred';
 const mockUnblur = vi.fn();
 vi.mock('@/core', () => ({
   ModerationController: {
-    unblur: (...args: unknown[]) => mockUnblur(...args),
+    unBlur: (...args: unknown[]) => mockUnblur(...args),
   },
 }));
 

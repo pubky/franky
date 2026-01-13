@@ -4,7 +4,7 @@ import * as Core from '@/core';
 
 vi.mock('@/core/application/moderation', () => ({
   ModerationApplication: {
-    setUnblur: vi.fn(),
+    setUnBlur: vi.fn(),
     enrichPostsWithModeration: vi.fn(),
     enrichUsersWithModeration: vi.fn(),
     getModerationStatus: vi.fn(),
@@ -16,21 +16,21 @@ describe('ModerationController', () => {
     vi.clearAllMocks();
   });
 
-  describe('unblur', () => {
-    it('should call ModerationApplication.setUnblur', async () => {
+  describe('unBlur', () => {
+    it('should call ModerationApplication.setUnBlur', async () => {
       const id = 'author:post1';
-      const spy = vi.spyOn(Core.ModerationApplication, 'setUnblur').mockResolvedValue(undefined);
+      const spy = vi.spyOn(Core.ModerationApplication, 'setUnBlur').mockResolvedValue(undefined);
 
-      await ModerationController.unblur(id);
+      await ModerationController.unBlur(id);
 
       expect(spy).toHaveBeenCalledWith(id);
     });
 
     it('should work for both posts and profiles', async () => {
-      const spy = vi.spyOn(Core.ModerationApplication, 'setUnblur').mockResolvedValue(undefined);
+      const spy = vi.spyOn(Core.ModerationApplication, 'setUnBlur').mockResolvedValue(undefined);
 
-      await ModerationController.unblur('author:post1');
-      await ModerationController.unblur('pk:user1');
+      await ModerationController.unBlur('author:post1');
+      await ModerationController.unBlur('pk:user1');
 
       expect(spy).toHaveBeenCalledWith('author:post1');
       expect(spy).toHaveBeenCalledWith('pk:user1');

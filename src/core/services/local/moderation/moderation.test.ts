@@ -19,7 +19,7 @@ describe('LocalModerationService', () => {
         created_at: Date.now(),
       });
 
-      await Core.LocalModerationService.setUnblur(postId);
+      await Core.LocalModerationService.setUnBlur(postId);
 
       const record = await Core.ModerationModel.table.get(postId);
       expect(record).toBeTruthy();
@@ -35,7 +35,7 @@ describe('LocalModerationService', () => {
         created_at: Date.now(),
       });
 
-      await Core.LocalModerationService.setUnblur(profileId);
+      await Core.LocalModerationService.setUnBlur(profileId);
 
       const record = await Core.ModerationModel.table.get(profileId);
       expect(record).toBeTruthy();
@@ -45,7 +45,7 @@ describe('LocalModerationService', () => {
     it('should do nothing if item is not in moderation table', async () => {
       const postId = 'author:post1';
 
-      await Core.LocalModerationService.setUnblur(postId);
+      await Core.LocalModerationService.setUnBlur(postId);
 
       const record = await Core.ModerationModel.table.get(postId);
       expect(record).toBeUndefined();

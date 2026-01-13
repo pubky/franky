@@ -13,7 +13,7 @@ export const PostContentBlurred = ({ postId, className }: PostContentBlurredProp
       overrideDefaults
       onClick={(e) => {
         e.stopPropagation();
-        Core.ModerationController.unblur(postId);
+        Core.ModerationController.unBlur(postId);
       }}
       className={Libs.cn('group relative w-full cursor-pointer', className)}
     >

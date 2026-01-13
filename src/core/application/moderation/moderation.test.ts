@@ -4,7 +4,7 @@ import * as Core from '@/core';
 
 vi.mock('@/core/services/local/moderation', () => ({
   LocalModerationService: {
-    setUnblur: vi.fn(),
+    setUnBlur: vi.fn(),
     getModerationRecords: vi.fn(),
     getModerationRecord: vi.fn(),
   },
@@ -15,12 +15,12 @@ describe('ModerationApplication', () => {
     vi.clearAllMocks();
   });
 
-  describe('setUnblur', () => {
+  describe('setUnBlur', () => {
     it('should delegate to LocalModerationService', async () => {
       const id = 'author:post1';
-      const spy = vi.spyOn(Core.LocalModerationService, 'setUnblur').mockResolvedValue(undefined);
+      const spy = vi.spyOn(Core.LocalModerationService, 'setUnBlur').mockResolvedValue(undefined);
 
-      await ModerationApplication.setUnblur(id);
+      await ModerationApplication.setUnBlur(id);
 
       expect(spy).toHaveBeenCalledWith(id);
     });

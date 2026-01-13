@@ -5,10 +5,10 @@ export class ModerationApplication {
   private constructor() {}
 
   /**
-   * Sets an item as unblurred by the user.
+   * Sets an item as un-blurred by the user.
    */
-  static async setUnblur(id: string): Promise<void> {
-    return Core.LocalModerationService.setUnblur(id);
+  static async setUnBlur(id: string): Promise<void> {
+    return Core.LocalModerationService.setUnBlur(id);
   }
 
   /**

@@ -5,9 +5,9 @@ export class LocalModerationService {
   private constructor() {}
 
   /**
-   * Sets an item as unblurred by the user.
+   * Sets an item as un-blurred by the user.
    */
-  static async setUnblur(id: string): Promise<void> {
+  static async setUnBlur(id: string): Promise<void> {
     try {
       const record = await Core.ModerationModel.findById(id);
       if (!record) {

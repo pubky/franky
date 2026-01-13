@@ -8,10 +8,10 @@ export class ModerationController {
   }
 
   /**
-   * Unblur a moderated item (post or profile).
+   * Un-blur a moderated item (post or profile).
    */
-  static async unblur(id: string): Promise<void> {
-    return Core.ModerationApplication.setUnblur(id);
+  static async unBlur(id: string): Promise<void> {
+    return Core.ModerationApplication.setUnBlur(id);
   }
 
   static async enrichPosts(posts: Core.PostDetailsModelSchema[]): Promise<Core.EnrichedPostDetails[]> {

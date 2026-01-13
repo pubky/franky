@@ -12,13 +12,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with basic items 1`] = `
   >
     <span
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
-    >
-      <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
-      >
-        A
-      </span>
-    </span>
+    />
   </div>
   <div
     class="relative rounded-full shadow-sm"
@@ -27,13 +21,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with basic items 1`] = `
   >
     <span
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
-    >
-      <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
-      >
-        B
-      </span>
-    </span>
+    />
   </div>
 </div>
 `;

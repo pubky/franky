@@ -14,7 +14,7 @@ const mockUnblur = vi.fn();
 vi.mock('@/core', () => ({
   ModerationController: {
     getModerationStatus: (...args: unknown[]) => mockGetModerationStatus(...args),
-    unblur: (...args: unknown[]) => mockUnblur(...args),
+    unBlur: (...args: unknown[]) => mockUnblur(...args),
   },
   ModerationType: {
     PROFILE: 'PROFILE',
@@ -110,13 +110,16 @@ describe('AvatarWithFallback', () => {
     expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
   });
 
-  it('renders avatar fallback while moderation status is loading', () => {
+  it('renders avatar image immediately while moderation status is loading (no flicker)', () => {
     mockUseLiveQuery.mockReturnValue(undefined);
 
     render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
 
-    expect(screen.queryByTestId('avatar-image')).not.toBeInTheDocument();
-    expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+    // Image should be shown immediately without waiting for moderation status
+    expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
+    expect(screen.queryByTestId('avatar-fallback')).not.toBeInTheDocument();
+    // No blur applied while loading
+    expect(screen.getByTestId('avatar-image')).not.toHaveClass('blur-xs');
   });
 
   it('uses custom alt text when provided', () => {
@@ -317,13 +320,15 @@ describe('AvatarWithFallback', () => {
       expect(parentClickHandler).not.toHaveBeenCalled();
     });
 
-    it('shows fallback for invalid avatar URL format', () => {
+    it('shows image without blur for invalid avatar URL format (no moderation lookup)', () => {
       mockUseLiveQuery.mockReturnValue(null);
 
       render(<AvatarWithFallback {...mockProps} avatarUrl="https://example.com/invalid-url" />);
 
-      expect(screen.queryByTestId('avatar-image')).not.toBeInTheDocument();
-      expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+      // Image should still be shown (the URL might still load an image)
+      // Moderation can't be checked without valid userId, so no blur
+      expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
+      expect(screen.getByTestId('avatar-image')).not.toHaveClass('blur-xs');
     });
 
     it('queries moderation status with correct userId and type', () => {

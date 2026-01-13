@@ -35,7 +35,8 @@ export function AvatarWithFallback({
     return await Core.ModerationController.getModerationStatus(userId, Core.ModerationType.PROFILE);
   }, [userId]);
 
-  const isBlurred = moderationStatus?.is_blurred;
+  // Show image immediately, apply blur only when status confirms
+  const shouldBlur = moderationStatus?.is_blurred ?? false;
 
   // Reset error state when avatarUrl changes
   useEffect(() => {
@@ -44,23 +45,23 @@ export function AvatarWithFallback({
 
   return (
     <Atoms.Avatar size={size} className={className} data-testid={dataTestId}>
-      {avatarUrl && !imageError && moderationStatus ? (
+      {avatarUrl && !imageError ? (
         <>
           <Atoms.AvatarImage
             src={avatarUrl}
             alt={alt || name}
             onError={() => setImageError(true)}
-            className={Libs.cn(isBlurred && 'blur-xs')}
+            className={Libs.cn(shouldBlur && 'blur-xs')}
           />
 
-          {isBlurred && (
+          {shouldBlur && (
             <Atoms.Button
               overrideDefaults
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 if (!userId) return;
-                Core.ModerationController.unblur(userId);
+                Core.ModerationController.unBlur(userId);
               }}
               className="absolute inset-0 flex cursor-pointer items-center justify-center"
             >
