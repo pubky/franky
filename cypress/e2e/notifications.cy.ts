@@ -1,5 +1,5 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, fastTagPost, replyToPost, repostPost, deletePost } from '../support/posts';
+import { createQuickPost, fastTagPost, replyToPost, repostPost, deletePost, waitForFeedToLoad } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
@@ -254,6 +254,10 @@ describe('notifications', () => {
     // * profile 1 deletes own post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
+    // Go to profile page and click Posts tab to see own posts (home feed shows followed users' posts)
+    goToProfilePageFromHeader();
+    cy.get('[data-cy="profile-filter-item-posts"]').click();
+    cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
     deletePost({ postIdx: 0, filterText: postContent });
 
     // * profile 2 checks for notification for post (1) being deleted
@@ -288,8 +292,11 @@ describe('notifications', () => {
     // * profile 1 deletes own post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
-    // After reposting, the original post will be at index 1 (repost is at index 0)
-    deletePost({ postIdx: 1, filterText: postContent });
+    // Go to profile page and click Posts tab to see own posts (home feed shows followed users' posts)
+    goToProfilePageFromHeader();
+    cy.get('[data-cy="profile-filter-item-posts"]').click();
+    cy.get('[data-cy="profile-filter-item-posts"]').closest('[data-selected="true"]').should('exist');
+    deletePost({ postIdx: 0, filterText: postContent });
 
     // * profile 2 checks for notification for post being deleted
     cy.signOut(HasBackedUp.Yes);
