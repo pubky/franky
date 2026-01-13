@@ -1,3 +1,42 @@
+// =============================================================================
+// NEW ERROR SYSTEM (Phase 1) - Category-based error types
+// =============================================================================
+
+/**
+ * Error categories represent WHAT KIND of failure occurred.
+ * Used for retry decisions, UI routing, and error handling logic.
+ */
+export enum ErrorCategory {
+  Network = 'network', // Connection issues: DNS, offline, connection refused
+  Timeout = 'timeout', // Request timeouts (408, network timeout)
+  Server = 'server', // Server errors (5xx) from any remote service
+  Client = 'client', // Client errors (4xx) - bad request, not found, conflict
+  Auth = 'auth', // Authentication/authorization (401, 403)
+  RateLimit = 'rateLimit', // Rate limiting (429) - special handling for retry-after
+  Validation = 'validation', // Input validation failures (local, before request)
+  Database = 'database', // Local storage failures (Dexie/IndexedDB)
+}
+
+/**
+ * Services that can produce errors.
+ * Used for logging context, NOT for error handling decisions.
+ */
+export enum ErrorService {
+  Nexus = 'nexus',
+  Homeserver = 'homeserver',
+  Homegate = 'homegate',
+  Exchangerate = 'exchangerate',
+  Chatwoot = 'chatwoot',
+  Local = 'local',
+}
+
+// =============================================================================
+// LEGACY ERROR TYPES (Deprecated - will be removed in Phase 2)
+// =============================================================================
+
+/**
+ * @deprecated Use ErrorCategory and Err.* factories instead. Will be removed in Phase 2.
+ */
 export enum NexusErrorType {
   INVALID_REQUEST = 'INVALID_REQUEST', // 400
   RESOURCE_NOT_FOUND = 'RESOURCE_NOT_FOUND', // 404
@@ -10,6 +49,9 @@ export enum NexusErrorType {
   NO_CONTENT = 'NO_CONTENT', // 204
 }
 
+/**
+ * @deprecated Use ErrorCategory and Err.* factories instead. Will be removed in Phase 2.
+ */
 export enum HomeserverErrorType {
   SIGNUP_FAILED = 'SIGNUP_FAILED',
   SIGNIN_FAILED = 'SIGNIN_FAILED',
@@ -29,6 +71,9 @@ export enum HomeserverErrorType {
   DELETE_FAILED = 'DELETE_FAILED',
 }
 
+/**
+ * @deprecated Use ErrorCategory and Err.* factories instead. Will be removed in Phase 2.
+ */
 export enum DatabaseErrorType {
   RECORD_NOT_FOUND = 'RECORD_NOT_FOUND',
   SAVE_FAILED = 'SAVE_FAILED',
@@ -47,6 +92,9 @@ export enum DatabaseErrorType {
   DB_SCHEMA_ERROR = 'DB_SCHEMA_ERROR',
 }
 
+/**
+ * @deprecated Use ErrorCategory and Err.* factories instead. Will be removed in Phase 2.
+ */
 export enum CommonErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
   TIMEOUT = 'TIMEOUT',
@@ -62,10 +110,16 @@ export enum CommonErrorType {
   ENV_TYPE_ERROR = 'ENV_TYPE_ERROR',
 }
 
+/**
+ * @deprecated Use ErrorCategory and Err.* factories instead. Will be removed in Phase 2.
+ */
 export enum SanitizationErrorType {
   POST_NOT_FOUND = 'POST_NOT_FOUND',
 }
 
+/**
+ * @deprecated Use ErrorCategory instead. Will be removed in Phase 2.
+ */
 export type AppErrorType =
   | NexusErrorType
   | DatabaseErrorType

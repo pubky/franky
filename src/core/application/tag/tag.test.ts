@@ -97,7 +97,7 @@ describe('Tag Application', () => {
       const mockData = createMockDeleteData();
       const { removeSpy, requestSpy } = setupMocks();
 
-      removeSpy.mockResolvedValue(undefined);
+      removeSpy.mockResolvedValue(true);
       requestSpy.mockResolvedValue(undefined);
 
       await TagApplication.commitDelete(mockData);
@@ -127,12 +127,24 @@ describe('Tag Application', () => {
       const mockData = createMockDeleteData();
       const { removeSpy, requestSpy } = setupMocks();
 
-      removeSpy.mockResolvedValue(undefined);
+      removeSpy.mockResolvedValue(true);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
       await expect(TagApplication.commitDelete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 404');
       expect(removeSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should not call homeserver when nothing was deleted locally (idempotent)', async () => {
+      const mockData = createMockDeleteData();
+      const { removeSpy, requestSpy } = setupMocks();
+
+      removeSpy.mockResolvedValue(false); // Nothing to delete
+
+      await TagApplication.commitDelete(mockData);
+
+      expect(removeSpy).toHaveBeenCalledOnce();
+      expect(requestSpy).not.toHaveBeenCalled();
     });
   });
 });

@@ -35,7 +35,7 @@ describe('PostCountsModel', () => {
 
     it('should create post counts', async () => {
       const result = await Core.PostCountsModel.create(createTestPostCounts(testPostId1));
-      expect(result).toBeUndefined();
+      expect(result).toBe(testPostId1);
     });
 
     it('should find post counts by id', async () => {
