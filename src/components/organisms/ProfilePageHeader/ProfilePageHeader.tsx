@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
@@ -31,7 +32,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
       data-testid="profile-page-header"
     >
       <Atoms.Container overrideDefaults={true} className="relative cursor-pointer lg:px-4" onClick={onAvatarClick}>
-        <Molecules.AvatarWithFallback
+        <Organisms.AvatarWithFallback
           avatarUrl={avatarUrl}
           name={name}
           className="size-16 lg:size-36"
