@@ -137,7 +137,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_MODERATION_ID: z.string().default('euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro'),
   NEXT_PUBLIC_MODERATED_TAGS: z
     .string()
-    .default('["nudity"]')
+    .default('["adult_nu_sex_act"]')
     .transform((val) => JSON.parse(val))
     .pipe(z.array(z.string().min(1)).min(1)),
   NEXT_PUBLIC_EXCHANGE_RATE_API: z.url().default('https://api1.blocktank.to/api/fx/rates/btc'),
