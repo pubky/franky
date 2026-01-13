@@ -47,8 +47,14 @@ Cypress.Commands.add(
 
     // copy pubky to alias
     if (pubkyAlias) {
-      cy.get('#copy-to-clipboard-action-btn').click();
-      cy.saveCopiedPubkyToAlias(pubkyAlias);
+      // WebKit doesn't support clipboard read, so read directly from input field
+      if (Cypress.browser.family === 'webkit') {
+        cy.saveElementValueToAlias('[data-cy="pubky-display"]', pubkyAlias);
+      } else {
+        // Chrome/Firefox are configured to support clipboard read, so copy to clipboard and read from clipboard
+        cy.get('#copy-to-clipboard-action-btn').click();
+        cy.saveCopiedPubkyToAlias(pubkyAlias);
+      }
     }
 
     cy.get('#public-key-navigation-continue-btn').click();
@@ -271,6 +277,38 @@ Cypress.Commands.add('innerTextShouldNotEq', { prevSubject: 'element' }, (subjec
   });
 });
 
+// Common helper function to store a string value to an alias and Cypress env
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+function storeStringToAlias(text: string, alias: string): void {
+  // store text as alias
+  cy.wrap(text).as(alias);
+  // also store text in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
+  // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
+  Cypress.env(alias, text);
+}
+
+// Stores a string value to an alias
+Cypress.Commands.add('saveStringToAlias', (text: string, alias: string) => {
+  if (!text || text.length === 0) {
+    throw new Error('Cannot save empty string to alias');
+  }
+  storeStringToAlias(text, alias);
+});
+
+// Reads a value from an element and stores it to an alias
+Cypress.Commands.add('saveElementValueToAlias', (selector: string, alias: string) => {
+  cy.get(selector)
+    .invoke('val')
+    .then((text) => {
+      const value = text as string;
+      if (!value || value.length === 0) {
+        throw new Error(`Unable to read value from ${selector}`);
+      }
+      cy.saveStringToAlias(value, alias);
+    });
+});
+
 // Stores the clipboard contents to an alias for later use
 // see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
 // note: aliases work in the context of as test and only the first test after before
@@ -289,11 +327,7 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
       // so an additional 'then' is needed to guarantee the alias is stored before the next test step
     })
     .then((text) => {
-      // store pubky as alias
-      cy.wrap(text).as(alias);
-      // also store pubky in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
-      // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
-      Cypress.env(alias, text);
+      storeStringToAlias(text, alias);
     });
 });
 

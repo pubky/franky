@@ -22,6 +22,8 @@ declare global {
       innerTextContains(text: string): Chainable<Subject>;
       innerTextShouldNotContain(text: string): Chainable<Subject>;
       innerTextShouldNotEq(text: string): Chainable<Subject>;
+      saveStringToAlias(text: string, alias: string): Chainable<void>;
+      saveElementValueToAlias(selector: string, alias: string): Chainable<void>;
       saveCopiedPubkyToAlias(alias: string): Chainable<void>;
       saveCopiedTextToAlias(alias: string): Chainable<void>;
       assertElementDoesNotExist(selector: string): Chainable<void>;

@@ -5,29 +5,25 @@
 // This is a great place to put global configuration and
 // behavior that modifies Cypress.
 //
+// You can change the location of this file or turn off
+// automatically serving support files with the
+// 'supportFile' configuration option.
+//
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
+// Import commands.ts using ES2015 syntax:
 import './commands';
 
-// Grant clipboard permissions for Chrome/WebKit in CI environments
-// This is needed in addition to browser launch flags for headless browsers
-// The CDP command must be run after visiting a page
-before(() => {
-  if (Cypress.env('ci') && (Cypress.browser.family === 'chromium' || Cypress.browser.family === 'webkit')) {
-    cy.visit('/');
-    cy.window().then((win) => {
-      Cypress.automation('remote:debugger:protocol', {
-        command: 'Browser.grantPermissions',
-        params: {
-          permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
-          origin: win.location.origin,
-        },
-      }).catch(() => {
-        // Ignore errors if CDP is not available (e.g., in some browser configurations)
-      });
-    });
-  }
-});
+// uses Chrome DevTools Protocol to allow clipboard permissions
+// resolves 'NotAllowedError: Document is not focused.' in CI
+if (Cypress.browser.family === 'chromium') {
+  Cypress.automation('remote:debugger:protocol', {
+    command: 'Browser.grantPermissions',
+    params: {
+      permissions: ['clipboardReadWrite', 'clipboardSanitizedWrite'],
+      origin: window.location.origin,
+    },
+  });
+}
