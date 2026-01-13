@@ -166,7 +166,10 @@ export class LocalUserService {
    * This ensures the entity becomes stale after the specified delay.
    *
    * @param userId - The user ID
-   * @param retryDelayMs - Delay in milliseconds before the entity should become stale
+   * @param retryDelayMs - Delay in milliseconds before the entity should become stale.
+   *   If retryDelayMs >= NEXT_PUBLIC_TTL_USER_MS, the entity becomes immediately stale
+   *   (triggers immediate refresh on next TTL coordinator tick). This is intentional
+   *   and can be useful for forcing immediate refresh.
    * @returns Promise resolving to void
    */
   static async upsertTtlWithDelay(userId: Core.Pubky, retryDelayMs: number): Promise<void> {

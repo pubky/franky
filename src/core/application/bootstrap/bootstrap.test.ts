@@ -636,12 +636,13 @@ describe('BootstrapApplication', () => {
       await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       // Verify warning was logged
-      expect(loggerWarnSpy).toHaveBeenCalledWith('User is not indexed in Nexus. Scheduling TTL retry in 1 minute', {
+      expect(loggerWarnSpy).toHaveBeenCalledWith('User is not indexed in Nexus. Scheduling TTL retry', {
         pubky: TEST_PUBKY,
+        retryDelayMs: Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
       });
 
-      // Verify TTL record was written with 1 minute delay
-      expect(upsertTtlSpy).toHaveBeenCalledWith(TEST_PUBKY, 60_000);
+      // Verify TTL record was written with configured retry delay
+      expect(upsertTtlSpy).toHaveBeenCalledWith(TEST_PUBKY, Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS);
 
       // Verify TTL coordinator subscription
       expect(mockGetInstance).toHaveBeenCalled();
@@ -669,7 +670,7 @@ describe('BootstrapApplication', () => {
 
       // Verify no warning was logged
       expect(loggerWarnSpy).not.toHaveBeenCalledWith(
-        'User is not indexed in Nexus. Scheduling TTL retry in 1 minute',
+        'User is not indexed in Nexus. Scheduling TTL retry',
         expect.any(Object),
       );
 
