@@ -213,16 +213,41 @@ describe('LocalUserTagService', () => {
       expect(savedCounts!.unique_tags).toBe(0);
     });
 
-    it('should throw error for invalid operations', async () => {
+    it('should return false when user has no tags (idempotent)', async () => {
       await Core.UserTagsModel.table.clear();
 
-      await expect(
-        Core.LocalUserTagService.delete({
-          taggedId: testData.taggedPubky,
-          label: 'developer',
-          taggerId: testData.taggerPubky,
-        }),
-      ).rejects.toThrow('Failed to delete user tag');
+      const result = await Core.LocalUserTagService.delete({
+        taggedId: testData.taggedPubky,
+        label: 'developer',
+        taggerId: testData.taggerPubky,
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when user has not tagged with this label (idempotent)', async () => {
+      // Setup: User has tags but not from this tagger with this label
+      await setupExistingUserTag('developer', [testData.anotherTaggerPubky], false);
+
+      const result = await Core.LocalUserTagService.delete({
+        taggedId: testData.taggedPubky,
+        label: 'developer',
+        taggerId: testData.taggerPubky, // Different tagger
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when tag is successfully deleted', async () => {
+      await setupUserCounts(testData.taggerPubky, 0, 0, 1);
+
+      const result = await Core.LocalUserTagService.delete({
+        taggedId: testData.taggedPubky,
+        label: 'developer',
+        taggerId: testData.taggerPubky,
+      });
+
+      expect(result).toBe(true);
     });
   });
 });

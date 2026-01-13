@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
 
 /**
  * Mapping of post kinds to their corresponding bookmark stream types.
@@ -36,7 +36,7 @@ export class LocalBookmarkService {
 
         // Skip if already in desired state (idempotent operation)
         if (bookmarkExists === isCreate) {
-          Libs.Logger.debug(isCreate ? 'Post already bookmarked' : 'Post not bookmarked', { postId });
+          Logger.debug(isCreate ? 'Post already bookmarked' : 'Post not bookmarked', { postId });
           return;
         }
 
@@ -54,7 +54,7 @@ export class LocalBookmarkService {
             this.addToBookmarkStreams(postId, kind),
           ]);
 
-          Libs.Logger.debug('Bookmark created', { postId });
+          Logger.debug('Bookmark created', { postId });
         } else {
           await Promise.all([
             Core.BookmarkModel.deleteById(postId),
@@ -62,19 +62,16 @@ export class LocalBookmarkService {
             this.removeFromBookmarkStreams(postId, kind),
           ]);
 
-          Libs.Logger.debug('Bookmark deleted', { postId });
+          Logger.debug('Bookmark deleted', { postId });
         }
       });
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPDATE_FAILED,
-        `Failed to ${isCreate ? 'create' : 'delete'} bookmark`,
-        500,
-        {
-          error,
-          postId,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to ${isCreate ? 'create' : 'delete'} bookmark`, {
+        service: ErrorService.Local,
+        operation: isCreate ? 'createBookmark' : 'deleteBookmark',
+        context: { postId },
+        cause: error,
+      });
     }
   }
 
@@ -95,8 +92,7 @@ export class LocalBookmarkService {
    * @returns Array of bookmarked post IDs
    */
   static async getAllBookmarks(): Promise<string[]> {
-    const bookmarks = await Core.BookmarkModel.table.toArray();
-    return bookmarks.map((b) => b.id);
+    return await Core.BookmarkModel.findAll();
   }
 
   /**

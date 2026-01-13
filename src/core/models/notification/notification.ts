@@ -1,6 +1,6 @@
 import { Table } from 'dexie';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
 import * as Config from '@/config';
 import { FlatNotification, NotificationType } from './notification.types';
 
@@ -40,42 +40,29 @@ export class NotificationModel {
    * Uses business key (id) as primary key - duplicates are automatically handled via upsert.
    */
   static async bulkSave(notifications: FlatNotification[]) {
-    try {
-      if (notifications.length === 0) {
-        return [];
-      }
-
-      // Filter out malformed notifications missing required fields
-      const validNotifications = notifications.filter((n) => {
-        const isValid = n.id && n.timestamp !== undefined && n.type !== undefined;
-        if (!isValid) {
-          Libs.Logger.warn('Skipping malformed notification', {
-            hasId: !!n.id,
-            hasTimestamp: n.timestamp !== undefined,
-            hasType: n.type !== undefined,
-          });
-        }
-        return isValid;
-      });
-
-      if (validNotifications.length === 0) {
-        return [];
-      }
-
-      // bulkPut with business key as id handles duplicates automatically (upsert)
-      return await this.table.bulkPut(validNotifications);
-    } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
-        `Failed to bulk save records in ${this.table.name}`,
-        500,
-        {
-          error,
-          count: notifications.length,
-          sampleId: notifications[0]?.id,
-        },
-      );
+    if (notifications.length === 0) {
+      return [];
     }
+
+    // Filter out malformed notifications missing required fields
+    const validNotifications = notifications.filter((n) => {
+      const isValid = n.id && n.timestamp !== undefined && n.type !== undefined;
+      if (!isValid) {
+        Logger.warn('Skipping malformed notification', {
+          hasId: !!n.id,
+          hasTimestamp: n.timestamp !== undefined,
+          hasType: n.type !== undefined,
+        });
+      }
+      return isValid;
+    });
+
+    if (validNotifications.length === 0) {
+      return [];
+    }
+
+    // bulkPut with business key as id handles duplicates automatically (upsert)
+    return await this.table.bulkPut(validNotifications);
   }
 
   /**
@@ -86,34 +73,72 @@ export class NotificationModel {
     try {
       return await this.table.orderBy('timestamp').reverse().toArray();
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        `Failed to read all notifications from ${this.table.name}`,
-        500,
-        { error },
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to read all notifications from ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'getAll',
+        context: { table: this.table.name },
+        cause: error,
+      });
+    }
+  }
+
+  static async getRecent(limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT): Promise<FlatNotification[]> {
+    try {
+      return await this.table.orderBy('timestamp').reverse().limit(limit).toArray();
+    } catch (error) {
+      throw Err.database(
+        DatabaseErrorCode.QUERY_FAILED,
+        `Failed to read recent notifications from ${this.table.name}`,
+        {
+          service: ErrorService.Local,
+          operation: 'getRecent',
+          context: { table: this.table.name, limit },
+          cause: error,
+        },
       );
     }
   }
 
-  // Query methods. TODO: Error handling when we will use it
-  static async getRecent(limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT): Promise<FlatNotification[]> {
-    return await this.table.orderBy('timestamp').reverse().limit(limit).toArray();
-  }
-
   static async getByType(type: NotificationType): Promise<FlatNotification[]> {
-    return await this.table.where('type').equals(type).toArray();
+    try {
+      return await this.table.where('type').equals(type).toArray();
+    } catch (error) {
+      throw Err.database(
+        DatabaseErrorCode.QUERY_FAILED,
+        `Failed to read notifications by type from ${this.table.name}`,
+        {
+          service: ErrorService.Local,
+          operation: 'getByType',
+          context: { table: this.table.name, type },
+          cause: error,
+        },
+      );
+    }
   }
 
   static async getRecentByType(
     type: NotificationType,
     limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT,
   ): Promise<FlatNotification[]> {
-    return await this.table
-      .where('type')
-      .equals(type)
-      .reverse()
-      .sortBy('timestamp')
-      .then((notifications) => notifications.slice(0, limit));
+    try {
+      return await this.table
+        .where('type')
+        .equals(type)
+        .reverse()
+        .sortBy('timestamp')
+        .then((notifications) => notifications.slice(0, limit));
+    } catch (error) {
+      throw Err.database(
+        DatabaseErrorCode.QUERY_FAILED,
+        `Failed to read recent notifications by type from ${this.table.name}`,
+        {
+          service: ErrorService.Local,
+          operation: 'getRecentByType',
+          context: { table: this.table.name, type, limit },
+          cause: error,
+        },
+      );
+    }
   }
 
   /**
@@ -131,14 +156,14 @@ export class NotificationModel {
     try {
       return await this.table.where('timestamp').below(olderThan).reverse().limit(limit).toArray();
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
+      throw Err.database(
+        DatabaseErrorCode.QUERY_FAILED,
         `Failed to read notifications older than ${olderThan} from ${this.table.name}`,
-        500,
         {
-          error,
-          olderThan,
-          limit,
+          service: ErrorService.Local,
+          operation: 'getOlderThan',
+          context: { table: this.table.name, olderThan, limit },
+          cause: error,
         },
       );
     }
@@ -151,14 +176,12 @@ export class NotificationModel {
     try {
       await this.table.clear();
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        `Failed to clear table ${this.table.name}`,
-        500,
-        {
-          error,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, `Failed to clear table ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'clear',
+        context: { table: this.table.name },
+        cause: error,
+      });
     }
   }
 }
