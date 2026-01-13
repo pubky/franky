@@ -29,7 +29,9 @@ export function getNotificationText(notification: FlatNotification, userName: st
     case NotificationType.Mention:
       return `${userName} mentioned you in post`;
     case NotificationType.PostDeleted:
-      return `${userName} deleted his post`;
+      return `${userName} deleted a post`;
+    case NotificationType.PostEdited:
+      return `${userName} edited a post`;
     default:
       return 'New notification';
   }

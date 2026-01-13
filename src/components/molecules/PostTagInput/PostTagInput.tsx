@@ -68,6 +68,7 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
           placeholder={placeholder}
           autoFocus={autoFocus}
           aria-label="Add new tag"
+          data-cy="add-tag-input"
           className={Libs.cn(
             'flex-1 bg-transparent text-sm leading-5 font-bold caret-white outline-none',
             'border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',

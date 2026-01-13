@@ -17,7 +17,7 @@ export function Logo({
 }: LogoProps & React.HTMLAttributes<HTMLAnchorElement>) {
   return !noLink ? (
     <Atoms.Link
-      href="/"
+      href="/home"
       className={Libs.cn(`flex items-center min-w-[${width}px] min-h-[${height}px]`, props.className)}
     >
       <LogoImage width={width} height={height} />
