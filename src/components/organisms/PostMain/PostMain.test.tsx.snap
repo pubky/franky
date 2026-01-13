@@ -199,6 +199,16 @@ exports[`PostMain - Snapshots > matches snapshot with default state 1`] = `
     data-testid="card"
   >
     <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
@@ -276,6 +286,16 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
     data-testid="card"
   >
     <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
+    <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"
     >
@@ -346,6 +366,16 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     data-class-name="min-w-0 flex-1 gap-0 rounded-md py-0"
     data-testid="card"
   >
+    <div
+      data-is-undoing="false"
+      data-testid="repost-header"
+    >
+      <button
+        data-testid="repost-undo"
+      >
+        Undo repost
+      </button>
+    </div>
     <div
       data-class-name="flex min-w-0 flex-col gap-4 p-6"
       data-testid="card-content"

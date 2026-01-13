@@ -30,3 +30,52 @@ exports[`TimelinePosts - Snapshots > should match snapshot for loading state 1`]
   </div>
 </div>
 `;
+
+exports[`TimelinePosts - Snapshots > should match snapshot with posts 1`] = `
+<div>
+  <div
+    data-testid="container"
+  >
+    <div
+      class="space-y-4"
+      data-cy="timeline-posts"
+      data-testid="container"
+    >
+      <div
+        data-testid="container"
+      >
+        <div
+          data-testid="post-author1:post1"
+        />
+        <div
+          data-testid="replies-author1:post1"
+        />
+      </div>
+      <div
+        data-testid="container"
+      >
+        <div
+          data-testid="post-author2:post2"
+        />
+        <div
+          data-testid="replies-author2:post2"
+        />
+      </div>
+      <div
+        data-testid="container"
+      >
+        <div
+          data-testid="post-author3:post3"
+        />
+        <div
+          data-testid="replies-author3:post3"
+        />
+      </div>
+      <div
+        class="h-5"
+        data-testid="container"
+      />
+    </div>
+  </div>
+</div>
+`;
