@@ -23,6 +23,13 @@ jobs:
         with:
           path: franky
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: 'franky/.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'franky/package-lock.json'
+
       - name: Checkout pubky-stack
         uses: actions/checkout@v4
         with:
@@ -123,12 +130,14 @@ jobs:
       - name: Build Franky frontend
         working-directory: franky
         run: |
-          echo "NEXT_PUBLIC_DB_VERSION=1
+          cat > .env << EOF
+          NEXT_PUBLIC_DB_VERSION=1
           NEXT_PUBLIC_SYNC_TTL=300000
           NEXT_PUBLIC_DEBUG_MODE=false
+          NEXT_PUBLIC_TTL_POST_MS=4000
+          NEXT_PUBLIC_TTL_USER_MS=600000
           NEXT_PUBLIC_HOMESERVER=8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
           NEXT_PUBLIC_NEXUS_URL=http://localhost:8080
-          NEXT_PUBLIC_NEXUS_VERSION=v0
           NEXT_PUBLIC_TESTNET=true
           NEXT_PUBLIC_DEFAULT_HTTP_RELAY=http://localhost:15412/link/
           NEXT_PUBLIC_HOMESERVER_ADMIN_URL=http://localhost:6288/generate_signup_token
@@ -138,7 +147,8 @@ jobs:
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID=1
-          SUPPORT_FEEDBACK_INBOX_ID=${{ secrets.SUPPORT_FEEDBACK_INBOX_ID }}" > .env
+          SUPPORT_FEEDBACK_INBOX_ID=${{ secrets.SUPPORT_FEEDBACK_INBOX_ID }}
+          EOF
           npm ci
           npm run build
 
