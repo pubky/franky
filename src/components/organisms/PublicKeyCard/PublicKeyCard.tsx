@@ -116,6 +116,7 @@ export function PublicKeyCard() {
           icon={<Libs.Key className="h-4 w-4 text-brand" />}
           status={pubky ? 'success' : 'default'}
           className="w-full max-w-[576px]"
+          dataCy="pubky-display"
         />
       </Molecules.ActionSection>
     </Molecules.ContentCard>

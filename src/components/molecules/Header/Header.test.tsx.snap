@@ -476,6 +476,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </div>
     <div
       class="inline-flex items-center justify-center border px-2 py-0.5 text-xs font-medium whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
+      data-cy="header-notification-counter"
       data-slot="badge"
       data-variant="secondary"
     >

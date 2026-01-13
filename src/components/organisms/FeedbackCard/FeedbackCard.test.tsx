@@ -135,12 +135,6 @@ vi.mock('@/atoms', async (importOriginal) => {
   };
 });
 
-// Mock Libs
-vi.mock('@/libs', async () => {
-  const actual = await vi.importActual('@/libs');
-  return { ...actual };
-});
-
 describe('FeedbackCard', () => {
   const mockPubky = 'user123pubky';
   const mockUseLiveQuery = vi.mocked(useLiveQuery);
@@ -178,8 +172,8 @@ describe('FeedbackCard', () => {
       expect(avatarWithFallback).toHaveAttribute('data-avatar-url', `https://cdn.example.com/avatar/${mockPubky}`);
       expect(avatarWithFallback).toHaveAttribute('data-name', 'Miguel Medeiros');
 
-      // Check that the displayed name is truncated
-      expect(screen.getByText('Miguel Med...')).toBeInTheDocument();
+      // Full name is displayed (CSS truncation handles visual truncation)
+      expect(screen.getByText('Miguel Medeiros')).toBeInTheDocument();
     });
 
     it('renders with authenticated user without avatar image', async () => {
@@ -223,8 +217,8 @@ describe('FeedbackCard', () => {
     });
   });
 
-  describe('Name Truncation', () => {
-    it('truncates long names to 10 characters in display', async () => {
+  describe('Name Display with CSS Truncation', () => {
+    it('displays full name with CSS truncation classes for long names', async () => {
       mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
       mockUseLiveQuery.mockReturnValue({
         name: 'VeryLongUserName',
@@ -238,12 +232,12 @@ describe('FeedbackCard', () => {
         const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
         expect(avatarWithFallback).toHaveAttribute('data-name', 'VeryLongUserName');
 
-        // But display text is truncated
-        expect(screen.getByText('VeryLongUs...')).toBeInTheDocument();
+        // Full name is rendered (CSS handles visual truncation)
+        expect(screen.getByText('VeryLongUserName')).toBeInTheDocument();
       });
     });
 
-    it('does not truncate names shorter than 10 characters', async () => {
+    it('displays short names correctly', async () => {
       mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
       mockUseLiveQuery.mockReturnValue({
         name: 'John',
@@ -259,7 +253,7 @@ describe('FeedbackCard', () => {
       });
     });
 
-    it('handles exactly 10 character names', async () => {
+    it('displays medium length names correctly', async () => {
       mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
       mockUseLiveQuery.mockReturnValue({
         name: '1234567890',
@@ -496,7 +490,7 @@ describe('FeedbackCard - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with truncated long name', async () => {
+  it('matches snapshot with long name (CSS truncation)', async () => {
     mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
     mockUseLiveQuery.mockReturnValue({
       name: 'VeryLongUserNameThatExceedsTenCharacters',
