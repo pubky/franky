@@ -43,13 +43,14 @@ vi.mock('@/atoms', async () => {
         {children}
       </div>
     ),
-    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref, onFocus }) => (
+    Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref, onFocus, onKeyDown }) => (
       <textarea
         ref={ref}
         data-testid="textarea"
         value={value}
         onChange={onChange}
         onFocus={onFocus}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         disabled={disabled}
       />
@@ -243,6 +244,7 @@ vi.mock('@/hooks', () => ({
     currentUserPubky: 'test-user-id:pubkey',
   })),
   useEmojiInsert: vi.fn(() => vi.fn()),
+  useEnterSubmit: vi.fn(() => vi.fn()),
   usePostInput: vi.fn((options: { variant: string; placeholder?: string }) => ({
     textareaRef: { current: null },
     containerRef: { current: null },

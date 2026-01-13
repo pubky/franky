@@ -6,6 +6,7 @@ import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Organisms from '@/organisms';
 import * as Utils from '@/libs/utils';
+import * as Libs from '@/libs';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
@@ -61,11 +62,11 @@ export function QuickReply({
   const { ref: cardRef, height: cardHeight } = Hooks.useElementHeight();
 
   const isValid = React.useCallback(() => {
-    return Boolean(content.trim()) && !isSubmitting;
-  }, [content, isSubmitting]);
+    return Libs.canSubmitPost(POST_INPUT_VARIANT.REPLY, content, attachments, isSubmitting);
+  }, [content, attachments, isSubmitting]);
 
   const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
-    ignoreShiftEnter: true,
+    requireModifier: true,
   });
 
   // Account for spacing between main post and QuickReply in connector calculation
@@ -145,6 +146,7 @@ export function QuickReply({
             onEmojiSelect={handleEmojiSelect}
             onFileClick={handleFileClick}
             onImageClick={handleFileClick}
+            isPostDisabled={!isValid()}
             submitMode={POST_INPUT_VARIANT.REPLY}
             className={isExpanded ? 'mt-4' : ''}
           />
