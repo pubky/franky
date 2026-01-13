@@ -47,8 +47,8 @@ vi.mock('@/atoms', () => ({
   Tag: ({ name }: { name: string }) => <span data-testid="tag">{name}</span>,
 }));
 
-// Mock molecules
-vi.mock('@/molecules', () => ({
+// Mock organisms
+vi.mock('@/organisms', () => ({
   AvatarWithFallback: ({
     avatarUrl,
     name,
