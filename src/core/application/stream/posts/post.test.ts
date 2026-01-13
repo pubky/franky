@@ -708,6 +708,74 @@ describe('PostStreamApplication', () => {
       // Next 7 should be from Nexus
       expectPostIds(result.nextPageIds.slice(3, 10), 4, 7);
     });
+
+    it('should fetch original posts for reposts when served from cache (full cache hit)', async () => {
+      const repostAuthor = 'reposter-user';
+      const originalAuthor = 'original-author';
+      const originalPostId = 'original-post-123';
+      const originalPostUri = `pubky://${originalAuthor}/pub/pubky.app/posts/${originalPostId}`;
+      const originalPostCompositeId = `${originalAuthor}:${originalPostId}`;
+      const repostCompositeId = `${repostAuthor}:repost-1`;
+
+      // Create a repost in the stream cache (full cache hit scenario)
+      await createStreamWithPosts([repostCompositeId]);
+
+      // Create the repost's details in cache
+      await Core.PostDetailsModel.create({
+        id: repostCompositeId,
+        content: 'This is a repost',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: `pubky://${repostAuthor}/pub/pubky.app/posts/repost-1`,
+        attachments: null,
+      });
+
+      // Create the repost's relationships in cache (marking it as a repost)
+      await Core.PostRelationshipsModel.table.put({
+        id: repostCompositeId,
+        replied: null,
+        reposted: originalPostUri,
+        mentioned: [],
+      });
+
+      // DO NOT create the original post in cache - this is the bug scenario
+      // The original post is missing from cache
+
+      // Mock the Nexus API to return the original post when fetched
+      const originalNexusPost = createMockNexusPost(originalPostId, originalAuthor, BASE_TIMESTAMP - 1000);
+      const fetchByIdsSpy = vi.spyOn(Core.NexusPostStreamService, 'fetchByIds').mockResolvedValue([originalNexusPost]);
+
+      // Mock other dependencies
+      const mocks = setupDefaultMocks();
+      mocks.getUserDetails.mockResolvedValue([{ id: originalAuthor } as Core.UserDetailsModelSchema]);
+
+      // Mock that original post is NOT in local DB
+      vi.spyOn(Core.LocalStreamPostsService, 'getNotPersistedPostsInCache').mockResolvedValue([
+        originalPostCompositeId,
+      ]);
+
+      // Call getOrFetchStreamSlice - should return repost from cache (full cache hit)
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 1,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId: 'viewer-user' as Core.Pubky,
+      });
+
+      // Verify we got the repost from cache
+      expect(result.nextPageIds).toEqual([repostCompositeId]);
+      // This is a full cache hit, so cacheMissPostIds should be empty for the stream posts
+      expect(result.cacheMissPostIds).toEqual([]);
+
+      // Verify that the original post is fetched even though cacheMissPostIds is empty
+      // (the repost was served from cache, but its original post was missing)
+      expect(fetchByIdsSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          post_ids: expect.arrayContaining([originalPostCompositeId]),
+        }),
+      );
+    });
   });
 
   describe('getCachedLastPostTimestamp', () => {
