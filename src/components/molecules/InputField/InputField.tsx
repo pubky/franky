@@ -25,6 +25,7 @@ interface InputFieldProps {
   message?: ReactNode;
   messageType?: 'default' | 'info' | 'alert' | 'error' | 'success';
   size?: 'sm' | 'md' | 'lg';
+  dataCy?: string;
 }
 
 export function InputField({
@@ -49,6 +50,7 @@ export function InputField({
   message,
   messageType = 'default',
   size = 'md',
+  dataCy,
 }: InputFieldProps) {
   const containerClasses = variant === 'dashed' && 'border-dashed';
 
@@ -113,6 +115,7 @@ export function InputField({
           onKeyDown={onKeyDown}
           maxLength={maxLength}
           aria-invalid={status === 'error'}
+          data-cy={dataCy}
         />
         {!loading && icon && iconPosition === 'right' && (
           <Atoms.Container

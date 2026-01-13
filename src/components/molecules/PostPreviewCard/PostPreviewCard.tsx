@@ -18,6 +18,10 @@ import type { PostPreviewCardProps } from './PostPreviewCard.types';
  * If PostContent were used, it would detect the nested post as a repost and render
  * another PostPreviewCard, creating an infinite loop.
  *
+ * **TTL Tracking:**
+ * Subscribes the original post to TTL tracking when visible in the viewport.
+ * This ensures original posts for reposts get refreshed when stale.
+ *
  * **Usage:**
  * - Repost previews: Shows the original post being reposted (in PostContent)
  * - Reply previews: Shows the post being replied to (in DialogReply)
@@ -25,6 +29,10 @@ import type { PostPreviewCardProps } from './PostPreviewCard.types';
  */
 export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
   const { navigateToPost } = Hooks.usePostNavigation();
+  const { ref: ttlRef } = Hooks.useTtlViewportSubscription({
+    compositePostId: postId,
+    subscribeAuthor: true,
+  });
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -41,6 +49,7 @@ export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
 
   return (
     <Atoms.Card
+      ref={ttlRef}
       className={Libs.cn('cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50', className)}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
