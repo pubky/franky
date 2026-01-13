@@ -42,6 +42,18 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
+// Mock hooks - useRequireAuth needs to execute the action for authenticated users
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useRequireAuth: vi.fn(() => ({
+      isAuthenticated: true,
+      requireAuth: vi.fn((action: () => void) => action()),
+    })),
+  };
+});
+
 const mockTag: TagWithAvatars = {
   label: 'bitcoin',
   taggers: [

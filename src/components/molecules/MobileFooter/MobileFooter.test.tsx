@@ -40,17 +40,27 @@ vi.mock('@/app', () => ({
 }));
 
 // Mock Core
-vi.mock('@/core', () => ({
-  FileController: {
-    getAvatarUrl: vi.fn((pubky: string) => `https://example.com/avatar/${pubky}`),
-  },
-}));
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
+  return {
+    ...actual,
+    FileController: {
+      getAvatarUrl: vi.fn((pubky: string) => `https://example.com/avatar/${pubky}`),
+    },
+    useAuthStore: vi.fn((selector: (state: { currentUserPubky: string | null }) => unknown) =>
+      selector({ currentUserPubky: 'pk:test-user-pubky' }),
+    ),
+  };
+});
 
 // Mock Hooks
 vi.mock('@/hooks', () => ({
   useCurrentUserProfile: vi.fn(() => ({
     userDetails: { name: 'Test User' },
     currentUserPubky: 'pk:test-user-pubky',
+  })),
+  usePublicRoute: vi.fn(() => ({
+    isPublicRoute: false,
   })),
 }));
 

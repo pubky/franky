@@ -15,6 +15,7 @@ export * from './FAQAccordion';
 export * from './Header';
 export * from './HeaderButtonSignIn';
 export * from './HeaderHome';
+export * from './HeaderJoin';
 export * from './HeaderSignIn';
 export * from './HelpContent';
 export * from './Home';

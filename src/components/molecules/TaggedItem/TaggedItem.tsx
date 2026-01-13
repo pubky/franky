@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/app/routes';
 import type { TaggedItemProps } from './TaggedItem.types';
@@ -10,6 +11,7 @@ import { MAX_VISIBLE_AVATARS } from './TaggedItem.constants';
 
 export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideAvatars = false }: TaggedItemProps) {
   const router = useRouter();
+  const { requireAuth } = Hooks.useRequireAuth();
   const visibleTaggers = tag.taggers.slice(0, MAX_VISIBLE_AVATARS);
   const overflowCount = tag.taggers.length - MAX_VISIBLE_AVATARS;
   const displayLabel = maxTagLength ? Libs.truncateString(tag.label, maxTagLength) : tag.label;
@@ -19,14 +21,16 @@ export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideA
   };
 
   const handleSearchClick = () => {
-    if (onSearchClick) {
-      onSearchClick();
-    } else {
-      // Default behavior: navigate to search with tag filter
-      const searchParams = new URLSearchParams();
-      searchParams.set('tags', tag.label);
-      router.push(`${APP_ROUTES.SEARCH}?${searchParams.toString()}`);
-    }
+    requireAuth(() => {
+      if (onSearchClick) {
+        onSearchClick();
+      } else {
+        // Default behavior: navigate to search with tag filter
+        const searchParams = new URLSearchParams();
+        searchParams.set('tags', tag.label);
+        router.push(`${APP_ROUTES.SEARCH}?${searchParams.toString()}`);
+      }
+    });
   };
 
   return (

@@ -6,15 +6,21 @@ import * as Hooks from '@/hooks';
 import * as Organisms from '@/organisms';
 import type { PostActionsBarProps, ActionButtonConfig } from './PostActionsBar.types';
 
+const buttonProps = {
+  variant: 'secondary' as const,
+  size: 'sm' as const,
+  className: 'border-none shadow-xs-dark',
+};
+
 export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick, className }: PostActionsBarProps) {
   const { postCounts, isLoading: isCountsLoading } = Hooks.usePostCounts(postId);
-
   const {
     isBookmarked,
     isLoading: isBookmarkLoading,
     isToggling: isBookmarkToggling,
     toggle: toggleBookmark,
   } = Hooks.useBookmark(postId);
+  const { requireAuth } = Hooks.useRequireAuth();
 
   const isBookmarkBusy = isBookmarkLoading || isBookmarkToggling;
 
@@ -26,38 +32,32 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
     );
   }
 
-  const commonButtonProps = {
-    variant: 'secondary' as const,
-    size: 'sm' as const,
-    className: 'border-none shadow-xs-dark',
-  };
-
   const actionButtons: ActionButtonConfig[] = [
     {
       id: 'tag',
       icon: Libs.Tag,
       count: postCounts.tags,
-      onClick: onTagClick,
+      onClick: () => requireAuth(() => onTagClick?.()),
       ariaLabel: `Tag post (${postCounts.tags})`,
     },
     {
       id: 'reply',
       icon: Libs.MessageCircle,
       count: postCounts.replies,
-      onClick: onReplyClick,
+      onClick: () => requireAuth(() => onReplyClick?.()),
       ariaLabel: `Reply to post (${postCounts.replies})`,
     },
     {
       id: 'repost',
       icon: Libs.Repeat,
       count: postCounts.reposts,
-      onClick: onRepostClick,
+      onClick: () => requireAuth(() => onRepostClick?.()),
       ariaLabel: `Repost (${postCounts.reposts})`,
     },
     {
       id: 'bookmark',
       icon: isBookmarkBusy ? Libs.Loader2 : Libs.Bookmark,
-      onClick: toggleBookmark,
+      onClick: () => requireAuth(() => toggleBookmark()),
       ariaLabel: isBookmarkBusy ? 'Loading...' : isBookmarked ? 'Remove bookmark' : 'Add bookmark',
       className: 'w-10',
       iconProps: {
@@ -68,38 +68,33 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
     },
   ];
 
-  const moreButton = (
-    <Atoms.Button {...commonButtonProps} aria-label="More options">
-      <Libs.Ellipsis />
-    </Atoms.Button>
-  );
-
   return (
     <Atoms.Container overrideDefaults className={Libs.cn('flex gap-2', className)}>
-      {actionButtons.map(
-        ({ id, icon: Icon, count, onClick, ariaLabel, className: buttonClassName, iconProps, disabled }) => (
-          <Atoms.Button
-            key={id}
-            {...commonButtonProps}
-            onClick={onClick}
-            disabled={disabled}
-            className={Libs.cn(commonButtonProps.className, buttonClassName)}
-            aria-label={ariaLabel}
-          >
-            <Icon {...iconProps} />
-            {count !== undefined && (
-              <Atoms.Typography
-                as="span"
-                overrideDefaults
-                className="text-xs leading-4 font-bold text-muted-foreground"
-              >
-                {count}
-              </Atoms.Typography>
-            )}
+      {actionButtons.map(({ id, icon: Icon, count, onClick, ariaLabel, className: btnClass, iconProps, disabled }) => (
+        <Atoms.Button
+          key={id}
+          {...buttonProps}
+          onClick={onClick}
+          disabled={disabled}
+          className={Libs.cn(buttonProps.className, btnClass)}
+          aria-label={ariaLabel}
+        >
+          <Icon {...iconProps} />
+          {count !== undefined && (
+            <Atoms.Typography as="span" overrideDefaults className="text-xs leading-4 font-bold text-muted-foreground">
+              {count}
+            </Atoms.Typography>
+          )}
+        </Atoms.Button>
+      ))}
+      <Organisms.PostMenuActions
+        postId={postId}
+        trigger={
+          <Atoms.Button {...buttonProps} aria-label="More options">
+            <Libs.Ellipsis />
           </Atoms.Button>
-        ),
-      )}
-      <Organisms.PostMenuActions postId={postId} trigger={moreButton} />
+        }
+      />
     </Atoms.Container>
   );
 }

@@ -32,7 +32,9 @@ export function useEntityTags(
 ): UseEntityTagsResult {
   const { viewerId: customViewerId, providedTags } = options;
 
-  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+  // selectCurrentUserPubky() throws an error when user is not authenticated;
+  // access currentUserPubky directly to get null instead (unauthenticated views should still render tags)
+  const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const viewerId = customViewerId ?? currentUserId;
 
   // Use the appropriate hook based on kind

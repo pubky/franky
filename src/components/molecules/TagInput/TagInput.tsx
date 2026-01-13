@@ -21,6 +21,7 @@ export function TagInput({
   currentTagsCount = 0,
   limitReachedPlaceholder = 'limit reached',
   onBlur,
+  onClick,
 }: TagInputProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -122,7 +123,11 @@ export function TagInput({
       <Atoms.Container
         ref={containerRef}
         overrideDefaults={true}
-        className="relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
+        className={Libs.cn(
+          'relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm',
+          onClick && 'cursor-pointer',
+        )}
+        onClick={onClick}
       >
         <Atoms.Input
           ref={inputRef}
@@ -142,12 +147,18 @@ export function TagInput({
             'placeholder:font-bold',
             isAtLimit ? 'placeholder:text-destructive' : 'placeholder:text-input',
             inputValue ? 'text-foreground' : 'text-input',
+            // Allow parent click handler when disabled (for auth prompts)
+            isDisabled && onClick && 'pointer-events-none',
           )}
         />
         <Atoms.Button
           overrideDefaults={true}
           onClick={() => setShowEmojiPicker(true)}
-          className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark"
+          className={Libs.cn(
+            'inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark',
+            // Allow parent click handler when disabled (for auth prompts)
+            isDisabled && onClick && 'pointer-events-none',
+          )}
           aria-label="Open emoji picker"
           disabled={isDisabled}
         >

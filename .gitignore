@@ -64,6 +64,7 @@ public/sw.js.map
 
 # Claude
 CLAUDE.md
+.claude/settings.local.json
 
 # AI generated reviews
 .ai-reviews/

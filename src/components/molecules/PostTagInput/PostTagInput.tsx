@@ -21,6 +21,10 @@ export interface PostTagInputProps {
   className?: string;
   /** Autofocus on mount */
   autoFocus?: boolean;
+  /** Whether the input is disabled */
+  disabled?: boolean;
+  /** Callback when the input container is clicked (useful for auth prompts) */
+  onClick?: () => void;
 }
 
 export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps>(
@@ -35,6 +39,8 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
       onEmojiClick,
       className,
       autoFocus = false,
+      disabled = false,
+      onClick,
     },
     ref,
   ) => {
@@ -55,8 +61,10 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
         className={Libs.cn(
           'relative flex h-8 items-center rounded-lg px-3',
           'border border-dashed border-input focus-within:border-white/80',
+          onClick && 'cursor-pointer',
           className,
         )}
+        onClick={onClick}
       >
         <Atoms.Input
           ref={ref}
@@ -67,6 +75,7 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
           onBlur={onBlur}
           placeholder={placeholder}
           autoFocus={autoFocus}
+          disabled={disabled}
           aria-label="Add new tag"
           className={Libs.cn(
             'flex-1 bg-transparent text-sm leading-5 font-bold caret-white outline-none',
@@ -75,16 +84,25 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
             showEmojiPicker ? 'pr-6' : undefined,
             'placeholder:font-bold placeholder:text-input',
             value ? 'text-secondary-foreground' : 'text-input',
+            // Allow parent click handler when disabled (for auth prompts)
+            disabled && onClick && 'pointer-events-none',
           )}
         />
 
         {/* Emoji inside dashed area (both sizes) */}
         {showEmojiPicker && (
-          <div className="pointer-events-auto absolute top-1/2 right-1 -translate-y-1/2">
+          <div
+            className={Libs.cn(
+              'pointer-events-auto absolute top-1/2 right-1 -translate-y-1/2',
+              // Allow parent click handler when disabled (for auth prompts)
+              disabled && onClick && 'pointer-events-none',
+            )}
+          >
             <Atoms.Button
               variant="secondary"
               size="icon"
               onClick={onEmojiClick}
+              disabled={disabled}
               className="size-5 border-none p-1 shadow-xs-dark"
               aria-label="Open emoji picker"
             >

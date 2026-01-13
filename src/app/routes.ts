@@ -51,12 +51,9 @@ export enum POST_ROUTES {
 
 // Public routes are accessible regardless of authentication status.
 // This includes routes that need to be accessible during auth transitions (like logout).
-export const PUBLIC_ROUTES: string[] = [
-  AUTH_ROUTES.LOGOUT,
-  // Profile is public to prevent RouteGuard redirect during logout.
-  // The profile page components handle unauthenticated state gracefully.
-  APP_ROUTES.PROFILE,
-];
+// Note: Dynamic public routes like /profile/[pubky] and /post/[userId]/[postId]
+// are handled by isDynamicPublicRoute() in RouteGuardProvider.
+export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
 
 export const ALLOWED_ROUTES = [
   ONBOARDING_ROUTES.PROFILE,
@@ -101,6 +98,66 @@ export const HOME_ROUTES = {
 };
 
 // ============================================================================
+// Dynamic Public Route Detection
+// ============================================================================
+
+/**
+ * Own profile sub-routes that should NOT be treated as public.
+ * These are routes like /profile/posts that belong to the logged-in user.
+ */
+const OWN_PROFILE_SUB_ROUTES = [
+  'posts',
+  'replies',
+  'followers',
+  'following',
+  'friends',
+  'tagged',
+  'notifications',
+  'profile',
+] as const;
+
+/**
+ * Minimum length for a segment to be considered a pubky identifier.
+ * Pubky strings are typically 52+ characters, while route names are short.
+ */
+const MIN_PUBKY_LENGTH = 20;
+
+/**
+ * Checks if a pathname is a dynamic public route that should be accessible
+ * without authentication.
+ *
+ * Dynamic public routes are routes with URL parameters that are publicly viewable:
+ * - /post/[userId]/[postId] - viewing a single post
+ * - /profile/[pubky] - viewing another user's profile
+ * - /profile/[pubky]/posts, /profile/[pubky]/followers, etc.
+ *
+ * Own profile routes (/profile/posts, /profile/followers, etc.) are NOT public
+ * as they require authentication to know which user's data to show.
+ */
+export function isDynamicPublicRoute(pathname: string): boolean {
+  // Match /post/[userId]/[postId] - single post view
+  if (/^\/post\/[^/]+\/[^/]+$/.test(pathname)) {
+    return true;
+  }
+
+  // Match /profile/[pubky] routes (viewing another user's profile)
+  const profileMatch = pathname.match(/^\/profile\/([^/]+)(\/.*)?$/);
+  if (profileMatch) {
+    const segment = profileMatch[1];
+
+    // Own profile sub-routes use short names
+    // Pubky strings are much longer (typically 52+ chars)
+    const isOwnProfileRoute = OWN_PROFILE_SUB_ROUTES.includes(segment as (typeof OWN_PROFILE_SUB_ROUTES)[number]);
+
+    if (!isOwnProfileRoute && segment.length > MIN_PUBKY_LENGTH) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// ============================================================================
 // Profile Route Helpers
 // ============================================================================
 
@@ -139,16 +196,3 @@ export function getProfileRoute(route: PROFILE_ROUTES, pubky?: string): string {
 
   return `/profile/${pubky}${subPath}`;
 }
-
-/**
- * Profile route page types for dynamic route generation
- */
-export const PROFILE_PAGE_PATHS = {
-  posts: '/posts',
-  replies: '/replies',
-  followers: '/followers',
-  following: '/following',
-  friends: '/friends',
-  tagged: '/tagged',
-  profile: '/profile',
-} as const;

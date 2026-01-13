@@ -51,7 +51,9 @@ export class StreamPostsController {
     limit = Config.NEXUS_POSTS_PER_PAGE,
     order,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
-    const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
+    // selectCurrentUserPubky() throws an error when user is not authenticated;
+    // access currentUserPubky directly to get null instead (unauthenticated users can view profile posts)
+    const viewerId = Core.useAuthStore.getState().currentUserPubky;
     const { nextPageIds, cacheMissPostIds, timestamp } = await Core.PostStreamApplication.getOrFetchStreamSlice({
       streamId,
       limit,
