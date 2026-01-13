@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 
 export interface UserData {
@@ -37,10 +38,13 @@ export function User({
       className={Libs.cn('flex flex-row items-center gap-2', className)}
       data-testid={dataTestId || 'user'}
     >
-      <Atoms.Avatar className="size-8" data-testid="user-avatar">
-        <Atoms.AvatarImage src={user.avatar} alt={user.name} />
-        <Atoms.AvatarFallback>{Libs.extractInitials({ name: user.name, maxLength: 2 })}</Atoms.AvatarFallback>
-      </Atoms.Avatar>
+      <Organisms.AvatarWithFallback
+        avatarUrl={user.avatar}
+        name={user.name}
+        size="md"
+        alt={user.name}
+        data-testid="user-avatar"
+      />
 
       <Atoms.Container className="flex min-w-0 flex-1 flex-col">
         <Atoms.Typography size="sm" className="truncate font-bold" data-testid="user-name">
