@@ -114,6 +114,14 @@ const envSchema = z.object({
     .default('20')
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
+
+  // TTL retry delay for entities not yet indexed in Nexus (e.g., new users)
+  NEXT_PUBLIC_TTL_RETRY_DELAY_MS: z
+    .string()
+    .default('60000') // 1 minute in milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
   NEXT_PUBLIC_TESTNET: z
     .string()
     .default('false')
@@ -211,6 +219,7 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: process.env.NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS,
       NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE,
       NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE,
+      NEXT_PUBLIC_TTL_RETRY_DELAY_MS: process.env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
