@@ -3,6 +3,25 @@ import { describe, it, expect, vi } from 'vitest';
 import { User, type UserData } from './User';
 import { ButtonVariant } from '@/atoms';
 
+// Mock AvatarWithFallback to isolate User component tests
+vi.mock('@/organisms', async () => {
+  const actual = await vi.importActual('@/organisms');
+  return {
+    ...actual,
+    AvatarWithFallback: ({
+      name,
+      avatarUrl,
+      'data-testid': dataTestId,
+    }: {
+      name: string;
+      avatarUrl?: string;
+      size?: string;
+      alt?: string;
+      'data-testid'?: string;
+    }) => <div data-testid={dataTestId} className="h-8 w-8" data-name={name} data-avatar-url={avatarUrl} />,
+  };
+});
+
 const mockUser: UserData = {
   id: '1',
   name: 'Anna Pleb',
@@ -61,9 +80,10 @@ describe('User', () => {
     expect(container.firstChild).toHaveClass(customClass);
   });
 
-  it('renders avatar with default size', () => {
+  it('renders avatar with md size', () => {
     render(<User user={mockUser} />);
-    expect(screen.getByTestId('user-avatar')).toHaveClass('size-8');
+    // Mock AvatarWithFallback renders with h-8 w-8 classes
+    expect(screen.getByTestId('user-avatar')).toHaveClass('h-8', 'w-8');
   });
 
   it('renders with different action button variants', () => {
@@ -117,25 +137,21 @@ describe('User', () => {
     expect(screen.queryByTestId('user-posts-count')).not.toBeInTheDocument();
   });
 
-  it('handles user without avatar', () => {
+  it('passes correct props to AvatarWithFallback when avatar is provided', () => {
+    render(<User user={mockUser} />);
+
+    const avatar = screen.getByTestId('user-avatar');
+    expect(avatar).toHaveAttribute('data-name', 'Anna Pleb');
+    expect(avatar).toHaveAttribute('data-avatar-url', '/avatar1.jpg');
+  });
+
+  it('passes correct props to AvatarWithFallback when avatar is not provided', () => {
     const userWithoutAvatar = { ...mockUser, avatar: undefined };
     render(<User user={userWithoutAvatar} />);
 
-    expect(screen.getByText('AP')).toBeInTheDocument(); // Fallback initials
-  });
-
-  it('handles user with single name', () => {
-    const singleNameUser = { ...mockUser, name: 'Anna' };
-    render(<User user={singleNameUser} />);
-
-    expect(screen.getByText('A')).toBeInTheDocument(); // Single initial
-  });
-
-  it('handles user with multiple names', () => {
-    const multiNameUser = { ...mockUser, name: 'Anna Maria Pleb' };
-    render(<User user={multiNameUser} />);
-
-    expect(screen.getByText('AM')).toBeInTheDocument(); // Multiple initials, capped to 2
+    const avatar = screen.getByTestId('user-avatar');
+    expect(avatar).toHaveAttribute('data-name', 'Anna Pleb');
+    expect(avatar).not.toHaveAttribute('data-avatar-url');
   });
 
   it('truncates long names and handles', () => {

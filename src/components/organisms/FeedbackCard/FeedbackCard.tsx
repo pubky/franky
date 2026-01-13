@@ -3,7 +3,6 @@
 import { useState } from 'react';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 
@@ -35,7 +34,7 @@ export function FeedbackCard() {
               overrideDefaults={true}
               className="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
             >
-              <Molecules.AvatarWithFallback
+              <Organisms.AvatarWithFallback
                 avatarUrl={avatarUrl}
                 name={name}
                 className="h-12 w-12"

@@ -38,10 +38,9 @@ vi.mock('@/hooks', async (importOriginal) => {
   };
 });
 
-// Mock Molecules
-const mockToast = vi.fn();
-vi.mock('@/molecules', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/molecules')>();
+// Mock Organisms
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
   return {
     ...actual,
     AvatarWithFallback: ({
@@ -70,6 +69,15 @@ vi.mock('@/molecules', async (importOriginal) => {
         )}
       </div>
     ),
+  };
+});
+
+// Mock Molecules
+const mockToast = vi.fn();
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
     useToast: vi.fn(() => ({
       toast: mockToast,
     })),

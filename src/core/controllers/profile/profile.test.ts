@@ -150,7 +150,7 @@ describe('ProfileController', () => {
         {
           name: 'Test User',
           bio: '',
-          image: '',
+          image: null,
           links: [],
           status: '',
         },

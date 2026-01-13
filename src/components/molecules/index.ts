@@ -1,7 +1,6 @@
 export * from './ActionButtons';
 export * from './ActionSection';
 export * from './AvatarGroup';
-export * from './AvatarWithFallback';
 export * from './AvatarZoomModal';
 export * from './Breadcrumb';
 export * from './ContainerRoot';

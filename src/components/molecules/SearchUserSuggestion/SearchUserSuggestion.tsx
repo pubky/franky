@@ -1,5 +1,5 @@
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import type { SearchUserSuggestionProps } from './SearchUserSuggestion.types';
 
@@ -18,7 +18,7 @@ export function SearchUserSuggestion({ user, onClick }: SearchUserSuggestionProp
       data-testid={`search-user-suggestion-${user.id}`}
       aria-label={`User ${user.name} (${formattedPubky})`}
     >
-      <Molecules.AvatarWithFallback avatarUrl={user.avatarUrl} name={user.name} size="default" />
+      <Organisms.AvatarWithFallback avatarUrl={user.avatarUrl} name={user.name} size="default" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1 flex-col items-start">
         <Atoms.Typography
           className="block truncate text-sm font-bold text-foreground"
