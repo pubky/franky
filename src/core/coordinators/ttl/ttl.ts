@@ -29,6 +29,8 @@ import type {
  * Note: Post and user subscriptions are independent.
  * User subscriptions are managed explicitly via subscribeUser/unsubscribeUser,
  * with reference counting to handle multiple subscribers to the same user.
+ *
+ * More info in the ADR: https://github.com/pubky/pubky/blob/main/.cursor/adr/0012-ttl-coordinator.md
  */
 export class TtlCoordinator {
   private static instance: TtlCoordinator | null = null;

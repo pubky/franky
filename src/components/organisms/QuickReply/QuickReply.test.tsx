@@ -20,8 +20,11 @@ vi.mock('@/atoms', () => ({
   POST_THREAD_CONNECTOR_VARIANTS: { LAST: 'last', REGULAR: 'regular', DIALOG_REPLY: 'dialog-reply' },
 }));
 
-vi.mock('@/molecules', () => ({
+vi.mock('@/organisms', () => ({
   AvatarWithFallback: ({ ...props }: { [key: string]: unknown }) => <div data-testid="avatar" {...props} />,
+}));
+
+vi.mock('@/molecules', () => ({
   PostLinkEmbeds: ({ ...props }: { [key: string]: unknown }) => <div data-testid="link-embeds" {...props} />,
   PostTag: ({ label }: { label: string }) => <div data-testid="tag">{label}</div>,
   EmojiPickerDialog: ({ ...props }: { [key: string]: unknown }) => <div data-testid="emoji-dialog" {...props} />,

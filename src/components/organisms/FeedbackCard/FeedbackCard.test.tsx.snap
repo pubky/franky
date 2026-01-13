@@ -2,7 +2,7 @@
 
 exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user with avatar 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="flex w-full min-w-0 flex-col gap-2"
   data-testid="feedback-card"
 >
   <div
@@ -14,15 +14,15 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
     Feedback
   </div>
   <div
-    class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+    class="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
     data-testid="container"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex w-full min-w-0 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+        class="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
         data-testid="container"
       >
         <div
@@ -39,10 +39,10 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
         </div>
       </div>
       <div
-        class="text-base font-bold text-foreground"
+        class="min-w-0 flex-1 truncate text-base font-bold text-foreground"
         data-testid="container"
       >
-        Miguel Med...
+        Miguel Medeiros
       </div>
     </div>
     <button
@@ -57,7 +57,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
 
 exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user without avatar 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="flex w-full min-w-0 flex-col gap-2"
   data-testid="feedback-card"
 >
   <div
@@ -69,15 +69,15 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
     Feedback
   </div>
   <div
-    class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+    class="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
     data-testid="container"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex w-full min-w-0 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+        class="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
         data-testid="container"
       >
         <div
@@ -95,7 +95,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
         </div>
       </div>
       <div
-        class="text-base font-bold text-foreground"
+        class="min-w-0 flex-1 truncate text-base font-bold text-foreground"
         data-testid="container"
       >
         Miguel
@@ -111,9 +111,9 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
 </div>
 `;
 
-exports[`FeedbackCard - Snapshots > matches snapshot with truncated long name 1`] = `
+exports[`FeedbackCard - Snapshots > matches snapshot with long name (CSS truncation) 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="flex w-full min-w-0 flex-col gap-2"
   data-testid="feedback-card"
 >
   <div
@@ -125,15 +125,15 @@ exports[`FeedbackCard - Snapshots > matches snapshot with truncated long name 1`
     Feedback
   </div>
   <div
-    class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+    class="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
     data-testid="container"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex w-full min-w-0 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+        class="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
         data-testid="container"
       >
         <div
@@ -151,10 +151,10 @@ exports[`FeedbackCard - Snapshots > matches snapshot with truncated long name 1`
         </div>
       </div>
       <div
-        class="text-base font-bold text-foreground"
+        class="min-w-0 flex-1 truncate text-base font-bold text-foreground"
         data-testid="container"
       >
-        VeryLongUs...
+        VeryLongUserNameThatExceedsTenCharacters
       </div>
     </div>
     <button
@@ -169,7 +169,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with truncated long name 1`
 
 exports[`FeedbackCard - Snapshots > matches snapshot with unauthenticated user 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="flex w-full min-w-0 flex-col gap-2"
   data-testid="feedback-card"
 >
   <div
@@ -181,15 +181,15 @@ exports[`FeedbackCard - Snapshots > matches snapshot with unauthenticated user 1
     Feedback
   </div>
   <div
-    class="flex cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+    class="flex w-full min-w-0 cursor-pointer flex-col gap-4 rounded-lg border border-dashed border-input p-6"
     data-testid="container"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex w-full min-w-0 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+        class="flex size-12 shrink-0 items-center justify-center rounded-md p-2 shadow-xs"
         data-testid="container"
       >
         <div
@@ -207,7 +207,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with unauthenticated user 1
         </div>
       </div>
       <div
-        class="text-base font-bold text-foreground"
+        class="min-w-0 flex-1 truncate text-base font-bold text-foreground"
         data-testid="container"
       >
         Your Name
