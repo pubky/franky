@@ -61,11 +61,11 @@ export function QuickReply({
   const { ref: cardRef, height: cardHeight } = Hooks.useElementHeight();
 
   const isValid = React.useCallback(() => {
-    return Boolean(content.trim()) && !isSubmitting;
-  }, [content, isSubmitting]);
+    return Boolean(content.trim() || attachments.length > 0) && !isSubmitting;
+  }, [content, attachments.length, isSubmitting]);
 
   const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
-    ignoreShiftEnter: true,
+    requireModifier: true,
   });
 
   // Account for spacing between main post and QuickReply in connector calculation

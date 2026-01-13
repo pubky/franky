@@ -8,6 +8,12 @@ interface UseEnterSubmitOptions {
    * @default true
    */
   ignoreShiftEnter?: boolean;
+  /**
+   * If true, requires Ctrl (Windows/Linux) or Cmd (Mac) to be pressed with Enter.
+   * Useful for multiline inputs where plain Enter should insert a newline.
+   * @default false
+   */
+  requireModifier?: boolean;
 }
 
 /**
@@ -33,11 +39,19 @@ interface UseEnterSubmitOptions {
  *
  * <Textarea onKeyDown={handleKeyDown} />
  * ```
+ *
+ * @example
+ * ```tsx
+ * // For multiline input where Ctrl/Cmd+Enter submits
+ * const handleKeyDown = useEnterSubmit(isFormValid, handleSubmit, { requireModifier: true });
+ *
+ * <Textarea onKeyDown={handleKeyDown} />
+ * ```
  */
 export function useEnterSubmit(
   isValid: () => boolean,
   onSubmit: () => void | Promise<void>,
-  options: UseEnterSubmitOptions = { ignoreShiftEnter: true },
+  options: UseEnterSubmitOptions = { ignoreShiftEnter: true, requireModifier: false },
 ) {
   const isSubmittingRef = useRef(false);
 
@@ -50,6 +64,10 @@ export function useEnterSubmit(
 
     // Guard against double-submit race condition
     if (isSubmittingRef.current) return;
+
+    // Check if modifier key is required (Ctrl on Windows/Linux, Cmd on Mac)
+    const hasModifier = e.ctrlKey || e.metaKey;
+    if (options.requireModifier && !hasModifier) return;
 
     if (e.key === 'Enter' && isValid()) {
       e.preventDefault();
