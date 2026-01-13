@@ -146,7 +146,7 @@ export function QuickReply({
             onEmojiSelect={handleEmojiSelect}
             onFileClick={handleFileClick}
             onImageClick={handleFileClick}
-            isPostDisabled={!Libs.canSubmitPost(POST_INPUT_VARIANT.REPLY, content, attachments, isSubmitting)}
+            isPostDisabled={!isValid()}
             submitMode={POST_INPUT_VARIANT.REPLY}
             className={isExpanded ? 'mt-4' : ''}
           />

@@ -65,11 +65,14 @@ export function useEnterSubmit(
     // Guard against double-submit race condition
     if (isSubmittingRef.current) return;
 
+    // Early return for non-Enter keys to avoid unnecessary work
+    if (e.key !== 'Enter') return;
+
     // Check if modifier key is required (Ctrl on Windows/Linux, Cmd on Mac)
     const hasModifier = e.ctrlKey || e.metaKey;
     if (options.requireModifier && !hasModifier) return;
 
-    if (e.key === 'Enter' && isValid()) {
+    if (isValid()) {
       e.preventDefault();
 
       isSubmittingRef.current = true;

@@ -142,7 +142,7 @@ export function PostInput({
           onEmojiSelect={handleEmojiSelect}
           onFileClick={handleFileClick}
           onImageClick={handleFileClick}
-          isPostDisabled={!Libs.canSubmitPost(variant, content, attachments, isSubmitting)}
+          isPostDisabled={!isValid()}
           submitMode={variant}
         />
       </Atoms.Container>
