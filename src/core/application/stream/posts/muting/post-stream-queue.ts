@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { TQueueEntry } from '../post.types';
 import { CollectParams, CollectResult } from './post-stream-queue.types';
 
@@ -47,13 +48,15 @@ export class PostStreamQueue {
     // If queue has enough, return early with correct timestamp
     if (posts.length >= limit) {
       const timestamp = await this.getLastPostTimestamp(posts, limit);
-      return this.finalize(streamId, posts, limit, cursor, [], timestamp);
+      // Returning from queue means we haven't reached end of stream
+      return this.finalize(streamId, posts, limit, cursor, [], timestamp, false);
     }
 
     // Fetch until we have enough
     const allCacheMissIds = new Set<string>();
     let latestTimestamp: number | undefined;
     let fetchCount = 0;
+    let reachedEnd = false;
 
     while (posts.length < limit && fetchCount < MAX_FETCH_ITERATIONS) {
       fetchCount++;
@@ -79,13 +82,14 @@ export class PostStreamQueue {
         latestTimestamp = result.timestamp;
       }
 
-      // Stop if we've reached end of stream
+      // Stop if we've reached end of stream (Nexus returned fewer posts than limit)
       if (result.nextPageIds.length < limit) {
+        reachedEnd = true;
         break;
       }
     }
 
-    return this.finalize(streamId, posts, limit, cursor, Array.from(allCacheMissIds), latestTimestamp);
+    return this.finalize(streamId, posts, limit, cursor, Array.from(allCacheMissIds), latestTimestamp, reachedEnd);
   }
 
   /**
@@ -109,7 +113,7 @@ export class PostStreamQueue {
     } catch (error) {
       // Log but don't fail - caller can fall back to cursor
       // This allows pagination to continue even if IndexedDB access fails
-      console.warn('Failed to get last post timestamp:', error);
+      Libs.Logger.warn('Failed to get last post timestamp', { error });
       return undefined;
     }
   }
@@ -120,7 +124,8 @@ export class PostStreamQueue {
     limit: number,
     cursor: number,
     cacheMissIds: string[],
-    timestamp?: number,
+    timestamp: number | undefined,
+    reachedEnd: boolean,
   ): CollectResult {
     const toReturn = posts.slice(0, limit);
     const toSave = posts.slice(limit);
@@ -137,6 +142,7 @@ export class PostStreamQueue {
       cacheMissIds,
       cursor,
       timestamp,
+      reachedEnd,
     };
   }
 }

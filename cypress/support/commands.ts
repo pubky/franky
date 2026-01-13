@@ -2,8 +2,7 @@
 
 import { backupDownloadFilePath, extendedTimeout } from './common';
 import { goToProfilePageFromHeader } from './header';
-//import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
-import { BackupType } from './types/enums';
+import { BackupType, CheckForNewPosts } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -43,10 +42,19 @@ Cypress.Commands.add(
     cy.get('#create-keys-in-browser-btn').click();
     cy.location('pathname').should('eq', '/onboarding/pubky');
 
+    cy.get('[data-cy="pubky-display"]').should('be.visible');
+    cy.get('[data-cy="pubky-display"]').invoke('val').should('not.eq', '').and('have.length.greaterThan', 0);
+
     // copy pubky to alias
     if (pubkyAlias) {
-      cy.get('#copy-to-clipboard-action-btn').click();
-      cy.saveCopiedPubkyToAlias(pubkyAlias);
+      // WebKit doesn't support clipboard read, so read directly from input field
+      if (Cypress.browser.family === 'webkit') {
+        cy.saveElementValueToAlias('[data-cy="pubky-display"]', pubkyAlias);
+      } else {
+        // Chrome/Firefox are configured to support clipboard read, so copy to clipboard and read from clipboard
+        cy.get('#copy-to-clipboard-action-btn').click();
+        cy.saveCopiedPubkyToAlias(pubkyAlias);
+      }
     }
 
     cy.get('#public-key-navigation-continue-btn').click();
@@ -269,6 +277,38 @@ Cypress.Commands.add('innerTextShouldNotEq', { prevSubject: 'element' }, (subjec
   });
 });
 
+// Common helper function to store a string value to an alias and Cypress env
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+function storeStringToAlias(text: string, alias: string): void {
+  // store text as alias
+  cy.wrap(text).as(alias);
+  // also store text in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
+  // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
+  Cypress.env(alias, text);
+}
+
+// Stores a string value to an alias
+Cypress.Commands.add('saveStringToAlias', (text: string, alias: string) => {
+  if (!text || text.length === 0) {
+    throw new Error('Cannot save empty string to alias');
+  }
+  storeStringToAlias(text, alias);
+});
+
+// Reads a value from an element and stores it to an alias
+Cypress.Commands.add('saveElementValueToAlias', (selector: string, alias: string) => {
+  cy.get(selector)
+    .invoke('val')
+    .then((text) => {
+      const value = text as string;
+      if (!value || value.length === 0) {
+        throw new Error(`Unable to read value from ${selector}`);
+      }
+      cy.saveStringToAlias(value, alias);
+    });
+});
+
 // Stores the clipboard contents to an alias for later use
 // see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
 // note: aliases work in the context of as test and only the first test after before
@@ -287,11 +327,7 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
       // so an additional 'then' is needed to guarantee the alias is stored before the next test step
     })
     .then((text) => {
-      // store pubky as alias
-      cy.wrap(text).as(alias);
-      // also store pubky in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
-      // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
-      Cypress.env(alias, text);
+      storeStringToAlias(text, alias);
     });
 });
 
@@ -356,65 +392,54 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-// const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIndexed.Yes) => {
-//   waitForFeedToLoad(filterText);
+const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = CheckForNewPosts.No) => {
+  var filteredPosts: JQuery<HTMLElement>;
+  // find the post in the timeline
+  return cy
+    .get('[data-cy="timeline-posts"]')
+    .children()
+    .should('have.length.gte', 1)
+    .then(($posts): Cypress.Chainable<JQuery<HTMLElement>> => {
+      // optionally filter posts by contained text
+      filteredPosts = filterText ? $posts.filter((_idx, element) => element.innerText.includes(filterText)) : $posts;
 
-//   // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
-//   // this is needed because the container element is rerendered when the post is indexed
-//   cy.wrap(checkIndexed).then(($checkIndexed) => {
-//     if ($checkIndexed === CheckIndexed.Yes) checkPostIsIndexed(postIdx);
-//   });
+      // Check if the requested post index exists
+      if (filteredPosts.length > postIdx) {
+        cy.log(`findPostInFeed: Post found at index ${postIdx}`);
+        return cy.wrap(filteredPosts.eq(postIdx));
+      }
+      cy.log(`findPostInFeed: Post not found at index ${postIdx}`);
 
-//   // find the post in the timeline
-//   cy.get('#posts-feed')
-//     .find('#timeline')
-//     .children()
-//     .should('have.length.gte', 1)
-//     .then(($posts) => {
-//       // optionally filter posts by contained text
-//       return filterText
-//         ? // cannot use :contains due to additional space inserted between each word in the post content
-//           $posts.filter((_idx, element) => element.innerText.includes(filterText))
-//         : $posts;
-//     })
-//     .eq(postIdx);
+      // Post not found - if checkForNewPosts is enabled, try clicking "See new posts" button
+      if (checkForNewPosts) {
+        cy.log(`Clicking 'See new posts' button to check for new posts`);
+        // Check if "See new posts" button exists and click it
+        cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
+        // Recursively call findPostInFeed without checking for new posts
+        return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
+      }
 
-// TODO: this implementation is more robust when "Show n new posts" appears unexpectedly, see https://github.com/pubky/pubky-app/issues/1033
-// cy.get('#posts-feed')
-//   .find('#timeline')
-//   .should('have.descendants', '*')
-//   .children()
-//   .then(($posts) => {
-//     // Filter out "Show new posts" element
-//     const actualPosts = $posts.filter((_, el) => {
-//       const text = Cypress.$(el).text();
-//       // Match "Show n new posts" pattern where n is a number
-//       return !/Show\s+\d+\s+new posts/i.test(text);
-//     });
-
-//     // optionally filter posts by contained text
-//     return filterText
-//       ? // cannot use :contains due to additional space inserted between each word in the post content
-//         actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
-//       : actualPosts;
-//   })
-//   .eq(postIdx);
-// };
+      // fail the test if the post cannot be found
+      assert(false, `findPostInFeed: Post not found at index ${postIdx} and checkForNewPosts is disabled`);
+      // return unfound post to satisfy return type
+      return cy.wrap(filteredPosts.eq(postIdx));
+    });
+};
 
 // useful to find your latest new post
-// Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = CheckIndexed.Yes) => {
-//   findPostInFeed(0, '', checkIndexed);
-// });
+Cypress.Commands.add('findFirstPostInFeed', (checkForNewPosts = CheckForNewPosts.No) => {
+  return findPostInFeed(0, undefined, checkForNewPosts);
+});
 
-// // useful for finding a specific post by text
-// Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = CheckIndexed.Yes) => {
-//   findPostInFeed(0, filterText, checkIndexed);
-// });
+// useful for finding a specific post by text
+Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkForNewPosts = CheckForNewPosts.No) => {
+  return findPostInFeed(0, filterText, checkForNewPosts);
+});
 
-// // useful for finding a specific post by index with optional filter text
-// Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
-//   findPostInFeed(postIdx, filterText, checkIndexed);
-// });
+// useful for finding a specific post by index with optional filter text
+Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkForNewPosts = CheckForNewPosts.No) => {
+  return findPostInFeed(postIdx, filterText, checkForNewPosts);
+});
 
 // useful for finding a specific post by text in search results
 Cypress.Commands.add('findPostInSearchResults', (filterText?: string, postIdx = 0) => {

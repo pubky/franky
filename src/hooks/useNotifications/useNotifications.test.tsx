@@ -5,12 +5,17 @@ import { NotificationType } from '@/core';
 import * as Core from '@/core';
 
 // Hoist mock data
-const { mockCurrentUserPubky, setMockCurrentUserPubky } = vi.hoisted(() => {
+const { mockCurrentUserPubky, setMockCurrentUserPubky, mockUnreadCount, setMockUnreadCount } = vi.hoisted(() => {
   const pubky = { current: 'test-user-pubky' as string | null };
+  const unread = { current: 0 };
   return {
     mockCurrentUserPubky: pubky,
     setMockCurrentUserPubky: (value: string | null) => {
       pubky.current = value;
+    },
+    mockUnreadCount: unread,
+    setMockUnreadCount: (value: number) => {
+      unread.current = value;
     },
   };
 });
@@ -47,7 +52,7 @@ vi.mock('@/core', async (importOriginal) => {
       currentUserPubky: mockCurrentUserPubky.current,
     })),
     useNotificationStore: vi.fn((selector) => {
-      const state = { lastRead: 0, setLastRead: vi.fn() };
+      const state = { lastRead: 0, unread: mockUnreadCount.current, setLastRead: vi.fn() };
       return selector ? selector(state) : state.lastRead;
     }),
   };
@@ -62,6 +67,7 @@ describe('useNotifications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setMockCurrentUserPubky('test-user-pubky');
+    setMockUnreadCount(0);
   });
 
   it('should return empty notifications array when no data', async () => {
@@ -207,5 +213,57 @@ describe('useNotifications', () => {
     expect(Core.NotificationController.getOrFetchNotifications).toHaveBeenCalledWith({
       olderThan: 999,
     });
+  });
+
+  it('should refresh notifications when unread count increases (bug #743)', async () => {
+    // Initial notifications
+    const initialNotifications = [
+      { id: 'test-1', type: NotificationType.Follow, timestamp: 1000, followed_by: 'user1' },
+    ] as Core.FlatNotification[];
+
+    // Updated notifications (includes a new notification)
+    const updatedNotifications = [
+      { id: 'test-2', type: NotificationType.Follow, timestamp: 2000, followed_by: 'user2' },
+      { id: 'test-1', type: NotificationType.Follow, timestamp: 1000, followed_by: 'user1' },
+    ] as Core.FlatNotification[];
+
+    vi.mocked(Core.NotificationController.getOrFetchNotifications)
+      .mockResolvedValueOnce({
+        flatNotifications: initialNotifications,
+        olderThan: 999,
+      })
+      .mockResolvedValueOnce({
+        flatNotifications: updatedNotifications,
+        olderThan: 999,
+      });
+
+    const { result, rerender } = renderHook(() => useNotifications());
+
+    // Wait for initial load
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.notifications).toEqual(initialNotifications);
+    expect(result.current.count).toBe(1);
+
+    // Simulate the store's unread count increasing (as if polling detected new notifications)
+    await act(async () => {
+      setMockUnreadCount(2);
+      // Force a rerender to simulate what happens when the store state changes
+      rerender();
+    });
+
+    // The notification list should have been refreshed automatically
+    await waitFor(
+      () => {
+        expect(result.current.notifications).toEqual(updatedNotifications);
+      },
+      { timeout: 1000 },
+    );
+
+    expect(result.current.count).toBe(2);
+    // Should have called getOrFetchNotifications twice: once on mount, once on unread count change
+    expect(Core.NotificationController.getOrFetchNotifications).toHaveBeenCalledTimes(2);
   });
 });

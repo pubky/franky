@@ -1,19 +1,12 @@
 import type { ReactNode } from 'react';
 
-export interface OpenGraphMetadata {
-  url: string;
-  title: string | null;
-  image: string | null;
-}
-
 /**
  * Discriminated union for embed data types
  * Each provider returns a specific type to ensure type safety
  */
 export type EmbedData =
-  | { type: 'url'; value: string } // YouTube, Vimeo (embed URLs)
-  | { type: 'id'; value: string } // Twitter (tweet ID)
-  | { type: 'metadata'; value: OpenGraphMetadata }; // Generic (website metadata)
+  | { type: 'url'; value: string } // YouTube, Vimeo, Generic (embed URLs)
+  | { type: 'id'; value: string }; // Twitter (tweet ID)
 
 /**
  * Standard interface that all embed providers must implement
@@ -32,7 +25,7 @@ export interface EmbedProvider {
    * @param url - The URL to parse
    * @returns EmbedData with type discriminator, or null if invalid
    */
-  parseEmbed: (url: string) => EmbedData | Promise<EmbedData | null> | null;
+  parseEmbed: (url: string) => EmbedData | null;
 
   /**
    * Render the embed component for this provider
