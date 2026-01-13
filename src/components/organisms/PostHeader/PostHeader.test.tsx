@@ -58,12 +58,6 @@ vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    AvatarWithFallback: ({ avatarUrl, name, size }: { avatarUrl?: string; name: string; size?: string }) => (
-      <div data-testid="avatar" data-size={size}>
-        {avatarUrl ? <img data-testid="avatar-image" src={avatarUrl} alt={name} /> : null}
-        <div data-testid="avatar-fallback">{name.substring(0, 2).toUpperCase()}</div>
-      </div>
-    ),
     PostHeaderUserInfo: vi.fn(
       ({
         userId,

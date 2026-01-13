@@ -107,6 +107,99 @@ describe('TtlApplication', () => {
       );
       expect(persistPostsSpy).not.toHaveBeenCalled();
     });
+
+    it('fetches original posts for reposts when refreshing', async () => {
+      const viewerId = 'viewer' as Core.Pubky;
+      const originalAuthor = 'original-author';
+      const originalPostId = 'original-post-123';
+      const originalPostUri = `pubky://${originalAuthor}/pub/pubky.app/posts/${originalPostId}`;
+
+      // The repost that will be refreshed
+      const repostNexusPost: Core.NexusPost = {
+        details: {
+          id: 'repost-1',
+          author: 'reposter' as Core.Pubky,
+          content: '',
+          indexed_at: 0,
+          kind: 'short',
+          uri: 'pubky://reposter/pub/pubky.app/posts/repost-1',
+          attachments: null,
+        },
+        counts: { tags: 0, unique_tags: 0, replies: 0, reposts: 0 },
+        tags: [],
+        relationships: { replied: null, reposted: originalPostUri, mentioned: [] },
+        bookmark: null,
+      };
+
+      vi.spyOn(Core.postStreamApi, 'postsByIds').mockReturnValue({
+        url: '/stream/posts/by_ids',
+        body: { post_ids: ['reposter:repost-1'], viewer_id: viewerId },
+      } as unknown as ReturnType<typeof Core.postStreamApi.postsByIds>);
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([repostNexusPost]);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
+        postAttachments: [],
+      } as unknown as Awaited<ReturnType<typeof Core.LocalStreamPostsService.persistPosts>>);
+      vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([]);
+
+      // Mock the shared helper to verify it's called with correct URIs
+      const fetchOriginalsSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchOriginalPostsByUris')
+        .mockResolvedValue(undefined);
+
+      await Core.TtlApplication.forceRefreshPostsByIds({ postIds: ['reposter:repost-1'], viewerId });
+
+      // Verify fetchOriginalPostsByUris is called with the reposted URI
+      expect(fetchOriginalsSpy).toHaveBeenCalledWith({
+        repostedUris: [originalPostUri],
+        viewerId,
+      });
+    });
+
+    it('does not call fetchOriginalPostsByUris when post is not a repost', async () => {
+      const viewerId = 'viewer' as Core.Pubky;
+
+      const regularPost: Core.NexusPost = {
+        details: {
+          id: 'post-1',
+          author: 'alice' as Core.Pubky,
+          content: 'Regular post',
+          indexed_at: 0,
+          kind: 'short',
+          uri: 'pubky://alice/pub/pubky.app/posts/post-1',
+          attachments: null,
+        },
+        counts: { tags: 0, unique_tags: 0, replies: 0, reposts: 0 },
+        tags: [],
+        relationships: { replied: null, reposted: null, mentioned: [] },
+        bookmark: null,
+      };
+
+      vi.spyOn(Core.postStreamApi, 'postsByIds').mockReturnValue({
+        url: '/stream/posts/by_ids',
+        body: { post_ids: ['alice:post-1'], viewer_id: viewerId },
+      } as unknown as ReturnType<typeof Core.postStreamApi.postsByIds>);
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([regularPost]);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
+        postAttachments: [],
+      } as unknown as Awaited<ReturnType<typeof Core.LocalStreamPostsService.persistPosts>>);
+      vi.spyOn(Core.FileApplication, 'fetchFiles').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalStreamUsersService, 'getNotPersistedUsersInCache').mockResolvedValue([]);
+
+      const fetchOriginalsSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchOriginalPostsByUris')
+        .mockResolvedValue(undefined);
+
+      await Core.TtlApplication.forceRefreshPostsByIds({ postIds: ['alice:post-1'], viewerId });
+
+      // Verify fetchOriginalPostsByUris is called with empty array (no reposts)
+      expect(fetchOriginalsSpy).toHaveBeenCalledWith({
+        repostedUris: [],
+        viewerId,
+      });
+    });
   });
 
   describe('forceRefreshUsersByIds', () => {
