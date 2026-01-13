@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 export class LocalUserService {
   private constructor() {} // Prevent instantiation
@@ -155,5 +156,24 @@ export class LocalUserService {
    */
   static async upsertTags(userId: Core.Pubky, tags: Core.NexusTag[]): Promise<void> {
     await Core.UserTagsModel.upsert({ id: userId, tags });
+  }
+
+  /**
+   * Upserts user TTL record with a calculated timestamp for delayed refresh.
+   * Used to schedule refresh for users not yet indexed in Nexus.
+   *
+   * The timestamp is calculated as: now - (userTtlMs - retryDelayMs)
+   * This ensures the entity becomes stale after the specified delay.
+   *
+   * @param userId - The user ID
+   * @param retryDelayMs - Delay in milliseconds before the entity should become stale.
+   *   If retryDelayMs >= NEXT_PUBLIC_TTL_USER_MS, the entity becomes immediately stale
+   *   (triggers immediate refresh on next TTL coordinator tick). This is intentional
+   *   and can be useful for forcing immediate refresh.
+   * @returns Promise resolving to void
+   */
+  static async upsertTtlWithDelay(userId: Core.Pubky, retryDelayMs: number): Promise<void> {
+    const lastUpdatedAt = Date.now() - (Libs.Env.NEXT_PUBLIC_TTL_USER_MS - retryDelayMs);
+    await Core.UserTtlModel.upsert({ id: userId, lastUpdatedAt });
   }
 }

@@ -16,7 +16,7 @@ export const Generic: ProviderTypes.EmbedProvider = {
    * Parse Generic URL and return embed information
    * Returns the URL immediately - fetching happens in the component with SWR
    */
-  parseEmbed: async (url: string): Promise<ProviderTypes.EmbedData | null> => {
+  parseEmbed: (url: string): ProviderTypes.EmbedData => {
     // Just return the URL - the component will handle fetching with SWR
     return { type: 'url', value: url };
   },

@@ -11,7 +11,7 @@ export class PostController {
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getDetails({ compositeId }: Core.TCompositeId) {
+  static async getDetails({ compositeId }: Core.TCompositeId): Promise<Core.EnrichedPostDetails | null> {
     return await Core.PostApplication.getDetails({ compositeId });
   }
 
