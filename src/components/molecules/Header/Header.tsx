@@ -126,7 +126,11 @@ export function HeaderNavigationButtons({ counter = 0, avatarImage, avatarName =
           alt="Profile"
         />
         {counter > 0 && (
-          <Atoms.Badge className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand" variant="secondary">
+          <Atoms.Badge
+            data-cy="header-notification-counter"
+            className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
+            variant="secondary"
+          >
             <Atoms.Typography className={Libs.cn('text-primary-foreground', counter > 21 && 'text-xs')} size="sm">
               {counterString}
             </Atoms.Typography>
