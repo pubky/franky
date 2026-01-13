@@ -1,6 +1,6 @@
 import * as Config from '@/config';
 import * as Libs from '@/libs';
-import * as Core from '@/core';
+import type { Pubky } from '@/core/models/models.types';
 
 export class FeedbackValidators {
   private constructor() {}
@@ -13,7 +13,7 @@ export class FeedbackValidators {
    * @returns Normalized pubky (trimmed)
    * @throws AppError if pubky is invalid
    */
-  static validatePubky(pubky: string | undefined | null): Core.Pubky {
+  static validatePubky(pubky: string | undefined | null): Pubky {
     if (!pubky || pubky.trim() === '') {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
@@ -21,7 +21,7 @@ export class FeedbackValidators {
         400,
       );
     }
-    return pubky.trim() as Core.Pubky;
+    return pubky.trim() as Pubky;
   }
 
   /**

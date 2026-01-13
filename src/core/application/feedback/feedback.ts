@@ -1,4 +1,4 @@
-import * as Core from '@/core';
+import { ChatwootService } from '@/core/services/chatwoot';
 import * as Libs from '@/libs';
 import * as Types from './feedback.types';
 
@@ -28,7 +28,7 @@ export class FeedbackApplication {
   static async submit({ pubky, comment, name }: Types.TFeedbackSubmitInput) {
     try {
       // Delegate to Chatwoot service
-      await Core.ChatwootService.submit({ pubky, comment, name });
+      await ChatwootService.submit({ pubky, comment, name });
     } catch (error) {
       // Log error for observability
       if (error instanceof Libs.AppError) {

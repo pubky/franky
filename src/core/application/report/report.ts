@@ -1,4 +1,4 @@
-import * as Core from '@/core';
+import { ChatwootService } from '@/core/services/chatwoot';
 import * as Libs from '@/libs';
 import { REPORT_ISSUE_LABELS, type ReportIssueType } from '@/core/pipes/report';
 import { CHATWOOT_SUBMISSION_TYPES, CHATWOOT_REPORT_MESSAGE_PREFIX } from '@/core/services/chatwoot';
@@ -64,7 +64,7 @@ export class ReportApplication {
       const comment = this.buildCommentBody(postUrl, reason);
 
       // Delegate to Chatwoot service with report type
-      await Core.ChatwootService.submit({
+      await ChatwootService.submit({
         pubky,
         comment,
         name,
