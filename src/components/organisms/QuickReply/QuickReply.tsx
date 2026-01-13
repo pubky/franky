@@ -6,6 +6,7 @@ import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Utils from '@/libs/utils';
+import * as Libs from '@/libs';
 import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
@@ -61,8 +62,8 @@ export function QuickReply({
   const { ref: cardRef, height: cardHeight } = Hooks.useElementHeight();
 
   const isValid = React.useCallback(() => {
-    return Boolean(content.trim() || attachments.length > 0) && !isSubmitting;
-  }, [content, attachments.length, isSubmitting]);
+    return Libs.canSubmitPost(POST_INPUT_VARIANT.REPLY, content, attachments, isSubmitting);
+  }, [content, attachments, isSubmitting]);
 
   const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
@@ -145,6 +146,7 @@ export function QuickReply({
             onEmojiSelect={handleEmojiSelect}
             onFileClick={handleFileClick}
             onImageClick={handleFileClick}
+            isPostDisabled={!Libs.canSubmitPost(POST_INPUT_VARIANT.REPLY, content, attachments, isSubmitting)}
             submitMode={POST_INPUT_VARIANT.REPLY}
             className={isExpanded ? 'mt-4' : ''}
           />

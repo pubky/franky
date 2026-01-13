@@ -62,11 +62,8 @@ export function PostInput({
   });
 
   const isValid = React.useCallback(() => {
-    if (isSubmitting) return false;
-    // Reposts allow empty content, posts and replies require content or attachments
-    if (variant === POST_INPUT_VARIANT.REPOST) return true;
-    return Boolean(content.trim()) || attachments.length > 0;
-  }, [content, attachments.length, isSubmitting, variant]);
+    return Libs.canSubmitPost(variant, content, attachments, isSubmitting);
+  }, [variant, content, attachments, isSubmitting]);
 
   const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
@@ -145,12 +142,7 @@ export function PostInput({
           onEmojiSelect={handleEmojiSelect}
           onFileClick={handleFileClick}
           onImageClick={handleFileClick}
-          // Reposts allow empty content, posts and replies require content or attachments
-          isPostDisabled={
-            variant === POST_INPUT_VARIANT.REPOST
-              ? isSubmitting
-              : (!content.trim() && attachments.length === 0) || isSubmitting
-          }
+          isPostDisabled={!Libs.canSubmitPost(variant, content, attachments, isSubmitting)}
           submitMode={variant}
         />
       </Atoms.Container>
