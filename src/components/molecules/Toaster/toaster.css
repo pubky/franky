@@ -1,80 +1,58 @@
-/* Custom toast styles for Sonner component */
-
-/* Responsive toaster visibility */
-.toaster-mobile {
-  display: block;
-}
-
-.toaster-desktop {
-  display: none;
-}
-
-@media (min-width: 1024px) {
-  .toaster-mobile {
-    display: none;
-  }
-
-  .toaster-desktop {
-    display: block;
-  }
-}
-
-/* Center toast on mobile */
-.toaster-mobile [data-sonner-toaster] {
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-}
-
-.toaster-mobile [data-sonner-toast] {
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
+/**
+ * Custom toast styles for Sonner component.
+ *
+ * Uses unstyled mode from Sonner, so we build styles from scratch.
+ * CSS variables are defined in globals.css for consistency with design system.
+ *
+ * Note: !important is needed to override Sonner's internal positioning and
+ * flex behaviors when using unstyled mode.
+ */
 
 /* Ensure toast respects max-width and doesn't overflow */
 .toast-custom {
-  box-sizing: border-box !important;
-  overflow: hidden !important;
-  justify-content: space-between !important;
+  box-sizing: border-box;
+  overflow: hidden;
+  justify-content: space-between;
 }
 
 /* Toast content wrapper - contains title and description */
 .toast-custom [data-content] {
-  flex: 1 1 0% !important;
-  min-width: 0 !important;
-  overflow: hidden !important;
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 /* Ensure title and description truncate properly */
 .toast-custom [data-title],
 .toast-custom [data-description] {
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Ensure button doesn't shrink, doesn't wrap, and stays at the right */
 .toast-custom button[data-button] {
-  flex-shrink: 0 !important;
-  white-space: nowrap !important;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* Icon styling - use brand color from design system */
 .toast-custom [data-icon] svg {
-  color: hsl(var(--brand)) !important;
+  color: var(--brand);
 }
 
 .toast-custom [data-icon] svg * {
-  fill: hsl(var(--brand)) !important;
-  stroke: hsl(var(--brand)) !important;
-  color: hsl(var(--brand)) !important;
+  fill: var(--brand);
+  stroke: var(--brand);
+  color: var(--brand);
 }
 
-/* Error toast icon - white color */
+/* Error toast icon - white color for contrast on error background */
 [data-sonner-toast][data-type='error'] [data-icon] svg,
 [data-sonner-toast][data-type='error'] [data-icon] svg *,
 .toast-custom[data-type='error'] [data-icon] svg,
 .toast-custom[data-type='error'] [data-icon] svg * {
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
-  color: #ffffff !important;
+  fill: var(--popover-foreground);
+  stroke: var(--popover-foreground);
+  color: var(--popover-foreground);
 }

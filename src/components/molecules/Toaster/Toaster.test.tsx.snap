@@ -1,17 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Toaster - Snapshots > matches snapshot 1`] = `
+exports[`Toaster - Snapshots > matches snapshot for mobile 1`] = `
 <div>
   <div
-    class="toaster-mobile lg:hidden"
+    class="z-50"
     data-offset="96"
     data-position="top-center"
-    data-testid="sonner-toaster"
-  />
-  <div
-    class="toaster-desktop hidden lg:block"
-    data-offset="80"
-    data-position="bottom-center"
     data-testid="sonner-toaster"
   />
 </div>
