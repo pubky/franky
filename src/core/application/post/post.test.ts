@@ -497,12 +497,9 @@ describe('Post Application', () => {
 
     it('should propagate database error when findById throws', async () => {
       const mockData = createMockDeleteData();
-      const databaseError = createDatabaseError(
-        DatabaseErrorType.QUERY_FAILED,
-        'Database connection failed',
-        500,
-        { compositePostId: mockData.compositePostId },
-      );
+      const databaseError = createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Database connection failed', 500, {
+        compositePostId: mockData.compositePostId,
+      });
       const { findByIdSpy, deleteSpy, requestSpy } = setupDeleteSpies();
       findByIdSpy.mockRejectedValue(databaseError);
 

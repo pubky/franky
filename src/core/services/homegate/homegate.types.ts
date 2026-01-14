@@ -2,13 +2,19 @@
  * Result of checking SMS verification availability.
  * Returns available: true if service is accessible, false if geoblocked (403).
  */
-export type TSmsInfoResult = { available: true } | { available: false };
+export type TSmsInfoResult = { available: boolean };
 
 /**
  * Result of checking LN verification availability and price.
  * Returns available: true with amountSat if service is accessible, false if geoblocked (403).
  */
 export type TLnInfoResult = { available: true; amountSat: number } | { available: false };
+
+/**
+ * Represents a raw/unvalidated JSON object from API responses.
+ * Used as intermediate type before parsing into domain types.
+ */
+export type TRawApiResponse = Record<string, unknown>;
 
 export type TVerifySmsCodeResult = {
   /**
@@ -94,9 +100,11 @@ export type TAwaitLnVerificationResult =
  * @property success - True if the request was successful, false otherwise.
  * @property retryAfter - The number of seconds to wait before retrying the request. Only set if the request was not successful.
  * @property errorType - The type of error that occurred. Only set if the request was not successful.
+ * @property statusCode - The HTTP status code. Only set for 'unknown' errors to aid debugging.
  */
-export interface ISendSmsCodeResult {
+export type TSendSmsCodeResult = {
   success: boolean;
   retryAfter?: number;
   errorType?: 'blocked' | 'rate_limited' | 'unknown';
-}
+  statusCode?: number;
+};

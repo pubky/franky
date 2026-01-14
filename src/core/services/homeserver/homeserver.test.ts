@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Session, Keypair, PublicKey } from '@synonymdev/pubky';
-import * as Core from '@/core';
 import {
   HttpMethod,
   AppError,
@@ -479,10 +478,7 @@ describe('HomeserverService', () => {
           const testData = { name: 'test', value: 123 };
           mockState.sessionStorageGet.mockResolvedValue(new Response(JSON.stringify(testData), { status: 200 }));
 
-          const result = await HomeserverService.request<typeof testData>(
-            HttpMethod.GET,
-            'pubky://user/pub/data.json',
-          );
+          const result = await HomeserverService.request<typeof testData>(HttpMethod.GET, 'pubky://user/pub/data.json');
 
           expect(result).toEqual(testData);
           expect(mockState.sessionStorageGet).toHaveBeenCalledWith('/pub/data.json');
@@ -568,9 +564,7 @@ describe('HomeserverService', () => {
             new Response('Unauthorized', { status: 401, statusText: 'Unauthorized' }),
           );
 
-          await expect(
-            HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json'),
-          ).rejects.toMatchObject({
+          await expect(HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json')).rejects.toMatchObject({
             category: ErrorCategory.Auth,
             code: AuthErrorCode.SESSION_EXPIRED,
           });
@@ -580,9 +574,7 @@ describe('HomeserverService', () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockRejectedValue(new Error('Network error'));
 
-          await expect(
-            HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json'),
-          ).rejects.toMatchObject({
+          await expect(HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json')).rejects.toMatchObject({
             category: ErrorCategory.Server,
             code: ServerErrorCode.INTERNAL_ERROR,
           });
@@ -790,11 +782,10 @@ describe('HomeserverService', () => {
       it('should re-throw AppError instances without wrapping', async () => {
         // Import Libs after module reset to get matching AppError class
         const freshLibs = await import('@/libs');
-        const appError = freshLibs.Err.auth(
-          freshLibs.AuthErrorCode.UNAUTHORIZED,
-          'Already an AppError',
-          { service: freshLibs.ErrorService.Homeserver, operation: 'test' },
-        );
+        const appError = freshLibs.Err.auth(freshLibs.AuthErrorCode.UNAUTHORIZED, 'Already an AppError', {
+          service: freshLibs.ErrorService.Homeserver,
+          operation: 'test',
+        });
         mockState.signup.mockRejectedValue(appError);
 
         try {

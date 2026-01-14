@@ -86,7 +86,7 @@ export class ChatwootApi {
 
     try {
       const response = await fetch(createUrl, {
-        method: 'POST',
+        method: Libs.HttpMethod.POST,
         headers: config.headers,
         body: JSON.stringify({
           inbox_id: params.inboxId,
@@ -142,7 +142,7 @@ export class ChatwootApi {
 
     try {
       const response = await fetch(conversationUrl, {
-        method: 'POST',
+        method: Libs.HttpMethod.POST,
         headers: config.headers,
         body: JSON.stringify({
           source_id: params.sourceId,

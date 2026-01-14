@@ -49,44 +49,8 @@ describe('Error Library', () => {
       expect(error.details).toEqual({ param: 'test' });
     });
 
-    it('should log error with correct level based on status code', () => {
-      // 5xx error
-      const error500 = new AppError(CommonErrorType.INTERNAL_ERROR, 'Server error', 500);
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        '[INTERNAL_ERROR] Server error',
-        expect.objectContaining({
-          type: CommonErrorType.INTERNAL_ERROR,
-          statusCode: 500,
-          stack: error500.stack,
-        }),
-      );
-
-      vi.clearAllMocks();
-
-      // 4xx error
-      const error400 = new AppError(NexusErrorType.INVALID_REQUEST, 'Bad request', 400);
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        '[INVALID_REQUEST] Bad request',
-        expect.objectContaining({
-          type: NexusErrorType.INVALID_REQUEST,
-          statusCode: 400,
-          stack: error400.stack,
-        }),
-      );
-
-      vi.clearAllMocks();
-
-      // Other
-      const error0 = new AppError(CommonErrorType.NETWORK_ERROR, 'Network issue', 0);
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        '[NETWORK_ERROR] Network issue',
-        expect.objectContaining({
-          type: CommonErrorType.NETWORK_ERROR,
-          statusCode: 0,
-          stack: error0.stack,
-        }),
-      );
-    });
+    // NOTE: Logging on construction was intentionally removed to fix double-logging issue.
+    // Logging is now the responsibility of the Application layer (see error.ts line 160).
   });
 
   describe('Error Creators', () => {

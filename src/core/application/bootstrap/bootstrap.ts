@@ -103,10 +103,7 @@ export class BootstrapApplication {
   }: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let userLastRead: number;
     try {
-      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
-        HttpMethod.GET,
-        lastReadUrl,
-      );
+      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(HttpMethod.GET, lastReadUrl);
       userLastRead = timestamp;
     } catch (error) {
       // Only handle 404 errors (resource not found), rethrow everything else

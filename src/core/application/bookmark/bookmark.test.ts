@@ -147,9 +147,7 @@ describe('BookmarkApplication', () => {
       authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as unknown as AuthStore);
       persistSpy.mockRejectedValue(new Error('Bookmark not found'));
 
-      await expect(BookmarkApplication.persist(HttpMethod.DELETE, mockData)).rejects.toThrow(
-        'Bookmark not found',
-      );
+      await expect(BookmarkApplication.persist(HttpMethod.DELETE, mockData)).rejects.toThrow('Bookmark not found');
       expect(persistSpy).toHaveBeenCalledOnce();
     });
 

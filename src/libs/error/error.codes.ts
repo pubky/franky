@@ -12,6 +12,8 @@ export enum NetworkErrorCode {
   DNS_FAILED = 'DNS_FAILED',
   CONNECTION_REFUSED = 'CONNECTION_REFUSED',
   CONNECTION_RESET = 'CONNECTION_RESET',
+  /** Generic network failure (fetch threw) */
+  CONNECTION_FAILED = 'CONNECTION_FAILED',
 }
 
 /**
@@ -20,6 +22,8 @@ export enum NetworkErrorCode {
 export enum TimeoutErrorCode {
   REQUEST_TIMEOUT = 'REQUEST_TIMEOUT',
   GATEWAY_TIMEOUT = 'GATEWAY_TIMEOUT',
+  /** Request was aborted via AbortSignal */
+  REQUEST_ABORTED = 'REQUEST_ABORTED',
 }
 
 /**
@@ -30,6 +34,8 @@ export enum ServerErrorCode {
   BAD_GATEWAY = 'BAD_GATEWAY',
   SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
   UNKNOWN_ERROR = 'UNKNOWN_ERROR',
+  /** Response was received but body was empty or malformed */
+  INVALID_RESPONSE = 'INVALID_RESPONSE',
 }
 
 /**

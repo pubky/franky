@@ -1,14 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Config from '@/config';
-import { HttpMethod, ErrorCategory, ClientErrorCode, ServerErrorCode, ensureHttpResponseOk, ErrorService } from '@/libs';
-import {
-  buildNexusUrl,
-  buildCdnUrl,
-  buildUrlWithQuery,
-  createFetchOptions,
-  parseResponseOrThrow,
-  queryNexus,
-} from './nexus.utils';
+import { HttpMethod, ErrorCategory, ClientErrorCode, ServerErrorCode, parseResponseOrThrow } from '@/libs';
+import { buildNexusUrl, buildCdnUrl, buildUrlWithQuery, createFetchOptions, queryNexus } from './nexus.utils';
 
 describe('nexus.utils', () => {
   describe('buildNexusUrl', () => {
@@ -60,26 +53,6 @@ describe('nexus.utils', () => {
     });
   });
 
-  describe('ensureHttpResponseOk', () => {
-    it('should not throw for successful response', () => {
-      const response = { ok: true, status: 200, statusText: 'OK' } as Response;
-      expect(() => ensureHttpResponseOk(response, ErrorService.Nexus, 'test', '/test')).not.toThrow();
-    });
-
-    it('should throw error for failed responses', () => {
-      const response = { ok: false, status: 400, statusText: 'Bad Request', headers: new Headers() } as Response;
-      expect(() => ensureHttpResponseOk(response, ErrorService.Nexus, 'test', '/test')).toThrow();
-      try {
-        ensureHttpResponseOk(response, ErrorService.Nexus, 'test', '/test');
-      } catch (error) {
-        expect(error).toMatchObject({
-          category: ErrorCategory.Client,
-          code: ClientErrorCode.BAD_REQUEST,
-        });
-      }
-    });
-  });
-
   describe('parseResponseOrThrow', () => {
     const createMockResponse = (overrides: Partial<Response> = {}) =>
       ({
@@ -93,7 +66,7 @@ describe('nexus.utils', () => {
       const response = createMockResponse({ status: 204, text: vi.fn().mockResolvedValue('') });
       await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
         category: ErrorCategory.Server,
-        code: ServerErrorCode.INTERNAL_ERROR,
+        code: ServerErrorCode.INVALID_RESPONSE,
       });
     });
 
@@ -101,7 +74,7 @@ describe('nexus.utils', () => {
       const response = createMockResponse({ text: vi.fn().mockResolvedValue('') });
       await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
         category: ErrorCategory.Server,
-        code: ServerErrorCode.INTERNAL_ERROR,
+        code: ServerErrorCode.INVALID_RESPONSE,
       });
     });
 
@@ -117,7 +90,7 @@ describe('nexus.utils', () => {
       const response = createMockResponse({ text: vi.fn().mockResolvedValue('invalid json {') });
       await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
         category: ErrorCategory.Server,
-        code: ServerErrorCode.INTERNAL_ERROR,
+        code: ServerErrorCode.INVALID_RESPONSE,
       });
     });
   });
@@ -168,7 +141,7 @@ describe('nexus.utils', () => {
       mockFetch.mockResolvedValueOnce(createMockResponse({ status: 204, text: vi.fn().mockResolvedValue('') }));
       await expect(queryNexus(url)).rejects.toMatchObject({
         category: ErrorCategory.Server,
-        code: ServerErrorCode.INTERNAL_ERROR,
+        code: ServerErrorCode.INVALID_RESPONSE,
       });
     });
 

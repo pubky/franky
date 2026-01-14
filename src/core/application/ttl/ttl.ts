@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Logger } from '@/libs';
+import { HttpMethod, Logger } from '@/libs';
 
 export class TtlApplication {
   private constructor() {}
@@ -83,7 +83,7 @@ export class TtlApplication {
       viewer_id: params.viewerId,
     });
 
-    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
+    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, HttpMethod.POST, JSON.stringify(body));
 
     await Core.LocalStreamUsersService.persistUsers(userBatch);
   }
@@ -106,7 +106,7 @@ export class TtlApplication {
       viewer_id: params.viewerId,
     });
 
-    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
+    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, HttpMethod.POST, JSON.stringify(body));
     await Core.LocalStreamUsersService.persistUsers(userBatch);
   }
 }

@@ -366,7 +366,11 @@ export class PostStreamApplication {
         user_ids: cacheMissUserIds,
         viewer_id: viewerId ?? undefined,
       });
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
+      const userBatch = await Core.queryNexus<Core.NexusUser[]>(
+        userUrl,
+        Libs.HttpMethod.POST,
+        JSON.stringify(userBody),
+      );
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }

@@ -21,11 +21,7 @@ export class SettingsApplication {
 
     Logger.info('[Settings] Pushing to homeserver', { url: meta.url, settings: settingsJson });
 
-    await Core.HomeserverService.request(
-      HttpMethod.PUT,
-      meta.url,
-      settingsJson as unknown as Record<string, unknown>,
-    );
+    await Core.HomeserverService.request(HttpMethod.PUT, meta.url, settingsJson as unknown as Record<string, unknown>);
 
     Logger.info('[Settings] Push complete');
   }

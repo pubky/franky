@@ -3,25 +3,88 @@ import {
   TAwaitLnVerificationResult,
   TCreateLnVerificationResult,
   TVerifySmsCodeResult,
-  ISendSmsCodeResult,
+  TSendSmsCodeResult,
   TSmsInfoResult,
   TLnInfoResult,
+  TRawApiResponse,
 } from './homegate.types';
 import { homegateApi } from './homegate.api';
 import { HOMEGATE_QUERY_KEYS } from './homegate.constants';
 import { homegateQueryClient } from './homegate.query-client';
-import { ErrorService, HttpStatusCode, JSON_HEADERS, fromHttpResponse } from '@/libs';
+import {
+  ErrorService,
+  HttpStatusCode,
+  JSON_HEADERS,
+  httpResponseToError,
+  safeFetch,
+  Err,
+  ServerErrorCode,
+  ValidationErrorCode,
+  HttpMethod,
+} from '@/libs';
+
+/**
+ * Safely parses JSON response from Homegate API.
+ * Throws AppError with proper context if parsing fails.
+ *
+ * @param response - The HTTP response to parse
+ * @param operation - The operation name for error context
+ * @param url - The endpoint URL for error context
+ * @returns Parsed JSON data
+ * @throws AppError when response body is empty or not valid JSON
+ */
+async function parseHomegateResponse<T>(response: Response, operation: string, url: string): Promise<T> {
+  const text = await response.text();
+
+  if (!text || text.trim() === '') {
+    throw Err.server(ServerErrorCode.INVALID_RESPONSE, 'Response body is empty (expected JSON)', {
+      service: ErrorService.Homegate,
+      operation,
+      context: { endpoint: url, statusCode: response.status },
+    });
+  }
+
+  try {
+    return JSON.parse(text) as T;
+  } catch (error) {
+    throw Err.server(ServerErrorCode.INVALID_RESPONSE, 'Failed to parse JSON response', {
+      service: ErrorService.Homegate,
+      operation,
+      context: { endpoint: url, statusCode: response.status, responsePreview: text.slice(0, 200) },
+      cause: error,
+    });
+  }
+}
+
+/** Regex for validating 64-character hex strings (payment hash format) */
+const PAYMENT_HASH_REGEX = /^[0-9a-fA-F]{64}$/;
+
+/**
+ * Validates that a payment hash is a 64-character hex string.
+ * @param paymentHash - The payment hash to validate
+ * @param operation - The operation name for error context
+ * @throws AppError with ValidationErrorCode.FORMAT_ERROR if invalid
+ */
+function assertValidPaymentHash(paymentHash: string, operation: string): void {
+  if (!PAYMENT_HASH_REGEX.test(paymentHash)) {
+    throw Err.validation(ValidationErrorCode.FORMAT_ERROR, 'Payment hash must be 64 hex characters', {
+      service: ErrorService.Homegate,
+      operation,
+      context: { paymentHash, expectedFormat: '64 hex characters' },
+    });
+  }
+}
 
 /**
  * Parses a Lightning verification status response from the API.
  */
-function parseLnVerificationStatus(json: Record<string, unknown>): TLnVerificationStatus {
+function parseLnVerificationStatus(json: TRawApiResponse): TLnVerificationStatus {
   return {
     id: json.id as string,
     amountSat: json.amountSat as number,
     expiresAt: json.expiresAt as number,
     isPaid: json.isPaid as boolean,
-    signupCode: (json.signupCode as string | undefined) ?? undefined,
+    signupCode: json.signupCode as string | undefined,
     homeserverPubky: json.homeserverPubky as string,
     createdAt: json.createdAt as number,
   };
@@ -60,7 +123,7 @@ export class HomegateService {
           return { available: false } as TSmsInfoResult;
         }
 
-        throw fromHttpResponse(response, ErrorService.Homegate, 'getSmsVerificationInfo', url);
+        throw httpResponseToError(response, ErrorService.Homegate, 'getSmsVerificationInfo', url);
       },
     });
   }
@@ -71,13 +134,14 @@ export class HomegateService {
    * @param phoneNumber - The phone number to send the SMS code to.
    * @returns The result of the SMS code send request.
    */
-  static async sendSmsCode(phoneNumber: string): Promise<ISendSmsCodeResult> {
+  static async sendSmsCode(phoneNumber: string): Promise<TSendSmsCodeResult> {
     const url = homegateApi.sendSmsCode();
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ phoneNumber }),
-      headers: JSON_HEADERS,
-    });
+    const response = await safeFetch(
+      url,
+      { method: HttpMethod.POST, body: JSON.stringify({ phoneNumber }), headers: JSON_HEADERS },
+      ErrorService.Homegate,
+      'sendSmsCode',
+    );
 
     if (!response.ok) {
       // Phone number is blocked
@@ -95,7 +159,7 @@ export class HomegateService {
         };
       }
 
-      return { success: false, errorType: 'unknown' };
+      return { success: false, errorType: 'unknown', statusCode: response.status };
     }
 
     return { success: true };
@@ -109,23 +173,24 @@ export class HomegateService {
    */
   static async verifySmsCode(phoneNumber: string, code: string): Promise<TVerifySmsCodeResult> {
     const url = homegateApi.validateSmsCode();
-    const response = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({ phoneNumber, code }),
-      headers: JSON_HEADERS,
-    });
+    const response = await safeFetch(
+      url,
+      { method: HttpMethod.POST, body: JSON.stringify({ phoneNumber, code }), headers: JSON_HEADERS },
+      ErrorService.Homegate,
+      'verifySmsCode',
+    );
 
     if (!response.ok) {
-      throw fromHttpResponse(response, ErrorService.Homegate, 'verifySmsCode', url);
+      throw httpResponseToError(response, ErrorService.Homegate, 'verifySmsCode', url);
     }
 
-    const json = await response.json();
+    const json = await parseHomegateResponse<TRawApiResponse>(response, 'verifySmsCode', url);
     // API returns valid as string "true" or "false"
     const isValid = json.valid === 'true' || json.valid === true;
     return {
       valid: isValid,
-      signupCode: json.signupCode,
-      homeserverPubky: json.homeserverPubky,
+      signupCode: json.signupCode as string | undefined,
+      homeserverPubky: json.homeserverPubky as string | undefined,
     };
   }
 
@@ -140,7 +205,13 @@ export class HomegateService {
       queryKey: HOMEGATE_QUERY_KEYS.lnVerificationInfo,
       queryFn: async () => {
         const url = homegateApi.getLnVerificationInfo();
-        const response = await fetch(url, { method: 'GET' });
+
+        const response = await safeFetch(
+          url,
+          { method: HttpMethod.GET },
+          ErrorService.Homegate,
+          'getLnVerificationInfo',
+        );
         
         if (response.ok) {
           const json = await response.json();
@@ -152,7 +223,7 @@ export class HomegateService {
           return { available: false } as TLnInfoResult;
         }
         
-        throw fromHttpResponse(response, ErrorService.Homegate, 'getLnVerificationInfo', url);
+        throw httpResponseToError(response, ErrorService.Homegate, 'getLnVerificationInfo', url);
       },
     });
   }
@@ -163,21 +234,23 @@ export class HomegateService {
    */
   static async createLnVerification(): Promise<TCreateLnVerificationResult> {
     const url = homegateApi.createLnVerification();
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: JSON_HEADERS,
-    });
+    const response = await safeFetch(
+      url,
+      { method: HttpMethod.POST, headers: JSON_HEADERS },
+      ErrorService.Homegate,
+      'createLnVerification',
+    );
 
     if (!response.ok) {
-      throw fromHttpResponse(response, ErrorService.Homegate, 'createLnVerification', url);
+      throw httpResponseToError(response, ErrorService.Homegate, 'createLnVerification', url);
     }
 
-    const json = await response.json();
+    const json = await parseHomegateResponse<TRawApiResponse>(response, 'createLnVerification', url);
     return {
-      id: json.id,
-      bolt11Invoice: json.bolt11Invoice,
-      amountSat: json.amountSat,
-      expiresAt: json.expiresAt,
+      id: json.id as string,
+      bolt11Invoice: json.bolt11Invoice as string,
+      amountSat: json.amountSat as number,
+      expiresAt: json.expiresAt as number,
     };
   }
 
@@ -187,16 +260,15 @@ export class HomegateService {
    * @returns The verification status.
    */
   static async getLnVerification(paymentHash: string): Promise<TLnVerificationStatus> {
+    assertValidPaymentHash(paymentHash, 'getLnVerification');
     const url = homegateApi.getLnVerification(paymentHash);
-    const response = await fetch(url, {
-      method: 'GET',
-    });
+    const response = await safeFetch(url, { method: HttpMethod.GET }, ErrorService.Homegate, 'getLnVerification');
 
     if (!response.ok) {
-      throw fromHttpResponse(response, ErrorService.Homegate, 'getLnVerification', url);
+      throw httpResponseToError(response, ErrorService.Homegate, 'getLnVerification', url);
     }
 
-    const json = await response.json();
+    const json = await parseHomegateResponse<TRawApiResponse>(response, 'getLnVerification', url);
     return parseLnVerificationStatus(json);
   }
 
@@ -207,10 +279,9 @@ export class HomegateService {
    * @returns The result of awaiting the verification.
    */
   static async awaitLnVerification(paymentHash: string): Promise<TAwaitLnVerificationResult> {
+    assertValidPaymentHash(paymentHash, 'awaitLnVerification');
     const url = homegateApi.awaitLnVerification(paymentHash);
-    const response = await fetch(url, {
-      method: 'GET',
-    });
+    const response = await safeFetch(url, { method: HttpMethod.GET }, ErrorService.Homegate, 'awaitLnVerification');
 
     if (!response.ok) {
       // Domain-specific handling: 408 timeout and 404 not found return result objects
@@ -221,11 +292,11 @@ export class HomegateService {
       if (response.status === HttpStatusCode.NOT_FOUND) {
         return { success: false, notFound: true };
       }
-      
-      throw fromHttpResponse(response, ErrorService.Homegate, 'awaitLnVerification', url);
+
+      throw httpResponseToError(response, ErrorService.Homegate, 'awaitLnVerification', url);
     }
 
-    const json = await response.json();
+    const json = await parseHomegateResponse<TRawApiResponse>(response, 'awaitLnVerification', url);
     return {
       success: true,
       data: parseLnVerificationStatus(json),

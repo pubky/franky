@@ -1,6 +1,6 @@
 import * as Config from '@/config';
 import { nexusQueryClient } from './nexus.query-client';
-import { HttpMethod, JSON_HEADERS, ensureHttpResponseOk, ErrorService, Err, ServerErrorCode, HttpStatusCode } from '@/libs';
+import { HttpMethod, JSON_HEADERS, safeFetch, httpResponseToError, ErrorService, parseResponseOrThrow } from '@/libs';
 
 export function buildNexusUrl(endpoint: string): string {
   return `${Config.NEXUS_URL}/${endpoint}`;
@@ -47,9 +47,10 @@ export function buildUrlWithQuery(
 }
 
 /**
- * Utility function to create fetch options with common headers
+ * Utility function to create fetch options with common headers.
+ * Body must be a string (typically JSON.stringify'd) to ensure safe query key serialization.
  */
-export function createFetchOptions(method: HttpMethod = HttpMethod.GET, body?: BodyInit | null): RequestInit {
+export function createFetchOptions(method: HttpMethod = HttpMethod.GET, body?: string | null): RequestInit {
   const options: RequestInit = {
     method,
     headers: JSON_HEADERS,
@@ -61,69 +62,41 @@ export function createFetchOptions(method: HttpMethod = HttpMethod.GET, body?: B
 }
 
 /**
- * Parses response body as JSON, throws NexusError if parsing fails
- * @param response - Response object
- * @returns Parsed JSON data
- * @throws {NexusError} When response body is not valid JSON
- */
-export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
-  const text = await response.text();
-
-  // Nexus API always returns JSON for successful responses.
-  // Empty body on 2xx is unexpected - treat as server error.
-  if (!text || text.trim() === '') {
-    throw Err.server(ServerErrorCode.INTERNAL_ERROR, 'Response body is empty (expected JSON)', {
-      service: ErrorService.Nexus,
-      operation: 'parseResponse',
-      context: { statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR },
-    });
-  }
-
-  try {
-    return JSON.parse(text) as T;
-  } catch (error) {
-    throw Err.server(ServerErrorCode.INTERNAL_ERROR, 'Failed to parse JSON response', {
-      service: ErrorService.Nexus,
-      operation: 'parseResponse',
-      context: { statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR },
-      cause: error,
-    });
-  }
-}
-
-/**
  * Raw fetch function without retry logic.
  * Used internally by queryNexus and for cases where retry is not desired.
  *
  * @param url - Full API endpoint URL
  * @param method - HTTP method (default: 'GET')
- * @param body - Request body (optional)
+ * @param body - JSON string body (use JSON.stringify for objects)
  * @returns Parsed response data
  * @throws {NexusError} When response is not ok or JSON parsing fails
  */
 export async function fetchNexus<T>(
   url: string,
   method: HttpMethod = HttpMethod.GET,
-  body: BodyInit | null = null,
+  body: string | null = null,
 ): Promise<T> {
-  const response = await fetch(url, createFetchOptions(method, body));
-  ensureHttpResponseOk(response, ErrorService.Nexus, 'fetchNexus', url);
+  const response = await safeFetch(url, createFetchOptions(method, body), ErrorService.Nexus, 'fetchNexus');
+  if (!response.ok) {
+    throw httpResponseToError(response, ErrorService.Nexus, 'fetchNexus', url);
+  }
   return parseResponseOrThrow<T>(response);
 }
 
 /**
- * Queries Nexus API with automatic retry logic via TanStack Query
+ * Queries Nexus API with automatic retry logic via TanStack Query.
+ * Body must be a string (typically JSON.stringify'd) to ensure proper cache key serialization.
  *
  * @param url - Full API endpoint URL
  * @param method - HTTP method (default: 'GET')
- * @param body - Request body (optional)
+ * @param body - JSON string body (use JSON.stringify for objects)
  * @returns Parsed response data
  * @throws {NexusError} When response is not ok after all retries
  */
 export async function queryNexus<T>(
   url: string,
   method: HttpMethod = HttpMethod.GET,
-  body: BodyInit | null = null,
+  body: string | null = null,
 ): Promise<T> {
   return nexusQueryClient.fetchQuery({
     queryKey: ['nexus', url, method, body],

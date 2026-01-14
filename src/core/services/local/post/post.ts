@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { DatabaseErrorCode, Err, ErrorService, HttpMethod } from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, HttpMethod, Logger } from '@/libs';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
@@ -47,13 +47,13 @@ export class LocalPostService {
     try {
       return await Core.PostRelationshipsModel.findByIdsPreserveOrder(postIds);
     } catch (error) {
-      Libs.Logger.error('Failed to read post relationships by ids', { postIds, error });
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Failed to read post relationships by ids',
-        500,
-        { error, postIds },
-      );
+      Logger.error('Failed to read post relationships by ids', { postIds, error });
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, 'Failed to read post relationships by ids', {
+        service: ErrorService.Local,
+        operation: 'readRelationshipsByIds',
+        context: { postIds },
+        cause: error,
+      });
     }
   }
 

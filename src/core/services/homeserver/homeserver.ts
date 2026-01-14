@@ -8,7 +8,7 @@ import {
   Env,
   Err,
   ValidationErrorCode,
-  fromHttpResponse,
+  httpResponseToError,
   ServerErrorCode,
   ErrorService,
 } from '@/libs';
@@ -29,10 +29,10 @@ import {
   createCancelableAuthApproval,
   resolveOwnedSessionPath,
   assertOk,
-  handleError,
   getOwnedResponse,
   PUBKY_PREFIX,
 } from './homeserver.utils';
+import { handleError } from './error.utils';
 
 import type { PubPath } from './homeserver.types';
 
@@ -40,6 +40,8 @@ const TESTNET = Config.TESTNET.toString() === 'true';
 
 const CAPABILITIES = '/pub/pubky.app/:rw';
 const PUB_PATH_PREFIX = '/pub/' as const;
+/** Default limit for list operations */
+const LIST_DEFAULT_LIMIT = 500;
 
 export class HomeserverService {
   private constructor() {}
@@ -106,14 +108,23 @@ export class HomeserverService {
 
       return { session };
     } catch (error) {
-      return handleError(error, { signupTokenProvided: Boolean(signupToken) }, HttpStatusCode.INTERNAL_SERVER_ERROR, true);
+      return handleError(
+        error,
+        { signupTokenProvided: Boolean(signupToken) },
+        HttpStatusCode.INTERNAL_SERVER_ERROR,
+        true,
+      );
     }
   }
 
   /**
-   * Signs in a user to the homeserver
+   * Signs in a user to the homeserver.
+   *
+   * If signin fails due to missing homeserver records, this method will attempt to republish
+   * the homeserver and return `undefined` to signal the caller should retry the signin.
+   *
    * @param keypair - The keypair to sign in with
-   * @returns The session
+   * @returns The session result, or `undefined` if homeserver was republished and caller should retry
    */
   static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
     const signer = this.getSigner(keypair);
@@ -176,7 +187,14 @@ export class HomeserverService {
    */
   static async generateSignupAuthUrl(inviteCode: string, caps?: Capabilities): Promise<Core.TGenerateAuthUrlResult> {
     const res = await this.generateAuthUrl(caps);
-    const url = URL.parse(res.authorizationUrl)!;
+    const url = URL.parse(res.authorizationUrl);
+    if (!url) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid authorization URL format', {
+        service: ErrorService.Homeserver,
+        operation: 'generateSignupAuthUrl',
+        context: { authorizationUrl: res.authorizationUrl },
+      });
+    }
     url.host = 'signup';
     url.pathname = '';
     url.searchParams.set('hs', Env.NEXT_PUBLIC_HOMESERVER);
@@ -241,14 +259,10 @@ export class HomeserverService {
           return (await parseResponseOrUndefined<T>(response)) as T;
         }
         case HttpMethod.PUT:
-          await session.storage
-            .putJson(path, bodyJson ?? {})
-            .catch((error) => handleError(error, { url, method }));
+          await session.storage.putJson(path, bodyJson ?? {}).catch((error) => handleError(error, { url, method }));
           return undefined as T;
         case HttpMethod.DELETE:
-          await session.storage
-            .delete(path)
-            .catch((error) => handleError(error, { url, method }));
+          await session.storage.delete(path).catch((error) => handleError(error, { url, method }));
           return undefined as T;
       }
     }
@@ -258,7 +272,11 @@ export class HomeserverService {
       throw Err.validation(
         ValidationErrorCode.INVALID_INPUT,
         `Authenticated writes must target an owned ${PUB_PATH_PREFIX}* path for the current session.`,
-        { service: ErrorService.Homeserver, operation: 'request', context: { url, method, statusCode: HttpStatusCode.BAD_REQUEST } },
+        {
+          service: ErrorService.Homeserver,
+          operation: 'request',
+          context: { url, method, statusCode: HttpStatusCode.BAD_REQUEST },
+        },
       );
     }
 
@@ -275,9 +293,7 @@ export class HomeserverService {
 
     await assertOk(response, url, 'request');
 
-    return method === HttpMethod.GET
-      ? ((await parseResponseOrUndefined<T>(response)) as T)
-      : (undefined as T);
+    return method === HttpMethod.GET ? ((await parseResponseOrUndefined<T>(response)) as T) : (undefined as T);
   }
 
   /**
@@ -304,7 +320,11 @@ export class HomeserverService {
       throw Err.validation(
         ValidationErrorCode.INVALID_INPUT,
         `Blob uploads must target an owned ${PUB_PATH_PREFIX}* path for the current session.`,
-        { service: ErrorService.Homeserver, operation: 'putBlob', context: { url, statusCode: HttpStatusCode.BAD_REQUEST } },
+        {
+          service: ErrorService.Homeserver,
+          operation: 'putBlob',
+          context: { url, statusCode: HttpStatusCode.BAD_REQUEST },
+        },
       );
     }
 
@@ -327,7 +347,7 @@ export class HomeserverService {
     baseDirectory: string,
     cursor?: string,
     reverse: boolean = false,
-    limit: number = 500,
+    limit: number = LIST_DEFAULT_LIMIT,
   ): Promise<string[]> {
     const pubkySdk = this.getPubkySdk();
     try {
@@ -361,10 +381,9 @@ export class HomeserverService {
    * Fetches a resource from the homeserver.
    *
    * @param {string} url - Pubky URL to fetch.
-   * @param {Core.FetchOptions} [options] - Optional fetch options.
    * @returns {Promise<Response>} The fetch response.
    */
-  static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
+  static async get(url: string): Promise<Response> {
     const pubkySdk = this.getPubkySdk();
     try {
       if (isHttpUrl(url)) {
@@ -394,7 +413,6 @@ export class HomeserverService {
     }
   }
 
-  // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
   /**
    * Generates a signup token for dev/test environments.
    * Calls the server-side API route to keep admin credentials secure.
@@ -425,7 +443,7 @@ export class HomeserverService {
     });
 
     if (!response.ok) {
-      throw fromHttpResponse(response, ErrorService.Homeserver, 'generateSignupToken', '/api/dev/signup-token');
+      throw httpResponseToError(response, ErrorService.Homeserver, 'generateSignupToken', '/api/dev/signup-token');
     }
 
     const data = await response.json();

@@ -106,11 +106,7 @@ describe('FeedApplication', () => {
           tags: ['bitcoin', 'lightning'],
         }),
       );
-      expect(requestSpy).toHaveBeenCalledWith(
-        HttpMethod.PUT,
-        expect.stringContaining('pubky://'),
-        expect.any(Object),
-      );
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, expect.stringContaining('pubky://'), expect.any(Object));
       expect(result).toBeTruthy();
       expect(result!.id).toBe(1);
     });
