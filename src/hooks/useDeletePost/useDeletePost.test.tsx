@@ -4,9 +4,23 @@ import { useDeletePost } from './useDeletePost';
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 
+// Hoist mock data and functions
+const { mockToast, mockDelete, mockGetPostDetails, mockRemovePosts, mockPrependPosts } = vi.hoisted(() => {
+  const toast = Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  });
+  return {
+    mockToast: toast,
+    mockDelete: vi.fn(),
+    mockGetPostDetails: vi.fn(),
+    mockRemovePosts: vi.fn(),
+    mockPrependPosts: vi.fn(),
+  };
+});
+
 // Mock Core
-const mockDelete = vi.fn();
-const mockGetPostDetails = vi.fn();
 vi.mock('@/core', () => ({
   PostController: {
     commitDelete: vi.fn(),
@@ -14,17 +28,16 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock molecules (useToast)
-const mockToast = vi.fn();
-vi.mock('@/molecules', () => ({
-  useToast: () => ({
+// Mock molecules - now using Sonner toast
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
     toast: mockToast,
-  }),
-}));
+  };
+});
 
 // Mock organisms (useTimelineFeedContext)
-const mockRemovePosts = vi.fn();
-const mockPrependPosts = vi.fn();
 const mockTimelineFeed = {
   removePosts: mockRemovePosts,
   prependPosts: mockPrependPosts,
@@ -92,8 +105,7 @@ describe('useDeletePost', () => {
       await result.current.deletePost();
     });
 
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Post deleted',
+    expect(mockToast.success).toHaveBeenCalledWith('Post deleted', {
       description: 'Your post has been deleted',
     });
   });
@@ -167,10 +179,8 @@ describe('useDeletePost', () => {
       await result.current.deletePost();
     });
 
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Error',
+    expect(mockToast.error).toHaveBeenCalledWith('Error', {
       description: 'Failed to delete post. Please try again.',
-      className: 'destructive border-destructive bg-destructive text-destructive-foreground',
     });
   });
 
@@ -227,8 +237,7 @@ describe('useDeletePost', () => {
 
     expect(mockRemovePosts).not.toHaveBeenCalled();
     expect(mockPrependPosts).not.toHaveBeenCalled();
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Post deleted',
+    expect(mockToast.success).toHaveBeenCalledWith('Post deleted', {
       description: 'Your post has been deleted',
     });
   });

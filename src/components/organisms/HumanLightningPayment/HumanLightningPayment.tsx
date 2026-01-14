@@ -14,7 +14,6 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
   const rate = useBtcRate();
   const [isLoading, setIsLoading] = useState(true);
   const [isPaymentExpired, setIsPaymentExpired] = useState(false);
-  const { toast } = Molecules.useToast();
 
   /**
    * Request a new lightning invoice if the verification is expired or not set.
@@ -26,23 +25,18 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
         verification.abort();
       }
       const onPaymentConfirmed = async (signupCode: string, homeserverPubky: string) => {
-        toast({
-          title: 'Payment successful',
-        });
+        Molecules.toast.success('Payment successful');
         onSuccess(signupCode, homeserverPubky);
       };
       const onPaymentExpired = () => {
         setIsPaymentExpired(true);
-        toast({
-          title: 'Payment expired',
-        });
+        Molecules.toast.error('Payment expired');
       };
       const client = await VerificationHandler.create(onPaymentConfirmed, onPaymentExpired);
       setVerification(client);
       setIsPaymentExpired(false);
     } catch {
-      toast({
-        title: 'Failed to request lightning invoice',
+      Molecules.toast.error('Failed to request lightning invoice', {
         description: 'Please try again later. If the problem persists, please contact support.',
       });
     } finally {
@@ -67,9 +61,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text);
-    toast({
-      title: 'Invoice copied to clipboard',
-    });
+    Molecules.toast.success('Invoice copied to clipboard');
   }
 
   return (

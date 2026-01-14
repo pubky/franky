@@ -19,14 +19,12 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  const { toast } = Molecules.useToast();
-
   const handleFullscreen = () => {
     const currentMedia = document.getElementById(`media-item-${currentIndex}`);
 
     if (currentMedia) {
       currentMedia.requestFullscreen().catch((error) => {
-        toast({ title: 'Error attempting to enable fullscreen', description: error });
+        Molecules.toast.error('Error attempting to enable fullscreen', { description: String(error) });
       });
     }
   };

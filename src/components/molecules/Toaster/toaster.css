@@ -1,0 +1,59 @@
+/* Custom toast styles for Sonner component */
+
+/* Responsive toaster visibility */
+.toaster-mobile {
+  display: block;
+}
+
+.toaster-desktop {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .toaster-mobile {
+    display: none;
+  }
+
+  .toaster-desktop {
+    display: block;
+  }
+}
+
+/* Ensure toast respects max-width and doesn't overflow */
+.toast-custom {
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  justify-content: space-between !important;
+}
+
+/* Toast content wrapper - contains title and description */
+.toast-custom [data-content] {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Ensure title and description truncate properly */
+.toast-custom [data-title],
+.toast-custom [data-description] {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Ensure button doesn't shrink, doesn't wrap, and stays at the right */
+.toast-custom button[data-button] {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Icon styling - use brand color from design system */
+.toast-custom [data-icon] svg {
+  color: var(--brand) !important;
+}
+
+.toast-custom [data-icon] svg * {
+  fill: var(--brand) !important;
+  stroke: var(--brand) !important;
+  color: var(--brand) !important;
+}

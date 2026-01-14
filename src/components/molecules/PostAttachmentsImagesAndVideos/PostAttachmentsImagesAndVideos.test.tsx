@@ -4,10 +4,14 @@ import { useEffect } from 'react';
 import { PostAttachmentsImagesAndVideos } from './PostAttachmentsImagesAndVideos';
 import type { AttachmentConstructed } from '@/organisms/PostAttachments/PostAttachments.types';
 
-// Mock useToast
-const mockToast = vi.fn();
+// Mock toast
+const mockToastError = vi.fn();
 vi.mock('@/molecules', () => ({
-  useToast: () => ({ toast: mockToast }),
+  toast: {
+    error: (...args: unknown[]) => mockToastError(...args),
+    success: vi.fn(),
+    dismiss: vi.fn(),
+  },
   PostAttachmentsCarouselImage: ({
     id,
     image,
@@ -618,9 +622,8 @@ describe('PostAttachmentsImagesAndVideos', () => {
 
       // Wait for the promise rejection to be handled
       await vi.waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error attempting to enable fullscreen',
-          description: mockError,
+        expect(mockToastError).toHaveBeenCalledWith('Error attempting to enable fullscreen', {
+          description: String(mockError),
         });
       });
 

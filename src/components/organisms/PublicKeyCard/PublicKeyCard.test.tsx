@@ -11,8 +11,9 @@ import { PublicKeyCard } from './PublicKeyCard';
 // });
 
 // Hoisted mocks so they can be used inside vi.mock factories
-const { mockToast, mockDismiss } = vi.hoisted(() => ({
+const { mockToast, mockToastError, mockDismiss } = vi.hoisted(() => ({
   mockToast: vi.fn(),
+  mockToastError: vi.fn(),
   mockDismiss: vi.fn(),
 }));
 
@@ -30,78 +31,82 @@ interface ActionProps {
   className?: string;
 }
 
-// Mock molecules
-vi.mock('@/molecules', () => ({
-  useToast: () => ({
-    toast: mockToast,
-  }),
-  toast: mockToast,
-  ContentCard: ({ children, image }: { children: React.ReactNode; image?: ImageProps }) => (
-    <div data-testid="content-card">
-      {image && <img data-testid="content-card-image" src={image.src} alt={image.alt} data-size={image.size} />}
-      {children}
-    </div>
-  ),
-  PopoverPublicKey: () => <div data-testid="popover-public-key">Popover</div>,
-  ActionSection: ({
-    children,
-    actions,
-    className,
-  }: {
-    children: React.ReactNode;
-    actions?: ActionProps[];
-    className?: string;
-  }) => (
-    <div data-testid="action-section" className={className}>
-      {actions?.map((action: ActionProps, index: number) => (
-        <button
-          key={index}
-          data-testid={`action-button-${index}`}
-          onClick={action.onClick}
-          data-variant={action.variant}
-          className={action.className}
-        >
-          {action.icon}
-          {action.label}
-        </button>
-      ))}
-      {children}
-    </div>
-  ),
-  InputField: ({
-    value,
-    variant,
-    readOnly,
-    onClick,
-    loading,
-    loadingText,
-    loadingIcon,
-    icon,
-  }: {
-    value?: string;
-    variant?: string;
-    readOnly?: boolean;
-    onClick?: () => void;
-    loading?: boolean;
-    loadingText?: string;
-    loadingIcon?: React.ReactNode;
-    icon?: React.ReactNode;
-  }) => (
-    <div data-testid="input-field">
-      {loading ? (
-        <div data-testid="loading">
-          {loadingIcon}
-          {loadingText}
-        </div>
-      ) : (
-        <div>
-          {icon}
-          <input data-testid="input" value={value} readOnly={readOnly} onClick={onClick} data-variant={variant} />
-        </div>
-      )}
-    </div>
-  ),
-}));
+// Mock molecules - toast is a function with error/success methods
+vi.mock('@/molecules', () => {
+  const toastFn = Object.assign((...args: unknown[]) => mockToast(...args), {
+    error: (...args: unknown[]) => mockToastError(...args),
+    success: vi.fn(),
+    dismiss: mockDismiss,
+  });
+  return {
+    toast: toastFn,
+    ContentCard: ({ children, image }: { children: React.ReactNode; image?: ImageProps }) => (
+      <div data-testid="content-card">
+        {image && <img data-testid="content-card-image" src={image.src} alt={image.alt} data-size={image.size} />}
+        {children}
+      </div>
+    ),
+    PopoverPublicKey: () => <div data-testid="popover-public-key">Popover</div>,
+    ActionSection: ({
+      children,
+      actions,
+      className,
+    }: {
+      children: React.ReactNode;
+      actions?: ActionProps[];
+      className?: string;
+    }) => (
+      <div data-testid="action-section" className={className}>
+        {actions?.map((action: ActionProps, index: number) => (
+          <button
+            key={index}
+            data-testid={`action-button-${index}`}
+            onClick={action.onClick}
+            data-variant={action.variant}
+            className={action.className}
+          >
+            {action.icon}
+            {action.label}
+          </button>
+        ))}
+        {children}
+      </div>
+    ),
+    InputField: ({
+      value,
+      variant,
+      readOnly,
+      onClick,
+      loading,
+      loadingText,
+      loadingIcon,
+      icon,
+    }: {
+      value?: string;
+      variant?: string;
+      readOnly?: boolean;
+      onClick?: () => void;
+      loading?: boolean;
+      loadingText?: string;
+      loadingIcon?: React.ReactNode;
+      icon?: React.ReactNode;
+    }) => (
+      <div data-testid="input-field">
+        {loading ? (
+          <div data-testid="loading">
+            {loadingIcon}
+            {loadingText}
+          </div>
+        ) : (
+          <div>
+            {icon}
+            <input data-testid="input" value={value} readOnly={readOnly} onClick={onClick} data-variant={variant} />
+          </div>
+        )}
+      </div>
+    ),
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -390,8 +395,7 @@ describe('PublicKeyCard', () => {
 
     expect(mockShareWithFallback).toHaveBeenCalled();
     expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPubky);
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Sharing unavailable',
+    expect(mockToast).toHaveBeenCalledWith('Sharing unavailable', {
       description: 'We copied your pubky so you can paste it into your favorite app.',
     });
   });
@@ -412,8 +416,7 @@ describe('PublicKeyCard', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(mockShareWithFallback).toHaveBeenCalled();
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Share failed',
+    expect(mockToastError).toHaveBeenCalledWith('Share failed', {
       description: 'Unable to share right now. Please try again.',
     });
   });

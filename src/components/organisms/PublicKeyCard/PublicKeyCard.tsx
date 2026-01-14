@@ -12,7 +12,6 @@ export function PublicKeyCard() {
   const secretKey = Core.useOnboardingStore((state) => state.secretKey);
   const pubky = Core.useAuthStore((state) => state.currentUserPubky);
   const { copyToClipboard } = Hooks.useCopyToClipboard();
-  const { toast } = Molecules.useToast();
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
@@ -46,15 +45,13 @@ export function PublicKeyCard() {
           },
           onSuccess: (result) => {
             if (result.method === 'fallback') {
-              toast({
-                title: 'Sharing unavailable',
+              Molecules.toast('Sharing unavailable', {
                 description: 'We copied your pubky so you can paste it into your favorite app.',
               });
             }
           },
           onError: () => {
-            toast({
-              title: 'Share failed',
+            Molecules.toast.error('Share failed', {
               description: 'Unable to share right now. Please try again.',
             });
           },
