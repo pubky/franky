@@ -198,7 +198,7 @@ describe('useFeedback', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(global.fetch).toHaveBeenCalledWith('/api/chatwoot', {
+      expect(global.fetch).toHaveBeenCalledWith('/api/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

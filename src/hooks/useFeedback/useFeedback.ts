@@ -5,7 +5,7 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 
 /**
- * Hook to handle feedback submission to Chatwoot.
+ * Hook to handle feedback submission.
  *
  * Fetches current user data internally via useCurrentUserProfile.
  * Submission is guarded - requires authenticated user with loaded profile.
@@ -45,7 +45,7 @@ export function useFeedback() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/chatwoot', {
+      const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
