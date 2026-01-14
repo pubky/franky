@@ -6,6 +6,7 @@ import type { PostTagAddButtonProps } from './PostTagAddButton.types';
 export function PostTagAddButton({ onClick, className, disabled }: PostTagAddButtonProps) {
   return (
     <Atoms.Button
+      data-cy="post-tag-add-button"
       onClick={onClick}
       variant="outline"
       size="sm"
