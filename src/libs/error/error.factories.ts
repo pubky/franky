@@ -41,6 +41,7 @@ function createAppError<C extends ErrorCategory>(
   message: string,
   params: FactoryParams,
 ): AppError {
+  
   return new AppError({
     category,
     code,

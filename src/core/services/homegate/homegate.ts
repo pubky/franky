@@ -10,30 +10,7 @@ import {
 import { homegateApi } from './homegate.api';
 import { HOMEGATE_QUERY_KEYS } from './homegate.constants';
 import { homegateQueryClient } from './homegate.query-client';
-import { Logger, createNexusError, NexusErrorType } from '@/libs';
-
-async function logRequestError(response: Response, url: string) {
-  let body = undefined;
-  try {
-    // Clone the response before reading to avoid "Body has already been read" errors
-    const clonedResponse = response.clone();
-    body = await clonedResponse.text();
-    try {
-      body = JSON.parse(body);
-    } catch {} // Not JSON, use the raw body
-  } catch {}
-
-  Logger.error(`Failed to send request to ${url}`, {
-    status: response.status,
-    statusText: response.statusText,
-    body,
-  });
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    body,
-  };
-}
+import { ErrorService, HttpStatusCode, JSON_HEADERS, fromHttpResponse } from '@/libs';
 
 /**
  * Parses a Lightning verification status response from the API.
@@ -83,13 +60,7 @@ export class HomegateService {
           return { available: false } as TSmsInfoResult;
         }
 
-        await logRequestError(response, url);
-        throw createNexusError(
-          NexusErrorType.SERVICE_UNAVAILABLE,
-          'Failed to get SMS verification info',
-          response.status,
-          { url, action: 'getSmsVerificationInfo' },
-        );
+        throw fromHttpResponse(response, ErrorService.Homegate, 'getSmsVerificationInfo', url);
       },
     });
   }
@@ -105,30 +76,29 @@ export class HomegateService {
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify({ phoneNumber }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
     });
-    if (response.ok) {
-      return { success: true };
+
+    if (!response.ok) {
+      // Phone number is blocked
+      if (response.status === HttpStatusCode.FORBIDDEN) {
+        return { success: false, errorType: 'blocked' };
+      }
+
+      // Rate limited (weekly/annual limit exceeded)
+      if (response.status === HttpStatusCode.TOO_MANY_REQUESTS) {
+        const retryAfter = response.headers.get('retry-after');
+        return {
+          success: false,
+          errorType: 'rate_limited',
+          retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
+        };
+      }
+
+      return { success: false, errorType: 'unknown' };
     }
 
-    await logRequestError(response, url);
-
-    // Phone number is blocked
-    if (response.status === 403) {
-      return { success: false, errorType: 'blocked' };
-    }
-
-    // Rate limited (weekly/annual limit exceeded)
-    if (response.status === 429) {
-      const retryAfter = response.headers.get('retry-after');
-      return {
-        success: false,
-        errorType: 'rate_limited',
-        retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
-      };
-    }
-
-    return { success: false, errorType: 'unknown' };
+    return { success: true };
   }
 
   /**
@@ -142,23 +112,21 @@ export class HomegateService {
     const response = await fetch(url, {
       method: 'POST',
       body: JSON.stringify({ phoneNumber, code }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: JSON_HEADERS,
     });
-    if (response.ok) {
-      const json = await response.json();
-      // API returns valid as string "true" or "false"
-      const isValid = json.valid === 'true' || json.valid === true;
-      return {
-        valid: isValid,
-        signupCode: json.signupCode,
-        homeserverPubky: json.homeserverPubky,
-      };
+
+    if (!response.ok) {
+      throw fromHttpResponse(response, ErrorService.Homegate, 'verifySmsCode', url);
     }
-    await logRequestError(response, url);
-    throw createNexusError(NexusErrorType.SERVICE_UNAVAILABLE, 'Failed to validate SMS code', response.status, {
-      url,
-      action: 'verifySmsCode',
-    });
+
+    const json = await response.json();
+    // API returns valid as string "true" or "false"
+    const isValid = json.valid === 'true' || json.valid === true;
+    return {
+      valid: isValid,
+      signupCode: json.signupCode,
+      homeserverPubky: json.homeserverPubky,
+    };
   }
 
   /**
@@ -173,7 +141,7 @@ export class HomegateService {
       queryFn: async () => {
         const url = homegateApi.getLnVerificationInfo();
         const response = await fetch(url, { method: 'GET' });
-
+        
         if (response.ok) {
           const json = await response.json();
           return { available: true, amountSat: json.amountSat } as TLnInfoResult;
@@ -183,14 +151,8 @@ export class HomegateService {
         if (response.status === 403) {
           return { available: false } as TLnInfoResult;
         }
-
-        await logRequestError(response, url);
-        throw createNexusError(
-          NexusErrorType.SERVICE_UNAVAILABLE,
-          'Failed to get Lightning verification info',
-          response.status,
-          { url, action: 'getLnVerificationInfo' },
-        );
+        
+        throw fromHttpResponse(response, ErrorService.Homegate, 'getLnVerificationInfo', url);
       },
     });
   }
@@ -203,28 +165,20 @@ export class HomegateService {
     const url = homegateApi.createLnVerification();
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: JSON_HEADERS,
     });
 
-    if (response.ok) {
-      const json = await response.json();
-      return {
-        id: json.id,
-        bolt11Invoice: json.bolt11Invoice,
-        amountSat: json.amountSat,
-        expiresAt: json.expiresAt,
-      };
+    if (!response.ok) {
+      throw fromHttpResponse(response, ErrorService.Homegate, 'createLnVerification', url);
     }
 
-    await logRequestError(response, url);
-    throw createNexusError(
-      NexusErrorType.SERVICE_UNAVAILABLE,
-      'Failed to create Lightning verification',
-      response.status,
-      { url, action: 'createLnVerification' },
-    );
+    const json = await response.json();
+    return {
+      id: json.id,
+      bolt11Invoice: json.bolt11Invoice,
+      amountSat: json.amountSat,
+      expiresAt: json.expiresAt,
+    };
   }
 
   /**
@@ -238,18 +192,12 @@ export class HomegateService {
       method: 'GET',
     });
 
-    if (response.ok) {
-      const json = await response.json();
-      return parseLnVerificationStatus(json);
+    if (!response.ok) {
+      throw fromHttpResponse(response, ErrorService.Homegate, 'getLnVerification', url);
     }
 
-    await logRequestError(response, url);
-    throw createNexusError(
-      NexusErrorType.SERVICE_UNAVAILABLE,
-      'Failed to get Lightning verification status',
-      response.status,
-      { url, action: 'getLnVerification' },
-    );
+    const json = await response.json();
+    return parseLnVerificationStatus(json);
   }
 
   /**
@@ -263,28 +211,24 @@ export class HomegateService {
     const response = await fetch(url, {
       method: 'GET',
     });
-    if (response.ok) {
-      const json = await response.json();
-      return {
-        success: true,
-        data: parseLnVerificationStatus(json),
-      };
+
+    if (!response.ok) {
+      // Domain-specific handling: 408 timeout and 404 not found return result objects
+      if (response.status === HttpStatusCode.REQUEST_TIMEOUT) {
+        return { success: false, timeout: true };
+      }
+
+      if (response.status === HttpStatusCode.NOT_FOUND) {
+        return { success: false, notFound: true };
+      }
+      
+      throw fromHttpResponse(response, ErrorService.Homegate, 'awaitLnVerification', url);
     }
 
-    if (response.status === 408) {
-      return { success: false, timeout: true };
-    }
-
-    if (response.status === 404) {
-      return { success: false, notFound: true };
-    }
-
-    await logRequestError(response, url);
-    throw createNexusError(
-      NexusErrorType.SERVICE_UNAVAILABLE,
-      'Failed to await Lightning verification',
-      response.status,
-      { url, action: 'awaitLnVerification' },
-    );
+    const json = await response.json();
+    return {
+      success: true,
+      data: parseLnVerificationStatus(json),
+    };
   }
 }

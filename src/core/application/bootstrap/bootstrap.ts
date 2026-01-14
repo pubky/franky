@@ -1,4 +1,4 @@
-import * as Libs from '@/libs';
+import { HttpMethod, HttpStatusCode, Logger, AppError, Env } from '@/libs';
 import * as Core from '@/core';
 import * as Config from '@/config';
 
@@ -16,13 +16,13 @@ export class BootstrapApplication {
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
     const data = await Core.NexusBootstrapService.fetch(params.pubky);
     if (!data.indexed) {
-      Libs.Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
+      Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
         pubky: params.pubky,
-        retryDelayMs: Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
+        retryDelayMs: Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
       });
 
       // Write TTL record to become stale after configured retry delay
-      await Core.LocalUserService.upsertTtlWithDelay(params.pubky, Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS);
+      await Core.LocalUserService.upsertTtlWithDelay(params.pubky, Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS);
 
       // Subscribe to TTL coordinator for periodic staleness checks
       Core.TtlCoordinator.getInstance().subscribeUser({ pubky: params.pubky });
@@ -79,11 +79,11 @@ export class BootstrapApplication {
       // If remote settings were returned and are newer, update the local store
       if (remoteSettings) {
         Core.useSettingsStore.getState().loadFromHomeserver(remoteSettings);
-        Libs.Logger.info('Settings loaded from homeserver', { pubky });
+        Logger.info('Settings loaded from homeserver', { pubky });
       }
     } catch (error) {
       // Log but don't throw, settings sync failure shouldn't block bootstrap
-      Libs.Logger.error('Failed to initialize settings during bootstrap', { error, pubky });
+      Logger.error('Failed to initialize settings during bootstrap', { error, pubky });
     }
   }
 
@@ -104,20 +104,20 @@ export class BootstrapApplication {
     let userLastRead: number;
     try {
       const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
-        Core.HomeserverAction.GET,
+        HttpMethod.GET,
         lastReadUrl,
       );
       userLastRead = timestamp;
     } catch (error) {
       // Only handle 404 errors (resource not found), rethrow everything else
-      if (error instanceof Libs.AppError && error.statusCode === 404) {
-        Libs.Logger.info('Last read file not found, creating new one', { pubky });
+      if (error instanceof AppError && error.statusCode === HttpStatusCode.NOT_FOUND) {
+        Logger.info('Last read file not found, creating new one', { pubky });
         const lastRead = Core.LastReadNormalizer.to(pubky);
-        void Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
+        void Core.HomeserverService.request(HttpMethod.PUT, lastRead.meta.url, lastRead.last_read.toJson());
         userLastRead = Number(lastRead.last_read.timestamp);
       } else {
         // Network errors, timeouts, server errors, etc. should bubble up
-        Libs.Logger.error('Failed to fetch last read timestamp', error);
+        Logger.error('Failed to fetch last read timestamp', error);
         // TODO: TO harsh, we should handle this error better
         throw error;
       }

@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 /**
  * File Application
@@ -24,7 +25,7 @@ export class FileApplication {
         // Upload Blob
         await Core.HomeserverService.putBlob(blobResult.meta.url, blobResult.blob.data);
         // Create File Record
-        await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
+        await Core.HomeserverService.request(HttpMethod.PUT, fileResult.meta.url, fileResult.file.toJson());
         // Persist Files locally
         await Core.LocalFileService.create({ blobResult, fileResult });
       }),
@@ -51,7 +52,7 @@ export class FileApplication {
             await Core.HomeserverService.delete(file.src);
             await Core.LocalFileService.deleteById(fileCompositeId);
           } else {
-            const file = (await Core.HomeserverService.request(Core.HomeserverAction.GET, fileUri)) as { src: string };
+            const file = (await Core.HomeserverService.request(HttpMethod.GET, fileUri)) as { src: string };
             // Delete the file blob
             await Core.HomeserverService.delete(file.src);
           }

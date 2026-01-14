@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TagResult } from 'pubky-app-specs';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import type { TTagEventParams } from './tag.types';
 
 // Mock HomeserverService
@@ -117,7 +118,7 @@ describe('TagController', () => {
 
         // Verify homeserver sync was called
         expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
+          HttpMethod.PUT,
           expect.stringContaining('pubky://'),
           expect.any(Object),
         );
@@ -131,7 +132,7 @@ describe('TagController', () => {
 
         // Verify homeserver sync was called
         expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
+          HttpMethod.PUT,
           expect.stringContaining('pubky://'),
           expect.any(Object),
         );
@@ -174,7 +175,7 @@ describe('TagController', () => {
 
         // Verify homeserver sync was called
         expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          Core.HomeserverAction.DELETE,
+          HttpMethod.DELETE,
           expect.stringContaining('pubky://'),
         );
       });
@@ -187,7 +188,7 @@ describe('TagController', () => {
 
         // Verify homeserver sync was called
         expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          Core.HomeserverAction.DELETE,
+          HttpMethod.DELETE,
           expect.stringContaining('pubky://'),
         );
       });

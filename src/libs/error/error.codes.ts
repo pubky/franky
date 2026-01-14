@@ -41,6 +41,7 @@ export enum ClientErrorCode {
   CONFLICT = 'CONFLICT',
   GONE = 'GONE',
   UNPROCESSABLE = 'UNPROCESSABLE',
+  PAYLOAD_TOO_LARGE = 'PAYLOAD_TOO_LARGE',
 }
 
 /**

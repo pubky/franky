@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PubkyAppFeedReach, PubkyAppFeedSort, FeedResult, PubkyAppFeedLayout } from 'pubky-app-specs';
 import { FeedApplication } from './feed';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 // Mock the LocalFeedService
 vi.mock('@/core/services/local/feed', () => ({
@@ -106,7 +107,7 @@ describe('FeedApplication', () => {
         }),
       );
       expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
+        HttpMethod.PUT,
         expect.stringContaining('pubky://'),
         expect.any(Object),
       );
@@ -188,7 +189,7 @@ describe('FeedApplication', () => {
       const result = await FeedApplication.commitDelete({ userId: testUserId, params: mockParams });
 
       expect(deleteSpy).toHaveBeenCalledWith({ feedId: 123 });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, expect.stringContaining('pubky://'));
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, expect.stringContaining('pubky://'));
       expect(result).toBeUndefined();
     });
 

@@ -3,24 +3,19 @@ import type { BlobResult, FileResult } from 'pubky-app-specs';
 import type { Pubky } from '@/core/models/models.types';
 import type { NexusFileDetails } from '@/core/services/nexus/nexus.types';
 import { FileVariant } from '@/core/services/nexus/file/file.types';
+import { HttpMethod } from '@/libs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({
   getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
-// Mock HomeserverService methods and provide enum-like HomeserverAction
+// Mock HomeserverService methods
 vi.mock('@/core/services/homeserver', () => ({
   HomeserverService: {
     putBlob: vi.fn(),
     request: vi.fn(),
     delete: vi.fn(),
-  },
-  HomeserverAction: {
-    GET: 'GET',
-    POST: 'POST',
-    PUT: 'PUT',
-    DELETE: 'DELETE',
   },
 }));
 
@@ -127,7 +122,7 @@ describe('FileApplication', () => {
 
       expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenNthCalledWith(1, Core.HomeserverAction.PUT, fileResult.meta.url, fileJson);
+      expect(requestSpy).toHaveBeenNthCalledWith(1, HttpMethod.PUT, fileResult.meta.url, fileJson);
       expect(createSpy).toHaveBeenCalledWith({ blobResult, fileResult });
 
       // Ensure blob upload happened before file record request
@@ -199,8 +194,8 @@ describe('FileApplication', () => {
       expect(putBlobSpy).toHaveBeenCalledWith(blobResult2.meta.url, blobResult2.blob.data);
       expect(fileResult1.file.toJson).toHaveBeenCalledTimes(1);
       expect(fileResult2.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, fileResult1.meta.url, fileJson1);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, fileResult2.meta.url, fileJson2);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, fileResult1.meta.url, fileJson1);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, fileResult2.meta.url, fileJson2);
       expect(createSpy).toHaveBeenCalledWith({ blobResult: blobResult1, fileResult: fileResult1 });
       expect(createSpy).toHaveBeenCalledWith({ blobResult: blobResult2, fileResult: fileResult2 });
 
@@ -226,7 +221,7 @@ describe('FileApplication', () => {
 
       expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, fileResult.meta.url, fileJson);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, fileResult.meta.url, fileJson);
       expect(createSpy).toHaveBeenCalledWith({ blobResult, fileResult });
 
       // Verify all homeserver operations completed before error
@@ -516,7 +511,7 @@ describe('FileApplication', () => {
       // Verify deletion sequence
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(1, fileUri); // Delete metadata
       expect(readSpy).toHaveBeenCalledWith(compositeId);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, fileUri); // Fetch from homeserver
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, fileUri); // Fetch from homeserver
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(2, blobUrl); // Delete blob
       expect(deleteLocalSpy).not.toHaveBeenCalled(); // No local deletion in fallback path
 
@@ -659,7 +654,7 @@ describe('FileApplication', () => {
 
       expect(Core.HomeserverService.delete).toHaveBeenNthCalledWith(1, fileUri);
       expect(Core.LocalFileService.read).toHaveBeenCalledWith(compositeId);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, fileUri);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, fileUri);
       expect(Core.HomeserverService.delete).toHaveBeenCalledTimes(1); // Blob deletion not reached
     });
   });

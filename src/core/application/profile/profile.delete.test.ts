@@ -7,7 +7,7 @@ vi.mock('pubky-app-specs', () => ({
   getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
-// Mock HomeserverService methods and provide enum-like HomeserverAction
+// Mock HomeserverService methods
 vi.mock('@/core/services/homeserver', () => ({
   HomeserverService: {
     list: vi.fn(),

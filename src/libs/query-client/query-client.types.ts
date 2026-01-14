@@ -1,4 +1,5 @@
 import type { AppErrorType } from '../error';
+import type { ErrorCode } from '../error/error.codes';
 
 /**
  * Configuration for retry delays with exponential backoff.
@@ -16,8 +17,8 @@ export type RetryDelayConfig = {
  * Defines which errors should retry, how many times, and with what delays.
  */
 export type RetryConfig = {
-  /** Error types that should NEVER retry (permanent failures) */
-  nonRetryable: AppErrorType[];
+  /** Error types/codes that should NEVER retry (permanent failures) */
+  nonRetryable: (AppErrorType | ErrorCode)[];
 
   /**
    * Retry limits by status code category.

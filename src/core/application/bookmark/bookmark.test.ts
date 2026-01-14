@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookmarkApplication } from './bookmark';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import type { TCreateBookmarkInput, TDeleteBookmarkInput } from './bookmark.types';
 import type { AuthStore } from '@/core/stores/auth/auth.types';
 
@@ -53,13 +54,13 @@ describe('BookmarkApplication', () => {
       persistSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData);
+      await BookmarkApplication.persist(HttpMethod.PUT, mockData);
 
-      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, {
+      expect(persistSpy).toHaveBeenCalledWith(HttpMethod.PUT, {
         userId: testUserId,
         postId: mockData.postId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.bookmarkUrl, mockData.bookmarkJson);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, mockData.bookmarkUrl, mockData.bookmarkJson);
     });
 
     it('should throw error when user is not authenticated', async () => {
@@ -73,7 +74,7 @@ describe('BookmarkApplication', () => {
         },
       } as unknown as AuthStore);
 
-      await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow(
+      await expect(BookmarkApplication.persist(HttpMethod.PUT, mockData)).rejects.toThrow(
         'Current user pubky is not available',
       );
     });
@@ -85,7 +86,7 @@ describe('BookmarkApplication', () => {
       authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as unknown as AuthStore);
       persistSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow('Database error');
+      await expect(BookmarkApplication.persist(HttpMethod.PUT, mockData)).rejects.toThrow('Database error');
       expect(persistSpy).toHaveBeenCalledOnce();
     });
 
@@ -97,7 +98,7 @@ describe('BookmarkApplication', () => {
       persistSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow(
+      await expect(BookmarkApplication.persist(HttpMethod.PUT, mockData)).rejects.toThrow(
         'Failed to PUT to homeserver: 500',
       );
       expect(persistSpy).toHaveBeenCalledOnce();
@@ -114,13 +115,13 @@ describe('BookmarkApplication', () => {
       persistSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData);
+      await BookmarkApplication.persist(HttpMethod.DELETE, mockData);
 
-      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
+      expect(persistSpy).toHaveBeenCalledWith(HttpMethod.DELETE, {
         userId: testUserId,
         postId: mockData.postId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.bookmarkUrl, undefined);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, mockData.bookmarkUrl, undefined);
     });
 
     it('should throw error when user is not authenticated', async () => {
@@ -134,7 +135,7 @@ describe('BookmarkApplication', () => {
         },
       } as unknown as AuthStore);
 
-      await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
+      await expect(BookmarkApplication.persist(HttpMethod.DELETE, mockData)).rejects.toThrow(
         'Current user pubky is not available',
       );
     });
@@ -146,7 +147,7 @@ describe('BookmarkApplication', () => {
       authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as unknown as AuthStore);
       persistSpy.mockRejectedValue(new Error('Bookmark not found'));
 
-      await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
+      await expect(BookmarkApplication.persist(HttpMethod.DELETE, mockData)).rejects.toThrow(
         'Bookmark not found',
       );
       expect(persistSpy).toHaveBeenCalledOnce();
@@ -160,7 +161,7 @@ describe('BookmarkApplication', () => {
       persistSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
+      await expect(BookmarkApplication.persist(HttpMethod.DELETE, mockData)).rejects.toThrow(
         'Failed to DELETE from homeserver: 404',
       );
       expect(persistSpy).toHaveBeenCalledOnce();
