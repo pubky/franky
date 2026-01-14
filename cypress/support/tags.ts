@@ -16,7 +16,7 @@ export const clickAddTagButton = () => {
  * @param tag - The tag label to add
  */
 export const addTagToPost = (tag: string) => {
-  cy.get('[data-cy="post-tag-input-field"]').should('be.visible').type(`${tag}{enter}`);
+  cy.get('[data-cy="add-tag-input"]').should('be.visible').type(`${tag}{enter}`);
 };
 
 /**

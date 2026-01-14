@@ -11,7 +11,6 @@ export function PostTagAddButton({ onClick, className, disabled }: PostTagAddBut
       variant="outline"
       size="sm"
       disabled={disabled}
-      data-cy="post-tag-add-button"
       className={Libs.cn(
         'size-8 min-w-8! rounded-md border-dashed bg-transparent p-0 transition-opacity hover:bg-transparent hover:opacity-80',
         disabled && 'cursor-not-allowed opacity-50',
