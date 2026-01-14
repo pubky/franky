@@ -8,6 +8,7 @@ export * from './search';
 export * from './sync';
 export * from './logs';
 export * from './metadata';
+export * from './moderation';
 export * from './tags';
 export * from './theme';
 export * from './ui';

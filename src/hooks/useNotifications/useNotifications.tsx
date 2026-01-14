@@ -21,7 +21,9 @@ export function useNotifications(): UseNotificationsResult {
 
   const { currentUserPubky } = Core.useAuthStore();
   const lastRead = Core.useNotificationStore((s) => s.lastRead);
+  const unread = Core.useNotificationStore((s) => s.unread);
   const lastReadRef = useRef(lastRead);
+  const previousUnreadRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (lastReadRef.current === 0 && lastRead > 0) {
@@ -148,6 +150,21 @@ export function useNotifications(): UseNotificationsResult {
     if (!currentUserPubky) return;
     performInitialLoad();
   }, [currentUserPubky, performInitialLoad]);
+
+  // Refresh list when new notifications come in via polling
+  useEffect(() => {
+    // Skip initial render
+    if (previousUnreadRef.current === null) {
+      previousUnreadRef.current = unread;
+      return;
+    }
+
+    if (unread > previousUnreadRef.current) {
+      refresh();
+    }
+
+    previousUnreadRef.current = unread;
+  }, [unread, refresh]);
 
   return {
     notifications,

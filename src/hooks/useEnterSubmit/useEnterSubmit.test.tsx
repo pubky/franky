@@ -7,10 +7,14 @@ describe('useEnterSubmit', () => {
     key: string,
     isComposing: boolean = false,
     shiftKey: boolean = false,
+    ctrlKey: boolean = false,
+    metaKey: boolean = false,
   ): React.KeyboardEvent =>
     ({
       key,
       shiftKey,
+      ctrlKey,
+      metaKey,
       nativeEvent: { isComposing } as KeyboardEvent,
       preventDefault: vi.fn(),
     }) as unknown as React.KeyboardEvent;
@@ -228,5 +232,72 @@ describe('useEnterSubmit', () => {
     });
 
     expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+  });
+
+  describe('requireModifier option', () => {
+    it('ignores plain Enter when requireModifier is true', () => {
+      const mockOnSubmit = vi.fn();
+      const mockIsValid = vi.fn(() => true);
+
+      const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit, { requireModifier: true }));
+
+      act(() => {
+        result.current(createKeyboardEvent('Enter'));
+      });
+
+      expect(mockOnSubmit).not.toHaveBeenCalled();
+    });
+
+    it('submits on Ctrl+Enter when requireModifier is true', () => {
+      const mockOnSubmit = vi.fn();
+      const mockIsValid = vi.fn(() => true);
+
+      const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit, { requireModifier: true }));
+
+      act(() => {
+        result.current(createKeyboardEvent('Enter', false, false, true, false));
+      });
+
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('submits on Cmd+Enter (metaKey) when requireModifier is true', () => {
+      const mockOnSubmit = vi.fn();
+      const mockIsValid = vi.fn(() => true);
+
+      const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit, { requireModifier: true }));
+
+      act(() => {
+        result.current(createKeyboardEvent('Enter', false, false, false, true));
+      });
+
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not require modifier by default', () => {
+      const mockOnSubmit = vi.fn();
+      const mockIsValid = vi.fn(() => true);
+
+      const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit));
+
+      act(() => {
+        result.current(createKeyboardEvent('Enter'));
+      });
+
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    it('allows Ctrl+Enter even when requireModifier is false', () => {
+      const mockOnSubmit = vi.fn();
+      const mockIsValid = vi.fn(() => true);
+
+      const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit, { requireModifier: false }));
+
+      act(() => {
+        result.current(createKeyboardEvent('Enter', false, false, true, false));
+      });
+
+      expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 });

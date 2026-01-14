@@ -44,7 +44,7 @@ export function DialogReportPostReasonStep({
             <Atoms.Textarea
               aria-label="Report reason"
               placeholder="Why are you reporting?"
-              className="min-h-20 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="min-h-20 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
               value={reason}
               onChange={onReasonChange}
               maxLength={REPORT_REASON_MAX_LENGTH}

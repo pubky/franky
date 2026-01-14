@@ -8,15 +8,26 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }));
 
-// Mock the atoms
-vi.mock('@/atoms', () => ({
-  Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="avatar" className={className}>
-      {children}
+// Mock the organisms
+vi.mock('@/organisms', () => ({
+  AvatarWithFallback: ({
+    avatarUrl,
+    name,
+    size,
+    className,
+    alt,
+  }: {
+    avatarUrl?: string;
+    name: string;
+    size?: string;
+    className?: string;
+    alt?: string;
+  }) => (
+    <div data-testid="avatar-with-fallback" className={className} data-size={size}>
+      <img data-testid="avatar-image" src={avatarUrl} alt={alt || name} />
+      <span data-testid="avatar-name">{name}</span>
     </div>
   ),
-  AvatarImage: ({ src, alt }: { src: string; alt: string }) => <img data-testid="avatar-image" src={src} alt={alt} />,
-  AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
 }));
 
 // Mock the libs - use actual implementations
@@ -77,7 +88,7 @@ describe('MobileFooter', () => {
     expect(document.querySelector('.lucide-flame')).toBeInTheDocument();
     expect(document.querySelector('.lucide-bookmark')).toBeInTheDocument();
     expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
-    expect(screen.getByTestId('avatar')).toBeInTheDocument();
+    expect(screen.getByTestId('avatar-with-fallback')).toBeInTheDocument();
   });
 
   it('renders with custom className', () => {
@@ -108,7 +119,7 @@ describe('MobileFooter', () => {
   it('renders profile link', () => {
     render(<MobileFooter />);
 
-    const profileLink = screen.getByTestId('avatar').closest('a');
+    const profileLink = screen.getByTestId('avatar-with-fallback').closest('a');
     expect(profileLink).toHaveAttribute('href', '/profile');
     expect(profileLink).toHaveAttribute('aria-label', 'Profile');
   });
@@ -122,12 +133,12 @@ describe('MobileFooter', () => {
     expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
   });
 
-  it('renders avatar fallback with user initials', () => {
+  it('renders avatar with user name', () => {
     render(<MobileFooter />);
 
-    const fallback = screen.getByTestId('avatar-fallback');
-    expect(fallback).toBeInTheDocument();
-    expect(fallback).toHaveTextContent('TU'); // "Test User" initials
+    const avatarName = screen.getByTestId('avatar-name');
+    expect(avatarName).toBeInTheDocument();
+    expect(avatarName).toHaveTextContent('Test User');
   });
 
   it('applies correct icon classes', () => {
@@ -200,7 +211,7 @@ describe('MobileFooter - Snapshots', () => {
   it('matches snapshot for profile link', () => {
     render(<MobileFooter />);
 
-    const profileLink = screen.getByTestId('avatar').closest('a');
+    const profileLink = screen.getByTestId('avatar-with-fallback').closest('a');
     expect(profileLink).toMatchSnapshot();
   });
 });

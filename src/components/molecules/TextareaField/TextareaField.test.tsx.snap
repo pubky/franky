@@ -8,7 +8,7 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with cus
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       maxlength="100"
       rows="6"
@@ -27,7 +27,7 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with das
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       rows="4"
     >
@@ -45,7 +45,7 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with err
   >
     <textarea
       aria-invalid="true"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       rows="4"
     >
@@ -69,7 +69,7 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with pla
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       placeholder="Enter your message here..."
       rows="4"
@@ -86,7 +86,7 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with pro
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       rows="4"
     />
@@ -108,7 +108,7 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with suc
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       rows="4"
     >
@@ -132,7 +132,7 @@ exports[`TextareaField - Snapshots > matches snapshot for default TextareaField 
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       rows="4"
     >
@@ -150,7 +150,7 @@ exports[`TextareaField - Snapshots > matches snapshot for disabled TextareaField
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       disabled=""
       rows="4"
@@ -169,7 +169,7 @@ exports[`TextareaField - Snapshots > matches snapshot for readOnly TextareaField
   >
     <textarea
       aria-invalid="false"
-      class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      class="w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
       data-testid="textarea"
       readonly=""
       rows="4"

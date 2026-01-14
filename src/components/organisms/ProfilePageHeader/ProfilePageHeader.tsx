@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import * as Organisms from '@/organisms';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
@@ -35,7 +36,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
       data-testid="profile-page-header"
     >
       <Atoms.Container overrideDefaults={true} className="relative cursor-pointer lg:px-4" onClick={onAvatarClick}>
-        <Molecules.AvatarWithFallback
+        <Organisms.AvatarWithFallback
           avatarUrl={avatarUrl}
           name={name}
           className="size-16 lg:size-36"
@@ -124,7 +125,13 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               </Atoms.Button>
               {/* Follow/Unfollow button - only shown for authenticated users */}
               {isAuthenticated && (
-                <Atoms.Button variant="secondary" size="sm" onClick={onFollowToggle} disabled={isFollowLoading}>
+                <Atoms.Button
+                  data-cy="profile-follow-toggle-btn"
+                  variant="secondary"
+                  size="sm"
+                  onClick={onFollowToggle}
+                  disabled={isFollowLoading}
+                >
                   {isFollowLoading ? (
                     <>
                       <Icons.Loader2 className="size-4 animate-spin" />

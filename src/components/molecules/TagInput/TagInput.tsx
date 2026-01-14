@@ -130,6 +130,7 @@ export function TagInput({
         onClick={onClick}
       >
         <Atoms.Input
+          data-cy="add-tag-input"
           ref={inputRef}
           type="text"
           value={inputValue}

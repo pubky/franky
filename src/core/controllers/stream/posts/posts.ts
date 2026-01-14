@@ -54,21 +54,22 @@ export class StreamPostsController {
     // selectCurrentUserPubky() throws an error when user is not authenticated;
     // access currentUserPubky directly to get null instead (unauthenticated users can view profile posts)
     const viewerId = Core.useAuthStore.getState().currentUserPubky;
-    const { nextPageIds, cacheMissPostIds, timestamp } = await Core.PostStreamApplication.getOrFetchStreamSlice({
-      streamId,
-      limit,
-      streamHead,
-      streamTail,
-      lastPostId,
-      viewerId,
-      order,
-    });
+    const { nextPageIds, cacheMissPostIds, timestamp, reachedEnd } =
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit,
+        streamHead,
+        streamTail,
+        lastPostId,
+        viewerId,
+        order,
+      });
     // Query nexus to get the cacheMissPostIds
     if (cacheMissPostIds.length > 0) {
       // TODO: When TTL is implemented, we can return to void
       await Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId });
     }
-    return { nextPageIds, timestamp };
+    return { nextPageIds, timestamp, reachedEnd };
   }
 
   /**

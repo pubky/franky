@@ -1,5 +1,6 @@
 export * from './ActiveUsers';
 export * from './AlertBackup';
+export * from './AvatarWithFallback';
 export * from './Backup';
 export * from './BackupMethodCard';
 export * from './ClickableTagsList';
@@ -52,6 +53,7 @@ export * from './PostActionsBar';
 export * from './PostAttachments';
 export * from './PostContent';
 export * from './PostContentBase';
+export * from './PostContentBlurred';
 export * from './PostHeader';
 export * from './PostInput';
 export * from './PostInputActionBar';

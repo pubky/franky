@@ -49,12 +49,10 @@ export class TtlApplication {
     const uniqueIds = Array.from(new Set(params.postIds));
     if (uniqueIds.length === 0) return;
 
-    const { url, body } = Core.postStreamApi.postsByIds({
+    const postBatch = await Core.NexusPostStreamService.fetchByIds({
       post_ids: uniqueIds,
       viewer_id: params.viewerId,
     });
-
-    const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
 
     Logger.debug('TtlApplication: Fetched posts from Nexus', {
       postCount: postBatch.length,
@@ -65,6 +63,12 @@ export class TtlApplication {
 
     // Opportunistic cache warm: fetch missing authors
     await this.fetchAndPersistMissingAuthors({ posts: postBatch, viewerId: params.viewerId });
+
+    // Fetch original posts for any reposts (to display embedded repost content)
+    const repostedUris = postBatch
+      .map((post) => post.relationships.reposted)
+      .filter((uri): uri is string => uri !== null);
+    await Core.PostStreamApplication.fetchOriginalPostsByUris({ repostedUris, viewerId: params.viewerId });
   }
 
   /**

@@ -59,6 +59,7 @@ export function ProfilePageTaggedAs({
       </Atoms.Container>
 
       <Atoms.Button
+        data-cy="profile-tag-btn"
         variant="outline"
         size="sm"
         className="border border-border bg-foreground/5"
