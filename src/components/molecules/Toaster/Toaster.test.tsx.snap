@@ -4,7 +4,7 @@ exports[`Toaster - Snapshots > matches snapshot 1`] = `
 <div>
   <div
     class="toaster-mobile lg:hidden"
-    data-offset="88"
+    data-offset="96"
     data-position="top-center"
     data-testid="sonner-toaster"
   />

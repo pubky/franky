@@ -29,7 +29,7 @@ const sharedToastOptions = {
  * Custom Toaster component using Sonner with Figma design styles.
  *
  * - Desktop (lg+): bottom-center, min-width 392px, offset 80px above footer
- * - Mobile: top-center, below header (88px = 80px header + 8px gap)
+ * - Mobile: top-center, below header (96px = 80px header + 16px gap)
  *
  * Design references:
  * - Sonner Default (node-id: 193:1386)
@@ -45,7 +45,7 @@ export function Toaster() {
       {/* Mobile: top position, below header */}
       <SonnerToaster
         position="top-center"
-        offset={88} // Below MobileHeader (80px + 8px gap)
+        offset={96} // Below MobileHeader (80px + 16px gap)
         toastOptions={sharedToastOptions}
         className="toaster-mobile lg:hidden"
       />

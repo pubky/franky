@@ -25,10 +25,10 @@ describe('Toaster', () => {
     const toasters = screen.getAllByTestId('sonner-toaster');
     expect(toasters).toHaveLength(2);
 
-    // Mobile toaster: top-center, offset 88
+    // Mobile toaster: top-center, offset 96
     const mobileToaster = toasters.find((t) => t.getAttribute('data-position') === 'top-center');
     expect(mobileToaster).toBeInTheDocument();
-    expect(mobileToaster).toHaveAttribute('data-offset', '88');
+    expect(mobileToaster).toHaveAttribute('data-offset', '96');
     expect(mobileToaster).toHaveClass('toaster-mobile');
 
     // Desktop toaster: bottom-center, offset 80
