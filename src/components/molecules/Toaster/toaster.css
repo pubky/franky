@@ -19,6 +19,17 @@
   }
 }
 
+/* Center toast on mobile */
+.toaster-mobile [data-sonner-toaster] {
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+.toaster-mobile [data-sonner-toast] {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 /* Ensure toast respects max-width and doesn't overflow */
 .toast-custom {
   box-sizing: border-box !important;
