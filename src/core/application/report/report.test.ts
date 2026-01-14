@@ -172,10 +172,25 @@ describe('ReportApplication', () => {
       );
     });
 
-    it('should throw AppError when contact has no inbox associations', async () => {
+    it('should throw AppError when contact has empty inbox associations', async () => {
       const input = createReportInput();
       const contactWithoutInbox = createMockContact({ contact_inboxes: [] });
       vi.spyOn(Core.ChatwootService, 'createOrFindContact').mockResolvedValue(contactWithoutInbox);
+
+      await expect(ReportApplication.submit(input)).rejects.toThrow('Contact has no inbox associations');
+
+      expect(Libs.Logger.error).toHaveBeenCalledWith('Report submission failed', expect.any(Object));
+    });
+
+    it('should throw AppError when contact has undefined inbox associations', async () => {
+      const input = createReportInput();
+      const contactWithUndefinedInbox = {
+        id: testData.contactId,
+        email: `${testData.userPubky}@pubky.app`,
+        name: testData.userName,
+        contact_inboxes: undefined,
+      } as unknown as TChatwootContact;
+      vi.spyOn(Core.ChatwootService, 'createOrFindContact').mockResolvedValue(contactWithUndefinedInbox);
 
       await expect(ReportApplication.submit(input)).rejects.toThrow('Contact has no inbox associations');
 

@@ -1,7 +1,12 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { REPORT_ISSUE_LABELS, type ReportIssueType } from '@/core/pipes/report';
-import { CHATWOOT_INBOX_IDS, CHATWOOT_REPORT_MESSAGE_PREFIX } from '@/core/services/chatwoot';
+import {
+  CHATWOOT_INBOX_IDS,
+  CHATWOOT_REPORT_MESSAGE_PREFIX,
+  buildChatwootEmail,
+  extractSourceId,
+} from '@/core/services/chatwoot';
 import * as Types from './report.types';
 
 /**
@@ -46,16 +51,6 @@ export class ReportApplication {
   }
 
   /**
-   * Build email address from pubky
-   *
-   * @param pubky - User's public key
-   * @returns Email address in format pubky@pubky.app
-   */
-  private static buildEmail(pubky: Core.Pubky): string {
-    return `${pubky}@pubky.app`;
-  }
-
-  /**
    * Format the full message content with source label prefix
    *
    * @param sourceLabel - Source label (e.g., "Report Post - Personal Info Leak")
@@ -83,10 +78,10 @@ export class ReportApplication {
    * @param params.name - Reporter's display name
    * @throws AppError if submission fails
    */
-  static async submit({ pubky, postUrl, issueType, reason, name }: Types.TReportSubmitInput) {
+  static async submit({ pubky, postUrl, issueType, reason, name }: Types.TReportSubmitInput): Promise<void> {
     try {
       // Build email from pubky
-      const email = this.buildEmail(pubky);
+      const email = buildChatwootEmail(pubky);
 
       // Get inbox ID for reports
       const inboxId = CHATWOOT_INBOX_IDS.REPORTS;
@@ -99,15 +94,8 @@ export class ReportApplication {
       // Create or find contact in Chatwoot
       const contact = await Core.ChatwootService.createOrFindContact(email, name, inboxId);
 
-      // Validate contact has inbox associations
-      if (!contact.contact_inboxes || contact.contact_inboxes.length === 0) {
-        throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Contact has no inbox associations', 500, {
-          contactId: contact.id,
-          email,
-        });
-      }
-
-      const sourceId = contact.contact_inboxes[0].source_id;
+      // Extract source ID (validates inbox associations)
+      const sourceId = extractSourceId(contact, email);
 
       // Create conversation with formatted message
       await Core.ChatwootService.createConversation(sourceId, contact.id, inboxId, content);
