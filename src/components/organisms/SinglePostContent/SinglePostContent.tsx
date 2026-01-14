@@ -22,7 +22,7 @@ import type { SinglePostContentProps } from './SinglePostContent.types';
  */
 export function SinglePostContent({ postId }: SinglePostContentProps) {
   // Use the dedicated hook for fetching replies
-  const { replyIds, loading, loadingMore, error, hasMore, loadMore, refresh } = Hooks.usePostReplies(postId);
+  const { replyIds, loading, loadingMore, error, hasMore, loadMore, prependReply } = Hooks.usePostReplies(postId);
 
   const { navigateToPost } = Hooks.usePostNavigation();
 
@@ -59,7 +59,7 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
                     ? Atoms.POST_THREAD_CONNECTOR_VARIANTS.REGULAR
                     : Atoms.POST_THREAD_CONNECTOR_VARIANTS.LAST
                 }
-                onReplySubmitted={refresh}
+                onReplySubmitted={prependReply}
               />
             </Atoms.Container>
           )}
