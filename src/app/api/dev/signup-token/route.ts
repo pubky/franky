@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { Env } from '@/libs/env';
 
 /**
  * DEV/TEST ONLY: Generates a signup token from the homeserver admin endpoint.
@@ -24,8 +23,9 @@ export async function GET() {
     );
   }
 
-  const endpoint = Env.HOMESERVER_ADMIN_URL;
-  const password = Env.HOMESERVER_ADMIN_PASSWORD;
+  // Read directly from process.env to avoid circular dependency with @/libs
+  const endpoint = process.env.HOMESERVER_ADMIN_URL;
+  const password = process.env.HOMESERVER_ADMIN_PASSWORD;
 
   if (!endpoint || !password) {
     return NextResponse.json(
