@@ -138,8 +138,11 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
-  NEXT_PUBLIC_HOMESERVER_ADMIN_URL: z.string().url().default('http://localhost:6288/generate_signup_token'),
-  NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
+  // Server-side only admin credentials for signup token generation (dev/test only)
+  // These are NOT exposed to the client bundle - only available on the server
+  HOMESERVER_ADMIN_URL: z.string().url().optional(),
+  HOMESERVER_ADMIN_PASSWORD: z.string().optional(),
+
   NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://relay.pubky.app'),
 
   NEXT_PUBLIC_MODERATION_ID: z.string().default('euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro'),
@@ -223,8 +226,8 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
-      NEXT_PUBLIC_HOMESERVER_ADMIN_URL: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL,
-      NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
+      HOMESERVER_ADMIN_URL: process.env.HOMESERVER_ADMIN_URL,
+      HOMESERVER_ADMIN_PASSWORD: process.env.HOMESERVER_ADMIN_PASSWORD,
       NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
       NEXT_PUBLIC_MODERATION_ID: process.env.NEXT_PUBLIC_MODERATION_ID,
       NEXT_PUBLIC_MODERATED_TAGS: process.env.NEXT_PUBLIC_MODERATED_TAGS,
