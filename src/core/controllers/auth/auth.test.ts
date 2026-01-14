@@ -118,10 +118,11 @@ vi.mock('@synonymdev/pubky', () => ({
   createRecoveryFile: vi.fn(() => new Uint8Array([1, 2, 3, 4, 5])),
 }));
 
+// Admin credentials are now server-side only (not exposed to client)
 vi.mock('@/libs/env', () => ({
   Env: {
-    NEXT_PUBLIC_HOMESERVER_ADMIN_URL: 'http://test-admin.com',
-    NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: 'test-password',
+    HOMESERVER_ADMIN_URL: 'http://test-admin.com',
+    HOMESERVER_ADMIN_PASSWORD: 'test-password',
   },
 }));
 
