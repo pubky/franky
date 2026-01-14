@@ -3,7 +3,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 /**
- * API Route for feedback submission to Chatwoot
+ * API Route for feedback submission
  *
  * This endpoint receives feedback from the UI and processes it through
  * the controller layer following Franky's architecture.

@@ -1,7 +1,7 @@
 /**
  * Chatwoot service constants
  *
- * Inbox IDs and submission types for Chatwoot API integration.
+ * Inbox IDs and message prefixes for Chatwoot API integration.
  */
 
 /**
@@ -15,14 +15,6 @@ export const CHATWOOT_INBOX_IDS = {
   REPORTS: 27,
   /** Reserved for future copyright infringement reports */
   COPYRIGHT: 28,
-} as const;
-
-/**
- * Chatwoot submission types
- */
-export const CHATWOOT_SUBMISSION_TYPES = {
-  FEEDBACK: 'feedback',
-  REPORT: 'report',
 } as const;
 
 /**

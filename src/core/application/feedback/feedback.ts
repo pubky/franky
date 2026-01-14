@@ -1,13 +1,22 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import {
+  CHATWOOT_INBOX_IDS,
+  CHATWOOT_FEEDBACK_MESSAGE_PREFIX,
+  buildChatwootEmail,
+  extractSourceId,
+} from '@/core/services/chatwoot';
 import * as Types from './feedback.types';
 
 /**
  * Feedback application service.
  *
  * Orchestrates feedback submission workflow:
- * 1. Calls Chatwoot service to submit feedback
- * 2. Logs errors for observability
+ * 1. Builds email from pubky
+ * 2. Determines inbox ID for feedback
+ * 3. Formats message with feedback prefix
+ * 4. Calls Chatwoot service to create contact and conversation
+ * 5. Logs errors for observability
  *
  * This layer is called by the controller and handles cross-domain orchestration.
  */
@@ -15,9 +24,22 @@ export class FeedbackApplication {
   private constructor() {}
 
   /**
+   * Format the full message content with feedback prefix
+   *
+   * @param comment - User's feedback comment
+   * @returns Full formatted message content
+   */
+  private static formatMessageContent(comment: string): string {
+    return `${CHATWOOT_FEEDBACK_MESSAGE_PREFIX}\n\n${comment}`;
+  }
+
+  /**
    * Submit feedback to Chatwoot
    *
-   * Orchestrates the feedback submission by delegating to the Chatwoot service.
+   * Orchestrates the feedback submission by:
+   * 1. Building email from pubky
+   * 2. Creating or finding contact in Chatwoot
+   * 3. Creating conversation with formatted message
    *
    * @param params - Parameters object
    * @param params.pubky - User's public key
@@ -25,10 +47,25 @@ export class FeedbackApplication {
    * @param params.name - User's display name
    * @throws AppError if submission fails
    */
-  static async submit({ pubky, comment, name }: Types.TFeedbackSubmitInput) {
+  static async submit({ pubky, comment, name }: Types.TFeedbackSubmitInput): Promise<void> {
     try {
-      // Delegate to Chatwoot service
-      await Core.ChatwootService.submit({ pubky, comment, name });
+      // Build email from pubky
+      const email = buildChatwootEmail(pubky);
+
+      // Get inbox ID for feedback
+      const inboxId = CHATWOOT_INBOX_IDS.FEEDBACK;
+
+      // Format message with prefix
+      const content = this.formatMessageContent(comment);
+
+      // Create or find contact in Chatwoot
+      const contact = await Core.ChatwootService.createOrFindContact(email, name, inboxId);
+
+      // Extract source ID (validates inbox associations)
+      const sourceId = extractSourceId(contact, email);
+
+      // Create conversation with formatted message
+      await Core.ChatwootService.createConversation(sourceId, contact.id, inboxId, content);
     } catch (error) {
       // Log error for observability
       if (error instanceof Libs.AppError) {

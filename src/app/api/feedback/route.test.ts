@@ -12,7 +12,7 @@ const testData = {
 };
 
 const createPostRequest = (body: Record<string, unknown>) => {
-  return new NextRequest('http://localhost:3000/api/chatwoot', {
+  return new NextRequest('http://localhost:3000/api/feedback', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ const createPostRequest = (body: Record<string, unknown>) => {
   });
 };
 
-describe('API Route: /api/chatwoot', () => {
+describe('API Route: /api/feedback', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(Core.FeedbackController, 'submit').mockResolvedValue(undefined);
@@ -104,7 +104,7 @@ describe('API Route: /api/chatwoot', () => {
     it('should handle invalid JSON body', async () => {
       // NextRequest.json() may throw or return error response depending on Next.js version
       // This tests that the route properly handles JSON parsing errors
-      const request = new NextRequest('http://localhost:3000/api/chatwoot', {
+      const request = new NextRequest('http://localhost:3000/api/feedback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
