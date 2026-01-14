@@ -1,0 +1,1 @@
+export { CopyrightForm } from './CopyrightForm';

@@ -12,9 +12,19 @@ export function Header() {
   const isAuthenticated = authStore.selectIsAuthenticated();
 
   const isOnboarding = pathname?.startsWith('/onboarding') ?? false;
+  const isCopyrightPage = pathname === '/copyright';
   const { step: currentStep, title: currentTitle } = pathToStepConfig[pathname] ?? { step: 1, title: 'Sign in' };
 
   const shouldHideHeaderOnMobile = isAuthenticated && !isOnboarding;
+
+  // Copyright page shows only logo (minimal header)
+  if (isCopyrightPage) {
+    return (
+      <Molecules.HeaderContainer>
+        <Molecules.Logo />
+      </Molecules.HeaderContainer>
+    );
+  }
 
   return (
     <Molecules.HeaderContainer className={shouldHideHeaderOnMobile ? 'hidden lg:block' : undefined}>
