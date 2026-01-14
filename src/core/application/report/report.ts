@@ -1,16 +1,18 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { REPORT_ISSUE_LABELS, type ReportIssueType } from '@/core/pipes/report';
-import { CHATWOOT_SUBMISSION_TYPES, CHATWOOT_REPORT_MESSAGE_PREFIX } from '@/core/services/chatwoot';
+import { CHATWOOT_INBOX_IDS, CHATWOOT_REPORT_MESSAGE_PREFIX } from '@/core/services/chatwoot';
 import * as Types from './report.types';
 
 /**
  * Report application service.
  *
  * Orchestrates report submission workflow:
- * 1. Formats report message with post URL and issue details
- * 2. Calls Chatwoot service to submit report
- * 3. Logs errors for observability
+ * 1. Builds email from pubky
+ * 2. Determines inbox ID for reports
+ * 3. Formats report message with source label, post URL and issue details
+ * 4. Calls Chatwoot service to create contact and conversation
+ * 5. Logs errors for observability
  *
  * This layer is called by the controller and handles cross-domain orchestration.
  */
@@ -44,11 +46,34 @@ export class ReportApplication {
   }
 
   /**
+   * Build email address from pubky
+   *
+   * @param pubky - User's public key
+   * @returns Email address in format pubky@pubky.app
+   */
+  private static buildEmail(pubky: Core.Pubky): string {
+    return `${pubky}@pubky.app`;
+  }
+
+  /**
+   * Format the full message content with source label prefix
+   *
+   * @param sourceLabel - Source label (e.g., "Report Post - Personal Info Leak")
+   * @param commentBody - Comment body with post URL and reason
+   * @returns Full formatted message content
+   */
+  private static formatMessageContent(sourceLabel: string, commentBody: string): string {
+    return `${sourceLabel}\n\n${commentBody}`;
+  }
+
+  /**
    * Submit a post report to Chatwoot
    *
    * Orchestrates the report submission by:
-   * 1. Building the source label and comment body
-   * 2. Delegating to the Chatwoot service with report type
+   * 1. Building email from pubky
+   * 2. Building source label and comment body
+   * 3. Creating or finding contact in Chatwoot
+   * 4. Creating conversation with formatted message
    *
    * @param params - Parameters object
    * @param params.pubky - Reporter's public key
@@ -60,17 +85,32 @@ export class ReportApplication {
    */
   static async submit({ pubky, postUrl, issueType, reason, name }: Types.TReportSubmitInput) {
     try {
-      const source = this.buildSourceLabel(issueType);
-      const comment = this.buildCommentBody(postUrl, reason);
+      // Build email from pubky
+      const email = this.buildEmail(pubky);
 
-      // Delegate to Chatwoot service with report type
-      await Core.ChatwootService.submit({
-        pubky,
-        comment,
-        name,
-        type: CHATWOOT_SUBMISSION_TYPES.REPORT,
-        source,
-      });
+      // Get inbox ID for reports
+      const inboxId = CHATWOOT_INBOX_IDS.REPORTS;
+
+      // Build source label and comment body
+      const sourceLabel = this.buildSourceLabel(issueType);
+      const commentBody = this.buildCommentBody(postUrl, reason);
+      const content = this.formatMessageContent(sourceLabel, commentBody);
+
+      // Create or find contact in Chatwoot
+      const contact = await Core.ChatwootService.createOrFindContact(email, name, inboxId);
+
+      // Validate contact has inbox associations
+      if (!contact.contact_inboxes || contact.contact_inboxes.length === 0) {
+        throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Contact has no inbox associations', 500, {
+          contactId: contact.id,
+          email,
+        });
+      }
+
+      const sourceId = contact.contact_inboxes[0].source_id;
+
+      // Create conversation with formatted message
+      await Core.ChatwootService.createConversation(sourceId, contact.id, inboxId, content);
     } catch (error) {
       // Log error for observability
       if (error instanceof Libs.AppError) {
