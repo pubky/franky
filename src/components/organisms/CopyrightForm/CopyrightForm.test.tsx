@@ -111,11 +111,25 @@ describe('CopyrightForm', () => {
     const user = userEvent.setup();
     render(<CopyrightForm />);
 
-    // Switch to reporting on behalf, then uncheck it
+    // Fill all required fields first
+    await user.type(screen.getByLabelText(/Name of the rights owner/i), 'John Doe');
+    await user.type(screen.getByLabelText(/Original Content URLs/i), 'https://example.com/original');
+    await user.type(screen.getByLabelText(/Brief description/i), 'Description');
+    await user.type(screen.getByLabelText(/Infringing Content URLs/i), 'https://example.com/infringing');
+    await user.type(screen.getByLabelText(/First Name/i), 'John');
+    await user.type(screen.getByLabelText(/Last Name/i), 'Doe');
+    await user.type(screen.getByLabelText(/Email/i), 'john@example.com');
+    await user.type(screen.getByLabelText(/Phone number/i), '123-456-7890');
+    await user.type(screen.getByLabelText(/Street address/i), '123 Main St');
+    await user.type(screen.getByLabelText(/Country/i), 'United States');
+    await user.type(screen.getByLabelText(/City/i), 'New York');
+    await user.type(screen.getByLabelText(/State\/Province/i), 'NY');
+    await user.type(screen.getByLabelText(/Zip code/i), '10001');
+    await user.type(screen.getByLabelText(/Full Name as Signature/i), 'John Doe');
+
+    // Switch to reporting on behalf, then uncheck it (both will be unchecked)
     const reportingOnBehalfCheckbox = screen.getByLabelText('I am reporting on behalf of my organization or client');
     await user.click(reportingOnBehalfCheckbox);
-
-    // Now uncheck reporting on behalf (both will be unchecked)
     await user.click(reportingOnBehalfCheckbox);
 
     const submitButton = screen.getByRole('button', { name: 'Submit form' });
