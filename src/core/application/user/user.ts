@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger } from '@/libs';
 
 export class UserApplication {
   /**
@@ -62,7 +62,7 @@ export class UserApplication {
       return nexusUserCounts;
     } catch (error) {
       // Return null if user counts cannot be fetched (e.g., user not indexed yet)
-      Libs.Logger.warn('Failed to fetch user counts from Nexus', { userId, error });
+      Logger.warn('Failed to fetch user counts from Nexus', { userId, error });
       return null;
     }
   }
@@ -135,9 +135,9 @@ export class UserApplication {
     followee,
     activeStreamId,
   }: Core.TUserApplicationFollowParams) {
-    if (eventType === Core.HomeserverAction.PUT) {
+    if (eventType === HttpMethod.PUT) {
       await Core.LocalFollowService.create({ follower, followee, activeStreamId });
-    } else if (eventType === Core.HomeserverAction.DELETE) {
+    } else if (eventType === HttpMethod.DELETE) {
       await Core.LocalFollowService.delete({ follower, followee, activeStreamId });
     }
     await Core.HomeserverService.request(eventType, followUrl, followJson);
@@ -149,13 +149,13 @@ export class UserApplication {
    * @param params - Parameters containing event type, URLs, JSON data, and user IDs
    */
   static async commitMute({ eventType, muteUrl, muteJson, muter, mutee }: Core.TUserApplicationMuteParams) {
-    if (eventType === Core.HomeserverAction.PUT) {
+    if (eventType === HttpMethod.PUT) {
       await Core.LocalMuteService.create({ muter, mutee });
       await Core.HomeserverService.request(eventType, muteUrl, muteJson);
       return;
     }
 
-    if (eventType === Core.HomeserverAction.DELETE) {
+    if (eventType === HttpMethod.DELETE) {
       await Core.LocalMuteService.delete({ muter, mutee });
       await Core.HomeserverService.request(eventType, muteUrl, muteJson);
       return;

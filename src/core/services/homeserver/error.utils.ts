@@ -1,8 +1,16 @@
 import * as Libs from '@/libs';
-
+import { HttpStatusCode } from '@/libs/http/http.types';
 export const AUTH_FLOW_CANCELED_ERROR_NAME = 'AuthFlowCanceled';
 
-const RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504] as const;
+const RETRYABLE_STATUS_CODES = [
+  HttpStatusCode.REQUEST_TIMEOUT,
+  HttpStatusCode.TOO_MANY_REQUESTS,
+  HttpStatusCode.INTERNAL_SERVER_ERROR,
+  HttpStatusCode.BAD_GATEWAY,
+  HttpStatusCode.SERVICE_UNAVAILABLE,
+  HttpStatusCode.GATEWAY_TIMEOUT,
+] as const;
+
 type RetryableStatusCode = (typeof RETRYABLE_STATUS_CODES)[number];
 
 /**
@@ -47,7 +55,7 @@ export const isRetryableRelayPollError = (error: unknown): boolean => {
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
     if (message.includes('timed out') || message.includes('timeout')) return true;
-    if (message.includes('504') || message.includes('gateway')) return true;
+    if (message.includes(HttpStatusCode.GATEWAY_TIMEOUT.toString()) || message.includes('gateway')) return true;
   }
 
   return false;
@@ -89,9 +97,10 @@ export const isPubkyErrorLike = (error: unknown): error is { name: string; messa
  * @returns Never (always throws)
  */
 const throwSessionExpiredError = (errorMessage: string, additionalContext: Record<string, unknown>): never => {
-  throw Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, errorMessage || 'Session expired', 401, {
-    originalError: errorMessage,
-    ...additionalContext,
+  throw Libs.Err.auth(Libs.AuthErrorCode.SESSION_EXPIRED, errorMessage || 'Session expired', {
+    service: Libs.ErrorService.Homeserver,
+    operation: (additionalContext.operation as string | undefined) ?? 'unknown',
+    context: { originalError: errorMessage, ...additionalContext },
   });
 };
 
@@ -102,32 +111,38 @@ const throwSessionExpiredError = (errorMessage: string, additionalContext: Recor
  * @returns Never (always throws)
  */
 const throwInvalidInputError = (errorMessage: string, additionalContext: Record<string, unknown>): never => {
-  throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, errorMessage, 400, {
-    originalError: errorMessage,
-    ...additionalContext,
+  throw Libs.Err.validation(Libs.ValidationErrorCode.INVALID_INPUT, errorMessage, {
+    service: Libs.ErrorService.Homeserver,
+    operation: (additionalContext.operation as string | undefined) ?? 'unknown',
+    context: { originalError: errorMessage, ...additionalContext },
   });
 };
 
 /**
  * Throws a homeserver error with the provided context.
- * @param homeserverErrorType - The type of homeserver error
- * @param message - The error message
+ * Uses fromHttpResponse for proper HTTP status code mapping.
  * @param statusCode - The HTTP status code
  * @param errorMessage - The original error message
  * @param additionalContext - Additional context to add to the error
  * @returns Never (always throws)
  */
 const throwHomeserverError = (
-  homeserverErrorType: Libs.HomeserverErrorType,
-  message: string,
   statusCode: number,
   errorMessage: string,
   additionalContext: Record<string, unknown>,
 ): never => {
-  throw Libs.createHomeserverError(homeserverErrorType, message, statusCode, {
-    originalError: errorMessage,
-    ...additionalContext,
-  });
+  const operation = (additionalContext.operation as string | undefined) ?? 'unknown';
+  const url = (additionalContext.url as string | undefined) ?? 'unknown';
+
+  // Create minimal Response for fromHttpResponse to get proper status code mapping
+  const mockResponse = {
+    status: statusCode,
+    statusText: errorMessage,
+    ok: false,
+    headers: new Headers(),
+  } as Response;
+
+  throw Libs.fromHttpResponse(mockResponse, Libs.ErrorService.Homeserver, operation, url);
 };
 
 /**
@@ -136,8 +151,6 @@ const throwHomeserverError = (
  *
  * @param errorMessage - The original error message
  * @param errorName - The error name (e.g., 'InvalidInput', 'AuthenticationError')
- * @param homeserverErrorType - The type of homeserver error
- * @param message - The error message for display
  * @param statusCode - The HTTP status code
  * @param additionalContext - Additional context to add to the error
  * @returns Never (always throws)
@@ -145,8 +158,6 @@ const throwHomeserverError = (
 const handleTypedError = (
   errorMessage: string,
   errorName: string | undefined,
-  homeserverErrorType: Libs.HomeserverErrorType,
-  message: string,
   statusCode: number,
   additionalContext: Record<string, unknown>,
 ): never => {
@@ -154,11 +165,11 @@ const handleTypedError = (
     return throwInvalidInputError(errorMessage, additionalContext);
   }
 
-  if (errorName === 'AuthenticationError' || statusCode === 401) {
+  if (errorName === 'AuthenticationError' || statusCode === HttpStatusCode.UNAUTHORIZED) {
     return throwSessionExpiredError(errorMessage, additionalContext);
   }
 
-  return throwHomeserverError(homeserverErrorType, message, statusCode, errorMessage, additionalContext);
+  return throwHomeserverError(statusCode, errorMessage, additionalContext);
 };
 
 /**
@@ -166,19 +177,15 @@ const handleTypedError = (
  * Transforms various error types into standardized AppError instances.
  *
  * @param error - The error to handle
- * @param homeserverErrorType - The type of error
- * @param message - The message to use
- * @param statusCode - The status code to use
  * @param additionalContext - Additional context to add to the error
+ * @param statusCode - Fallback status code if not extractable from error (default: 500)
  * @param alwaysUseHomeserverError - Whether to always use the homeserver error
  * @returns Never (always throws)
  */
 export const handleError = (
   error: unknown,
-  homeserverErrorType: Libs.HomeserverErrorType,
-  message: string,
-  statusCode: number,
   additionalContext: Record<string, unknown> = {},
+  statusCode: number = HttpStatusCode.INTERNAL_SERVER_ERROR,
   alwaysUseHomeserverError = false,
 ): never => {
   // Re-throw existing AppErrors as-is
@@ -190,37 +197,25 @@ export const handleError = (
 
   // Handle Pubky SDK errors
   if (isPubkyErrorLike(error)) {
-    return handleTypedError(
-      error.message,
-      error.name,
-      homeserverErrorType,
-      message,
-      resolvedStatusCode,
-      additionalContext,
-    );
+    return handleTypedError(error.message, error.name, resolvedStatusCode, additionalContext);
   }
 
   // Handle standard JavaScript errors
   if (error instanceof Error) {
-    return handleTypedError(
-      error.message,
-      undefined,
-      homeserverErrorType,
-      message,
-      resolvedStatusCode,
-      additionalContext,
-    );
+    return handleTypedError(error.message, undefined, resolvedStatusCode, additionalContext);
   }
 
   // Handle unknown error types
   if (alwaysUseHomeserverError) {
-    return throwHomeserverError(homeserverErrorType, message, resolvedStatusCode, String(error), additionalContext);
+    return throwHomeserverError(resolvedStatusCode, String(error), additionalContext);
   }
 
-  throw Libs.createCommonError(
-    Libs.CommonErrorType.NETWORK_ERROR,
-    `An unexpected error occurred during ${message.toLowerCase()}`,
-    resolvedStatusCode,
-    { error, ...additionalContext },
-  );
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
+  throw Libs.Err.network(Libs.NetworkErrorCode.CONNECTION_REFUSED, errorMessage, {
+    service: Libs.ErrorService.Homeserver,
+    operation: (additionalContext.operation as string | undefined) ?? 'unknown',
+    context: { statusCode: resolvedStatusCode, ...additionalContext },
+    cause: error,
+  });
 };

@@ -1,8 +1,19 @@
 import { parseResponseOrThrow } from '@/core/services/nexus/nexus.utils';
-import * as Libs from '@/libs';
+import {
+  HttpMethod,
+  HttpStatusCode,
+  AppError,
+  sleep,
+  fromHttpResponse,
+  ErrorService,
+  Err,
+  AuthErrorCode,
+  TimeoutErrorCode,
+  ErrorCategory,
+  ServerErrorCode,
+} from '@/libs';
 import { Session, type AuthFlow } from '@synonymdev/pubky';
 import type { CancelableAuthApproval, PubPath } from './homeserver.types';
-import { HomeserverAction } from './homeserver.types';
 import { createCanceledError, handleError, isRetryableRelayPollError } from './error.utils';
 
 // Re-export error utilities for backwards compatibility
@@ -110,7 +121,8 @@ export const parseResponseOrUndefined = async <T>(response: Response): Promise<T
   try {
     return await parseResponseOrThrow<T>(response);
   } catch (error) {
-    if (error instanceof Libs.AppError && error.type === Libs.NexusErrorType.INVALID_RESPONSE) {
+    // Empty/invalid JSON responses return undefined instead of throwing
+    if (error instanceof AppError && error.category === ErrorCategory.Server && error.code === ServerErrorCode.INTERNAL_ERROR) {
       return undefined;
     }
     throw error;
@@ -146,18 +158,17 @@ export const createCancelableAuthApproval = (
   };
 
   const awaitApproval = (async () => {
-    await Libs.sleep(0);
+    await sleep(0);
 
     let attempts = 0;
     for (;;) {
       if (canceled) throw createCanceledError();
       if (++attempts > maxPollAttempts) {
-        throw Libs.createHomeserverError(
-          Libs.HomeserverErrorType.AUTH_REQUEST_FAILED,
-          'Auth flow timed out after maximum attempts',
-          408,
-          { maxAttempts: maxPollAttempts },
-        );
+        throw Err.timeout(TimeoutErrorCode.REQUEST_TIMEOUT, 'Auth flow timed out after maximum attempts', {
+          service: ErrorService.Homeserver,
+          operation: 'awaitApproval',
+          context: { maxAttempts: maxPollAttempts, statusCode: HttpStatusCode.REQUEST_TIMEOUT },
+        });
       }
 
       try {
@@ -166,13 +177,13 @@ export const createCancelableAuthApproval = (
       } catch (error) {
         if (canceled) throw createCanceledError();
         if (isRetryableRelayPollError(error)) {
-          await Libs.sleep(pollIntervalMs);
+          await sleep(pollIntervalMs);
           continue;
         }
         throw error;
       }
 
-      await Libs.sleep(pollIntervalMs);
+      await sleep(pollIntervalMs);
     }
   })();
 
@@ -219,10 +230,10 @@ export const resolveOwnedSessionPath = (
  *
  * @param response - The response to check
  * @param url - The URL that was requested
- * @throws {HomeserverError} When response status is 401
+ * @throws {AppError} When response status is 401
  */
 export const checkSessionExpiration = async (response: Response, url: string): Promise<void> => {
-  if (response.status === 401) {
+  if (response.status === HttpStatusCode.UNAUTHORIZED) {
     let errorMessage = 'Session expired';
     try {
       const text = await response.text();
@@ -232,7 +243,11 @@ export const checkSessionExpiration = async (response: Response, url: string): P
     } catch {
       // Ignore error reading response body
     }
-    throw Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, errorMessage, 401, { url });
+    throw Err.auth(AuthErrorCode.SESSION_EXPIRED, errorMessage, {
+      service: ErrorService.Homeserver,
+      operation: 'checkSessionExpiration',
+      context: { endpoint: url, statusCode: HttpStatusCode.UNAUTHORIZED },
+    });
   }
 };
 
@@ -242,23 +257,17 @@ export const checkSessionExpiration = async (response: Response, url: string): P
  *
  * @param response - The response to check
  * @param url - The URL that was requested
- * @param errorType - The type of error to throw if not OK
- * @param errorMessage - The error message to use
- * @throws {HomeserverError} When response is not OK
+ * @param operation - The operation name for error context
+ * @throws {AppError} When response is not OK
  */
 export const assertOk = async (
   response: Response,
   url: string,
-  errorType: Libs.HomeserverErrorType,
-  errorMessage: string,
+  operation: string,
 ): Promise<void> => {
   if (response.ok) return;
   await checkSessionExpiration(response, url);
-  throw Libs.createHomeserverError(errorType, errorMessage, response.status, {
-    url,
-    statusCode: response.status,
-    statusText: response.statusText,
-  });
+  throw fromHttpResponse(response, ErrorService.Homeserver, operation, url);
 };
 
 /**
@@ -274,12 +283,9 @@ export const assertOk = async (
 export const getOwnedResponse = async (session: Session, path: PubPath<string>, url: string): Promise<Response> => {
   const response = await session.storage.get(path).catch((error) =>
     // Transforms the error into an AppError and re-throws to caller
-    handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
-      url,
-      method: HomeserverAction.GET,
-    }),
+    handleError(error, { url, method: HttpMethod.GET }),
   );
 
-  await assertOk(response, url, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data');
+  await assertOk(response, url, 'getOwnedResponse');
   return response;
 };

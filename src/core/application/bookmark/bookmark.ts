@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';    
 
 /**
  * Bookmark application service.
@@ -21,7 +22,7 @@ export class BookmarkApplication {
     return Core.LocalBookmarkService.exists(postId);
   }
 
-  static async persist(action: Core.HomeserverAction, params: Core.TBookmarkPersistInput) {
+  static async persist(action: HttpMethod, params: Core.TBookmarkPersistInput) {
     // Get current user ID for user counts update
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 

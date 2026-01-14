@@ -2,7 +2,7 @@ import JSZip from 'jszip';
 
 import * as Specs from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger } from '@/libs';
 
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
@@ -15,7 +15,7 @@ export class ProfileApplication {
    */
   static async commitCreate({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
-      await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
+      await Core.HomeserverService.request(HttpMethod.PUT, url, profile.toJson());
       const authStore = Core.useAuthStore.getState();
       authStore.setCurrentUserPubky(pubky);
       authStore.setHasProfile(true);
@@ -50,7 +50,7 @@ export class ProfileApplication {
         pubky,
       );
       // Update homeserver with complete profile
-      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
+      await Core.HomeserverService.request(HttpMethod.PUT, meta.url, user.toJson());
       // Update local database after successful homeserver sync
       await Core.LocalProfileService.updateDetails(user, pubky);
     } catch (error) {
@@ -84,7 +84,7 @@ export class ProfileApplication {
       );
 
       // Update homeserver with complete profile
-      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
+      await Core.HomeserverService.request(HttpMethod.PUT, meta.url, user.toJson());
 
       // Update local database after successful homeserver sync
       await Core.UserDetailsModel.upsert({
@@ -92,7 +92,7 @@ export class ProfileApplication {
         status: status || null,
       });
     } catch (error) {
-      Libs.Logger.error('Failed to update status', { error, pubky, status });
+      Logger.error('Failed to update status', { error, pubky, status });
       throw error;
     }
   }

@@ -183,12 +183,12 @@ describe('NexusBootstrapService', () => {
       });
 
       await expect(Core.NexusBootstrapService.fetch(errorPubky)).rejects.toMatchObject({
-        type: Libs.NexusErrorType.INVALID_REQUEST,
-        statusCode: 400,
+        category: Libs.ErrorCategory.Client,
+        code: Libs.ClientErrorCode.BAD_REQUEST,
       });
     });
 
-    it('should throw INVALID_RESPONSE error when response is empty', async () => {
+    it('should throw INTERNAL_ERROR when response is empty', async () => {
       // Use a different pubky to avoid cache collision
       const emptyPubky = 'empty-user-789';
       mockFetch.mockResolvedValueOnce({
@@ -201,8 +201,8 @@ describe('NexusBootstrapService', () => {
       });
 
       await expect(Core.NexusBootstrapService.fetch(emptyPubky)).rejects.toMatchObject({
-        type: Libs.NexusErrorType.INVALID_RESPONSE,
-        statusCode: 500,
+        category: Libs.ErrorCategory.Server,
+        code: Libs.ServerErrorCode.INTERNAL_ERROR,
       });
     });
   });

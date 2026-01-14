@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 // Mock HomeserverService
 vi.mock('@/core/services/homeserver', () => ({
@@ -223,7 +224,7 @@ describe('PostController', () => {
 
       // Verify homeserver sync was called
       expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
+        HttpMethod.PUT,
         expect.stringContaining('pubky://'),
         expect.any(Object),
       );
@@ -243,7 +244,7 @@ describe('PostController', () => {
 
       // Verify homeserver sync was called
       expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
+        HttpMethod.PUT,
         expect.stringContaining('pubky://'),
         expect.any(Object),
       );
@@ -292,7 +293,7 @@ describe('PostController', () => {
 
       // Verify homeserver sync was called
       expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
+        HttpMethod.PUT,
         expect.stringContaining('pubky://'),
         expect.any(Object),
       );
@@ -327,7 +328,7 @@ describe('PostController', () => {
 
       // Verify homeserver sync was called
       expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
+        HttpMethod.PUT,
         expect.stringContaining('pubky://'),
         expect.any(Object),
       );

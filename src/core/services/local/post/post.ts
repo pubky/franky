@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { DatabaseErrorCode, Err, ErrorService } from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, HttpMethod } from '@/libs';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
@@ -172,7 +172,7 @@ export class LocalPostService {
             kind: normalizedKind,
             parentUri,
             ops,
-            action: Core.HomeserverAction.PUT,
+            action: HttpMethod.PUT,
           });
 
           await Promise.all(ops);
@@ -257,7 +257,7 @@ export class LocalPostService {
           );
 
           // Remove post from streams
-          this.updatePostStream({ compositePostId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });
+          this.updatePostStream({ compositePostId, kind, parentUri, ops, action: HttpMethod.DELETE });
 
           await Promise.all(ops);
         },
@@ -285,7 +285,7 @@ export class LocalPostService {
 
     // Helper to call the appropriate method with proper class context
     const updateStream = (streamId: Core.PostStreamId, items: string[]) => {
-      if (action === Core.HomeserverAction.PUT) {
+      if (action === HttpMethod.PUT) {
         return Core.PostStreamModel.prependItems(streamId, items);
       } else {
         return Core.PostStreamModel.removeItems(streamId, items);

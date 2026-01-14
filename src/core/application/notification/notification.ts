@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger } from '@/libs';
 import { LastReadResult } from 'pubky-app-specs';
 
 export class NotificationApplication {
@@ -27,8 +27,8 @@ export class NotificationApplication {
    * @returns The new lastRead timestamp
    */
   static markAllAsRead({ meta, last_read }: LastReadResult) {
-    Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, last_read.toJson()).catch((error) =>
-      Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
+    Core.HomeserverService.request(HttpMethod.PUT, meta.url, last_read.toJson()).catch((error) =>
+      Logger.warn('Failed to update lastRead on homeserver', { error }),
     );
   }
 
@@ -140,7 +140,7 @@ export class NotificationApplication {
       try {
         await Core.LocalNotificationService.bulkSave({ flatNotifications });
       } catch (error) {
-        Libs.Logger.warn('Failed to persist notifications to cache', { error });
+        Logger.warn('Failed to persist notifications to cache', { error });
         // Continue - we still return the fetched notifications for display
       }
 
@@ -150,7 +150,7 @@ export class NotificationApplication {
       // Decrement the timestamp. If not we will get duplicated notification. Infinity is used for initial load.
       return { flatNotifications, olderThan: nextOlderThan - 1 };
     } catch (error) {
-      Libs.Logger.warn('Failed to fetch notifications from Nexus', { userId, olderThan, limit, error });
+      Logger.warn('Failed to fetch notifications from Nexus', { userId, olderThan, limit, error });
       return { flatNotifications: [], olderThan: undefined };
     }
   }

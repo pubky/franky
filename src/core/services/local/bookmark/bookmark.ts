@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger, HttpMethod } from '@/libs';
 
 /**
  * Mapping of post kinds to their corresponding bookmark stream types.
@@ -26,8 +26,8 @@ export class LocalBookmarkService {
   /**
    * Persists a bookmark operation (create or delete).
    */
-  static async persist(action: Core.HomeserverAction, { userId, postId }: Core.TBookmarkEventParams) {
-    const isCreate = action === Core.HomeserverAction.PUT;
+  static async persist(action: HttpMethod, { userId, postId }: Core.TBookmarkEventParams) {
+    const isCreate = action === HttpMethod.PUT;
 
     try {
       await Core.db.transaction('rw', this.BOOKMARK_TABLES, async () => {

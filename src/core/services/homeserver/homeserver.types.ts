@@ -1,9 +1,10 @@
 import type { Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 export type FetchOptions = {
-  method?: HomeserverAction;
+  method?: HttpMethod;
   body?: string | Uint8Array;
 };
 
@@ -20,12 +21,6 @@ export type TGenerateAuthUrlResult = {
   awaitApproval: Promise<Session>;
   cancelAuthFlow: () => void;
 };
-
-export enum HomeserverAction {
-  GET = 'GET',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-}
 
 export type THomeserverRestoreSessionParams = {
   sessionExport: string;

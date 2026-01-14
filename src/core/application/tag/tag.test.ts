@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TagApplication } from './tag';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 
 // Mock the Local.Tag service
@@ -63,7 +64,7 @@ describe('Tag Application', () => {
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.tagUrl, mockData.tagJson);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, mockData.tagUrl, mockData.tagJson);
     });
 
     it('should throw when local save fails', async () => {
@@ -107,7 +108,7 @@ describe('Tag Application', () => {
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.tagUrl);
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, mockData.tagUrl);
     });
 
     it('should throw when local remove fails', async () => {

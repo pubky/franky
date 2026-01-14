@@ -2,6 +2,7 @@ import { AppError } from './error';
 import { ErrorService } from './error.types';
 import { ServerErrorCode, TimeoutErrorCode, ClientErrorCode, AuthErrorCode, RateLimitErrorCode } from './error.codes';
 import { Err } from './error.factories';
+import { HttpStatusCode } from '../http';
 
 /**
  * Creates appropriate AppError from HTTP response.
@@ -31,21 +32,21 @@ export function fromHttpResponse(
   const baseParams = { service, operation, context: { endpoint, statusCode: status } };
 
   // 5xx Server Errors
-  if (status >= 500) {
-    if (status === 504) {
+  if (status >= HttpStatusCode.INTERNAL_SERVER_ERROR) {
+    if (status === HttpStatusCode.GATEWAY_TIMEOUT) {
       return Err.timeout(TimeoutErrorCode.GATEWAY_TIMEOUT, message, baseParams);
     }
     const code =
-      status === 503
+      status === HttpStatusCode.SERVICE_UNAVAILABLE
         ? ServerErrorCode.SERVICE_UNAVAILABLE
-        : status === 502
+        : status === HttpStatusCode.BAD_GATEWAY
           ? ServerErrorCode.BAD_GATEWAY
           : ServerErrorCode.INTERNAL_ERROR;
     return Err.server(code, message, baseParams);
   }
 
   // 429 Rate Limited
-  if (status === 429) {
+  if (status === HttpStatusCode.TOO_MANY_REQUESTS) {
     const retryAfter = response.headers.get('retry-after');
     return Err.rateLimit(RateLimitErrorCode.RATE_LIMITED, message, {
       ...baseParams,
@@ -54,40 +55,45 @@ export function fromHttpResponse(
   }
 
   // 401/403 Auth Errors
-  if (status === 401) {
+  if (status === HttpStatusCode.UNAUTHORIZED) {
     return Err.auth(AuthErrorCode.UNAUTHORIZED, message, baseParams);
   }
-  if (status === 403) {
+  if (status === HttpStatusCode.FORBIDDEN) {
     return Err.auth(AuthErrorCode.FORBIDDEN, message, baseParams);
   }
 
   // 408 Timeout
-  if (status === 408) {
+  if (status === HttpStatusCode.REQUEST_TIMEOUT) {
     return Err.timeout(TimeoutErrorCode.REQUEST_TIMEOUT, message, baseParams);
   }
 
   // 404 Not Found
-  if (status === 404) {
+  if (status === HttpStatusCode.NOT_FOUND) {
     return Err.client(ClientErrorCode.NOT_FOUND, message, baseParams);
   }
 
   // 409 Conflict
-  if (status === 409) {
+  if (status === HttpStatusCode.CONFLICT) {
     return Err.client(ClientErrorCode.CONFLICT, message, baseParams);
   }
 
+  // 413 Payload Too Large
+  if (status === HttpStatusCode.PAYLOAD_TOO_LARGE) {
+    return Err.client(ClientErrorCode.PAYLOAD_TOO_LARGE, message, baseParams);
+  }
+
   // 410 Gone
-  if (status === 410) {
+  if (status === HttpStatusCode.GONE) {
     return Err.client(ClientErrorCode.GONE, message, baseParams);
   }
 
   // 422 Unprocessable
-  if (status === 422) {
+  if (status === HttpStatusCode.UNPROCESSABLE_ENTITY) {
     return Err.client(ClientErrorCode.UNPROCESSABLE, message, baseParams);
   }
 
   // Other 4xx
-  if (status >= 400) {
+  if (status >= HttpStatusCode.BAD_REQUEST) {
     return Err.client(ClientErrorCode.BAD_REQUEST, message, baseParams);
   }
 
@@ -103,7 +109,7 @@ export function fromHttpResponse(
  * @param service - Which service produced the error
  * @param operation - Which operation failed
  * @param endpoint - The endpoint URL (for context)
- * @throws AppError when response is not ok (status >= 400)
+ * @throws AppError when response is not ok (status >= BAD_REQUEST)
  *
  * @example
  * ```typescript

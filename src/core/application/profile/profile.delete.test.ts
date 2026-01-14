@@ -6,7 +6,7 @@ vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: vi.fn((pubky: string) => `pubky://${pubky}/pub/pubky.app/`),
 }));
 
-// Mock HomeserverService methods and provide enum-like HomeserverAction
+// Mock HomeserverService methods
 vi.mock('@/core/services/homeserver', () => ({
   HomeserverService: {
     list: vi.fn(),

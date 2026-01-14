@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger, isAppError } from '@/libs';
 import type { UseFollowUserResult } from './useFollowUser.types';
 
 /**
@@ -49,20 +49,20 @@ export function useFollowUser(): UseFollowUserResult {
       setError(null);
 
       try {
-        const action = isCurrentlyFollowing ? Core.HomeserverAction.DELETE : Core.HomeserverAction.PUT;
+        const action = isCurrentlyFollowing ? HttpMethod.DELETE : HttpMethod.PUT;
 
         await Core.UserController.commitFollow(action, {
           follower: currentUserPubky,
           followee: userId,
         });
 
-        Libs.Logger.debug(`[useFollowUser] Successfully ${isCurrentlyFollowing ? 'unfollowed' : 'followed'} user`, {
+        Logger.debug(`[useFollowUser] Successfully ${isCurrentlyFollowing ? 'unfollowed' : 'followed'} user`, {
           userId,
         });
       } catch (err) {
-        const errorMessage = Libs.isAppError(err) ? err.message : 'Failed to update follow status';
+        const errorMessage = isAppError(err) ? err.message : 'Failed to update follow status';
         setError(errorMessage);
-        Libs.Logger.error('[useFollowUser] Failed to toggle follow:', err);
+        Logger.error('[useFollowUser] Failed to toggle follow:', err);
         throw err;
       } finally {
         setIsLoading(false);

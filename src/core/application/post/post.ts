@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostApplication {
   /**
@@ -98,7 +98,7 @@ export class PostApplication {
       await Core.FileApplication.commitCreate({ fileAttachments });
     }
     await Core.LocalPostService.create({ compositePostId, post });
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
+    await Core.HomeserverService.request(HttpMethod.PUT, postUrl, post.toJson());
 
     if (tags && tags.length > 0) {
       await Core.TagApplication.commitCreate({ tagList: tags });
@@ -109,7 +109,7 @@ export class PostApplication {
     const post = await Core.PostDetailsModel.findById(compositePostId);
 
     if (!post) {
-      throw Libs.createSanitizationError(Libs.SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, {
+      throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, {
         compositePostId,
       });
     }
@@ -118,7 +118,7 @@ export class PostApplication {
     // Always delete from homeserver, even if the post had connections (soft delete).
     // Nexus will determine the definitive state based on graph state.
     const postUrl = post.uri;
-    await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);
+    await Core.HomeserverService.request(HttpMethod.DELETE, postUrl);
 
     if (!hadConnections && post.attachments && post.attachments.length > 0) {
       await Core.FileApplication.commitDelete(post.attachments);
