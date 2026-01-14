@@ -44,12 +44,14 @@ const sharedToastOptions = {
  * @see https://www.figma.com/design/01ZvjSPZnKTNmaEWz0yJsq/shadcn_ui-PUBKY?node-id=302-6032&m=dev
  */
 export function Toaster() {
-  const [isDesktop, setIsDesktop] = useState(false);
+  // Initialize with SSR-safe check to prevent hydration mismatch flash
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(min-width: 1024px)').matches;
+  });
 
   useEffect(() => {
-    // Check initial viewport width
     const mediaQuery = window.matchMedia('(min-width: 1024px)');
-    setIsDesktop(mediaQuery.matches);
 
     // Listen for viewport changes
     const handleChange = (e: MediaQueryListEvent) => {

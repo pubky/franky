@@ -23,8 +23,9 @@ export const PostAttachmentsImagesAndVideos = ({ imagesAndVideos }: PostAttachme
     const currentMedia = document.getElementById(`media-item-${currentIndex}`);
 
     if (currentMedia) {
-      currentMedia.requestFullscreen().catch((error) => {
-        Molecules.toast.error('Error attempting to enable fullscreen', { description: String(error) });
+      currentMedia.requestFullscreen().catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        Molecules.toast.error('Error attempting to enable fullscreen', { description: message });
       });
     }
   };

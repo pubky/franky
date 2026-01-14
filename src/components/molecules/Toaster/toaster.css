@@ -3,9 +3,6 @@
  *
  * Uses unstyled mode from Sonner, so we build styles from scratch.
  * CSS variables are defined in globals.css for consistency with design system.
- *
- * Note: !important is needed to override Sonner's internal positioning and
- * flex behaviors when using unstyled mode.
  */
 
 /* Ensure toast respects max-width and doesn't overflow */
