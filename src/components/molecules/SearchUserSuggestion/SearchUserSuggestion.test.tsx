@@ -26,7 +26,7 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-vi.mock('@/molecules', () => ({
+vi.mock('@/organisms', () => ({
   AvatarWithFallback: ({ name, size }: { name: string; avatarUrl?: string; size: string }) => (
     <div data-testid="avatar" data-name={name} data-size={size}>
       Avatar

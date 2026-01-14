@@ -512,6 +512,37 @@ describe('TimelinePosts', () => {
 });
 
 describe('TimelinePosts - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Mock router
+    mockUseRouter.mockReturnValue({
+      push: mockPush,
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+    } as ReturnType<typeof useRouter>);
+
+    // Mock infinite scroll
+    mockUseInfiniteScroll.mockReturnValue({
+      sentinelRef: vi.fn(),
+    });
+
+    // Mock usePostNavigation
+    mockUsePostNavigation.mockReturnValue({
+      navigateToPost: mockPush,
+    });
+
+    // Mock useLiveQuery
+    mockUseLiveQuery.mockReturnValue({ id: 'test', replies: 0, tags: 0, unique_tags: 0, reposts: 0 });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should match snapshot for loading state', () => {
     const { container } = render(
       <TimelinePosts postIds={[]} loading={true} loadingMore={false} error={null} hasMore={true} loadMore={vi.fn()} />,

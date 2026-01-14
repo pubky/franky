@@ -16,6 +16,7 @@ export function DialogRepost({ postId, open, onOpenChangeAction }: DialogRepostP
         <Atoms.Container className="gap-3">
           {/* Repost input - repost preview is rendered inside PostInput */}
           <Organisms.PostInput
+            dataCy="repost-post-input"
             variant={POST_INPUT_VARIANT.REPOST}
             originalPostId={postId}
             onSuccess={() => {

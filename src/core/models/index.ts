@@ -7,6 +7,7 @@ export * from './notification';
 export * from './hot';
 export * from './bookmark';
 export * from './feed';
+export * from './moderation';
 export * from './models.types';
 export * from './models.defaults';
 export * from './models.utils';

@@ -1,10 +1,11 @@
 import { clickFollowButton } from './profile';
 
 export const searchForProfileByPubky = (pubky: string, profileName: string) => {
-  // type pubkyinto search bar and press enter
-  //cy.get('#header-search-input').type(`${pubky}{enter}`);
-  // todo: use search once implemented
-  cy.visit(`/profile/${pubky}`);
+  // type pubky into search bar
+  cy.get('[data-cy="header-search-input"]').should('be.visible').type(`pk:${pubky}`);
+
+  // wait for autocomplete suggestions to appear and click on the user
+  cy.get(`[data-cy="search-user-suggestion-${pubky}"]`).should('be.visible').click();
 
   // check that profile page is displayed
   cy.get('[data-cy="profile-username-header"]').should('have.text', profileName);

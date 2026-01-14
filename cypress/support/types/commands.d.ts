@@ -1,4 +1,4 @@
-import { CheckIndexed, HasBackedUp, BackupType } from './enums';
+import { HasBackedUp, BackupType, CheckForNewPosts } from './enums';
 
 declare global {
   namespace Cypress {
@@ -22,6 +22,8 @@ declare global {
       innerTextContains(text: string): Chainable<Subject>;
       innerTextShouldNotContain(text: string): Chainable<Subject>;
       innerTextShouldNotEq(text: string): Chainable<Subject>;
+      saveStringToAlias(text: string, alias: string): Chainable<void>;
+      saveElementValueToAlias(selector: string, alias: string): Chainable<void>;
       saveCopiedPubkyToAlias(alias: string): Chainable<void>;
       saveCopiedTextToAlias(alias: string): Chainable<void>;
       assertElementDoesNotExist(selector: string): Chainable<void>;
@@ -30,12 +32,15 @@ declare global {
       findPostInBookmarks(postIdx: number, expectedCount?: number): Chainable<JQuery<HTMLElement>>;
       countPostsInBookmarks(expectedCount: number): Chainable<void>;
       findPostInSearchResults(filterText?: string, postIdx?: number): Chainable<JQuery<HTMLElement>>;
-      findFirstPostInFeed(checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
-      findFirstPostInFeedFiltered(filterText: string, checkIndexed?: CheckIndexed): Chainable<JQuery<HTMLElement>>;
+      findFirstPostInFeed(checkForNewPosts?: CheckForNewPosts): Chainable<JQuery<HTMLElement>>;
+      findFirstPostInFeedFiltered(
+        filterText: string,
+        checkForNewPosts?: CheckForNewPosts,
+      ): Chainable<JQuery<HTMLElement>>;
       findPostInFeed(
         postIdx?: number,
         filterText?: string,
-        checkIndexed?: CheckIndexed,
+        checkForNewPosts?: CheckForNewPosts,
       ): Chainable<JQuery<HTMLElement>>;
     }
   }

@@ -120,7 +120,7 @@ export class PostStreamApplication {
     const mutedUserIds = new Set(mutedStream?.stream ?? []);
 
     let isFirstFetch = true;
-    const { posts, cacheMissIds, timestamp } = await postStreamQueue.collect(streamId, {
+    const { posts, cacheMissIds, timestamp, reachedEnd } = await postStreamQueue.collect(streamId, {
       limit,
       cursor: streamTail,
       filter: (posts) => MuteFilter.filterPosts(posts, mutedUserIds),
@@ -149,16 +149,43 @@ export class PostStreamApplication {
       },
     });
 
+    // Fetch original posts for any reposts served from cache
+    // (handles case where repost is cached but original was evicted)
+    try {
+      const relationships = await Core.LocalPostService.readRelationshipsByIds(posts);
+      const repostedUris = relationships
+        .filter((rel): rel is Core.PostRelationshipsModelSchema => rel !== undefined && rel.reposted !== null)
+        .map((rel) => rel.reposted as string);
+      await this.fetchOriginalPostsByUris({ repostedUris, viewerId });
+    } catch (error) {
+      Libs.Logger.warn('Failed to fetch missing repost content', { postIds: posts, error });
+    }
+
     return {
       nextPageIds: posts,
       cacheMissPostIds: cacheMissIds,
       timestamp,
+      reachedEnd,
     };
   }
 
   // ============================================================================
   // Internal Helpers
   // ============================================================================
+
+  /**
+   * Gets the indexed_at timestamp from a post for pagination cursor advancement.
+   * Returns undefined if the post details cannot be found.
+   */
+  private static async getPostTimestamp(postId: string): Promise<number | undefined> {
+    try {
+      const postDetails = await Core.LocalPostService.readDetails({ postId });
+      return postDetails?.indexed_at;
+    } catch (error) {
+      Libs.Logger.warn('Failed to get post timestamp', { postId, error });
+      return undefined;
+    }
+  }
 
   /**
    * Internal method that performs the actual fetch without mute filtering.
@@ -180,9 +207,11 @@ export class PostStreamApplication {
       if (cachedStream) {
         const cachedStreamChunk = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
 
-        // Full cache hit, return immediately
+        // Full cache hit, return with proper timestamp for pagination
         if (cachedStreamChunk.length === limit) {
-          return { nextPageIds: cachedStreamChunk, cacheMissPostIds: [], timestamp: undefined };
+          const lastCachedPostId = cachedStreamChunk[cachedStreamChunk.length - 1];
+          const timestamp = await this.getPostTimestamp(lastCachedPostId);
+          return { nextPageIds: cachedStreamChunk, cacheMissPostIds: [], timestamp };
         }
 
         // Partial cache hit, fetch missing posts from Nexus and combine
@@ -220,25 +249,26 @@ export class PostStreamApplication {
       // Persist the missing authors of the posts
       await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
       // Fetch original posts for any reposts (to display embedded repost content)
-      await this.fetchRepostedOriginalPosts({ posts: postBatch, viewerId });
+      const repostedUris = postBatch
+        .map((post) => post.relationships.reposted)
+        .filter((uri): uri is string => uri !== null);
+      await this.fetchOriginalPostsByUris({ repostedUris, viewerId });
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
     }
   }
 
   /**
-   * Fetch original posts that are referenced by reposts.
-   * This ensures that when a repost is displayed, the embedded original post content is available.
-   * @param posts - Array of posts that may contain reposts
+   * Core logic for fetching original posts by their URIs.
+   * Converts URIs to IDs, checks cache, fetches missing posts from Nexus, and persists them.
+   * This method is public to allow reuse by TtlApplication for refreshing repost originals.
+   * @param repostedUris - Array of pubky URIs pointing to original posts
    * @param viewerId - ID of the viewer
    */
-  private static async fetchRepostedOriginalPosts({ posts, viewerId }: Core.TFetchMissingUsersParams) {
-    // Collect all reposted URIs from the posts
-    const repostedUris = posts.map((post) => post.relationships.reposted).filter((uri): uri is string => uri !== null);
-
+  static async fetchOriginalPostsByUris({ repostedUris, viewerId }: { repostedUris: string[]; viewerId: Core.Pubky }) {
     if (repostedUris.length === 0) return;
 
-    // Convert URIs to composite IDs and deduplicate (multiple reposts may reference the same original)
+    // Convert URIs to composite IDs and deduplicate
     const originalPostIds = Array.from(
       new Set(
         repostedUris
@@ -265,7 +295,6 @@ export class PostStreamApplication {
       missingOriginalCount: missingOriginalPostIds.length,
     });
 
-    // Fetch the missing original posts (non-recursive to avoid infinite loops)
     try {
       const originalPosts = await Core.NexusPostStreamService.fetchByIds({
         post_ids: missingOriginalPostIds,
@@ -298,16 +327,8 @@ export class PostStreamApplication {
     const lastCachedPostId = cachedStreamChunk[cachedStreamChunk.length - 1];
     const remainingLimit = limit - cachedStreamChunk.length;
 
-    // Get timestamp from last cached post for pagination
-    let nextStreamTail = streamTail;
-    try {
-      const lastPostDetails = await Core.PostDetailsModel.findById(lastCachedPostId);
-      if (lastPostDetails) {
-        nextStreamTail = lastPostDetails.indexed_at;
-      }
-    } catch (error) {
-      Libs.Logger.warn('Failed to get timestamp from last cached post', { lastCachedPostId, error });
-    }
+    // Get timestamp from last cached post for pagination cursor
+    const nextStreamTail = (await this.getPostTimestamp(lastCachedPostId)) ?? streamTail;
 
     // Fetch remaining posts from Nexus
     const { nextPageIds, cacheMissPostIds, timestamp } = await this.fetchStreamFromNexus({
@@ -326,6 +347,7 @@ export class PostStreamApplication {
       nextPageIds: uniquePostIds,
       cacheMissPostIds,
       timestamp,
+      reachedEnd: false,
     };
   }
 

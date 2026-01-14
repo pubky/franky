@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PostHeaderUserInfoPopoverHeader } from './PostHeaderUserInfoPopoverHeader';
 
-vi.mock('@/molecules', () => ({
+vi.mock('@/organisms', () => ({
   AvatarWithFallback: ({ name }: { name: string }) => <div data-testid="avatar">{name}</div>,
 }));
 
