@@ -60,11 +60,21 @@
 
 /* Icon styling - use brand color from design system */
 .toast-custom [data-icon] svg {
-  color: var(--brand) !important;
+  color: hsl(var(--brand)) !important;
 }
 
 .toast-custom [data-icon] svg * {
-  fill: var(--brand) !important;
-  stroke: var(--brand) !important;
-  color: var(--brand) !important;
+  fill: hsl(var(--brand)) !important;
+  stroke: hsl(var(--brand)) !important;
+  color: hsl(var(--brand)) !important;
+}
+
+/* Error toast icon - white color */
+[data-sonner-toast][data-type='error'] [data-icon] svg,
+[data-sonner-toast][data-type='error'] [data-icon] svg *,
+.toast-custom[data-type='error'] [data-icon] svg,
+.toast-custom[data-type='error'] [data-icon] svg * {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  color: #ffffff !important;
 }

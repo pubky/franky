@@ -14,7 +14,7 @@ const sharedToastOptions = {
       'toast-custom flex items-center gap-3 w-[calc(100%-32px)] min-w-0 lg:min-w-[392px] max-w-[392px] rounded-lg border p-4 shadow-lg bg-[#1a1f14] border-brand/32',
     default: 'text-popover-foreground',
     success: 'text-popover-foreground',
-    error: '!bg-destructive !border-destructive text-popover-foreground',
+    error: '!bg-[#3d1515] !border-destructive/60 text-popover-foreground',
     title: 'text-sm font-bold text-popover-foreground line-clamp-1',
     description: 'text-sm text-muted-foreground line-clamp-1',
     actionButton:
