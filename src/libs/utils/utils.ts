@@ -80,6 +80,23 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
 
+  // Normalise root element attributes too (querySelectorAll does not include the root)
+  if (shouldNormalise(clonedContainer.getAttribute('id'))) {
+    clonedContainer.setAttribute('id', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-controls'))) {
+    clonedContainer.setAttribute('aria-controls', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-labelledby'))) {
+    clonedContainer.setAttribute('aria-labelledby', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-describedby'))) {
+    clonedContainer.setAttribute('aria-describedby', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('for'))) {
+    clonedContainer.setAttribute('for', normalizedId);
+  }
+
   // Normalise all radix IDs to a consistent value
   const elementsWithIds = clonedContainer.querySelectorAll('[id]');
   elementsWithIds.forEach((el) => {
@@ -101,6 +118,14 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   elementsWithAriaLabelledBy.forEach((el) => {
     if (shouldNormalise(el.getAttribute('aria-labelledby'))) {
       el.setAttribute('aria-labelledby', normalizedId);
+    }
+  });
+
+  // Normalise aria-describedby attributes
+  const elementsWithAriaDescribedBy = clonedContainer.querySelectorAll('[aria-describedby]');
+  elementsWithAriaDescribedBy.forEach((el) => {
+    if (shouldNormalise(el.getAttribute('aria-describedby'))) {
+      el.setAttribute('aria-describedby', normalizedId);
     }
   });
 
