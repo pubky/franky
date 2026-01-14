@@ -30,15 +30,6 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock libs
-vi.mock('@/libs', async () => {
-  const actual = await vi.importActual('@/libs');
-  return {
-    ...actual,
-    extractInitials: vi.fn(({ name }: { name: string }) => (name ? name.charAt(0).toUpperCase() : 'U')),
-  };
-});
-
 // Mock organisms
 vi.mock('@/organisms', () => ({
   SearchInput: () => <div data-testid="search-input">Search Input</div>,
@@ -48,17 +39,17 @@ vi.mock('@/organisms', () => ({
 vi.mock('@/molecules', () => ({
   HeaderNavigationButtons: ({
     avatarImage,
-    avatarInitial,
+    avatarName,
     counter,
   }: {
     avatarImage?: string;
-    avatarInitial?: string;
+    avatarName?: string;
     counter?: number;
   }) => (
     <div
       data-testid="header-navigation-buttons"
       data-avatar-image={avatarImage}
-      data-avatar-initial={avatarInitial}
+      data-avatar-name={avatarName}
       data-counter={counter?.toString()}
     >
       Navigation Buttons
@@ -91,12 +82,12 @@ describe('HeaderSignIn', () => {
     expect(screen.getByTestId('header-navigation-buttons')).toBeInTheDocument();
   });
 
-  it('passes avatar image and initial to navigation buttons', () => {
+  it('passes avatar image and name to navigation buttons', () => {
     render(<HeaderSignIn />);
 
     const navButtons = screen.getByTestId('header-navigation-buttons');
     expect(navButtons).toHaveAttribute('data-avatar-image', 'https://cdn.example.com/avatar/test-pubky-123');
-    expect(navButtons).toHaveAttribute('data-avatar-initial', 'T');
+    expect(navButtons).toHaveAttribute('data-avatar-name', 'Test User');
   });
 
   it('passes notification counter to navigation buttons', () => {
@@ -115,7 +106,7 @@ describe('HeaderSignIn', () => {
     render(<HeaderSignIn />);
 
     const navButtons = screen.getByTestId('header-navigation-buttons');
-    expect(navButtons).toHaveAttribute('data-avatar-initial', 'U');
+    expect(navButtons).not.toHaveAttribute('data-avatar-name');
   });
 
   it('applies correct container classes', () => {

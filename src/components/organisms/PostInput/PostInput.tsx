@@ -1,12 +1,14 @@
 'use client';
 
+import * as React from 'react';
+
 import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import { POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
-import { usePostInput } from '@/hooks';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 import { PostInputExpandableSection } from '../PostInputExpandableSection';
@@ -49,7 +51,7 @@ export function PostInput({
     handleDragLeave,
     handleDragOver,
     handleDrop,
-  } = usePostInput({
+  } = Hooks.usePostInput({
     variant,
     postId,
     originalPostId,
@@ -57,6 +59,14 @@ export function PostInput({
     placeholder,
     expanded,
     onContentChange,
+  });
+
+  const isValid = React.useCallback(() => {
+    return Libs.canSubmitPost(variant, content, attachments, isSubmitting);
+  }, [variant, content, attachments, isSubmitting]);
+
+  const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
+    requireModifier: true,
   });
 
   return (
@@ -97,10 +107,11 @@ export function PostInput({
         <Atoms.Textarea
           ref={textareaRef}
           placeholder={displayPlaceholder}
-          className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
           value={content}
           onChange={handleChange}
           onFocus={handleExpand}
+          onKeyDown={handleKeyDown}
           maxLength={POST_MAX_CHARACTER_LENGTH}
           rows={1}
           disabled={isSubmitting}
@@ -131,12 +142,7 @@ export function PostInput({
           onEmojiSelect={handleEmojiSelect}
           onFileClick={handleFileClick}
           onImageClick={handleFileClick}
-          // Reposts allow empty content, posts and replies require content or attachments
-          isPostDisabled={
-            variant === POST_INPUT_VARIANT.REPOST
-              ? isSubmitting
-              : (!content.trim() && attachments.length === 0) || isSubmitting
-          }
+          isPostDisabled={!isValid()}
           submitMode={variant}
         />
       </Atoms.Container>

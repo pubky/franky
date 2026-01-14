@@ -16,7 +16,16 @@ export class BootstrapApplication {
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
     const data = await Core.NexusBootstrapService.fetch(params.pubky);
     if (!data.indexed) {
-      Libs.Logger.error('User is not indexed in Nexus. Adding user to TTL', { pubky: params.pubky });
+      Libs.Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
+        pubky: params.pubky,
+        retryDelayMs: Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
+      });
+
+      // Write TTL record to become stale after configured retry delay
+      await Core.LocalUserService.upsertTtlWithDelay(params.pubky, Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS);
+
+      // Subscribe to TTL coordinator for periodic staleness checks
+      Core.TtlCoordinator.getInstance().subscribeUser({ pubky: params.pubky });
     }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),

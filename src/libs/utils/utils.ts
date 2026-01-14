@@ -601,3 +601,37 @@ export const TAG_BANNED_CHARS = /[:, ]/g;
 export function sanitizeTagInput(value: string): string {
   return value.replace(TAG_BANNED_CHARS, '');
 }
+
+/**
+ * Determines if a post can be submitted based on variant, content, attachments, and submission state.
+ *
+ * @param variant - The post input variant ('post', 'reply', or 'repost')
+ * @param content - The text content of the post
+ * @param attachments - Array of attached files
+ * @param isSubmitting - Whether a submission is currently in progress
+ * @returns true if the post can be submitted, false otherwise
+ *
+ * @remarks
+ * - Reposts allow empty content
+ * - Posts and replies require either content or attachments
+ * - Cannot submit if already submitting
+ *
+ * @example
+ * canSubmitPost('post', 'Hello world', [], false) // true
+ * canSubmitPost('post', '', [], false) // false
+ * canSubmitPost('repost', '', [], false) // true
+ * canSubmitPost('post', 'Hello', [], true) // false (submitting)
+ */
+export function canSubmitPost(
+  variant: 'post' | 'reply' | 'repost',
+  content: string,
+  attachments: File[],
+  isSubmitting: boolean,
+): boolean {
+  if (isSubmitting) return false;
+
+  // Reposts allow empty content, posts and replies require content or attachments
+  if (variant === 'repost') return true;
+
+  return Boolean(content.trim()) || attachments.length > 0;
+}

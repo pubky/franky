@@ -38,11 +38,12 @@ export const saveNetworkRequestLog = (interceptedRequests: NetworkRequest[], tes
   });
 };
 
-export const verifyNotificationCounter = (expectedCount = '1') => {
-  // Wait and reload if the counter doesn't appear
-  cy.waitReloadWhileElementDoesNotExist('#header-notification-counter', 10);
-  // Assert the counter text
-  cy.get('#header-notification-counter').should('have.text', expectedCount);
+export const verifyNotificationCounter = (expectedCount?: number) => {
+  if (expectedCount === 0) {
+    cy.get('[data-cy="header-notification-counter"]').should('not.exist');
+  } else {
+    cy.get('[data-cy="header-notification-counter"]', { timeout: 30_000 }).should('have.text', expectedCount);
+  }
 };
 
 /**
