@@ -24,7 +24,7 @@ export { AppError, type AppErrorParams } from './error';
 export { Err } from './error.factories';
 
 // HTTP helpers
-export { fromHttpResponse, ensureHttpResponseOk } from './error.http';
+export { httpStatusCodeToError, httpResponseToError, safeFetch } from './error.http';
 
 // Utility functions
 export {

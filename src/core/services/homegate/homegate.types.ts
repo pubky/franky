@@ -1,3 +1,9 @@
+/**
+ * Represents a raw/unvalidated JSON object from API responses.
+ * Used as intermediate type before parsing into domain types.
+ */
+export type TRawApiResponse = Record<string, unknown>;
+
 export type TVerifySmsCodeResult = {
   /**
    * True if the code is valid, false otherwise.
@@ -92,9 +98,11 @@ export type TGetPriceResult = {
  * @property success - True if the request was successful, false otherwise.
  * @property retryAfter - The number of seconds to wait before retrying the request. Only set if the request was not successful.
  * @property errorType - The type of error that occurred. Only set if the request was not successful.
+ * @property statusCode - The HTTP status code. Only set for 'unknown' errors to aid debugging.
  */
-export interface ISendSmsCodeResult {
+export type TSendSmsCodeResult = {
   success: boolean;
   retryAfter?: number;
   errorType?: 'blocked' | 'rate_limited' | 'unknown';
-}
+  statusCode?: number;
+};

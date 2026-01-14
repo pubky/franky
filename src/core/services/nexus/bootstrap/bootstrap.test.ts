@@ -202,7 +202,7 @@ describe('NexusBootstrapService', () => {
 
       await expect(Core.NexusBootstrapService.fetch(emptyPubky)).rejects.toMatchObject({
         category: Libs.ErrorCategory.Server,
-        code: Libs.ServerErrorCode.INTERNAL_ERROR,
+        code: Libs.ServerErrorCode.INVALID_RESPONSE,
       });
     });
   });

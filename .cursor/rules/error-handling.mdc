@@ -6,251 +6,195 @@ alwaysApply: false
 
 # Error Handling Rules
 
-Rules for consistent error handling across all layers. Based on error-handling.md.
+Rules for consistent error handling across all layers. Based on ADR-0015.
 
 ## Core Principle
 
-**Every layer uses `AppError`** - no raw `Error`, no plain strings.
+**Every layer uses `AppError`** with category-based typing. No raw `Error`, no plain strings.
 
 ```typescript
-// ✅ Good
-throw createDatabaseError(DatabaseErrorType.UPSERT_FAILED, { table, id });
+// ✅ Good - Use Err.* factories
+throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to save post', {
+  service: ErrorService.Local,
+  operation: 'create',
+  context: { table: 'posts', id: post.id },
+  cause: error,
+});
 
 // ❌ Bad
 throw new Error('Failed to save');
 throw 'Something went wrong';
 ```
 
+## Error Taxonomy
+
+**Categories** (WHAT kind of failure): `Network`, `Timeout`, `Server`, `Client`, `Auth`, `RateLimit`, `Validation`, `Database`
+
+**Codes** (WHICH specific error): `WRITE_FAILED`, `NOT_FOUND`, `UNAUTHORIZED`, `SESSION_EXPIRED`, etc.
+
+**Services** (WHERE it originated): `Nexus`, `Homeserver`, `Homegate`, `Local`, etc.
+
 ## Layer-Specific Patterns
 
-### Models (`src/core/*/models/`)
+### Services / Models (`src/core/services/`)
 
 ```typescript
-// Always use createDatabaseError
-// Include table and id in details
-// Skip logging - let services decide
-
-class PostModel {
-  static async upsert(post: Post) {
-    try {
-      await db.posts.put(post);
-    } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.UPSERT_FAILED, {
-        table: 'posts',
-        id: post.id,
-        originalError: error,
-      });
-    }
-  }
-}
-```
-
-### Local Services (`src/core/*/services/local/`)
-
-```typescript
-// Catch model errors, add context
-// Re-throw same AppError (preserve stack)
-// Add service and action to details
+// Use Err.* factories
+// Include service, operation, context, cause
+// NO logging - let Application layer decide
 
 class LocalPostService {
-  static async create(post: Post) {
+  static async create({ compositePostId, post }: TLocalSavePostParams) {
     try {
-      await PostModel.upsert(post);
+      await Core.db.transaction('rw', [...tables], async () => {
+        // ... database operations
+      });
     } catch (error) {
-      if (error instanceof AppError) {
-        error.details = {
-          ...error.details,
-          service: 'LocalPostService',
-          action: 'create',
-        };
-        throw error;
-      }
-      throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, {
-        service: 'LocalPostService',
-        action: 'create',
-        originalError: error,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to save post', {
+        service: ErrorService.Local,
+        operation: 'create',
+        context: { compositePostId, kind: post.kind },
+        cause: error,
       });
     }
   }
 }
 ```
 
-### Remote Services (`src/core/*/services/homeserver/`, `nexus/`)
+### Remote Services (`src/core/services/nexus/`, `homegate/`, `homeserver/`)
 
 ```typescript
-// Use ensureHttpResponseOk and parseResponseOrThrow
-// Include endpoint, method, status, bodyPreview
-// Differentiate transient vs fatal errors
+// Use safeFetch + httpResponseToError
+// Or use queryNexus which wraps both with TanStack Query retry
 
-class NexusPostService {
-  static async fetch(id: string) {
-    const response = await queryNexus(`/v0/post/${id}`);
+class HomegateService {
+  static async verifySmsCode(phoneNumber: string, code: string) {
+    const url = homegateApi.validateSmsCode();
     
-    // queryNexus already wraps errors in AppError
-    // with status codes and endpoint info
-    
-    return response;
+    const response = await safeFetch(
+      url,
+      { method: HttpMethod.POST, body: JSON.stringify({ phoneNumber, code }), headers: JSON_HEADERS },
+      ErrorService.Homegate,
+      'verifySmsCode',
+    );
+
+    if (!response.ok) {
+      throw httpResponseToError(response, ErrorService.Homegate, 'verifySmsCode', url);
+    }
+
+    return await parseResponseOrThrow<TResult>(response, ErrorService.Homegate, 'verifySmsCode');
   }
 }
-
-// Transient errors (retryable):
-// - SERVICE_UNAVAILABLE (503)
-// - NETWORK_ERROR
-// - TIMEOUT
-
-// Fatal errors (don't retry):
-// - NOT_FOUND (404)
-// - UNAUTHORIZED (401)
-// - BAD_REQUEST (400)
 ```
 
-### Application Layer (`src/core/*/application/`)
+### Application Layer (`src/core/application/`)
 
 ```typescript
-// Treat AppError as canonical
-// Map to domain errors if needed
-// Wrap stray errors in CommonError
-// Check error.type for retry decisions
+// Log errors here (single logging point)
+// Use decision helpers: isRetryable(), requiresLogin(), isNotFound()
+// Re-throw or handle based on category/code
 
 class PostApplication {
   static async create(post: Post) {
     try {
       await LocalPostService.create(post);
-      await this.syncToHomeserver(post);
     } catch (error) {
-      if (error instanceof AppError) {
-        // Map to domain error if needed
-        if (error.statusCode === 404) {
-          throw createSanitizationError(
-            SanitizationErrorType.POST_NOT_FOUND,
-            { postId: post.id }
-          );
-        }
-        throw error;
-      }
-      // Wrap unexpected errors
-      throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, {
-        context: 'PostApplication.create',
-        originalError: error,
-      });
-    }
-  }
-}
-```
-
-### Controllers (`src/core/controllers/`)
-
-```typescript
-// Normalize any non-AppError at entry point
-// Convert AppError to UI responses
-// Use ErrorMessages for user-facing copy
-// Avoid logging (delegate to reporter)
-
-class PostController {
-  static async commitCreatePost(input: CreatePostInput) {
-    try {
-      const post = PostPipe.normalizeCreate(input);
-      await PostApplication.create(post);
-      return { success: true };
-    } catch (error) {
-      const appError = error instanceof AppError 
-        ? error 
-        : createCommonError(CommonErrorType.UNEXPECTED_ERROR, { error });
+      Logger.error('Failed to create post', { error, postId: post.id });
       
-      return {
-        success: false,
-        error: ErrorMessages[appError.type] || 'An error occurred',
-        type: appError.type,
-      };
+      if (error instanceof AppError && isNotFound(error)) {
+        // Handle specific case
+      }
+      throw error; // Let it bubble to UI
     }
   }
 }
 ```
 
-## Error Types
+### UI Layer (`src/components/`, `src/hooks/`)
 
-### Database Errors
 ```typescript
-DatabaseErrorType.UPSERT_FAILED
-DatabaseErrorType.DELETE_FAILED
-DatabaseErrorType.QUERY_FAILED
-DatabaseErrorType.TRANSACTION_FAILED
+// Convert AppError to user-facing responses
+// Use requiresLogin() for auth redirects
+// Use isNotFound() for empty states
+
+try {
+  await PostApplication.create(post);
+} catch (error) {
+  if (error instanceof AppError) {
+    if (requiresLogin(error)) {
+      router.push('/login');
+      return;
+    }
+    toast.error(getErrorMessage(error));
+  }
+}
 ```
 
-### Common Errors
-```typescript
-CommonErrorType.UNEXPECTED_ERROR
-CommonErrorType.INVALID_INPUT
-CommonErrorType.NOT_FOUND
-CommonErrorType.NETWORK_ERROR
-CommonErrorType.TIMEOUT
-```
+## Error Utilities
 
-### Domain Errors
 ```typescript
-SanitizationErrorType.POST_NOT_FOUND
-SanitizationErrorType.USER_NOT_FOUND
-AuthErrorType.UNAUTHORIZED
-AuthErrorType.SESSION_EXPIRED
+// Category predicates
+isNetworkError(error)   // Network category
+isServerError(error)    // Server category  
+isAuthError(error)      // Auth category
+isDatabaseError(error)  // Database category
+
+// Decision helpers
+isRetryable(error)      // Network, Timeout, Server, RateLimit → true
+requiresLogin(error)    // Auth + UNAUTHORIZED or SESSION_EXPIRED → true
+isNotFound(error)       // NOT_FOUND or RECORD_NOT_FOUND → true
+getRetryAfter(error)    // Extract retry delay from context
+
+// Normalization
+toAppError(error, service, operation)  // Wrap unknown errors
+getErrorMessage(error)                  // Extract user message
 ```
 
 ## Logging Discipline
 
-**Log once, at the right layer:**
+**Log once, in the Application layer:**
 
 ```typescript
-// ❌ Bad: Multiple layers logging same error
-// Models: console.error(error)
-// Services: console.error(error)
-// Application: console.error(error)
-// Controller: console.error(error)
-
-// ✅ Good: Log in error factory or single handler
-function createDatabaseError(type, details) {
-  const error = new AppError(type, details);
-  Logger.error({ type, details, stack: error.stack }); // Log once
-  return error;
-}
-```
-
-## Retry Guidance
-
-```typescript
-// Helper to check if error is retryable
-function isTransient(error: AppError): boolean {
-  return [
-    CommonErrorType.SERVICE_UNAVAILABLE,
-    CommonErrorType.NETWORK_ERROR,
-    CommonErrorType.TIMEOUT,
-  ].includes(error.type);
+// ❌ Bad: Logging in services
+class LocalPostService {
+  static async create(post) {
+    try { ... } catch (error) {
+      Logger.error('Failed', error);  // DON'T log here
+      throw Err.database(...);
+    }
+  }
 }
 
-// Usage in application layer
-async function fetchWithRetry(fn, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await fn();
-    } catch (error) {
-      if (!isTransient(error) || i === maxRetries - 1) {
-        throw error;
-      }
-      await delay(Math.pow(2, i) * 1000); // Exponential backoff
+// ✅ Good: Log in Application layer only
+class PostApplication {
+  static async create(post) {
+    try { ... } catch (error) {
+      Logger.error('Failed to create post', { error, postId: post.id });
+      throw error;
     }
   }
 }
 ```
+
+## TanStack Query Integration
+
+The QueryClient reads `error.context.statusCode` for retry decisions. Configure per-service:
+
+- **Retryable**: Network, Timeout, Server, RateLimit categories
+- **Non-retryable**: Client, Auth, Validation, Database categories
+- Each service can mark specific codes as non-retryable
 
 ## Quick Checklist
 
 When handling errors:
 
-- [ ] Using `AppError` (not raw Error or strings)?
-- [ ] Including relevant context in `details`?
-- [ ] Layer-specific error types used?
-- [ ] Logging only once (in factory or handler)?
-- [ ] Transient vs fatal errors distinguished for retries?
-- [ ] User-facing messages via ErrorMessages enum?
+- [ ] Using `Err.*` factories (not raw Error)?
+- [ ] Including `service`, `operation`, `context`, `cause`?
+- [ ] NO logging in services (only in Application layer)?
+- [ ] Using `safeFetch` for HTTP requests?
+- [ ] Checking `category`/`code` instead of parsing messages?
+- [ ] Using decision helpers (`isRetryable`, `requiresLogin`, `isNotFound`)?
 
 ---
 
-**Reference**: `.cursor/docs/error-handling.md`
+**Reference**: `.cursor/adr/0015-error-handling-architecture.md`

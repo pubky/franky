@@ -1,34 +1,33 @@
-import { parseResponseOrThrow } from '@/core/services/nexus/nexus.utils';
 import {
   HttpMethod,
   HttpStatusCode,
   AppError,
   sleep,
-  fromHttpResponse,
+  httpResponseToError,
   ErrorService,
   Err,
   AuthErrorCode,
   TimeoutErrorCode,
   ErrorCategory,
   ServerErrorCode,
+  Logger,
+  parseResponseOrThrow,
 } from '@/libs';
 import { Session, type AuthFlow } from '@synonymdev/pubky';
 import type { CancelableAuthApproval, PubPath } from './homeserver.types';
 import { createCanceledError, handleError, isRetryableRelayPollError } from './error.utils';
-
-// Re-export error utilities for backwards compatibility
-export {
-  AUTH_FLOW_CANCELED_ERROR_NAME,
-  createCanceledError,
-  handleError,
-  isRetryableRelayPollError,
-} from './error.utils';
 
 // URL protocol constants
 const PUBKY_PROTOCOL = 'pubky://';
 const PUBKYAUTH_PROTOCOL = 'pubkyauth://';
 export const PUBKY_PREFIX = 'pubky';
 const PUBKY_HOSTNAME_PREFIX = '_pubky.';
+
+// Auth polling defaults
+/** Default interval between auth flow polls in milliseconds */
+const AUTH_POLL_INTERVAL_MS = 2_000;
+/** Maximum auth poll attempts (150 × 2s = 5 minutes max wait) */
+const AUTH_POLL_MAX_ATTEMPTS = 150;
 
 /**
  * Checks if a URL is an HTTP or HTTPS URL
@@ -68,7 +67,8 @@ export const toPathname = (url: string): string | null => {
   if (isHttpUrl(url)) {
     try {
       return new URL(url).pathname || null;
-    } catch {
+    } catch (error) {
+      Logger.debug('Failed to parse URL pathname', { url, error });
       return null;
     }
   }
@@ -104,7 +104,8 @@ export const extractPubkyZ32 = (url: string): string | null => {
     try {
       const { hostname } = new URL(url);
       return hostname.startsWith(PUBKY_HOSTNAME_PREFIX) ? hostname.slice(PUBKY_HOSTNAME_PREFIX.length) || null : null;
-    } catch {
+    } catch (error) {
+      Logger.debug('Failed to extract Pubky z32 from URL', { url, error });
       return null;
     }
   }
@@ -122,7 +123,11 @@ export const parseResponseOrUndefined = async <T>(response: Response): Promise<T
     return await parseResponseOrThrow<T>(response);
   } catch (error) {
     // Empty/invalid JSON responses return undefined instead of throwing
-    if (error instanceof AppError && error.category === ErrorCategory.Server && error.code === ServerErrorCode.INTERNAL_ERROR) {
+    if (
+      error instanceof AppError &&
+      error.category === ErrorCategory.Server &&
+      error.code === ServerErrorCode.INVALID_RESPONSE
+    ) {
       return undefined;
     }
     throw error;
@@ -140,8 +145,8 @@ export const createCancelableAuthApproval = (
   flow: AuthFlow,
   options?: { pollIntervalMs?: number; maxPollAttempts?: number },
 ): CancelableAuthApproval => {
-  const pollIntervalMs = options?.pollIntervalMs ?? 2_000;
-  const maxPollAttempts = options?.maxPollAttempts ?? 150;
+  const pollIntervalMs = options?.pollIntervalMs ?? AUTH_POLL_INTERVAL_MS;
+  const maxPollAttempts = options?.maxPollAttempts ?? AUTH_POLL_MAX_ATTEMPTS;
 
   let canceled = false;
   let freed = false;
@@ -260,14 +265,10 @@ export const checkSessionExpiration = async (response: Response, url: string): P
  * @param operation - The operation name for error context
  * @throws {AppError} When response is not OK
  */
-export const assertOk = async (
-  response: Response,
-  url: string,
-  operation: string,
-): Promise<void> => {
+export const assertOk = async (response: Response, url: string, operation: string): Promise<void> => {
   if (response.ok) return;
   await checkSessionExpiration(response, url);
-  throw fromHttpResponse(response, ErrorService.Homeserver, operation, url);
+  throw httpResponseToError(response, ErrorService.Homeserver, operation, url);
 };
 
 /**

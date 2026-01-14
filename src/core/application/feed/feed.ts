@@ -3,7 +3,6 @@ import * as Core from '@/core';
 import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './feed.types';
 import { HttpMethod } from '@/libs';
 
-
 export class FeedApplication {
   private constructor() {}
 

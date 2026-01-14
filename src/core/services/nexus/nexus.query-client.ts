@@ -6,8 +6,8 @@ import { createQueryClient, ClientErrorCode, ServerErrorCode } from '@/libs';
  */
 export const nexusQueryClient = createQueryClient({
   retry: {
-    // Don't retry client errors (400) or internal errors (malformed response)
-    nonRetryable: [ClientErrorCode.BAD_REQUEST, ServerErrorCode.INTERNAL_ERROR],
+    // Don't retry client errors (400), internal errors, or malformed responses
+    nonRetryable: [ClientErrorCode.BAD_REQUEST, ServerErrorCode.INTERNAL_ERROR, ServerErrorCode.INVALID_RESPONSE],
     limits: {
       // 404 errors are transient because Nexus indexes content asynchronously,
       // so content that returns 404 may become available shortly after.

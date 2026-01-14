@@ -41,7 +41,8 @@ function createAppError<C extends ErrorCategory>(
   message: string,
   params: FactoryParams,
 ): AppError {
-  
+  // TODO: Could create the traceId for sentry monitoring
+  // Sentry.captureException(err);
   return new AppError({
     category,
     code,
@@ -65,22 +66,6 @@ function createAppError<C extends ErrorCategory>(
  *   operation: 'verifySmsCode',
  *   context: { endpoint: url, statusCode: 503 },
  * });
- *
- * // Database error
- * throw Err.database('QUERY_FAILED', 'Failed to read post', {
- *   service: ErrorService.Local,
- *   operation: 'readDetails',
- *   context: { table: 'postDetails', postId },
- *   cause: error,
- * });
- *
- * // Rate limit with retry-after
- * throw Err.rateLimit('RATE_LIMITED', 'Too many requests', {
- *   service: ErrorService.Homegate,
- *   operation: 'sendSmsCode',
- *   context: { endpoint: url, retryAfter: 60 },
- * });
- * ```
  */
 export const Err = {
   /**

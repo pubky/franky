@@ -114,10 +114,7 @@ describe('SettingsApplication', () => {
       const result = await SettingsApplication.fetchFromHomeserver(testPubky);
 
       expect(normalizerBuildUrlSpy).toHaveBeenCalledWith(testPubky);
-      expect(requestSpy).toHaveBeenCalledWith(
-        HttpMethod.GET,
-        `pubky://${testPubky}/pub/pubky.app/settings.json`,
-      );
+      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, `pubky://${testPubky}/pub/pubky.app/settings.json`);
       expect(result).toEqual(remoteSettings);
     });
 

@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 /**
  * Nexus User Stream Service
@@ -53,6 +54,6 @@ export class NexusUserStreamService {
       return [];
     }
     const url = Core.userStreamApi.usersByIds(params);
-    return await Core.queryNexus<Core.NexusUser[]>(url.url, 'POST', JSON.stringify(url.body));
+    return await Core.queryNexus<Core.NexusUser[]>(url.url, HttpMethod.POST, JSON.stringify(url.body));
   }
 }
