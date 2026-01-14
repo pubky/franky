@@ -1,14 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { GET } from './route';
 
-// Mock the Env module
-vi.mock('@/libs/env', () => ({
-  Env: {
-    HOMESERVER_ADMIN_URL: 'http://localhost:6288/generate_signup_token',
-    HOMESERVER_ADMIN_PASSWORD: 'test-password',
-  },
-}));
-
 // Mock global fetch
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -20,6 +12,8 @@ describe('/api/dev/signup-token', () => {
     vi.clearAllMocks();
     // Default to development mode
     vi.stubEnv('NODE_ENV', 'development');
+    vi.stubEnv('HOMESERVER_ADMIN_URL', 'http://localhost:6288/generate_signup_token');
+    vi.stubEnv('HOMESERVER_ADMIN_PASSWORD', 'test-password');
   });
 
   afterEach(() => {
@@ -113,24 +107,13 @@ describe('/api/dev/signup-token - missing credentials', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubEnv('NODE_ENV', 'development');
+    // Unset credentials
+    vi.stubEnv('HOMESERVER_ADMIN_URL', '');
+    vi.stubEnv('HOMESERVER_ADMIN_PASSWORD', '');
   });
 
   it('should return 500 when credentials are not configured', async () => {
-    // Reset modules to pick up new mock
-    vi.resetModules();
-
-    // Mock with missing credentials
-    vi.doMock('@/libs/env', () => ({
-      Env: {
-        HOMESERVER_ADMIN_URL: undefined,
-        HOMESERVER_ADMIN_PASSWORD: undefined,
-      },
-    }));
-
-    // Re-import the route with new mock
-    const { GET: GetWithoutCreds } = await import('./route');
-
-    const response = await GetWithoutCreds();
+    const response = await GET();
     const data = await response.json();
 
     expect(response.status).toBe(500);
