@@ -24,11 +24,11 @@ vi.mock('@/config', async (importOriginal) => {
   };
 });
 
-// Mock the Env module
+// Mock the Env module (admin credentials are now server-side only)
 vi.mock('@/libs/env', () => ({
   Env: {
-    NEXT_PUBLIC_HOMESERVER_ADMIN_URL: 'http://test-admin.com',
-    NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: 'test-password',
+    HOMESERVER_ADMIN_URL: 'http://test-admin.com',
+    HOMESERVER_ADMIN_PASSWORD: 'test-password',
   },
 }));
 
