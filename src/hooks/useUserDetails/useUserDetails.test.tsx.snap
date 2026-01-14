@@ -20,7 +20,7 @@ exports[`useUserDetails - Snapshots > matches snapshot for valid user 1`] = `
   "userDetails": {
     "bio": "A user for snapshot testing",
     "id": "snapshot-user",
-    "image": "",
+    "image": null,
     "links": [],
     "name": "Snapshot User",
     "status": "active",

@@ -43,7 +43,7 @@ export class ProfileApplication {
         {
           name,
           bio: bio ?? '',
-          image: image ?? '',
+          image: image,
           links,
           status: userDetails.status ?? '',
         },
@@ -76,7 +76,7 @@ export class ProfileApplication {
         {
           name: currentUser.name,
           bio: currentUser.bio,
-          image: currentUser.image ?? '',
+          image: currentUser.image,
           links: (currentUser.links ?? []).map((link) => ({ title: link.title, url: link.url })),
           status: status || '',
         },

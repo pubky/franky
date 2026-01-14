@@ -34,7 +34,7 @@ describe('useAvatarUrl', () => {
     const userDetails = {
       id: 'test-user',
       name: 'Test User',
-      image: '',
+      image: null,
     } as Core.NexusUserDetails;
 
     const { result } = renderHook(() => useAvatarUrl(userDetails));
@@ -123,7 +123,7 @@ describe('useAvatarUrl', () => {
     const userDetails1 = {
       id: 'test-user',
       name: 'Test User',
-      image: '',
+      image: null,
     } as Core.NexusUserDetails;
 
     const { result, rerender } = renderHook(({ userDetails }) => useAvatarUrl(userDetails), {
@@ -168,7 +168,7 @@ describe('useAvatarUrl - Snapshots', () => {
     const userDetails = {
       id: 'snapshot-user',
       name: 'Snapshot User',
-      image: '',
+      image: null,
     } as Core.NexusUserDetails;
 
     const { result } = renderHook(() => useAvatarUrl(userDetails));

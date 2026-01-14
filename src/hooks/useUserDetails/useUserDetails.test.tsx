@@ -85,7 +85,7 @@ describe('useUserDetails - Snapshots', () => {
       id: 'snapshot-user',
       name: 'Snapshot User',
       bio: 'A user for snapshot testing',
-      image: '',
+      image: null,
       links: [],
       status: 'active',
     };

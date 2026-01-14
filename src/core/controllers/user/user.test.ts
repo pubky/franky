@@ -19,7 +19,7 @@ describe('UserController', () => {
         id: userId,
         name: 'Test User',
         bio: 'Test bio',
-        image: '',
+        image: null,
         links: [],
         status: '',
         indexed_at: Date.now(),
