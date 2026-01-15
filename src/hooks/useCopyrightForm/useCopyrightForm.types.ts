@@ -11,23 +11,7 @@ export const copyrightFormSchema = z
     nameOwner: z.string().min(1, 'Name of rights owner is required'),
     originalContentUrls: z.string().min(1, 'Original content URLs are required'),
     briefDescription: z.string().min(1, 'Brief description is required'),
-    infringingContentUrl: z
-      .string()
-      .min(1, 'Infringing content URL is required')
-      .refine(
-        (val) => {
-          const lines = val.split('\n').filter((line) => line.trim());
-          return lines.every((line) => {
-            try {
-              new URL(line.trim());
-              return true;
-            } catch {
-              return false;
-            }
-          });
-        },
-        { message: 'Please enter valid URLs (one per line)' },
-      ),
+    infringingContentUrl: z.string().min(1, 'Infringing content URL is required'),
     firstName: z.string().min(1, 'First name is required'),
     lastName: z.string().min(1, 'Last name is required'),
     email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),

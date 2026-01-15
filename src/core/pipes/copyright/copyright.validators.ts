@@ -40,32 +40,6 @@ export class CopyrightValidators {
   }
 
   /**
-   * Validates a newline-delimited list of URLs
-   *
-   * @param value - Raw string containing URLs
-   * @returns Normalized value (trimmed)
-   * @throws AppError if any URL is invalid
-   */
-  private static validateUrlList(value: string | undefined | null, fieldName: string): string {
-    const trimmed = this.validateRequiredString(value, fieldName);
-    const lines = trimmed.split('\n').filter((line) => line.trim());
-    const allValid = lines.every((line) => {
-      try {
-        new URL(line.trim());
-        return true;
-      } catch {
-        return false;
-      }
-    });
-
-    if (!allValid) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Please enter valid URLs (one per line)', 400);
-    }
-
-    return trimmed;
-  }
-
-  /**
    * Validates phone number format
    *
    * @param phoneNumber - Phone number to validate
@@ -105,7 +79,7 @@ export class CopyrightValidators {
    * Validates infringing content URL
    */
   static validateInfringingContentUrl(infringingContentUrl: string | undefined | null): string {
-    return this.validateUrlList(infringingContentUrl, 'Infringing content URL');
+    return this.validateRequiredString(infringingContentUrl, 'Infringing content URL');
   }
 
   /**
