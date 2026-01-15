@@ -110,8 +110,8 @@ export class BootstrapApplication {
       userLastRead = timestamp;
     } catch (error) {
       // Only handle 404 errors (resource not found), rethrow everything else
-      if (error instanceof AppError && error.statusCode === HttpStatusCode.NOT_FOUND) {
-        Logger.info('Last read file not found, creating new one', { pubky });
+      if (error instanceof AppError && error.context?.statusCode === HttpStatusCode.NOT_FOUND) {
+        Logger.info('Last read file not found, creating new one...', { pubky });
         const lastRead = Core.LastReadNormalizer.to(pubky);
         void Core.HomeserverService.request({
           method: HttpMethod.PUT,
