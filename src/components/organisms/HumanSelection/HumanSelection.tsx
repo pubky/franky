@@ -12,10 +12,10 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Fair <span className="text-brand">Access.</span>
+          Prove <span className="text-brand">you&apos;re not a Robot.</span>
         </Molecules.PageTitle>
         <Atoms.PageSubtitle>
-          To keep the network fair and spam free, we ask you for a small proof of work.
+          No email needed. Verify quickly using SMS or a small payment.
         </Atoms.PageSubtitle>
       </Atoms.PageHeader>
 

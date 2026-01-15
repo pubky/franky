@@ -10,17 +10,17 @@ exports[`HumanSelection > matches snapshot 1`] = `
       class="font-bold text-foreground text-5xl lg:text-6xl"
       data-testid="heading-1"
     >
-      Fair 
+      Prove 
       <span
         class="text-brand"
       >
-        Access.
+        you're not a Robot.
       </span>
     </h1>
     <h2
       class="text-xl leading-normal font-light text-muted-foreground lg:text-2xl"
     >
-      To keep the network fair and spam free, we ask you for a small proof of work.
+      No email needed. Verify quickly using SMS or a small payment.
     </h2>
   </div>
   <div
