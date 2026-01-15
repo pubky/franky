@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { HttpMethod, Logger, AppError, CommonErrorType } from '@/libs';
+import { HttpMethod, Logger, Err, ValidationErrorCode, ErrorService } from '@/libs';
 import { userUriBuilder } from 'pubky-app-specs';
 
 export class AuthApplication {
@@ -70,10 +70,13 @@ export class AuthApplication {
    */
   static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
     if (!keypair) {
-      throw new AppError(
-        CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         'Keypair not found in onboarding store. Please regenerate your keys and try again.',
-        400,
+        {
+          service: ErrorService.Local,
+          operation: 'signIn',
+        },
       );
     }
     return await Core.HomeserverService.signIn({ keypair });
@@ -123,7 +126,7 @@ export class AuthApplication {
    */
   static async userIsSignedUp({ pubky }: Core.TPubkyParams): Promise<boolean> {
     try {
-      await Core.HomeserverService.request(HttpMethod.GET, userUriBuilder(pubky));
+      await Core.HomeserverService.request({ method: HttpMethod.GET, url: userUriBuilder(pubky) });
       return true;
     } catch {
       Logger.error('User profile.json missing in homeserver. Please PUT that file first.', { pubky });

@@ -106,7 +106,11 @@ describe('FeedApplication', () => {
           tags: ['bitcoin', 'lightning'],
         }),
       );
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, expect.stringContaining('pubky://'), expect.any(Object));
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: expect.stringContaining('pubky://'),
+        bodyJson: expect.any(Object),
+      });
       expect(result).toBeTruthy();
       expect(result!.id).toBe(1);
     });
@@ -185,7 +189,10 @@ describe('FeedApplication', () => {
       const result = await FeedApplication.commitDelete({ userId: testUserId, params: mockParams });
 
       expect(deleteSpy).toHaveBeenCalledWith({ feedId: 123 });
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, expect.stringContaining('pubky://'));
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.DELETE,
+        url: expect.stringContaining('pubky://'),
+      });
       expect(result).toBeUndefined();
     });
 

@@ -226,7 +226,11 @@ describe('NotificationApplication.markAllAsRead', () => {
 
     NotificationApplication.markAllAsRead(mockLastReadResult);
 
-    expect(homeserverSpy).toHaveBeenCalledWith(HttpMethod.PUT, mockLastReadUrl, mockLastReadResult.last_read.toJson());
+    expect(homeserverSpy).toHaveBeenCalledWith({
+      method: HttpMethod.PUT,
+      url: mockLastReadUrl,
+      bodyJson: mockLastReadResult.last_read.toJson(),
+    });
   });
 
   it('should log warning if homeserver fails (fire and forget)', async () => {

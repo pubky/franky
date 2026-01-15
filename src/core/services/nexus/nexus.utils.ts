@@ -1,6 +1,12 @@
 import * as Config from '@/config';
 import { nexusQueryClient } from './nexus.query-client';
 import { HttpMethod, JSON_HEADERS, safeFetch, httpResponseToError, ErrorService, parseResponseOrThrow } from '@/libs';
+import type {
+  TBuildUrlWithQueryParams,
+  TCreateFetchOptionsParams,
+  TFetchNexusParams,
+  TQueryNexusParams,
+} from './nexus.utils.types';
 
 export function buildNexusUrl(endpoint: string): string {
   return `${Config.NEXUS_URL}/${endpoint}`;
@@ -26,11 +32,7 @@ export function encodePathSegment(segment: string): string {
  * @param excludeKeys - Array of keys that are path parameters and should be excluded from query string
  * @returns Full Nexus URL with query parameters appended
  */
-export function buildUrlWithQuery(
-  baseRoute: string,
-  params: Record<string, unknown>,
-  excludeKeys: readonly string[] = [],
-): string {
+export function buildUrlWithQuery({ baseRoute, params, excludeKeys = [] }: TBuildUrlWithQueryParams): string {
   const queryParams = new URLSearchParams();
 
   // Add only query parameters (exclude path params)
@@ -50,7 +52,7 @@ export function buildUrlWithQuery(
  * Utility function to create fetch options with common headers.
  * Body must be a string (typically JSON.stringify'd) to ensure safe query key serialization.
  */
-export function createFetchOptions(method: HttpMethod = HttpMethod.GET, body?: string | null): RequestInit {
+export function createFetchOptions({ method = HttpMethod.GET, body }: TCreateFetchOptionsParams = {}): RequestInit {
   const options: RequestInit = {
     method,
     headers: JSON_HEADERS,
@@ -71,16 +73,12 @@ export function createFetchOptions(method: HttpMethod = HttpMethod.GET, body?: s
  * @returns Parsed response data
  * @throws {NexusError} When response is not ok or JSON parsing fails
  */
-export async function fetchNexus<T>(
-  url: string,
-  method: HttpMethod = HttpMethod.GET,
-  body: string | null = null,
-): Promise<T> {
-  const response = await safeFetch(url, createFetchOptions(method, body), ErrorService.Nexus, 'fetchNexus');
+export async function fetchNexus<T>({ url, method = HttpMethod.GET, body = null }: TFetchNexusParams): Promise<T> {
+  const response = await safeFetch(url, createFetchOptions({ method, body }), ErrorService.Nexus, 'fetchNexus');
   if (!response.ok) {
     throw httpResponseToError(response, ErrorService.Nexus, 'fetchNexus', url);
   }
-  return parseResponseOrThrow<T>(response);
+  return parseResponseOrThrow<T>(response, ErrorService.Nexus, 'fetchNexus', url);
 }
 
 /**
@@ -93,13 +91,9 @@ export async function fetchNexus<T>(
  * @returns Parsed response data
  * @throws {NexusError} When response is not ok after all retries
  */
-export async function queryNexus<T>(
-  url: string,
-  method: HttpMethod = HttpMethod.GET,
-  body: string | null = null,
-): Promise<T> {
+export async function queryNexus<T>({ url, method = HttpMethod.GET, body = null }: TQueryNexusParams): Promise<T> {
   return nexusQueryClient.fetchQuery({
     queryKey: ['nexus', url, method, body],
-    queryFn: () => fetchNexus<T>(url, method, body),
+    queryFn: () => fetchNexus<T>({ url, method, body }),
   });
 }

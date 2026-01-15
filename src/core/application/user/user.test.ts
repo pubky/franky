@@ -29,7 +29,7 @@ describe('UserApplication.commitFollow', () => {
 
     expect(createSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
     expect(deleteSpy).not.toHaveBeenCalled();
-    expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: followUrl, bodyJson: followJson });
   });
 
   it('should update local state on DELETE and call homeserver', async () => {
@@ -48,7 +48,7 @@ describe('UserApplication.commitFollow', () => {
 
     expect(deleteSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
     expect(createSpy).not.toHaveBeenCalled();
-    expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: followUrl, bodyJson: followJson });
   });
 
   it('should not update local state for non-mutate methods but still call homeserver', async () => {
@@ -67,7 +67,7 @@ describe('UserApplication.commitFollow', () => {
 
     expect(createSpy).not.toHaveBeenCalled();
     expect(deleteSpy).not.toHaveBeenCalled();
-    expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.GET, url: followUrl, bodyJson: followJson });
   });
 
   it('should propagate error when local create fails on PUT and not call homeserver', async () => {
@@ -123,7 +123,7 @@ describe('UserApplication.commitFollow', () => {
       }),
     ).rejects.toThrow('homeserver-fail');
 
-    expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: followUrl, bodyJson: followJson });
   });
 });
 

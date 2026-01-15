@@ -13,8 +13,17 @@ import {
   Logger,
   parseResponseOrThrow,
 } from '@/libs';
-import { Session, type AuthFlow } from '@synonymdev/pubky';
-import type { CancelableAuthApproval, PubPath } from './homeserver.types';
+import { type AuthFlow } from '@synonymdev/pubky';
+import type {
+  CancelableAuthApproval,
+  PubPath,
+  TParseResponseOrUndefinedParams,
+  TResolveOwnedSessionPathParams,
+  TOwnedSessionPath,
+  TCheckSessionExpirationParams,
+  TAssertOkParams,
+  TGetOwnedResponseParams,
+} from './homeserver.types';
 import { createCanceledError, handleError, isRetryableRelayPollError } from './error.utils';
 
 // URL protocol constants
@@ -114,13 +123,21 @@ export const extractPubkyZ32 = (url: string): string | null => {
 };
 
 /**
- * Parses a response as JSON, returning undefined if parsing fails with INVALID_RESPONSE error
+ * Parses a response as JSON, returning undefined if parsing fails with INVALID_RESPONSE error.
+ * Useful when empty/invalid JSON responses are expected and should not throw.
+ *
  * @param response - The response to parse
+ * @param operation - The operation name for error context (used if error is re-thrown)
+ * @param url - Optional endpoint URL for error context
  * @returns The parsed JSON data or undefined if parsing fails with INVALID_RESPONSE
  */
-export const parseResponseOrUndefined = async <T>(response: Response): Promise<T | undefined> => {
+export const parseResponseOrUndefined = async <T>({
+  response,
+  operation = 'parseResponseOrUndefined',
+  url,
+}: TParseResponseOrUndefinedParams): Promise<T | undefined> => {
   try {
-    return await parseResponseOrThrow<T>(response);
+    return await parseResponseOrThrow<T>(response, ErrorService.Homeserver, operation, url);
   } catch (error) {
     // Empty/invalid JSON responses return undefined instead of throwing
     if (
@@ -207,11 +224,11 @@ export const createCancelableAuthApproval = (
  * @param pubPathPrefix - The pub path prefix constant (e.g., '/pub/')
  * @returns Object with session and path if owned, null otherwise
  */
-export const resolveOwnedSessionPath = (
-  url: string,
-  session: Session | null,
-  pubPathPrefix: string,
-): { session: Session; path: PubPath<string> } | null => {
+export const resolveOwnedSessionPath = ({
+  url,
+  session,
+  pubPathPrefix,
+}: TResolveOwnedSessionPathParams): TOwnedSessionPath | null => {
   if (!session) return null;
 
   const pathname = toPathname(url);
@@ -237,7 +254,7 @@ export const resolveOwnedSessionPath = (
  * @param url - The URL that was requested
  * @throws {AppError} When response status is 401
  */
-export const checkSessionExpiration = async (response: Response, url: string): Promise<void> => {
+export const checkSessionExpiration = async ({ response, url }: TCheckSessionExpirationParams): Promise<void> => {
   if (response.status === HttpStatusCode.UNAUTHORIZED) {
     let errorMessage = 'Session expired';
     try {
@@ -265,9 +282,9 @@ export const checkSessionExpiration = async (response: Response, url: string): P
  * @param operation - The operation name for error context
  * @throws {AppError} When response is not OK
  */
-export const assertOk = async (response: Response, url: string, operation: string): Promise<void> => {
+export const assertOk = async ({ response, url, operation }: TAssertOkParams): Promise<void> => {
   if (response.ok) return;
-  await checkSessionExpiration(response, url);
+  await checkSessionExpiration({ response, url });
   throw httpResponseToError(response, ErrorService.Homeserver, operation, url);
 };
 
@@ -281,12 +298,12 @@ export const assertOk = async (response: Response, url: string, operation: strin
  * @returns The response from storage
  * @throws {HomeserverError} When response is not OK or storage.get fails
  */
-export const getOwnedResponse = async (session: Session, path: PubPath<string>, url: string): Promise<Response> => {
+export const getOwnedResponse = async ({ session, path, url }: TGetOwnedResponseParams): Promise<Response> => {
   const response = await session.storage.get(path).catch((error) =>
     // Transforms the error into an AppError and re-throws to caller
-    handleError(error, { url, method: HttpMethod.GET }),
+    handleError({ error, additionalContext: { url, method: HttpMethod.GET } }),
   );
 
-  await assertOk(response, url, 'getOwnedResponse');
+  await assertOk({ response, url, operation: 'getOwnedResponse' });
   return response;
 };

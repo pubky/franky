@@ -11,11 +11,10 @@ export class NexusPostService {
    * @throws {NexusError} When post is not found or request fails
    */
   static async getPost({ compositeId }: Core.TCompositeId): Promise<Core.NexusPost> {
-    // TODO: Handle the error in application layer
     const { pubky: author_id, id: post_id } = Core.parseCompositeId(compositeId);
 
     const url = Core.postApi.view({ author_id, post_id });
-    return await Core.queryNexus<Core.NexusPost>(url);
+    return await Core.queryNexus<Core.NexusPost>({ url });
   }
 
   /**
@@ -27,10 +26,9 @@ export class NexusPostService {
    * @throws {NexusError} When post is not found or request fails
    */
   static async getPostTags({ compositeId, skip, limit }: Core.TFetchMorePostTagsParams): Promise<Core.NexusTag[]> {
-    // TODO: Handle the error in application layer
     const { pubky: author_id, id: post_id } = Core.parseCompositeId(compositeId);
 
     const url = Core.postApi.tags({ author_id, post_id, skip_tags: skip, limit_tags: limit });
-    return await Core.queryNexus<Core.NexusTag[]>(url);
+    return await Core.queryNexus<Core.NexusTag[]>({ url });
   }
 }

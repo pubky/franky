@@ -117,11 +117,11 @@ describe('TagController', () => {
         expect(savedTags!.tags[0].relationship).toBe(true);
 
         // Verify homeserver sync was called
-        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          HttpMethod.PUT,
-          expect.stringContaining('pubky://'),
-          expect.any(Object),
-        );
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: expect.stringContaining('pubky://'),
+          bodyJson: expect.any(Object),
+        });
       });
 
       it('should normalize post tag label (trim and lowercase)', async () => {
@@ -131,11 +131,11 @@ describe('TagController', () => {
         expect(savedTags!.tags[0].label).toBe('javascript');
 
         // Verify homeserver sync was called
-        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          HttpMethod.PUT,
-          expect.stringContaining('pubky://'),
-          expect.any(Object),
-        );
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: expect.stringContaining('pubky://'),
+          bodyJson: expect.any(Object),
+        });
       });
     });
 
@@ -174,10 +174,10 @@ describe('TagController', () => {
         expect(savedTags!.tags).toHaveLength(0);
 
         // Verify homeserver sync was called
-        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          HttpMethod.DELETE,
-          expect.stringContaining('pubky://'),
-        );
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+          method: HttpMethod.DELETE,
+          url: expect.stringContaining('pubky://'),
+        });
       });
 
       it('should normalize post tag label (trim and lowercase)', async () => {
@@ -187,10 +187,10 @@ describe('TagController', () => {
         expect(savedTags!.tags).toHaveLength(0);
 
         // Verify homeserver sync was called
-        expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-          HttpMethod.DELETE,
-          expect.stringContaining('pubky://'),
-        );
+        expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+          method: HttpMethod.DELETE,
+          url: expect.stringContaining('pubky://'),
+        });
       });
     });
 

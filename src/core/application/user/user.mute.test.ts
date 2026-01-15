@@ -43,7 +43,7 @@ describe('UserApplication.commitMute', () => {
       expect(rel?.muted).toBe(expectedStatus);
       expect(rel?.following).toBe(false);
       expect(rel?.followed_by).toBe(false);
-      expect(requestSpy).toHaveBeenCalledWith(homeserverAction, muteUrl, muteJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: homeserverAction, url: muteUrl, bodyJson: muteJson });
     });
 
     it(`should update existing relationship to muted=${expectedStatus}`, async () => {
@@ -68,7 +68,7 @@ describe('UserApplication.commitMute', () => {
       expect(rel?.muted).toBe(expectedStatus);
       expect(rel?.following).toBe(true);
       expect(rel?.followed_by).toBe(true);
-      expect(requestSpy).toHaveBeenCalledWith(homeserverAction, muteUrl, muteJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: homeserverAction, url: muteUrl, bodyJson: muteJson });
     });
 
     it(`should be idempotent when user already ${action}d`, async () => {
@@ -93,7 +93,7 @@ describe('UserApplication.commitMute', () => {
       const rel = await Core.UserRelationshipsModel.findById(mutee);
       expect(rel?.muted).toBe(expectedStatus);
       expect(updateSpy).not.toHaveBeenCalled();
-      expect(requestSpy).toHaveBeenCalledWith(homeserverAction, muteUrl, muteJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: homeserverAction, url: muteUrl, bodyJson: muteJson });
     });
   });
 
@@ -164,7 +164,7 @@ describe('UserApplication.commitMute', () => {
         }),
       ).rejects.toThrow('homeserver-fail');
 
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, muteUrl, muteJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: muteUrl, bodyJson: muteJson });
     });
 
     it('should rollback database transaction when update fails', async () => {

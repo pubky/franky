@@ -103,14 +103,21 @@ export class BootstrapApplication {
   }: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let userLastRead: number;
     try {
-      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(HttpMethod.GET, lastReadUrl);
+      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>({
+        method: HttpMethod.GET,
+        url: lastReadUrl,
+      });
       userLastRead = timestamp;
     } catch (error) {
       // Only handle 404 errors (resource not found), rethrow everything else
       if (error instanceof AppError && error.statusCode === HttpStatusCode.NOT_FOUND) {
         Logger.info('Last read file not found, creating new one', { pubky });
         const lastRead = Core.LastReadNormalizer.to(pubky);
-        void Core.HomeserverService.request(HttpMethod.PUT, lastRead.meta.url, lastRead.last_read.toJson());
+        void Core.HomeserverService.request({
+          method: HttpMethod.PUT,
+          url: lastRead.meta.url,
+          bodyJson: lastRead.last_read.toJson(),
+        });
         userLastRead = Number(lastRead.last_read.timestamp);
       } else {
         // Network errors, timeouts, server errors, etc. should bubble up

@@ -15,7 +15,7 @@ export class ProfileApplication {
    */
   static async commitCreate({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
-      await Core.HomeserverService.request(HttpMethod.PUT, url, profile.toJson());
+      await Core.HomeserverService.request({ method: HttpMethod.PUT, url, bodyJson: profile.toJson() });
       const authStore = Core.useAuthStore.getState();
       authStore.setCurrentUserPubky(pubky);
       authStore.setHasProfile(true);
@@ -50,7 +50,7 @@ export class ProfileApplication {
         pubky,
       );
       // Update homeserver with complete profile
-      await Core.HomeserverService.request(HttpMethod.PUT, meta.url, user.toJson());
+      await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
       // Update local database after successful homeserver sync
       await Core.LocalProfileService.updateDetails(user, pubky);
     } catch (error) {
@@ -84,7 +84,7 @@ export class ProfileApplication {
       );
 
       // Update homeserver with complete profile
-      await Core.HomeserverService.request(HttpMethod.PUT, meta.url, user.toJson());
+      await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
 
       // Update local database after successful homeserver sync
       await Core.UserDetailsModel.upsert({
@@ -109,7 +109,7 @@ export class ProfileApplication {
     const baseDirectory = Specs.baseUriBuilder(pubky);
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
     // homeserver.list does not yet support pagination. This ensures all files are deleted.
-    const dataList = await Core.HomeserverService.list(baseDirectory, undefined, false, Infinity);
+    const dataList = await Core.HomeserverService.list({ baseDirectory, reverse: false, limit: Infinity });
 
     // Separate profile.json and other files
     const profileUrl = `${baseDirectory}profile.json`;
@@ -151,7 +151,7 @@ export class ProfileApplication {
 
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since homeserver.list does not yet
     // support pagination. This ensures all files are retrieved.
-    const dataList = await Core.HomeserverService.list(baseDirectory, undefined, false, Infinity);
+    const dataList = await Core.HomeserverService.list({ baseDirectory, reverse: false, limit: Infinity });
 
     // Create JSZip instance and data folder
     const zip = new JSZip();

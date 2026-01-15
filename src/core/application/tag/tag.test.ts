@@ -64,7 +64,11 @@ describe('Tag Application', () => {
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, mockData.tagUrl, mockData.tagJson);
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: mockData.tagUrl,
+        bodyJson: mockData.tagJson,
+      });
     });
 
     it('should throw when local save fails', async () => {
@@ -108,7 +112,7 @@ describe('Tag Application', () => {
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, mockData.tagUrl);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: mockData.tagUrl });
     });
 
     it('should throw when local remove fails', async () => {

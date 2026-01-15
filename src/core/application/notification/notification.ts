@@ -27,8 +27,8 @@ export class NotificationApplication {
    * @returns The new lastRead timestamp
    */
   static markAllAsRead({ meta, last_read }: LastReadResult) {
-    Core.HomeserverService.request(HttpMethod.PUT, meta.url, last_read.toJson()).catch((error) =>
-      Logger.warn('Failed to update lastRead on homeserver', { error }),
+    Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: last_read.toJson() }).catch(
+      (error) => Logger.warn('Failed to update lastRead on homeserver', { error }),
     );
   }
 

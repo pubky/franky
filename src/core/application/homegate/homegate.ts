@@ -22,7 +22,7 @@ export class HomegateApplication {
    * @returns Authentication URL and promise to the generated authentication URL
    */
   static async generateSignupAuthUrl(inviteCode: string): Promise<Core.TGenerateAuthUrlResult> {
-    return await Core.HomeserverService.generateSignupAuthUrl(inviteCode);
+    return await Core.HomeserverService.generateSignupAuthUrl({ inviteCode });
   }
 
   /**
@@ -37,20 +37,21 @@ export class HomegateApplication {
     } catch (error) {
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Failed to get LN verification price', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         throw error;
       }
 
       Libs.Logger.error('Unexpected error getting LN verification price', { error });
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to get Lightning verification price',
-        500,
-        { error },
-      );
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to get Lightning verification price', {
+        service: Libs.ErrorService.Homegate,
+        operation: 'getLnVerificationPrice',
+        cause: error,
+      });
     }
   }
 
@@ -66,20 +67,21 @@ export class HomegateApplication {
     } catch (error) {
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Failed to create LN verification', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         throw error;
       }
 
       Libs.Logger.error('Unexpected error creating LN verification', { error });
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to create Lightning verification',
-        500,
-        { error },
-      );
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to create Lightning verification', {
+        service: Libs.ErrorService.Homegate,
+        operation: 'createLnVerification',
+        cause: error,
+      });
     }
   }
 
@@ -97,46 +99,56 @@ export class HomegateApplication {
     } catch (error) {
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Failed to await LN verification', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         throw error;
       }
 
       Libs.Logger.error('Unexpected error awaiting LN verification', { error });
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to await Lightning verification',
-        500,
-        { error },
-      );
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to await Lightning verification', {
+        service: Libs.ErrorService.Homegate,
+        operation: 'awaitLnVerification',
+        cause: error,
+      });
     }
   }
 
   /**
    * Verify an SMS code for a given phone number.
    *
-   * @param phoneNumber - The phone number to verify
-   * @param code - The SMS code to verify
+   * @param params.phoneNumber - The phone number to verify
+   * @param params.code - The SMS code to verify
    * @returns The verification result with signup code if valid
    * @throws AppError if verification fails
    */
-  static async verifySmsCode(phoneNumber: string, code: string): Promise<Types.THomegateVerifySmsCodeResult> {
+  static async verifySmsCode({
+    phoneNumber,
+    code,
+  }: Types.THomegateVerifySmsCodeParams): Promise<Types.THomegateVerifySmsCodeResult> {
     try {
-      return await Core.HomegateService.verifySmsCode(phoneNumber, code);
+      return await Core.HomegateService.verifySmsCode({ phoneNumber, code });
     } catch (error) {
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Failed to verify SMS code', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         throw error;
       }
 
       Libs.Logger.error('Unexpected error verifying SMS code', { error });
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to verify SMS code', 500, { error });
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to verify SMS code', {
+        service: Libs.ErrorService.Homegate,
+        operation: 'verifySmsCode',
+        cause: error,
+      });
     }
   }
 
@@ -153,15 +165,21 @@ export class HomegateApplication {
     } catch (error) {
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Failed to send SMS code', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         throw error;
       }
 
       Libs.Logger.error('Unexpected error sending SMS code', { error });
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to send SMS code', 500, { error });
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to send SMS code', {
+        service: Libs.ErrorService.Homegate,
+        operation: 'sendSmsCode',
+        cause: error,
+      });
     }
   }
 
@@ -177,16 +195,20 @@ export class HomegateApplication {
     } catch (error) {
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Failed to get BTC rate', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         throw error;
       }
 
       Libs.Logger.error('Unexpected error getting BTC rate', { error });
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to get BTC exchange rate', 500, {
-        error,
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to get BTC exchange rate', {
+        service: Libs.ErrorService.Exchangerate,
+        operation: 'getBtcRate',
+        cause: error,
       });
     }
   }
