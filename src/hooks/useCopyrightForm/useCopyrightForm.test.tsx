@@ -104,6 +104,40 @@ describe('useCopyrightForm', () => {
       // Should not call fetch because role validation fails
       expect(global.fetch).not.toHaveBeenCalled();
     });
+
+    it('should validate URL format for originalContentUrls', async () => {
+      const { result } = renderHook(() => useCopyrightForm());
+
+      act(() => {
+        Object.entries(validFormData).forEach(([key, value]) => {
+          result.current.form.setValue(key as keyof typeof validFormData, value);
+        });
+        result.current.form.setValue('originalContentUrls', 'not-a-url');
+      });
+
+      await act(async () => {
+        await result.current.onSubmit();
+      });
+
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should validate phone number format', async () => {
+      const { result } = renderHook(() => useCopyrightForm());
+
+      act(() => {
+        Object.entries(validFormData).forEach(([key, value]) => {
+          result.current.form.setValue(key as keyof typeof validFormData, value);
+        });
+        result.current.form.setValue('phoneNumber', 'invalid@phone');
+      });
+
+      await act(async () => {
+        await result.current.onSubmit();
+      });
+
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
   });
 
   describe('form submission', () => {

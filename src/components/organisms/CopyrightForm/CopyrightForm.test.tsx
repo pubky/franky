@@ -98,6 +98,7 @@ describe('CopyrightForm', () => {
 
     const emailInput = screen.getByLabelText(/Email/i);
     await user.type(emailInput, 'invalid-email');
+    await user.tab(); // Trigger blur validation
 
     const submitButton = screen.getByRole('button', { name: 'Submit form' });
     await user.click(submitButton);
@@ -333,6 +334,13 @@ describe('CopyrightForm', () => {
     // Form should be reset
     expect(screen.getByLabelText(/Name of the rights owner/i)).toHaveValue('');
     expect(screen.getByLabelText(/Email/i)).toHaveValue('');
+  });
+
+  it('renders form element with onSubmit', () => {
+    render(<CopyrightForm />);
+
+    const form = document.querySelector('form');
+    expect(form).toBeInTheDocument();
   });
 });
 

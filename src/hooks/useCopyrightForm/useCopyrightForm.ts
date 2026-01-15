@@ -2,56 +2,19 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import * as Molecules from '@/molecules';
+import { copyrightFormSchema, type CopyrightFormData } from './useCopyrightForm.types';
+import { copyrightFormDefaultValues, COPYRIGHT_FORM_FIELDS, type RoleField } from './useCopyrightForm.constants';
 
-const copyrightFormSchema = z.object({
-  isRightsOwner: z.boolean(),
-  isReportingOnBehalf: z.boolean(),
-  nameOwner: z.string().min(1, 'Name of rights owner is required'),
-  originalContentUrls: z.string().min(1, 'Original content URLs are required'),
-  briefDescription: z.string().min(1, 'Brief description is required'),
-  infringingContentUrl: z.string().min(1, 'Infringing content URL is required'),
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
-  phoneNumber: z.string().min(1, 'Phone number is required'),
-  streetAddress: z.string().min(1, 'Street address is required'),
-  country: z.string().min(1, 'Country is required'),
-  city: z.string().min(1, 'City is required'),
-  stateProvince: z.string().min(1, 'State/Province is required'),
-  zipCode: z.string().min(1, 'Zip code is required'),
-  signature: z.string().min(1, 'Signature is required'),
-});
-
-export type CopyrightFormData = z.infer<typeof copyrightFormSchema>;
-
-const defaultValues: CopyrightFormData = {
-  isRightsOwner: true,
-  isReportingOnBehalf: false,
-  nameOwner: '',
-  originalContentUrls: '',
-  briefDescription: '',
-  infringingContentUrl: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  phoneNumber: '',
-  streetAddress: '',
-  country: '',
-  city: '',
-  stateProvince: '',
-  zipCode: '',
-  signature: '',
-};
+export type { CopyrightFormData } from './useCopyrightForm.types';
 
 export function useCopyrightForm() {
   const { toast } = Molecules.useToast();
 
   const form = useForm<CopyrightFormData>({
     resolver: zodResolver(copyrightFormSchema),
-    defaultValues,
-    mode: 'onSubmit',
+    defaultValues: copyrightFormDefaultValues,
+    mode: 'onBlur',
   });
 
   const submitForm = async (data: CopyrightFormData) => {
@@ -78,26 +41,20 @@ export function useCopyrightForm() {
     }
   };
 
-  const onSubmit = form.handleSubmit(async (data) => {
-    // Validate role selection
-    if (!data.isRightsOwner && !data.isReportingOnBehalf) {
-      form.setError('root', {
-        message: 'Please select if you are the rights owner or reporting on behalf',
-      });
-      return;
-    }
+  const onSubmit = form.handleSubmit(submitForm);
 
-    await submitForm(data);
-  });
+  const handleRoleChange = (field: RoleField, checked: boolean) => {
+    const { IS_RIGHTS_OWNER, IS_REPORTING_ON_BEHALF } = COPYRIGHT_FORM_FIELDS;
 
-  const handleRoleChange = (field: 'isRightsOwner' | 'isReportingOnBehalf', checked: boolean) => {
-    if (field === 'isRightsOwner') {
-      form.setValue('isRightsOwner', checked);
-      if (checked) form.setValue('isReportingOnBehalf', false);
+    if (field === IS_RIGHTS_OWNER) {
+      form.setValue(IS_RIGHTS_OWNER, checked);
+      if (checked) form.setValue(IS_REPORTING_ON_BEHALF, false);
     } else {
-      form.setValue('isReportingOnBehalf', checked);
-      if (checked) form.setValue('isRightsOwner', false);
+      form.setValue(IS_REPORTING_ON_BEHALF, checked);
+      if (checked) form.setValue(IS_RIGHTS_OWNER, false);
     }
+    // Clear the role error when user makes a selection
+    form.clearErrors(IS_RIGHTS_OWNER);
   };
 
   return {

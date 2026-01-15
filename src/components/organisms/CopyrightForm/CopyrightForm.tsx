@@ -1,198 +1,131 @@
 'use client';
 
-import { Controller } from 'react-hook-form';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
-
-const LABEL_CLASSES = 'text-xs font-medium tracking-wide text-muted-foreground uppercase';
+import { COPYRIGHT_FORM_FIELDS, type CopyrightFormData } from '@/hooks';
 
 export function CopyrightForm() {
   const { form, onSubmit, handleRoleChange } = Hooks.useCopyrightForm();
   const { isSubmitting, errors } = form.formState;
-  const roleError = errors.root?.message;
-
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-  });
+  const roleError = errors.isRightsOwner?.message;
+  const currentDate = Libs.formatUSDate();
 
   return (
     <Atoms.Container>
-      <Atoms.Card className="rounded-t-lg rounded-b-none border border-border p-8 md:p-12">
-        <Atoms.Container className="gap-6">
-          <Atoms.Typography as="h1" size="lg">
-            Copyright Removal Request
-          </Atoms.Typography>
+      <form onSubmit={onSubmit}>
+        <Atoms.Card className="rounded-t-lg rounded-b-none border border-border p-8 md:p-12">
+          <Atoms.Container className="gap-6">
+            <Atoms.Typography as="h1" size="lg">
+              Copyright Removal Request
+            </Atoms.Typography>
 
-          <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
-            Date: {currentDate}
-          </Atoms.Typography>
-
-          <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
-            Synonym Software, S.A. de C.V. (&quot;Synonym&quot;)
-            <br />
-            87 avenida norte, calle El Mirador, edificio Torre Futura, oficina 06, nivel 11, colonia Escalón, del
-            municipio de San Salvador, departamento de San Salvador. Código postal 01101, República de El Salvador.
-          </Atoms.Typography>
-
-          <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
-
-          <Atoms.Container className="rounded-lg bg-muted p-4">
             <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+              Date: {currentDate}
+            </Atoms.Typography>
+
+            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+              Synonym Software, S.A. de C.V. (&quot;Synonym&quot;)
+              <br />
+              87 avenida norte, calle El Mirador, edificio Torre Futura, oficina 06, nivel 11, colonia Escalón, del
+              municipio de San Salvador, departamento de San Salvador. Código postal 01101, República de El Salvador.
+            </Atoms.Typography>
+
+            <Atoms.FormDivider />
+
+            <Molecules.FormInfoBox>
               Dear Synonym:
-            </Atoms.Typography>
-            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+              <br />
+              <br />
               We write on behalf of:
-            </Atoms.Typography>
-          </Atoms.Container>
+            </Molecules.FormInfoBox>
 
-          <Atoms.Typography size="md">Rights Owner Information</Atoms.Typography>
+            <Atoms.Typography size="md">Rights Owner Information</Atoms.Typography>
 
-          <Atoms.Container className="gap-4 xl:flex-row xl:justify-between">
-            <Atoms.Checkbox
-              checked={form.watch('isRightsOwner')}
-              onCheckedChange={(checked) => handleRoleChange('isRightsOwner', Boolean(checked))}
-              label="I am the rights owner"
-            />
-            <Atoms.Checkbox
-              checked={form.watch('isReportingOnBehalf')}
-              onCheckedChange={(checked) => handleRoleChange('isReportingOnBehalf', Boolean(checked))}
-              label="I am reporting on behalf of my organization or client"
-            />
-          </Atoms.Container>
+            <Atoms.Container className="gap-4 xl:flex-row xl:justify-between">
+              <Atoms.Checkbox
+                checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER)}
+                onCheckedChange={(checked) => handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER, Boolean(checked))}
+                label="I am the rights owner"
+              />
+              <Atoms.Checkbox
+                checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF)}
+                onCheckedChange={(checked) =>
+                  handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF, Boolean(checked))
+                }
+                label="I am reporting on behalf of my organization or client"
+              />
+            </Atoms.Container>
 
-          {roleError && (
-            <Atoms.Typography size="sm" className="font-normal text-destructive" role="alert">
-              {roleError}
-            </Atoms.Typography>
-          )}
+            {roleError && (
+              <Atoms.Typography size="sm" className="font-normal text-destructive" role="alert">
+                {roleError}
+              </Atoms.Typography>
+            )}
 
-          <Atoms.Container className="gap-2">
-            <Atoms.Label htmlFor="nameOwner" className={LABEL_CLASSES}>
-              Name of the rights owner
-              <span className="text-xs normal-case"> (This may be your full name or the name of the organization)</span>
-            </Atoms.Label>
-            <Controller
+            <Molecules.ControlledInputField<CopyrightFormData>
               name="nameOwner"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Molecules.InputField
-                  id="nameOwner"
-                  value={field.value}
-                  onChange={field.onChange}
-                  maxLength={50}
-                  placeholder="Name of the rights owner"
-                  variant="dashed"
-                  size="lg"
-                  status={fieldState.error ? 'error' : 'default'}
-                  message={fieldState.error?.message}
-                  messageType={fieldState.error ? 'error' : 'default'}
-                />
-              )}
+              label="Name of the rights owner"
+              labelHint={
+                <Atoms.Typography as="span" overrideDefaults className="text-xs normal-case">
+                  {' '}
+                  (This may be your full name or the name of the organization)
+                </Atoms.Typography>
+              }
+              placeholder="Name of the rights owner"
+              maxLength={50}
             />
-          </Atoms.Container>
 
-          <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
+            <Atoms.FormDivider />
 
-          <Atoms.Container className="rounded-lg bg-muted p-4">
-            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+            <Molecules.FormInfoBox>
               We hereby provide notice of copyright infringements pursuant to the terms of the Digital Millennium
               Copyright Act (the &quot;Act&quot;) and the Pubky Terms and Conditions. Copyright Owner is the owner of
               the copyrights in the following work(s) (collectively, the &quot;Work(s)&quot;):
-            </Atoms.Typography>
-          </Atoms.Container>
+            </Molecules.FormInfoBox>
 
-          <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="originalContentUrls" className={LABEL_CLASSES}>
-                Original Content URLs
-              </Atoms.Label>
-              <Controller
+            <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
+              <Molecules.ControlledTextareaField<CopyrightFormData>
                 name="originalContentUrls"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.TextareaField
-                    id="originalContentUrls"
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Enter URLs of your original content"
-                    variant="dashed"
-                    rows={4}
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Original Content URLs"
+                placeholder="Enter URLs of your original content"
+                rows={4}
               />
-            </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="briefDescription" className={LABEL_CLASSES}>
-                Brief description of your original content
-              </Atoms.Label>
-              <Controller
+              <Molecules.ControlledTextareaField<CopyrightFormData>
                 name="briefDescription"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.TextareaField
-                    id="briefDescription"
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Describe your original content"
-                    variant="dashed"
-                    rows={4}
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Brief description of your original content"
+                placeholder="Describe your original content"
+                rows={4}
               />
             </Atoms.Container>
-          </Atoms.Container>
 
-          <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
+            <Atoms.FormDivider />
 
-          <Atoms.Container className="rounded-lg bg-muted p-4">
-            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+            <Molecules.FormInfoBox>
               It has come to Copyright Owner&apos;s attention that your platform (the &quot;Platform&quot;) displays,
               provides access to or caches materials that infringe Copyright Owner&apos;s copyrights in the Work(s). The
               following is a list of the infringing material(s) and the URL(s), if applicable, at which the infringing
               material(s) are accessible on the Platform:
-            </Atoms.Typography>
-          </Atoms.Container>
+            </Molecules.FormInfoBox>
 
-          <Atoms.Typography size="md">Infringing work details</Atoms.Typography>
+            <Atoms.Typography size="md">Infringing work details</Atoms.Typography>
 
-          <Atoms.Container className="gap-2">
-            <Atoms.Label htmlFor="infringingContentUrl" className={LABEL_CLASSES}>
-              Infringing Content URLs
-            </Atoms.Label>
-            <Controller
+            <Molecules.ControlledTextareaField<CopyrightFormData>
               name="infringingContentUrl"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Molecules.TextareaField
-                  id="infringingContentUrl"
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Enter URLs of infringing content"
-                  variant="dashed"
-                  rows={4}
-                  status={fieldState.error ? 'error' : 'default'}
-                  message={fieldState.error?.message}
-                  messageType={fieldState.error ? 'error' : 'default'}
-                />
-              )}
+              label="Infringing Content URLs"
+              placeholder="Enter URLs of infringing content"
+              rows={4}
             />
-          </Atoms.Container>
 
-          <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
+            <Atoms.FormDivider />
 
-          <Atoms.Container className="rounded-lg bg-muted p-4">
-            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+            <Molecules.FormInfoBox>
               We have a good faith belief that the use of the Works described in this letter are not authorized by
               Copyright Owner, any agent of Copyright Owner or any applicable law. The information in this notification
               is accurate. We swear under penalty of perjury that we are authorized to act on behalf of Copyright Owner
@@ -205,289 +138,129 @@ export function CopyrightForm() {
               copyright removal request to confirm that the infringing materials have been removed or access disabled.
               The undersigned may be contacted at the telephone number, address and email address set forth below, as
               follows:
-            </Atoms.Typography>
-          </Atoms.Container>
+            </Molecules.FormInfoBox>
 
-          <Atoms.Typography size="md">Contact Information</Atoms.Typography>
+            <Atoms.Typography size="md">Contact Information</Atoms.Typography>
 
-          <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="firstName" className={LABEL_CLASSES}>
-                First Name
-              </Atoms.Label>
-              <Controller
+            <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="firstName"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="firstName"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={30}
-                    placeholder="Satoshi"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="First Name"
+                placeholder="Satoshi"
+                maxLength={30}
               />
-            </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="lastName" className={LABEL_CLASSES}>
-                Last Name
-              </Atoms.Label>
-              <Controller
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="lastName"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="lastName"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={30}
-                    placeholder="Nakamoto"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Last Name"
+                placeholder="Nakamoto"
+                maxLength={30}
               />
             </Atoms.Container>
-          </Atoms.Container>
 
-          <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="email" className={LABEL_CLASSES}>
-                Email
-              </Atoms.Label>
-              <Controller
+            <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="email"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="email"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={100}
-                    placeholder="email@example.com"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Email"
+                placeholder="email@example.com"
+                maxLength={100}
               />
-            </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="phoneNumber" className={LABEL_CLASSES}>
-                Phone number
-              </Atoms.Label>
-              <Controller
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="phoneNumber"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="phoneNumber"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={30}
-                    placeholder="000-000-0000"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Phone number"
+                placeholder="000-000-0000"
+                maxLength={30}
               />
             </Atoms.Container>
-          </Atoms.Container>
 
-          <Atoms.Typography size="md">Address</Atoms.Typography>
+            <Atoms.Typography size="md">Address</Atoms.Typography>
 
-          <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="streetAddress" className={LABEL_CLASSES}>
-                Street address
-              </Atoms.Label>
-              <Controller
+            <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="streetAddress"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="streetAddress"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={100}
-                    placeholder="Street number and name"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Street address"
+                placeholder="Street number and name"
+                maxLength={100}
               />
-            </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="country" className={LABEL_CLASSES}>
-                Country
-              </Atoms.Label>
-              <Controller
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="country"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="country"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={50}
-                    placeholder="United States"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="Country"
+                placeholder="United States"
+                maxLength={50}
               />
             </Atoms.Container>
-          </Atoms.Container>
 
-          <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="city" className={LABEL_CLASSES}>
-                City
-              </Atoms.Label>
-              <Controller
+            <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="city"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="city"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={50}
-                    placeholder="City name"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="City"
+                placeholder="City name"
+                maxLength={50}
               />
-            </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Label htmlFor="stateProvince" className={LABEL_CLASSES}>
-                State/Province
-              </Atoms.Label>
-              <Controller
+              <Molecules.ControlledInputField<CopyrightFormData>
                 name="stateProvince"
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Molecules.InputField
-                    id="stateProvince"
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={50}
-                    placeholder="State name"
-                    variant="dashed"
-                    size="lg"
-                    status={fieldState.error ? 'error' : 'default'}
-                    message={fieldState.error?.message}
-                    messageType={fieldState.error ? 'error' : 'default'}
-                  />
-                )}
+                label="State/Province"
+                placeholder="State name"
+                maxLength={50}
               />
             </Atoms.Container>
-          </Atoms.Container>
 
-          <Atoms.Container className="gap-2">
-            <Atoms.Label htmlFor="zipCode" className={LABEL_CLASSES}>
-              Zip code
-            </Atoms.Label>
-            <Controller
+            <Molecules.ControlledInputField<CopyrightFormData>
               name="zipCode"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Molecules.InputField
-                  id="zipCode"
-                  value={field.value}
-                  onChange={field.onChange}
-                  maxLength={20}
-                  placeholder="000000"
-                  variant="dashed"
-                  size="lg"
-                  status={fieldState.error ? 'error' : 'default'}
-                  message={fieldState.error?.message}
-                  messageType={fieldState.error ? 'error' : 'default'}
-                />
-              )}
+              label="Zip code"
+              placeholder="000000"
+              maxLength={20}
             />
-          </Atoms.Container>
 
-          <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
+            <Atoms.FormDivider />
 
-          <Atoms.Typography as="h2" size="md">
-            Signature
-          </Atoms.Typography>
+            <Atoms.Typography as="h2" size="md">
+              Signature
+            </Atoms.Typography>
 
-          <Atoms.Container className="gap-2">
-            <Atoms.Label htmlFor="signature" className={LABEL_CLASSES}>
-              Full Name as Signature
-            </Atoms.Label>
-            <Controller
+            <Molecules.ControlledInputField<CopyrightFormData>
               name="signature"
               control={form.control}
-              render={({ field, fieldState }) => (
-                <Molecules.InputField
-                  id="signature"
-                  value={field.value}
-                  onChange={field.onChange}
-                  maxLength={100}
-                  placeholder="Full name"
-                  variant="dashed"
-                  size="lg"
-                  status={fieldState.error ? 'error' : 'default'}
-                  message={fieldState.error?.message}
-                  messageType={fieldState.error ? 'error' : 'default'}
-                />
-              )}
+              label="Full Name as Signature"
+              placeholder="Full name"
+              maxLength={100}
             />
           </Atoms.Container>
-        </Atoms.Container>
-      </Atoms.Card>
+        </Atoms.Card>
 
-      <Atoms.Card className="rounded-t-none rounded-b-lg border border-t-0 border-border p-8">
-        <Atoms.Container className="flex-row justify-end">
-          <Atoms.Button
-            disabled={isSubmitting}
-            onClick={onSubmit}
-            size="lg"
-            className="w-auto"
-            aria-label={isSubmitting ? 'Submitting form' : 'Submit form'}
-          >
-            {isSubmitting ? (
-              <>
-                <Libs.Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
-                Submitting...
-              </>
-            ) : (
-              'Submit Form'
-            )}
-          </Atoms.Button>
-        </Atoms.Container>
-      </Atoms.Card>
+        <Atoms.Card className="rounded-t-none rounded-b-lg border border-t-0 border-border p-8">
+          <Atoms.Container className="flex-row justify-end">
+            <Atoms.Button
+              type="submit"
+              disabled={isSubmitting}
+              size="lg"
+              className="w-auto"
+              aria-label={isSubmitting ? 'Submitting form' : 'Submit form'}
+            >
+              {isSubmitting ? (
+                <>
+                  <Libs.Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit Form'
+              )}
+            </Atoms.Button>
+          </Atoms.Container>
+        </Atoms.Card>
+      </form>
     </Atoms.Container>
   );
 }

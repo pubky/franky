@@ -10,6 +10,7 @@ export * from './Container';
 export * from './Dialog';
 export * from './DropdownMenu';
 export * from './Filter';
+export * from './FormDivider';
 export * from './FooterLinks';
 export * from './Heading';
 export * from './Iframe';
