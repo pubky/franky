@@ -28,6 +28,7 @@ export enum ErrorService {
   Exchangerate = 'exchangerate',
   Chatwoot = 'chatwoot',
   Local = 'local',
+  PubkyAppSpecs = 'pubky-app-specs',
 }
 
 // =============================================================================

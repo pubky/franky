@@ -333,7 +333,11 @@ describe('BootstrapApplication', () => {
       const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation(({ method, url }) => {
         if (method === Libs.HttpMethod.GET) {
           return Promise.reject(
-            Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Not found', 404, { url }),
+            Libs.Err.client(Libs.ClientErrorCode.NOT_FOUND, 'Not found', {
+              service: Libs.ErrorService.Homeserver,
+              operation: 'request',
+              context: { statusCode: Libs.HttpStatusCode.NOT_FOUND, url },
+            }),
           );
         }
         // Allow PUT to succeed (fire and forget)
@@ -349,7 +353,9 @@ describe('BootstrapApplication', () => {
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       // Verify error was logged as info (not error) since 404 is expected for new users
-      expect(loggerInfoSpy).toHaveBeenCalledWith('Last read file not found, creating new one', { pubky: TEST_PUBKY });
+      expect(loggerInfoSpy).toHaveBeenCalledWith('Last read file not found, creating new one...', {
+        pubky: TEST_PUBKY,
+      });
 
       // Verify LastReadNormalizer was called to create new lastRead
       expect(lastReadNormalizerSpy).toHaveBeenCalledWith(TEST_PUBKY);
