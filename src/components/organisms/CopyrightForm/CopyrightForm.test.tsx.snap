@@ -73,7 +73,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               aria-checked="true"
               class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
               data-state="checked"
-              id="_r_q_"
+              id="isRightsOwner"
               role="checkbox"
               type="button"
               value="on"
@@ -105,6 +105,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
             <input
               aria-hidden="true"
               checked=""
+              name="isRightsOwner"
               style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
@@ -117,7 +118,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               <label
                 class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
                 data-slot="label"
-                for="_r_q_"
+                for="isRightsOwner"
               >
                 I am the rights owner
               </label>
@@ -131,13 +132,14 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               aria-checked="false"
               class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
               data-state="unchecked"
-              id="_r_r_"
+              id="isReportingOnBehalf"
               role="checkbox"
               type="button"
               value="on"
             />
             <input
               aria-hidden="true"
+              name="isReportingOnBehalf"
               style="position: absolute; pointer-events: none; opacity: 0; margin: 0px; transform: translateX(-100%); width: 0px; height: 0px;"
               tabindex="-1"
               type="checkbox"
@@ -150,7 +152,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               <label
                 class="flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
                 data-slot="label"
-                for="_r_r_"
+                for="isReportingOnBehalf"
               >
                 I am reporting on behalf of my organization or client
               </label>

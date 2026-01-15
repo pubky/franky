@@ -70,8 +70,16 @@ export function useCopyrightForm() {
       form.setValue(IS_REPORTING_ON_BEHALF, checked);
       if (checked) form.setValue(IS_RIGHTS_OWNER, false);
     }
-    // Clear the role error when user makes a selection
-    form.clearErrors(IS_RIGHTS_OWNER);
+    const nextIsRightsOwner = form.getValues(IS_RIGHTS_OWNER);
+    const nextIsReportingOnBehalf = form.getValues(IS_REPORTING_ON_BEHALF);
+
+    if (nextIsRightsOwner || nextIsReportingOnBehalf) {
+      // Clear the role error when a valid selection is made
+      form.clearErrors(IS_RIGHTS_OWNER);
+    } else {
+      // Re-validate to surface the role error immediately
+      void form.trigger(IS_RIGHTS_OWNER);
+    }
   };
 
   return {

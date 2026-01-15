@@ -40,6 +40,47 @@ export class CopyrightValidators {
   }
 
   /**
+   * Validates a newline-delimited list of URLs
+   *
+   * @param value - Raw string containing URLs
+   * @returns Normalized value (trimmed)
+   * @throws AppError if any URL is invalid
+   */
+  private static validateUrlList(value: string | undefined | null, fieldName: string): string {
+    const trimmed = this.validateRequiredString(value, fieldName);
+    const lines = trimmed.split('\n').filter((line) => line.trim());
+    const allValid = lines.every((line) => {
+      try {
+        new URL(line.trim());
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    if (!allValid) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Please enter valid URLs (one per line)', 400);
+    }
+
+    return trimmed;
+  }
+
+  /**
+   * Validates phone number format
+   *
+   * @param phoneNumber - Phone number to validate
+   * @returns Normalized phone number (trimmed)
+   * @throws AppError if phone number is invalid
+   */
+  private static validatePhoneNumberFormat(phoneNumber: string): string {
+    const phoneRegex = /^[\d\s\-+().,#*ext]+$/i;
+    if (!phoneRegex.test(phoneNumber)) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Please enter a valid phone number', 400);
+    }
+    return phoneNumber.trim();
+  }
+
+  /**
    * Validates name of rights owner
    */
   static validateNameOwner(nameOwner: string | undefined | null): string {
@@ -50,7 +91,7 @@ export class CopyrightValidators {
    * Validates original content URLs
    */
   static validateOriginalContentUrls(originalContentUrls: string | undefined | null): string {
-    return this.validateRequiredString(originalContentUrls, 'Original content URLs');
+    return this.validateUrlList(originalContentUrls, 'Original content URLs');
   }
 
   /**
@@ -64,7 +105,7 @@ export class CopyrightValidators {
    * Validates infringing content URL
    */
   static validateInfringingContentUrl(infringingContentUrl: string | undefined | null): string {
-    return this.validateRequiredString(infringingContentUrl, 'Infringing content URL');
+    return this.validateUrlList(infringingContentUrl, 'Infringing content URL');
   }
 
   /**
@@ -93,7 +134,8 @@ export class CopyrightValidators {
    * Validates phone number
    */
   static validatePhoneNumber(phoneNumber: string | undefined | null): string {
-    return this.validateRequiredString(phoneNumber, 'Phone number');
+    const trimmed = this.validateRequiredString(phoneNumber, 'Phone number');
+    return this.validatePhoneNumberFormat(trimmed);
   }
 
   /**

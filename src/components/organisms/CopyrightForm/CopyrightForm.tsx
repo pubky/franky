@@ -47,12 +47,16 @@ export function CopyrightForm() {
 
             <Atoms.Container className="gap-4 xl:flex-row xl:justify-between">
               <Atoms.Checkbox
+                id={COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER}
+                name={COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER}
                 checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER)}
                 onCheckedChange={(checked) => handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER, Boolean(checked))}
                 label="I am the rights owner"
                 disabled={isSubmitting}
               />
               <Atoms.Checkbox
+                id={COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF}
+                name={COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF}
                 checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF)}
                 onCheckedChange={(checked) =>
                   handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF, Boolean(checked))
