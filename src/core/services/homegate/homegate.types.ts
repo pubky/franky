@@ -5,13 +5,13 @@
 export type TRawApiResponse = Record<string, unknown>;
 
 /**
- * Parameters for validating a payment hash.
+ * Parameters for validating a verification ID.
  */
-export type TAssertValidPaymentHashParams = {
+export type TAssertValidVerificationIdParams = {
   /**
-   * The payment hash to validate (64 hex characters).
+   * The verification ID to validate (UUID format).
    */
-  paymentHash: string;
+  verificationId: string;
   /**
    * The operation name for error context.
    */
@@ -52,7 +52,7 @@ export type TVerifySmsCodeResult = {
  */
 export type TCreateLnVerificationResult = {
   /**
-   * The payment hash identifier for this verification.
+   * The verification ID for this verification request.
    */
   id: string;
   /**
@@ -74,7 +74,7 @@ export type TCreateLnVerificationResult = {
  */
 export type TLnVerificationStatus = {
   /**
-   * The payment hash identifier.
+   * The verification ID.
    */
   id: string;
   /**
