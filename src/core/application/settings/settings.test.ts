@@ -81,7 +81,11 @@ describe('SettingsApplication', () => {
       await SettingsApplication.commitUpdate(settings, testPubky);
 
       expect(normalizerToSpy).toHaveBeenCalledWith(settings, testPubky);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, normalizerResult.meta.url, expect.any(Object));
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: normalizerResult.meta.url,
+        bodyJson: expect.any(Object),
+      });
     });
 
     it('should throw error when homeserver request fails', async () => {
@@ -114,7 +118,10 @@ describe('SettingsApplication', () => {
       const result = await SettingsApplication.fetchFromHomeserver(testPubky);
 
       expect(normalizerBuildUrlSpy).toHaveBeenCalledWith(testPubky);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, `pubky://${testPubky}/pub/pubky.app/settings.json`);
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.GET,
+        url: `pubky://${testPubky}/pub/pubky.app/settings.json`,
+      });
       expect(result).toEqual(remoteSettings);
     });
 

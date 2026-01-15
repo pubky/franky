@@ -31,7 +31,7 @@ export class BookmarkApplication {
     // Execute local and homeserver operations in parallel
     await Promise.all([
       Core.LocalBookmarkService.persist(action, { userId, postId }),
-      Core.HomeserverService.request(action, bookmarkUrl, bookmarkJson),
+      Core.HomeserverService.request({ method: action, url: bookmarkUrl, bodyJson: bookmarkJson }),
     ]);
   }
 }

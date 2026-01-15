@@ -8,6 +8,13 @@ import {
   httpStatusCodeToError,
 } from '@/libs';
 import { HttpStatusCode } from '@/libs/http/http.types';
+import type {
+  TThrowSessionExpiredErrorParams,
+  TThrowInvalidInputErrorParams,
+  TThrowHomeserverErrorParams,
+  THandleTypedErrorParams,
+  THandleErrorParams,
+} from './homeserver.types';
 
 export const AUTH_FLOW_CANCELED_ERROR_NAME = 'AuthFlowCanceled';
 
@@ -111,7 +118,7 @@ export const isPubkyErrorLike = (error: unknown): error is { name: string; messa
  * @param additionalContext - Additional context to add to the error
  * @returns Never (always throws)
  */
-const throwSessionExpiredError = (errorMessage: string, additionalContext: Record<string, unknown>): never => {
+const throwSessionExpiredError = ({ errorMessage, additionalContext }: TThrowSessionExpiredErrorParams): never => {
   throw Err.auth(AuthErrorCode.SESSION_EXPIRED, errorMessage || 'Session expired', {
     service: ErrorService.Homeserver,
     operation: (additionalContext.operation as string | undefined) ?? 'unknown',
@@ -125,7 +132,7 @@ const throwSessionExpiredError = (errorMessage: string, additionalContext: Recor
  * @param additionalContext - Additional context to add to the error
  * @returns Never (always throws)
  */
-const throwInvalidInputError = (errorMessage: string, additionalContext: Record<string, unknown>): never => {
+const throwInvalidInputError = ({ errorMessage, additionalContext }: TThrowInvalidInputErrorParams): never => {
   throw Err.validation(ValidationErrorCode.INVALID_INPUT, errorMessage, {
     service: ErrorService.Homeserver,
     operation: (additionalContext.operation as string | undefined) ?? 'unknown',
@@ -141,11 +148,7 @@ const throwInvalidInputError = (errorMessage: string, additionalContext: Record<
  * @param additionalContext - Additional context to add to the error
  * @returns Never (always throws)
  */
-const throwHomeserverError = (
-  statusCode: number,
-  errorMessage: string,
-  additionalContext: Record<string, unknown>,
-): never => {
+const throwHomeserverError = ({ statusCode, errorMessage, additionalContext }: TThrowHomeserverErrorParams): never => {
   const operation = (additionalContext.operation as string | undefined) ?? 'unknown';
   const url = (additionalContext.url as string | undefined) ?? 'unknown';
 
@@ -162,21 +165,21 @@ const throwHomeserverError = (
  * @param additionalContext - Additional context to add to the error
  * @returns Never (always throws)
  */
-const handleTypedError = (
-  errorMessage: string,
-  errorName: string | undefined,
-  statusCode: number,
-  additionalContext: Record<string, unknown>,
-): never => {
+const handleTypedError = ({
+  errorMessage,
+  errorName,
+  statusCode,
+  additionalContext,
+}: THandleTypedErrorParams): never => {
   if (errorName === PUBKY_ERROR_NAMES.INVALID_INPUT) {
-    return throwInvalidInputError(errorMessage, additionalContext);
+    return throwInvalidInputError({ errorMessage, additionalContext });
   }
 
   if (errorName === PUBKY_ERROR_NAMES.AUTHENTICATION_ERROR || statusCode === HttpStatusCode.UNAUTHORIZED) {
-    return throwSessionExpiredError(errorMessage, additionalContext);
+    return throwSessionExpiredError({ errorMessage, additionalContext });
   }
 
-  return throwHomeserverError(statusCode, errorMessage, additionalContext);
+  return throwHomeserverError({ statusCode, errorMessage, additionalContext });
 };
 
 /**
@@ -189,12 +192,12 @@ const handleTypedError = (
  * @param alwaysUseHomeserverError - Whether to always use the homeserver error
  * @returns Never (always throws)
  */
-export const handleError = (
-  error: unknown,
-  additionalContext: Record<string, unknown> = {},
-  statusCode: number = HttpStatusCode.INTERNAL_SERVER_ERROR,
+export const handleError = ({
+  error,
+  additionalContext = {},
+  statusCode = HttpStatusCode.INTERNAL_SERVER_ERROR,
   alwaysUseHomeserverError = false,
-): never => {
+}: THandleErrorParams): never => {
   // Re-throw existing AppErrors as-is
   if (error instanceof AppError) {
     throw error;
@@ -204,17 +207,27 @@ export const handleError = (
 
   // Handle Pubky SDK errors
   if (isPubkyErrorLike(error)) {
-    return handleTypedError(error.message, error.name, resolvedStatusCode, additionalContext);
+    return handleTypedError({
+      errorMessage: error.message,
+      errorName: error.name,
+      statusCode: resolvedStatusCode,
+      additionalContext,
+    });
   }
 
   // Handle standard JavaScript errors
   if (error instanceof Error) {
-    return handleTypedError(error.message, undefined, resolvedStatusCode, additionalContext);
+    return handleTypedError({
+      errorMessage: error.message,
+      errorName: undefined,
+      statusCode: resolvedStatusCode,
+      additionalContext,
+    });
   }
 
   // Handle unknown error types
   if (alwaysUseHomeserverError) {
-    return throwHomeserverError(resolvedStatusCode, String(error), additionalContext);
+    return throwHomeserverError({ statusCode: resolvedStatusCode, errorMessage: String(error), additionalContext });
   }
 
   const errorMessage = String(error);

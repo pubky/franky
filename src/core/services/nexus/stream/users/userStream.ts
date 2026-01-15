@@ -15,7 +15,6 @@ export class NexusUserStreamService {
    * @returns Array of user IDs
    */
   static async fetch({ streamId, params }: Core.TFetchUserStreamParams): Promise<Core.Pubky[]> {
-    // TODO: Handle the error in application layer
     const { reach, apiParams } = Core.createUserStreamParams(streamId, params);
 
     let url: string;
@@ -39,7 +38,7 @@ export class NexusUserStreamService {
         throw new Error(`Invalid reach type: ${reach}`);
     }
 
-    return await Core.queryNexus<Core.NexusUserIdsStream>(url);
+    return await Core.queryNexus<Core.NexusUserIdsStream>({ url });
   }
 
   /**
@@ -49,11 +48,10 @@ export class NexusUserStreamService {
    * @returns Array of full user objects with details, counts, tags, and relationships
    */
   static async fetchByIds(params: Core.TUserStreamUsersByIdsParams): Promise<Core.NexusUser[]> {
-    // TODO: Handle the error in application layer
     if (params.user_ids.length === 0) {
       return [];
     }
-    const url = Core.userStreamApi.usersByIds(params);
-    return await Core.queryNexus<Core.NexusUser[]>(url.url, HttpMethod.POST, JSON.stringify(url.body));
+    const { url, body } = Core.userStreamApi.usersByIds(params);
+    return await Core.queryNexus<Core.NexusUser[]>({ url, method: HttpMethod.POST, body: JSON.stringify(body) });
   }
 }

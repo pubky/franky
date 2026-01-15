@@ -15,7 +15,7 @@ export class NexusPostStreamService {
    */
   static async fetchByIds(params: Core.TStreamPostsByIdsParams): Promise<Core.NexusPost[]> {
     const { url, body } = Core.postStreamApi.postsByIds(params);
-    return await Core.queryNexus<Core.NexusPost[]>(url, HttpMethod.POST, JSON.stringify(body));
+    return await Core.queryNexus<Core.NexusPost[]>({ url, method: HttpMethod.POST, body: JSON.stringify(body) });
   }
 
   /**
@@ -29,7 +29,6 @@ export class NexusPostStreamService {
     invokeEndpoint,
     extraParams,
   }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream> {
-    // TODO: Handle the error in application layer
     let nexusEndpoint: string;
     switch (invokeEndpoint) {
       case Core.StreamSource.ALL:
@@ -57,6 +56,6 @@ export class NexusPostStreamService {
       default:
         throw new Error(`Invalid stream type: ${invokeEndpoint}`);
     }
-    return await Core.queryNexus<Core.NexusPostsKeyStream>(nexusEndpoint);
+    return await Core.queryNexus<Core.NexusPostsKeyStream>({ url: nexusEndpoint });
   }
 }

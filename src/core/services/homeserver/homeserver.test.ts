@@ -478,7 +478,10 @@ describe('HomeserverService', () => {
           const testData = { name: 'test', value: 123 };
           mockState.sessionStorageGet.mockResolvedValue(new Response(JSON.stringify(testData), { status: 200 }));
 
-          const result = await HomeserverService.request<typeof testData>(HttpMethod.GET, 'pubky://user/pub/data.json');
+          const result = await HomeserverService.request<typeof testData>({
+            method: HttpMethod.GET,
+            url: 'pubky://user/pub/data.json',
+          });
 
           expect(result).toEqual(testData);
           expect(mockState.sessionStorageGet).toHaveBeenCalledWith('/pub/data.json');
@@ -488,7 +491,10 @@ describe('HomeserverService', () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockResolvedValue(new Response('', { status: 200 }));
 
-          const result = await HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/empty.json');
+          const result = await HomeserverService.request({
+            method: HttpMethod.GET,
+            url: 'pubky://user/pub/empty.json',
+          });
 
           expect(result).toBeUndefined();
         });
@@ -497,7 +503,10 @@ describe('HomeserverService', () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockResolvedValue(new Response('not-valid-json', { status: 200 }));
 
-          const result = await HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/invalid.json');
+          const result = await HomeserverService.request({
+            method: HttpMethod.GET,
+            url: 'pubky://user/pub/invalid.json',
+          });
 
           expect(result).toBeUndefined();
         });
@@ -507,7 +516,11 @@ describe('HomeserverService', () => {
         it('should send JSON body for PUT request', async () => {
           mockState.currentSession = createMockSession();
           const bodyData = { name: 'new-value' };
-          await HomeserverService.request(HttpMethod.PUT, 'pubky://user/pub/data.json', bodyData);
+          await HomeserverService.request({
+            method: HttpMethod.PUT,
+            url: 'pubky://user/pub/data.json',
+            bodyJson: bodyData,
+          });
 
           expect(mockState.sessionStoragePutJson).toHaveBeenCalledWith('/pub/data.json', bodyData);
         });
@@ -515,7 +528,11 @@ describe('HomeserverService', () => {
         it('should throw INVALID_INPUT when PUT is attempted without a session on a pubky:// address', async () => {
           mockState.currentSession = null;
           await expect(
-            HomeserverService.request(HttpMethod.PUT, 'pubky://someone/pub/data.json', { ok: true }),
+            HomeserverService.request({
+              method: HttpMethod.PUT,
+              url: 'pubky://someone/pub/data.json',
+              bodyJson: { ok: true },
+            }),
           ).rejects.toMatchObject({
             category: ErrorCategory.Validation,
             code: ValidationErrorCode.INVALID_INPUT,
@@ -525,8 +542,12 @@ describe('HomeserverService', () => {
         it('should return undefined for successful PUT', async () => {
           mockState.currentSession = createMockSession();
 
-          const result = await HomeserverService.request(HttpMethod.PUT, 'pubky://user/pub/data.json', {
-            data: 'test',
+          const result = await HomeserverService.request({
+            method: HttpMethod.PUT,
+            url: 'pubky://user/pub/data.json',
+            bodyJson: {
+              data: 'test',
+            },
           });
 
           expect(result).toBeUndefined();
@@ -537,7 +558,7 @@ describe('HomeserverService', () => {
         it('should send DELETE request without body', async () => {
           mockState.currentSession = createMockSession();
 
-          await HomeserverService.request(HttpMethod.DELETE, 'pubky://user/pub/data.json');
+          await HomeserverService.request({ method: HttpMethod.DELETE, url: 'pubky://user/pub/data.json' });
 
           expect(mockState.sessionStorageDelete).toHaveBeenCalledWith('/pub/data.json');
         });
@@ -551,7 +572,7 @@ describe('HomeserverService', () => {
           );
 
           await expect(
-            HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/missing.json'),
+            HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/missing.json' }),
           ).rejects.toMatchObject({
             category: ErrorCategory.Client,
             code: ClientErrorCode.NOT_FOUND,
@@ -564,7 +585,9 @@ describe('HomeserverService', () => {
             new Response('Unauthorized', { status: 401, statusText: 'Unauthorized' }),
           );
 
-          await expect(HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json')).rejects.toMatchObject({
+          await expect(
+            HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' }),
+          ).rejects.toMatchObject({
             category: ErrorCategory.Auth,
             code: AuthErrorCode.SESSION_EXPIRED,
           });
@@ -574,7 +597,9 @@ describe('HomeserverService', () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockRejectedValue(new Error('Network error'));
 
-          await expect(HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json')).rejects.toMatchObject({
+          await expect(
+            HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' }),
+          ).rejects.toMatchObject({
             category: ErrorCategory.Server,
             code: ServerErrorCode.INTERNAL_ERROR,
           });
@@ -587,7 +612,7 @@ describe('HomeserverService', () => {
         mockState.currentSession = createMockSession();
         const blobData = new Uint8Array([1, 2, 3, 4, 5]);
 
-        await HomeserverService.putBlob('pubky://user/pub/avatar.png', blobData);
+        await HomeserverService.putBlob({ url: 'pubky://user/pub/avatar.png', blob: blobData });
 
         expect(mockState.sessionStoragePutBytes).toHaveBeenCalledWith('/pub/avatar.png', blobData);
       });
@@ -601,7 +626,9 @@ describe('HomeserverService', () => {
           data: { statusCode: 413 },
         });
 
-        await expect(HomeserverService.putBlob('pubky://user/pub/large.bin', blobData)).rejects.toMatchObject({
+        await expect(
+          HomeserverService.putBlob({ url: 'pubky://user/pub/large.bin', blob: blobData }),
+        ).rejects.toMatchObject({
           category: ErrorCategory.Client,
           code: ClientErrorCode.PAYLOAD_TOO_LARGE,
         });
@@ -616,7 +643,9 @@ describe('HomeserverService', () => {
           data: { statusCode: 401 },
         });
 
-        await expect(HomeserverService.putBlob('pubky://user/pub/avatar.png', blobData)).rejects.toMatchObject({
+        await expect(
+          HomeserverService.putBlob({ url: 'pubky://user/pub/avatar.png', blob: blobData }),
+        ).rejects.toMatchObject({
           category: ErrorCategory.Auth,
           code: AuthErrorCode.SESSION_EXPIRED,
         });
@@ -626,7 +655,9 @@ describe('HomeserverService', () => {
         mockState.currentSession = null;
         const blobData = new Uint8Array([1, 2, 3]);
 
-        await expect(HomeserverService.putBlob('pubky://someone/pub/avatar.png', blobData)).rejects.toMatchObject({
+        await expect(
+          HomeserverService.putBlob({ url: 'pubky://someone/pub/avatar.png', blob: blobData }),
+        ).rejects.toMatchObject({
           category: ErrorCategory.Validation,
           code: ValidationErrorCode.INVALID_INPUT,
         });
@@ -638,7 +669,7 @@ describe('HomeserverService', () => {
         const mockFiles = ['file1.json', 'file2.json', 'file3.json'];
         mockState.publicStorageList.mockResolvedValue(mockFiles);
 
-        const result = await HomeserverService.list('pubky://user/pub/posts/');
+        const result = await HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' });
 
         expect(result).toEqual(mockFiles);
       });
@@ -648,7 +679,7 @@ describe('HomeserverService', () => {
         const mockFiles = ['pubky://user/pub/posts/file1.json', 'pubky://user/pub/posts/file2.json'];
         mockState.sessionStorageList.mockResolvedValue(mockFiles);
 
-        const result = await HomeserverService.list('pubky://user/pub/posts/');
+        const result = await HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' });
 
         expect(result).toEqual(mockFiles);
         expect(mockState.sessionStorageList).toHaveBeenCalledWith(
@@ -664,7 +695,7 @@ describe('HomeserverService', () => {
       it('should call list with default parameters', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
 
-        await HomeserverService.list('pubky://user/pub/posts/');
+        await HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' });
 
         expect(mockState.publicStorageList).toHaveBeenCalledWith(
           'pubky://user/pub/posts/',
@@ -678,7 +709,12 @@ describe('HomeserverService', () => {
       it('should pass pagination parameters to list', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
 
-        await HomeserverService.list('pubky://user/pub/posts/', 'cursor123', true, 100);
+        await HomeserverService.list({
+          baseDirectory: 'pubky://user/pub/posts/',
+          cursor: 'cursor123',
+          reverse: true,
+          limit: 100,
+        });
 
         expect(mockState.publicStorageList).toHaveBeenCalledWith(
           'pubky://user/pub/posts/',
@@ -692,7 +728,7 @@ describe('HomeserverService', () => {
       it('should throw INTERNAL_ERROR on list failure', async () => {
         mockState.publicStorageList.mockRejectedValue(new Error('List failed'));
 
-        await expect(HomeserverService.list('pubky://user/pub/posts/')).rejects.toMatchObject({
+        await expect(HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' })).rejects.toMatchObject({
           category: ErrorCategory.Server,
           code: ServerErrorCode.INTERNAL_ERROR,
         });
@@ -811,7 +847,7 @@ describe('HomeserverService', () => {
         mockState.sessionStorageGet.mockResolvedValue(new Response('Session expired', { status: 401 }));
 
         try {
-          await HomeserverService.request(HttpMethod.GET, testUrl);
+          await HomeserverService.request({ method: HttpMethod.GET, url: testUrl });
           expect.fail('Should have thrown');
         } catch (error) {
           // Use name check instead of instanceof due to module reset
@@ -826,7 +862,7 @@ describe('HomeserverService', () => {
         mockState.sessionStorageGet.mockResolvedValue(new Response(customMessage, { status: 401 }));
 
         try {
-          await HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json');
+          await HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' });
           expect.fail('Should have thrown');
         } catch (error) {
           // Use name check instead of instanceof due to module reset
@@ -900,7 +936,7 @@ describe('HomeserverService', () => {
         mockState.currentSession = createMockSession();
         mockState.sessionStorageGet.mockResolvedValue(new Response('{}', { status: 200 }));
 
-        await HomeserverService.request(HttpMethod.GET, 'pubky://user/pub/data.json');
+        await HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' });
 
         expect(mockState.sessionStorageGet).toHaveBeenCalledWith('/pub/data.json');
       });

@@ -60,7 +60,11 @@ describe('BookmarkApplication', () => {
         userId: testUserId,
         postId: mockData.postId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, mockData.bookmarkUrl, mockData.bookmarkJson);
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: mockData.bookmarkUrl,
+        bodyJson: mockData.bookmarkJson,
+      });
     });
 
     it('should throw error when user is not authenticated', async () => {
@@ -121,7 +125,11 @@ describe('BookmarkApplication', () => {
         userId: testUserId,
         postId: mockData.postId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.DELETE, mockData.bookmarkUrl, undefined);
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.DELETE,
+        url: mockData.bookmarkUrl,
+        bodyJson: undefined,
+      });
     });
 
     it('should throw error when user is not authenticated', async () => {

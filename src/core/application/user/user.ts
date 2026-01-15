@@ -140,7 +140,7 @@ export class UserApplication {
     } else if (eventType === HttpMethod.DELETE) {
       await Core.LocalFollowService.delete({ follower, followee, activeStreamId });
     }
-    await Core.HomeserverService.request(eventType, followUrl, followJson);
+    await Core.HomeserverService.request({ method: eventType, url: followUrl, bodyJson: followJson });
   }
 
   /**
@@ -151,13 +151,13 @@ export class UserApplication {
   static async commitMute({ eventType, muteUrl, muteJson, muter, mutee }: Core.TUserApplicationMuteParams) {
     if (eventType === HttpMethod.PUT) {
       await Core.LocalMuteService.create({ muter, mutee });
-      await Core.HomeserverService.request(eventType, muteUrl, muteJson);
+      await Core.HomeserverService.request({ method: eventType, url: muteUrl, bodyJson: muteJson });
       return;
     }
 
     if (eventType === HttpMethod.DELETE) {
       await Core.LocalMuteService.delete({ muter, mutee });
-      await Core.HomeserverService.request(eventType, muteUrl, muteJson);
+      await Core.HomeserverService.request({ method: eventType, url: muteUrl, bodyJson: muteJson });
       return;
     }
   }

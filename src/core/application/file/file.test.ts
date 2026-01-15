@@ -120,9 +120,9 @@ describe('FileApplication', () => {
 
       await FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] });
 
-      expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
+      expect(putBlobSpy).toHaveBeenCalledWith({ url: blobResult.meta.url, blob: blobResult.blob.data });
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenNthCalledWith(1, HttpMethod.PUT, fileResult.meta.url, fileJson);
+      expect(requestSpy).toHaveBeenNthCalledWith(1, { method: HttpMethod.PUT, url: fileResult.meta.url, bodyJson: fileJson });
       expect(createSpy).toHaveBeenCalledWith({ blobResult, fileResult });
 
       // Ensure blob upload happened before file record request
@@ -190,12 +190,12 @@ describe('FileApplication', () => {
       });
 
       // Verify both files were uploaded
-      expect(putBlobSpy).toHaveBeenCalledWith(blobResult1.meta.url, blobResult1.blob.data);
-      expect(putBlobSpy).toHaveBeenCalledWith(blobResult2.meta.url, blobResult2.blob.data);
+      expect(putBlobSpy).toHaveBeenCalledWith({ url: blobResult1.meta.url, blob: blobResult1.blob.data });
+      expect(putBlobSpy).toHaveBeenCalledWith({ url: blobResult2.meta.url, blob: blobResult2.blob.data });
       expect(fileResult1.file.toJson).toHaveBeenCalledTimes(1);
       expect(fileResult2.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, fileResult1.meta.url, fileJson1);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, fileResult2.meta.url, fileJson2);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: fileResult1.meta.url, bodyJson: fileJson1 });
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: fileResult2.meta.url, bodyJson: fileJson2 });
       expect(createSpy).toHaveBeenCalledWith({ blobResult: blobResult1, fileResult: fileResult1 });
       expect(createSpy).toHaveBeenCalledWith({ blobResult: blobResult2, fileResult: fileResult2 });
 
@@ -219,9 +219,9 @@ describe('FileApplication', () => {
         'Local persistence failed',
       );
 
-      expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
+      expect(putBlobSpy).toHaveBeenCalledWith({ url: blobResult.meta.url, blob: blobResult.blob.data });
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, fileResult.meta.url, fileJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: fileResult.meta.url, bodyJson: fileJson });
       expect(createSpy).toHaveBeenCalledWith({ blobResult, fileResult });
 
       // Verify all homeserver operations completed before error
@@ -511,7 +511,7 @@ describe('FileApplication', () => {
       // Verify deletion sequence
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(1, fileUri); // Delete metadata
       expect(readSpy).toHaveBeenCalledWith(compositeId);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, fileUri); // Fetch from homeserver
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.GET, url: fileUri }); // Fetch from homeserver
       expect(deleteMetadataSpy).toHaveBeenNthCalledWith(2, blobUrl); // Delete blob
       expect(deleteLocalSpy).not.toHaveBeenCalled(); // No local deletion in fallback path
 
@@ -654,7 +654,7 @@ describe('FileApplication', () => {
 
       expect(Core.HomeserverService.delete).toHaveBeenNthCalledWith(1, fileUri);
       expect(Core.LocalFileService.read).toHaveBeenCalledWith(compositeId);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.GET, fileUri);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.GET, url: fileUri });
       expect(Core.HomeserverService.delete).toHaveBeenCalledTimes(1); // Blob deletion not reached
     });
   });

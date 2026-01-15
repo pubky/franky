@@ -55,7 +55,7 @@ describe('ProfileApplication.commitDelete', () => {
     await ProfileApplication.commitDelete({ pubky });
 
     expect(localDeleteSpy).toHaveBeenCalledTimes(1);
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({ baseDirectory, cursor: undefined, reverse: false, limit: Infinity });
     expect(deleteSpy).toHaveBeenCalledTimes(4);
 
     expect(deleteSpy).toHaveBeenNthCalledWith(1, `${baseDirectory}tags/tag1`);
@@ -101,7 +101,7 @@ describe('ProfileApplication.commitDelete', () => {
     await ProfileApplication.commitDelete({ pubky });
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
     // homeserver.list does not yet support pagination. This ensures all files are deleted.
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({ baseDirectory, cursor: undefined, reverse: false, limit: Infinity });
     expect(deleteSpy).toHaveBeenCalledTimes(1);
     expect(deleteSpy).toHaveBeenCalledWith(profileUrl);
   });
@@ -177,6 +177,6 @@ describe('ProfileApplication.commitDelete', () => {
     await ProfileApplication.commitDelete({ pubky });
 
     // Verify that list was called with Infinity to get all files
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({ baseDirectory, cursor: undefined, reverse: false, limit: Infinity });
   });
 });

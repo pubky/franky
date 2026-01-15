@@ -362,15 +362,10 @@ export class PostStreamApplication {
   private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
     if (cacheMissUserIds.length > 0) {
-      const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+      const userBatch = await Core.NexusUserStreamService.fetchByIds({
         user_ids: cacheMissUserIds,
         viewer_id: viewerId ?? undefined,
       });
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(
-        userUrl,
-        Libs.HttpMethod.POST,
-        JSON.stringify(userBody),
-      );
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }

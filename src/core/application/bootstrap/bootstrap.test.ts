@@ -223,7 +223,7 @@ const assertCommonCalls = (
   notifications: Core.NexusNotification[],
 ) => {
   expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-  expect(mocks.homeserverRequest).toHaveBeenCalledWith(Libs.HttpMethod.GET, MOCK_LAST_READ_URL);
+  expect(mocks.homeserverRequest).toHaveBeenCalledWith({ method: Libs.HttpMethod.GET, url: MOCK_LAST_READ_URL });
   expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
   expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
   expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
@@ -330,8 +330,8 @@ describe('BootstrapApplication', () => {
 
       const mocks = setupMocks({ bootstrapData });
       // Override homeserver mock to reject on GET with 404 error but allow PUT
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
-        if (action === Libs.HttpMethod.GET) {
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation(({ method, url }) => {
+        if (method === Libs.HttpMethod.GET) {
           return Promise.reject(
             Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Not found', 404, { url }),
           );
@@ -355,14 +355,14 @@ describe('BootstrapApplication', () => {
       expect(lastReadNormalizerSpy).toHaveBeenCalledWith(TEST_PUBKY);
 
       // Verify GET request failed (first call)
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Libs.HttpMethod.GET, MOCK_LAST_READ_URL);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith({ method: Libs.HttpMethod.GET, url: MOCK_LAST_READ_URL });
 
       // Verify PUT request was made to homeserver (fire and forget)
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(
-        Libs.HttpMethod.PUT,
-        MOCK_NORMALIZED_LAST_READ_URL,
-        mockLastReadResult.last_read.toJson(),
-      );
+      expect(homeserverRequestSpy).toHaveBeenCalledWith({
+        method: Libs.HttpMethod.PUT,
+        url: MOCK_NORMALIZED_LAST_READ_URL,
+        bodyJson: mockLastReadResult.last_read.toJson(),
+      });
 
       // Verify notifications were still fetched (homeserver failure only affects lastRead, not notifications)
       expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
@@ -382,8 +382,8 @@ describe('BootstrapApplication', () => {
       const mocks = setupMocks({ bootstrapData });
 
       // Override homeserver mock to reject with 500 error
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
-        if (action === Libs.HttpMethod.GET) {
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation(({ method, url }) => {
+        if (method === Libs.HttpMethod.GET) {
           return Promise.reject(
             Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Internal server error', 500, { url }),
           );
@@ -404,14 +404,14 @@ describe('BootstrapApplication', () => {
       expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch last read timestamp', expect.any(Error));
 
       // Verify GET request was attempted
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Libs.HttpMethod.GET, MOCK_LAST_READ_URL);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith({ method: Libs.HttpMethod.GET, url: MOCK_LAST_READ_URL });
 
       // Verify PUT was NOT called (error should bubble up, not create new lastRead)
-      expect(homeserverRequestSpy).not.toHaveBeenCalledWith(
-        Libs.HttpMethod.PUT,
-        expect.any(String),
-        expect.any(Object),
-      );
+      expect(homeserverRequestSpy).not.toHaveBeenCalledWith({
+        method: Libs.HttpMethod.PUT,
+        url: expect.any(String),
+        bodyJson: expect.any(Object),
+      });
 
       // Bootstrap data is persisted before notifications are fetched, so it will be persisted even if notifications fail
       expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
@@ -422,8 +422,8 @@ describe('BootstrapApplication', () => {
       const mocks = setupMocks({ bootstrapData });
 
       // Override homeserver mock to reject with network error (no status code)
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action) => {
-        if (action === Libs.HttpMethod.GET) {
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation(({ method }) => {
+        if (method === Libs.HttpMethod.GET) {
           return Promise.reject(new Error('Network timeout'));
         }
         return Promise.resolve(undefined);
@@ -438,14 +438,14 @@ describe('BootstrapApplication', () => {
       expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch last read timestamp', expect.any(Error));
 
       // Verify GET request was attempted
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Libs.HttpMethod.GET, MOCK_LAST_READ_URL);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith({ method: Libs.HttpMethod.GET, url: MOCK_LAST_READ_URL });
 
       // Verify PUT was NOT called (error should bubble up)
-      expect(homeserverRequestSpy).not.toHaveBeenCalledWith(
-        Libs.HttpMethod.PUT,
-        expect.any(String),
-        expect.any(Object),
-      );
+      expect(homeserverRequestSpy).not.toHaveBeenCalledWith({
+        method: Libs.HttpMethod.PUT,
+        url: expect.any(String),
+        bodyJson: expect.any(Object),
+      });
 
       // Bootstrap data is persisted before notifications are fetched, so it will be persisted even if notifications fail
       expect(mocks.persistUsers).toHaveBeenCalled();
@@ -459,14 +459,14 @@ describe('BootstrapApplication', () => {
       );
 
       // Verify homeserver was called for GET (to get lastRead)
-      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Libs.HttpMethod.GET, MOCK_LAST_READ_URL);
+      expect(mocks.homeserverRequest).toHaveBeenCalledWith({ method: Libs.HttpMethod.GET, url: MOCK_LAST_READ_URL });
 
       // Verify PUT was NOT called (should not write to homeserver when notifications fail)
-      expect(mocks.homeserverRequest).not.toHaveBeenCalledWith(
-        Libs.HttpMethod.PUT,
-        expect.any(String),
-        expect.any(Object),
-      );
+      expect(mocks.homeserverRequest).not.toHaveBeenCalledWith({
+        method: Libs.HttpMethod.PUT,
+        url: expect.any(String),
+        bodyJson: expect.any(Object),
+      });
 
       // Bootstrap data is persisted before notifications are fetched, so it will be persisted even if notifications fail
       expect(mocks.persistUsers).toHaveBeenCalled();

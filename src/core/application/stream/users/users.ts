@@ -1,6 +1,5 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
-import { HttpMethod } from '@/libs';
 
 /**
  * Internal type for fetchStreamFromNexus parameters
@@ -59,12 +58,10 @@ export class UserStreamApplication {
     }
 
     try {
-      const { url, body } = Core.userStreamApi.usersByIds({
+      const userBatch = await Core.NexusUserStreamService.fetchByIds({
         user_ids: cacheMissUserIds,
         viewer_id: viewerId,
       });
-
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, HttpMethod.POST, JSON.stringify(body));
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     } catch (error) {
       console.error('Failed to fetch missing users from Nexus:', error);

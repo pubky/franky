@@ -1,6 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Config from '@/config';
-import { HttpMethod, ErrorCategory, ClientErrorCode, ServerErrorCode, parseResponseOrThrow } from '@/libs';
+import {
+  HttpMethod,
+  ErrorCategory,
+  ClientErrorCode,
+  ServerErrorCode,
+  ErrorService,
+  parseResponseOrThrow,
+} from '@/libs';
 import { buildNexusUrl, buildCdnUrl, buildUrlWithQuery, createFetchOptions, queryNexus } from './nexus.utils';
 
 describe('nexus.utils', () => {
@@ -18,19 +25,26 @@ describe('nexus.utils', () => {
 
   describe('buildUrlWithQuery', () => {
     it('should build URL with query parameters', () => {
-      const result = buildUrlWithQuery('v0/posts', { limit: 10, offset: 0 });
+      const result = buildUrlWithQuery({ baseRoute: 'v0/posts', params: { limit: 10, offset: 0 } });
       expect(result).toContain('limit=10');
       expect(result).toContain('offset=0');
     });
 
     it('should exclude path parameters from query string', () => {
-      const result = buildUrlWithQuery('v0/posts', { post_id: '123', limit: 10 }, ['post_id']);
+      const result = buildUrlWithQuery({
+        baseRoute: 'v0/posts',
+        params: { post_id: '123', limit: 10 },
+        excludeKeys: ['post_id'],
+      });
       expect(result).not.toContain('post_id');
       expect(result).toContain('limit=10');
     });
 
     it('should exclude undefined and null values', () => {
-      const result = buildUrlWithQuery('v0/posts', { limit: 10, offset: undefined, filter: null });
+      const result = buildUrlWithQuery({
+        baseRoute: 'v0/posts',
+        params: { limit: 10, offset: undefined, filter: null },
+      });
       expect(result).toContain('limit=10');
       expect(result).not.toContain('offset');
       expect(result).not.toContain('filter');
@@ -39,7 +53,7 @@ describe('nexus.utils', () => {
 
   describe('createFetchOptions', () => {
     it('should create GET options with default headers', () => {
-      const result = createFetchOptions(HttpMethod.GET);
+      const result = createFetchOptions({ method: HttpMethod.GET });
       expect(result.method).toBe('GET');
       expect(result.headers).toEqual({ 'Content-Type': 'application/json' });
       expect(result.body).toBeUndefined();
@@ -47,7 +61,7 @@ describe('nexus.utils', () => {
 
     it('should create POST options with body', () => {
       const body = JSON.stringify({ key: 'value' });
-      const result = createFetchOptions(HttpMethod.POST, body);
+      const result = createFetchOptions({ method: HttpMethod.POST, body });
       expect(result.method).toBe('POST');
       expect(result.body).toBe(body);
     });
@@ -64,7 +78,7 @@ describe('nexus.utils', () => {
 
     it('should throw server error for 204 No Content with empty body', async () => {
       const response = createMockResponse({ status: 204, text: vi.fn().mockResolvedValue('') });
-      await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
+      await expect(parseResponseOrThrow(response, ErrorService.Nexus, 'testOp')).rejects.toMatchObject({
         category: ErrorCategory.Server,
         code: ServerErrorCode.INVALID_RESPONSE,
       });
@@ -72,7 +86,7 @@ describe('nexus.utils', () => {
 
     it('should throw server error for empty text', async () => {
       const response = createMockResponse({ text: vi.fn().mockResolvedValue('') });
-      await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
+      await expect(parseResponseOrThrow(response, ErrorService.Nexus, 'testOp')).rejects.toMatchObject({
         category: ErrorCategory.Server,
         code: ServerErrorCode.INVALID_RESPONSE,
       });
@@ -83,12 +97,12 @@ describe('nexus.utils', () => {
       const response = createMockResponse({
         text: vi.fn().mockResolvedValue(JSON.stringify(mockData)),
       });
-      expect(await parseResponseOrThrow<typeof mockData>(response)).toEqual(mockData);
+      expect(await parseResponseOrThrow<typeof mockData>(response, ErrorService.Nexus, 'testOp')).toEqual(mockData);
     });
 
     it('should throw server error for invalid JSON', async () => {
       const response = createMockResponse({ text: vi.fn().mockResolvedValue('invalid json {') });
-      await expect(parseResponseOrThrow(response)).rejects.toMatchObject({
+      await expect(parseResponseOrThrow(response, ErrorService.Nexus, 'testOp')).rejects.toMatchObject({
         category: ErrorCategory.Server,
         code: ServerErrorCode.INVALID_RESPONSE,
       });
@@ -120,7 +134,7 @@ describe('nexus.utils', () => {
         createMockResponse({ text: vi.fn().mockResolvedValue(JSON.stringify(mockData)) }),
       );
 
-      const result = await queryNexus<typeof mockData>(url);
+      const result = await queryNexus<typeof mockData>({ url });
       expect(result).toEqual(mockData);
     });
 
@@ -132,14 +146,14 @@ describe('nexus.utils', () => {
         createMockResponse({ text: vi.fn().mockResolvedValue(JSON.stringify(mockData)) }),
       );
 
-      await queryNexus(url, HttpMethod.POST, body);
+      await queryNexus({ url, method: HttpMethod.POST, body });
       expect(mockFetch).toHaveBeenCalledWith(url, expect.objectContaining({ method: 'POST', body }));
     });
 
     it('should throw server error for empty response', async () => {
       const url = 'https://example.com/api/test3';
       mockFetch.mockResolvedValueOnce(createMockResponse({ status: 204, text: vi.fn().mockResolvedValue('') }));
-      await expect(queryNexus(url)).rejects.toMatchObject({
+      await expect(queryNexus({ url })).rejects.toMatchObject({
         category: ErrorCategory.Server,
         code: ServerErrorCode.INVALID_RESPONSE,
       });
@@ -155,7 +169,7 @@ describe('nexus.utils', () => {
         text: vi.fn().mockResolvedValue(''),
       });
 
-      await expect(queryNexus(errorUrl)).rejects.toMatchObject({
+      await expect(queryNexus({ url: errorUrl })).rejects.toMatchObject({
         category: ErrorCategory.Client,
         code: ClientErrorCode.BAD_REQUEST,
       });

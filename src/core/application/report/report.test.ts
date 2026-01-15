@@ -205,9 +205,11 @@ describe('ReportApplication', () => {
       await expect(ReportApplication.submit(input)).rejects.toThrow(appError);
 
       expect(Libs.Logger.error).toHaveBeenCalledWith('Report submission failed', {
-        type: appError.type,
-        statusCode: appError.statusCode,
-        details: appError.details,
+        category: appError.category,
+        code: appError.code,
+        service: appError.service,
+        operation: appError.operation,
+        context: appError.context,
       });
     });
 

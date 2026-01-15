@@ -21,7 +21,11 @@ export class SettingsApplication {
 
     Logger.info('[Settings] Pushing to homeserver', { url: meta.url, settings: settingsJson });
 
-    await Core.HomeserverService.request(HttpMethod.PUT, meta.url, settingsJson as unknown as Record<string, unknown>);
+    await Core.HomeserverService.request({
+      method: HttpMethod.PUT,
+      url: meta.url,
+      bodyJson: settingsJson as unknown as Record<string, unknown>,
+    });
 
     Logger.info('[Settings] Push complete');
   }
@@ -39,7 +43,7 @@ export class SettingsApplication {
     Logger.info('[Settings] Pulling from homeserver', { url });
 
     try {
-      const settingsJson = await Core.HomeserverService.request<Core.SettingsJson>(HttpMethod.GET, url);
+      const settingsJson = await Core.HomeserverService.request<Core.SettingsJson>({ method: HttpMethod.GET, url });
 
       if (!settingsJson) {
         Logger.info('[Settings] Pull complete, no settings found');

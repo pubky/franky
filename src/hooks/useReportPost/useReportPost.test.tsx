@@ -261,9 +261,7 @@ describe('useReportPost', () => {
 
       expect(global.fetch).toHaveBeenCalledWith(REPORT_API_ENDPOINT, {
         method: HttpMethod.POST,
-        headers: {
-          JSON_HEADERS,
-        },
+        headers: JSON_HEADERS,
         body: JSON.stringify({
           pubky: TEST_USER_PUBKY,
           postUrl: TEST_POST_URL,

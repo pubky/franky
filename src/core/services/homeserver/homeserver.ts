@@ -34,7 +34,15 @@ import {
 } from './homeserver.utils';
 import { handleError } from './error.utils';
 
-import type { PubPath } from './homeserver.types';
+import type {
+  PubPath,
+  TOwnedSessionPath,
+  TGenerateSignupAuthUrlParams,
+  THomeserverFetchParams,
+  THomeserverRequestParams,
+  TPutBlobParams,
+  THomeserverListParams,
+} from './homeserver.types';
 
 const TESTNET = Config.TESTNET.toString() === 'true';
 
@@ -58,9 +66,9 @@ export class HomeserverService {
     return this.pubkySdk;
   }
 
-  private static resolveOwnedSessionPath(url: string): { session: Session; path: PubPath<string> } | null {
+  private static resolveOwnedSessionPath(url: string): TOwnedSessionPath | null {
     const session = Core.useAuthStore.getState().selectSession();
-    return resolveOwnedSessionPath(url, session, PUB_PATH_PREFIX);
+    return resolveOwnedSessionPath({ url, session, pubPathPrefix: PUB_PATH_PREFIX });
   }
 
   /**
@@ -88,7 +96,11 @@ export class HomeserverService {
       }
       return homeserver;
     } catch (error) {
-      return handleError(error, { publicKey: publicKey?.z32?.() }, HttpStatusCode.UNAUTHORIZED);
+      return handleError({
+        error,
+        additionalContext: { publicKey: publicKey?.z32?.() },
+        statusCode: HttpStatusCode.UNAUTHORIZED,
+      });
     }
   }
 
@@ -108,12 +120,12 @@ export class HomeserverService {
 
       return { session };
     } catch (error) {
-      return handleError(
+      return handleError({
         error,
-        { signupTokenProvided: Boolean(signupToken) },
-        HttpStatusCode.INTERNAL_SERVER_ERROR,
-        true,
-      );
+        additionalContext: { signupTokenProvided: Boolean(signupToken) },
+        statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
+        alwaysUseHomeserverError: true,
+      });
     }
   }
 
@@ -143,11 +155,11 @@ export class HomeserverService {
         return undefined;
       } catch (republishError) {
         // Report the republish error since that's what actually failed
-        return handleError(
-          republishError,
-          { pubky: Identity.pubkyFromKeypair(keypair), originalSigninError: String(signinError) },
-          HttpStatusCode.UNAUTHORIZED,
-        );
+        return handleError({
+          error: republishError,
+          additionalContext: { pubky: Identity.pubkyFromKeypair(keypair), originalSigninError: String(signinError) },
+          statusCode: HttpStatusCode.UNAUTHORIZED,
+        });
       }
     }
   }
@@ -171,7 +183,7 @@ export class HomeserverService {
         cancelAuthFlow: approval.cancel,
       };
     } catch (error) {
-      return handleError(error, { capabilities, relay: Config.DEFAULT_HTTP_RELAY });
+      return handleError({ error, additionalContext: { capabilities, relay: Config.DEFAULT_HTTP_RELAY } });
     }
   }
 
@@ -185,7 +197,10 @@ export class HomeserverService {
    * @param caps - The capabilities to use
    * @returns The authentication URL and approval promise
    */
-  static async generateSignupAuthUrl(inviteCode: string, caps?: Capabilities): Promise<Core.TGenerateAuthUrlResult> {
+  static async generateSignupAuthUrl({
+    inviteCode,
+    caps,
+  }: TGenerateSignupAuthUrlParams): Promise<Core.TGenerateAuthUrlResult> {
     const res = await this.generateAuthUrl(caps);
     const url = URL.parse(res.authorizationUrl);
     if (!url) {
@@ -212,11 +227,11 @@ export class HomeserverService {
     try {
       await session.signout();
     } catch (error) {
-      handleError(error, { url: 'signout' });
+      handleError({ error, additionalContext: { url: 'signout' } });
     }
   }
 
-  private static async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+  private static async fetch({ url, options }: THomeserverFetchParams): Promise<Response> {
     try {
       const pubkySdk = this.getPubkySdk();
       const httpBridge = pubkySdk.client;
@@ -232,7 +247,7 @@ export class HomeserverService {
 
       return response;
     } catch (error) {
-      return handleError(error, { url, method: options?.method });
+      return handleError({ error, additionalContext: { url, method: options?.method } });
     }
   }
 
@@ -246,7 +261,7 @@ export class HomeserverService {
    * @param {string} url - Pubky URL.
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
-  static async request<T>(method: HttpMethod, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
+  static async request<T>({ method, url, bodyJson }: THomeserverRequestParams): Promise<T> {
     const owned = this.resolveOwnedSessionPath(url);
 
     // Handle owned session paths
@@ -255,14 +270,18 @@ export class HomeserverService {
 
       switch (method) {
         case HttpMethod.GET: {
-          const response = await getOwnedResponse(session, path, url);
-          return (await parseResponseOrUndefined<T>(response)) as T;
+          const response = await getOwnedResponse({ session, path, url });
+          return (await parseResponseOrUndefined<T>({ response })) as T;
         }
         case HttpMethod.PUT:
-          await session.storage.putJson(path, bodyJson ?? {}).catch((error) => handleError(error, { url, method }));
+          await session.storage
+            .putJson(path, bodyJson ?? {})
+            .catch((error) => handleError({ error, additionalContext: { url, method } }));
           return undefined as T;
         case HttpMethod.DELETE:
-          await session.storage.delete(path).catch((error) => handleError(error, { url, method }));
+          await session.storage
+            .delete(path)
+            .catch((error) => handleError({ error, additionalContext: { url, method } }));
           return undefined as T;
       }
     }
@@ -287,13 +306,13 @@ export class HomeserverService {
         ? isHttpUrl(url)
           ? pubkySdk.client.fetch(url)
           : pubkySdk.publicStorage.get(url as Address)
-        : this.fetch(url, { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined });
+        : this.fetch({ url, options: { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined } });
 
-    const response = await fetchPromise.catch((error) => handleError(error, { url, method }));
+    const response = await fetchPromise.catch((error) => handleError({ error, additionalContext: { url, method } }));
 
-    await assertOk(response, url, 'request');
+    await assertOk({ response, url, operation: 'request' });
 
-    return method === HttpMethod.GET ? ((await parseResponseOrUndefined<T>(response)) as T) : (undefined as T);
+    return method === HttpMethod.GET ? ((await parseResponseOrUndefined<T>({ response })) as T) : (undefined as T);
   }
 
   /**
@@ -305,14 +324,14 @@ export class HomeserverService {
    * @param {string} url - Pubky URL.
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
-  static async putBlob(url: string, blob: Uint8Array) {
+  static async putBlob({ url, blob }: TPutBlobParams) {
     const owned = this.resolveOwnedSessionPath(url);
     if (owned) {
       try {
         await owned.session.storage.putBytes(owned.path, blob);
         return;
       } catch (error) {
-        handleError(error, { url, method: HttpMethod.PUT });
+        handleError({ error, additionalContext: { url, method: HttpMethod.PUT } });
       }
     }
 
@@ -328,8 +347,8 @@ export class HomeserverService {
       );
     }
 
-    const response = await this.fetch(url, { method: HttpMethod.PUT, body: blob });
-    await assertOk(response, url, 'putBlob');
+    const response = await this.fetch({ url, options: { method: HttpMethod.PUT, body: blob } });
+    await assertOk({ response, url, operation: 'putBlob' });
   }
 
   /**
@@ -343,12 +362,12 @@ export class HomeserverService {
    * @param {number} [limit=500] - Maximum number of files to return.
    * @returns {Promise<string[]>} Array of file URLs.
    */
-  static async list(
-    baseDirectory: string,
-    cursor?: string,
-    reverse: boolean = false,
-    limit: number = LIST_DEFAULT_LIMIT,
-  ): Promise<string[]> {
+  static async list({
+    baseDirectory,
+    cursor,
+    reverse = false,
+    limit = LIST_DEFAULT_LIMIT,
+  }: THomeserverListParams): Promise<string[]> {
     const pubkySdk = this.getPubkySdk();
     try {
       const owned = this.resolveOwnedSessionPath(baseDirectory);
@@ -363,7 +382,7 @@ export class HomeserverService {
       Logger.debug('List successful', { baseDirectory, filesCount: files.length });
       return files;
     } catch (error) {
-      return handleError(error, { url: baseDirectory, baseDirectory });
+      return handleError({ error, additionalContext: { url: baseDirectory, baseDirectory } });
     }
   }
 
@@ -373,7 +392,7 @@ export class HomeserverService {
    * @param {string} url - Pubky URL of the file to delete.
    */
   static async delete(url: string) {
-    await this.request(HttpMethod.DELETE, url);
+    await this.request({ method: HttpMethod.DELETE, url });
     Logger.debug('Delete successful', { url });
   }
 
@@ -392,12 +411,12 @@ export class HomeserverService {
 
       const owned = this.resolveOwnedSessionPath(url);
       if (owned) {
-        return await getOwnedResponse(owned.session, owned.path, url);
+        return await getOwnedResponse({ session: owned.session, path: owned.path, url });
       }
 
       return await pubkySdk.publicStorage.get(url as Address);
     } catch (error) {
-      return handleError(error, { url, method: HttpMethod.GET });
+      return handleError({ error, additionalContext: { url, method: HttpMethod.GET } });
     }
   }
 
@@ -409,7 +428,11 @@ export class HomeserverService {
       const pubkySdk = this.getPubkySdk();
       return await pubkySdk.restoreSession(sessionExport);
     } catch (error) {
-      return handleError(error, { sessionExport: Boolean(sessionExport) }, HttpStatusCode.UNAUTHORIZED);
+      return handleError({
+        error,
+        additionalContext: { sessionExport: Boolean(sessionExport) },
+        statusCode: HttpStatusCode.UNAUTHORIZED,
+      });
     }
   }
 

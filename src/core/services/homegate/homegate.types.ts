@@ -16,6 +16,34 @@ export type TLnInfoResult = { available: true; amountSat: number } | { available
  */
 export type TRawApiResponse = Record<string, unknown>;
 
+/**
+ * Parameters for validating a payment hash.
+ */
+export type TAssertValidPaymentHashParams = {
+  /**
+   * The payment hash to validate (64 hex characters).
+   */
+  paymentHash: string;
+  /**
+   * The operation name for error context.
+   */
+  operation: string;
+};
+
+/**
+ * Parameters for verifying a SMS code.
+ */
+export type TVerifySmsCodeParams = {
+  /**
+   * The phone number to validate the SMS code for.
+   */
+  phoneNumber: string;
+  /**
+   * The verification code received via SMS.
+   */
+  code: string;
+};
+
 export type TVerifySmsCodeResult = {
   /**
    * True if the code is valid, false otherwise.

@@ -62,7 +62,7 @@ describe('ProfileApplication', () => {
       await ProfileApplication.commitCreate({ profile, url, pubky });
 
       expect(profile.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith(HttpMethod.PUT, url, profileJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url, bodyJson: profileJson });
       expect(mockAuthState.setCurrentUserPubky).toHaveBeenCalledWith(pubky);
       expect(mockAuthState.setHasProfile).toHaveBeenCalledWith(true);
     });
@@ -139,11 +139,11 @@ describe('ProfileApplication', () => {
       );
 
       // Verify homeserver PUT request
-      expect(requestSpy).toHaveBeenCalledWith(
-        HttpMethod.PUT,
-        `pubky://${testPubky}/pub/pubky.app/profile.json`,
-        mockUserResult.user.toJson(),
-      );
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: `pubky://${testPubky}/pub/pubky.app/profile.json`,
+        bodyJson: mockUserResult.user.toJson(),
+      });
 
       // Verify local database update
       const updatedUser = await Core.UserDetailsModel.findById(testPubky);
