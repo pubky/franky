@@ -1,6 +1,6 @@
 'use client';
 
-import * as Organisms from '@/organisms';
+import * as Templates from '@/templates';
 
 /**
  * Copyright/DMCA takedown request page
@@ -9,9 +9,5 @@ import * as Organisms from '@/organisms';
  * copyright infringement claims.
  */
 export default function CopyrightPage() {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <Organisms.CopyrightForm />
-    </div>
-  );
+  return <Templates.CopyrightForm />;
 }

@@ -68,7 +68,6 @@ export * from './PostText';
 export * from './ProgressSteps';
 export * from './PublicKey';
 export * from './Filters';
-export * from './FormInfoBox';
 // export * from './Scan';
 // export * from './SearchInput';
 export * from './HumanSmsCard';

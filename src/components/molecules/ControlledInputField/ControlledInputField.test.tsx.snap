@@ -13,7 +13,7 @@ exports[`ControlledInputField - Snapshots > matches snapshot for default state 1
     Test Label
   </label>
   <div
-    class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+    class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
     data-testid="container"
   >
     <input
@@ -21,6 +21,7 @@ exports[`ControlledInputField - Snapshots > matches snapshot for default state 1
       class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full border-none !bg-transparent"
       data-testid="input"
       id="testField"
+      name="testField"
       placeholder="Enter value"
       type="text"
       value=""

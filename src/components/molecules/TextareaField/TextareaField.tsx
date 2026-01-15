@@ -1,8 +1,10 @@
 import * as Atoms from '@/atoms';
+import * as Config from '@/config';
 import * as Libs from '@/libs';
 
 interface TextareaFieldProps {
   id?: string;
+  name?: string;
   value: string;
   placeholder?: string;
   disabled?: boolean;
@@ -12,6 +14,7 @@ interface TextareaFieldProps {
   variant?: 'default' | 'dashed';
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   maxLength?: number;
   rows?: number;
@@ -22,6 +25,7 @@ interface TextareaFieldProps {
 
 export function TextareaField({
   id,
+  name,
   value,
   placeholder,
   disabled = false,
@@ -31,9 +35,10 @@ export function TextareaField({
   variant = 'default',
   status = 'default',
   onChange,
+  onBlur,
   onKeyDown,
   maxLength,
-  rows = 4,
+  rows = Config.DEFAULT_TEXTAREA_ROWS,
   message,
   messageType = 'default',
 }: TextareaFieldProps) {
@@ -61,6 +66,7 @@ export function TextareaField({
       <Atoms.Container className={Libs.cn(containerClasses, statusClasses[status], className)}>
         <Atoms.Textarea
           id={id}
+          name={name}
           className={textAreaClasses}
           value={value}
           placeholder={placeholder}
@@ -68,6 +74,7 @@ export function TextareaField({
           readOnly={readOnly}
           onClick={onClick}
           onChange={onChange}
+          onBlur={onBlur}
           onKeyDown={onKeyDown}
           maxLength={maxLength}
           rows={rows}

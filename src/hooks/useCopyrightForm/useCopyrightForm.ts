@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Molecules from '@/molecules';
 import { copyrightFormSchema, type CopyrightFormData } from './useCopyrightForm.types';
@@ -41,7 +41,24 @@ export function useCopyrightForm() {
     }
   };
 
-  const onSubmit = form.handleSubmit(submitForm);
+  const handleInvalidSubmit = (errors: FieldErrors<CopyrightFormData>) => {
+    const [firstErrorField] = Object.keys(errors);
+    if (!firstErrorField) return;
+
+    const fieldElement =
+      document.querySelector(`[name="${firstErrorField}"]`) ?? document.querySelector('[aria-invalid="true"]');
+
+    if (fieldElement instanceof HTMLElement) {
+      if (typeof fieldElement.scrollIntoView === 'function') {
+        fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      if (typeof fieldElement.focus === 'function') {
+        fieldElement.focus();
+      }
+    }
+  };
+
+  const onSubmit = form.handleSubmit(submitForm, handleInvalidSubmit);
 
   const handleRoleChange = (field: RoleField, checked: boolean) => {
     const { IS_RIGHTS_OWNER, IS_REPORTING_ON_BEHALF } = COPYRIGHT_FORM_FIELDS;

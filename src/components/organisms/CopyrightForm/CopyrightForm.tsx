@@ -32,14 +32,16 @@ export function CopyrightForm() {
               municipio de San Salvador, departamento de San Salvador. Código postal 01101, República de El Salvador.
             </Atoms.Typography>
 
-            <Atoms.FormDivider />
+            <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
 
-            <Molecules.FormInfoBox>
-              Dear Synonym:
-              <br />
-              <br />
-              We write on behalf of:
-            </Molecules.FormInfoBox>
+            <Atoms.Container className="gap-6 rounded-lg bg-muted p-4">
+              <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+                Dear Synonym:
+                <br />
+                <br />
+                We write on behalf of:
+              </Atoms.Typography>
+            </Atoms.Container>
 
             <Atoms.Typography size="md">Rights Owner Information</Atoms.Typography>
 
@@ -48,6 +50,7 @@ export function CopyrightForm() {
                 checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER)}
                 onCheckedChange={(checked) => handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER, Boolean(checked))}
                 label="I am the rights owner"
+                disabled={isSubmitting}
               />
               <Atoms.Checkbox
                 checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF)}
@@ -55,6 +58,7 @@ export function CopyrightForm() {
                   handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF, Boolean(checked))
                 }
                 label="I am reporting on behalf of my organization or client"
+                disabled={isSubmitting}
               />
             </Atoms.Container>
 
@@ -76,15 +80,18 @@ export function CopyrightForm() {
               }
               placeholder="Name of the rights owner"
               maxLength={50}
+              disabled={isSubmitting}
             />
 
-            <Atoms.FormDivider />
+            <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
 
-            <Molecules.FormInfoBox>
-              We hereby provide notice of copyright infringements pursuant to the terms of the Digital Millennium
-              Copyright Act (the &quot;Act&quot;) and the Pubky Terms and Conditions. Copyright Owner is the owner of
-              the copyrights in the following work(s) (collectively, the &quot;Work(s)&quot;):
-            </Molecules.FormInfoBox>
+            <Atoms.Container className="gap-6 rounded-lg bg-muted p-4">
+              <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+                We hereby provide notice of copyright infringements pursuant to the terms of the Digital Millennium
+                Copyright Act (the &quot;Act&quot;) and the Pubky Terms and Conditions. Copyright Owner is the owner of
+                the copyrights in the following work(s) (collectively, the &quot;Work(s)&quot;):
+              </Atoms.Typography>
+            </Atoms.Container>
 
             <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
               <Molecules.ControlledTextareaField<CopyrightFormData>
@@ -92,7 +99,7 @@ export function CopyrightForm() {
                 control={form.control}
                 label="Original Content URLs"
                 placeholder="Enter URLs of your original content"
-                rows={4}
+                disabled={isSubmitting}
               />
 
               <Molecules.ControlledTextareaField<CopyrightFormData>
@@ -100,18 +107,20 @@ export function CopyrightForm() {
                 control={form.control}
                 label="Brief description of your original content"
                 placeholder="Describe your original content"
-                rows={4}
+                disabled={isSubmitting}
               />
             </Atoms.Container>
 
-            <Atoms.FormDivider />
+            <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
 
-            <Molecules.FormInfoBox>
-              It has come to Copyright Owner&apos;s attention that your platform (the &quot;Platform&quot;) displays,
-              provides access to or caches materials that infringe Copyright Owner&apos;s copyrights in the Work(s). The
-              following is a list of the infringing material(s) and the URL(s), if applicable, at which the infringing
-              material(s) are accessible on the Platform:
-            </Molecules.FormInfoBox>
+            <Atoms.Container className="gap-6 rounded-lg bg-muted p-4">
+              <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+                It has come to Copyright Owner&apos;s attention that your platform (the &quot;Platform&quot;) displays,
+                provides access to or caches materials that infringe Copyright Owner&apos;s copyrights in the Work(s).
+                The following is a list of the infringing material(s) and the URL(s), if applicable, at which the
+                infringing material(s) are accessible on the Platform:
+              </Atoms.Typography>
+            </Atoms.Container>
 
             <Atoms.Typography size="md">Infringing work details</Atoms.Typography>
 
@@ -120,25 +129,27 @@ export function CopyrightForm() {
               control={form.control}
               label="Infringing Content URLs"
               placeholder="Enter URLs of infringing content"
-              rows={4}
+              disabled={isSubmitting}
             />
 
-            <Atoms.FormDivider />
+            <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
 
-            <Molecules.FormInfoBox>
-              We have a good faith belief that the use of the Works described in this letter are not authorized by
-              Copyright Owner, any agent of Copyright Owner or any applicable law. The information in this notification
-              is accurate. We swear under penalty of perjury that we are authorized to act on behalf of Copyright Owner
-              with respect to the subject matter of this letter.
-              <br />
-              <br />
-              We therefore request that you remove or disable access to the infringing materials as set forth in Section
-              512(c)(1)(C), Section 512(d)(3) and/or Section 512(b)(2)(E) of the Act, as applicable, and pursuant to the
-              Pubky Terms and Conditions. Please contact the undersigned no later than one week from the date of this
-              copyright removal request to confirm that the infringing materials have been removed or access disabled.
-              The undersigned may be contacted at the telephone number, address and email address set forth below, as
-              follows:
-            </Molecules.FormInfoBox>
+            <Atoms.Container className="gap-6 rounded-lg bg-muted p-4">
+              <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
+                We have a good faith belief that the use of the Works described in this letter are not authorized by
+                Copyright Owner, any agent of Copyright Owner or any applicable law. The information in this
+                notification is accurate. We swear under penalty of perjury that we are authorized to act on behalf of
+                Copyright Owner with respect to the subject matter of this letter.
+                <br />
+                <br />
+                We therefore request that you remove or disable access to the infringing materials as set forth in
+                Section 512(c)(1)(C), Section 512(d)(3) and/or Section 512(b)(2)(E) of the Act, as applicable, and
+                pursuant to the Pubky Terms and Conditions. Please contact the undersigned no later than one week from
+                the date of this copyright removal request to confirm that the infringing materials have been removed or
+                access disabled. The undersigned may be contacted at the telephone number, address and email address set
+                forth below, as follows:
+              </Atoms.Typography>
+            </Atoms.Container>
 
             <Atoms.Typography size="md">Contact Information</Atoms.Typography>
 
@@ -149,6 +160,7 @@ export function CopyrightForm() {
                 label="First Name"
                 placeholder="Satoshi"
                 maxLength={30}
+                disabled={isSubmitting}
               />
 
               <Molecules.ControlledInputField<CopyrightFormData>
@@ -157,6 +169,7 @@ export function CopyrightForm() {
                 label="Last Name"
                 placeholder="Nakamoto"
                 maxLength={30}
+                disabled={isSubmitting}
               />
             </Atoms.Container>
 
@@ -167,6 +180,7 @@ export function CopyrightForm() {
                 label="Email"
                 placeholder="email@example.com"
                 maxLength={100}
+                disabled={isSubmitting}
               />
 
               <Molecules.ControlledInputField<CopyrightFormData>
@@ -175,6 +189,7 @@ export function CopyrightForm() {
                 label="Phone number"
                 placeholder="000-000-0000"
                 maxLength={30}
+                disabled={isSubmitting}
               />
             </Atoms.Container>
 
@@ -187,6 +202,7 @@ export function CopyrightForm() {
                 label="Street address"
                 placeholder="Street number and name"
                 maxLength={100}
+                disabled={isSubmitting}
               />
 
               <Molecules.ControlledInputField<CopyrightFormData>
@@ -195,6 +211,7 @@ export function CopyrightForm() {
                 label="Country"
                 placeholder="United States"
                 maxLength={50}
+                disabled={isSubmitting}
               />
             </Atoms.Container>
 
@@ -205,6 +222,7 @@ export function CopyrightForm() {
                 label="City"
                 placeholder="City name"
                 maxLength={50}
+                disabled={isSubmitting}
               />
 
               <Molecules.ControlledInputField<CopyrightFormData>
@@ -213,6 +231,7 @@ export function CopyrightForm() {
                 label="State/Province"
                 placeholder="State name"
                 maxLength={50}
+                disabled={isSubmitting}
               />
             </Atoms.Container>
 
@@ -222,9 +241,10 @@ export function CopyrightForm() {
               label="Zip code"
               placeholder="000000"
               maxLength={20}
+              disabled={isSubmitting}
             />
 
-            <Atoms.FormDivider />
+            <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
 
             <Atoms.Typography as="h2" size="md">
               Signature
@@ -236,6 +256,7 @@ export function CopyrightForm() {
               label="Full Name as Signature"
               placeholder="Full name"
               maxLength={100}
+              disabled={isSubmitting}
             />
           </Atoms.Container>
         </Atoms.Card>

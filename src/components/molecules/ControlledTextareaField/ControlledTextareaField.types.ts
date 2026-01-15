@@ -15,4 +15,6 @@ export interface ControlledTextareaFieldProps<T extends FieldValues> {
   variant?: 'default' | 'dashed';
   /** Number of visible text rows */
   rows?: number;
+  /** Disabled state */
+  disabled?: boolean;
 }
