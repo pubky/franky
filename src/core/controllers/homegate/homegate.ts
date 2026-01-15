@@ -51,12 +51,12 @@ export class HomegateController {
    * Await Lightning Network payment confirmation.
    * Long-polling endpoint that waits for payment to be confirmed.
    *
-   * @param paymentHash - The payment hash from createLnVerification
+   * @param verificationId - The verification ID from createLnVerification
    * @returns The verification result
    * @throws AppError if awaiting fails
    */
-  static async awaitLnVerification(paymentHash: string): Promise<Core.THomegateAwaitLnVerificationResult> {
-    return await Core.HomegateApplication.awaitLnVerification(paymentHash);
+  static async awaitLnVerification(verificationId: string): Promise<Core.THomegateAwaitLnVerificationResult> {
+    return await Core.HomegateApplication.awaitLnVerification(verificationId);
   }
 
   /**

@@ -122,7 +122,11 @@ describe('FileApplication', () => {
 
       expect(putBlobSpy).toHaveBeenCalledWith({ url: blobResult.meta.url, blob: blobResult.blob.data });
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenNthCalledWith(1, { method: HttpMethod.PUT, url: fileResult.meta.url, bodyJson: fileJson });
+      expect(requestSpy).toHaveBeenNthCalledWith(1, {
+        method: HttpMethod.PUT,
+        url: fileResult.meta.url,
+        bodyJson: fileJson,
+      });
       expect(createSpy).toHaveBeenCalledWith({ blobResult, fileResult });
 
       // Ensure blob upload happened before file record request
@@ -194,8 +198,16 @@ describe('FileApplication', () => {
       expect(putBlobSpy).toHaveBeenCalledWith({ url: blobResult2.meta.url, blob: blobResult2.blob.data });
       expect(fileResult1.file.toJson).toHaveBeenCalledTimes(1);
       expect(fileResult2.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: fileResult1.meta.url, bodyJson: fileJson1 });
-      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: fileResult2.meta.url, bodyJson: fileJson2 });
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: fileResult1.meta.url,
+        bodyJson: fileJson1,
+      });
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: fileResult2.meta.url,
+        bodyJson: fileJson2,
+      });
       expect(createSpy).toHaveBeenCalledWith({ blobResult: blobResult1, fileResult: fileResult1 });
       expect(createSpy).toHaveBeenCalledWith({ blobResult: blobResult2, fileResult: fileResult2 });
 

@@ -8,7 +8,7 @@ import {
   TSmsInfoResult,
   TLnInfoResult,
   TRawApiResponse,
-  TAssertValidPaymentHashParams,
+  TAssertValidVerificationIdParams,
 } from './homegate.types';
 import { homegateApi } from './homegate.api';
 import { HOMEGATE_QUERY_KEYS } from './homegate.constants';
@@ -25,21 +25,21 @@ import {
   HttpMethod,
 } from '@/libs';
 
-/** Regex for validating 64-character hex strings (payment hash format) */
-const PAYMENT_HASH_REGEX = /^[0-9a-fA-F]{64}$/;
+/** Regex for validating UUID format strings (verification ID format) */
+const VERIFICATION_ID_REGEX = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 /**
- * Validates that a payment hash is a 64-character hex string.
- * @param params.paymentHash - The payment hash to validate
+ * Validates that a verification ID is a valid UUID format.
+ * @param params.verificationId - The verification ID to validate
  * @param params.operation - The operation name for error context
  * @throws AppError with ValidationErrorCode.FORMAT_ERROR if invalid
  */
-function assertValidPaymentHash({ paymentHash, operation }: TAssertValidPaymentHashParams): void {
-  if (!PAYMENT_HASH_REGEX.test(paymentHash)) {
-    throw Err.validation(ValidationErrorCode.FORMAT_ERROR, 'Payment hash must be 64 hex characters', {
+function assertValidVerificationId({ verificationId, operation }: TAssertValidVerificationIdParams): void {
+  if (!VERIFICATION_ID_REGEX.test(verificationId)) {
+    throw Err.validation(ValidationErrorCode.FORMAT_ERROR, 'Verification ID must be a valid UUID format', {
       service: ErrorService.Homegate,
       operation,
-      context: { paymentHash, expectedFormat: '64 hex characters' },
+      context: { verificationId, expectedFormat: 'UUID (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)' },
     });
   }
 }
@@ -234,12 +234,12 @@ export class HomegateService {
 
   /**
    * Gets the current status of a Lightning Network payment verification.
-   * @param paymentHash - The payment hash (64 hex characters) from createLnVerification.
+   * @param verificationId - The verification ID (UUID format) from createLnVerification.
    * @returns The verification status.
    */
-  static async getLnVerification(paymentHash: string): Promise<TLnVerificationStatus> {
-    assertValidPaymentHash({ paymentHash, operation: 'getLnVerification' });
-    const url = homegateApi.getLnVerification(paymentHash);
+  static async getLnVerification(verificationId: string): Promise<TLnVerificationStatus> {
+    assertValidVerificationId({ verificationId, operation: 'getLnVerification' });
+    const url = homegateApi.getLnVerification(verificationId);
     const response = await safeFetch(url, { method: HttpMethod.GET }, ErrorService.Homegate, 'getLnVerification');
 
     if (!response.ok) {
@@ -253,12 +253,12 @@ export class HomegateService {
   /**
    * Long-polling endpoint that waits for a Lightning Network payment to be confirmed.
    * Returns immediately if payment is already confirmed, otherwise waits up to 60 seconds.
-   * @param paymentHash - The payment hash (64 hex characters) from createLnVerification.
+   * @param verificationId - The verification ID (UUID format) from createLnVerification.
    * @returns The result of awaiting the verification.
    */
-  static async awaitLnVerification(paymentHash: string): Promise<TAwaitLnVerificationResult> {
-    assertValidPaymentHash({ paymentHash, operation: 'awaitLnVerification' });
-    const url = homegateApi.awaitLnVerification(paymentHash);
+  static async awaitLnVerification(verificationId: string): Promise<TAwaitLnVerificationResult> {
+    assertValidVerificationId({ verificationId, operation: 'awaitLnVerification' });
+    const url = homegateApi.awaitLnVerification(verificationId);
     const response = await safeFetch(url, { method: HttpMethod.GET }, ErrorService.Homegate, 'awaitLnVerification');
 
     if (!response.ok) {
