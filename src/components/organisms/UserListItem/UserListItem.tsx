@@ -365,7 +365,7 @@ export function UserListItem({
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
   const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
-  const formattedPublicKey = Libs.truncateMiddle(user.id, variant === 'compact' ? 10 : 12);
+  const formattedPublicKey = Libs.formatPublicKey({ key: user.id, length: variant === 'compact' ? 10 : 12 });
   const tags = user.tags || [];
   const stats = user.stats || user.counts || { tags: 0, posts: 0 };
   const isFollowing = isFollowingProp ?? user.isFollowing ?? false;

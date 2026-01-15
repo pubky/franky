@@ -28,7 +28,7 @@ exports[`SearchRecentUserItem > SearchRecentUserItem - Snapshots > matches snaps
       class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
       data-testid="user-pubky"
     >
-      pk:a...c123
+      abc123
     </span>
   </div>
 </div>
