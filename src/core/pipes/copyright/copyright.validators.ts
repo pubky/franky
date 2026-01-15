@@ -91,7 +91,7 @@ export class CopyrightValidators {
    * Validates original content URLs
    */
   static validateOriginalContentUrls(originalContentUrls: string | undefined | null): string {
-    return this.validateUrlList(originalContentUrls, 'Original content URLs');
+    return this.validateRequiredString(originalContentUrls, 'Original content URLs');
   }
 
   /**

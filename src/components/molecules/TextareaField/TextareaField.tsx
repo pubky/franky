@@ -48,9 +48,11 @@ export function TextareaField({
     error: 'border-red-500 text-red-500',
   };
 
-  const textAreaClasses = Libs.cn('w-full border-none resize-none px-5 py-4 h-25 !bg-transparent');
+  const textAreaClasses = Libs.cn(
+    'w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words',
+  );
   const containerClasses = Libs.cn(
-    'flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium',
+    'flex-1 cursor-pointer w-full min-w-0 items-center flex-row border gap-0 rounded-md font-medium',
     variant === 'dashed' && 'border-dashed !bg-alpha-90/10',
   );
   const messageClasses = {
