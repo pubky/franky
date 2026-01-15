@@ -24,7 +24,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
           />
           <Atoms.Typography
             as="p"
-            className="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase sm:text-left"
+            className="mt-3 text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase"
           >
             (More private)
           </Atoms.Typography>
