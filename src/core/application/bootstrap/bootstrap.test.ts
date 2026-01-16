@@ -9,8 +9,8 @@ vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
 }));
 
-// Bootstrap store mocks
-const bootstrapStoreMocks = {
+// SignIn store mocks
+const signInStoreMocks = {
   setBootstrapFetched: vi.fn(),
   setDataPersisted: vi.fn(),
   setHomeserverSynced: vi.fn(),
@@ -269,12 +269,12 @@ describe('BootstrapApplication', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.clearAllMocks();
-    // Clear bootstrap store mocks
-    bootstrapStoreMocks.setBootstrapFetched.mockClear();
-    bootstrapStoreMocks.setDataPersisted.mockClear();
-    bootstrapStoreMocks.setHomeserverSynced.mockClear();
-    // Mock bootstrap store
-    vi.spyOn(Core.useBootstrapStore, 'getState').mockReturnValue(bootstrapStoreMocks as unknown as Core.BootstrapStore);
+    // Clear signIn store mocks
+    signInStoreMocks.setBootstrapFetched.mockClear();
+    signInStoreMocks.setDataPersisted.mockClear();
+    signInStoreMocks.setHomeserverSynced.mockClear();
+    // Mock signIn store
+    vi.spyOn(Core.useSignInStore, 'getState').mockReturnValue(signInStoreMocks as unknown as Core.SignInStore);
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
     } as LastReadResult);
@@ -300,10 +300,10 @@ describe('BootstrapApplication', () => {
       assertCommonCalls(mocks, bootstrapData, notifications);
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
 
-      // Verify bootstrap store progress tracking
-      expect(bootstrapStoreMocks.setBootstrapFetched).toHaveBeenCalledWith(true);
-      expect(bootstrapStoreMocks.setDataPersisted).toHaveBeenCalledWith(true);
-      expect(bootstrapStoreMocks.setHomeserverSynced).toHaveBeenCalledWith(true);
+      // Verify signIn store progress tracking
+      expect(signInStoreMocks.setBootstrapFetched).toHaveBeenCalledWith(true);
+      expect(signInStoreMocks.setDataPersisted).toHaveBeenCalledWith(true);
+      expect(signInStoreMocks.setHomeserverSynced).toHaveBeenCalledWith(true);
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {

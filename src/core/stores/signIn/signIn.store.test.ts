@@ -1,17 +1,18 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useBootstrapStore } from './bootstrap.store';
+import { useSignInStore } from './signIn.store';
 import * as Libs from '@/libs';
 
-describe('BootstrapStore', () => {
+describe('SignInStore', () => {
   beforeEach(() => {
     // Reset the store to initial state before each test
-    useBootstrapStore.getState().reset();
+    useSignInStore.getState().reset();
   });
 
   describe('Initial State', () => {
     it('should have all flags set to false initially', () => {
-      const state = useBootstrapStore.getState();
+      const state = useSignInStore.getState();
 
+      expect(state.authUrlResolved).toBe(false);
       expect(state.profileChecked).toBe(false);
       expect(state.bootstrapFetched).toBe(false);
       expect(state.dataPersisted).toBe(false);
@@ -21,40 +22,48 @@ describe('BootstrapStore', () => {
   });
 
   describe('Step Actions', () => {
+    it('should set authUrlResolved to true', () => {
+      useSignInStore.getState().setAuthUrlResolved(true);
+      expect(useSignInStore.getState().authUrlResolved).toBe(true);
+    });
+
     it('should set profileChecked to true', () => {
-      useBootstrapStore.getState().setProfileChecked(true);
-      expect(useBootstrapStore.getState().profileChecked).toBe(true);
+      useSignInStore.getState().setProfileChecked(true);
+      expect(useSignInStore.getState().profileChecked).toBe(true);
     });
 
     it('should set bootstrapFetched to true', () => {
-      useBootstrapStore.getState().setBootstrapFetched(true);
-      expect(useBootstrapStore.getState().bootstrapFetched).toBe(true);
+      useSignInStore.getState().setBootstrapFetched(true);
+      expect(useSignInStore.getState().bootstrapFetched).toBe(true);
     });
 
     it('should set dataPersisted to true', () => {
-      useBootstrapStore.getState().setDataPersisted(true);
-      expect(useBootstrapStore.getState().dataPersisted).toBe(true);
+      useSignInStore.getState().setDataPersisted(true);
+      expect(useSignInStore.getState().dataPersisted).toBe(true);
     });
 
     it('should set homeserverSynced to true', () => {
-      useBootstrapStore.getState().setHomeserverSynced(true);
-      expect(useBootstrapStore.getState().homeserverSynced).toBe(true);
+      useSignInStore.getState().setHomeserverSynced(true);
+      expect(useSignInStore.getState().homeserverSynced).toBe(true);
     });
 
     it('should track progress through all steps', () => {
-      const store = useBootstrapStore.getState();
+      const store = useSignInStore.getState();
+
+      store.setAuthUrlResolved(true);
+      expect(useSignInStore.getState().authUrlResolved).toBe(true);
 
       store.setProfileChecked(true);
-      expect(useBootstrapStore.getState().profileChecked).toBe(true);
+      expect(useSignInStore.getState().profileChecked).toBe(true);
 
       store.setBootstrapFetched(true);
-      expect(useBootstrapStore.getState().bootstrapFetched).toBe(true);
+      expect(useSignInStore.getState().bootstrapFetched).toBe(true);
 
       store.setDataPersisted(true);
-      expect(useBootstrapStore.getState().dataPersisted).toBe(true);
+      expect(useSignInStore.getState().dataPersisted).toBe(true);
 
       store.setHomeserverSynced(true);
-      expect(useBootstrapStore.getState().homeserverSynced).toBe(true);
+      expect(useSignInStore.getState().homeserverSynced).toBe(true);
     });
   });
 
@@ -62,27 +71,28 @@ describe('BootstrapStore', () => {
     it('should set error state', () => {
       const mockError = new Libs.AppError(Libs.CommonErrorType.NETWORK_ERROR, 'Network failed', 500);
 
-      useBootstrapStore.getState().setError(mockError);
+      useSignInStore.getState().setError(mockError);
 
-      expect(useBootstrapStore.getState().error).toBe(mockError);
+      expect(useSignInStore.getState().error).toBe(mockError);
     });
 
     it('should clear error state', () => {
       const mockError = new Libs.AppError(Libs.CommonErrorType.NETWORK_ERROR, 'Network failed', 500);
 
-      useBootstrapStore.getState().setError(mockError);
-      useBootstrapStore.getState().setError(null);
+      useSignInStore.getState().setError(mockError);
+      useSignInStore.getState().setError(null);
 
-      expect(useBootstrapStore.getState().error).toBeNull();
+      expect(useSignInStore.getState().error).toBeNull();
     });
   });
 
   describe('Reset', () => {
     it('should reset all state to initial values', () => {
-      const store = useBootstrapStore.getState();
+      const store = useSignInStore.getState();
       const mockError = new Libs.AppError(Libs.CommonErrorType.NETWORK_ERROR, 'Network failed', 500);
 
       // Set all state
+      store.setAuthUrlResolved(true);
       store.setProfileChecked(true);
       store.setBootstrapFetched(true);
       store.setDataPersisted(true);
@@ -93,7 +103,8 @@ describe('BootstrapStore', () => {
       store.reset();
 
       // Verify all reset
-      const resetState = useBootstrapStore.getState();
+      const resetState = useSignInStore.getState();
+      expect(resetState.authUrlResolved).toBe(false);
       expect(resetState.profileChecked).toBe(false);
       expect(resetState.bootstrapFetched).toBe(false);
       expect(resetState.dataPersisted).toBe(false);

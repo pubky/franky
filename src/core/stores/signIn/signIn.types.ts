@@ -1,19 +1,22 @@
 import * as Libs from '@/libs';
 
-export interface BootstrapState {
-  /** Profile check completed (25%) */
+export interface SignInState {
+  /** Auth URL callback successfully resolved (20%) */
+  authUrlResolved: boolean;
+  /** Profile check completed (40%) */
   profileChecked: boolean;
-  /** Bootstrap data fetched from Nexus (50%) */
+  /** Bootstrap data fetched from Nexus (60%) */
   bootstrapFetched: boolean;
-  /** Data persisted to IndexedDB (75%) */
+  /** Data persisted to IndexedDB (80%) */
   dataPersisted: boolean;
-  /** Homeserver data synced: last_read, settings */
+  /** Homeserver data synced: last_read, settings (100%) */
   homeserverSynced: boolean;
-  /** Error that occurred during bootstrap, if any */
+  /** Error that occurred during sign-in, if any */
   error: Libs.AppError | null;
 }
 
-export interface BootstrapActions {
+export interface SignInActions {
+  setAuthUrlResolved: (value: boolean) => void;
   setProfileChecked: (value: boolean) => void;
   setBootstrapFetched: (value: boolean) => void;
   setDataPersisted: (value: boolean) => void;
@@ -22,9 +25,10 @@ export interface BootstrapActions {
   reset: () => void;
 }
 
-export type BootstrapStore = BootstrapState & BootstrapActions;
+export type SignInStore = SignInState & SignInActions;
 
-export const bootstrapInitialState: BootstrapState = {
+export const signInInitialState: SignInState = {
+  authUrlResolved: false,
   profileChecked: false,
   bootstrapFetched: false,
   dataPersisted: false,
@@ -32,7 +36,8 @@ export const bootstrapInitialState: BootstrapState = {
   error: null,
 };
 
-export enum BootstrapActionTypes {
+export enum SignInActionTypes {
+  SET_AUTH_URL_RESOLVED = 'SET_AUTH_URL_RESOLVED',
   SET_PROFILE_CHECKED = 'SET_PROFILE_CHECKED',
   SET_BOOTSTRAP_FETCHED = 'SET_BOOTSTRAP_FETCHED',
   SET_DATA_PERSISTED = 'SET_DATA_PERSISTED',
