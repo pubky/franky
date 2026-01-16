@@ -1004,6 +1004,57 @@ describe('LocalStreamPostsService', () => {
       expect(result?.stream).toEqual(initialStream);
     });
 
+    // Regression test for reply count bug: when duplicate posts arrive in batches,
+    // the function must return only the actually new posts so counts are updated correctly.
+    // Previously, the function returned void and the caller used the full batch size,
+    // causing reply counts to inflate when the same posts arrived multiple times.
+    it('should return only actually new post IDs to prevent count inflation from duplicates', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      // Batch contains 3 posts, but 2 are duplicates
+      const batchWithDuplicates = [postId('post-2'), postId('post-3'), postId('post-1')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+
+      const newPostIds = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: batchWithDuplicates,
+      });
+
+      // Must return only the 1 new post, not 3 (the batch size)
+      // This is critical: using batch size (3) instead of actual new count (1)
+      // would cause reply counts to be inflated by 2 extra
+      expect(newPostIds).toEqual([postId('post-3')]);
+      expect(newPostIds.length).toBe(1);
+    });
+
+    it('should return all posts when stream does not exist yet', async () => {
+      const newChunk = [postId('post-1'), postId('post-2'), postId('post-3')];
+
+      const newPostIds = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: newChunk,
+      });
+
+      expect(newPostIds).toEqual(newChunk);
+      expect(newPostIds.length).toBe(3);
+    });
+
+    it('should return empty array when all posts are duplicates', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const allDuplicates = [postId('post-1'), postId('post-2')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+
+      const newPostIds = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: allDuplicates,
+      });
+
+      // Must return empty array, not the batch size of 2
+      expect(newPostIds).toEqual([]);
+      expect(newPostIds.length).toBe(0);
+    });
+
     it('should propagate error when underlying model throws', async () => {
       const databaseError = Libs.createDatabaseError(
         Libs.DatabaseErrorType.QUERY_FAILED,

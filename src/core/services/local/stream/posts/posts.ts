@@ -318,18 +318,19 @@ export class LocalStreamPostsService {
    * Persist a new chunk of posts to the unread post stream
    * @param stream - Array of post IDs to persist
    * @param streamId - The stream ID to persist the new chunk to
-   * @returns
+   * @returns The post IDs that were actually added (after deduplication)
    */
-  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
+  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams): Promise<string[]> {
     const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
     if (!unreadPostStream) {
       await Core.UnreadPostStreamModel.upsert(streamId, stream);
-      return;
+      return stream;
     }
     const existingIds = new Set(unreadPostStream.stream);
     const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
-    if (newPostsToAdd.length === 0) return;
+    if (newPostsToAdd.length === 0) return [];
     const combinedStream = [...newPostsToAdd, ...unreadPostStream.stream];
     await Core.UnreadPostStreamModel.upsert(streamId, combinedStream);
+    return newPostsToAdd;
   }
 }

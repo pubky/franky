@@ -35,4 +35,10 @@ export interface UsePostRepliesResult {
    * Function to manually refresh replies
    */
   refresh: () => Promise<void>;
+  /**
+   * Function to prepend a newly created reply to the list.
+   * Used after local reply creation to immediately show the reply
+   * without waiting for Nexus to index it.
+   */
+  prependReply: (replyId: string) => void;
 }
