@@ -1,4 +1,13 @@
-import { createNexusError, Env, isAppError, NexusErrorType } from '@/libs';
+import {
+  ErrorService,
+  Err,
+  ServerErrorCode,
+  safeFetch,
+  httpResponseToError,
+  parseResponseOrThrow,
+  HttpMethod,
+} from '@/libs';
+import { EXCHANGE_RATE_API } from '@/config';
 import { exchangerateQueryClient } from './exchangerate.query-client';
 import { BlockTankResponse, BtcRate } from './exchangerate.types';
 
@@ -16,67 +25,54 @@ export class ExchangerateService {
    * @throws {AppError} If the API request fails, response is invalid, or BTCUSD ticker is not found
    */
   private static async getBtcUsdRate(): Promise<number> {
-    const apiUrl = Env.NEXT_PUBLIC_EXCHANGE_RATE_API;
 
-    try {
-      const response = await fetch(apiUrl);
+    const response = await safeFetch(
+      EXCHANGE_RATE_API,
+      { method: HttpMethod.GET },
+      ErrorService.Exchangerate,
+      'getBtcUsdRate',
+    );
 
-      if (!response.ok) {
-        // TODO: Wrap in a generic error type
-        throw createNexusError(
-          NexusErrorType.SERVICE_UNAVAILABLE,
-          `Failed to fetch exchange rate: ${response.statusText}`,
-          response.status,
-          { url: apiUrl, statusCode: response.status },
-        );
-      }
-
-      const data: BlockTankResponse = await response.json();
-
-      if (!data.tickers || !Array.isArray(data.tickers)) {
-        // TODO: Wrap in a generic error type
-        throw createNexusError(NexusErrorType.INVALID_RESPONSE, 'Invalid response format from exchange rate API', 500, {
-          url: apiUrl,
-        });
-      }
-
-      const btcUsdTicker = data.tickers.find((ticker) => ticker.symbol === 'BTCUSD');
-
-      if (!btcUsdTicker) {
-        // TODO: Wrap in a generic error type
-        throw createNexusError(NexusErrorType.RESOURCE_NOT_FOUND, 'BTCUSD ticker not found in API response', 404, {
-          url: apiUrl,
-          availableSymbols: data.tickers.map((t) => t.symbol),
-        });
-      }
-
-      const rate = parseFloat(btcUsdTicker.lastPrice);
-
-      if (isNaN(rate) || rate <= 0) {
-        // TODO: Wrap in a generic error type
-        throw createNexusError(
-          NexusErrorType.INVALID_RESPONSE,
-          `Invalid exchange rate value: ${btcUsdTicker.lastPrice}`,
-          500,
-          { url: apiUrl, lastPrice: btcUsdTicker.lastPrice },
-        );
-      }
-
-      return rate;
-    } catch (error) {
-      // Re-throw AppError instances as-is
-      if (isAppError(error)) {
-        throw error;
-      }
-
-      // TODO: Wrap other errors (network failures, JSON parse errors, etc.)
-      throw createNexusError(
-        NexusErrorType.SERVICE_UNAVAILABLE,
-        `Failed to fetch BTC/USD exchange rate: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        500,
-        { url: apiUrl, originalError: error },
-      );
+    if (!response.ok) {
+      throw httpResponseToError(response, ErrorService.Exchangerate, 'getBtcUsdRate', EXCHANGE_RATE_API);
     }
+
+    const data = await parseResponseOrThrow<BlockTankResponse>(
+      response,
+      ErrorService.Exchangerate,
+      'getBtcUsdRate',
+      EXCHANGE_RATE_API,
+    );
+
+    if (!data.tickers || !Array.isArray(data.tickers)) {
+      throw Err.server(ServerErrorCode.INVALID_RESPONSE, 'Invalid response format from exchange rate API', {
+        service: ErrorService.Exchangerate,
+        operation: 'getBtcUsdRate',
+        context: { endpoint: EXCHANGE_RATE_API },
+      });
+    }
+
+    const btcUsdTicker = data.tickers.find((ticker) => ticker.symbol === 'BTCUSD');
+
+    if (!btcUsdTicker) {
+      throw Err.server(ServerErrorCode.INVALID_RESPONSE, 'BTCUSD ticker not found in API response', {
+        service: ErrorService.Exchangerate,
+        operation: 'getBtcUsdRate',
+        context: { endpoint: EXCHANGE_RATE_API, availableSymbols: data.tickers.map((t) => t.symbol) },
+      });
+    }
+
+    const rate = parseFloat(btcUsdTicker.lastPrice);
+
+    if (isNaN(rate) || rate <= 0) {
+      throw Err.server(ServerErrorCode.INVALID_RESPONSE, `Invalid exchange rate value: ${btcUsdTicker.lastPrice}`, {
+        service: ErrorService.Exchangerate,
+        operation: 'getBtcUsdRate',
+        context: { endpoint: EXCHANGE_RATE_API, lastPrice: btcUsdTicker.lastPrice },
+      });
+    }
+
+    return rate;
   }
 
   /**

@@ -55,7 +55,7 @@ export class SettingsApplication {
       return settings;
     } catch (error) {
       // Handle 404, settings don't exist yet
-      if (error instanceof AppError && error.statusCode === HttpStatusCode.NOT_FOUND) {
+      if (error instanceof AppError && error.context?.statusCode === HttpStatusCode.NOT_FOUND) {
         Logger.info('[Settings] Pull complete, settings file not found (404)');
         return null;
       }

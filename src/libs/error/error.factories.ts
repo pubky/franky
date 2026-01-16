@@ -11,6 +11,7 @@ import type {
   ValidationErrorCode,
   DatabaseErrorCode,
 } from './error.codes';
+import { Logger } from '../logger/logger';
 
 /**
  * Common parameters for all error factories.
@@ -41,9 +42,7 @@ function createAppError<C extends ErrorCategory>(
   message: string,
   params: FactoryParams,
 ): AppError {
-  // TODO: Could create the traceId for sentry monitoring
-  // Sentry.captureException(err);
-  return new AppError({
+  const error = new AppError({
     category,
     code,
     message,
@@ -53,6 +52,13 @@ function createAppError<C extends ErrorCategory>(
     cause: params.cause,
     traceId: params.traceId,
   } as AppErrorParams);
+  
+  Logger.error(`[${params.service}:${params.operation}]`, error.message, params.context);
+  
+  // We could send to sentry error here
+  // Sentry.captureException(err);
+
+  return error;
 }
 
 /**

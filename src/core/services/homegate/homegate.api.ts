@@ -1,4 +1,4 @@
-import { Env } from '@/libs/env';
+import { HOMEGATE_URL } from '@/config';
 
 /**
  * Homegate API Endpoints
@@ -12,7 +12,7 @@ import { Env } from '@/libs/env';
  * @returns Full Homegate URL
  */
 function buildHomegateUrl(endpoint: string): string {
-  return new URL(endpoint, Env.NEXT_PUBLIC_HOMEGATE_URL).toString();
+  return new URL(endpoint, HOMEGATE_URL).toString();
 }
 
 export const homegateApi = {

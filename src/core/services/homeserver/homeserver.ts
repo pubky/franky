@@ -438,7 +438,7 @@ export class HomeserverService {
   /**
    * Generates a signup token from the homeserver admin endpoint.
    *
-   * @deprecated This is a temporary workaround for development and E2E testing.
+   * This is a temporary workaround for development and E2E testing.
    *
    * TODO: Remove this method when proper signup token endpoint is available.
    * Action items:

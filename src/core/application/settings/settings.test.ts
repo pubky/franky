@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SettingsApplication } from './settings';
 import * as Core from '@/core';
-import { HttpMethod, Logger, AppError, HomeserverErrorType } from '@/libs';
+import { HttpMethod, Logger, AppError, HomeserverErrorType, ErrorService, httpStatusCodeToError } from '@/libs';
 
 // Mock the HomeserverService
 vi.mock('@/core/services/homeserver', () => ({
@@ -138,9 +138,15 @@ describe('SettingsApplication', () => {
 
     it('should return null on 404 error', async () => {
       const { requestSpy, normalizerBuildUrlSpy } = setupMocks();
-      const notFoundError = new AppError(HomeserverErrorType.FETCH_FAILED, 'Not found', 404);
 
       normalizerBuildUrlSpy.mockReturnValue(`pubky://${testPubky}/pub/pubky.app/settings.json`);
+      const notFoundError = httpStatusCodeToError(
+        404,
+        'Not found',
+        ErrorService.Homeserver,
+        'request',
+        `pubky://${testPubky}/pub/pubky.app/settings.json`,
+      );
       requestSpy.mockRejectedValue(notFoundError);
 
       const result = await SettingsApplication.fetchFromHomeserver(testPubky);
