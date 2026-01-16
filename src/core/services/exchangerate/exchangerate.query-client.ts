@@ -1,4 +1,4 @@
-import { createQueryClient, NexusErrorType } from '@/libs';
+import { createQueryClient, ServerErrorCode, ClientErrorCode } from '@/libs';
 
 /**
  * Exchange Rate API Query Client
@@ -10,8 +10,8 @@ import { createQueryClient, NexusErrorType } from '@/libs';
 export const exchangerateQueryClient = createQueryClient({
   retry: {
     // INVALID_RESPONSE: Malformed API response - won't change on retry
-    // RESOURCE_NOT_FOUND: BTCUSD ticker missing - permanent failure
-    nonRetryable: [NexusErrorType.INVALID_RESPONSE, NexusErrorType.RESOURCE_NOT_FOUND],
+    // NOT_FOUND: BTCUSD ticker missing - permanent failure
+    nonRetryable: [ServerErrorCode.INVALID_RESPONSE, ClientErrorCode.NOT_FOUND],
     limits: {
       serverError: 3,
       default: 3,

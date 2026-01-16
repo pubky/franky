@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import { FeedResult } from 'pubky-app-specs';
+import { HttpMethod } from '@/libs';
 
 export interface FeedDeleteParams {
   userId: string;
@@ -39,7 +40,7 @@ export type TFeedPersistDeleteParams = {
 export type TFeedPersistParams = TFeedPersistCreateParams | TFeedPersistUpdateParams | TFeedPersistDeleteParams;
 
 export type TFeedPersistInput = {
-  action: Core.HomeserverAction;
+  action: HttpMethod;
   userId: Core.Pubky;
   params: TFeedPersistParams;
 };

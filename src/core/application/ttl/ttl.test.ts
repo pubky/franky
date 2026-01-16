@@ -80,11 +80,11 @@ describe('TtlApplication', () => {
 
       await Core.TtlApplication.forceRefreshPostsByIds({ postIds, viewerId });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        '/stream/posts/by_ids',
-        'POST',
-        JSON.stringify({ post_ids: postIds, viewer_id: viewerId }),
-      );
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: '/stream/posts/by_ids',
+        method: 'POST',
+        body: JSON.stringify({ post_ids: postIds, viewer_id: viewerId }),
+      });
       // persistPosts handles TTL updates internally
       expect(persistPostsSpy).toHaveBeenCalledWith({ posts: nexusPosts });
       expect(fetchFilesSpy).toHaveBeenCalledWith([]);
@@ -261,7 +261,7 @@ describe('TtlApplication', () => {
         },
       ];
 
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(nexusUsers);
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue(nexusUsers);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       await Core.TtlApplication.forceRefreshUsersByIds({ userIds });
@@ -272,12 +272,8 @@ describe('TtlApplication', () => {
 
     it('does not persist when fetch fails', async () => {
       const userIds = ['alice' as Core.Pubky];
-      vi.spyOn(Core.userStreamApi, 'usersByIds').mockReturnValue({
-        url: '/stream/users/by_ids',
-        body: { user_ids: userIds, viewer_id: undefined },
-      } as unknown as ReturnType<typeof Core.userStreamApi.usersByIds>);
 
-      vi.spyOn(Core, 'queryNexus').mockRejectedValue(new Error('Network down'));
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockRejectedValue(new Error('Network down'));
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       await expect(Core.TtlApplication.forceRefreshUsersByIds({ userIds })).rejects.toThrow('Network down');

@@ -81,7 +81,7 @@ describe('PostTagsModel', () => {
     it('should insert post tags', async () => {
       const rec = { id: testPostId1, tags: MOCK_TAGS_1 };
       const result = await Core.PostTagsModel.create(rec);
-      expect(result).toBeUndefined();
+      expect(result).toBe(rec.id);
     });
 
     it('should find post tags by id', async () => {

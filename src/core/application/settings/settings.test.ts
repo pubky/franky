@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SettingsApplication } from './settings';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger, Err, ServerErrorCode, ErrorService, httpStatusCodeToError } from '@/libs';
 
 // Mock the HomeserverService
 vi.mock('@/core/services/homeserver', () => ({
@@ -51,9 +51,9 @@ describe('SettingsApplication', () => {
   // Helper functions
   const setupMocks = () => {
     // Spy on Logger methods
-    vi.spyOn(Libs.Logger, 'debug').mockImplementation(() => {});
-    vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
-    vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+    vi.spyOn(Logger, 'debug').mockImplementation(() => {});
+    vi.spyOn(Logger, 'info').mockImplementation(() => {});
+    vi.spyOn(Logger, 'error').mockImplementation(() => {});
 
     return {
       requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
@@ -81,7 +81,11 @@ describe('SettingsApplication', () => {
       await SettingsApplication.commitUpdate(settings, testPubky);
 
       expect(normalizerToSpy).toHaveBeenCalledWith(settings, testPubky);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, normalizerResult.meta.url, expect.any(Object));
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: normalizerResult.meta.url,
+        bodyJson: expect.any(Object),
+      });
     });
 
     it('should throw error when homeserver request fails', async () => {
@@ -114,10 +118,10 @@ describe('SettingsApplication', () => {
       const result = await SettingsApplication.fetchFromHomeserver(testPubky);
 
       expect(normalizerBuildUrlSpy).toHaveBeenCalledWith(testPubky);
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.GET,
-        `pubky://${testPubky}/pub/pubky.app/settings.json`,
-      );
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.GET,
+        url: `pubky://${testPubky}/pub/pubky.app/settings.json`,
+      });
       expect(result).toEqual(remoteSettings);
     });
 
@@ -134,9 +138,15 @@ describe('SettingsApplication', () => {
 
     it('should return null on 404 error', async () => {
       const { requestSpy, normalizerBuildUrlSpy } = setupMocks();
-      const notFoundError = new Libs.AppError(Libs.HomeserverErrorType.FETCH_FAILED, 'Not found', 404);
 
       normalizerBuildUrlSpy.mockReturnValue(`pubky://${testPubky}/pub/pubky.app/settings.json`);
+      const notFoundError = httpStatusCodeToError(
+        404,
+        'Not found',
+        ErrorService.Homeserver,
+        'request',
+        `pubky://${testPubky}/pub/pubky.app/settings.json`,
+      );
       requestSpy.mockRejectedValue(notFoundError);
 
       const result = await SettingsApplication.fetchFromHomeserver(testPubky);
@@ -146,7 +156,11 @@ describe('SettingsApplication', () => {
 
     it('should throw on non-404 errors', async () => {
       const { requestSpy, normalizerBuildUrlSpy } = setupMocks();
-      const serverError = new Libs.AppError(Libs.HomeserverErrorType.FETCH_FAILED, 'Server error', 500);
+      const serverError = Err.server(ServerErrorCode.INTERNAL_ERROR, 'Server error', {
+        service: ErrorService.Homeserver,
+        operation: 'request',
+        context: { statusCode: 500 },
+      });
 
       normalizerBuildUrlSpy.mockReturnValue(`pubky://${testPubky}/pub/pubky.app/settings.json`);
       requestSpy.mockRejectedValue(serverError);

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import { UserApplication } from './user';
 
 describe('UserApplication.commitFollow', () => {
@@ -18,7 +19,7 @@ describe('UserApplication.commitFollow', () => {
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await UserApplication.commitFollow({
-      eventType: Core.HomeserverAction.PUT,
+      eventType: HttpMethod.PUT,
       followUrl,
       followJson,
       follower,
@@ -28,7 +29,7 @@ describe('UserApplication.commitFollow', () => {
 
     expect(createSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
     expect(deleteSpy).not.toHaveBeenCalled();
-    expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: followUrl, bodyJson: followJson });
   });
 
   it('should update local state on DELETE and call homeserver', async () => {
@@ -37,7 +38,7 @@ describe('UserApplication.commitFollow', () => {
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await UserApplication.commitFollow({
-      eventType: Core.HomeserverAction.DELETE,
+      eventType: HttpMethod.DELETE,
       followUrl,
       followJson,
       follower,
@@ -47,7 +48,7 @@ describe('UserApplication.commitFollow', () => {
 
     expect(deleteSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
     expect(createSpy).not.toHaveBeenCalled();
-    expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: followUrl, bodyJson: followJson });
   });
 
   it('should not update local state for non-mutate methods but still call homeserver', async () => {
@@ -56,7 +57,7 @@ describe('UserApplication.commitFollow', () => {
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await UserApplication.commitFollow({
-      eventType: Core.HomeserverAction.GET,
+      eventType: HttpMethod.GET,
       followUrl,
       followJson,
       follower,
@@ -66,7 +67,7 @@ describe('UserApplication.commitFollow', () => {
 
     expect(createSpy).not.toHaveBeenCalled();
     expect(deleteSpy).not.toHaveBeenCalled();
-    expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.GET, url: followUrl, bodyJson: followJson });
   });
 
   it('should propagate error when local create fails on PUT and not call homeserver', async () => {
@@ -75,7 +76,7 @@ describe('UserApplication.commitFollow', () => {
 
     await expect(
       UserApplication.commitFollow({
-        eventType: Core.HomeserverAction.PUT,
+        eventType: HttpMethod.PUT,
         followUrl,
         followJson,
         follower,
@@ -94,7 +95,7 @@ describe('UserApplication.commitFollow', () => {
 
     await expect(
       UserApplication.commitFollow({
-        eventType: Core.HomeserverAction.DELETE,
+        eventType: HttpMethod.DELETE,
         followUrl,
         followJson,
         follower,
@@ -113,7 +114,7 @@ describe('UserApplication.commitFollow', () => {
 
     await expect(
       UserApplication.commitFollow({
-        eventType: Core.HomeserverAction.PUT,
+        eventType: HttpMethod.PUT,
         followUrl,
         followJson,
         follower,
@@ -122,7 +123,7 @@ describe('UserApplication.commitFollow', () => {
       }),
     ).rejects.toThrow('homeserver-fail');
 
-    expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, followUrl, followJson);
+    expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url: followUrl, bodyJson: followJson });
   });
 });
 

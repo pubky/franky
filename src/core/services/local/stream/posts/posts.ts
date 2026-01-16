@@ -305,9 +305,6 @@ export class LocalStreamPostsService {
     // Combine existing and new posts
     const combinedStream = [...postStream.stream, ...newPostsToAdd];
 
-    // TODO: Not sure if we need line 189-202. From nexus we bring from a SORTED SET being the score the timestamp
-    // and if they are new posts, it does not exist in the cache
-
     // Sort by timestamp (indexed_at) in descending order (most recent first)
     const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 

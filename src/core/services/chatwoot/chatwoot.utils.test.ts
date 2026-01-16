@@ -81,7 +81,7 @@ describe('chatwoot.utils', () => {
       expect(() => extractSourceId(contact, email)).toThrow('Contact has no inbox associations');
     });
 
-    it('should include contactId and email in error details', () => {
+    it('should include contactId and email in error context', () => {
       const contact = createMockContact({ contact_inboxes: [] });
       const email = `${testData.pubky}@${CHATWOOT_EMAIL_DOMAIN}`;
 
@@ -89,8 +89,8 @@ describe('chatwoot.utils', () => {
         extractSourceId(contact, email);
         expect.fail('Should have thrown an error');
       } catch (error) {
-        expect(error).toHaveProperty('details');
-        expect((error as { details: { contactId: number; email: string } }).details).toEqual({
+        expect(error).toHaveProperty('context');
+        expect((error as { context: { contactId: number; email: string } }).context).toEqual({
           contactId: testData.contactId,
           email,
         });

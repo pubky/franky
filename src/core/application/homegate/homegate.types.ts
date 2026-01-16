@@ -2,12 +2,14 @@ import type {
   TGetPriceResult,
   TCreateLnVerificationResult,
   TAwaitLnVerificationResult,
+  TVerifySmsCodeParams,
   TVerifySmsCodeResult,
-  ISendSmsCodeResult,
+  TSendSmsCodeResult,
 } from '@/core/services/homegate';
 
 export type TGetLnVerificationPriceResult = TGetPriceResult;
 export type THomegateCreateLnVerificationResult = TCreateLnVerificationResult;
 export type THomegateAwaitLnVerificationResult = TAwaitLnVerificationResult;
+export type THomegateVerifySmsCodeParams = TVerifySmsCodeParams;
 export type THomegateVerifySmsCodeResult = TVerifySmsCodeResult;
-export type THomegateSendSmsCodeResult = ISendSmsCodeResult;
+export type THomegateSendSmsCodeResult = TSendSmsCodeResult;

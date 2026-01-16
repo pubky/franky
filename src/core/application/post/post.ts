@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Err, ClientErrorCode, ErrorService } from '@/libs';
 
 export class PostApplication {
   /**
@@ -38,7 +38,6 @@ export class PostApplication {
    * @returns Post relationships or null if not found
    */
   static async getRelationships({ compositeId }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
-    // TODO: Throw an error and do not return null
     return await Core.LocalPostService.readRelationships(compositeId);
   }
 
@@ -79,7 +78,6 @@ export class PostApplication {
     compositeId,
     viewerId,
   }: Core.TGetOrFetchPostParams): Promise<Core.PostDetailsModelSchema | null> {
-    // TODO: Throw an error and do not return null
     const localPost = await Core.LocalPostService.readDetails({ postId: compositeId });
     if (localPost) return localPost;
 
@@ -98,7 +96,7 @@ export class PostApplication {
       await Core.FileApplication.commitCreate({ fileAttachments });
     }
     await Core.LocalPostService.create({ compositePostId, post });
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
+    await Core.HomeserverService.request({ method: HttpMethod.PUT, url: postUrl, bodyJson: post.toJson() });
 
     if (tags && tags.length > 0) {
       await Core.TagApplication.commitCreate({ tagList: tags });
@@ -109,8 +107,10 @@ export class PostApplication {
     const post = await Core.PostDetailsModel.findById(compositePostId);
 
     if (!post) {
-      throw Libs.createSanitizationError(Libs.SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, {
-        compositePostId,
+      throw Err.client(ClientErrorCode.NOT_FOUND, 'Post not found', {
+        service: ErrorService.Local,
+        operation: 'commitDelete',
+        context: { compositePostId },
       });
     }
     const hadConnections = await Core.LocalPostService.delete({ compositePostId });
@@ -118,7 +118,7 @@ export class PostApplication {
     // Always delete from homeserver, even if the post had connections (soft delete).
     // Nexus will determine the definitive state based on graph state.
     const postUrl = post.uri;
-    await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);
+    await Core.HomeserverService.request({ method: HttpMethod.DELETE, url: postUrl });
 
     if (!hadConnections && post.attachments && post.attachments.length > 0) {
       await Core.FileApplication.commitDelete(post.attachments);

@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { Err, ErrorService, ValidationErrorCode } from '@/libs';
 
 const MIN_TAGS = 1;
 const MAX_TAGS = 5;
@@ -16,17 +17,29 @@ export class FeedValidators {
    */
   static validateTags(tags: string[] | undefined | null): string[] {
     if (!tags || tags.length < MIN_TAGS) {
-      throw new Error('At least one tag is required');
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'At least one tag is required', {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'validateTags',
+        context: { tags },
+      });
     }
 
     if (tags.length > MAX_TAGS) {
-      throw new Error(`Maximum ${MAX_TAGS} tags allowed`);
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, `Maximum ${MAX_TAGS} tags allowed`, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'validateTags',
+        context: { tags },
+      });
     }
 
     const normalizedTags = [...new Set(tags.map((t) => t.trim().toLowerCase()).filter((t) => t.length > 0))];
 
     if (normalizedTags.length < MIN_TAGS) {
-      throw new Error('At least one unique tag is required');
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'At least one unique tag is required', {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'validateTags',
+        context: { tags },
+      });
     }
 
     return normalizedTags;
@@ -41,7 +54,11 @@ export class FeedValidators {
    */
   static validateDeleteParams(params: Core.TFeedPersistParams): asserts params is Core.TFeedPersistDeleteParams {
     if (!Core.isFeedDeleteParams(params)) {
-      throw new Error('Invalid params for DELETE action');
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid params for DELETE action', {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'validateDeleteParams',
+        context: { params },
+      });
     }
   }
 
@@ -54,7 +71,11 @@ export class FeedValidators {
    */
   static validatePutParams(params: Core.TFeedPersistParams): asserts params is Core.TFeedPersistCreateParams {
     if (Core.isFeedDeleteParams(params)) {
-      throw new Error('Invalid params for PUT action');
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid params for PUT action', {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'validatePutParams',
+        context: { params },
+      });
     }
   }
 }

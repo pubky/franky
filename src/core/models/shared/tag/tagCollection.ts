@@ -1,6 +1,6 @@
 import { Table } from 'dexie';
 
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService } from '@/libs';
 import * as Core from '@/core';
 import { ModelBase } from '@/core/models/shared/base/baseModel';
 
@@ -69,15 +69,12 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
       const toSave = tuples.map((t) => ({ id: t[0] as TId, tags: t[1] }) as TSchema);
       return await this.table.bulkPut(toSave);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
-        `Failed to bulk save tags in ${this.table.name}`,
-        500,
-        {
-          error,
-          tuplesCount: tuples.length,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to bulk save tags in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'bulkSave',
+        context: { table: this.table.name, count: tuples.length },
+        cause: error,
+      });
     }
   }
 

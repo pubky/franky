@@ -39,7 +39,7 @@ describe('UserRelationshipsModel', () => {
       };
 
       const result = await Core.UserRelationshipsModel.create(mockUserRelationshipsData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockUserRelationshipsData.id);
     });
 
     it('should find user relationships by id', async () => {

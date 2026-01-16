@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { UserResult } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -53,13 +53,12 @@ describe('UserNormalizer', () => {
     afterEach(restoreMocks);
 
     describe('to - successful creation', () => {
-      it('should create user and log debug message', () => {
+      it('should create user with user and meta properties', () => {
         const user = createUserData();
         const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
 
         expect(result).toHaveProperty('user');
         expect(result).toHaveProperty('meta');
-        expect(Libs.Logger.debug).toHaveBeenCalledWith('User validated', { result });
       });
 
       it('should call PubkySpecsSingleton.get with pubky', () => {
@@ -174,33 +173,34 @@ describe('UserNormalizer', () => {
     });
 
     describe('to - error handling', () => {
-      it.each([
-        [
-          'createUser',
-          () =>
-            mockBuilder.createUser.mockImplementation(() => {
-              throw new Error('Builder error');
-            }),
-        ],
-        [
-          'PubkySpecsSingleton.get',
-          () =>
-            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
-              throw new Error('Singleton error');
-            }),
-        ],
-      ])('should propagate errors from %s', (_, setupError) => {
-        setupError();
-        expect(() => Core.UserNormalizer.to(createUserData(), TEST_PUBKY.USER_1)).toThrow();
+      it('should throw AppError with correct properties when createUser fails', () => {
+        const errorMessage = 'Invalid user data';
+        mockBuilder.createUser.mockImplementation(() => {
+          throw errorMessage;
+        });
+        const user = createUserData();
+
+        try {
+          Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createUser');
+          expect(appError.context).toEqual({ user, pubky: TEST_PUBKY.USER_1 });
+          expect(appError.message).toBe(errorMessage);
+        }
       });
 
-      it('should not call logger when error occurs', () => {
-        mockBuilder.createUser.mockImplementation(() => {
-          throw new Error('Error');
+      it('should throw AppError when PubkySpecsSingleton.get fails', () => {
+        vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+          throw 'Singleton error';
         });
 
-        expect(() => Core.UserNormalizer.to(createUserData(), TEST_PUBKY.USER_1)).toThrow();
-        expect(Libs.Logger.debug).not.toHaveBeenCalled();
+        expect(() => Core.UserNormalizer.to(createUserData(), TEST_PUBKY.USER_1)).toThrow(AppError);
       });
     });
   });
@@ -260,16 +260,16 @@ describe('UserNormalizer', () => {
     });
 
     describe('validation with real library', () => {
-      it('should throw error for empty name', () => {
+      it('should throw AppError for empty name', () => {
         const user = createUserData({ name: '' });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow();
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
-      it('should throw error for null name', () => {
+      it('should throw AppError for null name', () => {
         const user = createUserData({ name: null as unknown as string });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow();
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       /**
@@ -302,7 +302,7 @@ describe('UserNormalizer', () => {
       it('should reject single character name', () => {
         const user = createUserData({ name: 'A' });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow();
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept minimum valid name length (3 characters)', () => {
@@ -316,7 +316,7 @@ describe('UserNormalizer', () => {
       it('should reject 2 character name', () => {
         const user = createUserData({ name: 'AB' });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow();
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept name at maximum length (50 characters)', () => {
@@ -327,10 +327,10 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().name).toBe('A'.repeat(50));
       });
 
-      it('should reject name exceeding maximum length (51 characters)', () => {
+      it('should throw AppError for name exceeding maximum length (51 characters)', () => {
         const user = createUserData({ name: 'A'.repeat(51) });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Invalid name length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept name with emojis at maximum length', () => {
@@ -341,10 +341,10 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().name).toBe('🎉'.repeat(50));
       });
 
-      it('should reject name with emojis exceeding maximum length', () => {
+      it('should throw AppError for name with emojis exceeding maximum length', () => {
         const user = createUserData({ name: '🎉'.repeat(51) });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Invalid name length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
     });
 
@@ -357,10 +357,10 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().bio).toBe('B'.repeat(160));
       });
 
-      it('should reject bio exceeding maximum length (161 characters)', () => {
+      it('should throw AppError for bio exceeding maximum length (161 characters)', () => {
         const user = createUserData({ bio: 'B'.repeat(161) });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Bio exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept bio with emojis at maximum length', () => {
@@ -371,10 +371,10 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().bio).toBe('🚀'.repeat(160));
       });
 
-      it('should reject bio with emojis exceeding maximum length', () => {
+      it('should throw AppError for bio with emojis exceeding maximum length', () => {
         const user = createUserData({ bio: '🚀'.repeat(161) });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Bio exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
     });
 
@@ -388,11 +388,11 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().image).toBe(longImageUrl);
       });
 
-      it('should reject image URL exceeding maximum length', () => {
+      it('should throw AppError for image URL exceeding maximum length', () => {
         const tooLongImageUrl = 'https://example.com/' + 'A'.repeat(341);
         const user = createUserData({ image: tooLongImageUrl });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Image URI exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
     });
 
@@ -410,7 +410,7 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().links).toHaveLength(5);
       });
 
-      it('should reject exceeding maximum number of links (6 links)', () => {
+      it('should throw AppError for exceeding maximum number of links (6 links)', () => {
         const user = createUserData({
           links: Array.from({ length: 6 }, (_, i) => ({
             title: `Link ${i + 1}`,
@@ -418,7 +418,7 @@ describe('UserNormalizer', () => {
           })),
         });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Too many links');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept link title at maximum length (100 characters)', () => {
@@ -432,13 +432,13 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().links?.[0]?.title).toBe(maxLengthTitle);
       });
 
-      it('should reject link title exceeding maximum length (101 characters)', () => {
+      it('should throw AppError for link title exceeding maximum length (101 characters)', () => {
         const tooLongTitle = 'T'.repeat(101);
         const user = createUserData({
           links: [{ title: tooLongTitle, url: 'https://example.com' }],
         });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Link title exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept link URL at maximum length (300 characters)', () => {
@@ -452,13 +452,13 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().links?.[0]?.url).toBe(maxLengthUrl);
       });
 
-      it('should reject link URL exceeding maximum length (301 characters)', () => {
+      it('should throw AppError for link URL exceeding maximum length (301 characters)', () => {
         const tooLongUrl = 'https://example.com/' + 'A'.repeat(281);
         const user = createUserData({
           links: [{ title: 'Website', url: tooLongUrl }],
         });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Link URL exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept multiple links with maximum title and URL length', () => {
@@ -490,10 +490,10 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().status).toBe('S'.repeat(50));
       });
 
-      it('should reject status exceeding maximum length (51 characters)', () => {
+      it('should throw AppError for status exceeding maximum length (51 characters)', () => {
         const user = createUserData({ status: 'S'.repeat(51) });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Status exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
 
       it('should accept status with emojis at maximum length', () => {
@@ -504,10 +504,10 @@ describe('UserNormalizer', () => {
         expect(result.user.toJson().status).toBe('⭐'.repeat(50));
       });
 
-      it('should reject status with emojis exceeding maximum length', () => {
+      it('should throw AppError for status with emojis exceeding maximum length', () => {
         const user = createUserData({ status: '⭐'.repeat(51) });
 
-        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow('Status exceeds maximum length');
+        expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow(AppError);
       });
     });
 

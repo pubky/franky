@@ -1,4 +1,4 @@
-import { createQueryClient, CommonErrorType } from '@/libs';
+import { createQueryClient, ValidationErrorCode } from '@/libs';
 
 /**
  * Homegate API Query Client
@@ -7,7 +7,7 @@ import { createQueryClient, CommonErrorType } from '@/libs';
  */
 export const homegateQueryClient = createQueryClient({
   retry: {
-    nonRetryable: [CommonErrorType.INVALID_INPUT],
+    nonRetryable: [ValidationErrorCode.INVALID_INPUT],
     limits: {
       serverError: 3,
       default: 3,

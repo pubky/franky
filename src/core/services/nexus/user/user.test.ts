@@ -25,7 +25,7 @@ describe('User API', () => {
       };
       const baseRoute = 'v0/user/test';
 
-      const result = buildUrlWithQuery(baseRoute, params, USER_PATH_PARAMS);
+      const result = buildUrlWithQuery({ baseRoute, params, excludeKeys: USER_PATH_PARAMS });
       expect(result).toBe(`${Config.NEXUS_URL}/v0/user/test?depth=2&viewer_id=${testViewerId}`);
     });
 
@@ -36,7 +36,7 @@ describe('User API', () => {
       };
       const baseRoute = 'v0/user/test';
 
-      const result = buildUrlWithQuery(baseRoute, params, USER_PATH_PARAMS);
+      const result = buildUrlWithQuery({ baseRoute, params, excludeKeys: USER_PATH_PARAMS });
       expect(result).not.toContain('user_id=');
       expect(result).toContain('depth=1');
     });
@@ -180,9 +180,9 @@ describe('NexusUserService', () => {
       });
 
       expect(result).toEqual(mockTags);
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        `${Config.NEXUS_URL}/v0/user/${testUserId}/tags?skip_tags=5&limit_tags=20`,
-      );
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: `${Config.NEXUS_URL}/v0/user/${testUserId}/tags?skip_tags=5&limit_tags=20`,
+      });
     });
   });
 
@@ -198,9 +198,9 @@ describe('NexusUserService', () => {
       });
 
       // Verify label is URL-encoded (& becomes %26)
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        expect.stringMatching(/\/taggers\/rust%20%26%20wasm\?skip=10&limit=5$/),
-      );
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringMatching(/\/taggers\/rust%20%26%20wasm\?skip=10&limit=5$/),
+      });
     });
   });
 
@@ -221,7 +221,7 @@ describe('NexusUserService', () => {
       const result = await Core.NexusUserService.details({ user_id: testUserId });
 
       expect(result).toEqual(mockUserDetails);
-      expect(queryNexusSpy).toHaveBeenCalledWith(`${Config.NEXUS_URL}/v0/user/${testUserId}/details`);
+      expect(queryNexusSpy).toHaveBeenCalledWith({ url: `${Config.NEXUS_URL}/v0/user/${testUserId}/details` });
     });
 
     it('should handle user with complete profile data', async () => {

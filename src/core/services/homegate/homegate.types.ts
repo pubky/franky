@@ -1,3 +1,37 @@
+/**
+ * Represents a raw/unvalidated JSON object from API responses.
+ * Used as intermediate type before parsing into domain types.
+ */
+export type TRawApiResponse = Record<string, unknown>;
+
+/**
+ * Parameters for validating a verification ID.
+ */
+export type TAssertValidVerificationIdParams = {
+  /**
+   * The verification ID to validate (UUID format).
+   */
+  verificationId: string;
+  /**
+   * The operation name for error context.
+   */
+  operation: string;
+};
+
+/**
+ * Parameters for verifying a SMS code.
+ */
+export type TVerifySmsCodeParams = {
+  /**
+   * The phone number to validate the SMS code for.
+   */
+  phoneNumber: string;
+  /**
+   * The verification code received via SMS.
+   */
+  code: string;
+};
+
 export type TVerifySmsCodeResult = {
   /**
    * True if the code is valid, false otherwise.
@@ -18,7 +52,7 @@ export type TVerifySmsCodeResult = {
  */
 export type TCreateLnVerificationResult = {
   /**
-   * The payment hash identifier for this verification.
+   * The verification ID for this verification request.
    */
   id: string;
   /**
@@ -40,7 +74,7 @@ export type TCreateLnVerificationResult = {
  */
 export type TLnVerificationStatus = {
   /**
-   * The payment hash identifier.
+   * The verification ID.
    */
   id: string;
   /**
@@ -92,9 +126,11 @@ export type TGetPriceResult = {
  * @property success - True if the request was successful, false otherwise.
  * @property retryAfter - The number of seconds to wait before retrying the request. Only set if the request was not successful.
  * @property errorType - The type of error that occurred. Only set if the request was not successful.
+ * @property statusCode - The HTTP status code. Only set for 'unknown' errors to aid debugging.
  */
-export interface ISendSmsCodeResult {
+export type TSendSmsCodeResult = {
   success: boolean;
   retryAfter?: number;
   errorType?: 'blocked' | 'rate_limited' | 'unknown';
-}
+  statusCode?: number;
+};

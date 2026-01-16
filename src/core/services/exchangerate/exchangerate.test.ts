@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { ExchangerateService } from './exchangerate';
 import { exchangerateQueryClient } from './exchangerate.query-client';
-import { Env, NexusErrorType } from '@/libs';
+import { Env, ErrorCategory, ErrorService, NetworkErrorCode, ServerErrorCode } from '@/libs';
 
 // Helper to build a minimal BlockTank ticker
 function createTicker(overrides: Partial<{ symbol: string; lastPrice: string }> = {}) {
@@ -35,35 +35,38 @@ afterEach(() => {
 describe('ExchangerateService', () => {
   describe('getSatoshiUsdRate', () => {
     it('returns the SAT/USD rate when ticker is present', async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        json: async () => ({
-          tickers: [createTicker({ lastPrice: '87076.00' })],
-        }),
-      } as Response);
+      mockFetch.mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            tickers: [createTicker({ lastPrice: '87076.00' })],
+          }),
+          { status: 200, statusText: 'OK', headers: { 'Content-Type': 'application/json' } },
+        ),
+      );
 
       const rate = await ExchangerateService.getSatoshiUsdRate();
 
       expect(rate.satUsd).toEqual(0.00087076);
       expect(rate.btcUsd).toEqual(87076.0);
       expect(rate.lastUpdatedAt).toBeInstanceOf(Date);
-      expect(mockFetch).toHaveBeenCalledWith(Env.NEXT_PUBLIC_EXCHANGE_RATE_API);
+      expect(mockFetch).toHaveBeenCalledWith(Env.NEXT_PUBLIC_EXCHANGE_RATE_API, { method: 'GET' });
     });
 
     it('throws RESOURCE_NOT_FOUND when BTCUSD ticker is missing', async () => {
-      mockFetch.mockResolvedValue({
-        ok: true,
-        status: 200,
-        statusText: 'OK',
-        json: async () => ({
-          tickers: [createTicker({ symbol: 'BTCEUR' })],
-        }),
-      } as Response);
+      mockFetch.mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            tickers: [createTicker({ symbol: 'BTCEUR' })],
+          }),
+          { status: 200, statusText: 'OK', headers: { 'Content-Type': 'application/json' } },
+        ),
+      );
 
       await expect(ExchangerateService.getSatoshiUsdRate()).rejects.toMatchObject({
-        type: NexusErrorType.RESOURCE_NOT_FOUND,
+        category: ErrorCategory.Server,
+        code: ServerErrorCode.INVALID_RESPONSE,
+        service: ErrorService.Exchangerate,
+        operation: 'getBtcUsdRate',
       });
     });
 
@@ -72,7 +75,10 @@ describe('ExchangerateService', () => {
       mockFetch.mockRejectedValue(new Error('Network down'));
 
       await expect(ExchangerateService.getSatoshiUsdRate()).rejects.toMatchObject({
-        type: NexusErrorType.SERVICE_UNAVAILABLE,
+        category: ErrorCategory.Network,
+        code: NetworkErrorCode.CONNECTION_FAILED,
+        service: ErrorService.Exchangerate,
+        operation: 'getBtcUsdRate',
       });
     }, 15000); // Extended timeout to allow for retry attempts
   });

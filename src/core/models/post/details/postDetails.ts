@@ -23,9 +23,4 @@ export class PostDetailsModel
     this.uri = postDetails.uri;
     this.attachments = postDetails.attachments;
   }
-
-  // Query methods
-  static async fetchPaginated(limit: number = 30, offset: number = 0) {
-    return this.table.orderBy('indexed_at').reverse().offset(offset).limit(limit).toArray();
-  }
 }

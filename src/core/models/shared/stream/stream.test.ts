@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Dexie, { Table } from 'dexie';
 import { indexedDB, IDBKeyRange } from 'fake-indexeddb';
 import { BaseStreamModel } from './stream';
+import { AppError, DatabaseErrorCode, ErrorCategory, ErrorService } from '@/libs';
 
 type TestItem = string;
 
@@ -136,5 +137,176 @@ describe('BaseStreamModel', () => {
       await TestStreamModel.removeItems('s1', []);
       expect((await TestStreamModel.table.get('s1'))?.stream).toEqual(['a', 'b']);
     });
+  });
+});
+
+describe('BaseStreamModel error handling', () => {
+  let db: Dexie;
+
+  beforeEach(async () => {
+    globalThis.indexedDB = indexedDB;
+    globalThis.IDBKeyRange = IDBKeyRange;
+
+    db = new Dexie('stream-model-error-test');
+    db.version(1).stores({ test_streams: 'id' });
+    await db.open();
+
+    TestStreamModel.table = db.table<TestStreamSchema>('test_streams');
+    await TestStreamModel.table.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('create throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestStreamModel.table, 'add').mockRejectedValueOnce(new Error('DB error'));
+
+    try {
+      await TestStreamModel.create('s1', ['a']);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('create');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1', streamLength: 1 });
+    }
+  });
+
+  it('upsert throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestStreamModel.table, 'put').mockRejectedValueOnce(new Error('DB error'));
+
+    try {
+      await TestStreamModel.upsert('s1', ['a', 'b']);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('upsert');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1', streamLength: 2 });
+    }
+  });
+
+  it('findById throws QUERY_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestStreamModel.table, 'get').mockRejectedValueOnce(new Error('DB error'));
+
+    try {
+      await TestStreamModel.findById('s1');
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('findById');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1' });
+    }
+  });
+
+  it('deleteById throws DELETE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestStreamModel.table, 'delete').mockRejectedValueOnce(new Error('DB error'));
+
+    try {
+      await TestStreamModel.deleteById('s1');
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.DELETE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('deleteById');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1' });
+    }
+  });
+
+  it('clear throws DELETE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestStreamModel.table, 'clear').mockRejectedValueOnce(new Error('DB error'));
+
+    try {
+      await TestStreamModel.clear();
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.DELETE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('clear');
+      expect(appError.context).toMatchObject({ table: 'test_streams' });
+    }
+  });
+
+  it('getStreamHead throws QUERY_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestStreamModel.table, 'get').mockRejectedValueOnce(new Error('DB error'));
+
+    try {
+      await TestStreamModel.getStreamHead('s1');
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('getStreamHead');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1' });
+    }
+  });
+
+  it('prependItems throws WRITE_FAILED with correct context on failure', async () => {
+    // First call succeeds (get), second fails (where/modify)
+    vi.spyOn(TestStreamModel.table, 'get').mockResolvedValueOnce({ id: 's1', stream: ['existing'] });
+    const mockWhere = {
+      equals: vi.fn().mockReturnValue({
+        modify: vi.fn().mockRejectedValueOnce(new Error('DB error')),
+      }),
+    };
+    vi.spyOn(TestStreamModel.table, 'where').mockReturnValue(mockWhere as never);
+
+    try {
+      // @ts-expect-error - TypeScript inference issue with generic static methods
+      await TestStreamModel.prependItems('s1', ['new']);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('prependItems');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1', itemsCount: 1 });
+    }
+  });
+
+  it('removeItems throws WRITE_FAILED with correct context on failure', async () => {
+    // First call succeeds (get), second fails (where/modify)
+    vi.spyOn(TestStreamModel.table, 'get').mockResolvedValueOnce({ id: 's1', stream: ['a', 'b'] });
+    const mockWhere = {
+      equals: vi.fn().mockReturnValue({
+        modify: vi.fn().mockRejectedValueOnce(new Error('DB error')),
+      }),
+    };
+    vi.spyOn(TestStreamModel.table, 'where').mockReturnValue(mockWhere as never);
+
+    try {
+      await TestStreamModel.removeItems('s1', ['a']);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('removeItems');
+      expect(appError.context).toMatchObject({ table: 'test_streams', id: 's1', itemsCount: 1 });
+    }
   });
 });
