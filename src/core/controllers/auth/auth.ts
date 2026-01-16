@@ -68,17 +68,29 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
-    this.cancelActiveAuthFlow();
-    const pubky = Libs.Identity.pubkyFromSession({ session });
-    const authStore = Core.useAuthStore.getState();
-    const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
-    if (isSignedUp) {
-      // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
-      // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
-      await this.hydrateMeImAlive({ pubky });
+    const signInStore = Core.useSignInStore.getState();
+    signInStore.reset(); // Reset for fresh sign-in
+    signInStore.setAuthUrlResolved(true); // Step 1 complete (20%)
+
+    try {
+      this.cancelActiveAuthFlow();
+      const pubky = Libs.Identity.pubkyFromSession({ session });
+      const authStore = Core.useAuthStore.getState();
+
+      const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
+      signInStore.setProfileChecked(true); // Step 2 complete (40%)
+
+      if (isSignedUp) {
+        // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
+        // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
+        await this.hydrateMeImAlive({ pubky });
+      }
+      const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
+      authStore.init(initialState);
+    } catch (error) {
+      signInStore.setError(error as Libs.AppError);
+      throw error;
     }
-    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
-    authStore.init(initialState);
   }
 
   /**
@@ -164,6 +176,7 @@ export class AuthController {
   static async logout() {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
+    const signInStore = Core.useSignInStore.getState();
 
     if (authStore.session) {
       try {
@@ -175,6 +188,7 @@ export class AuthController {
     this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();
+    signInStore.reset();
     Libs.clearCookies();
     await Core.clearDatabase();
   }

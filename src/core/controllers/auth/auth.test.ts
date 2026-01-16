@@ -62,14 +62,22 @@ vi.mock('pubky-app-specs', () => ({
 const storeMocks = vi.hoisted(() => {
   const resetAuthStore = vi.fn();
   const resetOnboardingStore = vi.fn();
+  const resetSignInStore = vi.fn();
   const notificationInit = vi.fn();
   const initAuthStore = vi.fn();
+  const setAuthUrlResolved = vi.fn();
+  const setProfileChecked = vi.fn();
+  const setSignInError = vi.fn();
 
   return {
     resetAuthStore,
     resetOnboardingStore,
+    resetSignInStore,
     notificationInit,
     initAuthStore,
+    setAuthUrlResolved,
+    setProfileChecked,
+    setSignInError,
     getAuthState: vi.fn(() => ({
       init: initAuthStore,
       setSession: vi.fn(),
@@ -87,6 +95,18 @@ const storeMocks = vi.hoisted(() => {
     getNotificationState: vi.fn(() => ({
       setState: notificationInit,
     })),
+    getSignInState: vi.fn(() => ({
+      reset: resetSignInStore,
+      setAuthUrlResolved,
+      setProfileChecked,
+      setError: setSignInError,
+      authUrlResolved: false,
+      profileChecked: false,
+      bootstrapFetched: false,
+      dataPersisted: false,
+      homeserverSynced: false,
+      error: null,
+    })),
   };
 });
 
@@ -100,6 +120,9 @@ vi.mock('@/core/stores', () => ({
   },
   useNotificationStore: {
     getState: storeMocks.getNotificationState,
+  },
+  useSignInStore: {
+    getState: storeMocks.getSignInState,
   },
 }));
 
@@ -625,12 +648,17 @@ describe('AuthController', () => {
       const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(bootstrapResponse);
 
       const authStore = storeMocks.getAuthState();
+      const signInStore = storeMocks.getSignInState();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+      vi.spyOn(Core.useSignInStore, 'getState').mockReturnValue(signInStore as unknown as Core.SignInStore);
 
       await AuthController.initializeAuthenticatedSession({ session: mockSession });
 
+      expect(signInStore.reset).toHaveBeenCalled();
+      expect(signInStore.setAuthUrlResolved).toHaveBeenCalledWith(true);
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
+      expect(signInStore.setProfileChecked).toHaveBeenCalledWith(true);
       expect(initializeSpy).toHaveBeenCalledWith({
         pubky: mockPubky,
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
@@ -652,12 +680,17 @@ describe('AuthController', () => {
       const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize');
 
       const authStore = storeMocks.getAuthState();
+      const signInStore = storeMocks.getSignInState();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+      vi.spyOn(Core.useSignInStore, 'getState').mockReturnValue(signInStore as unknown as Core.SignInStore);
 
       await AuthController.initializeAuthenticatedSession({ session: mockSession });
 
+      expect(signInStore.reset).toHaveBeenCalled();
+      expect(signInStore.setAuthUrlResolved).toHaveBeenCalledWith(true);
       expect(pubkyFromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
+      expect(signInStore.setProfileChecked).toHaveBeenCalledWith(true);
       expect(initializeSpy).not.toHaveBeenCalled();
       expect(authStore.init).toHaveBeenCalledWith({
         session: mockSession,
@@ -688,11 +721,14 @@ describe('AuthController', () => {
         reset: storeMocks.resetOnboardingStore,
       }) as unknown as Core.OnboardingStore;
 
+    const createSignInStore = () => storeMocks.getSignInState() as unknown as Core.SignInStore;
+
     beforeEach(() => {
       Object.defineProperty(document, 'cookie', { writable: true, value: '' });
       Object.defineProperty(window, 'location', { writable: true, value: { href: '' } });
       storeMocks.resetAuthStore.mockClear();
       storeMocks.resetOnboardingStore.mockClear();
+      storeMocks.resetSignInStore.mockClear();
     });
 
     it('should successfully logout user, clear stores, cookies and redirect', async () => {
@@ -700,8 +736,10 @@ describe('AuthController', () => {
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
 
+      const signInStore = createSignInStore();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+      vi.spyOn(Core.useSignInStore, 'getState').mockReturnValue(signInStore);
 
       document.cookie = 'testCookie=value; path=/';
       document.cookie = 'anotherCookie=anotherValue; path=/';
@@ -711,6 +749,7 @@ describe('AuthController', () => {
       expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
+      expect(signInStore.reset).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
     });

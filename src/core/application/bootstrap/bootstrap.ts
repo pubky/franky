@@ -14,7 +14,11 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
+    const signInStore = Core.useSignInStore.getState();
+
     const data = await Core.NexusBootstrapService.fetch(params.pubky);
+    signInStore.setBootstrapFetched(true); // Step 3 complete (60%)
+
     if (!data.indexed) {
       Libs.Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
         pubky: params.pubky,
@@ -51,6 +55,7 @@ export class BootstrapApplication {
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
       // Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead }),
     ]);
+    signInStore.setDataPersisted(true); // Step 4 complete (80%)
 
     const [_, notification] = await Promise.all([
       // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
@@ -59,6 +64,7 @@ export class BootstrapApplication {
       // Initialize settings from homeserver (non-blocking, errors are logged but don't fail bootstrap)
       this.initializeSettings(params.pubky),
     ]);
+    signInStore.setHomeserverSynced(true); // Step 5 complete (100%)
 
     return { notification };
   }
