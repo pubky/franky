@@ -31,7 +31,7 @@ export const STATUS_EMOJIS = {
 /**
  * Default status when none is provided
  */
-export const DEFAULT_STATUS = 'vacationing' as const;
+export const DEFAULT_STATUS = 'noStatus' as const;
 
 /**
  * Emoji regex pattern for extracting emojis from strings.
