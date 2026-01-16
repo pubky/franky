@@ -5,7 +5,8 @@ export interface TFetchStreamParams {
   streamHead: number;
   streamTail: number;
   limit: number;
-  viewerId: Core.Pubky;
+  /** Optional viewer ID for relationship data. Null for unauthenticated views. */
+  viewerId: Core.Pubky | null;
   lastPostId?: string;
   tags?: string[];
   order?: Core.StreamOrder;
@@ -31,12 +32,14 @@ export interface TPartialCacheHitParams {
   limit: number;
   streamTail: number;
   streamId: Core.PostStreamId;
-  viewerId: Core.Pubky;
+  /** Optional viewer ID for relationship data. Null for unauthenticated views. */
+  viewerId: Core.Pubky | null;
 }
 
 export interface TMissingPostsParams {
   cacheMissPostIds: string[];
-  viewerId: Core.Pubky;
+  /** Optional viewer ID for relationship data. Null/undefined for unauthenticated views. */
+  viewerId?: Core.Pubky | null;
 }
 
 export interface TCacheStreamParams {
@@ -47,7 +50,8 @@ export interface TCacheStreamParams {
 
 export interface TFetchMissingUsersParams {
   posts: Core.NexusPost[];
-  viewerId: Core.Pubky;
+  /** Optional viewer ID for relationship data. Null/undefined for unauthenticated views. */
+  viewerId?: Core.Pubky | null;
 }
 
 export interface TPersistUnreadNewStreamChunkParams {

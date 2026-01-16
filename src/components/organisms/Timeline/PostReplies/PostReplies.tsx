@@ -15,9 +15,12 @@ import * as Types from './PostReplies.types';
  * Renders replies for a specific post in the timeline with thread connectors (flat structure, 1 level).
  * This component shows a preview of up to 3 replies inline with the parent post.
  * It does NOT use pagination - for full replies view, see TimelineRepliesWithParent.
+ *
+ * Hidden for unauthenticated users following pubky-app pattern.
  */
 
 export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostRepliesProps) {
+  const { isAuthenticated } = Hooks.useRequireAuth();
   const [replyIds, setReplyIds] = useState<string[]>([]);
 
   // Watch for changes in post_counts to trigger refetch when replies count changes
@@ -56,6 +59,11 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
   }, [postId, postCounts?.replies, fetchReplies]);
 
   const hasReplies = replyIds && replyIds.length > 0;
+
+  // Don't render for unauthenticated users (following pubky-app pattern)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Don't render anything if there are no replies
   if (!hasReplies) {

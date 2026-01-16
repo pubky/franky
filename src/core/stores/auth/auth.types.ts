@@ -11,6 +11,8 @@ export interface AuthState extends AuthInitParams {
   sessionExport: string | null;
   hasHydrated: boolean;
   isRestoringSession: boolean;
+  /** Whether the sign-in dialog is open (for unauthenticated users) */
+  showSignInDialog: boolean;
 }
 
 export interface AuthActions {
@@ -21,6 +23,8 @@ export interface AuthActions {
   setIsRestoringSession: (isRestoringSession: boolean) => void;
   setHasProfile: (hasProfile: boolean) => void;
   setHasHydrated: (hasHydrated: boolean) => void;
+  /** Open or close the sign-in dialog */
+  setShowSignInDialog: (show: boolean) => void;
 }
 
 export interface AuthSelectors {
@@ -38,6 +42,7 @@ export const authInitialState: AuthState = {
   hasProfile: false,
   hasHydrated: false,
   isRestoringSession: false,
+  showSignInDialog: false,
 };
 
 export enum AuthActionTypes {
@@ -49,4 +54,5 @@ export enum AuthActionTypes {
   SET_IS_RESTORING_SESSION = 'SET_IS_RESTORING_SESSION',
   SET_HAS_PROFILE = 'SET_HAS_PROFILE',
   SET_HAS_HYDRATED = 'SET_HAS_HYDRATED',
+  SET_SHOW_SIGN_IN_DIALOG = 'SET_SHOW_SIGN_IN_DIALOG',
 }

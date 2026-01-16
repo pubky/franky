@@ -241,7 +241,8 @@ export class PostStreamApplication {
     try {
       const postBatch = await Core.NexusPostStreamService.fetchByIds({
         post_ids: cacheMissPostIds,
-        viewer_id: viewerId,
+        // Only pass viewer_id if it's a valid string (not null/undefined)
+        ...(viewerId ? { viewer_id: viewerId } : {}),
       });
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
       // Persist the post attachments metadata
@@ -265,7 +266,14 @@ export class PostStreamApplication {
    * @param repostedUris - Array of pubky URIs pointing to original posts
    * @param viewerId - ID of the viewer
    */
-  static async fetchOriginalPostsByUris({ repostedUris, viewerId }: { repostedUris: string[]; viewerId: Core.Pubky }) {
+  static async fetchOriginalPostsByUris({
+    repostedUris,
+    viewerId,
+  }: {
+    repostedUris: string[];
+    /** Optional viewer ID for relationship data. Null/undefined for unauthenticated views. */
+    viewerId?: Core.Pubky | null;
+  }) {
     if (repostedUris.length === 0) return;
 
     // Convert URIs to composite IDs and deduplicate
@@ -298,7 +306,7 @@ export class PostStreamApplication {
     try {
       const originalPosts = await Core.NexusPostStreamService.fetchByIds({
         post_ids: missingOriginalPostIds,
-        viewer_id: viewerId,
+        viewer_id: viewerId ?? undefined,
       });
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: originalPosts });
       await Core.FileApplication.fetchFiles(postAttachments);
@@ -356,7 +364,7 @@ export class PostStreamApplication {
     if (cacheMissUserIds.length > 0) {
       const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
         user_ids: cacheMissUserIds,
-        viewer_id: viewerId,
+        viewer_id: viewerId ?? undefined,
       });
       const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
       await Core.LocalStreamUsersService.persistUsers(userBatch);

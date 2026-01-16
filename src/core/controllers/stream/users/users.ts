@@ -24,7 +24,9 @@ export class StreamUserController {
     limit = Config.NEXUS_USERS_PER_PAGE,
     skip,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TReadUserStreamChunkResponse> {
-    const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
+    // selectCurrentUserPubky() throws an error when user is not authenticated;
+    // access currentUserPubky directly to get null instead (unauthenticated users can view profile followers/following)
+    const viewerId = Core.useAuthStore.getState().currentUserPubky;
 
     const {
       nextPageIds,
@@ -34,7 +36,7 @@ export class StreamUserController {
       streamId,
       skip,
       limit,
-      viewerId,
+      viewerId: viewerId ?? undefined,
     });
 
     // Background fetch for missing users (non-blocking)
@@ -42,7 +44,7 @@ export class StreamUserController {
       // TODO: When TTL is implemented, we can return to void
       await Core.UserStreamApplication.fetchMissingUsersFromNexus({
         cacheMissUserIds,
-        viewerId,
+        viewerId: viewerId ?? undefined,
       });
     }
 

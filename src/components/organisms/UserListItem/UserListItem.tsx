@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import type {
@@ -362,6 +363,9 @@ export function UserListItem({
   className,
   'data-testid': dataTestId,
 }: UserListItemProps) {
+  // Auth requirement for follow action
+  const { requireAuth } = Hooks.useRequireAuth();
+
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
   const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
@@ -374,10 +378,11 @@ export function UserListItem({
     onUserClick?.(user.id);
   };
 
+  // Wrap follow click with auth requirement
   const handleFollowClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onFollowClick?.(user.id, isFollowing);
+    requireAuth(() => onFollowClick?.(user.id, isFollowing));
   };
 
   const commonProps: VariantProps = {

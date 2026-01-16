@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HeaderJoin - Snapshots > matches snapshot for default HeaderJoin 1`] = `
+<div
+  class="flex-1 flex-row items-center justify-end"
+>
+  <button
+    aria-label="Join Pubky"
+    class="size-12"
+    data-testid="header-join-button"
+    variant="secondary"
+  >
+    <svg
+      class="size-6"
+      data-testid="user-round-icon"
+    />
+  </button>
+</div>
+`;

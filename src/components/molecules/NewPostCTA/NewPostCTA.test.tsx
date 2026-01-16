@@ -11,8 +11,16 @@ const mockUseAuthStatus = vi.fn(() => ({
   hasProfile: true,
 }));
 
+const mockIsPublicRoute = vi.fn(() => false);
+const mockRequireAuth = vi.fn((action: () => void) => action());
+
 vi.mock('@/hooks', () => ({
   useAuthStatus: () => mockUseAuthStatus(),
+  usePublicRoute: () => ({ isPublicRoute: mockIsPublicRoute() }),
+  useRequireAuth: () => ({
+    isAuthenticated: mockUseAuthStatus().isFullyAuthenticated,
+    requireAuth: mockRequireAuth,
+  }),
 }));
 
 // Mock organisms
@@ -84,6 +92,8 @@ describe('NewPostCTA', () => {
       hasKeypair: true,
       hasProfile: true,
     });
+    mockIsPublicRoute.mockReturnValue(false);
+    mockRequireAuth.mockImplementation((action: () => void) => action());
   });
 
   it('renders button with correct test id', () => {
@@ -91,7 +101,7 @@ describe('NewPostCTA', () => {
     expect(screen.getByTestId('new-post-cta')).toBeInTheDocument();
   });
 
-  it('returns null when user is not authenticated', () => {
+  it('returns null when user is not authenticated and not on public route', () => {
     mockUseAuthStatus.mockReturnValue({
       isFullyAuthenticated: false,
       isLoading: false,
@@ -99,6 +109,8 @@ describe('NewPostCTA', () => {
       hasKeypair: false,
       hasProfile: false,
     });
+    mockIsPublicRoute.mockReturnValue(false);
+
     const { container } = render(<NewPostCTA />);
     expect(container.firstChild).toBeNull();
   });
@@ -115,7 +127,7 @@ describe('NewPostCTA', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('opens dialog when button is clicked', () => {
+  it('opens dialog when button is clicked by authenticated user', () => {
     render(<NewPostCTA />);
     const button = screen.getByTestId('new-post-cta');
     const dialog = screen.getByTestId('dialog');
@@ -126,6 +138,58 @@ describe('NewPostCTA', () => {
 
     // Dialog should be opened (state managed internally)
     expect(screen.getByTestId('dialog-new-post')).toBeInTheDocument();
+  });
+
+  describe('Public Route Behavior', () => {
+    it('renders button when unauthenticated on public route', () => {
+      mockUseAuthStatus.mockReturnValue({
+        isFullyAuthenticated: false,
+        isLoading: false,
+        status: 'UNAUTHENTICATED',
+        hasKeypair: false,
+        hasProfile: false,
+      });
+      mockIsPublicRoute.mockReturnValue(true);
+
+      render(<NewPostCTA />);
+
+      expect(screen.getByTestId('new-post-cta')).toBeInTheDocument();
+    });
+
+    it('calls requireAuth when unauthenticated user clicks button', () => {
+      mockUseAuthStatus.mockReturnValue({
+        isFullyAuthenticated: false,
+        isLoading: false,
+        status: 'UNAUTHENTICATED',
+        hasKeypair: false,
+        hasProfile: false,
+      });
+      mockIsPublicRoute.mockReturnValue(true);
+      mockRequireAuth.mockImplementation(() => undefined); // Simulates showing sign-in dialog
+
+      render(<NewPostCTA />);
+
+      const button = screen.getByTestId('new-post-cta');
+      fireEvent.click(button);
+
+      expect(mockRequireAuth).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not render dialog wrapper for unauthenticated users', () => {
+      mockUseAuthStatus.mockReturnValue({
+        isFullyAuthenticated: false,
+        isLoading: false,
+        status: 'UNAUTHENTICATED',
+        hasKeypair: false,
+        hasProfile: false,
+      });
+      mockIsPublicRoute.mockReturnValue(true);
+
+      render(<NewPostCTA />);
+
+      expect(screen.getByTestId('new-post-cta')).toBeInTheDocument();
+      expect(screen.queryByTestId('dialog')).not.toBeInTheDocument();
+    });
   });
 });
 

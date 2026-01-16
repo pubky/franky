@@ -13,6 +13,7 @@ import { MAX_SIDEBAR_TAGS } from './ProfilePageSidebar.constants';
 
 export function ProfilePageSidebar() {
   const pathname = usePathname();
+  const { isAuthenticated, requireAuth } = Hooks.useRequireAuth();
 
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
@@ -42,6 +43,11 @@ export function ProfilePageSidebar() {
     bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
 
+  // Handle tag click - require auth for unauthenticated users
+  const handleTagClick = (tag: Parameters<typeof handleTagToggle>[0]) => {
+    requireAuth(() => handleTagToggle(tag));
+  };
+
   return (
     <Atoms.Container
       ref={ref}
@@ -53,13 +59,13 @@ export function ProfilePageSidebar() {
         <Molecules.ProfilePageTaggedAs
           tags={topTags}
           isLoading={isLoadingTags}
-          onTagClick={handleTagToggle}
+          onTagClick={handleTagClick}
           pubky={pubky ?? ''}
           userName={profile?.name}
         />
       )}
       <Molecules.ProfilePageLinks links={profile?.links} />
-      <Organisms.FeedbackCard />
+      {isAuthenticated && <Organisms.FeedbackCard />}
     </Atoms.Container>
   );
 }

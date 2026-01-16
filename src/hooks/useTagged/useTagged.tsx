@@ -20,8 +20,8 @@ import { TAGS_PER_PAGE } from './useTagged.constants';
 export function useTagged(userId: string | null | undefined, options: UseTaggedOptions = {}): UseTaggedResult {
   const { enablePagination = true, enableStats = true, viewerId: customViewerId } = options;
 
-  // Use currentUserPubky directly instead of selectCurrentUserPubky() to avoid throwing
-  // when user is not authenticated (e.g., during logout)
+  // selectCurrentUserPubky() throws an error when user is not authenticated;
+  // access currentUserPubky directly to get null instead (e.g., during logout or unauthenticated views)
   const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const viewerId = customViewerId ?? currentUserId;
 

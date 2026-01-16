@@ -31,6 +31,7 @@ vi.mock('@/core', async (importOriginal) => {
     },
     useAuthStore: vi.fn((selector) => {
       const state = {
+        currentUserPubky: mockCurrentUserId.current,
         selectCurrentUserPubky: () => mockCurrentUserId.current,
       };
       return selector ? selector(state) : state;

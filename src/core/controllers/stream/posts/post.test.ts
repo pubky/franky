@@ -9,8 +9,12 @@ describe('StreamPostsController', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock useAuthStore
-    vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockReturnValue(viewerId);
+    // Mock useAuthStore.getState() to return currentUserPubky directly
+    // (implementation accesses state.currentUserPubky instead of selectCurrentUserPubky())
+    vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+      ...Core.useAuthStore.getState(),
+      currentUserPubky: viewerId,
+    });
   });
 
   describe('getOrFetchStreamSlice', () => {
@@ -74,7 +78,6 @@ describe('StreamPostsController', () => {
         lastPostId: undefined,
         viewerId,
       });
-      expect(Core.useAuthStore.getState().selectCurrentUserPubky).toHaveBeenCalled();
       expect(fetchMissingPostsSpy).toHaveBeenCalledWith({
         cacheMissPostIds,
         viewerId,
@@ -154,8 +157,6 @@ describe('StreamPostsController', () => {
         streamTail: 0,
       });
 
-      // selectCurrentUserPubky is called to get viewerId (line 48 of posts.ts)
-      expect(Core.useAuthStore.getState().selectCurrentUserPubky).toHaveBeenCalled();
       expect(fetchMissingPostsSpy).not.toHaveBeenCalled();
     });
 
@@ -177,34 +178,43 @@ describe('StreamPostsController', () => {
       expect(result.nextPageIds).toEqual(nextPageIds);
     });
 
-    it('should propagate error when selectCurrentUserPubky throws (user not authenticated)', async () => {
-      // Set up spies to verify they're not called
-      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice');
-      const fetchMissingPostsSpy = vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus');
-
-      // Mock selectCurrentUserPubky to throw error (user not authenticated)
-      const authError = new Error('Current user pubky is not available. User may not be authenticated.');
-      vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockImplementation(() => {
-        throw authError;
+    it('should handle unauthenticated users (null viewerId)', async () => {
+      // Mock currentUserPubky as null (user not authenticated)
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+        ...Core.useAuthStore.getState(),
+        currentUserPubky: null,
       });
 
-      // Should propagate the error
-      await expect(
-        StreamPostsController.getOrFetchStreamSlice({
-          streamId,
-          streamTail: 0,
-        }),
-      ).rejects.toThrow('Current user pubky is not available. User may not be authenticated.');
+      const nextPageIds = ['user-1:post-1', 'user-1:post-2'];
+      const timestamp = 1000000;
 
-      // Should not call getOrFetchStreamSlice when viewerId can't be retrieved
-      expect(getOrFetchStreamSliceSpy).not.toHaveBeenCalled();
-      expect(fetchMissingPostsSpy).not.toHaveBeenCalled();
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp,
+      });
+
+      const result = await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        streamTail: 0,
+      });
+
+      // Should call with null viewerId (unauthenticated users can still view posts)
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
+        streamTail: 0,
+        lastPostId: undefined,
+        viewerId: null,
+      });
+      expect(result).toEqual({
+        nextPageIds,
+        timestamp,
+      });
     });
 
     it('should propagate error when PostStreamApplication.getOrFetchStreamSlice throws', async () => {
-      // Mock selectCurrentUserPubky to return viewerId
-      vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockReturnValue(viewerId);
-
       // Mock getOrFetchStreamSlice to throw error
       const applicationError = new Error('Network error');
       const getOrFetchStreamSliceSpy = vi
@@ -353,27 +363,6 @@ describe('StreamPostsController', () => {
         nextPageIds,
         timestamp,
       });
-    });
-
-    it('should call selectCurrentUserPubky exactly once per request', async () => {
-      const nextPageIds = ['user-1:post-1'];
-      const selectCurrentUserPubkySpy = vi
-        .spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky')
-        .mockReturnValue(viewerId);
-
-      vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds,
-        cacheMissPostIds: [],
-        timestamp: undefined,
-      });
-
-      await StreamPostsController.getOrFetchStreamSlice({
-        streamId,
-        streamTail: 0,
-      });
-
-      // Should be called exactly once to get viewerId
-      expect(selectCurrentUserPubkySpy).toHaveBeenCalledTimes(1);
     });
   });
 

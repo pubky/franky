@@ -11,8 +11,8 @@ vi.mock('next/navigation', () => ({
   useRouter: () => mockUseRouter(),
 }));
 
-// Mock Core
-const mockUseProfileStore = vi.fn();
+// Mock Core - use selector pattern (component calls useAuthStore with selector function)
+let mockCurrentUserPubky: string | null = null;
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(() => ({ name: 'Test User', image: 'test-image.jpg' })),
@@ -63,7 +63,8 @@ vi.mock('@/app', () => ({
 }));
 
 vi.mock('@/core', () => ({
-  useAuthStore: () => mockUseProfileStore(),
+  useAuthStore: (selector: (state: { currentUserPubky: string | null }) => unknown) =>
+    selector({ currentUserPubky: mockCurrentUserPubky }),
   useNotificationStore: () => ({ selectUnread: () => 0 }),
   ProfileController: {
     read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
@@ -115,23 +116,31 @@ vi.mock('@/molecules', () => ({
       <div data-testid="header-navigation-buttons">Navigation Buttons</div>
     </div>
   ),
+  HeaderJoin: () => (
+    <div data-testid="header-join">
+      <button aria-label="Join Pubky">Join</button>
+    </div>
+  ),
 }));
 
 // Mock hooks
+const mockIsPublicRoute = vi.fn();
 vi.mock('@/hooks', () => ({
   useCurrentUserProfile: vi.fn(() => ({
     userDetails: { name: 'Test User', image: 'test-image.jpg' },
     currentUserPubky: 'test-pubky-123',
   })),
+  usePublicRoute: () => ({ isPublicRoute: mockIsPublicRoute() }),
 }));
 
 describe('Header', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mock return values
-    mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+    mockCurrentUserPubky = null; // Not authenticated by default
     mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
     mockUseRouter.mockReturnValue({ push: vi.fn() });
+    mockIsPublicRoute.mockReturnValue(false);
   });
 
   it('renders header container with logo and home header', () => {
@@ -147,7 +156,7 @@ describe('Header', () => {
   });
 
   it('hides header container on mobile when signed in outside onboarding', () => {
-    mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+    mockCurrentUserPubky = 'test-pubky-123';
     mockUsePathname.mockReturnValue(App.HOME_ROUTES.HOME);
 
     render(<Header />);
@@ -157,7 +166,7 @@ describe('Header', () => {
   });
 
   it('keeps header visible on mobile during onboarding when signed in', () => {
-    mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+    mockCurrentUserPubky = 'test-pubky-123';
     mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
 
     render(<Header />);
@@ -290,7 +299,7 @@ describe('Header', () => {
 
   describe('Authentication Logic', () => {
     it('renders SignInHeader when user is authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -302,7 +311,7 @@ describe('Header', () => {
     });
 
     it('renders HomeHeader when user is not authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+      mockCurrentUserPubky = null;
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -313,7 +322,7 @@ describe('Header', () => {
     });
 
     it('does not render HeaderTitle when user is authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -322,7 +331,7 @@ describe('Header', () => {
     });
 
     it('renders HomeHeader when user is not authenticated', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+      mockCurrentUserPubky = null;
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -332,7 +341,7 @@ describe('Header', () => {
     });
 
     it('prioritizes onboarding header over authentication state', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.INSTALL);
 
       render(<Header />);
@@ -408,18 +417,29 @@ describe('Header', () => {
   });
 
   describe('HeaderTitle Display Logic', () => {
-    it('renders HeaderTitle when user is not signed in', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+    it('does not render HeaderTitle for unauthenticated users on public routes', () => {
+      mockCurrentUserPubky = null;
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
 
+      // No title should be shown on public routes (like /, /profile/[pubky], /post/[x]/[y])
+      // This matches Pubky-app behavior where header shows just Logo + Join button
+      expect(screen.queryByTestId('header-title')).not.toBeInTheDocument();
+    });
+
+    it('renders HeaderTitle for unauthenticated users on logout route', () => {
+      mockCurrentUserPubky = null;
+      mockUsePathname.mockReturnValue(App.AUTH_ROUTES.LOGOUT);
+
+      render(<Header />);
+
       expect(screen.getByTestId('header-title')).toBeInTheDocument();
-      expect(screen.getByTestId('header-title')).toHaveTextContent('Sign in');
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Signed out');
     });
 
     it('renders HeaderTitle when on step 5 (profile) even if signed in', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
 
       render(<Header />);
@@ -429,7 +449,7 @@ describe('Header', () => {
     });
 
     it('does not render HeaderTitle when signed in and not on step 5', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       render(<Header />);
@@ -450,7 +470,7 @@ describe('Header', () => {
 
       testCases.forEach(({ path, expectedTitle }) => {
         mockUsePathname.mockReturnValue(path);
-        mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+        mockCurrentUserPubky = null;
 
         const { rerender } = render(<Header />);
 
@@ -497,7 +517,7 @@ describe('Header', () => {
 
     it('shows HeaderTitle on step 5 regardless of authentication state', () => {
       // Test with authenticated user
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
 
       const { rerender } = render(<Header />);
@@ -506,7 +526,7 @@ describe('Header', () => {
       expect(screen.getByTestId('header-title')).toHaveTextContent('Profile');
 
       // Test with unauthenticated user
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+      mockCurrentUserPubky = null;
       rerender(<Header />);
 
       expect(screen.getByTestId('header-title')).toBeInTheDocument();
@@ -514,9 +534,55 @@ describe('Header', () => {
     });
   });
 
+  describe('Public Route Behavior', () => {
+    it('renders HeaderJoin when unauthenticated on public route', () => {
+      mockCurrentUserPubky = null;
+      mockIsPublicRoute.mockReturnValue(true);
+
+      render(<Header />);
+
+      expect(screen.getByTestId('header-join')).toBeInTheDocument();
+      expect(screen.queryByTestId('header-home')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('header-sign-in')).not.toBeInTheDocument();
+    });
+
+    it('renders HeaderHome when unauthenticated on non-public route', () => {
+      mockCurrentUserPubky = null;
+      mockIsPublicRoute.mockReturnValue(false);
+      mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
+
+      render(<Header />);
+
+      expect(screen.getByTestId('header-home')).toBeInTheDocument();
+      expect(screen.queryByTestId('header-join')).not.toBeInTheDocument();
+    });
+
+    it('renders HeaderSignIn when authenticated regardless of public route', () => {
+      mockCurrentUserPubky = 'test-pubky-123';
+      mockIsPublicRoute.mockReturnValue(true);
+
+      render(<Header />);
+
+      expect(screen.getByTestId('header-sign-in')).toBeInTheDocument();
+      expect(screen.queryByTestId('header-join')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('header-home')).not.toBeInTheDocument();
+    });
+
+    it('prioritizes onboarding header over public route state', () => {
+      mockCurrentUserPubky = null;
+      mockIsPublicRoute.mockReturnValue(true);
+      mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.INSTALL);
+
+      render(<Header />);
+
+      expect(screen.getByTestId('onboarding-header')).toBeInTheDocument();
+      expect(screen.queryByTestId('header-join')).not.toBeInTheDocument();
+    });
+  });
+
   describe('State Updates', () => {
     it('updates authentication state when isAuthenticated changes', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+      mockCurrentUserPubky = null;
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       const { rerender } = render(<Header />);
@@ -524,7 +590,7 @@ describe('Header', () => {
       expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
 
       // Change authentication state
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       rerender(<Header />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
@@ -547,17 +613,19 @@ describe('Header', () => {
       expect(onboardingHeader).toHaveAttribute('data-step', '4');
     });
 
-    it('updates HeaderTitle visibility when authentication state changes', () => {
-      mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => false });
+    it('updates HeaderTitle visibility when authentication state changes on configured routes', () => {
+      // Use logout route which has a title configured
+      mockUsePathname.mockReturnValue(App.AUTH_ROUTES.LOGOUT);
+      mockCurrentUserPubky = null;
 
       const { rerender } = render(<Header />);
 
-      // Should show HeaderTitle when not authenticated
+      // Should show HeaderTitle when not authenticated on configured route
       expect(screen.getByTestId('header-title')).toBeInTheDocument();
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Signed out');
 
       // Change to authenticated
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       rerender(<Header />);
 
       // Should hide HeaderTitle when authenticated (not on step 5)
@@ -565,7 +633,7 @@ describe('Header', () => {
     });
 
     it('updates HeaderTitle visibility when moving to/from step 5', () => {
-      mockUseProfileStore.mockReturnValue({ selectIsAuthenticated: () => true });
+      mockCurrentUserPubky = 'test-pubky-123';
       mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
 
       const { rerender } = render(<Header />);

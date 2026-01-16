@@ -65,6 +65,18 @@ vi.mock('@/organisms', async (importOriginal) => {
   };
 });
 
+// Mock hooks - useRequireAuth needs to return isAuthenticated: true for Follow button tests
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useRequireAuth: vi.fn(() => ({
+      isAuthenticated: true,
+      requireAuth: vi.fn((action: () => void) => action()),
+    })),
+  };
+});
+
 const mockProps: ProfilePageHeaderProps = {
   profile: {
     name: 'Satoshi Nakamoto',

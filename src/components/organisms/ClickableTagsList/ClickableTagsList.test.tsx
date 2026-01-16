@@ -23,6 +23,10 @@ vi.mock('@/hooks', () => ({
     setInputValue: vi.fn(),
     handleTagSubmit: vi.fn(() => onTagAdd?.('new-tag')),
   })),
+  useRequireAuth: () => ({
+    isAuthenticated: true,
+    requireAuth: <T,>(action: () => T) => action(),
+  }),
 }));
 
 // Mock atoms

@@ -3,30 +3,51 @@
 import { usePathname } from 'next/navigation';
 
 import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import { pathToStepConfig } from './Header.constants';
 
 export function Header() {
   const pathname = usePathname();
-  const authStore = Core.useAuthStore();
-  const isAuthenticated = authStore.selectIsAuthenticated();
+  const isAuthenticated = Core.useAuthStore((state) => Boolean(state.currentUserPubky));
+  const { isPublicRoute } = Hooks.usePublicRoute();
 
   const isOnboarding = pathname?.startsWith('/onboarding') ?? false;
-  const { step: currentStep, title: currentTitle } = pathToStepConfig[pathname] ?? { step: 1, title: 'Sign in' };
+  const stepConfig = pathname ? pathToStepConfig[pathname] : undefined;
+  const currentStep = stepConfig?.step ?? 1;
+  const currentTitle = stepConfig?.title;
 
-  const shouldHideHeaderOnMobile = isAuthenticated && !isOnboarding;
+  // Hide header on mobile when:
+  // - User is authenticated (not during onboarding) - they use MobileHeader
+  // - User is on public route (post/profile) - they use MobileHeader with Join button
+  const shouldHideHeaderOnMobile = (isAuthenticated && !isOnboarding) || isPublicRoute;
+  // Show title only for onboarding/logout pages (when stepConfig exists) and user is not authenticated,
+  // or during profile setup (step 5)
+  const shouldShowTitle = currentTitle && (!isAuthenticated || currentStep === 5);
+
+  // Determine which header content to show:
+  // - Onboarding: HeaderOnboarding
+  // - Authenticated: HeaderSignIn (navigation + avatar)
+  // - Unauthenticated on public route (post/profile): HeaderJoin (minimal, just join icon)
+  // - Unauthenticated on landing/other: HeaderHome (social links + sign in)
+  const renderHeaderContent = () => {
+    if (isOnboarding) {
+      return <Molecules.HeaderOnboarding currentStep={currentStep} />;
+    }
+    if (isAuthenticated) {
+      return <Molecules.HeaderSignIn />;
+    }
+    if (isPublicRoute) {
+      return <Molecules.HeaderJoin />;
+    }
+    return <Molecules.HeaderHome />;
+  };
 
   return (
     <Molecules.HeaderContainer className={shouldHideHeaderOnMobile ? 'hidden lg:block' : undefined}>
       <Molecules.Logo noLink={currentStep === 5} />
-      {(!isAuthenticated || currentStep === 5) && <Molecules.HeaderTitle currentTitle={currentTitle} />}
-      {isOnboarding ? (
-        <Molecules.HeaderOnboarding currentStep={currentStep} />
-      ) : isAuthenticated ? (
-        <Molecules.HeaderSignIn />
-      ) : (
-        <Molecules.HeaderHome />
-      )}
+      {shouldShowTitle && <Molecules.HeaderTitle currentTitle={currentTitle} />}
+      {renderHeaderContent()}
     </Molecules.HeaderContainer>
   );
 }

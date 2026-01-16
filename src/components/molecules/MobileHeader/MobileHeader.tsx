@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export interface MobileHeaderProps {
@@ -11,38 +12,54 @@ export interface MobileHeaderProps {
   showRightButton?: boolean;
 }
 
+const Placeholder = () => <Atoms.Container overrideDefaults className="w-10" />;
+
 export function MobileHeader({
   onLeftIconClick,
   onRightIconClick,
   showLeftButton = true,
   showRightButton = true,
 }: MobileHeaderProps) {
+  const isAuthenticated = Core.useAuthStore((state) => Boolean(state.currentUserPubky));
+  const setShowSignInDialog = Core.useAuthStore((state) => state.setShowSignInDialog);
+
+  const showLeftIcon = showLeftButton && isAuthenticated;
+
   return (
     <Atoms.Container
-      overrideDefaults={true}
+      overrideDefaults
       className="sticky top-0 z-(--z-mobile-menu) bg-background shadow-xs-dark lg:hidden"
     >
-      <Atoms.Container overrideDefaults={true} className="px-6 pt-6 pb-0">
-        <Atoms.Container overrideDefaults={true} className="flex items-center justify-between py-3">
-          {/* Left icon - filters */}
-          {showLeftButton ? (
+      <Atoms.Container overrideDefaults className="px-6 pt-6 pb-0">
+        <Atoms.Container overrideDefaults className="flex items-center justify-between py-3">
+          {/* Left icon - filters (authenticated only) */}
+          {showLeftIcon ? (
             <Atoms.Button variant="ghost" size="icon" onClick={onLeftIconClick}>
-              <Libs.SlidersHorizontal className="h-6 w-6" />
+              <Libs.SlidersHorizontal className="size-6" />
             </Atoms.Button>
           ) : (
-            <Atoms.Container overrideDefaults={true} />
+            <Placeholder />
           )}
 
-          {/* Center - Logo */}
           <Molecules.Logo />
 
-          {/* Right icon - community info */}
-          {showRightButton ? (
+          {/* Right icon - Join for unauthenticated, Activity for authenticated */}
+          {!isAuthenticated ? (
+            <Atoms.Button
+              variant="secondary"
+              size="icon"
+              className="size-12"
+              onClick={() => setShowSignInDialog(true)}
+              aria-label="Join Pubky"
+            >
+              <Libs.UserRound className="size-6" />
+            </Atoms.Button>
+          ) : showRightButton ? (
             <Atoms.Button variant="ghost" size="icon" onClick={onRightIconClick}>
-              <Libs.Activity className="h-6 w-6" />
+              <Libs.Activity className="size-6" />
             </Atoms.Button>
           ) : (
-            <Atoms.Container overrideDefaults={true} />
+            <Placeholder />
           )}
         </Atoms.Container>
       </Atoms.Container>

@@ -9,7 +9,7 @@ exports[`MobileHeader - Snapshots > matches snapshot for left button 1`] = `
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-sliders-horizontal h-6 w-6"
+    class="lucide lucide-sliders-horizontal size-6"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -68,7 +68,7 @@ exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-activity h-6 w-6"
+    class="lucide lucide-activity size-6"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -107,7 +107,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-sliders-horizontal h-6 w-6"
+          class="lucide lucide-sliders-horizontal size-6"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -160,7 +160,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-activity h-6 w-6"
+          class="lucide lucide-activity size-6"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -202,7 +202,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-sliders-horizontal h-6 w-6"
+          class="lucide lucide-sliders-horizontal size-6"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -255,7 +255,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-activity h-6 w-6"
+          class="lucide lucide-activity size-6"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -293,7 +293,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with padding container 1`] 
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sliders-horizontal h-6 w-6"
+        class="lucide lucide-sliders-horizontal size-6"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -346,7 +346,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with padding container 1`] 
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-activity h-6 w-6"
+        class="lucide lucide-activity size-6"
         fill="none"
         height="24"
         stroke="currentColor"

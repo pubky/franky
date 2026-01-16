@@ -19,7 +19,9 @@ import { TAGS_PER_PAGE } from './usePostTags.constants';
 export function usePostTags(postId: string | null | undefined, options: UsePostTagsOptions = {}): UsePostTagsResult {
   const { viewerId: customViewerId } = options;
 
-  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+  // selectCurrentUserPubky() throws an error when user is not authenticated;
+  // access currentUserPubky directly to get null instead (unauthenticated views should still render tags)
+  const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const viewerId = customViewerId ?? currentUserId;
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);

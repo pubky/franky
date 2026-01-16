@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
 import { PROFILE_ROUTES, getProfileRoute } from '@/app/routes';
@@ -16,11 +17,17 @@ export function ProfilePageTaggedAs({
   userName,
 }: ProfilePageTaggedAsProps) {
   const router = useRouter();
+  const { requireAuth } = Hooks.useRequireAuth();
 
   const getButtonLabel = () => {
     if (!pubky) return 'Tag Yourself';
     if (userName) return `Tag ${Libs.truncateString(userName, MAX_NAME_LENGTH)}`;
     return 'Tag User';
+  };
+
+  // Handle button click - require auth for unauthenticated users
+  const handleButtonClick = () => {
+    requireAuth(() => router.push(getProfileRoute(PROFILE_ROUTES.UNIQUE_TAGS, pubky)));
   };
 
   return (
@@ -56,7 +63,7 @@ export function ProfilePageTaggedAs({
         variant="outline"
         size="sm"
         className="border border-border bg-foreground/5"
-        onClick={() => router.push(getProfileRoute(PROFILE_ROUTES.UNIQUE_TAGS, pubky))}
+        onClick={handleButtonClick}
       >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">
