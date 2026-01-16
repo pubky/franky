@@ -155,7 +155,6 @@ function detectNetworkErrorCode(error: unknown): NetworkErrorCode {
   if (error instanceof Error) {
     const message = error.message.toLowerCase();
 
-    // Node.js style errors (for SSR/testing)
     if (message.includes('enotfound') || message.includes('getaddrinfo')) {
       return NetworkErrorCode.DNS_FAILED;
     }
