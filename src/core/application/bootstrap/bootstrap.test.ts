@@ -9,6 +9,13 @@ vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
 }));
 
+// Bootstrap store mocks
+const bootstrapStoreMocks = {
+  setBootstrapFetched: vi.fn(),
+  setDataPersisted: vi.fn(),
+  setHomeserverSynced: vi.fn(),
+};
+
 const TEST_PUBKY = '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y';
 const MOCK_LAST_READ_URL = 'http://example.com/last-read';
 const MOCK_LAST_READ = 1234567890;
@@ -262,6 +269,12 @@ describe('BootstrapApplication', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.clearAllMocks();
+    // Clear bootstrap store mocks
+    bootstrapStoreMocks.setBootstrapFetched.mockClear();
+    bootstrapStoreMocks.setDataPersisted.mockClear();
+    bootstrapStoreMocks.setHomeserverSynced.mockClear();
+    // Mock bootstrap store
+    vi.spyOn(Core.useBootstrapStore, 'getState').mockReturnValue(bootstrapStoreMocks as unknown as Core.BootstrapStore);
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
     } as LastReadResult);
@@ -286,6 +299,11 @@ describe('BootstrapApplication', () => {
 
       assertCommonCalls(mocks, bootstrapData, notifications);
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
+
+      // Verify bootstrap store progress tracking
+      expect(bootstrapStoreMocks.setBootstrapFetched).toHaveBeenCalledWith(true);
+      expect(bootstrapStoreMocks.setDataPersisted).toHaveBeenCalledWith(true);
+      expect(bootstrapStoreMocks.setHomeserverSynced).toHaveBeenCalledWith(true);
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {
