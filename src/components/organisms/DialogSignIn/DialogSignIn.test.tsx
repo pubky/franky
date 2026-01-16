@@ -1,16 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 import { DialogSignIn } from './DialogSignIn';
 
 const mockShowSignInDialog = vi.hoisted(() => ({ value: false }));
 const mockSetShowSignInDialog = vi.hoisted(() => vi.fn());
 
-// Mock @/core
-vi.mock('@/core', () => ({
-  useAuthStore: (
-    selector: (state: { showSignInDialog: boolean; setShowSignInDialog: typeof mockSetShowSignInDialog }) => unknown,
-  ) => selector({ showSignInDialog: mockShowSignInDialog.value, setShowSignInDialog: mockSetShowSignInDialog }),
-}));
+// Mock @/core - partial mock to preserve other exports
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: (
+      selector: (state: { showSignInDialog: boolean; setShowSignInDialog: typeof mockSetShowSignInDialog }) => unknown,
+    ) => selector({ showSignInDialog: mockShowSignInDialog.value, setShowSignInDialog: mockSetShowSignInDialog }),
+  };
+});
 
 // Mock next/link
 vi.mock('next/link', () => ({
@@ -21,93 +26,15 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-// Mock icons
-vi.mock('@/libs/icons', () => ({
-  UserPlus: ({ className }: { className?: string }) => <span data-testid="user-plus-icon" className={className} />,
-  KeyRound: ({ className }: { className?: string }) => <span data-testid="key-round-icon" className={className} />,
-}));
-
-// Mock atoms
-vi.mock('@/atoms', () => ({
-  Dialog: ({
-    children,
-    open,
-    onOpenChange,
-  }: {
-    children: React.ReactNode;
-    open?: boolean;
-    onOpenChange?: (open: boolean) => void;
-  }) => (
-    <div data-testid="dialog" data-open={open} onClick={() => onOpenChange?.(false)}>
-      {open ? children : null}
-    </div>
-  ),
-  DialogContent: ({
-    children,
-    className,
-    hiddenTitle,
-  }: {
-    children: React.ReactNode;
-    className?: string;
-    hiddenTitle?: string;
-  }) => (
-    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
-      {children}
-    </div>
-  ),
-  DialogHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-header" className={className}>
-      {children}
-    </div>
-  ),
-  DialogTitle: ({ children }: { children: React.ReactNode }) => <h2 data-testid="dialog-title">{children}</h2>,
-  DialogDescription: ({ children }: { children: React.ReactNode }) => (
-    <p data-testid="dialog-description">{children}</p>
-  ),
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="container" className={className}>
-      {children}
-    </div>
-  ),
-  Typography: ({
-    children,
-    className,
-    as: Tag = 'p',
-    size,
-  }: {
-    children: React.ReactNode;
-    as?: React.ElementType;
-    className?: string;
-    size?: string;
-  }) => (
-    <Tag data-testid="typography" data-size={size} className={className}>
-      {children}
-    </Tag>
-  ),
-  Button: ({
-    children,
-    variant,
-    className,
-    asChild,
-  }: {
-    children: React.ReactNode;
-    variant?: string;
-    className?: string;
-    asChild?: boolean;
-  }) =>
-    asChild ? (
-      <>{children}</>
-    ) : (
-      <button data-testid={`button-${variant || 'default'}`} data-variant={variant} className={className}>
-        {children}
-      </button>
-    ),
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>
-      {children}
-    </div>
-  ),
-}));
+// Mock only the icons used by this component, preserve all others
+vi.mock('@/libs/icons', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs/icons')>();
+  return {
+    ...actual,
+    UserPlus: ({ className }: { className?: string }) => <span data-testid="user-plus-icon" className={className} />,
+    KeyRound: ({ className }: { className?: string }) => <span data-testid="key-round-icon" className={className} />,
+  };
+});
 
 describe('DialogSignIn', () => {
   beforeEach(() => {
@@ -120,26 +47,26 @@ describe('DialogSignIn', () => {
       mockShowSignInDialog.value = false;
       render(<DialogSignIn />);
 
-      expect(screen.queryByTestId('dialog-content')).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
     it('renders dialog content when store has showSignInDialog=true', () => {
       mockShowSignInDialog.value = true;
       render(<DialogSignIn />);
 
-      expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
-      expect(screen.getByTestId('dialog-title')).toHaveTextContent('Join Pubky');
-      expect(screen.getByTestId('dialog-description')).toHaveTextContent(
-        'Sign in or create an account to interact with posts and profiles.',
-      );
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      // Title appears in dialog header
+      expect(screen.getByRole('heading', { name: 'Join Pubky' })).toBeInTheDocument();
+      expect(screen.getByText('Sign in or create an account to interact with posts and profiles.')).toBeInTheDocument();
     });
 
     it('renders two cards for join and sign in options', () => {
       mockShowSignInDialog.value = true;
       render(<DialogSignIn />);
 
-      const cards = screen.getAllByTestId('card');
-      expect(cards).toHaveLength(2);
+      // Check for the two card headings
+      expect(screen.getByText('New here?')).toBeInTheDocument();
+      expect(screen.getByText('Already have an account?')).toBeInTheDocument();
     });
 
     it('renders Join Pubky link pointing to root', () => {
@@ -197,18 +124,23 @@ describe('DialogSignIn', () => {
       render(<DialogSignIn />);
 
       // The DialogTitle provides accessibility for screen readers
-      const dialogTitle = screen.getByTestId('dialog-title');
-      expect(dialogTitle).toBeInTheDocument();
-      expect(dialogTitle).toHaveTextContent('Join Pubky');
+      expect(screen.getByRole('heading', { name: 'Join Pubky' })).toBeInTheDocument();
     });
   });
 });
 
 describe('DialogSignIn - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('matches snapshot when open', () => {
     mockShowSignInDialog.value = true;
-    const { container } = render(<DialogSignIn />);
-    expect(container.firstChild).toMatchSnapshot();
+    render(<DialogSignIn />);
+
+    const dialog = document.querySelector('[role="dialog"]');
+    const normalizedContainer = normaliseRadixIds(dialog?.parentElement as HTMLElement);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot when closed', () => {

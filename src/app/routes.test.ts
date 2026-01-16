@@ -53,15 +53,25 @@ describe('isDynamicPublicRoute', () => {
       expect(isDynamicPublicRoute('/profile')).toBe(false);
     });
 
-    it('returns false for short segment that could be a route name', () => {
-      // Segment must be > 20 chars to be considered a pubky
+    it('returns false for segments that are not valid pubky format', () => {
+      // Pubky must be exactly 52 lowercase alphanumeric characters
       expect(isDynamicPublicRoute('/profile/shortname')).toBe(false);
-      expect(isDynamicPublicRoute('/profile/12345678901234567890')).toBe(false); // exactly 20
+      expect(isDynamicPublicRoute('/profile/12345678901234567890')).toBe(false); // 20 chars
+      expect(isDynamicPublicRoute('/profile/123456789012345678901234567890123456789012345678901')).toBe(false); // 51 chars
+      expect(isDynamicPublicRoute('/profile/12345678901234567890123456789012345678901234567890123')).toBe(false); // 53 chars
     });
 
-    it('returns true for segment just over minimum length', () => {
-      // 21 characters - just over the threshold
-      expect(isDynamicPublicRoute('/profile/123456789012345678901')).toBe(true);
+    it('returns false for 52-char segment with invalid characters', () => {
+      // Uppercase characters are invalid
+      expect(isDynamicPublicRoute('/profile/GUJX6QD8KSYDH1MAKDPHD3BXU351D9B8WAQKA8HFG6Q7HNQKXEXO')).toBe(false);
+      // Special characters are invalid
+      expect(isDynamicPublicRoute('/profile/gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex!')).toBe(false);
+    });
+
+    it('returns true for valid 52-char lowercase alphanumeric pubky', () => {
+      // Valid pubky format: exactly 52 lowercase alphanumeric characters
+      const validPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(isDynamicPublicRoute(`/profile/${validPubky}`)).toBe(true);
     });
   });
 

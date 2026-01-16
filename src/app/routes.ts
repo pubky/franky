@@ -1,3 +1,5 @@
+import { isPubkyIdentifier } from '@/libs';
+
 export const ROOT_ROUTES = '/';
 
 export enum ONBOARDING_ROUTES {
@@ -102,37 +104,11 @@ export const HOME_ROUTES = {
 // ============================================================================
 
 /**
- * Own profile sub-routes that should NOT be treated as public.
- * These are routes like /profile/posts that belong to the logged-in user.
- */
-const OWN_PROFILE_SUB_ROUTES = [
-  'posts',
-  'replies',
-  'followers',
-  'following',
-  'friends',
-  'tagged',
-  'notifications',
-  'profile',
-] as const;
-
-/**
- * Minimum length for a segment to be considered a pubky identifier.
- * Pubky strings are typically 52+ characters, while route names are short.
- */
-const MIN_PUBKY_LENGTH = 20;
-
-/**
- * Checks if a pathname is a dynamic public route that should be accessible
- * without authentication.
+ * Checks if a pathname is a dynamic public route accessible without authentication.
  *
- * Dynamic public routes are routes with URL parameters that are publicly viewable:
+ * Dynamic public routes:
  * - /post/[userId]/[postId] - viewing a single post
- * - /profile/[pubky] - viewing another user's profile
- * - /profile/[pubky]/posts, /profile/[pubky]/followers, etc.
- *
- * Own profile routes (/profile/posts, /profile/followers, etc.) are NOT public
- * as they require authentication to know which user's data to show.
+ * - /profile/[pubky] - viewing another user's profile (pubky is exactly 52 chars)
  */
 export function isDynamicPublicRoute(pathname: string): boolean {
   // Match /post/[userId]/[postId] - single post view
@@ -140,18 +116,11 @@ export function isDynamicPublicRoute(pathname: string): boolean {
     return true;
   }
 
-  // Match /profile/[pubky] routes (viewing another user's profile)
-  const profileMatch = pathname.match(/^\/profile\/([^/]+)(\/.*)?$/);
-  if (profileMatch) {
-    const segment = profileMatch[1];
-
-    // Own profile sub-routes use short names
-    // Pubky strings are much longer (typically 52+ chars)
-    const isOwnProfileRoute = OWN_PROFILE_SUB_ROUTES.includes(segment as (typeof OWN_PROFILE_SUB_ROUTES)[number]);
-
-    if (!isOwnProfileRoute && segment.length > MIN_PUBKY_LENGTH) {
-      return true;
-    }
+  // Match /profile/[pubky] - viewing another user's profile
+  // Pubky identifiers are exactly 52 lowercase alphanumeric characters
+  const profileMatch = pathname.match(/^\/profile\/([^/]+)/);
+  if (profileMatch && isPubkyIdentifier(profileMatch[1])) {
+    return true;
   }
 
   return false;
