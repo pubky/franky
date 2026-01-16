@@ -459,7 +459,7 @@ describe('Header', () => {
 
     it('renders HeaderTitle with correct title for each onboarding step', () => {
       const testCases = [
-        { path: App.ONBOARDING_ROUTES.HUMAN, expectedTitle: 'Verify Humanity' },
+        { path: App.ONBOARDING_ROUTES.HUMAN, expectedTitle: 'Create account' },
         { path: App.ONBOARDING_ROUTES.INSTALL, expectedTitle: 'Identity keys' },
         { path: App.ONBOARDING_ROUTES.SCAN, expectedTitle: 'Use Pubky Ring' },
         { path: App.ONBOARDING_ROUTES.PUBKY, expectedTitle: 'Your pubky' },

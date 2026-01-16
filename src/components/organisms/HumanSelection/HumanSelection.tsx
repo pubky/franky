@@ -12,9 +12,9 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Proof of <span className="text-brand">Human.</span>
+          Prove <span className="text-brand">you&apos;re not a Robot.</span>
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>Prove your humanity. This keeps the arena real and fair for everyone.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>No email needed. Verify quickly using SMS or a small payment.</Atoms.PageSubtitle>
       </Atoms.PageHeader>
 
       <Atoms.Container data-testid="human-verification-cards" className="gap-6 lg:flex-row lg:items-stretch lg:gap-8">
