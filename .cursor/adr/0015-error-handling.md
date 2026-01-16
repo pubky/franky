@@ -24,7 +24,7 @@ The local-first architecture requires errors to distinguish between local (Dexie
 - **Always throw `AppError` across layer boundaries** (Service → Application → Controller → UI). Don’t throw raw `Error`/strings.
 - **Create typed errors via `Err.*`** with `{ service, operation, context, cause }`.
 - **HTTP services**: `safeFetch()` → if `!response.ok` throw `httpResponseToError()` → parse with `parseResponseOrThrow()`.
-- **TanStack Query services**: use a QueryClient (`createQueryClient`) so retry uses `error.context.statusCode` (with legacy fallback).
+- **TanStack Query services**: use a QueryClient (`createQueryClient`) so retry uses `error.context.statusCode`.
 - **Catching errors**: if it’s already an `AppError`, re-throw it unchanged; only use `toAppError()` to normalize truly unknown errors.
 
 ### Implementation status (what is true in code today)
@@ -34,7 +34,7 @@ This ADR describes the **intended architecture**, but some observability feature
 - ✅ **Taxonomy is implemented**: `ErrorCategory`, `ErrorService`, and per-category error codes live in `src/libs/error/`.
 - ✅ **HTTP mapping is implemented**: `safeFetch`, `httpResponseToError`, and `httpStatusCodeToError` are in `src/libs/error/error.http.ts`.
 - ✅ **JSON parsing guard is implemented**: `parseResponseOrThrow` is in `src/libs/http/response.utils.ts`.
-- ✅ **TanStack Query retry integration is implemented**: `createQueryClient` reads `error.context.statusCode` (and falls back to legacy `error.statusCode`) in `src/libs/query-client/query-client.factory.ts`.
+- ✅ **TanStack Query retry integration is implemented**: `createQueryClient` reads `error.context.statusCode` in `src/libs/query-client/query-client.factory.ts`.
 - ✅ **Logging currently happens in `Err.*` factories** (`src/libs/error/error.factories.ts`) via `Logger.error(...)`.
 - ⚠️ **Sentry + traceId inheritance + log de-duplication are NOT implemented yet** (see “Future Work”). Until then, avoid patterns that double-log (e.g., logging in a `catch` and then throwing `Err.*` again).
 
@@ -150,11 +150,6 @@ class AppError extends Error {
 
   // === MUTABLE OBSERVABILITY ===
   traceId?: string;                        // Correlation ID (planned for Sentry)
-
-  // === LEGACY (deprecated, removed in Phase 2) ===
-  readonly type?: AppErrorType;
-  readonly statusCode?: number;
-  readonly details?: Record<string, unknown>;
 
   // === METHODS ===
   setTraceId(id: string): this;            // Set correlation ID (rarely needed manually)
@@ -388,7 +383,11 @@ function createAppError(category, code, message, params): AppError {
 
 ### 6. Anti-Patterns to Avoid
 
-Services must never throw raw `Error` objects—always use `Err.*` factories with proper category, code, service, and operation. Network requests must use `safeFetch` instead of raw `fetch()` to ensure network errors are properly typed. Error handling logic should check `error.category` or `error.code` rather than parsing error messages with string matching. Every error must include both `service` and `operation` for proper tracing. Errors should never be swallowed silently—either handle them explicitly or re-throw to let them bubble up.
+- **Don’t throw raw errors across boundaries**: Never throw raw `Error` objects—always use `Err.*` factories with proper `category`, `code`, `service`, and `operation`.
+- **Don’t use raw `fetch()`**: Network requests must use `safeFetch` instead of raw `fetch()` to ensure network errors are properly typed.
+- **Don’t string-match error messages**: Check `error.category` or `error.code` rather than parsing error messages with string matching.
+- **Don’t omit origin metadata**: Every error must include both `service` and `operation` for proper tracing.
+- **Don’t swallow errors**: Errors should never be swallowed silently—either handle them explicitly or re-throw to let them bubble up.
 
 **Exception**: Control-flow sentinel errors (e.g., `AUTH_FLOW_CANCELED_ERROR_NAME`) may use plain `Error` because they are always caught in the same layer and never bubble across controller boundaries. Any error that crosses into the Application or UI layer must be an `AppError`.
 
@@ -434,7 +433,7 @@ Since logging (and future Sentry reporting) happen automatically in the `Err.*` 
 
 ## Future Work
 
-### 0. Observability Phase 2 (Sentry + traceId + de-dup logging)
+### 0. Observability (Sentry + traceId + de-dup logging)
 
 **Priority:** Medium
 

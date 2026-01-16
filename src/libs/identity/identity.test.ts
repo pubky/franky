@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Identity } from './identity';
 import * as bip39 from 'bip39';
-import { CommonErrorType } from '@/libs';
+import { ErrorCategory, ClientErrorCode, ValidationErrorCode } from '@/libs';
 
 // Mock @synonymdev/pubky
 const mockCreateRecoveryFile = vi.fn(() => new Uint8Array([1, 2, 3, 4, 5]));
@@ -178,7 +178,7 @@ describe('Identity', () => {
       }).toThrow();
     });
 
-    it('should handle createRecoveryFile errors and throw CommonError', () => {
+    it('should handle createRecoveryFile errors and throw AppError', () => {
       const keypairWithFailingMethod = {
         ...mockKeypair,
         createRecoveryFile: vi.fn(() => {
@@ -189,8 +189,8 @@ describe('Identity', () => {
       try {
         Identity.createRecoveryFile({ keypair: keypairWithFailingMethod as never, passphrase: 'password123' });
       } catch (error) {
-        expect(error).toHaveProperty('type', CommonErrorType.UNEXPECTED_ERROR);
-        expect(error).toHaveProperty('statusCode', 500);
+        expect(error).toHaveProperty('category', ErrorCategory.Client);
+        expect(error).toHaveProperty('code', ClientErrorCode.UNPROCESSABLE);
       }
     });
   });
@@ -212,14 +212,14 @@ describe('Identity', () => {
       expect(() => Identity.keypairFromSecretKey(invalidSecretKey)).toThrow();
     });
 
-    it('should throw CommonError with proper error type for invalid secret key', () => {
+    it('should throw AppError with proper error type for invalid secret key', () => {
       const invalidSecretKey = 'invalid-hex-string';
 
       try {
         Identity.keypairFromSecretKey(invalidSecretKey);
       } catch (error) {
-        expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
-        expect(error).toHaveProperty('statusCode', 400);
+        expect(error).toHaveProperty('category', ErrorCategory.Validation);
+        expect(error).toHaveProperty('code', ValidationErrorCode.INVALID_INPUT);
       }
     });
   });

@@ -52,9 +52,9 @@ function createAppError<C extends ErrorCategory>(
     cause: params.cause,
     traceId: params.traceId,
   } as AppErrorParams);
-  
+
   Logger.error(`[${params.service}:${params.operation}]`, error.message, params.context);
-  
+
   // We could send to sentry error here
   // Sentry.captureException(err);
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import { createDatabaseError, DatabaseErrorType, HttpMethod } from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService, HttpMethod } from '@/libs';
 import { PubkyAppPost, PubkyAppPostKind } from 'pubky-app-specs';
 import type { BlobResult, FileResult } from 'pubky-app-specs';
 
@@ -497,8 +497,10 @@ describe('Post Application', () => {
 
     it('should propagate database error when findById throws', async () => {
       const mockData = createMockDeleteData();
-      const databaseError = createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Database connection failed', 500, {
-        compositePostId: mockData.compositePostId,
+      const databaseError = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Database connection failed', {
+        service: ErrorService.Local,
+        operation: 'findById',
+        context: { compositePostId: mockData.compositePostId },
       });
       const { findByIdSpy, deleteSpy, requestSpy } = setupDeleteSpies();
       findByIdSpy.mockRejectedValue(databaseError);

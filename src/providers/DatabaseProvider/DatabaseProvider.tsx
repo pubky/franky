@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useEffect, useState, type ReactNode } from 'react';
-import { AppError, createDatabaseError, DatabaseErrorType } from '@/libs';
+import { AppError, Err, ErrorService, DatabaseErrorCode } from '@/libs';
 import { DatabaseContextType } from '@/providers';
 import { db } from '@/core';
 
@@ -27,12 +27,11 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       } else {
         // If it's not our AppError, it's likely a critical error from Dexie or browser
         setError(
-          createDatabaseError(
-            DatabaseErrorType.DB_INIT_FAILED,
-            'Unexpected error during database initialization',
-            500,
-            { originalError: err },
-          ),
+          Err.database(DatabaseErrorCode.INIT_FAILED, 'Unexpected error during database initialization', {
+            service: ErrorService.Local,
+            operation: 'initDatabase',
+            cause: err,
+          }),
         );
       }
     }
