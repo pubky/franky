@@ -68,17 +68,28 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
-    this.cancelActiveAuthFlow();
-    const pubky = Libs.Identity.z32FromSession({ session });
-    const authStore = Core.useAuthStore.getState();
-    const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
-    if (isSignedUp) {
-      // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
-      // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
-      await this.hydrateMeImAlive({ pubky });
+    const bootstrapStore = Core.useBootstrapStore.getState();
+    bootstrapStore.reset(); // Reset for fresh sign-in
+
+    try {
+      this.cancelActiveAuthFlow();
+      const pubky = Libs.Identity.z32FromSession({ session });
+      const authStore = Core.useAuthStore.getState();
+
+      const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
+      bootstrapStore.setProfileChecked(true); // Step 1 complete (25%)
+
+      if (isSignedUp) {
+        // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
+        // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
+        await this.hydrateMeImAlive({ pubky });
+      }
+      const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
+      authStore.init(initialState);
+    } catch (error) {
+      bootstrapStore.setError(error as Libs.AppError);
+      throw error;
     }
-    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
-    authStore.init(initialState);
   }
 
   /**
@@ -164,6 +175,7 @@ export class AuthController {
   static async logout() {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
+    const bootstrapStore = Core.useBootstrapStore.getState();
 
     if (authStore.session) {
       try {
@@ -175,6 +187,7 @@ export class AuthController {
     this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();
+    bootstrapStore.reset();
     Libs.clearCookies();
     await Core.clearDatabase();
   }
