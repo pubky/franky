@@ -31,7 +31,7 @@ function DialogWelcomeStory({
 }: DialogWelcomeStoryProps) {
   return (
     <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
-      <Atoms.DialogContent className="w-full sm:w-2xl" hiddenTitle="Welcome to Pubky!">
+      <Atoms.DialogContent className="w-full sm:w-xl" hiddenTitle="Welcome to Pubky!">
         <Atoms.DialogHeader className="gap-0 pr-6 text-left">
           <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
           <Atoms.DialogDescription className="font-medium">
