@@ -40,6 +40,7 @@ global.fetch = mockFetch;
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
 // Mock Logger to suppress console output during tests

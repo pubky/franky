@@ -5,7 +5,9 @@ import type { NexusFileDetails } from '@/core/services/nexus/nexus.types';
 import { FileVariant } from '@/core/services/nexus/file/file.types';
 
 // Avoid pulling WASM-heavy deps from type-only modules
-vi.mock('pubky-app-specs', () => ({}));
+vi.mock('pubky-app-specs', () => ({
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
+}));
 
 // Mock HomeserverService methods and provide enum-like HomeserverAction
 vi.mock('@/core/services/homeserver', () => ({

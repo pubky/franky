@@ -3,7 +3,9 @@ import type { Pubky } from '@/core';
 import type { PubkyAppUser, UserResult } from 'pubky-app-specs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
-vi.mock('pubky-app-specs', () => ({}));
+vi.mock('pubky-app-specs', () => ({
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
+}));
 
 // Mock HomeserverService methods and provide enum-like HomeserverAction
 vi.mock('@/core/services/homeserver', () => ({

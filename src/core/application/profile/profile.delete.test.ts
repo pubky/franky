@@ -4,6 +4,7 @@ import type { Pubky } from '@/core';
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: vi.fn((pubky: string) => `pubky://${pubky}/pub/pubky.app/`),
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
 // Mock HomeserverService methods and provide enum-like HomeserverAction

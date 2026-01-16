@@ -2,6 +2,7 @@ import { createRef } from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PostInputAttachments } from './PostInputAttachments';
+import { ATTACHMENT_ACCEPT_STRING } from '@/config';
 
 // Mock URL.createObjectURL and URL.revokeObjectURL
 const mockCreateObjectURL = vi.fn();
@@ -197,10 +198,7 @@ describe('PostInputAttachments', () => {
       render(<PostInputAttachments {...defaultProps} />);
 
       const fileInput = screen.getByTestId('file-input');
-      expect(fileInput).toHaveAttribute(
-        'accept',
-        'image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf',
-      );
+      expect(fileInput).toHaveAttribute('accept', ATTACHMENT_ACCEPT_STRING);
     });
 
     it('renders file input with multiple attribute', () => {
