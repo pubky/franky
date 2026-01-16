@@ -1,6 +1,6 @@
 export * from './onboarding';
 export * from './auth';
-export * from './bootstrap';
+export * from './signIn';
 export * from './home';
 export * from './hot';
 export * from './notification';
