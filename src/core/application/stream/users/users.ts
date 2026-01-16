@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
-
+import { Logger } from '@/libs';
 /**
  * Internal type for fetchStreamFromNexus parameters
  * Extends the internal fetch params type with optional cached stream data
@@ -64,7 +64,7 @@ export class UserStreamApplication {
       });
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     } catch (error) {
-      console.error('Failed to fetch missing users from Nexus:', error);
+      Logger.warn('Failed to fetch missing users from Nexus:', { error });
     }
   }
 

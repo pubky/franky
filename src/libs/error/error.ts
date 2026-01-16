@@ -11,7 +11,7 @@ import {
 import type { ErrorCode, ErrorCodeByCategory } from './error.codes';
 
 // =============================================================================
-// NEW AppError System (Phase 1)
+// AppError System
 // =============================================================================
 
 /**
@@ -47,7 +47,7 @@ export type AppErrorParams = {
  */
 export class AppError extends Error {
   // ==========================================================================
-  // NEW properties (Phase 1)
+  // NEW properties
   // ==========================================================================
 
   /** WHAT kind of failure — used for decision logic (retry, routing, login redirect) */
@@ -68,8 +68,8 @@ export class AppError extends Error {
   /** ROOT cause — preserves original thrown value for debugging (can be any thrown value, not just Error) */
   readonly cause?: unknown;
 
-  /** TRACE ID — correlates all errors/logs from a single user operation (set by Application layer) */
-  readonly traceId?: string;
+  /** TRACE ID — correlates all errors/logs from a single user operation*/
+  traceId?: string;
 
   // ==========================================================================
   // LEGACY properties (deprecated - will be removed in Phase 2)
@@ -159,6 +159,34 @@ export class AppError extends Error {
 
     // NO logging here - removed to fix double-logging issue
     // Legacy code that depends on constructor logging will need to add explicit logging
+  }
+
+  // ==========================================================================
+  // Enrichment Methods
+  // ==========================================================================
+
+  /**
+   * Sets the trace ID for error correlation.
+   *
+   * @param id - The trace ID to correlate this error with other logs/errors in the same operation
+   * @returns this - For chaining (e.g., `throw toAppError(e, service, op).setTraceId(id)`)
+   *
+   * @example
+   * ```typescript
+   * catch (error) {
+   *   const appError = toAppError(error, ErrorService.Nexus, 'fetchPost');
+   *   appError.setTraceId(currentTraceId);
+   *   Logger.error(appError);
+   *   throw appError;
+   * }
+   *
+   * // Or inline:
+   * throw toAppError(error, service, operation).setTraceId(traceId);
+   * ```
+   */
+  setTraceId(id: string): this {
+    this.traceId = id;
+    return this;
   }
 }
 

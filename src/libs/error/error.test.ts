@@ -8,6 +8,10 @@ import {
   createDatabaseError,
   createCommonError,
   Logger,
+  ErrorCategory,
+  ErrorService,
+  DatabaseErrorCode,
+  Err,
 } from '@/libs';
 
 // Create mock before imports using vi.hoisted
@@ -81,6 +85,98 @@ describe('Error Library', () => {
       expect(error.type).toBe(CommonErrorType.TIMEOUT);
       expect(error.statusCode).toBe(408);
       expect(error.details).toEqual({ duration: 5000 });
+    });
+  });
+
+  describe('New Error System (Category-based)', () => {
+    it('should create error with category and code', () => {
+      const error = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Failed to read post', {
+        service: ErrorService.Local,
+        operation: 'readDetails',
+        context: { table: 'postDetails', postId: '123' },
+      });
+
+      expect(error).toBeInstanceOf(AppError);
+      expect(error.category).toBe(ErrorCategory.Database);
+      expect(error.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(error.service).toBe(ErrorService.Local);
+      expect(error.operation).toBe('readDetails');
+      expect(error.context).toEqual({ table: 'postDetails', postId: '123' });
+    });
+
+    it('should preserve cause for debugging', () => {
+      const originalError = new Error('Original error');
+      const error = Err.database(DatabaseErrorCode.WRITE_FAILED, 'Write failed', {
+        service: ErrorService.Local,
+        operation: 'create',
+        cause: originalError,
+      });
+
+      expect(error.cause).toBe(originalError);
+    });
+
+    describe('setTraceId', () => {
+      it('should set traceId after construction', () => {
+        const error = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Query failed', {
+          service: ErrorService.Local,
+          operation: 'read',
+        });
+
+        expect(error.traceId).toBeUndefined();
+
+        error.setTraceId('trace-123');
+
+        expect(error.traceId).toBe('trace-123');
+      });
+
+      it('should return this for chaining', () => {
+        const error = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Query failed', {
+          service: ErrorService.Local,
+          operation: 'read',
+        });
+
+        const result = error.setTraceId('trace-456');
+
+        expect(result).toBe(error);
+        expect(result.traceId).toBe('trace-456');
+      });
+
+      it('should allow inline enrichment pattern', () => {
+        const traceId = 'inline-trace-789';
+        const error = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Query failed', {
+          service: ErrorService.Local,
+          operation: 'read',
+        }).setTraceId(traceId);
+
+        expect(error.traceId).toBe(traceId);
+        expect(error.category).toBe(ErrorCategory.Database);
+      });
+
+      it('should preserve stack trace when enriching', () => {
+        const error = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Query failed', {
+          service: ErrorService.Local,
+          operation: 'read',
+        });
+        const originalStack = error.stack;
+
+        error.setTraceId('trace-preserve-stack');
+
+        expect(error.stack).toBe(originalStack);
+      });
+
+      it('should allow overwriting traceId', () => {
+        const error = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Query failed', {
+          service: ErrorService.Local,
+          operation: 'read',
+          traceId: 'initial-trace',
+        });
+
+        expect(error.traceId).toBe('initial-trace');
+
+        error.setTraceId('updated-trace');
+
+        expect(error.traceId).toBe('updated-trace');
+      });
     });
   });
 });

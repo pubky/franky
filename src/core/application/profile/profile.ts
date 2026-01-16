@@ -2,7 +2,7 @@ import JSZip from 'jszip';
 
 import * as Specs from 'pubky-app-specs';
 import * as Core from '@/core';
-import { HttpMethod, Logger } from '@/libs';
+import { HttpMethod, Err, ClientErrorCode, ErrorService } from '@/libs';
 
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
@@ -33,10 +33,13 @@ export class ProfileApplication {
    * @param params - Parameters containing user's public key and profile data
    */
   static async commitUpdate({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
-    try {
-      const userDetails = await Core.LocalUserService.readDetails({ userId: pubky });
+    const userDetails = await Core.LocalUserService.readDetails({ userId: pubky });
       if (!userDetails) {
-        throw new Error('User profile not found');
+        throw Err.client(ClientErrorCode.NOT_FOUND, 'User profile not found', {
+          service: ErrorService.Local,
+          operation: 'commitUpdate',
+          context: { pubky },
+        });
       }
       // Build complete user object with updated fields
       const { user, meta } = Core.UserNormalizer.to(
@@ -53,48 +56,44 @@ export class ProfileApplication {
       await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
       // Update local database after successful homeserver sync
       await Core.LocalProfileService.updateDetails(user, pubky);
-    } catch (error) {
-      console.error('Failed to update profile', { error, pubky });
-      throw error;
-    }
   }
 
   /**
    * Updates user status in both homeserver and local database.
    */
   static async commitUpdateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
-    try {
-      // Get current user details from local DB
-      const currentUser = await Core.UserDetailsModel.findById(pubky);
-      if (!currentUser) {
-        throw new Error('User profile not found');
-      }
 
-      // Build complete user object with updated status
-      // According to spec, we must send the full profile, not just the status field
-      const { user, meta } = Core.UserNormalizer.to(
-        {
-          name: currentUser.name,
-          bio: currentUser.bio,
-          image: currentUser.image,
-          links: (currentUser.links ?? []).map((link) => ({ title: link.title, url: link.url })),
-          status: status || '',
-        },
-        pubky,
-      );
-
-      // Update homeserver with complete profile
-      await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
-
-      // Update local database after successful homeserver sync
-      await Core.UserDetailsModel.upsert({
-        ...currentUser,
-        status: status || null,
+    // Get current user details from local DB
+    const currentUser = await Core.UserDetailsModel.findById(pubky);
+    if (!currentUser) {
+      throw Err.client(ClientErrorCode.NOT_FOUND, 'User profile not found', {
+        service: ErrorService.Local,
+        operation: 'commitUpdateStatus',
+        context: { pubky },
       });
-    } catch (error) {
-      Logger.error('Failed to update status', { error, pubky, status });
-      throw error;
     }
+
+    // Build complete user object with updated status
+    // According to spec, we must send the full profile, not just the status field
+    const { user, meta } = Core.UserNormalizer.to(
+      {
+        name: currentUser.name,
+        bio: currentUser.bio,
+        image: currentUser.image,
+        links: (currentUser.links ?? []).map((link) => ({ title: link.title, url: link.url })),
+        status: status || '',
+      },
+      pubky,
+    );
+
+    // Update homeserver with complete profile
+    await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
+
+    // Update local database after successful homeserver sync
+    await Core.UserDetailsModel.upsert({
+      ...currentUser,
+      status: status || null,
+    });    
   }
 
   /**
@@ -158,7 +157,11 @@ export class ProfileApplication {
     const dataFolder = zip.folder('data');
 
     if (!dataFolder) {
-      throw new Error("Error creating 'data' folder in zip.");
+      throw Err.client(ClientErrorCode.UNPROCESSABLE, "Error creating 'data' folder in zip.", {
+        service: ErrorService.Local,
+        operation: 'downloadData',
+        context: { pubky },
+      });
     }
 
     const totalFiles = dataList.length;

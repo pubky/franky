@@ -19,31 +19,53 @@ A modern client-side application interacting with multiple remote services (Nexu
 
 The local-first architecture requires errors to distinguish between local (Dexie/IndexedDB) failures and remote service failures. With multiple remote services, a 503 from Nexus must be distinguishable from a 503 from Homegate for logging purposes, even though retry logic treats them identically. TanStack Query integration requires the HTTP status code to be in a predictable location (`context.statusCode`) for retry decisions. Future Sentry integration requires structured properties (`traceId`, `service`, `operation`) for error correlation across the application.
 
+### TL;DR (How to use this system)
+
+- **Always throw `AppError` across layer boundaries** (Service → Application → Controller → UI). Don’t throw raw `Error`/strings.
+- **Create typed errors via `Err.*`** with `{ service, operation, context, cause }`.
+- **HTTP services**: `safeFetch()` → if `!response.ok` throw `httpResponseToError()` → parse with `parseResponseOrThrow()`.
+- **TanStack Query services**: use a QueryClient (`createQueryClient`) so retry uses `error.context.statusCode` (with legacy fallback).
+- **Catching errors**: if it’s already an `AppError`, re-throw it unchanged; only use `toAppError()` to normalize truly unknown errors.
+
+### Implementation status (what is true in code today)
+
+This ADR describes the **intended architecture**, but some observability features are still in progress. As of the current codebase state:
+
+- ✅ **Taxonomy is implemented**: `ErrorCategory`, `ErrorService`, and per-category error codes live in `src/libs/error/`.
+- ✅ **HTTP mapping is implemented**: `safeFetch`, `httpResponseToError`, and `httpStatusCodeToError` are in `src/libs/error/error.http.ts`.
+- ✅ **JSON parsing guard is implemented**: `parseResponseOrThrow` is in `src/libs/http/response.utils.ts`.
+- ✅ **TanStack Query retry integration is implemented**: `createQueryClient` reads `error.context.statusCode` (and falls back to legacy `error.statusCode`) in `src/libs/query-client/query-client.factory.ts`.
+- ✅ **Logging currently happens in `Err.*` factories** (`src/libs/error/error.factories.ts`) via `Logger.error(...)`.
+- ⚠️ **Sentry + traceId inheritance + log de-duplication are NOT implemented yet** (see “Future Work”). Until then, avoid patterns that double-log (e.g., logging in a `catch` and then throwing `Err.*` again).
+
 ### Design Principle: Error Bubbling
 
 ```
-┌───────────────────────────────────────────────────────────────────────────────────────┐
-│                                 ERROR FLOW DIAGRAM                                    │
-├───────────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                       │
-│   THROW HERE                      ENRICH HERE                     HANDLE HERE         │
-│   ──────────                      ───────────                     ───────────         │
-│                                                                                       │
-│  ┌───────────────────┐  throw   ┌───────────────────┐  throw   ┌───────────────────┐ │
-│  │  SERVICE / MODEL  │ ───────► │    APPLICATION    │ ───────► │        UI         │ │
-│  │      LAYER        │ AppError │       LAYER       │ AppError │       LAYER       │ │
-│  └───────────────────┘          └───────────────────┘          └───────────────────┘ │
-│           │                              │                              │             │
-│           │                              │                              │             │
-│   • Wrap all errors              • Log errors                  • Show toast          │
-│   • NO logging                   • Add traceId                 • Map to i18n         │
-│   • Set service/operation        • Coordinate retries          • Redirect on 401     │
-│   • Preserve cause               • Cross-domain handling       • Empty states        │
-│                                                                                       │
-└───────────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                              ERROR FLOW DIAGRAM                                                     │
+├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                                     │
+│      THROW + LOG HERE                         PASS-THROUGH                              HANDLE HERE                 │
+│      ────────────────                         ────────────                              ───────────                 │
+│                                                                                                                     │
+│     ┌─────────────────────┐    throw      ┌─────────────────────┐     throw      ┌─────────────────────┐            │
+│     │   SERVICE / MODEL   │   ────────►   │     APPLICATION     │    ────────►   │         UI          │            │
+│     │       LAYER         │   AppError    │        LAYER        │    AppError    │        LAYER        │            │
+│     └─────────────────────┘               └─────────────────────┘                └─────────────────────┘            │
+│               │                                     │                                      │                        │
+│               │                                     │                                      │                        │
+│               │                                     │                                      │                        │
+│     • Wrap all errors                     • Coordinate retries                   • Show toast                       │
+│     • Create typed AppError (`Err.*`)     • Cross-domain handling                • Map to i18n                      │
+│     • Log once (current: factory)         • Re-throw AppError unchanged          • Redirect on 401/403              │
+│     • Set service/operation               • Re-throw errors                      • Redirect on 401                  │
+│     • Preserve cause                      • Wrap with context                    • Empty states                     │
+│     • (Future) traceId correlation          (Future) de-dup logging                                                 │
+│                                                                                                                     │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Key Principle**: Errors are thrown at the lowest layer where they originate and bubble up unchanged until a handler decides what to do. Services NEVER log; Application layer is the single logging point (TBD).
+**Key Principle**: Errors are created via `Err.*` factories at the lowest layer and bubble up unchanged. **Today, factories also log**; higher layers should generally **not re-wrap** an existing `AppError` with another `Err.*` (that would log again). UI layer handles user feedback and routing.
 
 ---
 
@@ -107,6 +129,7 @@ enum ErrorService {
   Exchangerate = 'exchangerate',
   Chatwoot     = 'chatwoot',
   Local        = 'local',
+  PubkyAppSpecs = 'pubky-app-specs',
 }
 ```
 
@@ -117,20 +140,30 @@ enum ErrorService {
 ```typescript
 // src/libs/error/error.ts
 class AppError extends Error {
-  // === DECISION PROPERTIES ===
-  readonly category: ErrorCategory;        // Retry logic, routing
-  readonly code: ErrorCode;                // Precise UI handling
-
-  // === CONTEXT PROPERTIES ===
-  readonly service: ErrorService;          // Logging, Sentry tags
-  readonly operation: string;              // Code path tracing
+  // === IMMUTABLE CLASSIFICATION (set at creation, never changes) ===
+  readonly category?: ErrorCategory;        // Retry logic, routing (new system)
+  readonly code?: ErrorCode;                // Precise UI handling (new system)
+  readonly service?: ErrorService;          // Logging tags (new system)
+  readonly operation?: string;              // Code path tracing (new system)
   readonly context?: Record<string, unknown>; // statusCode, endpoint, table, retryAfter
   readonly cause?: unknown;                // Original error for debugging
-  readonly traceId?: string;               // Sentry correlation ID
+
+  // === MUTABLE OBSERVABILITY ===
+  traceId?: string;                        // Correlation ID (planned for Sentry)
+
+  // === LEGACY (deprecated, removed in Phase 2) ===
+  readonly type?: AppErrorType;
+  readonly statusCode?: number;
+  readonly details?: Record<string, unknown>;
+
+  // === METHODS ===
+  setTraceId(id: string): this;            // Set correlation ID (rarely needed manually)
 }
 ```
 
-**Constructor does NOT log** — logging is the Application layer's responsibility.
+**Constructor does NOT log** — logging happens in the `Err.*` factories
+
+**Note on `setTraceId`**: Automatic `traceId` generation/inheritance is **planned** but not implemented yet. Use `setTraceId` only when you already have a correlation ID from outside (e.g., a request context), and you intentionally want to attach it.
 
 ---
 
@@ -160,7 +193,7 @@ export class HomegateService {
     }
 
     // 3. Parse JSON with error handling
-    return await parseHomegateResponse<TRawApiResponse>(response, 'verifySmsCode', url);
+    return await parseResponseOrThrow<TRawApiResponse>(response, ErrorService.Homegate, 'verifySmsCode', url);
   }
 }
 ```
@@ -177,7 +210,7 @@ export class NexusPostService {
     const url = postApi.view({ author_id, post_id });
     
     // queryNexus handles: safeFetch → httpResponseToError → parseResponseOrThrow → retry
-    return await queryNexus<NexusPost>(url);
+    return await queryNexus<NexusPost>({ url });
   }
 }
 ```
@@ -199,7 +232,7 @@ export class LocalPostService {
         ]);
       });
     } catch (error) {
-      // NO Logger.error here
+      // Logging happens automatically in Err.database()
       throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to save post', {
         service: ErrorService.Local,
         operation: 'create',
@@ -291,17 +324,89 @@ try {
 
 ### 5. Sentry Integration Architecture
 
-The error structure is designed for future Sentry integration without requiring changes to existing error creation code. Sentry capture can be added either at the factory level in `error.factories.ts` (centralized) or at the Application layer when logging (distributed).
+The error structure is designed for future Sentry integration. Today, **local logging is implemented** (via `Logger.error` inside `Err.*` factories), but Sentry capture, traceId generation/inheritance, and log de-duplication are still planned work.
+
+**Logging Ownership (current)**: Prefer logging via `Err.*` only. Avoid doing both:
+- `Logger.error(...)` inside a `catch`, and then
+- `throw Err.*(...)` for the same failure
+
+Until de-duplication exists, this produces duplicate logs.
 
 All `AppError` properties map naturally to Sentry features: `traceId` enables correlation across services for a single user operation, `service` and `category` become tags for dashboard filtering and alerting, `code` enables precise issue grouping, `operation` provides breadcrumb context for debugging, and `cause` preserves the full error chain for root cause analysis. The `context` object supplies structured data including `statusCode`, `endpoint`, and `retryAfter`.
 
 The recommended Sentry fingerprint is `[service, category, code]`, which groups errors by where they occurred and what type of failure while separating different error codes within the same category.
+
+#### 5.1 Planned implementation challenges & solutions (not implemented yet)
+
+##### Challenge 1: Double logging on re-throw / re-wrap
+
+When errors are caught and re-thrown with additional context (wrapping), each `Err.*` call would log again, causing duplicate entries in both local logs and Sentry.
+
+**Solution (planned)**: Add a `logged` flag to `AppError` (or similar) that tracks whether the error (or its cause chain) has already been logged. The factory checks this flag before logging / reporting.
+
+##### Challenge 2: traceId correlation across error chain
+
+If `traceId` is generated per-error in the factory, related errors in the same user operation get different trace IDs, breaking correlation in Sentry.
+
+**Solution (planned)**: Inherit `traceId` from the `cause` error when wrapping. Only generate a new `traceId` if none exists in the chain.
+
+##### Challenge 3: expected errors creating Sentry noise
+
+Some errors are expected and shouldn't create Sentry alerts: 404 for checking existence, user cancellations (AbortError), validation errors from user input.
+
+**Solution (planned)**: Filter errors before sending to Sentry using a `shouldReportToSentry` predicate.
+
+#### 5.2 Proposed factory behavior (example, not current code)
+
+Example pseudo-code for a `createAppError` factory that would implement all three solutions:
+
+```typescript
+function createAppError(category, code, message, params): AppError {
+  const cause = params.cause;
+  
+  // Inherit traceId from cause chain, or generate new one
+  const traceId = (isAppError(cause) && cause.traceId)
+    ? cause.traceId
+    : generateTraceId();
+
+  const error = new AppError({ category, code, message, ...params, traceId });
+
+  // Only log once per error chain
+  if (!isAppError(cause) || !cause.logged) {
+    Logger.error(error);
+    if (shouldReportToSentry(error)) {
+      Sentry.captureException(error);
+    }
+    error.markLogged();
+  }
+
+  return error;
+}
+```
 
 ---
 
 ### 6. Anti-Patterns to Avoid
 
 Services must never throw raw `Error` objects—always use `Err.*` factories with proper category, code, service, and operation. Network requests must use `safeFetch` instead of raw `fetch()` to ensure network errors are properly typed. Error handling logic should check `error.category` or `error.code` rather than parsing error messages with string matching. Every error must include both `service` and `operation` for proper tracing. Errors should never be swallowed silently—either handle them explicitly or re-throw to let them bubble up.
+
+**Exception**: Control-flow sentinel errors (e.g., `AUTH_FLOW_CANCELED_ERROR_NAME`) may use plain `Error` because they are always caught in the same layer and never bubble across controller boundaries. Any error that crosses into the Application or UI layer must be an `AppError`.
+
+---
+
+### 7. Controller Layer Error Handling
+
+All calls from UI components to controllers **must** be wrapped in try/catch blocks. Controllers are the boundary between the UI and Application layers, and any error that escapes a controller call must be an `AppError`.
+
+Since logging (and future Sentry reporting) happen automatically in the `Err.*` factories, the UI layer focuses solely on **user feedback and routing**.
+
+**Key Rules:**
+
+1. **Every controller call in UI must have try/catch** — No exceptions
+2. **Use `toAppError()` for unexpected errors** — Ensures consistent error shape
+3. **Don't log manually** — `Err.*` factories handle logging automatically (and will be the Sentry integration point)
+4. **Handle by category first, then code** — Category determines routing; code enables precise UI
+5. **Never swallow errors silently** — Either handle explicitly or show user feedback
 
 ---
 
@@ -312,8 +417,7 @@ Services must never throw raw `Error` objects—always use `Err.*` factories wit
 - **Single source of truth**: All errors are `AppError` with consistent structure
 - **Compile-time type safety**: Invalid category-code combinations fail at build time
 - **Deterministic retry logic**: TanStack Query decisions based on `context.statusCode` and `code`
-- **Sentry-ready**: `traceId`, `service`, `operation` enable rich error correlation
-- **No double-logging**: Constructor removed logging; Application layer is single point
+- **Centralized error shape**: Errors carry `service` + `operation` + `context` for debugging and future observability
 - **Preserved stack traces**: `AppError extends Error` with proper prototype chain
 
 ### Negative ❌
@@ -324,13 +428,75 @@ Services must never throw raw `Error` objects—always use `Err.*` factories wit
 ### Neutral ⚠️
 
 - **QueryClient complexity**: Per-service retry configuration adds config overhead
+- **Factory coupling**: Logging/Sentry logic lives in error creation, not handling
+
+---
+
+## Future Work
+
+### 0. Observability Phase 2 (Sentry + traceId + de-dup logging)
+
+**Priority:** Medium
+
+The ADR describes an end-state where:
+- `traceId` is generated once and inherited across error wrapping
+- errors are logged/reported **once per error chain**
+- expected errors are filtered from Sentry
+
+This is not implemented yet (see `src/libs/error/error.factories.ts`, which currently logs unconditionally).
+
+### 1. Cancellation as Non-Error Flow
+
+**Priority:** Medium (implement if cancellation noise becomes a problem)
+
+Currently, `safeFetch` converts `AbortError` into an `AppError` with `TimeoutErrorCode.REQUEST_ABORTED`. This:
+- Triggers error handling paths (TanStack Query `onError`, error boundaries)
+- May cause retries (Timeout category is retryable)
+- Will create Sentry noise when integrated
+
+**Solution:** Normalize cancellations as a control-flow signal, not an error. Filter them before logging/Sentry.
+
+**Trigger:** Cancelled requests appearing in logs or causing unwanted retries.
+
+### 2. Typed `ErrorContext`
+
+**Priority:** Low
+
+Currently `context` is `Record<string, unknown>`. We identified 52 unique fields used across the codebase. Options:
+
+1. Type only infrastructure fields (~15 fields: `statusCode`, `endpoint`, `table`, etc.)
+2. Type all 52 fields (comprehensive but verbose)
+3. Keep untyped, rely on discipline
+
+**Current assessment:** Not blocking anything. Revisit if typos in context keys cause bugs.
+
+### 3. Expanded Taxonomy for Local-First
+
+**Priority:** Low
+
+Current categories map well to HTTP errors. Local-first apps may need:
+- `StorageQuota` / `QuotaExceeded` — browser storage limits
+- `Serialization` / `ParseError` — data corruption
+- `Conflict` as semantic category — not just HTTP 409, but "local state diverged"
+
+**Trigger:** When you hit local-first failure modes that don't fit current categories.
+
+### 4. String-Based Error Codes
+
+**Priority:** Low
+
+Current: `NetworkErrorCode.OFFLINE` → enum value `'OFFLINE'`
+Suggested: Global prefixed strings like `'NETWORK_OFFLINE'`
+
+**Benefits:** Log readability, no imports needed, cross-package compatibility.
+
+**Current assessment:** Enums already use string values internally. Not blocking.
 
 ---
 
 ## Related Decisions
 
 - **ADR-0004**: Layering and dependency rules (Services → Application → Controllers)
-- **ADR-0013**: Error Handling Phase 1 (superseded by this comprehensive ADR)
 
 ---
 

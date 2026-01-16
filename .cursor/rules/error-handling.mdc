@@ -41,7 +41,9 @@ throw 'Something went wrong';
 ```typescript
 // Use Err.* factories
 // Include service, operation, context, cause
-// NO logging - let Application layer decide
+// NOTE (current implementation): Err.* factories log automatically.
+// Avoid logging the same failure again in the calling layer unless you are intentionally adding *new* context
+// (and understand this may duplicate logs until Phase 2 de-dup is implemented).
 
 class LocalPostService {
   static async create({ compositePostId, post }: TLocalSavePostParams) {
@@ -82,7 +84,7 @@ class HomegateService {
       throw httpResponseToError(response, ErrorService.Homegate, 'verifySmsCode', url);
     }
 
-    return await parseResponseOrThrow<TResult>(response, ErrorService.Homegate, 'verifySmsCode');
+    return await parseResponseOrThrow<TResult>(response, ErrorService.Homegate, 'verifySmsCode', url);
   }
 }
 ```
@@ -90,21 +92,22 @@ class HomegateService {
 ### Application Layer (`src/core/application/`)
 
 ```typescript
-// Log errors here (single logging point)
 // Use decision helpers: isRetryable(), requiresLogin(), isNotFound()
 // Re-throw or handle based on category/code
+// NOTE (current implementation): logging happens in Err.* factories, so Application code should usually *not* log again.
 
 class PostApplication {
   static async create(post: Post) {
     try {
       await LocalPostService.create(post);
     } catch (error) {
-      Logger.error('Failed to create post', { error, postId: post.id });
-      
-      if (error instanceof AppError && isNotFound(error)) {
+      // Prefer the AppError contract, normalize only if it's truly unknown.
+      const appError = toAppError(error, ErrorService.Local, 'create');
+
+      if (isNotFound(appError)) {
         // Handle specific case
       }
-      throw error; // Let it bubble to UI
+      throw appError; // Let it bubble to UI
     }
   }
 }
@@ -150,12 +153,20 @@ toAppError(error, service, operation)  // Wrap unknown errors
 getErrorMessage(error)                  // Extract user message
 ```
 
+## Re-throw Discipline (avoid double logging)
+
+Because `Err.*` factories **log automatically today**, follow these rules when catching:
+
+- **If you caught an `AppError`**: re-throw it unchanged (`throw error`). Do **not** call `Err.*` again for the same failure.
+- **If you caught an unknown error**: normalize once with `toAppError(error, service, operation)` and throw that.
+- **If you truly need additional context**: prefer adding it at the origin (service/model) where the error is created, not by re-wrapping higher up.
+
 ## Logging Discipline
 
-**Log once, in the Application layer:**
+**Log once (current implementation: in `Err.*` factories):**
 
 ```typescript
-// ❌ Bad: Logging in services
+// ❌ Bad: Logging in catch + throwing Err.* (double logs today)
 class LocalPostService {
   static async create(post) {
     try { ... } catch (error) {
@@ -165,12 +176,12 @@ class LocalPostService {
   }
 }
 
-// ✅ Good: Log in Application layer only
+// ✅ Good: Just throw Err.* (factories log automatically)
 class PostApplication {
   static async create(post) {
     try { ... } catch (error) {
-      Logger.error('Failed to create post', { error, postId: post.id });
-      throw error;
+      // Pass-through AppError unchanged; normalize unknowns once.
+      throw toAppError(error, ErrorService.Local, 'createPost');
     }
   }
 }
@@ -190,7 +201,7 @@ When handling errors:
 
 - [ ] Using `Err.*` factories (not raw Error)?
 - [ ] Including `service`, `operation`, `context`, `cause`?
-- [ ] NO logging in services (only in Application layer)?
+- [ ] Avoiding duplicate logs (don’t `Logger.error` and then throw `Err.*` for the same failure)?
 - [ ] Using `safeFetch` for HTTP requests?
 - [ ] Checking `category`/`code` instead of parsing messages?
 - [ ] Using decision helpers (`isRetryable`, `requiresLogin`, `isNotFound`)?
