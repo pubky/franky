@@ -143,7 +143,7 @@ describe('useUserProfile', () => {
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
-      expect(result.current.profile?.publicKey).toBe('pk:test-user-id');
+      expect(result.current.profile?.publicKey).toBe('pubkytest-user-id');
     });
 
     it('handles empty userId', () => {

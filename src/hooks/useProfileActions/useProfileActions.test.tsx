@@ -47,7 +47,7 @@ vi.mock('@/hooks', async (importOriginal) => {
 
 describe('useProfileActions', () => {
   const defaultProps = {
-    publicKey: 'pk:test-user-id',
+    publicKey: 'pubkytest-user-id',
     link: 'https://example.com/profile/test-user-id',
   };
 
@@ -79,13 +79,13 @@ describe('useProfileActions', () => {
 
       result.current.onCopyPublicKey();
 
-      expect(mockCopyToClipboard).toHaveBeenCalledWith('pk:test-user-id');
+      expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkytest-user-id');
       expect(mockCopyToClipboard).toHaveBeenCalledTimes(1);
     });
 
     it('uses provided public key from props', () => {
       const customProps = {
-        publicKey: 'pk:custom-user',
+        publicKey: 'pubkycustom-user',
         link: 'https://example.com/profile/custom-user',
       };
 
@@ -93,7 +93,7 @@ describe('useProfileActions', () => {
 
       result.current.onCopyPublicKey();
 
-      expect(mockCopyToClipboard).toHaveBeenCalledWith('pk:custom-user');
+      expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkycustom-user');
     });
 
     it('handles empty public key', () => {
@@ -122,7 +122,7 @@ describe('useProfileActions', () => {
 
     it('uses provided link from props', () => {
       const customProps = {
-        publicKey: 'pk:custom-user',
+        publicKey: 'pubkycustom-user',
         link: 'https://custom-domain.com/user/custom-user',
       };
 
@@ -135,7 +135,7 @@ describe('useProfileActions', () => {
 
     it('handles empty link', () => {
       const emptyProps = {
-        publicKey: 'pk:test',
+        publicKey: 'pubkytest',
         link: '',
       };
 
@@ -219,7 +219,7 @@ describe('useProfileActions', () => {
     it('calls ProfileController.commitUpdateStatus with status', async () => {
       const mockUpdateStatus = vi.spyOn(Core.ProfileController, 'commitUpdateStatus').mockResolvedValue(undefined);
       const mockAuthStore = {
-        currentUserPubky: 'pk:test-user',
+        currentUserPubky: 'test-user',
         setCurrentUserPubky: vi.fn(),
         setAuthenticated: vi.fn(),
       };
@@ -229,7 +229,7 @@ describe('useProfileActions', () => {
 
       await result.current.onStatusChange('available');
 
-      expect(mockUpdateStatus).toHaveBeenCalledWith({ pubky: 'pk:test-user', status: 'available' });
+      expect(mockUpdateStatus).toHaveBeenCalledWith({ pubky: 'test-user', status: 'available' });
       expect(mockUpdateStatus).toHaveBeenCalledTimes(1);
 
       mockUpdateStatus.mockRestore();
@@ -261,7 +261,7 @@ describe('useProfileActions', () => {
 
       // Rerender with different publicKey
       rerender({
-        publicKey: 'pk:new-user',
+        publicKey: 'pubkynew-user',
         link: defaultProps.link,
       });
 
@@ -269,7 +269,7 @@ describe('useProfileActions', () => {
 
       // Call the new handler to verify it uses the new publicKey
       result.current.onCopyPublicKey();
-      expect(mockCopyToClipboard).toHaveBeenCalledWith('pk:new-user');
+      expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkynew-user');
     });
 
     it('updates handlers when link changes', () => {
@@ -302,7 +302,7 @@ describe('useProfileActions', () => {
 
       // Rerender with different props
       rerender({
-        publicKey: 'pk:new-user',
+        publicKey: 'pubkynew-user',
         link: 'https://new-link.com',
       });
 
@@ -321,7 +321,7 @@ describe('useProfileActions', () => {
       result.current.onCopyPublicKey();
 
       expect(mockCopyToClipboard).toHaveBeenCalledTimes(3);
-      expect(mockCopyToClipboard).toHaveBeenCalledWith('pk:test-user-id');
+      expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkytest-user-id');
     });
 
     it('handles multiple onCopyLink calls', () => {

@@ -11,13 +11,13 @@ const mockPublicKey = {
 };
 const mockKeypair = {
   publicKey: mockPublicKey,
-  secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
+  secret: vi.fn(() => new Uint8Array(32).fill(1)),
   createRecoveryFile: mockCreateRecoveryFile,
 };
 
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
-    fromSecretKey: vi.fn(() => mockKeypair),
+    fromSecret: vi.fn(() => mockKeypair),
     fromRecoveryFile: vi.fn(() => mockKeypair),
   },
 }));

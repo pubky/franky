@@ -16,7 +16,7 @@ import {
   AUTOCOMPLETE_TAG_LIMIT,
   AUTOCOMPLETE_USER_LIMIT,
   MIN_USER_ID_SEARCH_LENGTH,
-  USER_ID_PREFIX,
+  USER_ID_PREFIXES,
 } from './useSearchAutocomplete.constants';
 
 export function useSearchAutocomplete({
@@ -63,8 +63,9 @@ export function useSearchAutocomplete({
 
       try {
         // Determine if this is a user ID search
-        const isUserIdSearch = searchQuery.startsWith(USER_ID_PREFIX);
-        const userIdPrefix = isUserIdSearch ? searchQuery.slice(USER_ID_PREFIX.length) : '';
+        const matchedPrefix = USER_ID_PREFIXES.find((prefix) => searchQuery.startsWith(prefix));
+        const isUserIdSearch = Boolean(matchedPrefix);
+        const userIdPrefix = matchedPrefix ? searchQuery.slice(matchedPrefix.length) : '';
 
         // Check if user ID search has a minimum length
         const shouldSearchUserId = isUserIdSearch && userIdPrefix.length >= MIN_USER_ID_SEARCH_LENGTH;

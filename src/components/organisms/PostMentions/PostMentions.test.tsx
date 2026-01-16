@@ -5,6 +5,8 @@ import { PostMentions } from './PostMentions';
 // Valid test pubky key (52 lowercase alphanumeric characters)
 const validPubkyKey = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
 
+const mockUseUserProfile = vi.fn();
+
 // Mock @/atoms
 vi.mock('@/atoms', () => ({
   Link: ({
@@ -25,34 +27,19 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock @/core
-const mockGetDetails = vi.fn();
-vi.mock('@/core', () => ({
-  UserController: {
-    getDetails: (params: { userId: string }) => mockGetDetails(params),
-  },
-}));
-
-// Mock dexie-react-hooks
-vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: (queryFn: () => Promise<unknown>, deps: unknown[], defaultValue: unknown) => {
-    // Execute the query function to trigger it, but return a controlled value
-    queryFn();
-    // Return the mock value based on what mockGetDetails returns
-    const result = mockGetDetails.mock.results[mockGetDetails.mock.results.length - 1];
-    return result?.value ?? defaultValue;
-  },
+vi.mock('@/hooks', () => ({
+  useUserProfile: (userId: string) => mockUseUserProfile(userId),
 }));
 
 describe('PostMentions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetDetails.mockReturnValue(null);
+    mockUseUserProfile.mockReturnValue({ profile: null, isLoading: false });
   });
 
   describe('Basic rendering', () => {
     it('renders mention with username when user details are available', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
 
@@ -60,7 +47,7 @@ describe('PostMentions', () => {
     });
 
     it('renders as a link with correct href', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
 
@@ -69,7 +56,7 @@ describe('PostMentions', () => {
     });
 
     it('renders with empty href when href is not provided', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(<PostMentions>{`pk:${validPubkyKey}`}</PostMentions>);
 
@@ -78,7 +65,7 @@ describe('PostMentions', () => {
     });
 
     it('applies custom className', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(
         <PostMentions href={`/profile/${validPubkyKey}`} className="custom-class">
@@ -91,7 +78,7 @@ describe('PostMentions', () => {
     });
 
     it('applies default text-base styling', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
 
@@ -122,7 +109,7 @@ describe('PostMentions', () => {
 
   describe('Click behavior', () => {
     it('stops event propagation on click', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
       const parentClickHandler = vi.fn();
 
       render(
@@ -139,25 +126,25 @@ describe('PostMentions', () => {
   });
 
   describe('User lookup', () => {
-    it('calls UserController.getDetails with extracted userId', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+    it('calls useUserProfile with extracted userId', () => {
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
 
-      expect(mockGetDetails).toHaveBeenCalledWith({ userId: validPubkyKey });
+      expect(mockUseUserProfile).toHaveBeenCalledWith(validPubkyKey);
     });
 
     it('handles user with pubky prefix', () => {
-      mockGetDetails.mockReturnValue({ name: 'PubkyUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'PubkyUser' }, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pubky${validPubkyKey}`}</PostMentions>);
 
       expect(screen.getByText('@PubkyUser')).toBeInTheDocument();
-      expect(mockGetDetails).toHaveBeenCalledWith({ userId: validPubkyKey });
+      expect(mockUseUserProfile).toHaveBeenCalledWith(validPubkyKey);
     });
 
     it('displays username with @ prefix when available', () => {
-      mockGetDetails.mockReturnValue({ name: 'Alice' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'Alice' }, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
 
@@ -167,7 +154,7 @@ describe('PostMentions', () => {
 
   describe('Props forwarding', () => {
     it('forwards additional props to the Link component', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       render(
         <PostMentions href={`/profile/${validPubkyKey}`} data-custom="value">
@@ -180,7 +167,7 @@ describe('PostMentions', () => {
     });
 
     it('does not forward node and ref props', () => {
-      mockGetDetails.mockReturnValue({ name: 'TestUser' });
+      mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
       const { container } = render(
         <PostMentions href={`/profile/${validPubkyKey}`} data-type="mention">
@@ -193,16 +180,17 @@ describe('PostMentions', () => {
   });
 
   describe('Truncation behavior', () => {
-    it('shows truncated key with ellipsis when no username', () => {
-      mockGetDetails.mockReturnValue(null);
+    it('shows truncated pubky with ellipsis when no username', () => {
+      mockUseUserProfile.mockReturnValue({ profile: null, isLoading: false });
 
       render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
 
       const link = screen.getByTestId('link');
       const text = link.textContent || '';
-      // Should contain ellipsis since the full pk:key string is longer than 20 chars
+      // Should contain ellipsis since the full key string is longer than 20 chars
+      expect(text.startsWith('pubky')).toBe(true);
       expect(text).toContain('...');
-      expect(text.length).toBeLessThanOrEqual(20);
+      expect(text.length).toBeLessThanOrEqual(28);
     });
   });
 });
@@ -210,11 +198,11 @@ describe('PostMentions', () => {
 describe('PostMentions - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetDetails.mockReturnValue(null);
+    mockUseUserProfile.mockReturnValue({ profile: null, isLoading: false });
   });
 
   it('matches snapshot for mention with username', () => {
-    mockGetDetails.mockReturnValue({ name: 'TestUser' });
+    mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>,
@@ -223,7 +211,7 @@ describe('PostMentions - Snapshots', () => {
   });
 
   it('matches snapshot for mention without username (truncated key)', () => {
-    mockGetDetails.mockReturnValue(null);
+    mockUseUserProfile.mockReturnValue({ profile: null, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>,
@@ -232,7 +220,7 @@ describe('PostMentions - Snapshots', () => {
   });
 
   it('matches snapshot with pubky prefix', () => {
-    mockGetDetails.mockReturnValue({ name: 'PubkyUser' });
+    mockUseUserProfile.mockReturnValue({ profile: { name: 'PubkyUser' }, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`}>{`pubky${validPubkyKey}`}</PostMentions>,
@@ -241,7 +229,7 @@ describe('PostMentions - Snapshots', () => {
   });
 
   it('matches snapshot with custom className', () => {
-    mockGetDetails.mockReturnValue({ name: 'StyledUser' });
+    mockUseUserProfile.mockReturnValue({ profile: { name: 'StyledUser' }, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`} className="custom-styling">
@@ -257,7 +245,7 @@ describe('PostMentions - Snapshots', () => {
   });
 
   it('matches snapshot with long username', () => {
-    mockGetDetails.mockReturnValue({ name: 'VeryLongUsernameForTesting' });
+    mockUseUserProfile.mockReturnValue({ profile: { name: 'VeryLongUsernameForTesting' }, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>,
@@ -266,7 +254,7 @@ describe('PostMentions - Snapshots', () => {
   });
 
   it('matches snapshot with special characters in username', () => {
-    mockGetDetails.mockReturnValue({ name: 'User_123' });
+    mockUseUserProfile.mockReturnValue({ profile: { name: 'User_123' }, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>,
@@ -275,7 +263,7 @@ describe('PostMentions - Snapshots', () => {
   });
 
   it('matches snapshot with additional props', () => {
-    mockGetDetails.mockReturnValue({ name: 'TestUser' });
+    mockUseUserProfile.mockReturnValue({ profile: { name: 'TestUser' }, isLoading: false });
 
     const { container } = render(
       <PostMentions href={`/profile/${validPubkyKey}`} data-type="mention" aria-label="User mention">

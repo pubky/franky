@@ -2,7 +2,7 @@
 
 exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snapshot with full user data 1`] = `
 <div
-  aria-label="User John Doe (pk:a...f456)"
+  aria-label="User John Doe (abc1...f456)"
   class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
   data-cy="search-user-suggestion-pk:abc123def456"
   data-testid="search-user-suggestion-pk:abc123def456"
@@ -27,7 +27,7 @@ exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snaps
       class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
       data-testid="user-pubky"
     >
-      pk:a...f456
+      abc1...f456
     </span>
   </div>
 </div>
@@ -35,7 +35,7 @@ exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snaps
 
 exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snapshot without avatar 1`] = `
 <div
-  aria-label="User Jane Doe (pk:x...z789)"
+  aria-label="User Jane Doe (xyz789)"
   class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-secondary"
   data-cy="search-user-suggestion-pk:xyz789"
   data-testid="search-user-suggestion-pk:xyz789"
@@ -60,7 +60,7 @@ exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snaps
       class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
       data-testid="user-pubky"
     >
-      pk:x...z789
+      xyz789
     </span>
   </div>
 </div>

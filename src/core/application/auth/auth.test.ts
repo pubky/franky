@@ -15,7 +15,7 @@ describe('AuthApplication', () => {
     const createParams = (): Core.THomeserverSignUpParams => ({
       keypair: {
         publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
-        secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
+        secret: vi.fn(() => new Uint8Array([1, 2, 3])),
       } as unknown as Keypair,
       signupToken: 'test-signup-token',
     });
@@ -46,7 +46,7 @@ describe('AuthApplication', () => {
     const createParams = (): Core.THomeserverAuthenticateParams => ({
       keypair: {
         publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
-        secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
+        secret: vi.fn(() => new Uint8Array([1, 2, 3])),
       } as unknown as Keypair,
       secretKey: 'test-secret-key',
     });

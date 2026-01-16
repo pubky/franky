@@ -11,10 +11,10 @@ export const CreateProfileHeader = () => {
   const pubky = authStore.selectCurrentUserPubky();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
-  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
+  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10, includePrefix: true });
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(pubky);
+    copyToClipboard(Libs.withPubkyPrefix(pubky));
   };
 
   return (

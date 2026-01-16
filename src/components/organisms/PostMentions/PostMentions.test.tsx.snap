@@ -18,7 +18,7 @@ exports[`PostMentions - Snapshots > matches snapshot for mention without usernam
   data-testid="link"
   href="/profile/o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy"
 >
-  pk:o1gg96...5a91j7dy
+  pubkyo1gg96ewuo...or5a91j7dy
 </a>
 `;
 

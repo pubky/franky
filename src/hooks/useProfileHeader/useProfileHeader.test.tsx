@@ -93,7 +93,7 @@ describe('useProfileHeader', () => {
       mockProfile = {
         name: 'Test User',
         bio: 'Test bio',
-        publicKey: 'pk:test-user-id',
+        publicKey: 'pubkytest-user-id',
         emoji: '🌴',
         status: 'Active',
         avatarUrl: 'https://example.com/avatar/test-user-id',
@@ -139,7 +139,7 @@ describe('useProfileHeader', () => {
       mockProfile = {
         name: 'Test User',
         bio: 'Test bio',
-        publicKey: 'pk:test-user-id',
+        publicKey: 'pubkytest-user-id',
         emoji: '🌴',
         status: 'Active',
         avatarUrl: undefined,
@@ -151,7 +151,7 @@ describe('useProfileHeader', () => {
       expect(result.current.profile?.name).toBe('Test User');
       expect(result.current.profile?.bio).toBe('Test bio');
       expect(result.current.profile?.status).toBe('Active');
-      expect(result.current.profile?.publicKey).toBe('pk:test-user-id');
+      expect(result.current.profile?.publicKey).toBe('pubkytest-user-id');
       expect(result.current.profile?.link).toBe('https://example.com/profile/test-user-id');
     });
   });
@@ -232,7 +232,7 @@ describe('useProfileHeader', () => {
       mockProfile = {
         name: 'Test User',
         bio: 'Test bio',
-        publicKey: 'pk:test-user-id',
+        publicKey: 'pubkytest-user-id',
         emoji: '🌴',
         status: 'Active',
         avatarUrl: undefined,
@@ -292,7 +292,7 @@ describe('useProfileHeader', () => {
       mockProfile = {
         name: 'Test User',
         bio: 'Test bio',
-        publicKey: 'pk:test-user-id',
+        publicKey: 'pubkytest-user-id',
         emoji: '🌴',
         status: 'Active',
         avatarUrl: undefined,
@@ -327,7 +327,7 @@ describe('useProfileHeader', () => {
       mockProfile = {
         name: 'Test User',
         bio: 'Test bio',
-        publicKey: 'pk:test-user-id',
+        publicKey: 'pubkytest-user-id',
         emoji: '🌴',
         status: 'Active',
         avatarUrl: 'https://example.com/avatar/test-user-id',
@@ -361,7 +361,7 @@ describe('useProfileHeader', () => {
       const profile: UserProfile = {
         name: 'Test',
         bio: 'Bio',
-        publicKey: 'pk:test',
+        publicKey: 'pubkytest',
         emoji: '🌴',
         status: 'Active',
         avatarUrl: undefined,

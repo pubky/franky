@@ -19,6 +19,8 @@ export interface FormatPublicKeyProps {
   key: string;
   /** The length to truncate to */
   length: number;
+  /** Whether to include the pubky prefix in the formatted output */
+  includePrefix?: boolean;
 }
 
 // =============================================================================

@@ -23,7 +23,7 @@ export class AuthController {
     const { session } = result;
     const initialState = {
       session,
-      currentUserPubky: Libs.Identity.pubkyFromSession({ session }),
+      currentUserPubky: Libs.Identity.z32FromSession({ session }),
       hasProfile: authStore.hasProfile,
     };
     authStore.init(initialState);
@@ -69,7 +69,7 @@ export class AuthController {
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
     this.cancelActiveAuthFlow();
-    const pubky = Libs.Identity.pubkyFromSession({ session });
+    const pubky = Libs.Identity.z32FromSession({ session });
     const authStore = Core.useAuthStore.getState();
     const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
     if (isSignedUp) {
@@ -93,7 +93,7 @@ export class AuthController {
     const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };
+    const initialState = { session, currentUserPubky: Libs.Identity.z32FromSession({ session }), hasProfile: false };
     authStore.init(initialState);
   }
 

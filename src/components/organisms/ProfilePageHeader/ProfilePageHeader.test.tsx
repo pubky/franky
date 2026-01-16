@@ -120,14 +120,14 @@ describe('ProfilePageHeader', () => {
     render(<ProfilePageHeader {...mockProps} />);
 
     // formatPublicKey with length 12: first 6 + ... + last 6
-    expect(screen.getByText(/1QX7GK\.\.\.567890/)).toBeInTheDocument();
+    expect(screen.getByText(/pubky1QX7GK\.\.\.567890/)).toBeInTheDocument();
   });
 
   it('renders all action buttons', () => {
     render(<ProfilePageHeader {...mockProps} />);
 
     expect(screen.getByText('Edit')).toBeInTheDocument();
-    expect(screen.getByText(/1QX7GK\.\.\.567890/)).toBeInTheDocument();
+    expect(screen.getByText(/pubky1QX7GK\.\.\.567890/)).toBeInTheDocument();
     expect(screen.getByText('Link')).toBeInTheDocument();
     expect(screen.getByText('Sign out')).toBeInTheDocument();
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
@@ -150,7 +150,7 @@ describe('ProfilePageHeader', () => {
     render(<ProfilePageHeader {...props} />);
 
     // Find button containing the formatted public key
-    const publicKeyButton = screen.getByText(/1QX7GK/).closest('button');
+    const publicKeyButton = screen.getByText(/pubky1QX7GK/).closest('button');
     fireEvent.click(publicKeyButton!);
 
     expect(onCopyPublicKey).toHaveBeenCalledTimes(1);

@@ -59,7 +59,7 @@ export class ProfileController {
   static generateSecrets() {
     const secrets = Libs.Identity.generateSecrets();
     Core.useOnboardingStore.getState().setSecrets(secrets);
-    Core.useAuthStore.getState().setCurrentUserPubky(Libs.Identity.pubkyFromSecret(secrets.secretKey));
+    Core.useAuthStore.getState().setCurrentUserPubky(Libs.Identity.z32FromSecret(secrets.secretKey));
   }
 
   /**

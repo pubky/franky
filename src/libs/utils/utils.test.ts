@@ -120,16 +120,22 @@ describe('Utils', () => {
       expect(result).toBe('abcd...7890');
     });
 
-    it('should return the original key if shorter than or equal to length', () => {
+    it('should return the key if shorter than or equal to length', () => {
       const shortKey = 'short';
       const result = formatPublicKey({ key: shortKey, length: 12 });
       expect(result).toBe('short');
     });
 
-    it('should return the original key if equal to length', () => {
+    it('should return the key if equal to length', () => {
       const exactKey = 'exactlength1';
       const result = formatPublicKey({ key: exactKey, length: 12 });
       expect(result).toBe('exactlength1');
+    });
+
+    it('should include the pubky prefix when requested', () => {
+      const longKey = 'abcdefghijklmnopqrstuvwxyz1234567890';
+      const result = formatPublicKey({ key: longKey, length: 12, includePrefix: true });
+      expect(result).toBe('pubkyabcdef...567890');
     });
 
     it('should handle empty string', () => {
@@ -146,15 +152,14 @@ describe('Utils', () => {
     it('should handle odd length parameter', () => {
       const key = 'abcdefghijklmno';
       const result = formatPublicKey({ key, length: 5 });
-      expect(result).toBe('ab...no');
+      expect(result).toBe('ab...mno');
     });
 
     it('should handle length of 1', () => {
       const key = 'abcdefghij';
       const result = formatPublicKey({ key, length: 1 });
-      // When length is 1, length/2 = 0.5, which rounds down to 0
-      // So prefix = key.slice(0, 0) = '' and suffix = key.slice(-0) = entire key
-      expect(result).toBe('...abcdefghij');
+      // With length 1, only the last character of the key is shown.
+      expect(result).toBe('...j');
     });
   });
 

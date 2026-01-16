@@ -22,7 +22,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     isFollowing,
   } = actions;
 
-  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
+  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (

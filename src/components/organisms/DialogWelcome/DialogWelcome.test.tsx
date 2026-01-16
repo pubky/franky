@@ -53,6 +53,7 @@ vi.mock('@/hooks', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   formatPublicKey: vi.fn(({ key, length }) => `${key.slice(0, 4)}...${key.slice(-length + 4)}`),
+  withPubkyPrefix: (key: string) => `pubky${key}`,
   Key: ({ className }: { className?: string }) => <svg data-testid="key-icon" className={className} />,
   ArrowRight: ({ className }: { className?: string }) => <svg data-testid="arrow-right-icon" className={className} />,
 }));
@@ -220,7 +221,7 @@ describe('DialogWelcome', () => {
     const copyButton = screen.getByTestId('button-secondary');
     fireEvent.click(copyButton);
 
-    expect(mockCopyToClipboard).toHaveBeenCalledWith('test-pubky-123');
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkytest-pubky-123');
   });
 
   it('uses generated avatar url', () => {
