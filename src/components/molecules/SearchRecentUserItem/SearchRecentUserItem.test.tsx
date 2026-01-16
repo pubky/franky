@@ -50,8 +50,9 @@ vi.mock('@/hooks', () => ({
 }));
 
 describe('SearchRecentUserItem', () => {
+  const mockPubky = 'abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnop';
   const mockUser = {
-    id: 'pk:abc123' as Pubky,
+    id: mockPubky as Pubky,
     searchedAt: Date.now(),
   };
 
@@ -65,9 +66,9 @@ describe('SearchRecentUserItem', () => {
     render(<SearchRecentUserItem user={mockUser} onClick={vi.fn()} />);
 
     // Real formatPublicKey implementation formats differently than mock
-    // pk:abc123 with length 8 should format as abc123
+    // 52-char z32 with length 8 should format as abcd...mnop
     const pubkyElement = screen.getByTestId('user-pubky');
-    expect(pubkyElement).toHaveTextContent('abc123');
+    expect(pubkyElement).toHaveTextContent('abcd...mnop');
   });
 
   it('renders avatar with avatar url', () => {
