@@ -49,6 +49,10 @@ export enum POST_ROUTES {
   POST = '/post',
 }
 
+export enum COPYRIGHT_ROUTES {
+  COPYRIGHT = '/copyright',
+}
+
 // Public routes are accessible regardless of authentication status.
 // This includes routes that need to be accessible during auth transitions (like logout).
 export const PUBLIC_ROUTES: string[] = [
@@ -56,6 +60,8 @@ export const PUBLIC_ROUTES: string[] = [
   // Profile is public to prevent RouteGuard redirect during logout.
   // The profile page components handle unauthenticated state gracefully.
   APP_ROUTES.PROFILE,
+  // Copyright page should be accessible without authentication
+  COPYRIGHT_ROUTES.COPYRIGHT,
 ];
 
 export const ALLOWED_ROUTES = [
@@ -81,6 +87,7 @@ export const UNAUTHENTICATED_ROUTES = {
     ONBOARDING_ROUTES.BACKUP,
     ONBOARDING_ROUTES.HUMAN,
     AUTH_ROUTES.LOGOUT,
+    COPYRIGHT_ROUTES.COPYRIGHT,
   ],
   redirectTo: ROOT_ROUTES,
 };

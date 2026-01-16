@@ -1,9 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import { DialogReportPostIssueStep } from './DialogReportPostIssueStep';
 import { REPORT_ISSUE_TYPES, REPORT_ISSUE_LABELS } from '@/core/pipes/report';
+
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(),
+}));
 
 // Mock @/libs - use actual implementations and only stub cn helper
 vi.mock('@/libs', async (importOriginal) => {
@@ -25,9 +31,19 @@ const renderWithDialog = (component: React.ReactElement) => {
 describe('DialogReportPostIssueStep', () => {
   const mockOnSelectIssueType = vi.fn();
   const mockOnCancel = vi.fn();
+  const mockOnOpenChange = vi.fn();
+  const mockPush = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useRouter).mockReturnValue({
+      push: mockPush,
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+    } as ReturnType<typeof useRouter>);
   });
 
   it('renders with correct title and description', () => {
@@ -69,6 +85,56 @@ describe('DialogReportPostIssueStep', () => {
     await user.click(cancelButton);
 
     expect(mockOnCancel).toHaveBeenCalled();
+  });
+
+  it('redirects to /copyright and closes dialog when copyright infringement is selected and Next is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithDialog(
+      <DialogReportPostIssueStep
+        onSelectIssueType={mockOnSelectIssueType}
+        onCancel={mockOnCancel}
+        onOpenChange={mockOnOpenChange}
+      />,
+    );
+
+    // Select copyright infringement
+    const copyrightButton = screen.getByLabelText(REPORT_ISSUE_LABELS[REPORT_ISSUE_TYPES.COPYRIGHT]);
+    await user.click(copyrightButton);
+
+    // Click Next button
+    const nextButton = screen.getByRole('button', { name: 'Continue to reason step' });
+    await user.click(nextButton);
+
+    // Should close dialog and redirect to /copyright
+    expect(mockOnOpenChange).toHaveBeenCalledWith(false);
+    expect(mockPush).toHaveBeenCalledWith('/copyright');
+    // Should NOT call onSelectIssueType for copyright
+    expect(mockOnSelectIssueType).not.toHaveBeenCalled();
+  });
+
+  it('does not redirect when non-copyright issue is selected', async () => {
+    const user = userEvent.setup();
+    renderWithDialog(
+      <DialogReportPostIssueStep
+        onSelectIssueType={mockOnSelectIssueType}
+        onCancel={mockOnCancel}
+        onOpenChange={mockOnOpenChange}
+      />,
+    );
+
+    // Select a non-copyright issue
+    const personalInfoButton = screen.getByLabelText(REPORT_ISSUE_LABELS[REPORT_ISSUE_TYPES.PERSONAL_INFO]);
+    await user.click(personalInfoButton);
+
+    // Click Next button
+    const nextButton = screen.getByRole('button', { name: 'Continue to reason step' });
+    await user.click(nextButton);
+
+    // Should call onSelectIssueType normally
+    expect(mockOnSelectIssueType).toHaveBeenCalledWith(REPORT_ISSUE_TYPES.PERSONAL_INFO);
+    // Should NOT redirect or close dialog
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockOnOpenChange).not.toHaveBeenCalled();
   });
 });
 

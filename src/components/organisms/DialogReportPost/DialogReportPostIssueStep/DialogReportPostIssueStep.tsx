@@ -1,13 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import { REPORT_ISSUE_LABELS, REPORT_ISSUE_TYPE_VALUES, type ReportIssueType } from '@/core/pipes/report';
+import {
+  REPORT_ISSUE_LABELS,
+  REPORT_ISSUE_TYPES,
+  REPORT_ISSUE_TYPE_VALUES,
+  type ReportIssueType,
+} from '@/core/pipes/report';
 import { ISSUE_TYPE_ICONS } from './DialogReportPostIssueStep.constants';
 import type { DialogReportPostIssueStepProps } from './DialogReportPostIssueStep.types';
 
-export function DialogReportPostIssueStep({ onSelectIssueType, onCancel }: DialogReportPostIssueStepProps) {
+export function DialogReportPostIssueStep({
+  onSelectIssueType,
+  onCancel,
+  onOpenChange,
+}: DialogReportPostIssueStepProps) {
+  const router = useRouter();
   const [selectedType, setSelectedType] = useState<ReportIssueType | null>(null);
 
   const handleSelect = (issueType: ReportIssueType) => {
@@ -15,9 +26,17 @@ export function DialogReportPostIssueStep({ onSelectIssueType, onCancel }: Dialo
   };
 
   const handleNext = () => {
-    if (selectedType) {
-      onSelectIssueType(selectedType);
+    if (!selectedType) return;
+
+    // If copyright infringement is selected, redirect to /copyright page
+    if (selectedType === REPORT_ISSUE_TYPES.COPYRIGHT) {
+      onOpenChange?.(false);
+      router.push('/copyright');
+      return;
     }
+
+    // Otherwise, proceed with normal flow
+    onSelectIssueType(selectedType);
   };
 
   return (

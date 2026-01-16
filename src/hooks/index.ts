@@ -64,3 +64,4 @@ export * from './usePostHeaderUserInfoPopoverData';
 export * from './usePostHeaderUserInfoPopoverActions';
 export * from './useReportPost';
 export * from './useTtlViewportSubscription';
+export * from './useCopyrightForm';

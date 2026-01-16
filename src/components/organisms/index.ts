@@ -5,6 +5,7 @@ export * from './Backup';
 export * from './BackupMethodCard';
 export * from './ClickableTagsList';
 export * from './ContentLayout';
+export * from './CopyrightForm';
 export * from './CreateProfileHeader';
 export * from './CreateProfileForm';
 export * from './DialogAddLink';
