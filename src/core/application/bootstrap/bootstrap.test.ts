@@ -391,7 +391,11 @@ describe('BootstrapApplication', () => {
       const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation(({ method, url }) => {
         if (method === Libs.HttpMethod.GET) {
           return Promise.reject(
-            Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Internal server error', 500, { url }),
+            Libs.Err.server(Libs.ServerErrorCode.INTERNAL_ERROR, 'Internal server error', {
+              service: Libs.ErrorService.Homeserver,
+              operation: 'request',
+              context: { statusCode: Libs.HttpStatusCode.INTERNAL_SERVER_ERROR, url },
+            }),
           );
         }
         return Promise.resolve(undefined);
@@ -401,8 +405,8 @@ describe('BootstrapApplication', () => {
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
       await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toMatchObject({
-        type: Libs.HomeserverErrorType.FETCH_FAILED,
-        statusCode: 500,
+        category: Libs.ErrorCategory.Server,
+        code: Libs.ServerErrorCode.INTERNAL_ERROR,
         message: 'Internal server error',
       });
 

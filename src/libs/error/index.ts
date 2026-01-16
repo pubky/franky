@@ -1,7 +1,3 @@
-// =============================================================================
-// NEW ERROR SYSTEM (Phase 1)
-// =============================================================================
-
 // Core types and enums
 export { ErrorCategory, ErrorService } from './error.types';
 export {
@@ -45,39 +41,5 @@ export {
   getErrorMessage,
 } from './error.utils';
 
-// =============================================================================
-// LEGACY EXPORTS (Deprecated - will be removed in Phase 2)
-// =============================================================================
-
-// Legacy error types
-export {
-  /** @deprecated Use ErrorCategory instead */
-  NexusErrorType,
-  /** @deprecated Use ErrorCategory instead */
-  HomeserverErrorType,
-  /** @deprecated Use ErrorCategory instead */
-  DatabaseErrorType,
-  /** @deprecated Use ErrorCategory instead */
-  CommonErrorType,
-  /** @deprecated Use ErrorCategory instead */
-  SanitizationErrorType,
-  /** @deprecated Use ErrorCategory instead */
-  type AppErrorType,
-} from './error.types';
-
-// Legacy error factories
-export {
-  /** @deprecated Use Err.server() or Err.client() instead */
-  createNexusError,
-  /** @deprecated Use Err.server() or Err.auth() instead */
-  createHomeserverError,
-  /** @deprecated Use Err.validation() or Err.server() instead */
-  createCommonError,
-  /** @deprecated Use Err.database() instead */
-  createDatabaseError,
-  /** @deprecated Use Err.client() instead */
-  createSanitizationError,
-} from './error';
-
-// Error messages (kept for backward compatibility)
+// Error messages
 export * from './error.messages';

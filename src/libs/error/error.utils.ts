@@ -132,8 +132,6 @@ export const toAppError = (error: unknown, service: ErrorService, operation: str
 /**
  * Extracts a user-friendly message from an error.
  * For AppError, returns the message. For other errors, returns a generic message.
- *
- * Note: In Phase 2, displayMessage will be set by the Application layer.
  */
 export const getErrorMessage = (error: unknown): string => {
   if (isAppError(error)) {

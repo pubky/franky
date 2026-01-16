@@ -1,13 +1,4 @@
-import {
-  NexusErrorType,
-  type AppErrorType,
-  type HomeserverErrorType,
-  type CommonErrorType,
-  type DatabaseErrorType,
-  SanitizationErrorType,
-  ErrorCategory,
-  ErrorService,
-} from './error.types';
+import { ErrorCategory, ErrorService } from './error.types';
 import type { ErrorCode, ErrorCodeByCategory } from './error.codes';
 
 // =============================================================================
@@ -39,17 +30,9 @@ export type AppErrorParams = {
 /**
  * Application error with category-based typing.
  *
- * IMPORTANT: Does NOT log on construction. Logging happens in Application layer (Phase 2).
- *
- * Supports both:
- * - NEW: Category-based errors via AppErrorParams
- * - LEGACY: Type-based errors via (type, message, statusCode, details) - deprecated
+ * IMPORTANT: Does NOT log on construction. Logging is handled by the `Err.*` factories.
  */
 export class AppError extends Error {
-  // ==========================================================================
-  // NEW properties
-  // ==========================================================================
-
   /** WHAT kind of failure — used for decision logic (retry, routing, login redirect) */
   readonly category?: ErrorCategory;
 
@@ -71,29 +54,10 @@ export class AppError extends Error {
   /** TRACE ID — correlates all errors/logs from a single user operation*/
   traceId?: string;
 
-  // ==========================================================================
-  // LEGACY properties (deprecated - will be removed in Phase 2)
-  // ==========================================================================
-
-  /**
-   * @deprecated Use `category` and `code` instead. Will be removed in Phase 2.
-   */
-  public readonly type?: AppErrorType;
-
-  /**
-   * @deprecated Use `context` instead. Will be removed in Phase 2.
-   */
-  public readonly details?: Record<string, unknown>;
-
-  /**
-   * @deprecated Use `context.statusCode` instead. Will be removed in Phase 2.
-   */
-  public readonly statusCode?: number;
-
   /**
    * Creates an AppError.
    *
-   * NEW usage (recommended):
+   * @example
    * ```typescript
    * new AppError({
    *   category: ErrorCategory.Database,
@@ -105,60 +69,25 @@ export class AppError extends Error {
    *   cause: originalError,
    * });
    * ```
-   *
-   * LEGACY usage (deprecated):
-   * ```typescript
-   * new AppError(DatabaseErrorType.QUERY_FAILED, 'Failed to read post', 500, { postId });
-   * ```
    */
-  constructor(params: AppErrorParams);
-  /** @deprecated Use object params instead. Will be removed in Phase 2. */
-  constructor(type: AppErrorType, message: string, statusCode?: number, details?: Record<string, unknown>);
-  constructor(
-    paramsOrType: AppErrorParams | AppErrorType,
-    message?: string,
-    statusCode?: number,
-    details?: Record<string, unknown>,
-  ) {
-    // NEW: Object-based params
-    if (typeof paramsOrType === 'object' && 'category' in paramsOrType) {
-      super(paramsOrType.message);
-      this.name = 'AppError';
-      this.category = paramsOrType.category;
-      this.code = paramsOrType.code;
-      this.service = paramsOrType.service;
-      this.operation = paramsOrType.operation;
-      this.context = paramsOrType.context;
-      this.cause = paramsOrType.cause;
-      this.traceId = paramsOrType.traceId;
-
-      // Maintain proper prototype chain
-      Object.setPrototypeOf(this, AppError.prototype);
-
-      // Capture stack trace, excluding constructor
-      if (Error.captureStackTrace) {
-        Error.captureStackTrace(this, AppError);
-      }
-
-      // NO logging here - that's Application layer's job (Phase 2)
-      return;
-    }
-
-    // LEGACY: Positional params (deprecated)
-    super(message!);
-    this.type = paramsOrType as AppErrorType;
-    this.details = details;
-    this.statusCode = statusCode ?? 500;
+  constructor(params: AppErrorParams) {
+    super(params.message);
     this.name = 'AppError';
+    this.category = params.category;
+    this.code = params.code;
+    this.service = params.service;
+    this.operation = params.operation;
+    this.context = params.context;
+    this.cause = params.cause;
+    this.traceId = params.traceId;
+
+    // Maintain proper prototype chain
     Object.setPrototypeOf(this, AppError.prototype);
 
-    // Capture stack trace for legacy errors too
+    // Capture stack trace, excluding constructor
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, AppError);
     }
-
-    // NO logging here - removed to fix double-logging issue
-    // Legacy code that depends on constructor logging will need to add explicit logging
   }
 
   // ==========================================================================
@@ -189,47 +118,6 @@ export class AppError extends Error {
     return this;
   }
 }
-
-// =============================================================================
-// LEGACY Factories (deprecated - use Err.* from error.factories.ts instead)
-// =============================================================================
-
-/**
- * Generic factory that creates typed error creator functions
- * Reduces duplication while maintaining type safety for each error domain
- *
- * @deprecated Use Err.* factories from error.factories.ts instead. Will be removed in Phase 2.
- */
-function createErrorFactory<T extends AppErrorType>() {
-  return (type: T, message: string, statusCode?: number, details?: Record<string, unknown>): AppError => {
-    return new AppError(type, message, statusCode, details);
-  };
-}
-
-/**
- * @deprecated Use Err.server() or Err.client() instead. Will be removed in Phase 2.
- */
-export const createNexusError = createErrorFactory<NexusErrorType>();
-
-/**
- * @deprecated Use Err.server() or Err.auth() instead. Will be removed in Phase 2.
- */
-export const createHomeserverError = createErrorFactory<HomeserverErrorType>();
-
-/**
- * @deprecated Use Err.validation() or Err.server() instead. Will be removed in Phase 2.
- */
-export const createCommonError = createErrorFactory<CommonErrorType>();
-
-/**
- * @deprecated Use Err.database() instead. Will be removed in Phase 2.
- */
-export const createDatabaseError = createErrorFactory<DatabaseErrorType>();
-
-/**
- * @deprecated Use Err.client() instead. Will be removed in Phase 2.
- */
-export const createSanitizationError = createErrorFactory<SanitizationErrorType>();
 
 /**
  * Type guard to check if an error is an AppError

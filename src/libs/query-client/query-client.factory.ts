@@ -25,10 +25,8 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
       return failureCount < retry.limits.default;
     }
 
-    // Support both new (context.statusCode) and legacy (statusCode) properties
-    const statusCode = (error.context?.statusCode as number | undefined) ?? error.statusCode;
-    // Support both new (code) and legacy (type) properties
-    const errorCode = error.code ?? error.type;
+    const statusCode = error.context?.statusCode as number | undefined;
+    const errorCode = error.code;
 
     // Permanent failures - don't retry
     if (errorCode && retry.nonRetryable.includes(errorCode)) {
@@ -64,8 +62,7 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
     const delays = retry.delays;
 
     if (isAppError(error)) {
-      // Support both new (context.statusCode) and legacy (statusCode) properties
-      const statusCode = (error.context?.statusCode as number | undefined) ?? error.statusCode;
+      const statusCode = error.context?.statusCode as number | undefined;
 
       // 404: Use notFound delays if configured
       if (statusCode === HttpStatusCode.NOT_FOUND && delays.notFound) {

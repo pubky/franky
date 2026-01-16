@@ -25,7 +25,6 @@ export class ExchangerateService {
    * @throws {AppError} If the API request fails, response is invalid, or BTCUSD ticker is not found
    */
   private static async getBtcUsdRate(): Promise<number> {
-
     const response = await safeFetch(
       EXCHANGE_RATE_API,
       { method: HttpMethod.GET },

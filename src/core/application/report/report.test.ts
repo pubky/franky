@@ -199,7 +199,11 @@ describe('ReportApplication', () => {
 
     it('should re-throw AppError from ChatwootService', async () => {
       const input = createReportInput();
-      const appError = Libs.createCommonError(Libs.CommonErrorType.NETWORK_ERROR, 'Chatwoot API error', 500);
+      const appError = Libs.Err.network(Libs.NetworkErrorCode.REQUEST_FAILED, 'Chatwoot API error', {
+        service: Libs.ErrorService.Chatwoot,
+        operation: 'createOrFindContact',
+        context: { statusCode: Libs.HttpStatusCode.INTERNAL_SERVER_ERROR },
+      });
       vi.spyOn(Core.ChatwootService, 'createOrFindContact').mockRejectedValue(appError);
 
       await expect(ReportApplication.submit(input)).rejects.toThrow(appError);
@@ -227,7 +231,11 @@ describe('ReportApplication', () => {
 
     it('should throw AppError when createConversation fails', async () => {
       const input = createReportInput();
-      const appError = Libs.createCommonError(Libs.CommonErrorType.NETWORK_ERROR, 'Failed to create conversation', 500);
+      const appError = Libs.Err.network(Libs.NetworkErrorCode.REQUEST_FAILED, 'Failed to create conversation', {
+        service: Libs.ErrorService.Chatwoot,
+        operation: 'createConversation',
+        context: { statusCode: Libs.HttpStatusCode.INTERNAL_SERVER_ERROR },
+      });
       vi.spyOn(Core.ChatwootService, 'createConversation').mockRejectedValue(appError);
 
       await expect(ReportApplication.submit(input)).rejects.toThrow(appError);

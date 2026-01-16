@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SettingsApplication } from './settings';
 import * as Core from '@/core';
-import { HttpMethod, Logger, AppError, HomeserverErrorType, ErrorService, httpStatusCodeToError } from '@/libs';
+import { HttpMethod, Logger, Err, ServerErrorCode, ErrorService, httpStatusCodeToError } from '@/libs';
 
 // Mock the HomeserverService
 vi.mock('@/core/services/homeserver', () => ({
@@ -156,7 +156,11 @@ describe('SettingsApplication', () => {
 
     it('should throw on non-404 errors', async () => {
       const { requestSpy, normalizerBuildUrlSpy } = setupMocks();
-      const serverError = new AppError(HomeserverErrorType.FETCH_FAILED, 'Server error', 500);
+      const serverError = Err.server(ServerErrorCode.INTERNAL_ERROR, 'Server error', {
+        service: ErrorService.Homeserver,
+        operation: 'request',
+        context: { statusCode: 500 },
+      });
 
       normalizerBuildUrlSpy.mockReturnValue(`pubky://${testPubky}/pub/pubky.app/settings.json`);
       requestSpy.mockRejectedValue(serverError);

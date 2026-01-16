@@ -34,28 +34,30 @@ export class ProfileApplication {
    */
   static async commitUpdate({ pubky, name, bio, image, links }: Core.TApplicationCommitUpdateDetailsParams) {
     const userDetails = await Core.LocalUserService.readDetails({ userId: pubky });
-      if (!userDetails) {
-        throw Err.client(ClientErrorCode.NOT_FOUND, 'User profile not found', {
-          service: ErrorService.Local,
-          operation: 'commitUpdate',
-          context: { pubky },
-        });
-      }
-      // Build complete user object with updated fields
-      const { user, meta } = Core.UserNormalizer.to(
-        {
-          name,
-          bio: bio ?? '',
-          image,
-          links,
-          status: userDetails.status ?? '',
-        },
-        pubky,
-      );
-      // Update homeserver with complete profile
-      await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
-      // Update local database after successful homeserver sync
-      await Core.LocalProfileService.updateDetails(user, pubky);
+    if (!userDetails) {
+      throw Err.client(ClientErrorCode.NOT_FOUND, 'User profile not found', {
+        service: ErrorService.Local,
+        operation: 'commitUpdate',
+        context: { pubky },
+      });
+    }
+    
+    // Build complete user object with updated fields
+    const { user, meta } = Core.UserNormalizer.to(
+      {
+        name,
+        bio: bio ?? '',
+        image,
+        links,
+        status: userDetails.status ?? '',
+      },
+      pubky,
+    );
+
+    // Update homeserver with complete profile
+    await Core.HomeserverService.request({ method: HttpMethod.PUT, url: meta.url, bodyJson: user.toJson() });
+    // Update local database after successful homeserver sync
+    await Core.LocalProfileService.updateDetails(user, pubky);
   }
 
   /**
