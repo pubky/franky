@@ -3,6 +3,7 @@
 exports[`PostTagInput - Snapshots > matches snapshot with emoji picker 1`] = `
 <div
   class="relative flex h-8 items-center rounded-lg px-3 border border-dashed border-input focus-within:border-white/80"
+  data-cy="post-tag-input"
 >
   <input
     aria-label="Add new tag"
@@ -65,6 +66,7 @@ exports[`PostTagInput - Snapshots > matches snapshot with emoji picker 1`] = `
 exports[`PostTagInput - Snapshots > matches snapshot with emoji picker and value 1`] = `
 <div
   class="relative flex h-8 items-center rounded-lg px-3 border border-dashed border-input focus-within:border-white/80"
+  data-cy="post-tag-input"
 >
   <input
     aria-label="Add new tag"
@@ -127,6 +129,7 @@ exports[`PostTagInput - Snapshots > matches snapshot with emoji picker and value
 exports[`PostTagInput - Snapshots > matches snapshot with empty state 1`] = `
 <div
   class="relative flex h-8 items-center rounded-lg px-3 border border-dashed border-input focus-within:border-white/80"
+  data-cy="post-tag-input"
 >
   <input
     aria-label="Add new tag"
@@ -143,6 +146,7 @@ exports[`PostTagInput - Snapshots > matches snapshot with empty state 1`] = `
 exports[`PostTagInput - Snapshots > matches snapshot with filled state 1`] = `
 <div
   class="relative flex h-8 items-center rounded-lg px-3 border border-dashed border-input focus-within:border-white/80"
+  data-cy="post-tag-input"
 >
   <input
     aria-label="Add new tag"
