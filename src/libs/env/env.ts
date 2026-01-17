@@ -140,7 +140,7 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_HOMESERVER_ADMIN_URL: z.string().url().default('http://localhost:6288/generate_signup_token'),
   NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
-  NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://relay.pubky.app'),
+  NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://httprelay.staging.pubky.app'),
 
   NEXT_PUBLIC_MODERATION_ID: z.string().default('euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro'),
   NEXT_PUBLIC_MODERATED_TAGS: z
