@@ -105,11 +105,13 @@ vi.mock('@/core', async (importOriginal) => {
 });
 
 // Mock Molecules module
-const mockToast = vi.fn();
+const mockToastError = vi.fn();
 vi.mock('@/molecules', () => ({
-  useToast: vi.fn(() => ({
-    toast: mockToast,
-  })),
+  toast: {
+    error: (...args: unknown[]) => mockToastError(...args),
+    success: vi.fn(),
+    dismiss: vi.fn(),
+  },
   WordSlot: vi.fn(
     ({ index, word, isError, showError, isRestoring, onChange, onValidate, onKeyDown, mode, ...props }) => (
       <div
@@ -501,8 +503,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       fireEvent.click(restoreButton!);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error logging in with mnemonic',
+        expect(mockToastError).toHaveBeenCalledWith('Error logging in with mnemonic', {
           description: 'Please try again.',
         });
       });

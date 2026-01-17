@@ -7,12 +7,10 @@ import * as Molecules from '@/molecules';
 import * as App from '@/app';
 import * as Core from '@/core';
 import { useState } from 'react';
-import { useToast } from '@/molecules';
 
 export const BackupNavigation = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
   const { secretKey, inviteCode } = Core.useOnboardingStore();
   const onHandleContinueButton = async () => {
     setLoading(true);
@@ -20,8 +18,7 @@ export const BackupNavigation = () => {
       await Core.AuthController.signUp({ secretKey: secretKey!, signupToken: inviteCode });
       router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch (error) {
-      toast({
-        title: 'Error - Failed to sign up',
+      Molecules.toast.error('Error - Failed to sign up', {
         description: 'Something went wrong. Please try again.',
       });
       console.error('Failed to sign up', error);

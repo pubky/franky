@@ -56,9 +56,13 @@ vi.mock('@/hooks/useProfileStats', () => ({
   })),
 }));
 
-// Mock toast
-vi.mock('@/molecules/Toaster/use-toast', () => ({
-  toast: vi.fn(),
+// Mock sonner toast
+vi.mock('sonner', () => ({
+  toast: Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  }),
 }));
 
 // Mock dexie-react-hooks

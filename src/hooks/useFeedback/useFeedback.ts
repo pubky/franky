@@ -19,22 +19,14 @@ import * as Hooks from '@/hooks';
  * @returns reset - Resets all state to initial values
  */
 export function useFeedback() {
-  const { toast } = Molecules.useToast();
   const { currentUserPubky, userDetails } = Hooks.useCurrentUserProfile();
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const showErrorToast = useCallback(
-    (description: string) => {
-      toast({
-        title: 'Error',
-        description,
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-      });
-    },
-    [toast],
-  );
+  const showErrorToast = useCallback((description: string) => {
+    Molecules.toast.error('Error', { description });
+  }, []);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFeedback(e.target.value);

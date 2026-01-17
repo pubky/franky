@@ -44,28 +44,14 @@ export function usePost() {
   const [attachments, setAttachments] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
-  const { toast } = Molecules.useToast();
 
-  const showErrorToast = useCallback(
-    (description: string) => {
-      toast({
-        title: 'Error',
-        description,
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-      });
-    },
-    [toast],
-  );
+  const showErrorToast = useCallback((description: string) => {
+    Molecules.toast.error('Error', { description });
+  }, []);
 
-  const showSuccessToast = useCallback(
-    (title: string, description: string) => {
-      toast({
-        title,
-        description,
-      });
-    },
-    [toast],
-  );
+  const showSuccessToast = useCallback((title: string, description: string) => {
+    Molecules.toast.success(title, { description });
+  }, []);
 
   const reply = useCallback(
     async ({ postId, onSuccess }: UsePostReplyOptions) => {

@@ -1,10 +1,10 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { toast } from 'sonner';
 import * as Core from '@/core';
 // Import directly to avoid circular dependency with @/hooks barrel
 import { useProfileStats } from '@/hooks/useProfileStats';
-import { toast } from '@/molecules/Toaster/use-toast';
 import type { UseTaggedResult, UseTaggedOptions } from './useTagged.types';
 import { transformTagsForViewer } from '@/molecules/TaggedItem/TaggedItem.utils';
 import { TAGS_PER_PAGE } from './useTagged.constants';
@@ -165,8 +165,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
 
         return { success: true };
       } catch {
-        toast({
-          title: 'Failed to add tag',
+        toast.error('Failed to add tag', {
           description: `Could not add "${label}". Please try again.`,
         });
         return { success: false, error: 'Failed to add tag' };
@@ -233,8 +232,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
             return next;
           });
         }
-        toast({
-          title: userIsTagger ? 'Failed to remove tag' : 'Failed to add tag',
+        toast.error(userIsTagger ? 'Failed to remove tag' : 'Failed to add tag', {
           description: `Could not ${userIsTagger ? 'remove' : 'add'} "${tag.label}". Please try again.`,
         });
       }

@@ -2,8 +2,8 @@
 
 import { useCallback, useMemo, useState, useRef, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { toast } from 'sonner';
 import * as Core from '@/core';
-import { toast } from '@/molecules/Toaster/use-toast';
 import type { UsePostTagsResult, UsePostTagsOptions } from './usePostTags.types';
 import { transformTagsForViewer } from '@/molecules/TaggedItem/TaggedItem.utils';
 import { TAGS_PER_PAGE } from './usePostTags.constants';
@@ -83,8 +83,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
 
       // loadedCountRef will be updated by the effect when tags change
     } catch {
-      toast({
-        title: 'Failed to load more tags',
+      toast.error('Failed to load more tags', {
         description: 'Could not load more tags. Please try again.',
       });
     } finally {
@@ -116,8 +115,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
 
         return { success: true };
       } catch {
-        toast({
-          title: 'Failed to add tag',
+        toast.error('Failed to add tag', {
           description: `Could not add "${label}". Please try again.`,
         });
         return { success: false, error: 'Failed to add tag' };
@@ -153,8 +151,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
           });
         }
       } catch {
-        toast({
-          title: userIsTagger ? 'Failed to remove tag' : 'Failed to add tag',
+        toast.error(userIsTagger ? 'Failed to remove tag' : 'Failed to add tag', {
           description: `Could not ${userIsTagger ? 'remove' : 'add'} "${tag.label}". Please try again.`,
         });
       }

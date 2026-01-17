@@ -48,6 +48,8 @@ body {
   --color-card: var(--card);
   --color-brand: var(--brand);
   --color-transparent: var(--transparent);
+  --color-toast: var(--toast);
+  --color-toast-error: var(--toast-error);
   --radius-xs: 0.25rem;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -103,6 +105,10 @@ body {
   --sidebar-ring: oklch(0.472 0.007 274.863);
   --brand: oklch(0.928 0.23 123.978);
   --transparent: oklch(0.118 0.014 284.115 / 0);
+
+  /* Toast colors - matches Figma design */
+  --toast: #1a1f14;
+  --toast-error: #3d1515;
 
   /* ==================================================================
    * LAYOUT DIMENSIONS
