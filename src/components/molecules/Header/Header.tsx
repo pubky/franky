@@ -20,7 +20,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
       overrideDefaults
       as="header"
       className={Libs.cn(
-        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background)/95 to-(--transparent) py-6 backdrop-blur-sm',
+        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-[#05050A] from-50% to-transparent py-6',
         className,
       )}
     >
@@ -97,7 +97,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
 const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isActive: boolean }) => (
   <Atoms.Link href={href}>
     <Atoms.Button
-      className={Libs.cn('h-12 w-12', isActive ? '' : 'border bg-transparent')}
+      className={Libs.cn('h-12 w-12 backdrop-blur-md', isActive ? '' : 'border bg-white/5')}
       variant="secondary"
       size="icon"
       aria-label={href}
