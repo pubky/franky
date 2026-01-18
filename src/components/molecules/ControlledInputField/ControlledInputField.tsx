@@ -42,6 +42,7 @@ export function ControlledInputField<T extends FieldValues>({
             icon={icon}
             iconPosition={iconPosition}
             disabled={disabled}
+            className="mb-0"
             status={fieldState.error ? 'error' : 'default'}
             message={fieldState.error?.message}
             messageType={fieldState.error ? 'error' : 'default'}
