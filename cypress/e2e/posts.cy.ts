@@ -47,7 +47,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  // todo: reenable when posts created from new post are optimistically added to feed, see https://github.com/pubky/pubky-app/issues/618
+  // todo: reenable when posts created from new post are optimistically added to feed, see https://github.com/pubky/franky/issues/618
   it.skip('can post from new post', () => {
     const postContent = `I can make a new post! ${Date.now()}`;
     createPostFromDialog(postContent);
@@ -64,4 +64,37 @@ describe('posts', () => {
     cy.reload();
     latestPostInFeedContentEq(postContent);
   });
+
+  // todo: implement when editing posts is implemented, see https://github.com/pubky/franky/issues/751
+  it.skip('can edit a post');
+
+  // todo: ready to implement these tests
+  it('can post with maximum character limit (2000)');
+  it('can post with emojis');
+  it('can post with image upload');
+  it('can post with embedded link');
+  it('can post with profile reference');
+  it('can delete a post');
+  it("cannot delete other profile's post");
+  it('can tag whilst creating post');
+  it('can tag and remove tags from existing post on feed page ');
+  it('can tag and remove tags from existing post on post page');
+  it('can bookmark multiple posts then remove bookmarks')
+  it('can repost with content then delete the repost');
+  it('can repost without content then delete the repost');
+  it('can see repost of a deleted post');
+  it('cannot see reply of a deleted post in feed');
+
+  // todo: implement when articles are implemented, see https://github.com/pubky/franky/issues/756
+  it.skip('can create an article from quick post box');
+  it.skip('can create an article from new post');
+  it.skip('new article modal is shown infront of new post modal'); // cover bug from pubky-app
+
+  // todo: check if we want this functionality
+  it.skip('signout when 401 response from homeserver when creating new post');
+  it.skip('signout when 401 response from homeserver when creating new article');
+  it.skip('signout when 401 response from homeserver when tagging a post');
+
+  //todo: implement once retaining scroll position is implemented, see https://github.com/pubky/franky/issues/416
+  it.skip('can navigate back to feed from post view');
 });
