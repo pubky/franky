@@ -347,6 +347,13 @@ describe('CopyrightForm', () => {
 describe('CopyrightForm - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Mock the date to ensure consistent snapshots
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-15'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('matches snapshot for default state', () => {
