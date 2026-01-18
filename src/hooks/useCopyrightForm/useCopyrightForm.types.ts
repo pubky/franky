@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import { VALIDATION_PATTERNS, VALIDATION_MESSAGES } from '@/config';
+import { COPYRIGHT_FORM_FIELDS } from './useCopyrightForm.constants';
+
+/** Type for role field names */
+export type RoleField = (typeof COPYRIGHT_FORM_FIELDS)[keyof typeof COPYRIGHT_FORM_FIELDS];
 
 /**
  * Schema for the copyright removal request form.

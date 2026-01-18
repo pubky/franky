@@ -3,10 +3,8 @@
 import { useForm, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Molecules from '@/molecules';
-import { copyrightFormSchema, type CopyrightFormData } from './useCopyrightForm.types';
-import { copyrightFormDefaultValues, COPYRIGHT_FORM_FIELDS, type RoleField } from './useCopyrightForm.constants';
-
-export type { CopyrightFormData } from './useCopyrightForm.types';
+import { copyrightFormSchema, type CopyrightFormData, type RoleField } from './useCopyrightForm.types';
+import { copyrightFormDefaultValues, COPYRIGHT_FORM_FIELDS } from './useCopyrightForm.constants';
 
 export function useCopyrightForm() {
   const { toast } = Molecules.useToast();
