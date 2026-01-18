@@ -111,18 +111,9 @@ export const HOME_ROUTES = {
  * - /profile/[pubky] - viewing another user's profile (pubky is exactly 52 chars)
  */
 export function isDynamicPublicRoute(pathname: string): boolean {
-  // Match /post/[userId]/[postId] - single post view
-  if (/^\/post\/[^/]+\/[^/]+$/.test(pathname)) {
-    return true;
-  }
-
-  // Match /profile/[pubky] - viewing another user's profile
-  // Pubky identifiers are exactly 52 lowercase alphanumeric characters
-  const profileMatch = pathname.match(/^\/profile\/([^/]+)/);
-  if (profileMatch && isPubkyIdentifier(profileMatch[1])) {
-    return true;
-  }
-
+  const segments = pathname.split('/').filter(Boolean);
+  if (segments[0] === 'post' && segments.length === 3) return true;
+  if (segments[0] === 'profile' && isPubkyIdentifier(segments[1])) return true;
   return false;
 }
 
