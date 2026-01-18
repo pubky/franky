@@ -2,10 +2,9 @@
 
 import { Controller, FieldValues } from 'react-hook-form';
 import * as Atoms from '@/atoms';
+import * as Config from '@/config';
 import * as Molecules from '@/molecules';
 import type { ControlledInputFieldProps } from './ControlledInputField.types';
-
-const LABEL_CLASSES = 'text-xs font-medium tracking-wide text-muted-foreground uppercase';
 
 export function ControlledInputField<T extends FieldValues>({
   name,
@@ -22,7 +21,7 @@ export function ControlledInputField<T extends FieldValues>({
 }: ControlledInputFieldProps<T>) {
   return (
     <Atoms.Container className="gap-2">
-      <Atoms.Label htmlFor={name} className={LABEL_CLASSES}>
+      <Atoms.Label htmlFor={name} className={Config.FORM_LABEL_CLASSES}>
         {label}
         {labelHint}
       </Atoms.Label>

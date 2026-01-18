@@ -49,12 +49,9 @@ export function useCopyrightForm() {
       document.querySelector(`[name="${firstErrorField}"]`) ?? document.querySelector('[aria-invalid="true"]');
 
     if (fieldElement instanceof HTMLElement) {
-      if (typeof fieldElement.scrollIntoView === 'function') {
-        fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      if (typeof fieldElement.focus === 'function') {
-        fieldElement.focus();
-      }
+      // Optional chaining handles test environments where these methods may not exist
+      fieldElement.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+      fieldElement.focus?.();
     }
   };
 

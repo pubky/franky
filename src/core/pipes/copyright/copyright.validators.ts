@@ -1,3 +1,4 @@
+import * as Config from '@/config';
 import * as Libs from '@/libs';
 
 /**
@@ -17,9 +18,8 @@ export class CopyrightValidators {
    * @throws AppError if email is invalid
    */
   private static validateEmailFormat(email: string): string {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Please enter a valid email address', 400);
+    if (!Config.VALIDATION_PATTERNS.EMAIL.test(email)) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, Config.VALIDATION_MESSAGES.INVALID_EMAIL, 400);
     }
     return email.toLowerCase().trim();
   }
@@ -47,9 +47,8 @@ export class CopyrightValidators {
    * @throws AppError if phone number is invalid
    */
   private static validatePhoneNumberFormat(phoneNumber: string): string {
-    const phoneRegex = /^[\d\s\-+().,#*ext]+$/i;
-    if (!phoneRegex.test(phoneNumber)) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Please enter a valid phone number', 400);
+    if (!Config.VALIDATION_PATTERNS.PHONE.test(phoneNumber)) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, Config.VALIDATION_MESSAGES.INVALID_PHONE, 400);
     }
     return phoneNumber.trim();
   }
@@ -162,11 +161,7 @@ export class CopyrightValidators {
     isReportingOnBehalf: boolean | undefined | null,
   ): void {
     if (!isRightsOwner && !isReportingOnBehalf) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Please select if you are the rights owner or reporting on behalf',
-        400,
-      );
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, Config.VALIDATION_MESSAGES.ROLE_REQUIRED, 400);
     }
   }
 }
