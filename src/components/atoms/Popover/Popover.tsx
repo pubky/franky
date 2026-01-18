@@ -5,23 +5,23 @@ import { useState, useRef, useEffect, createContext, useContext } from 'react';
 
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
-
-interface PopoverContextType {
-  hover?: boolean;
-  onMouseEnter?: () => void;
-  onMouseLeave?: () => void;
-}
+import { DEFAULT_HOVER_CLOSE_DELAY } from './Popover.constants';
+import type { PopoverContextType, PopoverProps } from './Popover.types';
 
 const PopoverContext = createContext<PopoverContextType>({});
 
-interface PopoverProps extends React.ComponentProps<typeof PopoverPrimitive.Root> {
-  hover?: boolean;
-  hoverDelay?: number;
-}
-
-function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, ...props }: PopoverProps) {
+function Popover({
+  open,
+  onOpenChange,
+  hover = false,
+  hoverDelay = 0,
+  hoverCloseDelay = DEFAULT_HOVER_CLOSE_DELAY,
+  children,
+  ...props
+}: PopoverProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const openTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isTouchDevice = Hooks.useIsTouchDevice();
   const isControlled = open !== undefined;
   const isOpen = isControlled ? open : internalOpen;
@@ -30,14 +30,38 @@ function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, 
   // Disable hover on touch devices
   const effectiveHover = hover && !isTouchDevice;
 
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+  const clearAllTimeouts = () => {
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
     }
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const handleMouseEnter = () => {
+    // Cancel any pending close
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
     if (effectiveHover) {
+      // If already open, just keep it open (don't restart open delay)
+      if (isOpen) {
+        return;
+      }
+
+      // Cancel any pending open and start fresh
+      if (openTimeoutRef.current) {
+        clearTimeout(openTimeoutRef.current);
+        openTimeoutRef.current = null;
+      }
+
       if (hoverDelay > 0) {
-        timeoutRef.current = setTimeout(() => {
+        openTimeoutRef.current = setTimeout(() => {
           handleOpenChange?.(true);
         }, hoverDelay);
       } else {
@@ -47,27 +71,41 @@ function Popover({ open, onOpenChange, hover = false, hoverDelay = 0, children, 
   };
 
   const handleMouseLeave = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
+    // Cancel any pending open
+    if (openTimeoutRef.current) {
+      clearTimeout(openTimeoutRef.current);
+      openTimeoutRef.current = null;
     }
+
     if (effectiveHover) {
-      handleOpenChange?.(false);
-      // Remove focus from trigger when closing via hover
-      setTimeout(() => {
-        const activeElement = document.activeElement as HTMLElement;
-        if (activeElement && activeElement.blur) {
-          activeElement.blur();
-        }
-      }, 0);
+      // Add a small delay before closing to allow mouse to move to content
+      if (hoverCloseDelay > 0) {
+        closeTimeoutRef.current = setTimeout(() => {
+          handleOpenChange?.(false);
+          // Remove focus from trigger when closing via hover
+          setTimeout(() => {
+            const activeElement = document.activeElement as HTMLElement;
+            if (activeElement && activeElement.blur) {
+              activeElement.blur();
+            }
+          }, 0);
+        }, hoverCloseDelay);
+      } else {
+        handleOpenChange?.(false);
+        // Remove focus from trigger when closing via hover
+        setTimeout(() => {
+          const activeElement = document.activeElement as HTMLElement;
+          if (activeElement && activeElement.blur) {
+            activeElement.blur();
+          }
+        }, 0);
+      }
     }
   };
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      clearAllTimeouts();
     };
   }, []);
 

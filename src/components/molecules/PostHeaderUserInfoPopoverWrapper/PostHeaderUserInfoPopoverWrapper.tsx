@@ -3,7 +3,11 @@
 import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import type { PostHeaderUserInfoPopoverWrapperProps } from './PostHeaderUserInfoPopoverWrapper.types';
-import { POPOVER_ALIGN_OFFSET, POPOVER_SIDE_OFFSET } from './PostHeaderUserInfoPopoverWrapper.constants';
+import {
+  POPOVER_ALIGN_OFFSET,
+  POPOVER_HOVER_DELAY,
+  POPOVER_SIDE_OFFSET,
+} from './PostHeaderUserInfoPopoverWrapper.constants';
 import { PostHeaderUserInfoPopoverContent } from './components/PostHeaderUserInfoPopoverContent/PostHeaderUserInfoPopoverContent';
 
 /**
@@ -25,7 +29,7 @@ export function PostHeaderUserInfoPopoverWrapper({
   const [open, setOpen] = useState(false);
 
   return (
-    <Atoms.Popover hover open={open} onOpenChange={setOpen}>
+    <Atoms.Popover hover hoverDelay={POPOVER_HOVER_DELAY} open={open} onOpenChange={setOpen}>
       <Atoms.PopoverTrigger asChild>{children}</Atoms.PopoverTrigger>
       <Atoms.PopoverContent
         side="top"
