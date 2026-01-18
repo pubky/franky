@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import * as Core from '@/core';
+// Direct import to avoid circular dependency (this hook is exported from @/hooks)
+import { useMutedUsers } from '@/hooks/useMutedUsers';
 import * as Libs from '@/libs';
 import { REPLIES_PER_PAGE } from './usePostReplies.constants';
 import type { UsePostRepliesOptions, UsePostRepliesResult } from './usePostReplies.types';
@@ -37,6 +39,12 @@ export function usePostReplies(
   const [newestPostId, setNewestPostId] = useState<string | undefined>(undefined);
   const [newestTimestamp, setNewestTimestamp] = useState<number>(0);
 
+  /**
+   * Mute filtering for replies.
+   * Ensures reply lists are consistent with timeline mute behavior throughout the app.
+   */
+  const { mutedUserIdSet } = useMutedUsers();
+
   // Fetch initial replies when postId changes
   useEffect(() => {
     if (!postId) {
@@ -68,8 +76,8 @@ export function usePostReplies(
 
         if (isCancelled) return;
 
-        // API returns [oldest, ..., newest] when order=ascending
-        const apiIds = response.nextPageIds;
+        // Apply mute filter so reply lists mirror timeline mute behavior.
+        const apiIds = Core.MuteFilter.filterPostsSafe(response.nextPageIds, mutedUserIdSet);
 
         if (apiIds.length === 0) {
           setHasMore(false);
@@ -100,7 +108,7 @@ export function usePostReplies(
     return () => {
       isCancelled = true;
     };
-  }, [postId, limit]);
+  }, [postId, limit, mutedUserIdSet]);
 
   // Load more newer replies (appends to list)
   const loadMore = useCallback(async () => {
@@ -122,7 +130,8 @@ export function usePostReplies(
       });
 
       // API returns [older_in_batch, ..., newest_in_batch] in ascending order
-      const apiIds = response.nextPageIds;
+      // Apply mute filter on pagination to avoid reintroducing hidden replies.
+      const apiIds = Core.MuteFilter.filterPostsSafe(response.nextPageIds, mutedUserIdSet);
 
       if (apiIds.length === 0) {
         setHasMore(false);
@@ -150,7 +159,7 @@ export function usePostReplies(
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, hasMore, loading, postId, newestTimestamp, newestPostId, limit, replyIds]);
+  }, [loadingMore, hasMore, loading, postId, newestTimestamp, newestPostId, limit, replyIds, mutedUserIdSet]);
 
   // Refresh function
   const refresh = useCallback(async () => {
@@ -174,7 +183,8 @@ export function usePostReplies(
         order: Core.StreamOrder.ASCENDING,
       });
 
-      const apiIds = response.nextPageIds;
+      // Apply mute filter on refresh to keep the list consistent.
+      const apiIds = Core.MuteFilter.filterPostsSafe(response.nextPageIds, mutedUserIdSet);
 
       if (apiIds.length === 0) {
         setHasMore(false);
@@ -193,7 +203,21 @@ export function usePostReplies(
     } finally {
       setLoading(false);
     }
-  }, [postId, limit]);
+  }, [postId, limit, mutedUserIdSet]);
+
+  /**
+   * Reactively prune replies when mute state changes.
+   * This handles the case where a user mutes someone while viewing a thread.
+   */
+  useEffect(() => {
+    if (replyIds.length === 0 || mutedUserIdSet.size === 0) return;
+
+    const filtered = Core.MuteFilter.filterPostsSafe(replyIds, mutedUserIdSet);
+
+    if (filtered.length !== replyIds.length) {
+      setReplyIds(filtered);
+    }
+  }, [replyIds, mutedUserIdSet]);
 
   return {
     replyIds,
