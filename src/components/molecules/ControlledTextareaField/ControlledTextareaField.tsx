@@ -1,7 +1,6 @@
 'use client';
 
 import { Controller, FieldValues } from 'react-hook-form';
-import * as Config from '@/config';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import type { ControlledTextareaFieldProps } from './ControlledTextareaField.types';
@@ -15,8 +14,10 @@ export function ControlledTextareaField<T extends FieldValues>({
   placeholder,
   maxLength,
   variant = 'dashed',
-  rows = Config.DEFAULT_TEXTAREA_ROWS,
+  rows = 4,
   disabled = false,
+  className,
+  textareaClassName,
 }: ControlledTextareaFieldProps<T>) {
   return (
     <Atoms.Container className="gap-2">
@@ -38,6 +39,8 @@ export function ControlledTextareaField<T extends FieldValues>({
             rows={rows}
             maxLength={maxLength}
             disabled={disabled}
+            className={className}
+            textareaClassName={textareaClassName}
             status={fieldState.error ? 'error' : 'default'}
             message={fieldState.error?.message}
             messageType={fieldState.error ? 'error' : 'default'}

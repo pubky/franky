@@ -17,4 +17,8 @@ export interface ControlledTextareaFieldProps<T extends FieldValues> {
   rows?: number;
   /** Disabled state */
   disabled?: boolean;
+  /** Custom className for the container */
+  className?: string;
+  /** Custom className for the textarea element */
+  textareaClassName?: string;
 }

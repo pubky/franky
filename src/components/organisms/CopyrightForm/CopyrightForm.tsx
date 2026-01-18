@@ -104,6 +104,8 @@ export function CopyrightForm() {
                 label="Original Content URLs"
                 placeholder="Enter URLs of your original content"
                 disabled={isSubmitting}
+                className="min-w-0"
+                textareaClassName="overflow-y-auto overflow-x-hidden break-words"
               />
 
               <Molecules.ControlledTextareaField<CopyrightFormData>
@@ -112,6 +114,8 @@ export function CopyrightForm() {
                 label="Brief description of your original content"
                 placeholder="Describe your original content"
                 disabled={isSubmitting}
+                className="min-w-0"
+                textareaClassName="overflow-y-auto overflow-x-hidden break-words"
               />
             </Atoms.Container>
 
@@ -134,6 +138,8 @@ export function CopyrightForm() {
               label="Infringing Content URLs"
               placeholder="Enter URLs of infringing content"
               disabled={isSubmitting}
+              className="min-w-0"
+              textareaClassName="overflow-y-auto overflow-x-hidden break-words"
             />
 
             <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />

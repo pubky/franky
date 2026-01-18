@@ -226,12 +226,12 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Original Content URLs
             </label>
             <div
-              class="mx-auto w-full flex-col flex flex-1 cursor-pointer w-full min-w-0 items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10"
+              class="mx-auto w-full flex-col flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10 min-w-0"
               data-testid="container"
             >
               <textarea
                 aria-invalid="false"
-                class="flex min-h-16 w-full max-w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base break-all shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words"
+                class="flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base wrap-break-word shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words"
                 data-slot="textarea"
                 id="originalContentUrls"
                 name="originalContentUrls"
@@ -252,12 +252,12 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Brief description of your original content
             </label>
             <div
-              class="mx-auto w-full flex-col flex flex-1 cursor-pointer w-full min-w-0 items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10"
+              class="mx-auto w-full flex-col flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10 min-w-0"
               data-testid="container"
             >
               <textarea
                 aria-invalid="false"
-                class="flex min-h-16 w-full max-w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base break-all shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words"
+                class="flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base wrap-break-word shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words"
                 data-slot="textarea"
                 id="briefDescription"
                 name="briefDescription"
@@ -301,12 +301,12 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
             Infringing Content URLs
           </label>
           <div
-            class="mx-auto w-full flex-col flex flex-1 cursor-pointer w-full min-w-0 items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10"
+            class="mx-auto w-full flex-col flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10 min-w-0"
             data-testid="container"
           >
             <textarea
               aria-invalid="false"
-              class="flex min-h-16 w-full max-w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base break-all shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words"
+              class="flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base wrap-break-word shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words"
               data-slot="textarea"
               id="infringingContentUrl"
               name="infringingContentUrl"

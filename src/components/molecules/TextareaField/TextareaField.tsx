@@ -1,5 +1,4 @@
 import * as Atoms from '@/atoms';
-import * as Config from '@/config';
 import * as Libs from '@/libs';
 
 interface TextareaFieldProps {
@@ -11,6 +10,7 @@ interface TextareaFieldProps {
   readOnly?: boolean;
   onClick?: () => void;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
+  textareaClassName?: string;
   variant?: 'default' | 'dashed';
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -32,13 +32,14 @@ export function TextareaField({
   readOnly = false,
   onClick,
   className,
+  textareaClassName,
   variant = 'default',
   status = 'default',
   onChange,
   onBlur,
   onKeyDown,
   maxLength,
-  rows = Config.DEFAULT_TEXTAREA_ROWS,
+  rows = 4,
   message,
   messageType = 'default',
 }: TextareaFieldProps) {
@@ -48,11 +49,9 @@ export function TextareaField({
     error: 'border-red-500 text-red-500',
   };
 
-  const textAreaClasses = Libs.cn(
-    'w-full border-none resize-none px-5 py-4 h-25 !bg-transparent overflow-y-auto overflow-x-hidden break-words',
-  );
+  const textAreaClasses = Libs.cn('w-full border-none resize-none px-5 py-4 h-25 !bg-transparent', textareaClassName);
   const containerClasses = Libs.cn(
-    'flex-1 cursor-pointer w-full min-w-0 items-center flex-row border gap-0 rounded-md font-medium',
+    'flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium',
     variant === 'dashed' && 'border-dashed !bg-alpha-90/10',
   );
   const messageClasses = {
