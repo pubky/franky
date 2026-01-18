@@ -31,11 +31,18 @@ describe('isDynamicPublicRoute', () => {
       expect(isDynamicPublicRoute(`/profile/${longPubky}`)).toBe(true);
     });
 
-    it('returns true for profile with pubky and sub-route', () => {
+    it('returns true for profile with pubky and posts sub-route', () => {
       const longPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
       expect(isDynamicPublicRoute(`/profile/${longPubky}/posts`)).toBe(true);
-      expect(isDynamicPublicRoute(`/profile/${longPubky}/followers`)).toBe(true);
-      expect(isDynamicPublicRoute(`/profile/${longPubky}/following`)).toBe(true);
+    });
+
+    it('returns false for profile with pubky and other sub-routes', () => {
+      const longPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+      expect(isDynamicPublicRoute(`/profile/${longPubky}/followers`)).toBe(false);
+      expect(isDynamicPublicRoute(`/profile/${longPubky}/following`)).toBe(false);
+      expect(isDynamicPublicRoute(`/profile/${longPubky}/friends`)).toBe(false);
+      expect(isDynamicPublicRoute(`/profile/${longPubky}/replies`)).toBe(false);
+      expect(isDynamicPublicRoute(`/profile/${longPubky}/tagged`)).toBe(false);
     });
 
     it('returns false for own profile sub-routes', () => {

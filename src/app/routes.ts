@@ -108,22 +108,23 @@ export const HOME_ROUTES = {
  *
  * Dynamic public routes:
  * - /post/[userId]/[postId] - viewing a single post
- * - /profile/[pubky] - viewing another user's profile (pubky is exactly 52 chars)
+ * - /profile/[pubky] - viewing another user's profile
+ * - /profile/[pubky]/posts - viewing another user's posts
  */
 export function isDynamicPublicRoute(pathname: string): boolean {
-  // Match /post/[userId]/[postId] - single post view
-  if (/^\/post\/[^/]+\/[^/]+$/.test(pathname)) {
-    return true;
-  }
+  const segments = pathname.split('/').filter(Boolean);
 
-  // Match /profile/[pubky] - viewing another user's profile
-  // Pubky identifiers are exactly 52 lowercase alphanumeric characters
-  const profileMatch = pathname.match(/^\/profile\/([^/]+)/);
-  if (profileMatch && isPubkyIdentifier(profileMatch[1])) {
-    return true;
+  switch (true) {
+    case segments[0] === 'post' && segments.length === 3:
+    case segments[0] === 'profile' && segments.length === 2 && isPubkyIdentifier(segments[1]):
+    case segments[0] === 'profile' &&
+      segments.length === 3 &&
+      isPubkyIdentifier(segments[1]) &&
+      segments[2] === 'posts':
+      return true;
+    default:
+      return false;
   }
-
-  return false;
 }
 
 // ============================================================================
