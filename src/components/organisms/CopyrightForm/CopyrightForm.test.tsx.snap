@@ -178,7 +178,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
             </span>
           </label>
           <div
-            class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+            class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
             data-testid="container"
           >
             <input
@@ -356,7 +356,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               First Name
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -384,7 +384,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Last Name
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -417,7 +417,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Email
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -445,7 +445,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Phone number
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -484,7 +484,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Street address
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -512,7 +512,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               Country
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -545,7 +545,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               City
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -573,7 +573,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
               State/Province
             </label>
             <div
-              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+              class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
               data-testid="container"
             >
               <input
@@ -602,7 +602,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
             Zip code
           </label>
           <div
-            class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+            class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
             data-testid="container"
           >
             <input
@@ -641,7 +641,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
             Full Name as Signature
           </label>
           <div
-            class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+            class="mx-auto w-full flex-col flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
             data-testid="container"
           >
             <input

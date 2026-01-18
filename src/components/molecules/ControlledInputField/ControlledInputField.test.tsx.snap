@@ -13,7 +13,7 @@ exports[`ControlledInputField - Snapshots > matches snapshot for default state 1
     Test Label
   </label>
   <div
-    class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg"
+    class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-14 text-lg mb-0"
     data-testid="container"
   >
     <input

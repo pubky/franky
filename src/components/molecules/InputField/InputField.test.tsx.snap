@@ -2,7 +2,7 @@
 
 exports[`InputField - Snapshots > matches snapshot when disabled 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
   data-testid="container"
 >
   <input
@@ -18,7 +18,7 @@ exports[`InputField - Snapshots > matches snapshot when disabled 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot when loading 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-brand text-brand h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-brand text-brand h-12 text-base"
   data-testid="container"
 >
   <div
@@ -44,7 +44,7 @@ exports[`InputField - Snapshots > matches snapshot when loading 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot when not loading with icon 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-4.5 h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-4.5 h-12 text-base"
   data-testid="container"
 >
   <div
@@ -69,7 +69,7 @@ exports[`InputField - Snapshots > matches snapshot when not loading with icon 1`
 
 exports[`InputField - Snapshots > matches snapshot when readOnly 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
   data-testid="container"
 >
   <input
@@ -85,7 +85,7 @@ exports[`InputField - Snapshots > matches snapshot when readOnly 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base custom-input-field"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base custom-input-field"
   data-testid="container"
 >
   <input
@@ -100,7 +100,7 @@ exports[`InputField - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot with dashed variant 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 border-dashed h-12 text-base"
   data-testid="container"
 >
   <input
@@ -115,7 +115,7 @@ exports[`InputField - Snapshots > matches snapshot with dashed variant 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
   data-testid="container"
 >
   <input
@@ -130,7 +130,7 @@ exports[`InputField - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot with icon 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-4.5 h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-4.5 h-12 text-base"
   data-testid="container"
 >
   <div
@@ -155,7 +155,7 @@ exports[`InputField - Snapshots > matches snapshot with icon 1`] = `
 
 exports[`InputField - Snapshots > matches snapshot with placeholder 1`] = `
 <div
-  class="flex !bg-alpha-90/10 mx-0 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
+  class="flex !bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent pl-2 h-12 text-base"
   data-testid="container"
 >
   <input
