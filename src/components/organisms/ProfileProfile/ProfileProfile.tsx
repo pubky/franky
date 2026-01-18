@@ -3,8 +3,8 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-
 import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
 import * as Providers from '@/providers';
 import { ProfilePageHeader } from '@/organisms';
 import { MAX_SIDEBAR_TAGS } from '../ProfilePageSidebar/ProfilePageSidebar.constants';
@@ -27,6 +27,11 @@ export function ProfileProfile() {
   const { toggleFollow, isLoading: isFollowLoading } = Hooks.useFollowUser();
   const { isFollowing } = Hooks.useIsFollowing(pubky ?? '');
 
+  // Handle mute/unmute for other users' profiles
+  const { toggleMute, isLoading: isMuteLoading, isUserLoading: isMuteUserLoading } = Hooks.useMuteUser();
+  const { isMuted } = Hooks.useMutedUsers();
+  const isProfileMuted = pubky ? isMuted(pubky) : false;
+
   // Get tags for the user
   const {
     tags: allTags,
@@ -42,22 +47,36 @@ export function ProfileProfile() {
     return [...allTags].sort((a, b) => (b.taggers_count ?? 0) - (a.taggers_count ?? 0)).slice(0, MAX_SIDEBAR_TAGS);
   }, [allTags]);
 
-  // Create follow toggle handler
-  const handleFollowToggle = React.useCallback(async () => {
+  const handleFollowToggle = async () => {
     if (!pubky) return;
     await toggleFollow(pubky, isFollowing);
-  }, [pubky, isFollowing, toggleFollow]);
+  };
 
-  // Merge actions with follow-related actions
-  const mergedActions = React.useMemo(
-    () => ({
-      ...actions,
-      onFollowToggle: handleFollowToggle,
-      isFollowLoading,
-      isFollowing,
-    }),
-    [actions, handleFollowToggle, isFollowLoading, isFollowing],
-  );
+  const handleMuteToggle = async () => {
+    if (!pubky) return;
+    try {
+      await toggleMute(pubky, isProfileMuted);
+      Molecules.toast({
+        title: isProfileMuted ? 'User unmuted' : 'User muted',
+        description: `${profile.name || pubky} has been ${isProfileMuted ? 'unmuted' : 'muted'}.`,
+      });
+    } catch (error) {
+      Molecules.toast({
+        title: 'Error',
+        description: Libs.isAppError(error) ? error.message : 'Failed to update mute status',
+      });
+    }
+  };
+
+  const mergedActions = {
+    ...actions,
+    onFollowToggle: handleFollowToggle,
+    isFollowLoading,
+    isFollowing,
+    onMuteToggle: handleMuteToggle,
+    isMuteLoading: isMuteLoading || (pubky ? isMuteUserLoading(pubky) : false),
+    isMuted: isProfileMuted,
+  };
 
   return (
     <Atoms.Container

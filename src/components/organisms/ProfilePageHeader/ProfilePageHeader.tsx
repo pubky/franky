@@ -21,6 +21,9 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     onFollowToggle,
     isFollowLoading,
     isFollowing,
+    onMuteToggle,
+    isMuteLoading,
+    isMuted,
   } = actions;
 
   // Check if user is authenticated for conditional rendering
@@ -128,36 +131,57 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                 <Icons.Link className="size-4" />
                 Link
               </Atoms.Button>
-              {/* Follow/Unfollow button - only shown for authenticated users */}
+              {/* Follow/Unfollow button and mute menu - only shown for authenticated users */}
               {isAuthenticated && (
-                <Atoms.Button
-                  data-cy="profile-follow-toggle-btn"
-                  variant="secondary"
-                  size="sm"
-                  onClick={onFollowToggle}
-                  disabled={isFollowLoading}
-                >
-                  {isFollowLoading ? (
-                    <>
-                      <Icons.Loader2 className="size-4 animate-spin" />
-                      {isFollowing ? 'Unfollowing...' : 'Following...'}
-                    </>
-                  ) : (
-                    <>
-                      {isFollowing ? (
-                        <>
-                          <Icons.Check className="size-4" />
-                          Following
-                        </>
-                      ) : (
-                        <>
-                          <Icons.UserPlus className="size-4" />
-                          Follow
-                        </>
-                      )}
-                    </>
+                <>
+                  <Atoms.Button
+                    data-cy="profile-follow-toggle-btn"
+                    variant="secondary"
+                    size="sm"
+                    onClick={onFollowToggle}
+                    disabled={isFollowLoading}
+                  >
+                    {isFollowLoading ? (
+                      <>
+                        <Icons.Loader2 className="size-4 animate-spin" />
+                        {isFollowing ? 'Unfollowing...' : 'Following...'}
+                      </>
+                    ) : (
+                      <>
+                        {isFollowing ? (
+                          <>
+                            <Icons.Check className="size-4" />
+                            Following
+                          </>
+                        ) : (
+                          <>
+                            <Icons.UserPlus className="size-4" />
+                            Follow
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Atoms.Button>
+                  {onMuteToggle && (
+                    <Atoms.DropdownMenu>
+                      <Atoms.DropdownMenuTrigger asChild>
+                        <Atoms.Button variant="secondary" size="sm" aria-label="Profile actions">
+                          <Libs.Ellipsis className="size-4" />
+                        </Atoms.Button>
+                      </Atoms.DropdownMenuTrigger>
+                      <Atoms.DropdownMenuContent align="end">
+                        <Atoms.DropdownMenuItem
+                          onClick={onMuteToggle}
+                          disabled={isMuteLoading}
+                          className="flex items-center gap-2"
+                        >
+                          {isMuted ? <Libs.VolumeX className="size-4" /> : <Libs.MegaphoneOff className="size-4" />}
+                          {`${isMuted ? 'Unmute' : 'Mute'} ${Libs.truncateString(name, 15)}`}
+                        </Atoms.DropdownMenuItem>
+                      </Atoms.DropdownMenuContent>
+                    </Atoms.DropdownMenu>
                   )}
-                </Atoms.Button>
+                </>
               )}
               {/* Status display inline with buttons */}
               {status && (

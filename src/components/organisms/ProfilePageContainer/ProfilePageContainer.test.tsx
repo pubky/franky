@@ -72,6 +72,18 @@ vi.mock('@/hooks', () => ({
     isFollowing: false,
     isLoading: false,
   })),
+  useMuteUser: vi.fn(() => ({
+    toggleMute: vi.fn(),
+    isLoading: false,
+    isUserLoading: vi.fn(() => false),
+    error: null,
+  })),
+  useMutedUsers: vi.fn(() => ({
+    mutedUserIds: [],
+    mutedUserIdSet: new Set(),
+    isMuted: vi.fn(() => false),
+    isLoading: false,
+  })),
 }));
 
 // Mock Organisms - ProfilePageLayout
@@ -161,8 +173,8 @@ describe('ProfilePageContainer', () => {
     );
     const layout = screen.getByTestId('profile-page-layout');
     const actionsCount = parseInt(layout.getAttribute('data-actions-count') || '0');
-    // 5 from useProfileHeader + 3 from useFollowUser/useIsFollowing (onFollowToggle, isFollowLoading, isFollowing)
-    expect(actionsCount).toBe(8);
+    // 5 from useProfileHeader + 3 from follow + 3 from mute
+    expect(actionsCount).toBe(11);
   });
 
   it('passes activePage from useProfileNavigation to layout', () => {
