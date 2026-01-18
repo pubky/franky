@@ -3,15 +3,18 @@ import * as Libs from '@/libs';
 
 interface TextareaFieldProps {
   id?: string;
+  name?: string;
   value: string;
   placeholder?: string;
   disabled?: boolean;
   readOnly?: boolean;
   onClick?: () => void;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
+  textareaClassName?: string;
   variant?: 'default' | 'dashed';
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   maxLength?: number;
   rows?: number;
@@ -22,15 +25,18 @@ interface TextareaFieldProps {
 
 export function TextareaField({
   id,
+  name,
   value,
   placeholder,
   disabled = false,
   readOnly = false,
   onClick,
   className,
+  textareaClassName,
   variant = 'default',
   status = 'default',
   onChange,
+  onBlur,
   onKeyDown,
   maxLength,
   rows = 4,
@@ -43,7 +49,7 @@ export function TextareaField({
     error: 'border-red-500 text-red-500',
   };
 
-  const textAreaClasses = Libs.cn('w-full border-none resize-none px-5 py-4 h-25 !bg-transparent');
+  const textAreaClasses = Libs.cn('w-full border-none resize-none px-5 py-4 h-25 !bg-transparent', textareaClassName);
   const containerClasses = Libs.cn(
     'flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium',
     variant === 'dashed' && 'border-dashed !bg-alpha-90/10',
@@ -61,6 +67,7 @@ export function TextareaField({
       <Atoms.Container className={Libs.cn(containerClasses, statusClasses[status], className)}>
         <Atoms.Textarea
           id={id}
+          name={name}
           className={textAreaClasses}
           value={value}
           placeholder={placeholder}
@@ -68,6 +75,7 @@ export function TextareaField({
           readOnly={readOnly}
           onClick={onClick}
           onChange={onChange}
+          onBlur={onBlur}
           onKeyDown={onKeyDown}
           maxLength={maxLength}
           rows={rows}

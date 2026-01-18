@@ -699,3 +699,21 @@ export function canSubmitPost(
 
   return Boolean(content.trim()) || attachments.length > 0;
 }
+
+/**
+ * Formats a date to US locale format (MM/DD/YYYY)
+ *
+ * @param date - The date to format (defaults to current date)
+ * @returns Formatted date string in MM/DD/YYYY format
+ *
+ * @example
+ * formatUSDate() // "01/15/2026" (current date)
+ * formatUSDate(new Date('2024-12-25')) // "12/25/2024"
+ */
+export function formatUSDate(date: Date = new Date()): string {
+  return date.toLocaleDateString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  });
+}
