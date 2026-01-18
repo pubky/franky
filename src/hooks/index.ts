@@ -30,6 +30,8 @@ export * from './usePostNavigation';
 export * from './usePostDetails';
 export * from './useProfileConnections';
 export * from './useFollowUser';
+export * from './useMuteUser';
+export * from './useMutedUsers';
 export * from './useIsFollowing';
 export * from './useAvatarUrl';
 export * from './useHotTags';

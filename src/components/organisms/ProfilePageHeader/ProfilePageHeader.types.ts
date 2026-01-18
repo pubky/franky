@@ -28,6 +28,12 @@ export interface ProfileHeaderActions {
   isFollowLoading?: boolean;
   /** Whether the current user is following this profile */
   isFollowing?: boolean;
+  /** Mute/unmute action for other user's profiles */
+  onMuteToggle?: () => void;
+  /** Whether the mute action is in progress */
+  isMuteLoading?: boolean;
+  /** Whether the current user has muted this profile */
+  isMuted?: boolean;
 }
 
 /**

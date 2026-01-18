@@ -20,6 +20,9 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     onFollowToggle,
     isFollowLoading,
     isFollowing,
+    onMuteToggle,
+    isMuteLoading,
+    isMuted,
   } = actions;
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
@@ -148,6 +151,25 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                   </>
                 )}
               </Atoms.Button>
+              {onMuteToggle && (
+                <Atoms.DropdownMenu>
+                  <Atoms.DropdownMenuTrigger asChild>
+                    <Atoms.Button variant="secondary" size="sm" aria-label="Profile actions">
+                      <Libs.Ellipsis className="size-4" />
+                    </Atoms.Button>
+                  </Atoms.DropdownMenuTrigger>
+                  <Atoms.DropdownMenuContent align="end">
+                    <Atoms.DropdownMenuItem
+                      onClick={onMuteToggle}
+                      disabled={isMuteLoading}
+                      className="flex items-center gap-2"
+                    >
+                      {isMuted ? <Libs.VolumeX className="size-4" /> : <Libs.MegaphoneOff className="size-4" />}
+                      {`${isMuted ? 'Unmute' : 'Mute'} ${Libs.truncateString(name, 15)}`}
+                    </Atoms.DropdownMenuItem>
+                  </Atoms.DropdownMenuContent>
+                </Atoms.DropdownMenu>
+              )}
               {/* Status display inline with buttons */}
               {status && (
                 <Atoms.Container overrideDefaults={true} className="flex h-8 items-center gap-1">
