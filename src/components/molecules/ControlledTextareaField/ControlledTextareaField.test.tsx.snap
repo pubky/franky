@@ -1,0 +1,30 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ControlledTextareaField - Snapshots > matches snapshot for default state 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-2"
+  data-testid="container"
+>
+  <label
+    class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-xs font-medium tracking-wide text-muted-foreground uppercase"
+    data-slot="label"
+    for="testField"
+  >
+    Test Label
+  </label>
+  <div
+    class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium border-dashed !bg-alpha-90/10"
+    data-testid="container"
+  >
+    <textarea
+      aria-invalid="false"
+      class="flex field-sizing-content min-h-16 rounded-md border border-input bg-transparent text-base wrap-break-word shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/40 md:text-sm w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+      data-slot="textarea"
+      id="testField"
+      name="testField"
+      placeholder="Enter text"
+      rows="4"
+    />
+  </div>
+</div>
+`;
