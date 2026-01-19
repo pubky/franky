@@ -167,8 +167,8 @@ describe('InitializedMDXEditor', () => {
     render(<InitializedMDXEditor editorRef={null} />);
 
     const editor = screen.getByTestId('mdx-editor');
-    // The editor should have 9 plugins configured
-    expect(editor).toHaveAttribute('data-plugins-count', '9');
+    // The editor should have 8 plugins configured (maxLengthPlugin was removed)
+    expect(editor).toHaveAttribute('data-plugins-count', '8');
   });
 
   it('passes additional props to MDXEditor', () => {

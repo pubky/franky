@@ -14,7 +14,6 @@ import {
   linkPlugin,
   listsPlugin,
   ListsToggle,
-  maxLengthPlugin,
   MDXEditor,
   type MDXEditorMethods,
   type MDXEditorProps,
@@ -27,7 +26,8 @@ import {
 import '@mdxeditor/editor/style.css';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { languages } from '@codemirror/language-data';
-import { ARTICLE_MAX_CHARACTER_LENGTH } from '@/config';
+// Note: maxLengthPlugin removed because body limit is dynamic based on title length
+// Validation is handled in the UI (ArticleCharacterBreakdown) and on submit
 import * as Icons from '@/libs/icons';
 import * as Molecules from '@/molecules';
 
@@ -138,7 +138,6 @@ export default function InitializedMDXEditor({
             codeBlockLanguages: CODE_BLOCK_LANGUAGES,
             codeMirrorExtensions: [oneDark],
           }),
-          maxLengthPlugin(ARTICLE_MAX_CHARACTER_LENGTH),
         ]}
         {...props}
         ref={editorRef}

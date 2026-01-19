@@ -149,6 +149,38 @@ vi.mock('@/molecules', () => ({
       Original Post: {postId}
     </div>
   )),
+  CharacterCounter: vi.fn(({ count, max, label }: { count: number; max: number; label?: string }) => (
+    <div data-testid="character-counter" data-count={count} data-max={max} data-label={label}>
+      {label && `${label}: `}
+      {count}/{max}
+    </div>
+  )),
+  ArticleCharacterBreakdown: vi.fn(
+    ({
+      titleCount,
+      titleMax,
+      bodyCount,
+      totalMax,
+      jsonOverhead,
+    }: {
+      titleCount: number;
+      titleMax: number;
+      bodyCount: number;
+      totalMax: number;
+      jsonOverhead: number;
+    }) => (
+      <div
+        data-testid="article-character-breakdown"
+        data-title-count={titleCount}
+        data-title-max={titleMax}
+        data-body-count={bodyCount}
+        data-total-max={totalMax}
+        data-json-overhead={jsonOverhead}
+      >
+        Title: {titleCount}/{titleMax} | Body: {bodyCount} | Total: {totalMax}
+      </div>
+    ),
+  ),
   MarkdownEditor: vi.fn(({ markdown, onChange, readOnly, ref }) => (
     <div
       data-testid="markdown-editor"

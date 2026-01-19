@@ -24,11 +24,34 @@ exports[`PostInput - Snapshots > matches snapshot for article mode 1`] = `
       data-testid="post-input-attachments"
     />
     <div
-      contenteditable="true"
-      data-readonly="false"
-      data-testid="markdown-editor"
+      class="max-h-[60vh] overflow-y-auto rounded-md border border-border"
+      data-override-defaults="true"
+      data-testid="container"
     >
-      Article body content
+      <div
+        contenteditable="true"
+        data-readonly="false"
+        data-testid="markdown-editor"
+      >
+        Article body content
+      </div>
+    </div>
+    <div
+      data-body-count="20"
+      data-json-overhead="22"
+      data-testid="article-character-breakdown"
+      data-title-count="18"
+      data-title-max="100"
+      data-total-max="50000"
+    >
+      Title: 
+      18
+      /
+      100
+       | Body: 
+      20
+       | Total: 
+      50000
     </div>
     <div
       class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "

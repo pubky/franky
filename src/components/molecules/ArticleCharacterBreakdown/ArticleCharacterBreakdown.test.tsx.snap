@@ -1,0 +1,475 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ArticleCharacterBreakdown - Snapshots > matches snapshot at max capacity 1`] = `
+<div
+  class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md bg-card/50 px-3 py-2 text-xs"
+  data-cy="article-character-breakdown"
+  data-testid="container"
+>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Title:
+    </span>
+    <span
+      class="tabular-nums text-destructive font-bold"
+      data-testid="typography"
+    >
+      100
+      /
+      100
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Body:
+    </span>
+    <span
+      class="tabular-nums text-destructive font-bold"
+      data-testid="typography"
+    >
+      49,878
+      /
+      49,878
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      JSON:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      +
+      22
+    </span>
+  </div>
+  <span
+    class="text-muted-foreground/50"
+    data-testid="typography"
+  >
+    │
+  </span>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="font-medium text-foreground"
+      data-testid="typography"
+    >
+      Total:
+    </span>
+    <span
+      class="tabular-nums font-bold text-destructive"
+      data-testid="typography"
+    >
+      50,000
+      /
+      50,000
+    </span>
+    <span
+      class="text-destructive"
+      data-testid="typography"
+    >
+      (
+      0
+       left)
+    </span>
+  </div>
+</div>
+`;
+
+exports[`ArticleCharacterBreakdown - Snapshots > matches snapshot when over limit 1`] = `
+<div
+  class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md bg-card/50 px-3 py-2 text-xs"
+  data-cy="article-character-breakdown"
+  data-testid="container"
+>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Title:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      50
+      /
+      100
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Body:
+    </span>
+    <span
+      class="tabular-nums text-destructive font-bold"
+      data-testid="typography"
+    >
+      50,500
+      /
+      49,928
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      JSON:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      +
+      22
+    </span>
+  </div>
+  <span
+    class="text-muted-foreground/50"
+    data-testid="typography"
+  >
+    │
+  </span>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="font-medium text-foreground"
+      data-testid="typography"
+    >
+      Total:
+    </span>
+    <span
+      class="tabular-nums font-bold text-destructive"
+      data-testid="typography"
+    >
+      50,572
+      /
+      50,000
+    </span>
+    <span
+      class="font-bold text-destructive"
+      data-testid="typography"
+    >
+      (delete 
+      572
+      )
+    </span>
+  </div>
+</div>
+`;
+
+exports[`ArticleCharacterBreakdown - Snapshots > matches snapshot with danger state 1`] = `
+<div
+  class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md bg-card/50 px-3 py-2 text-xs"
+  data-cy="article-character-breakdown"
+  data-testid="container"
+>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Title:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      50
+      /
+      100
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Body:
+    </span>
+    <span
+      class="tabular-nums text-destructive font-bold"
+      data-testid="typography"
+    >
+      47,450
+      /
+      49,928
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      JSON:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      +
+      22
+    </span>
+  </div>
+  <span
+    class="text-muted-foreground/50"
+    data-testid="typography"
+  >
+    │
+  </span>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="font-medium text-foreground"
+      data-testid="typography"
+    >
+      Total:
+    </span>
+    <span
+      class="tabular-nums font-bold text-destructive"
+      data-testid="typography"
+    >
+      47,522
+      /
+      50,000
+    </span>
+    <span
+      class="text-destructive"
+      data-testid="typography"
+    >
+      (
+      2,478
+       left)
+    </span>
+  </div>
+</div>
+`;
+
+exports[`ArticleCharacterBreakdown - Snapshots > matches snapshot with default values 1`] = `
+<div
+  class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md bg-card/50 px-3 py-2 text-xs"
+  data-cy="article-character-breakdown"
+  data-testid="container"
+>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Title:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      20
+      /
+      100
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Body:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      5,000
+      /
+      49,958
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      JSON:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      +
+      22
+    </span>
+  </div>
+  <span
+    class="text-muted-foreground/50"
+    data-testid="typography"
+  >
+    │
+  </span>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="font-medium text-foreground"
+      data-testid="typography"
+    >
+      Total:
+    </span>
+    <span
+      class="tabular-nums font-medium text-foreground"
+      data-testid="typography"
+    >
+      5,042
+      /
+      50,000
+    </span>
+  </div>
+</div>
+`;
+
+exports[`ArticleCharacterBreakdown - Snapshots > matches snapshot with warning state 1`] = `
+<div
+  class="flex flex-wrap items-center gap-x-4 gap-y-1 rounded-md bg-card/50 px-3 py-2 text-xs"
+  data-cy="article-character-breakdown"
+  data-testid="container"
+>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Title:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      50
+      /
+      100
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      Body:
+    </span>
+    <span
+      class="tabular-nums text-yellow-500"
+      data-testid="typography"
+    >
+      39,950
+      /
+      49,928
+    </span>
+  </div>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="text-muted-foreground"
+      data-testid="typography"
+    >
+      JSON:
+    </span>
+    <span
+      class="tabular-nums text-muted-foreground"
+      data-testid="typography"
+    >
+      +
+      22
+    </span>
+  </div>
+  <span
+    class="text-muted-foreground/50"
+    data-testid="typography"
+  >
+    │
+  </span>
+  <div
+    class="flex items-center gap-1"
+    data-testid="container"
+  >
+    <span
+      class="font-medium text-foreground"
+      data-testid="typography"
+    >
+      Total:
+    </span>
+    <span
+      class="tabular-nums font-medium text-yellow-500"
+      data-testid="typography"
+    >
+      40,022
+      /
+      50,000
+    </span>
+  </div>
+</div>
+`;

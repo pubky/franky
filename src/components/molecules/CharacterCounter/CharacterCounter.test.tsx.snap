@@ -1,0 +1,137 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CharacterCounter - Snapshots > matches snapshot when over limit 1`] = `
+<div
+  class="flex items-center gap-1.5"
+  data-cy="character-counter"
+  data-testid="container"
+>
+  <span
+    class="text-xs tabular-nums transition-colors font-bold text-destructive"
+    data-cy="character-counter-value"
+    data-testid="typography"
+  >
+    2,100
+    /
+    2,000
+  </span>
+  <span
+    class="text-xs font-bold text-destructive"
+    data-testid="typography"
+  >
+    (over limit!)
+  </span>
+</div>
+`;
+
+exports[`CharacterCounter - Snapshots > matches snapshot with danger state 1`] = `
+<div
+  class="flex items-center gap-1.5"
+  data-cy="character-counter"
+  data-testid="container"
+>
+  <span
+    class="text-xs tabular-nums transition-colors font-bold text-destructive"
+    data-cy="character-counter-value"
+    data-testid="typography"
+  >
+    1,950
+    /
+    2,000
+  </span>
+  <span
+    class="text-xs font-medium text-destructive"
+    data-testid="typography"
+  >
+    (
+    50
+     left)
+  </span>
+</div>
+`;
+
+exports[`CharacterCounter - Snapshots > matches snapshot with label 1`] = `
+<div
+  class="flex items-center gap-1.5"
+  data-cy="character-counter"
+  data-testid="container"
+>
+  <span
+    class="text-xs font-medium text-muted-foreground"
+    data-testid="typography"
+  >
+    Title
+    :
+  </span>
+  <span
+    class="text-xs font-medium tabular-nums transition-colors text-muted-foreground"
+    data-cy="character-counter-value"
+    data-testid="typography"
+  >
+    50
+    /
+    100
+  </span>
+</div>
+`;
+
+exports[`CharacterCounter - Snapshots > matches snapshot with large numbers (article body) 1`] = `
+<div
+  class="flex items-center gap-1.5"
+  data-cy="character-counter"
+  data-testid="container"
+>
+  <span
+    class="text-xs font-medium text-muted-foreground"
+    data-testid="typography"
+  >
+    Body
+    :
+  </span>
+  <span
+    class="text-xs font-medium tabular-nums transition-colors text-yellow-500"
+    data-cy="character-counter-value"
+    data-testid="typography"
+  >
+    45,000
+    /
+    50,000
+  </span>
+</div>
+`;
+
+exports[`CharacterCounter - Snapshots > matches snapshot with normal state 1`] = `
+<div
+  class="flex items-center gap-1.5"
+  data-cy="character-counter"
+  data-testid="container"
+>
+  <span
+    class="text-xs font-medium tabular-nums transition-colors text-muted-foreground"
+    data-cy="character-counter-value"
+    data-testid="typography"
+  >
+    500
+    /
+    2,000
+  </span>
+</div>
+`;
+
+exports[`CharacterCounter - Snapshots > matches snapshot with warning state 1`] = `
+<div
+  class="flex items-center gap-1.5"
+  data-cy="character-counter"
+  data-testid="container"
+>
+  <span
+    class="text-xs font-medium tabular-nums transition-colors text-yellow-500"
+    data-cy="character-counter-value"
+    data-testid="typography"
+  >
+    1,700
+    /
+    2,000
+  </span>
+</div>
+`;

@@ -5,7 +5,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with custom classNa
   class="custom-editor-class"
   data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
   data-placeholder="Start writing your masterpiece"
-  data-plugins-count="9"
+  data-plugins-count="8"
   data-testid="mdx-editor"
 >
   <div
@@ -78,7 +78,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with default props 
   class="dark-theme cursor-auto"
   data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
   data-placeholder="Start writing your masterpiece"
-  data-plugins-count="9"
+  data-plugins-count="8"
   data-testid="mdx-editor"
 >
   <div
@@ -151,7 +151,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with emoji picker o
   class="dark-theme cursor-auto"
   data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
   data-placeholder="Start writing your masterpiece"
-  data-plugins-count="9"
+  data-plugins-count="8"
   data-testid="mdx-editor"
 >
   <div
@@ -224,7 +224,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with markdown conte
   class="dark-theme cursor-auto"
   data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
   data-placeholder="Start writing your masterpiece"
-  data-plugins-count="9"
+  data-plugins-count="8"
   data-testid="mdx-editor"
   markdown="# Test Content"
 >

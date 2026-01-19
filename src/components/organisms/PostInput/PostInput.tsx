@@ -7,7 +7,12 @@ import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
-import { ARTICLE_TITLE_MAX_CHARACTER_LENGTH, POST_MAX_CHARACTER_LENGTH } from '@/config';
+import {
+  ARTICLE_JSON_OVERHEAD,
+  ARTICLE_TITLE_MAX_CHARACTER_LENGTH,
+  ARTICLE_TOTAL_MAX_CHARACTER_LENGTH,
+  POST_MAX_CHARACTER_LENGTH,
+} from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
@@ -69,6 +74,10 @@ export function PostInput({
     onArticleModeChange,
   });
 
+  // Memoize character counts to avoid expensive recalculations on every render
+  const titleCharCount = React.useMemo(() => Libs.getCharacterCount(articleTitle), [articleTitle]);
+  const contentCharCount = React.useMemo(() => Libs.getCharacterCount(content), [content]);
+
   const isValid = React.useCallback(() => {
     return Libs.canSubmitPost(variant, content, attachments, isSubmitting, isArticle, articleTitle);
   }, [variant, content, attachments, isSubmitting, isArticle, articleTitle]);
@@ -118,9 +127,7 @@ export function PostInput({
           <Organisms.PostHeader
             postId={currentUserPubky}
             isReplyInput={true}
-            characterLimit={
-              isArticle ? undefined : { count: Libs.getCharacterCount(content), max: POST_MAX_CHARACTER_LENGTH }
-            }
+            characterLimit={isArticle ? undefined : { count: contentCharCount, max: POST_MAX_CHARACTER_LENGTH }}
             showPopover={false}
           />
         )}
@@ -151,11 +158,24 @@ export function PostInput({
         />
 
         {isArticle && (
-          <Molecules.MarkdownEditor
-            ref={markdownEditorRef}
-            markdown={content}
-            onChange={handleArticleBodyChange}
-            readOnly={isSubmitting}
+          <Atoms.Container overrideDefaults className="max-h-[60vh] overflow-y-auto rounded-md border border-border">
+            <Molecules.MarkdownEditor
+              ref={markdownEditorRef}
+              markdown={content}
+              onChange={handleArticleBodyChange}
+              readOnly={isSubmitting}
+            />
+          </Atoms.Container>
+        )}
+
+        {/* Article character breakdown - shows title, body, JSON overhead, and total */}
+        {isArticle && (
+          <Molecules.ArticleCharacterBreakdown
+            titleCount={titleCharCount}
+            titleMax={ARTICLE_TITLE_MAX_CHARACTER_LENGTH}
+            bodyCount={contentCharCount}
+            totalMax={ARTICLE_TOTAL_MAX_CHARACTER_LENGTH}
+            jsonOverhead={ARTICLE_JSON_OVERHEAD}
           />
         )}
 

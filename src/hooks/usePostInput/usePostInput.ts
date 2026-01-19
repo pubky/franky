@@ -85,6 +85,10 @@ export function usePostInput({
     onArticleModeChange?.(isArticle);
   }, [isArticle, onArticleModeChange]);
 
+  // Note: We no longer truncate content automatically
+  // Instead, users can type beyond the limit and see visual feedback (red text)
+  // The submit button is disabled when over the limit (via canSubmitPost)
+
   // Handle click outside to collapse (only when expanded prop is false)
   useEffect(() => {
     if (expanded) return;
@@ -204,7 +208,9 @@ export function usePostInput({
     [setArticleTitle],
   );
 
-  // Handle article body change - length validation is handled via MDXEditor's maxLength plugin
+  // Handle article body change - no truncation, just update state
+  // Users can type beyond the limit and see visual feedback (red text)
+  // The submit button is disabled when over the limit
   const handleArticleBodyChange = useCallback<NonNullable<MDXEditorProps['onChange']>>(
     (markdown) => setContent(markdown),
     [setContent],
