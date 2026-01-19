@@ -53,7 +53,7 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
       {/* Main post card - FULL WIDTH - always visible */}
       <SinglePostCard postId={postId} />
 
-{/* Replies section - only visible for authenticated users */}
+      {/* Replies section - only visible for authenticated users */}
       {isAuthenticated && (
         <Atoms.Container overrideDefaults className="flex gap-6">
           {/* Left column - QuickReply and Replies thread connected to main post (larger) */}
