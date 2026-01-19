@@ -105,8 +105,9 @@ process.env.NEXT_PUBLIC_DEBUG_MODE = 'false';
 process.env.NEXT_PUBLIC_NEXUS_URL = 'https://nexus.staging.pubky.app';
 process.env.NEXT_PUBLIC_CDN_URL = 'https://nexus.staging.pubky.app/static';
 process.env.NEXT_PUBLIC_SYNC_TTL = '300000';
-process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL = 'http://localhost:6288/generate_signup_token';
-process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD = 'admin';
+// Server-side only admin credentials (not exposed to client)
+process.env.HOMESERVER_ADMIN_URL = 'http://localhost:6288/generate_signup_token';
+process.env.HOMESERVER_ADMIN_PASSWORD = 'admin';
 process.env.NEXT_PUBLIC_TESTNET = 'true';
 process.env.NEXT_PUBLIC_PKARR_RELAYS = 'http://localhost:8080';
 process.env.NEXT_PUBLIC_HOMESERVER = 'test-homeserver-key';
