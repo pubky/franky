@@ -2,15 +2,15 @@
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12 custom-section"
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12 custom-section"
   data-testid="container"
 >
   <div
-    class="flex w-full flex-col items-start justify-start gap-3"
+    class="flex w-full flex-col items-start gap-6"
     data-testid="container"
   >
     <div
-      class="inline-flex items-center justify-start gap-2"
+      class="inline-flex items-center justify-start gap-3"
       data-testid="container"
     >
       <svg
@@ -42,6 +42,11 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with custom classNam
         Test Section
       </h2>
     </div>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
     <div>
       Test content
     </div>
@@ -51,15 +56,15 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with custom classNam
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`] = `
 <div
-  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
   data-testid="container"
 >
   <div
-    class="flex w-full flex-col items-start justify-start gap-3"
+    class="flex w-full flex-col items-start gap-6"
     data-testid="container"
   >
     <div
-      class="inline-flex items-center justify-start gap-2"
+      class="inline-flex items-center justify-start gap-3"
       data-testid="container"
     >
       <svg
@@ -97,6 +102,11 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`]
     >
       Test description
     </p>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
     <div>
       Test content
     </div>
@@ -106,15 +116,15 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`]
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 1`] = `
 <div
-  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
   data-testid="container"
 >
   <div
-    class="flex w-full flex-col items-start justify-start gap-3"
+    class="flex w-full flex-col items-start gap-6"
     data-testid="container"
   >
     <div
-      class="inline-flex items-center justify-start gap-2"
+      class="inline-flex items-center justify-start gap-3"
       data-testid="container"
     >
       <svg
@@ -146,6 +156,11 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 
         Test Section
       </h2>
     </div>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
     <div>
       Test content
     </div>
@@ -155,11 +170,15 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot without icon and title 1`] = `
 <div
-  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
   data-testid="container"
 >
   <div
-    class="flex w-full flex-col items-start justify-start gap-3"
+    class="flex w-full flex-col items-start gap-6"
+    data-testid="container"
+  />
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
     data-testid="container"
   >
     <div>

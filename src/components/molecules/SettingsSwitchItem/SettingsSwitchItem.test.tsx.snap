@@ -2,17 +2,22 @@
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
 <div
-  class="inline-flex h-8 w-full items-center justify-between"
+  class="flex w-full items-start justify-between gap-3"
 >
-  <p
-    class="text-sm text-foreground font-semibold"
-    data-testid="typography"
+  <div
+    class="flex flex-col items-start gap-2"
   >
-    Test Setting
-  </p>
+    <label
+      class="text-sm text-foreground pt-[3px] leading-none font-medium"
+      data-testid="typography"
+      for="test-switch"
+    >
+      Test Setting
+    </label>
+  </div>
   <button
     aria-checked="true"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+    class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
     data-state="checked"
     id="test-switch"
     role="switch"
@@ -20,7 +25,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
     value="on"
   >
     <span
-      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
       data-state="checked"
     />
   </button>
@@ -29,17 +34,22 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
 <div
-  class="inline-flex h-8 w-full items-center justify-between"
+  class="flex w-full items-start justify-between gap-3"
 >
-  <p
-    class="text-sm text-foreground font-semibold"
-    data-testid="typography"
+  <div
+    class="flex flex-col items-start gap-2"
   >
-    Test Setting
-  </p>
+    <label
+      class="text-sm text-foreground pt-[3px] leading-none font-medium"
+      data-testid="typography"
+      for="test-switch"
+    >
+      Test Setting
+    </label>
+  </div>
   <button
     aria-checked="false"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+    class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
     data-disabled=""
     data-state="unchecked"
     disabled=""
@@ -49,7 +59,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
     value="on"
   >
     <span
-      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
       data-disabled=""
       data-state="unchecked"
     />
@@ -59,17 +69,22 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="inline-flex h-8 w-full items-center justify-between custom-item"
+  class="flex w-full items-start justify-between gap-3 custom-item"
 >
-  <p
-    class="text-sm text-foreground font-semibold"
-    data-testid="typography"
+  <div
+    class="flex flex-col items-start gap-2"
   >
-    Test Setting
-  </p>
+    <label
+      class="text-sm text-foreground pt-[3px] leading-none font-medium"
+      data-testid="typography"
+      for="test-switch"
+    >
+      Test Setting
+    </label>
+  </div>
   <button
     aria-checked="false"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+    class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
     data-state="unchecked"
     id="test-switch"
     role="switch"
@@ -77,7 +92,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className
     value="on"
   >
     <span
-      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
       data-state="unchecked"
     />
   </button>
@@ -86,17 +101,22 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="inline-flex h-8 w-full items-center justify-between"
+  class="flex w-full items-start justify-between gap-3"
 >
-  <p
-    class="text-sm text-foreground font-semibold"
-    data-testid="typography"
+  <div
+    class="flex flex-col items-start gap-2"
   >
-    Test Setting
-  </p>
+    <label
+      class="text-sm text-foreground pt-[3px] leading-none font-medium"
+      data-testid="typography"
+      for="test-switch"
+    >
+      Test Setting
+    </label>
+  </div>
   <button
     aria-checked="false"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+    class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
     data-state="unchecked"
     id="test-switch"
     role="switch"
@@ -104,7 +124,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with default props 1`
     value="on"
   >
     <span
-      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
       data-state="unchecked"
     />
   </button>
