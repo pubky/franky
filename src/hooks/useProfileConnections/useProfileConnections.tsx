@@ -46,8 +46,6 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
 
   // Refs for stable callbacks
   const userIdsRef = useRef<Core.Pubky[]>([]);
-  // Track if initial fetch completed for own following list
-  const hasInitialFetchRef = useRef(false);
 
   // Build stream ID: userId:connectionType (e.g., 'user123:followers')
   const streamId = targetUserId ? (`${targetUserId}:${type}` as Core.UserStreamCompositeId) : null;
@@ -65,19 +63,17 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Sync userIds when stream changes in cache (e.g., after follow/unfollow)
   useEffect(() => {
     if (cachedStream !== null && !isLoading) {
-      // Only sync if we haven't paginated (user is still on first page)
       const hasPaginated = skip > Config.NEXUS_USERS_PER_PAGE;
-      if (!hasPaginated) {
-        // For own following list, only skip sync when users were removed (unfollow)
-        // Allow sync when users were added (follow)
-        const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
-        if (isOwnFollowing && cachedStream.length < userIdsRef.current.length) {
-          return;
-        }
+      if (hasPaginated) return;
 
-        userIdsRef.current = cachedStream;
-        setUserIds(cachedStream);
-      }
+      // For own following list: don't sync from cache
+      // The cache may be polluted with stale API data
+      // Trust the filtered fetch result as source of truth
+      const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
+      if (isOwnFollowing) return;
+
+      userIdsRef.current = cachedStream;
+      setUserIds(cachedStream);
     }
   }, [cachedStream, isLoading, skip, targetUserId, currentUserPubky, type]);
 
@@ -199,20 +195,31 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       try {
         const currentSkip = isInitialLoad ? 0 : skip;
 
-        // For own following list, use localOnly on first-page reloads to preserve local state
-        // Skip localOnly for pagination (currentSkip > 0) to allow fetching more results
+        // For own following list, snapshot the cache BEFORE fetch
+        // The fetch may pollute the cache with stale API data
         const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
-        const useLocalOnly = isOwnFollowing && hasInitialFetchRef.current && currentSkip === 0;
+        const preFetchCache =
+          isOwnFollowing && isInitialLoad ? await Core.LocalStreamUsersService.findById(streamId) : null;
 
         const result = await Core.StreamUserController.getOrFetchStreamSlice({
           streamId,
           skip: currentSkip,
           limit: Config.NEXUS_USERS_PER_PAGE,
-          localOnly: useLocalOnly,
         });
 
+        let pageIds = result.nextPageIds;
+
+        // Filter API results against pre-fetch cache snapshot
+        // This handles eventual consistency where API returns unfollowed users
+        if (preFetchCache) {
+          const cachedSet = new Set(preFetchCache.stream);
+          pageIds = pageIds.filter((id) => cachedSet.has(id));
+          // Reset cache to clean state (undo pollution from API merge)
+          await Core.LocalStreamUsersService.upsert({ streamId, stream: preFetchCache.stream });
+        }
+
         // Handle empty results
-        if (result.nextPageIds.length === 0) {
+        if (pageIds.length === 0) {
           Libs.Logger.debug('[useProfileConnections] Empty result, no more connections');
           setHasMore(false);
           return;
@@ -220,18 +227,18 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
 
         // Deduplicate user IDs
         const existingIds = new Set(userIdsRef.current);
-        const newUniqueIds = result.nextPageIds.filter((id) => !existingIds.has(id));
+        const newUniqueIds = pageIds.filter((id) => !existingIds.has(id));
 
         // Update skip cursor for next pagination
-        const nextSkip = result.skip ?? currentSkip + result.nextPageIds.length;
+        const nextSkip = result.skip ?? currentSkip + pageIds.length;
         setSkip(nextSkip);
 
         // Check hasMore based on response length
-        const hasMoreConnections = result.nextPageIds.length >= Config.NEXUS_USERS_PER_PAGE;
+        const hasMoreConnections = pageIds.length >= Config.NEXUS_USERS_PER_PAGE;
         setHasMore(hasMoreConnections);
 
         // Update state with all IDs (including duplicates for cursor tracking)
-        const updatedIds = isInitialLoad ? result.nextPageIds : [...userIdsRef.current, ...newUniqueIds];
+        const updatedIds = isInitialLoad ? pageIds : [...userIdsRef.current, ...newUniqueIds];
         userIdsRef.current = updatedIds;
         setUserIds(updatedIds);
       } catch (err) {
@@ -242,10 +249,6 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       } finally {
         if (isInitialLoad) {
           setIsLoading(false);
-          // Mark initial fetch complete for own following list localOnly logic
-          if (targetUserId === currentUserPubky && type === 'following') {
-            hasInitialFetchRef.current = true;
-          }
         } else {
           setIsLoadingMore(false);
         }
@@ -259,7 +262,6 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
    */
   const clearState = useCallback(() => {
     userIdsRef.current = [];
-    hasInitialFetchRef.current = false;
     setUserIds([]);
     setSkip(0);
     setHasMore(true);
