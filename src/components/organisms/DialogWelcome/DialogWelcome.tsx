@@ -31,11 +31,11 @@ export function DialogWelcome() {
     return null;
   }
 
-  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10 });
+  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10, includePrefix: true });
   const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(currentUserPubky);
+    copyToClipboard(Libs.withPubkyPrefix(currentUserPubky));
   };
 
   const handleExplorePubky = () => {

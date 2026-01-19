@@ -80,7 +80,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
     icon: Libs.Key,
     onClick: async () => {
       try {
-        await copyPubky(postAuthorId);
+        await copyPubky(Libs.withPubkyPrefix(postAuthorId));
       } catch (error) {
         Molecules.toast({
           title: 'Error',
