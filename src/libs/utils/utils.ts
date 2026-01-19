@@ -114,7 +114,7 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
 // This is to ensure that the IDs are consistent across test runs
 export const normaliseRadixIds = (container: HTMLElement) => {
   const clonedContainer = container.cloneNode(true) as HTMLElement;
-  const normalizedId = 'radix-_r_0_';
+  const normalizedId = 'radix-normalized';
   const radixIdPatterns = [/^radix-_r_[\da-z]+_?$/i, /^_r_[\da-z]+_?$/i];
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));

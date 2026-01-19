@@ -20,7 +20,9 @@ interface TypographyProps {
     | 'sup'
     | 'code'
     | 'pre'
-    | 'blockquote';
+    | 'blockquote'
+    | 'label';
+  htmlFor?: string;
   children: ReactNode;
   className?: React.HTMLAttributes<HTMLElement>['className'];
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
