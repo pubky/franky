@@ -100,22 +100,6 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
             overrideDefaults={true}
             className="flex items-center gap-2 rounded-md border border-dashed border-input bg-background/10 px-5 py-4 shadow-sm focus-within:border-white/80"
           >
-            <Atoms.Input
-              ref={inputRef}
-              type="text"
-              value={customStatus}
-              placeholder="Add status"
-              maxLength={Config.USER_STATUS_MAX_LENGTH}
-              onChange={(e) => setCustomStatus(e.target.value)}
-              onKeyDown={handleKeyDown}
-              className={Libs.cn(
-                'flex-1 bg-transparent text-base leading-6 font-medium caret-white outline-none',
-                'border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
-                'min-h-6 p-0',
-                'placeholder:font-medium placeholder:text-input',
-                customStatus ? 'text-foreground' : 'text-input',
-              )}
-            />
             {selectedEmoji ? (
               <Atoms.Button
                 overrideDefaults={true}
@@ -143,6 +127,22 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
                 <Icons.Smile className="size-5" strokeWidth={2} />
               </Atoms.Button>
             )}
+            <Atoms.Input
+              ref={inputRef}
+              type="text"
+              value={customStatus}
+              placeholder="Add status"
+              maxLength={Config.USER_STATUS_MAX_LENGTH}
+              onChange={(e) => setCustomStatus(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={Libs.cn(
+                'flex-1 bg-transparent text-base leading-6 font-medium caret-white outline-none',
+                'border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
+                'min-h-6 p-0',
+                'placeholder:font-medium placeholder:text-input',
+                customStatus ? 'text-foreground' : 'text-input',
+              )}
+            />
           </Atoms.Container>
         </Atoms.Container>
       </Atoms.Container>
