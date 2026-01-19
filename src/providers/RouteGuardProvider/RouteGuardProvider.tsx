@@ -22,6 +22,7 @@ interface RouteGuardProviderProps {
  * - Redirects unauthorized users to appropriate default routes
  * - Shows loading states while determining access permissions
  * - Allows public routes to be accessed by anyone
+ * - Allows dynamic public routes (/post/[x]/[y], /profile/[pubky]) without auth
  *
  * Route access is configured via ROUTE_ACCESS_MAP which maps:
  * - UNAUTHENTICATED users → onboarding/auth routes
@@ -32,7 +33,9 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
-  const { hasHydrated, session, sessionExport } = Core.useAuthStore((state) => state);
+  const hasHydrated = Core.useAuthStore((state) => state.hasHydrated);
+  const session = Core.useAuthStore((state) => state.session);
+  const sessionExport = Core.useAuthStore((state) => state.sessionExport);
   // Attempt to restore an existing session snapshot on fresh loads.
   useEffect(() => {
     if (!hasHydrated) return;
@@ -43,8 +46,11 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
 
   // Determine if the current route is accessible based on authentication status
   const isRouteAccessible = useMemo(() => {
-    // Public routes are ALWAYS accessible, even during loading
+    // Static public routes are ALWAYS accessible, even during loading
     if (App.PUBLIC_ROUTES.includes(pathname)) return true;
+
+    // Dynamic public routes (e.g., /post/[x]/[y], /profile/[pubky]) are also always accessible
+    if (App.isDynamicPublicRoute(pathname)) return true;
 
     // Wait for authentication status to be determined before allowing access to protected routes
     if (isLoading) return false;
@@ -60,8 +66,11 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
 
   // Handle automatic redirects when user tries to access unauthorized routes
   useEffect(() => {
-    // Public routes never redirect
+    // Static public routes never redirect
     if (App.PUBLIC_ROUTES.includes(pathname)) return;
+
+    // Dynamic public routes never redirect
+    if (App.isDynamicPublicRoute(pathname)) return;
 
     // Wait for authentication status to be determined for protected routes
     if (isLoading) return;

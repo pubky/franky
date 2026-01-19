@@ -41,6 +41,24 @@ export function formatPublicKey({ key, length = 12, includePrefix = false }: For
   return `${prefixLabel}${prefix}...${suffix}`;
 }
 
+/**
+ * Checks if a string is a valid pubky identifier.
+ * Pubky identifiers are exactly 52 lowercase alphanumeric characters (z-base-32 encoded).
+ *
+ * @param value - The string to validate
+ * @returns true if the string is a valid pubky identifier
+ *
+ * @example
+ * ```ts
+ * isPubkyIdentifier('o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy') // true
+ * isPubkyIdentifier('posts') // false
+ * isPubkyIdentifier('ABC123...') // false (uppercase)
+ * ```
+ */
+export function isPubkyIdentifier(value: string): boolean {
+  return /^[a-z0-9]{52}$/.test(value);
+}
+
 export async function copyToClipboard({ text }: CopyToClipboardProps) {
   if (typeof navigator === 'undefined') {
     throw new Error('Clipboard API not supported');

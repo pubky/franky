@@ -63,5 +63,7 @@ export * from './useTagSearch';
 export * from './usePostHeaderUserInfoPopoverData';
 export * from './usePostHeaderUserInfoPopoverActions';
 export * from './useReportPost';
+export * from './useRequireAuth';
+export * from './usePublicRoute';
 export * from './useTtlViewportSubscription';
 export * from './usePostArticle';

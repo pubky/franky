@@ -46,7 +46,9 @@ export function usePost() {
   const [isArticle, setIsArticle] = useState(false);
   const [articleTitle, setArticleTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+  // selectCurrentUserPubky() throws an error when user is not authenticated;
+  // access currentUserPubky directly to get null instead (post actions return early if null)
+  const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const { toast } = Molecules.useToast();
 
   const showErrorToast = useCallback(
