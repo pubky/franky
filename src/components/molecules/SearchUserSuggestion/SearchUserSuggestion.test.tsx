@@ -54,10 +54,10 @@ describe('SearchUserSuggestion', () => {
     render(<SearchUserSuggestion user={mockUser} />);
 
     // Real formatPublicKey implementation formats differently than mock
-    // pk:abc123def456 with length 8 should format as pk:abc1...f456
+    // pk:abc123def456 with length 8 should format as abc1...f456
     const pubkyElement = screen.getByTestId('user-pubky');
-    expect(pubkyElement).toHaveTextContent(/pk:/);
-    expect(pubkyElement.textContent).toMatch(/pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
+    expect(pubkyElement).not.toHaveTextContent(/pubky/);
+    expect(pubkyElement.textContent).toMatch(/[a-z0-9]+\.\.\.[a-z0-9]+/);
   });
 
   it('renders avatar with correct props', () => {
@@ -104,8 +104,8 @@ describe('SearchUserSuggestion', () => {
     expect(suggestion).toHaveAttribute('aria-label');
     const ariaLabel = suggestion.getAttribute('aria-label');
     expect(ariaLabel).toContain('John Doe');
-    // Real formatPublicKey formats as pk:abc1...f456 (length 8)
-    expect(ariaLabel).toMatch(/pk:[a-z0-9]+\.\.\.[a-z0-9]+/);
+    // Real formatPublicKey formats as abc1...f456 (length 8)
+    expect(ariaLabel).toMatch(/[a-z0-9]+\.\.\.[a-z0-9]+/);
   });
 
   describe('SearchUserSuggestion - Snapshots', () => {
