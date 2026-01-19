@@ -29,14 +29,6 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
     setRepostDialogOpen(true);
   };
 
-  const handleInteractiveClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
-  const handleInteractiveKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
-  };
-
   return (
     <>
       <Atoms.Card className={Libs.cn('min-w-0 rounded-lg py-0', className)}>
@@ -44,9 +36,7 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
           <Atoms.Container className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left column - Post content */}
             <Atoms.Container className="flex flex-col gap-4 lg:col-span-2">
-              <Atoms.Container overrideDefaults onClick={handleInteractiveClick} onKeyDown={handleInteractiveKeyDown}>
-                <Organisms.PostHeader postId={postId} />
-              </Atoms.Container>
+              <Organisms.PostHeader postId={postId} />
 
               <Organisms.PostContent postId={postId} />
 
@@ -54,31 +44,17 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
               <Atoms.Container overrideDefaults className="flex-1" />
 
               {/* Tags on mobile - between content and buttons */}
-              <Atoms.Container
-                className="block lg:hidden"
-                onClick={handleInteractiveClick}
-                onKeyDown={handleInteractiveKeyDown}
-              >
-                <Organisms.PostTagsPanel postId={postId} />
-              </Atoms.Container>
+              <Organisms.PostTagsPanel postId={postId} className="flex lg:hidden" />
 
-              <Atoms.Container overrideDefaults onClick={handleInteractiveClick} onKeyDown={handleInteractiveKeyDown}>
-                <Organisms.PostActionsBar
-                  postId={postId}
-                  onReplyClick={handleReplyClick}
-                  onRepostClick={handleRepostClick}
-                />
-              </Atoms.Container>
+              <Organisms.PostActionsBar
+                postId={postId}
+                onReplyClick={handleReplyClick}
+                onRepostClick={handleRepostClick}
+              />
             </Atoms.Container>
 
             {/* Right column - Tags (desktop only) */}
-            <Atoms.Container
-              className="hidden lg:block"
-              onClick={handleInteractiveClick}
-              onKeyDown={handleInteractiveKeyDown}
-            >
-              <Organisms.PostTagsPanel postId={postId} />
-            </Atoms.Container>
+            <Organisms.PostTagsPanel postId={postId} className="hidden lg:flex" />
           </Atoms.Container>
         </Atoms.CardContent>
       </Atoms.Card>
