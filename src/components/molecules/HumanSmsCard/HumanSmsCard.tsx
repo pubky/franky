@@ -6,7 +6,7 @@ import type { HumanSmsCardProps } from './HumanSmsCard.types';
 
 export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
   return (
-    <Atoms.Card data-testid="sms-verification-card" className="gap-0 p-6 md:p-12">
+    <Atoms.Card data-testid="sms-verification-card" className="flex-1 gap-0 p-6 md:p-12">
       <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-center">
         <Atoms.Container className="flex hidden h-full w-full flex-1 items-center lg:block lg:w-auto">
           <Atoms.Image
@@ -17,7 +17,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
           />
         </Atoms.Container>
 
-        <Atoms.Container className="w-full flex-1 gap-6">
+        <Atoms.Container className="w-full flex-1 items-start gap-6">
           <Atoms.Container className="gap-3">
             <Atoms.Typography
               as="h3"
@@ -50,7 +50,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
           <Atoms.Button
             data-testid="human-sms-card-receive-sms-btn"
             variant={Atoms.ButtonVariant.SECONDARY}
-            className="h-12 w-full rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark sm:w-auto"
+            className="h-12 w-auto rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark"
             onClick={onClick}
           >
             <Libs.Smartphone className="mr-2 h-4 w-4" />
