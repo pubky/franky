@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 
@@ -38,8 +38,11 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   const { toast } = Molecules.useToast();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Generate a stable initial username for create mode (only generated once)
+  const initialUsername = useMemo(() => (mode === 'create' ? Libs.generateRandomUsername() : ''), [mode]);
+
   // Form state
-  const [name, setName] = useState('');
+  const [name, setName] = useState(initialUsername);
   const [bio, setBio] = useState('');
   const [links, setLinks] = useState<ProfileLink[]>(DEFAULT_LINKS);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
