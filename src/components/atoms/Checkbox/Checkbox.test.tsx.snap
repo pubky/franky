@@ -5,7 +5,7 @@ exports[`Checkbox - Snapshots > matches snapshot when checked 1`] = `
   aria-checked="true"
   class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
   data-state="checked"
-  id="radix-_r_0_"
+  id="radix-normalized"
   role="checkbox"
   type="button"
   value="on"
@@ -43,7 +43,7 @@ exports[`Checkbox - Snapshots > matches snapshot when disabled 1`] = `
   data-disabled=""
   data-state="unchecked"
   disabled=""
-  id="radix-_r_0_"
+  id="radix-normalized"
   role="checkbox"
   type="button"
   value="on"
@@ -57,7 +57,7 @@ exports[`Checkbox - Snapshots > matches snapshot when disabled and checked 1`] =
   data-disabled=""
   data-state="checked"
   disabled=""
-  id="radix-_r_0_"
+  id="radix-normalized"
   role="checkbox"
   type="button"
   value="on"
@@ -94,7 +94,7 @@ exports[`Checkbox - Snapshots > matches snapshot when unchecked 1`] = `
   aria-checked="false"
   class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
   data-state="unchecked"
-  id="radix-_r_0_"
+  id="radix-normalized"
   role="checkbox"
   type="button"
   value="on"
@@ -106,7 +106,7 @@ exports[`Checkbox - Snapshots > matches snapshot with default props 1`] = `
   aria-checked="false"
   class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
   data-state="unchecked"
-  id="radix-_r_0_"
+  id="radix-normalized"
   role="checkbox"
   type="button"
   value="on"
@@ -122,7 +122,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label 1`] = `
     aria-checked="false"
     class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
     data-state="unchecked"
-    id="radix-_r_0_"
+    id="radix-normalized"
     role="checkbox"
     type="button"
     value="on"
@@ -134,7 +134,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label 1`] = `
     <label
       class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
-      for="radix-_r_0_"
+      for="radix-normalized"
     >
       Test label
     </label>
@@ -151,7 +151,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label and description 1`] 
     aria-checked="false"
     class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
     data-state="unchecked"
-    id="radix-_r_0_"
+    id="radix-normalized"
     role="checkbox"
     type="button"
     value="on"
@@ -163,7 +163,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label and description 1`] 
     <label
       class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
-      for="radix-_r_0_"
+      for="radix-normalized"
     >
       Label
     </label>
@@ -186,7 +186,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label, description and che
     aria-checked="true"
     class="peer h-4 w-4 shrink-0 rounded border border-input bg-white/5 shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-brand data-[state=checked]:bg-brand"
     data-state="checked"
-    id="radix-_r_0_"
+    id="radix-normalized"
     role="checkbox"
     type="button"
     value="on"
@@ -222,7 +222,7 @@ exports[`Checkbox - Snapshots > matches snapshot with label, description and che
     <label
       class="flex items-center gap-2 select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 cursor-pointer text-base leading-none font-medium text-foreground peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
       data-slot="label"
-      for="radix-_r_0_"
+      for="radix-normalized"
     >
       Checked label
     </label>

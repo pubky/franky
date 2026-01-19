@@ -478,8 +478,8 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
-      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-normalized');
+      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-normalized');
     });
 
     it('should not modify non-radix aria-controls attributes', () => {
@@ -517,7 +517,7 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-normalized');
       expect(buttons[1].getAttribute('aria-controls')).toBe('normal-id');
     });
 
@@ -531,9 +531,9 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const div = normalized.querySelector('div');
 
-      expect(div?.getAttribute('id')).toBe('radix-_r_0_');
-      expect(div?.getAttribute('aria-controls')).toBe('radix-_r_0_');
-      expect(div?.getAttribute('aria-labelledby')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('id')).toBe('radix-normalized');
+      expect(div?.getAttribute('aria-controls')).toBe('radix-normalized');
+      expect(div?.getAttribute('aria-labelledby')).toBe('radix-normalized');
     });
 
     it('should normalize radix IDs in aria-describedby attributes', () => {
@@ -544,7 +544,7 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const div = normalized.querySelector('div');
 
-      expect(div?.getAttribute('aria-describedby')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('aria-describedby')).toBe('radix-normalized');
     });
 
     it('should return a cloned container', () => {
@@ -573,7 +573,7 @@ describe('Utils', () => {
 
       const normalized = normaliseRadixIds(element);
 
-      expect(normalized.getAttribute('id')).toBe('radix-_r_0_');
+      expect(normalized.getAttribute('id')).toBe('radix-normalized');
       expect(normalized.textContent).toBe('Title');
     });
   });

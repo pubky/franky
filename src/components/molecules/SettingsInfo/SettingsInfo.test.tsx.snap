@@ -34,7 +34,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         data-testid="filter-list"
       >
         <button
-          aria-controls="radix-_r_0_"
+          aria-controls="radix-normalized"
           aria-expanded="false"
           aria-haspopup="dialog"
           class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
@@ -80,7 +80,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           </span>
         </button>
         <button
-          aria-controls="radix-_r_0_"
+          aria-controls="radix-normalized"
           aria-expanded="false"
           aria-haspopup="dialog"
           class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
