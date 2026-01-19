@@ -363,6 +363,13 @@ describe('PostMain - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsPostDeleted.mockReturnValue(false);
+
+    // Reset usePostHeaderVisibility to default (same as main describe block)
+    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
+    mockUsePostHeaderVisibility.mockReturnValue({
+      showRepostHeader: false,
+      shouldShowPostHeader: true,
+    });
   });
 
   it('matches snapshot with default state', () => {

@@ -80,37 +80,39 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
 
+  // Helper to normalise an attribute on an element
+  const normaliseAttribute = (el: Element, attr: string) => {
+    if (shouldNormalise(el.getAttribute(attr))) {
+      el.setAttribute(attr, normalizedId);
+    }
+  };
+
+  // Normalise attributes on the container itself (querySelectorAll only searches descendants)
+  normaliseAttribute(clonedContainer, 'id');
+  normaliseAttribute(clonedContainer, 'aria-controls');
+  normaliseAttribute(clonedContainer, 'aria-labelledby');
+  normaliseAttribute(clonedContainer, 'aria-describedby');
+  normaliseAttribute(clonedContainer, 'for');
+
   // Normalise all radix IDs to a consistent value
   const elementsWithIds = clonedContainer.querySelectorAll('[id]');
-  elementsWithIds.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('id'))) {
-      el.setAttribute('id', normalizedId);
-    }
-  });
+  elementsWithIds.forEach((el) => normaliseAttribute(el, 'id'));
 
   // Normalise aria-controls attributes
   const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
-  elementsWithAriaControls.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('aria-controls'))) {
-      el.setAttribute('aria-controls', normalizedId);
-    }
-  });
+  elementsWithAriaControls.forEach((el) => normaliseAttribute(el, 'aria-controls'));
 
   // Normalise aria-labelledby attributes
   const elementsWithAriaLabelledBy = clonedContainer.querySelectorAll('[aria-labelledby]');
-  elementsWithAriaLabelledBy.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('aria-labelledby'))) {
-      el.setAttribute('aria-labelledby', normalizedId);
-    }
-  });
+  elementsWithAriaLabelledBy.forEach((el) => normaliseAttribute(el, 'aria-labelledby'));
+
+  // Normalise aria-describedby attributes
+  const elementsWithAriaDescribedBy = clonedContainer.querySelectorAll('[aria-describedby]');
+  elementsWithAriaDescribedBy.forEach((el) => normaliseAttribute(el, 'aria-describedby'));
 
   // Normalise for attributes (e.g. labels)
   const elementsWithFor = clonedContainer.querySelectorAll('[for]');
-  elementsWithFor.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('for'))) {
-      el.setAttribute('for', normalizedId);
-    }
-  });
+  elementsWithFor.forEach((el) => normaliseAttribute(el, 'for'));
 
   return clonedContainer;
 };

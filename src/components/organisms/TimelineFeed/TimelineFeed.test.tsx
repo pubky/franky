@@ -281,6 +281,15 @@ describe('TimelineFeed', () => {
 });
 
 describe('TimelineFeed - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Default mock implementations (same as main describe block)
+    mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.TIMELINE_ALL_ALL);
+    mockUseBookmarksStreamId.mockReturnValue(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
+    mockUseStreamPagination.mockReturnValue(defaultPaginationResult);
+  });
+
   it('should match snapshot for home variant', () => {
     const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
     expect(container).toMatchSnapshot();
