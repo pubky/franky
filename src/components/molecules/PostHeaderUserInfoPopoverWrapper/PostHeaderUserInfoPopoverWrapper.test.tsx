@@ -1,6 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { PostHeaderUserInfoPopoverWrapper } from './PostHeaderUserInfoPopoverWrapper';
+import { POPOVER_HOVER_DELAY } from './PostHeaderUserInfoPopoverWrapper.constants';
 
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
@@ -14,6 +15,11 @@ vi.mock('./components/PostHeaderUserInfoPopoverContent/PostHeaderUserInfoPopover
 describe('PostHeaderUserInfoPopoverWrapper', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('does not mount popover content until hovered', async () => {
@@ -29,8 +35,14 @@ describe('PostHeaderUserInfoPopoverWrapper', () => {
 
     fireEvent.mouseEnter(screen.getByTestId('trigger'));
 
-    await waitFor(() => {
-      expect(screen.getByTestId('popover-inner-content')).toBeInTheDocument();
+    // Popover should not appear immediately due to hover delay
+    expect(screen.queryByTestId('popover-inner-content')).not.toBeInTheDocument();
+
+    // Advance timers past the hover delay
+    await act(async () => {
+      vi.advanceTimersByTime(POPOVER_HOVER_DELAY);
     });
+
+    expect(screen.getByTestId('popover-inner-content')).toBeInTheDocument();
   });
 });

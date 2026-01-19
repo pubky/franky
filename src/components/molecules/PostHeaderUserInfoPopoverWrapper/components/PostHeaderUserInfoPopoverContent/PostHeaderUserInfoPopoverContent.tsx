@@ -64,7 +64,7 @@ export function PostHeaderUserInfoPopoverContent({
       />
       {profileBio ? (
         <Atoms.Typography
-          className="text-base leading-6 font-medium whitespace-pre-wrap text-secondary-foreground"
+          className="max-h-(--popover-bio-max-height) overflow-y-auto text-base leading-6 font-medium break-words whitespace-pre-wrap text-secondary-foreground"
           overrideDefaults
         >
           {profileBio}
