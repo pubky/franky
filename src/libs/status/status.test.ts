@@ -60,7 +60,7 @@ describe('status', () => {
 
     describe('DEFAULT_STATUS', () => {
       it('should be a valid status key', () => {
-        expect(DEFAULT_STATUS).toBe('vacationing');
+        expect(DEFAULT_STATUS).toBe('noStatus');
         expect(STATUS_LABELS[DEFAULT_STATUS]).toBeDefined();
         expect(STATUS_EMOJIS[DEFAULT_STATUS]).toBeDefined();
       });
@@ -87,20 +87,20 @@ describe('status', () => {
 
   describe('parseStatus', () => {
     describe('empty status', () => {
-      it('should return default vacationing status for empty string', () => {
+      it('should return default noStatus status for empty string', () => {
         const result = parseStatus('');
         expect(result).toEqual({
-          emoji: STATUS_EMOJIS.vacationing,
-          text: STATUS_LABELS.vacationing,
+          emoji: STATUS_EMOJIS.noStatus,
+          text: STATUS_LABELS.noStatus,
           isCustom: false,
         });
       });
 
-      it('should return default vacationing status for empty string with custom default emoji', () => {
+      it('should return default noStatus status for empty string with custom default emoji', () => {
         const result = parseStatus('', '🎉');
         expect(result).toEqual({
-          emoji: STATUS_EMOJIS.vacationing,
-          text: STATUS_LABELS.vacationing,
+          emoji: STATUS_EMOJIS.noStatus,
+          text: STATUS_LABELS.noStatus,
           isCustom: false,
         });
       });
@@ -352,14 +352,14 @@ describe('status', () => {
 
   describe('extractEmojiFromStatus', () => {
     describe('empty status', () => {
-      it('should return vacationing emoji for empty string', () => {
+      it('should return noStatus emoji for empty string', () => {
         const result = extractEmojiFromStatus('');
-        expect(result).toBe(STATUS_EMOJIS.vacationing);
+        expect(result).toBe(STATUS_EMOJIS.noStatus);
       });
 
-      it('should return vacationing emoji for empty string with custom default', () => {
+      it('should return noStatus emoji for empty string with custom default', () => {
         const result = extractEmojiFromStatus('', '🎯');
-        expect(result).toBe(STATUS_EMOJIS.vacationing);
+        expect(result).toBe(STATUS_EMOJIS.noStatus);
       });
     });
 
@@ -546,7 +546,7 @@ describe('status', () => {
       const parsed = parseStatus('');
       const extracted = extractEmojiFromStatus('');
       expect(parsed.emoji).toBe(extracted);
-      expect(extracted).toBe(STATUS_EMOJIS.vacationing);
+      expect(extracted).toBe(STATUS_EMOJIS.noStatus);
     });
   });
 });

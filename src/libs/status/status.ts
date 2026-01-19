@@ -17,7 +17,7 @@ function extractEmoji(status: string): string | null {
  * and text-only custom statuses (e.g., "Working hard")
  *
  * @param status - The status string to parse
- * @param defaultEmoji - Fallback emoji if none found (defaults to vacationing emoji)
+ * @param defaultEmoji - Fallback emoji if none found (defaults to noStatus emoji)
  * @returns Parsed status object with emoji, text, and isCustom flag
  *
  * @example
@@ -78,8 +78,8 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
  * Useful when you only need the emoji representation
  *
  * @param status - The status string to extract emoji from
- * @param defaultEmoji - Fallback emoji if none found (defaults to vacationing emoji)
- * @returns The emoji string (empty string for text-only custom statuses)
+ * @param defaultEmoji - Fallback emoji if none found (defaults to noStatus emoji)
+ * @returns The emoji string
  *
  * @example
  * extractEmojiFromStatus('vacationing')
