@@ -136,7 +136,7 @@ export class HomeserverService {
         // Republish keypair's homeserver
         const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
         await signer.pkdns.publishHomeserverForce(homeserverPublicKey);
-        Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.pubkyFromKeypair(keypair) });
+        Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.z32FromKeypair(keypair) });
         // Return undefined to signal caller should retry signin after republish
         return undefined;
       } catch (republishError) {
@@ -146,7 +146,7 @@ export class HomeserverService {
           Libs.HomeserverErrorType.NOT_AUTHENTICATED,
           'Not authenticated. Please sign up first.',
           401,
-          { pubky: Libs.Identity.pubkyFromKeypair(keypair), originalSigninError: String(signinError) },
+          { pubky: Libs.Identity.z32FromKeypair(keypair), originalSigninError: String(signinError) },
         );
       }
     }

@@ -179,12 +179,21 @@ describe('status', () => {
         });
       });
 
-      it('should use default emoji for unknown predefined status key', () => {
+      it('should treat unknown status key as text-only custom status', () => {
         const result = parseStatus('unknownStatus', '🎯');
         expect(result).toEqual({
-          emoji: '🎯',
+          emoji: '',
           text: 'unknownStatus',
-          isCustom: false,
+          isCustom: true,
+        });
+      });
+
+      it('should handle text-only custom status', () => {
+        const result = parseStatus('Working hard');
+        expect(result).toEqual({
+          emoji: '',
+          text: 'Working hard',
+          isCustom: true,
         });
       });
 
@@ -390,7 +399,7 @@ describe('status', () => {
         expect(result).toBe(STATUS_EMOJIS.sick);
       });
 
-      it('should use default emoji for unknown status key', () => {
+      it('should use default emoji for unknown status key (text-only custom)', () => {
         const result = extractEmojiFromStatus('unknownStatus', '🎯');
         expect(result).toBe('🎯');
       });
@@ -459,17 +468,17 @@ describe('status', () => {
         expect(result).toBe('😊');
       });
 
-      it('should use default emoji when no emoji found and status is not predefined', () => {
+      it('should use default emoji for text-only custom status', () => {
         const result = extractEmojiFromStatus('just text', '🎯');
         expect(result).toBe('🎯');
       });
 
-      it('should handle status with whitespace only', () => {
+      it('should use default emoji for whitespace-only status', () => {
         const result = extractEmojiFromStatus('   ', '🎯');
         expect(result).toBe('🎯');
       });
 
-      it('should handle status with special characters but no emoji', () => {
+      it('should use default emoji for status with special characters but no emoji', () => {
         const result = extractEmojiFromStatus('@#$%^&*()', '🎯');
         expect(result).toBe('🎯');
       });
@@ -492,11 +501,10 @@ describe('status', () => {
 
         results.forEach((result) => {
           expect(typeof result).toBe('string');
-          expect(result.length).toBeGreaterThan(0);
         });
       });
 
-      it('should return valid emoji strings', () => {
+      it('should return valid emoji strings for predefined and emoji statuses', () => {
         const results = [
           extractEmojiFromStatus('available'),
           extractEmojiFromStatus('😊Working'),
@@ -506,6 +514,11 @@ describe('status', () => {
         results.forEach((result) => {
           expect(result).toMatch(/\p{Extended_Pictographic}/u);
         });
+      });
+
+      it('should use default emoji for text-only custom statuses', () => {
+        const result = extractEmojiFromStatus('custom text');
+        expect(result).toBe(STATUS_EMOJIS.noStatus);
       });
     });
   });

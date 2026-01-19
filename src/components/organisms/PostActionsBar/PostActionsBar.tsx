@@ -8,13 +8,13 @@ import type { PostActionsBarProps, ActionButtonConfig } from './PostActionsBar.t
 
 export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick, className }: PostActionsBarProps) {
   const { postCounts, isLoading: isCountsLoading } = Hooks.usePostCounts(postId);
-
   const {
     isBookmarked,
     isLoading: isBookmarkLoading,
     isToggling: isBookmarkToggling,
     toggle: toggleBookmark,
   } = Hooks.useBookmark(postId);
+  const { requireAuth } = Hooks.useRequireAuth();
 
   const isBookmarkBusy = isBookmarkLoading || isBookmarkToggling;
 
@@ -37,27 +37,27 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
       id: 'tag',
       icon: Libs.Tag,
       count: postCounts.tags,
-      onClick: onTagClick,
+      onClick: () => requireAuth(() => onTagClick?.()),
       ariaLabel: `Tag post (${postCounts.tags})`,
     },
     {
       id: 'reply',
       icon: Libs.MessageCircle,
       count: postCounts.replies,
-      onClick: onReplyClick,
+      onClick: () => requireAuth(() => onReplyClick?.()),
       ariaLabel: `Reply to post (${postCounts.replies})`,
     },
     {
       id: 'repost',
       icon: Libs.Repeat,
       count: postCounts.reposts,
-      onClick: onRepostClick,
+      onClick: () => requireAuth(() => onRepostClick?.()),
       ariaLabel: `Repost (${postCounts.reposts})`,
     },
     {
       id: 'bookmark',
       icon: isBookmarkBusy ? Libs.Loader2 : Libs.Bookmark,
-      onClick: toggleBookmark,
+      onClick: () => requireAuth(() => toggleBookmark()),
       ariaLabel: isBookmarkBusy ? 'Loading...' : isBookmarked ? 'Remove bookmark' : 'Add bookmark',
       className: 'w-10',
       iconProps: {

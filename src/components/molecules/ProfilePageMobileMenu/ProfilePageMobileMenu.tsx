@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import * as Types from '@/app/profile/types';
 
 export interface ProfileMenuItem {
@@ -21,7 +22,11 @@ export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
     pageType: Types.PROFILE_PAGE_TYPES.NOTIFICATIONS,
     ownProfileOnly: true, // Notifications only make sense for logged-in user
   },
-  { icon: Libs.MessageCircle, label: 'Replies', pageType: Types.PROFILE_PAGE_TYPES.REPLIES },
+  {
+    icon: Libs.MessageCircle,
+    label: 'Replies',
+    pageType: Types.PROFILE_PAGE_TYPES.REPLIES,
+  },
   { icon: Libs.StickyNote, label: 'Posts', pageType: Types.PROFILE_PAGE_TYPES.POSTS },
   { icon: Libs.UsersRound, label: 'Followers', pageType: Types.PROFILE_PAGE_TYPES.FOLLOWERS },
   { icon: Libs.UsersRound2, label: 'Following', pageType: Types.PROFILE_PAGE_TYPES.FOLLOWING },
@@ -41,6 +46,8 @@ export function ProfilePageMobileMenu({
   onPageChangeAction,
   isOwnProfile = true,
 }: ProfilePageMobileMenuProps) {
+  const { requireAuth } = Hooks.useRequireAuth();
+
   // Filter menu items based on isOwnProfile
   const visibleItems = React.useMemo(() => {
     return PROFILE_MENU_ITEMS.filter((item) => {
@@ -50,6 +57,11 @@ export function ProfilePageMobileMenu({
       return true;
     });
   }, [isOwnProfile]);
+
+  // Handle item click - require auth for unauthenticated users
+  const handleItemClick = (pageType: Types.ProfilePageType) => {
+    requireAuth(() => onPageChangeAction(pageType));
+  };
 
   return (
     <Atoms.Container
@@ -74,7 +86,7 @@ export function ProfilePageMobileMenu({
             >
               <Atoms.Button
                 overrideDefaults
-                onClick={() => onPageChangeAction(item.pageType)}
+                onClick={() => handleItemClick(item.pageType)}
                 className="px-2.5 py-2"
                 aria-label={item.label}
                 aria-current={isSelected ? 'page' : undefined}

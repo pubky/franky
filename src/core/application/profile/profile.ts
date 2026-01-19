@@ -43,7 +43,7 @@ export class ProfileApplication {
         {
           name,
           bio: bio ?? '',
-          image: image,
+          image,
           links,
           status: userDetails.status ?? '',
         },

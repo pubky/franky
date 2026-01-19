@@ -5,6 +5,7 @@ import * as Libs from '@/libs';
 
 interface InputFieldProps {
   id?: string;
+  name?: string;
   value: string;
   placeholder?: string;
   disabled?: boolean;
@@ -19,6 +20,7 @@ interface InputFieldProps {
   loadingIcon?: ReactNode;
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   maxLength?: number;
   iconPosition?: 'left' | 'right';
@@ -30,6 +32,7 @@ interface InputFieldProps {
 
 export function InputField({
   id,
+  name,
   value,
   placeholder,
   disabled = false,
@@ -44,6 +47,7 @@ export function InputField({
   loadingIcon,
   status = 'default',
   onChange,
+  onBlur,
   onKeyDown,
   maxLength,
   iconPosition = 'left',
@@ -104,6 +108,7 @@ export function InputField({
         )}
         <Atoms.Input
           id={id}
+          name={name}
           type="text"
           className={Libs.cn('w-full border-none !bg-transparent')}
           value={loading ? loadingText : value}
@@ -112,6 +117,7 @@ export function InputField({
           readOnly={readOnly}
           onClick={onClick}
           onChange={onChange}
+          onBlur={onBlur}
           onKeyDown={onKeyDown}
           maxLength={maxLength}
           aria-invalid={status === 'error'}
