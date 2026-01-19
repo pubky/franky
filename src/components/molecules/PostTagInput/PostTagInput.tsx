@@ -60,7 +60,7 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
       <div
         data-cy="post-tag-input"
         className={Libs.cn(
-          'relative flex h-8 items-center rounded-lg px-3',
+          'relative flex h-8 items-center rounded-md px-3',
           'border border-dashed border-input focus-within:border-white/80',
           onClick && 'cursor-pointer',
           className,
