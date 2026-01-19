@@ -65,6 +65,18 @@ vi.mock('@/organisms', async (importOriginal) => {
   };
 });
 
+// Mock hooks - useRequireAuth needs to return isAuthenticated: true for Follow button tests
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useRequireAuth: vi.fn(() => ({
+      isAuthenticated: true,
+      requireAuth: vi.fn((action: () => void) => action()),
+    })),
+  };
+});
+
 const mockProps: ProfilePageHeaderProps = {
   profile: {
     name: 'Satoshi Nakamoto',
@@ -283,5 +295,18 @@ describe('ProfilePageHeader - Other User Profile', () => {
     const emojis = screen.getAllByText('🎉');
     expect(emojis.length).toBeGreaterThanOrEqual(2); // Badge + status
     expect(screen.getByText('Active')).toBeInTheDocument();
+  });
+
+  it('hides Follow button when user is not authenticated', async () => {
+    const Hooks = await import('@/hooks');
+    vi.mocked(Hooks.useRequireAuth).mockReturnValue({
+      isAuthenticated: false,
+      requireAuth: vi.fn(),
+    });
+
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    expect(screen.queryByText('Follow')).not.toBeInTheDocument();
+    expect(screen.queryByText('Following')).not.toBeInTheDocument();
   });
 });
