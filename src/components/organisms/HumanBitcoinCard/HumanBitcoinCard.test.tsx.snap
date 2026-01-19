@@ -260,65 +260,70 @@ exports[`BitcoinPaymentCard > matches snapshot when geoblocked 1`] = `
 
 exports[`BitcoinPaymentCard > matches snapshot when loading 1`] = `
 <div
-  class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
-  data-slot="card"
-  data-testid="bitcoin-payment-card-skeleton"
+  class="mx-auto w-full flex-col flex relative flex-1"
+  data-testid="container"
 >
   <div
-    class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12"
-    data-testid="container"
+    class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
+    data-slot="card"
+    data-testid="bitcoin-payment-card-skeleton"
   >
     <div
-      class="mx-auto hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto"
+      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12"
       data-testid="container"
     >
       <div
-        class="size-48 animate-pulse rounded bg-muted"
-        data-testid="container"
-      />
-      <div
-        class="h-4 w-28 animate-pulse rounded bg-muted"
-        data-testid="container"
-      />
-    </div>
-    <div
-      class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
-      data-testid="container"
-    >
-      <div
-        class="mx-auto flex-col flex w-full gap-3"
+        class="mx-auto hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto"
         data-testid="container"
       >
         <div
-          class="h-8 w-40 animate-pulse rounded bg-muted"
+          class="size-48 animate-pulse rounded bg-muted"
           data-testid="container"
         />
         <div
-          class="h-12 w-36 animate-pulse rounded bg-muted lg:h-15"
+          class="h-4 w-28 animate-pulse rounded bg-muted"
           data-testid="container"
         />
+      </div>
+      <div
+        class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+        data-testid="container"
+      >
         <div
-          class="h-4 w-32 animate-pulse rounded bg-muted"
-          data-testid="container"
-        />
-        <div
-          class="mx-auto w-full flex-col flex gap-1"
+          class="mx-auto flex-col flex w-full gap-3"
           data-testid="container"
         >
           <div
-            class="h-6 w-24 animate-pulse rounded bg-muted"
+            class="h-8 w-40 animate-pulse rounded bg-muted"
             data-testid="container"
           />
           <div
-            class="h-6 w-32 animate-pulse rounded bg-muted"
+            class="h-12 w-36 animate-pulse rounded bg-muted lg:h-15"
             data-testid="container"
           />
+          <div
+            class="h-4 w-32 animate-pulse rounded bg-muted"
+            data-testid="container"
+          />
+          <div
+            class="mx-auto w-full flex-col flex gap-1"
+            data-testid="container"
+          >
+            <div
+              class="h-6 w-24 animate-pulse rounded bg-muted"
+              data-testid="container"
+            />
+            <div
+              class="h-6 w-32 animate-pulse rounded bg-muted"
+              data-testid="container"
+            />
+          </div>
         </div>
+        <div
+          class="h-10 w-28 animate-pulse rounded-full bg-muted"
+          data-testid="container"
+        />
       </div>
-      <div
-        class="h-10 w-28 animate-pulse rounded-full bg-muted"
-        data-testid="container"
-      />
     </div>
   </div>
 </div>
