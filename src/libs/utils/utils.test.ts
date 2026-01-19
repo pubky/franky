@@ -1441,41 +1441,43 @@ describe('Utils', () => {
         expect(canSubmitPost('post', 'Hello', [], false, undefined, undefined)).toBe(true);
         expect(canSubmitPost('post', '', [], false, undefined, undefined)).toBe(false);
       });
-  describe('formatUSDate', () => {
-    it('should format current date in US locale format', () => {
-      const result = formatUSDate();
-      // Should match MM/DD/YYYY format
-      expect(result).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
-    });
+      describe('formatUSDate', () => {
+        it('should format current date in US locale format', () => {
+          const result = formatUSDate();
+          // Should match MM/DD/YYYY format
+          expect(result).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
+        });
 
-    it('should format a specific date correctly', () => {
-      const testDate = new Date('2024-12-25');
-      const result = formatUSDate(testDate);
-      expect(result).toBe('12/25/2024');
-    });
+        it('should format a specific date correctly', () => {
+          const testDate = new Date(2024, 11, 25); // Month is 0-indexed
+          const result = formatUSDate(testDate);
+          expect(result).toBe('12/25/2024');
+        });
 
-    it('should pad single digit months and days with zeros', () => {
-      const testDate = new Date('2024-01-05');
-      const result = formatUSDate(testDate);
-      expect(result).toBe('01/05/2024');
-    });
+        it('should pad single digit months and days with zeros', () => {
+          const testDate = new Date(2024, 0, 5); // Month is 0-indexed
+          const result = formatUSDate(testDate);
+          expect(result).toBe('01/05/2024');
+        });
 
-    it('should handle different years', () => {
-      const testDate = new Date('2030-06-15');
-      const result = formatUSDate(testDate);
-      expect(result).toBe('06/15/2030');
-    });
+        it('should handle different years', () => {
+          const testDate = new Date(2030, 5, 15); // Month is 0-indexed
+          const result = formatUSDate(testDate);
+          expect(result).toBe('06/15/2030');
+        });
 
-    it('should handle end of year date', () => {
-      const testDate = new Date('2024-12-31');
-      const result = formatUSDate(testDate);
-      expect(result).toBe('12/31/2024');
-    });
+        it('should handle end of year date', () => {
+          const testDate = new Date(2024, 11, 31); // Month is 0-indexed
+          const result = formatUSDate(testDate);
+          expect(result).toBe('12/31/2024');
+        });
 
-    it('should handle beginning of year date', () => {
-      const testDate = new Date('2024-01-01');
-      const result = formatUSDate(testDate);
-      expect(result).toBe('01/01/2024');
+        it('should handle beginning of year date', () => {
+          const testDate = new Date(2024, 0, 1); // Month is 0-indexed
+          const result = formatUSDate(testDate);
+          expect(result).toBe('01/01/2024');
+        });
+      });
     });
   });
 });
