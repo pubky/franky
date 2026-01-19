@@ -44,11 +44,24 @@ export function usePostArticle({
   attachments,
   coverImageVariant,
 }: UsePostArticleParams): UsePostArticleResult {
-  const { title, body } = JSON.parse(content) as { title: string; body: string };
+  const { toast } = Molecules.useToast();
 
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
   const [coverImage, setCoverImage] = useState<CoverImage | null>(null);
 
-  const { toast } = Molecules.useToast();
+  useEffect(() => {
+    try {
+      const parsed = JSON.parse(content) as { title: string; body: string };
+      setTitle(parsed.title || '');
+      setBody(parsed.body || '');
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to parse article content',
+      });
+    }
+  }, [content, toast]);
 
   useEffect(() => {
     const extractCoverImage = async () => {

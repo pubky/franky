@@ -273,6 +273,25 @@ describe('usePostArticle', () => {
   });
 
   describe('Error Handling', () => {
+    it('shows toast and returns empty values when content is malformed JSON', () => {
+      const malformedContent = 'this is not valid JSON';
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content: malformedContent,
+          attachments: null,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Failed to parse article content',
+      });
+      expect(result.current.title).toBe('');
+      expect(result.current.body).toBe('');
+    });
+
     it('shows toast on metadata fetch error', async () => {
       const content = JSON.stringify({ title: 'Test', body: 'Content' });
       const attachments = ['pubky://user123/pub/pubky.app/files/file456'];
