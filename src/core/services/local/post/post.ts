@@ -129,6 +129,27 @@ export class LocalPostService {
   }
 
   /**
+   * Edit a post's content in the local database.
+   *
+   * @param params.compositePostId - Composite post ID (author:postId)
+   * @param params.content - New content for the post
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async edit({ compositePostId, content }: { compositePostId: string; content: string }) {
+    try {
+      await Core.PostDetailsModel.update(compositePostId, { content });
+      Libs.Logger.debug('Post edited successfully', { compositePostId });
+    } catch (error) {
+      Libs.Logger.error('Failed to edit post', { compositePostId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to edit post', 500, {
+        error,
+        compositePostId,
+      });
+    }
+  }
+
+  /**
    * Save a new post to the local database.
    *
    * Creates a new post with all its related records:

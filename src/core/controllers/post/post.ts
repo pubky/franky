@@ -178,6 +178,12 @@ export class PostController {
     await Core.PostApplication.commitDelete({ compositePostId });
   }
 
+  static async commitEdit({ compositePostId, content }: Core.TEditPostParams) {
+    const { post, meta } = await Core.PostNormalizer.toEdit({ compositePostId, content });
+
+    await Core.PostApplication.commitEdit({ compositePostId, post, postUrl: meta.url });
+  }
+
   /**
    * Normalize file attachments
    * @param params - Parameters object
