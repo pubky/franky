@@ -2203,4 +2203,189 @@ describe('PostStreamApplication', () => {
       expect(queue?.cursor).toBe(BASE_TIMESTAMP + 200);
     });
   });
+
+  // Regression test for reply count double-counting bug.
+  // When a reply is created locally, it's already counted. When that same reply arrives
+  // via the unread stream (from Nexus polling), it should NOT be counted again.
+  describe('reply count deduplication', () => {
+    const parentAuthorId = 'parent-author' as Core.Pubky;
+    const parentPostId = 'parent-post-123';
+    const parentPostCompositeId = `${parentAuthorId}:${parentPostId}`;
+    const replyStreamId = `post_replies:${parentAuthorId}:${parentPostId}` as Core.PostStreamId;
+
+    beforeEach(async () => {
+      await Core.PostCountsModel.table.clear();
+    });
+
+    it('should not increment reply count when post already exists in database (locally created)', async () => {
+      // Setup: Parent post with 1 reply (already counted from local creation)
+      await Core.PostCountsModel.create({
+        id: parentPostCompositeId,
+        replies: 1,
+        tags: 0,
+        unique_tags: 0,
+        reposts: 0,
+      });
+
+      // Setup: The reply post already exists in database (was created locally)
+      const replyPostId = `${DEFAULT_AUTHOR}:reply-1`;
+      await Core.PostDetailsModel.create({
+        id: replyPostId,
+        content: 'This is a reply',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/reply-1`,
+        attachments: null,
+      });
+
+      // Mock Nexus returning the same reply via unread stream polling
+      const mockNexusResponse: Core.NexusPostsKeyStream = {
+        post_keys: [replyPostId],
+        last_post_score: BASE_TIMESTAMP,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusResponse);
+
+      // Trigger unread stream path (streamHead > SKIP_FETCH_NEW_POSTS)
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: replyStreamId,
+        limit: 10,
+        streamHead: BASE_TIMESTAMP + 1000, // Triggers unread stream code path
+        streamTail: 0,
+        viewerId: 'viewer' as Core.Pubky,
+      });
+
+      // Verify: Reply count should still be 1, not 2
+      const parentCounts = await Core.PostCountsModel.findById(parentPostCompositeId);
+      expect(parentCounts?.replies).toBe(1);
+    });
+
+    it('should increment reply count only for truly new posts not in database', async () => {
+      // Setup: Parent post with 0 replies
+      await Core.PostCountsModel.create({
+        id: parentPostCompositeId,
+        replies: 0,
+        tags: 0,
+        unique_tags: 0,
+        reposts: 0,
+      });
+
+      // No reply exists in database yet
+
+      // Mock Nexus returning a new reply via unread stream
+      const newReplyPostId = `${DEFAULT_AUTHOR}:new-reply-1`;
+      const mockNexusResponse: Core.NexusPostsKeyStream = {
+        post_keys: [newReplyPostId],
+        last_post_score: BASE_TIMESTAMP,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusResponse);
+
+      // Trigger unread stream path
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: replyStreamId,
+        limit: 10,
+        streamHead: BASE_TIMESTAMP + 1000,
+        streamTail: 0,
+        viewerId: 'viewer' as Core.Pubky,
+      });
+
+      // Verify: Reply count should be incremented to 1 for the truly new reply
+      const parentCounts = await Core.PostCountsModel.findById(parentPostCompositeId);
+      expect(parentCounts?.replies).toBe(1);
+    });
+
+    it('should correctly count mixed batch of new and existing posts', async () => {
+      // Setup: Parent post with 2 replies already counted
+      await Core.PostCountsModel.create({
+        id: parentPostCompositeId,
+        replies: 2,
+        tags: 0,
+        unique_tags: 0,
+        reposts: 0,
+      });
+
+      // Setup: 2 replies already exist in database
+      const existingReply1 = `${DEFAULT_AUTHOR}:existing-reply-1`;
+      const existingReply2 = `${DEFAULT_AUTHOR}:existing-reply-2`;
+      await Core.PostDetailsModel.create({
+        id: existingReply1,
+        content: 'Existing reply 1',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/existing-reply-1`,
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: existingReply2,
+        content: 'Existing reply 2',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 1,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/existing-reply-2`,
+        attachments: null,
+      });
+
+      // Mock Nexus returning batch with 2 existing + 3 new replies
+      const newReply1 = `${DEFAULT_AUTHOR}:new-reply-1`;
+      const newReply2 = `${DEFAULT_AUTHOR}:new-reply-2`;
+      const newReply3 = `${DEFAULT_AUTHOR}:new-reply-3`;
+      const mockNexusResponse: Core.NexusPostsKeyStream = {
+        post_keys: [existingReply1, newReply1, existingReply2, newReply2, newReply3],
+        last_post_score: BASE_TIMESTAMP + 10,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusResponse);
+
+      // Trigger unread stream path
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: replyStreamId,
+        limit: 10,
+        streamHead: BASE_TIMESTAMP + 1000,
+        streamTail: 0,
+        viewerId: 'viewer' as Core.Pubky,
+      });
+
+      // Verify: Reply count should be 2 + 3 = 5 (only new replies counted)
+      const parentCounts = await Core.PostCountsModel.findById(parentPostCompositeId);
+      expect(parentCounts?.replies).toBe(5);
+    });
+
+    it('should not increment reply count when post is in stream but not yet in database (race condition)', async () => {
+      // This tests the race condition where:
+      // 1. Local create adds reply to post stream
+      // 2. Stream coordinator polls before database transaction commits
+      // 3. Reply should not be double-counted
+
+      // Setup: Parent post with 1 reply (already counted from local creation)
+      await Core.PostCountsModel.create({
+        id: parentPostCompositeId,
+        replies: 1,
+        tags: 0,
+        unique_tags: 0,
+        reposts: 0,
+      });
+
+      // Setup: The reply is in the stream (added by local create) but NOT in PostDetailsModel
+      // This simulates the race condition where stream update happened but DB write didn't commit
+      const replyPostId = `${DEFAULT_AUTHOR}:reply-in-stream-only`;
+      await Core.PostStreamModel.upsert(replyStreamId, [replyPostId]);
+
+      // Mock Nexus returning the same reply
+      const mockNexusResponse: Core.NexusPostsKeyStream = {
+        post_keys: [replyPostId],
+        last_post_score: BASE_TIMESTAMP,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusResponse);
+
+      // Trigger unread stream path
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId: replyStreamId,
+        limit: 10,
+        streamHead: BASE_TIMESTAMP + 1000,
+        streamTail: 0,
+        viewerId: 'viewer' as Core.Pubky,
+      });
+
+      // Verify: Reply count should still be 1 (not double-counted)
+      const parentCounts = await Core.PostCountsModel.findById(parentPostCompositeId);
+      expect(parentCounts?.replies).toBe(1);
+    });
+  });
 });

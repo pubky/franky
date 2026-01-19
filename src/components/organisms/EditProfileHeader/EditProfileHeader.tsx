@@ -13,7 +13,7 @@ export const EditProfileHeader = () => {
 
   const handleCopyToClipboard = () => {
     if (currentUserPubky) {
-      copyToClipboard(currentUserPubky);
+      copyToClipboard(Libs.withPubkyPrefix(currentUserPubky));
     }
   };
 
