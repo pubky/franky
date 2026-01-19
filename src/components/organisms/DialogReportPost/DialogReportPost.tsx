@@ -53,7 +53,13 @@ export function DialogReportPost({ open, onOpenChange, postId }: DialogReportPos
       );
     }
 
-    return <DialogReportPostIssueStep onSelectIssueType={selectIssueType} onCancel={handleCancel} />;
+    return (
+      <DialogReportPostIssueStep
+        onSelectIssueType={selectIssueType}
+        onCancel={handleCancel}
+        onOpenChange={onOpenChange}
+      />
+    );
   };
 
   return (

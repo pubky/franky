@@ -16,6 +16,7 @@ export const VALIDATION_PATTERNS = {
 export const VALIDATION_MESSAGES = {
   INVALID_EMAIL: 'Please enter a valid email address',
   INVALID_PHONE: 'Please enter a valid phone number',
+  INVALID_URL: 'Please enter a valid URL',
   ROLE_REQUIRED: 'Please select if you are the rights owner or reporting on behalf',
 } as const;
 
