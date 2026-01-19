@@ -173,6 +173,20 @@ body {
   --popover-width: 280px;
 
   /**
+   * Popover bio max height
+   * - Maximum height for bio text in user info popovers before scrolling
+   * - Applied to: PostHeaderUserInfoPopoverContent bio section
+   * 
+   * Rationale for 150px:
+   * - Displays approximately 5-6 lines of bio text (at 16px font, 24px line-height)
+   * - Balances showing meaningful content vs keeping popover compact
+   * - Prevents excessively long bios from pushing other popover content off-screen
+   * - Matches pubky-app's implementation for consistency across apps
+   * - Combined with overflow-y-auto enables scrolling for longer bios
+   */
+  --popover-bio-max-height: 150px;
+
+  /**
    * Avatar zoom modal size
    * - Size of the avatar when displayed in the zoom modal
    * - Used for full-screen avatar preview on profile page

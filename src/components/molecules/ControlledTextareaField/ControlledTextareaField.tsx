@@ -1,0 +1,51 @@
+'use client';
+
+import { Controller, FieldValues } from 'react-hook-form';
+import * as Atoms from '@/atoms';
+import * as Config from '@/config';
+import * as Molecules from '@/molecules';
+import type { ControlledTextareaFieldProps } from './ControlledTextareaField.types';
+
+export function ControlledTextareaField<T extends FieldValues>({
+  name,
+  control,
+  label,
+  placeholder,
+  maxLength,
+  variant = 'dashed',
+  rows = 4,
+  disabled = false,
+  className,
+  textareaClassName,
+}: ControlledTextareaFieldProps<T>) {
+  return (
+    <Atoms.Container className="gap-2">
+      <Atoms.Label htmlFor={name} className={Config.FORM_LABEL_CLASSES}>
+        {label}
+      </Atoms.Label>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field, fieldState }) => (
+          <Molecules.TextareaField
+            id={name}
+            name={field.name}
+            value={field.value}
+            onChange={field.onChange}
+            onBlur={field.onBlur}
+            placeholder={placeholder}
+            variant={variant}
+            rows={rows}
+            maxLength={maxLength}
+            disabled={disabled}
+            className={className}
+            textareaClassName={textareaClassName}
+            status={fieldState.error ? 'error' : 'default'}
+            message={fieldState.error?.message}
+            messageType={fieldState.error ? 'error' : 'default'}
+          />
+        )}
+      />
+    </Atoms.Container>
+  );
+}
