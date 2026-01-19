@@ -20,7 +20,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
       overrideDefaults
       as="header"
       className={Libs.cn(
-        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-[#05050A] from-50% to-transparent py-6',
+        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background) from-50% to-transparent py-6',
         className,
       )}
     >
