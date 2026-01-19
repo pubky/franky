@@ -43,18 +43,15 @@ describe('useLnVerificationInfo', () => {
     });
   });
 
-  it('returns null when API call fails', async () => {
+  it('returns available: false when API call fails', async () => {
     mockGetLnVerificationInfo.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useLnVerificationInfo());
 
-    // Wait for the effect to complete
+    // Wait for the effect to complete and return unavailable
     await waitFor(() => {
-      expect(mockGetLnVerificationInfo).toHaveBeenCalled();
+      expect(result.current).toEqual({ available: false });
     });
-
-    // Should remain null on error
-    expect(result.current).toBeNull();
   });
 
   it('calls HomegateController.getLnVerificationInfo on mount', async () => {

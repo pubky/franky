@@ -24,9 +24,20 @@ export function useLnVerificationInfo(): THomegateLnInfoResult | null {
   const [info, setInfo] = useState<THomegateLnInfoResult | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     HomegateController.getLnVerificationInfo()
-      .then(setInfo)
-      .catch(() => setInfo(null));
+      .then((result) => {
+        if (!cancelled) setInfo(result);
+      })
+      .catch(() => {
+        // Treat errors as unavailable to provide clear feedback
+        if (!cancelled) setInfo({ available: false });
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return info;

@@ -24,9 +24,20 @@ export function useSmsVerificationInfo(): THomegateSmsInfoResult | null {
   const [info, setInfo] = useState<THomegateSmsInfoResult | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
     HomegateController.getSmsVerificationInfo()
-      .then(setInfo)
-      .catch(() => setInfo(null));
+      .then((result) => {
+        if (!cancelled) setInfo(result);
+      })
+      .catch(() => {
+        // Treat errors as unavailable to provide clear feedback
+        if (!cancelled) setInfo({ available: false });
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return info;

@@ -43,18 +43,15 @@ describe('useSmsVerificationInfo', () => {
     });
   });
 
-  it('returns null when API call fails', async () => {
+  it('returns available: false when API call fails', async () => {
     mockGetSmsVerificationInfo.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useSmsVerificationInfo());
 
-    // Wait for the effect to complete
+    // Wait for the effect to complete and return unavailable
     await waitFor(() => {
-      expect(mockGetSmsVerificationInfo).toHaveBeenCalled();
+      expect(result.current).toEqual({ available: false });
     });
-
-    // Should remain null on error
-    expect(result.current).toBeNull();
   });
 
   it('calls HomegateController.getSmsVerificationInfo on mount', async () => {
