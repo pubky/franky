@@ -209,6 +209,50 @@ describe('Utils', () => {
     });
   });
 
+  describe('isPubkyIdentifier', () => {
+    it('should return true for valid 52-char lowercase alphanumeric string', () => {
+      const validPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return true for another valid pubky', () => {
+      const validPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return false for string shorter than 52 characters', () => {
+      expect(isPubkyIdentifier('short')).toBe(false);
+      expect(isPubkyIdentifier('12345678901234567890')).toBe(false); // 20 chars
+      expect(isPubkyIdentifier('123456789012345678901234567890123456789012345678901')).toBe(false); // 51 chars
+    });
+
+    it('should return false for string longer than 52 characters', () => {
+      expect(isPubkyIdentifier('12345678901234567890123456789012345678901234567890123')).toBe(false); // 53 chars
+    });
+
+    it('should return false for string with uppercase characters', () => {
+      expect(isPubkyIdentifier('GUJX6QD8KSYDH1MAKDPHD3BXU351D9B8WAQKA8HFG6Q7HNQKXEXO')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexO')).toBe(false); // One uppercase
+    });
+
+    it('should return false for string with special characters', () => {
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex!')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex-')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex_')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isPubkyIdentifier('')).toBe(false);
+    });
+
+    it('should return false for common route names', () => {
+      expect(isPubkyIdentifier('posts')).toBe(false);
+      expect(isPubkyIdentifier('followers')).toBe(false);
+      expect(isPubkyIdentifier('following')).toBe(false);
+      expect(isPubkyIdentifier('notifications')).toBe(false);
+    });
+  });
+
   describe('copyToClipboard', () => {
     let mockClipboard: { writeText: ReturnType<typeof vi.fn> };
     let execCommandSpy: ReturnType<typeof vi.fn>;
