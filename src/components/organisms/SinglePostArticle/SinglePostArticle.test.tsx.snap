@@ -47,7 +47,7 @@ exports[`SinglePostArticle - Snapshots > matches snapshot when blurred 1`] = `
       Blurred Content
     </div>
     <div
-      class="mt-6 block lg:hidden"
+      class="mt-6 flex lg:hidden"
       data-post-id="snapshot-user:blurred-post"
       data-testid="post-tags-panel"
     >
@@ -55,7 +55,7 @@ exports[`SinglePostArticle - Snapshots > matches snapshot when blurred 1`] = `
     </div>
   </div>
   <div
-    class="hidden lg:block"
+    class="hidden lg:flex"
     data-post-id="snapshot-user:blurred-post"
     data-testid="post-tags-panel"
   >
@@ -117,7 +117,7 @@ exports[`SinglePostArticle - Snapshots > matches snapshot with cover image 1`] =
       Article body with cover image
     </div>
     <div
-      class="mt-6 block lg:hidden"
+      class="mt-6 flex lg:hidden"
       data-post-id="snapshot-user:cover-post"
       data-testid="post-tags-panel"
     >
@@ -125,7 +125,7 @@ exports[`SinglePostArticle - Snapshots > matches snapshot with cover image 1`] =
     </div>
   </div>
   <div
-    class="hidden lg:block"
+    class="hidden lg:flex"
     data-post-id="snapshot-user:cover-post"
     data-testid="post-tags-panel"
   >
@@ -181,7 +181,7 @@ exports[`SinglePostArticle - Snapshots > matches snapshot with default props (no
       Snapshot article body content
     </div>
     <div
-      class="mt-6 block lg:hidden"
+      class="mt-6 flex lg:hidden"
       data-post-id="snapshot-user:snapshot-post"
       data-testid="post-tags-panel"
     >
@@ -189,7 +189,7 @@ exports[`SinglePostArticle - Snapshots > matches snapshot with default props (no
     </div>
   </div>
   <div
-    class="hidden lg:block"
+    class="hidden lg:flex"
     data-post-id="snapshot-user:snapshot-post"
     data-testid="post-tags-panel"
   >

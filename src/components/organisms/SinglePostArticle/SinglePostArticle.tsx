@@ -64,11 +64,11 @@ export const SinglePostArticle = ({ postId, content, attachments, isBlurred }: S
           )}
 
           {/* Tags on mobile */}
-          <Organisms.PostTagsPanel postId={postId} className="mt-6 block lg:hidden" />
+          <Organisms.PostTagsPanel postId={postId} className="mt-6 flex lg:hidden" />
         </Atoms.Container>
 
         {/* Right column - Tags (desktop only) */}
-        <Organisms.PostTagsPanel postId={postId} className="hidden lg:block" />
+        <Organisms.PostTagsPanel postId={postId} className="hidden lg:flex" />
       </Atoms.Container>
 
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />
