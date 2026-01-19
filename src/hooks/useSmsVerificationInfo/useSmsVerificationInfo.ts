@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { HomegateController, THomegateSmsInfoResult, homegateQueryClient } from '@/core';
-
-const QUERY_KEY = ['homegate', 'sms-verification-info'];
+import { HomegateController, THomegateSmsInfoResult, homegateQueryClient, HOMEGATE_QUERY_KEYS } from '@/core';
 
 /**
  * Fetch the SMS verification availability for the user's region.
@@ -15,7 +13,7 @@ const QUERY_KEY = ['homegate', 'sms-verification-info'];
  */
 export function useSmsVerificationInfo(): THomegateSmsInfoResult | null {
   // Read cached data synchronously to avoid skeleton flash on navigation
-  const cachedData = homegateQueryClient.getQueryData<THomegateSmsInfoResult>(QUERY_KEY);
+  const cachedData = homegateQueryClient.getQueryData<THomegateSmsInfoResult>(HOMEGATE_QUERY_KEYS.smsVerificationInfo);
   const [info, setInfo] = useState<THomegateSmsInfoResult | null>(cachedData ?? null);
 
   useEffect(() => {

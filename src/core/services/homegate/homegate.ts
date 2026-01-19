@@ -8,6 +8,7 @@ import {
   TLnInfoResult,
 } from './homegate.types';
 import { homegateApi } from './homegate.api';
+import { HOMEGATE_QUERY_KEYS } from './homegate.constants';
 import { homegateQueryClient } from './homegate.query-client';
 import { Logger, createNexusError, NexusErrorType } from '@/libs';
 
@@ -68,7 +69,7 @@ export class HomegateService {
    */
   static async getSmsVerificationInfo(): Promise<TSmsInfoResult> {
     return homegateQueryClient.fetchQuery({
-      queryKey: ['homegate', 'sms-verification-info'],
+      queryKey: HOMEGATE_QUERY_KEYS.smsVerificationInfo,
       queryFn: async () => {
         const url = homegateApi.getSmsVerificationInfo();
         const response = await fetch(url, { method: 'GET' });
@@ -168,7 +169,7 @@ export class HomegateService {
    */
   static async getLnVerificationInfo(): Promise<TLnInfoResult> {
     return homegateQueryClient.fetchQuery({
-      queryKey: ['homegate', 'ln-verification-info'],
+      queryKey: HOMEGATE_QUERY_KEYS.lnVerificationInfo,
       queryFn: async () => {
         const url = homegateApi.getLnVerificationInfo();
         const response = await fetch(url, { method: 'GET' });

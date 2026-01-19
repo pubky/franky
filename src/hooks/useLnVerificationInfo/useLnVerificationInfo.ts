@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { HomegateController, THomegateLnInfoResult, homegateQueryClient } from '@/core';
-
-const QUERY_KEY = ['homegate', 'ln-verification-info'];
+import { HomegateController, THomegateLnInfoResult, homegateQueryClient, HOMEGATE_QUERY_KEYS } from '@/core';
 
 /**
  * Fetch the Lightning Network verification availability and price.
@@ -15,7 +13,7 @@ const QUERY_KEY = ['homegate', 'ln-verification-info'];
  */
 export function useLnVerificationInfo(): THomegateLnInfoResult | null {
   // Read cached data synchronously to avoid skeleton flash on navigation
-  const cachedData = homegateQueryClient.getQueryData<THomegateLnInfoResult>(QUERY_KEY);
+  const cachedData = homegateQueryClient.getQueryData<THomegateLnInfoResult>(HOMEGATE_QUERY_KEYS.lnVerificationInfo);
   const [info, setInfo] = useState<THomegateLnInfoResult | null>(cachedData ?? null);
 
   useEffect(() => {

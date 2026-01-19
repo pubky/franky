@@ -13,8 +13,8 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
 
   // Loading state - waiting for availability check
   const isLoading = lnInfo === null;
-  // Check if geoblocked (403 response)
-  const isGeoblocked = lnInfo !== null && !lnInfo.available;
+  // Check if geo blocked (403 response)
+  const isGeoBlocked = lnInfo !== null && !lnInfo.available;
   // Get price if available
   const priceSat = lnInfo?.available ? lnInfo.amountSat : undefined;
   const dataAvailable = priceSat !== undefined && satUsdRate !== undefined;
@@ -27,7 +27,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
     <Atoms.Container className="relative flex-1">
       <Atoms.Card
         data-testid="bitcoin-payment-card"
-        className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isGeoblocked && 'pointer-events-none opacity-60 blur-[5px]')}
+        className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isGeoBlocked && 'pointer-events-none opacity-60 blur-[5px]')}
       >
         <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-start lg:gap-12">
           <Atoms.Container className="hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto">
@@ -48,20 +48,20 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
                 Bitcoin Payment
               </Atoms.Typography>
 
-              {dataAvailable ? (
+              {dataAvailable && priceSat !== undefined && satUsdRate !== undefined ? (
                 <>
                   <Atoms.Typography
                     as="p"
                     className="text-5xl leading-none font-semibold whitespace-nowrap text-brand lg:text-6xl"
                   >
-                    ₿ {priceSat!.toLocaleString()}
+                    ₿ {priceSat.toLocaleString()}
                   </Atoms.Typography>
 
                   <Atoms.Typography
                     as="p"
                     className="text-xs font-medium tracking-widest text-muted-foreground uppercase"
                   >
-                    ₿{priceSat!.toLocaleString()} = ${Math.round(satUsdRate * priceSat! * 100) / 100}
+                    ₿{priceSat.toLocaleString()} = ${Math.round(satUsdRate * priceSat * 100) / 100}
                   </Atoms.Typography>
                 </>
               ) : (
@@ -82,7 +82,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
               variant={Atoms.ButtonVariant.DEFAULT}
               className="h-10 rounded-full px-4 text-sm font-semibold"
               onClick={onClick}
-              disabled={!dataAvailable || isGeoblocked}
+              disabled={!dataAvailable || isGeoBlocked}
             >
               <Libs.Wallet className="mr-2 size-4" />
               Pay Once
@@ -91,11 +91,11 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
         </Atoms.Container>
       </Atoms.Card>
 
-      {/* Geoblocking overlay badge */}
-      {isGeoblocked && (
+      {/* Geo-blocking overlay badge */}
+      {isGeoBlocked && (
         <Atoms.Container
           overrideDefaults
-          data-testid="geoblock-alert"
+          data-testid="geo-block-alert"
           className="absolute top-1/2 left-1/2 flex h-11 -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-md bg-destructive/60 px-6 py-3 shadow-xl"
         >
           <Atoms.Container overrideDefaults className="pt-0.5">

@@ -61,12 +61,12 @@ describe('BitcoinPaymentCard', () => {
     expect(screen.getByRole('button', { name: /Pay Once/i })).toBeDisabled();
   });
 
-  it('renders geoblocking overlay when not available', () => {
+  it('renders geo-blocking overlay when not available', () => {
     mockUseLnVerificationInfo.mockReturnValue({ available: false });
     render(<HumanBitcoinCard />);
 
-    // Check for geoblocking alert
-    expect(screen.getByTestId('geoblock-alert')).toBeInTheDocument();
+    // Check for geo-blocking alert
+    expect(screen.getByTestId('geo-block-alert')).toBeInTheDocument();
     expect(screen.getByText(/Currently not available in your country/i)).toBeInTheDocument();
 
     // Card should have blur class
@@ -90,7 +90,7 @@ describe('BitcoinPaymentCard', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot when geoblocked', () => {
+  it('matches snapshot when geo-blocked', () => {
     mockUseLnVerificationInfo.mockReturnValue({ available: false });
     const { container } = render(<HumanBitcoinCard />);
     expect(container.firstChild).toMatchSnapshot();

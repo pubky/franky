@@ -12,6 +12,10 @@ vi.mock('@/core', () => ({
   homegateQueryClient: {
     getQueryData: () => mockGetQueryData(),
   },
+  HOMEGATE_QUERY_KEYS: {
+    lnVerificationInfo: ['homegate', 'ln-verification-info'],
+    smsVerificationInfo: ['homegate', 'sms-verification-info'],
+  },
 }));
 
 describe('useSmsVerificationInfo', () => {
