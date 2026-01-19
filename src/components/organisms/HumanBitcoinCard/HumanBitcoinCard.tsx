@@ -4,18 +4,24 @@ import * as Atoms from '@/atoms';
 import { useBtcRate } from '@/hooks/useSatUsdRate';
 import { useLnVerificationInfo } from '@/hooks/useLnVerificationInfo';
 import * as Libs from '@/libs';
-import { PriceSkeleton } from './HumanBitcoinCard.skeleton';
+import { HumanBitcoinCardSkeleton, PriceSkeleton } from './HumanBitcoinCard.skeleton';
 import type { HumanBitcoinCardProps } from './HumanBitcoinCard.types';
 
 export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
   const satUsdRate = useBtcRate()?.satUsd;
   const lnInfo = useLnVerificationInfo();
 
+  // Loading state - waiting for availability check
+  const isLoading = lnInfo === null;
   // Check if geoblocked (403 response)
   const isGeoblocked = lnInfo !== null && !lnInfo.available;
   // Get price if available
   const priceSat = lnInfo?.available ? lnInfo.amountSat : undefined;
   const dataAvailable = priceSat !== undefined && satUsdRate !== undefined;
+
+  if (isLoading) {
+    return <HumanBitcoinCardSkeleton />;
+  }
 
   return (
     <Atoms.Container className="relative flex-1">
@@ -23,28 +29,22 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
         data-testid="bitcoin-payment-card"
         className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isGeoblocked && 'pointer-events-none opacity-60 blur-[5px]')}
       >
-        <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-start">
+        <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-start lg:gap-12">
           <Atoms.Container className="hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto">
             <Atoms.Image
               priority={true}
               src="/images/bitcoin-payment.png"
               alt="Lime Pubky coins representing Bitcoin payments"
-              className="h-auto w-[192px] max-w-full"
+              className="size-48"
             />
-            <Atoms.Typography
-              as="p"
-              className="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase"
-            >
+            <Atoms.Typography as="p" className="text-center text-xs font-semibold tracking-widest text-brand uppercase">
               (More private)
             </Atoms.Typography>
           </Atoms.Container>
 
           <Atoms.Container className="w-full flex-1 items-start gap-6">
             <Atoms.Container className="gap-3">
-              <Atoms.Typography
-                as="h3"
-                className="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
-              >
+              <Atoms.Typography as="h3" className="text-2xl leading-8 font-semibold text-foreground">
                 Bitcoin Payment
               </Atoms.Typography>
 
@@ -57,7 +57,10 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
                     ₿ {priceSat!.toLocaleString()}
                   </Atoms.Typography>
 
-                  <Atoms.Typography as="p" className="text-xs font-medium tracking-[0.1em] text-muted-foreground">
+                  <Atoms.Typography
+                    as="p"
+                    className="text-xs font-medium tracking-widest text-muted-foreground uppercase"
+                  >
                     ₿{priceSat!.toLocaleString()} = ${Math.round(satUsdRate * priceSat! * 100) / 100}
                   </Atoms.Typography>
                 </>
@@ -77,11 +80,11 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
 
             <Atoms.Button
               variant={Atoms.ButtonVariant.DEFAULT}
-              className="h-12 rounded-full px-5 py-3 text-sm font-semibold"
+              className="h-10 rounded-full px-4 text-sm font-semibold"
               onClick={onClick}
               disabled={!dataAvailable || isGeoblocked}
             >
-              <Libs.Wallet className="mr-2 h-4 w-4" />
+              <Libs.Wallet className="mr-2 size-4" />
               Pay Once
             </Atoms.Button>
           </Atoms.Container>

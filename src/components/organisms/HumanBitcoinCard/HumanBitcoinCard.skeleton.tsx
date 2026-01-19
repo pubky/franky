@@ -1,19 +1,43 @@
 import * as Atoms from '@/atoms';
-import React from 'react';
 
 /**
- * Skeleton loading state for the price section.
- * Heights must match the actual content exactly to avoid layout shift:
- * - Price: text-5xl (48px) on mobile, text-6xl (60px) on desktop with leading-none
- * - Conversion: text-xs (12px) with line-height
+ * Skeleton for the price section while loading.
  */
 export function PriceSkeleton() {
   return (
-    <React.Fragment>
-      {/* Price skeleton - matches "₿ 1,000" with text-5xl/text-6xl leading-none */}
-      <Atoms.Container className="h-[48px] w-36 animate-pulse rounded bg-muted lg:h-[60px]" overrideDefaults />
-      {/* Conversion skeleton - matches "₿1,000 = $1.00" with text-xs */}
-      <Atoms.Container className="h-[18px] w-32 animate-pulse rounded bg-muted" overrideDefaults />
-    </React.Fragment>
+    <>
+      <Atoms.Container className="h-12 w-36 animate-pulse rounded bg-muted lg:h-15" overrideDefaults />
+      <Atoms.Container className="h-4 w-32 animate-pulse rounded bg-muted" overrideDefaults />
+    </>
+  );
+}
+
+/**
+ * Skeleton loading state for Bitcoin payment card.
+ */
+export function HumanBitcoinCardSkeleton() {
+  return (
+    <Atoms.Card data-testid="bitcoin-payment-card-skeleton" className="flex-1 gap-0 p-6 md:p-12">
+      <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-start lg:gap-12">
+        {/* Image + label skeleton - hidden on mobile */}
+        <Atoms.Container className="hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto">
+          <Atoms.Container className="size-48 animate-pulse rounded bg-muted" overrideDefaults />
+          <Atoms.Container className="h-4 w-28 animate-pulse rounded bg-muted" overrideDefaults />
+        </Atoms.Container>
+
+        <Atoms.Container className="w-full flex-1 items-start gap-6">
+          <Atoms.Container className="w-full gap-3">
+            <Atoms.Container className="h-8 w-40 animate-pulse rounded bg-muted" overrideDefaults />
+            <Atoms.Container className="h-12 w-36 animate-pulse rounded bg-muted lg:h-15" overrideDefaults />
+            <Atoms.Container className="h-4 w-32 animate-pulse rounded bg-muted" overrideDefaults />
+            <Atoms.Container className="gap-1">
+              <Atoms.Container className="h-6 w-24 animate-pulse rounded bg-muted" overrideDefaults />
+              <Atoms.Container className="h-6 w-32 animate-pulse rounded bg-muted" overrideDefaults />
+            </Atoms.Container>
+          </Atoms.Container>
+          <Atoms.Container className="h-10 w-28 animate-pulse rounded-full bg-muted" overrideDefaults />
+        </Atoms.Container>
+      </Atoms.Container>
+    </Atoms.Card>
   );
 }

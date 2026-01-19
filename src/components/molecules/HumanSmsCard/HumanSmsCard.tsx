@@ -3,13 +3,20 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import { useSmsVerificationInfo } from '@/hooks/useSmsVerificationInfo';
+import { HumanSmsCardSkeleton } from './HumanSmsCard.skeleton';
 import type { HumanSmsCardProps } from './HumanSmsCard.types';
 
 export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
   const smsInfo = useSmsVerificationInfo();
 
+  // Loading state - waiting for availability check
+  const isLoading = smsInfo === null;
   // Check if geoblocked (403 response)
   const isGeoblocked = smsInfo !== null && !smsInfo.available;
+
+  if (isLoading) {
+    return <HumanSmsCardSkeleton />;
+  }
 
   return (
     <Atoms.Container className="relative flex-1">
@@ -17,22 +24,19 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
         data-testid="sms-verification-card"
         className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isGeoblocked && 'pointer-events-none opacity-60 blur-[5px]')}
       >
-        <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-center">
-          <Atoms.Container className="flex hidden h-full w-full flex-1 items-center lg:block lg:w-auto">
+        <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-center lg:gap-12">
+          <Atoms.Container className="hidden h-full w-full flex-1 items-center lg:block lg:w-auto">
             <Atoms.Image
               priority={true}
               src="/images/sms-verification-phone.png"
               alt="Lime Pubky phone representing SMS verification"
-              className="h-auto w-[192px] max-w-full"
+              className="size-48"
             />
           </Atoms.Container>
 
           <Atoms.Container className="w-full flex-1 items-start gap-6">
             <Atoms.Container className="gap-3">
-              <Atoms.Typography
-                as="h3"
-                className="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
-              >
+              <Atoms.Typography as="h3" className="text-2xl leading-8 font-semibold text-foreground">
                 SMS Verification
               </Atoms.Typography>
 
@@ -40,10 +44,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
                 Free
               </Atoms.Typography>
 
-              <Atoms.Typography
-                as="p"
-                className="text-xs font-medium tracking-[0.1em] whitespace-nowrap text-muted-foreground uppercase"
-              >
+              <Atoms.Typography as="p" className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
                 LESS PRIVATE, BUT EASY
               </Atoms.Typography>
 
@@ -60,11 +61,11 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
             <Atoms.Button
               data-testid="human-sms-card-receive-sms-btn"
               variant={Atoms.ButtonVariant.SECONDARY}
-              className="h-12 w-auto rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark"
+              className="h-10 rounded-full px-4 text-sm font-semibold shadow-xs-dark"
               onClick={onClick}
               disabled={isGeoblocked}
             >
-              <Libs.Smartphone className="mr-2 h-4 w-4" />
+              <Libs.Smartphone className="mr-2 size-4" />
               Receive SMS
             </Atoms.Button>
           </Atoms.Container>

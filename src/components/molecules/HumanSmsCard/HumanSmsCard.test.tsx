@@ -82,6 +82,15 @@ describe('SmsVerificationCard', () => {
     expect(isOnboardingClicked).toBe(false);
   });
 
+  it('renders full skeleton card when availability is loading', () => {
+    mockUseSmsVerificationInfo.mockReturnValue(null);
+    render(<HumanSmsCard />);
+
+    // Should show skeleton card, not the actual card
+    expect(screen.getByTestId('sms-verification-card-skeleton')).toBeInTheDocument();
+    expect(screen.queryByTestId('sms-verification-card')).not.toBeInTheDocument();
+  });
+
   it('matches snapshot', () => {
     const { container } = render(<HumanSmsCard />);
     expect(container.firstChild).toMatchSnapshot();
@@ -89,6 +98,12 @@ describe('SmsVerificationCard', () => {
 
   it('matches snapshot when geoblocked', () => {
     mockUseSmsVerificationInfo.mockReturnValue({ available: false });
+    const { container } = render(<HumanSmsCard />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when loading', () => {
+    mockUseSmsVerificationInfo.mockReturnValue(null);
     const { container } = render(<HumanSmsCard />);
     expect(container.firstChild).toMatchSnapshot();
   });

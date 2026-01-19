@@ -11,7 +11,7 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
     data-testid="bitcoin-payment-card"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start"
+      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12"
       data-testid="container"
     >
       <div
@@ -20,13 +20,13 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
       >
         <img
           alt="Lime Pubky coins representing Bitcoin payments"
-          class="h-auto w-[192px] max-w-full"
+          class="max-w-full size-48"
           height="600"
           src="/images/bitcoin-payment.png"
           width="800"
         />
         <p
-          class="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase"
+          class="text-center text-xs font-semibold tracking-widest text-brand uppercase"
           data-testid="typography"
         >
           (More private)
@@ -41,7 +41,7 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
           data-testid="container"
         >
           <h3
-            class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
+            class="text-2xl leading-8 font-semibold text-foreground"
             data-testid="typography"
           >
             Bitcoin Payment
@@ -54,7 +54,7 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
             1,000
           </p>
           <p
-            class="text-xs font-medium tracking-[0.1em] text-muted-foreground"
+            class="text-xs font-medium tracking-widest text-muted-foreground uppercase"
             data-testid="typography"
           >
             ₿
@@ -81,13 +81,13 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
           </div>
         </div>
         <button
-          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand gap-1 has-[>svg]:px-4 h-12 rounded-full px-5 py-3 text-sm font-semibold"
+          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand gap-1 py-2 has-[>svg]:px-4 h-10 rounded-full px-4 text-sm font-semibold"
           data-slot="button"
           data-variant="default"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-wallet mr-2 h-4 w-4"
+            class="lucide lucide-wallet mr-2 size-4"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -124,7 +124,7 @@ exports[`BitcoinPaymentCard > matches snapshot when geoblocked 1`] = `
     data-testid="bitcoin-payment-card"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start"
+      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12"
       data-testid="container"
     >
       <div
@@ -133,13 +133,13 @@ exports[`BitcoinPaymentCard > matches snapshot when geoblocked 1`] = `
       >
         <img
           alt="Lime Pubky coins representing Bitcoin payments"
-          class="h-auto w-[192px] max-w-full"
+          class="max-w-full size-48"
           height="600"
           src="/images/bitcoin-payment.png"
           width="800"
         />
         <p
-          class="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase"
+          class="text-center text-xs font-semibold tracking-widest text-brand uppercase"
           data-testid="typography"
         >
           (More private)
@@ -154,17 +154,17 @@ exports[`BitcoinPaymentCard > matches snapshot when geoblocked 1`] = `
           data-testid="container"
         >
           <h3
-            class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
+            class="text-2xl leading-8 font-semibold text-foreground"
             data-testid="typography"
           >
             Bitcoin Payment
           </h3>
           <div
-            class="h-[48px] w-36 animate-pulse rounded bg-muted lg:h-[60px]"
+            class="h-12 w-36 animate-pulse rounded bg-muted lg:h-15"
             data-testid="container"
           />
           <div
-            class="h-[18px] w-32 animate-pulse rounded bg-muted"
+            class="h-4 w-32 animate-pulse rounded bg-muted"
             data-testid="container"
           />
           <div
@@ -186,14 +186,14 @@ exports[`BitcoinPaymentCard > matches snapshot when geoblocked 1`] = `
           </div>
         </div>
         <button
-          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand gap-1 has-[>svg]:px-4 h-12 rounded-full px-5 py-3 text-sm font-semibold"
+          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand gap-1 py-2 has-[>svg]:px-4 h-10 rounded-full px-4 text-sm font-semibold"
           data-slot="button"
           data-variant="default"
           disabled=""
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-wallet mr-2 h-4 w-4"
+            class="lucide lucide-wallet mr-2 size-4"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -260,105 +260,65 @@ exports[`BitcoinPaymentCard > matches snapshot when geoblocked 1`] = `
 
 exports[`BitcoinPaymentCard > matches snapshot when loading 1`] = `
 <div
-  class="mx-auto w-full flex-col flex relative flex-1"
-  data-testid="container"
+  class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
+  data-slot="card"
+  data-testid="bitcoin-payment-card-skeleton"
 >
   <div
-    class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
-    data-slot="card"
-    data-testid="bitcoin-payment-card"
+    class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-12"
+    data-testid="container"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-start"
+      class="mx-auto hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto"
       data-testid="container"
     >
       <div
-        class="mx-auto hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto"
+        class="size-48 animate-pulse rounded bg-muted"
         data-testid="container"
-      >
-        <img
-          alt="Lime Pubky coins representing Bitcoin payments"
-          class="h-auto w-[192px] max-w-full"
-          height="600"
-          src="/images/bitcoin-payment.png"
-          width="800"
-        />
-        <p
-          class="text-center text-xs font-semibold tracking-[0.12em] text-brand uppercase"
-          data-testid="typography"
-        >
-          (More private)
-        </p>
-      </div>
+      />
       <div
-        class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+        class="h-4 w-28 animate-pulse rounded bg-muted"
+        data-testid="container"
+      />
+    </div>
+    <div
+      class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+      data-testid="container"
+    >
+      <div
+        class="mx-auto flex-col flex w-full gap-3"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col flex gap-3"
+          class="h-8 w-40 animate-pulse rounded bg-muted"
+          data-testid="container"
+        />
+        <div
+          class="h-12 w-36 animate-pulse rounded bg-muted lg:h-15"
+          data-testid="container"
+        />
+        <div
+          class="h-4 w-32 animate-pulse rounded bg-muted"
+          data-testid="container"
+        />
+        <div
+          class="mx-auto w-full flex-col flex gap-1"
           data-testid="container"
         >
-          <h3
-            class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
-            data-testid="typography"
-          >
-            Bitcoin Payment
-          </h3>
           <div
-            class="h-[48px] w-36 animate-pulse rounded bg-muted lg:h-[60px]"
+            class="h-6 w-24 animate-pulse rounded bg-muted"
             data-testid="container"
           />
           <div
-            class="h-[18px] w-32 animate-pulse rounded bg-muted"
+            class="h-6 w-32 animate-pulse rounded bg-muted"
             data-testid="container"
           />
-          <div
-            class="mx-auto w-full flex-col flex gap-1"
-            data-testid="container"
-          >
-            <p
-              class="text-base leading-6 font-medium text-secondary-foreground/80"
-              data-testid="typography"
-            >
-              1GB storage
-            </p>
-            <p
-              class="text-base leading-6 font-medium text-secondary-foreground/80"
-              data-testid="typography"
-            >
-              1MB/s speed limit
-            </p>
-          </div>
         </div>
-        <button
-          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand gap-1 has-[>svg]:px-4 h-12 rounded-full px-5 py-3 text-sm font-semibold"
-          data-slot="button"
-          data-variant="default"
-          disabled=""
-        >
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-wallet mr-2 h-4 w-4"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"
-            />
-            <path
-              d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"
-            />
-          </svg>
-          Pay Once
-        </button>
       </div>
+      <div
+        class="h-10 w-28 animate-pulse rounded-full bg-muted"
+        data-testid="container"
+      />
     </div>
   </div>
 </div>

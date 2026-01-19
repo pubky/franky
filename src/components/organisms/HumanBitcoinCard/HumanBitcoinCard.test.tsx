@@ -40,16 +40,13 @@ describe('BitcoinPaymentCard', () => {
     expect(screen.getByRole('button', { name: /Pay Once/i })).not.toBeDisabled();
   });
 
-  it('renders skeleton when price is loading', () => {
+  it('renders full skeleton card when availability is loading', () => {
     mockUseLnVerificationInfo.mockReturnValue(null);
-    const { container } = render(<HumanBitcoinCard />);
+    render(<HumanBitcoinCard />);
 
-    // Check for skeleton elements (they have animate-pulse class)
-    const skeletonContainer = container.querySelector('.animate-pulse');
-    expect(skeletonContainer).toBeInTheDocument();
-
-    // Button should be disabled when data is not available
-    expect(screen.getByRole('button', { name: /Pay Once/i })).toBeDisabled();
+    // Should show skeleton card, not the actual card
+    expect(screen.getByTestId('bitcoin-payment-card-skeleton')).toBeInTheDocument();
+    expect(screen.queryByTestId('bitcoin-payment-card')).not.toBeInTheDocument();
   });
 
   it('renders skeleton when rate is loading', () => {
