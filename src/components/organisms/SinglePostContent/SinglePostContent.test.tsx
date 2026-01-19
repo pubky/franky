@@ -13,6 +13,12 @@ const mockUsePostReplies = vi.fn(() => ({
   hasMore: false,
   loadMore: vi.fn(),
   refresh: vi.fn(),
+  prependReply: vi.fn(),
+}));
+
+const mockUseRequireAuth = vi.fn(() => ({
+  isAuthenticated: true,
+  requireAuth: vi.fn((action: () => unknown) => action()),
 }));
 
 const mockUsePostNavigation = vi.fn(() => ({
@@ -41,6 +47,7 @@ vi.mock('@/hooks', () => ({
   usePostNavigation: vi.fn(),
   usePostDetails: vi.fn(),
   useInfiniteScroll: vi.fn(),
+  useRequireAuth: vi.fn(),
 }));
 
 // Use vi.hoisted to define mock functions before vi.mock calls
@@ -181,6 +188,7 @@ describe('SinglePostContent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsPostDeleted.mockReturnValue(false);
+    vi.mocked(Hooks.useRequireAuth).mockReturnValue(mockUseRequireAuth());
     vi.mocked(Hooks.usePostReplies).mockReturnValue(mockUsePostReplies());
     vi.mocked(Hooks.usePostNavigation).mockReturnValue(mockUsePostNavigation());
     vi.mocked(Hooks.usePostDetails).mockReturnValue(mockUsePostDetails());
@@ -424,10 +432,21 @@ describe('SinglePostContent', () => {
   });
 
   describe('hooks integration', () => {
-    it('calls usePostReplies with the correct postId', () => {
+    it('calls usePostReplies with the correct postId when authenticated', () => {
       render(<SinglePostContent postId={mockPostId} />);
 
       expect(Hooks.usePostReplies).toHaveBeenCalledWith(mockPostId);
+    });
+
+    it('calls usePostReplies with null when not authenticated', () => {
+      vi.mocked(Hooks.useRequireAuth).mockReturnValue({
+        isAuthenticated: false,
+        requireAuth: vi.fn(),
+      });
+
+      render(<SinglePostContent postId={mockPostId} />);
+
+      expect(Hooks.usePostReplies).toHaveBeenCalledWith(null);
     });
 
     it('calls usePostDetails with the correct postId', () => {
@@ -464,6 +483,7 @@ describe('SinglePostContent - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsPostDeleted.mockReturnValue(false);
+    vi.mocked(Hooks.useRequireAuth).mockReturnValue(mockUseRequireAuth());
     vi.mocked(Hooks.usePostReplies).mockReturnValue(mockUsePostReplies());
     vi.mocked(Hooks.usePostNavigation).mockReturnValue(mockUsePostNavigation());
     vi.mocked(Hooks.usePostDetails).mockReturnValue(mockUsePostDetails());
