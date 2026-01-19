@@ -26,17 +26,17 @@ export class HomegateApplication {
   }
 
   /**
-   * Get the Lightning Network verification price.
+   * Get SMS verification availability info.
    *
-   * @returns The price in satoshis
+   * @returns The availability status
    * @throws AppError if retrieval fails
    */
-  static async getLnVerificationPrice(): Promise<Types.TGetLnVerificationPriceResult> {
+  static async getSmsVerificationInfo(): Promise<Types.THomegateSmsInfoResult> {
     try {
-      return await Core.HomegateService.getLnVerificationPrice();
+      return await Core.HomegateService.getSmsVerificationInfo();
     } catch (error) {
       if (error instanceof Libs.AppError) {
-        Libs.Logger.error('Failed to get LN verification price', {
+        Libs.Logger.error('Failed to get SMS verification info', {
           type: error.type,
           statusCode: error.statusCode,
           details: error.details,
@@ -44,10 +44,36 @@ export class HomegateApplication {
         throw error;
       }
 
-      Libs.Logger.error('Unexpected error getting LN verification price', { error });
+      Libs.Logger.error('Unexpected error getting SMS verification info', { error });
+      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to get SMS verification info', 500, {
+        error,
+      });
+    }
+  }
+
+  /**
+   * Get Lightning Network verification availability and price.
+   *
+   * @returns The availability status and price if available
+   * @throws AppError if retrieval fails
+   */
+  static async getLnVerificationInfo(): Promise<Types.THomegateLnInfoResult> {
+    try {
+      return await Core.HomegateService.getLnVerificationInfo();
+    } catch (error) {
+      if (error instanceof Libs.AppError) {
+        Libs.Logger.error('Failed to get LN verification info', {
+          type: error.type,
+          statusCode: error.statusCode,
+          details: error.details,
+        });
+        throw error;
+      }
+
+      Libs.Logger.error('Unexpected error getting LN verification info', { error });
       throw Libs.createCommonError(
         Libs.CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to get Lightning verification price',
+        'Failed to get Lightning verification info',
         500,
         { error },
       );

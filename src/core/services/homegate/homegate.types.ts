@@ -1,3 +1,15 @@
+/**
+ * Result of checking SMS verification availability.
+ * Returns available: true if service is accessible, false if geoblocked (403).
+ */
+export type TSmsInfoResult = { available: true } | { available: false };
+
+/**
+ * Result of checking LN verification availability and price.
+ * Returns available: true with amountSat if service is accessible, false if geoblocked (403).
+ */
+export type TLnInfoResult = { available: true; amountSat: number } | { available: false };
+
 export type TVerifySmsCodeResult = {
   /**
    * True if the code is valid, false otherwise.
@@ -76,16 +88,6 @@ export type TAwaitLnVerificationResult =
   | { success: true; data: TLnVerificationStatus }
   | { success: false; timeout: true }
   | { success: false; notFound: true };
-
-/**
- * Response from getting the Lightning Network verification price.
- */
-export type TGetPriceResult = {
-  /**
-   * The configured price in satoshis for Lightning Network verification.
-   */
-  amountSat: number;
-};
 
 /**
  * Result of sending a SMS code.
