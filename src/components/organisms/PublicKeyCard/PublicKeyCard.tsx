@@ -11,6 +11,7 @@ import * as Hooks from '@/hooks';
 export function PublicKeyCard() {
   const secretKey = Core.useOnboardingStore((state) => state.secretKey);
   const pubky = Core.useAuthStore((state) => state.currentUserPubky);
+  const displayPubky = pubky ? Libs.withPubkyPrefix(pubky) : '';
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const { toast } = Molecules.useToast();
   const canUseWebShare = Libs.isWebShareSupported();
@@ -22,23 +23,23 @@ export function PublicKeyCard() {
   }, [secretKey]);
 
   const handleCopyToClipboard = () => {
-    if (pubky) {
-      copyToClipboard(pubky);
+    if (displayPubky) {
+      copyToClipboard(displayPubky);
     }
   };
 
   const handleShare = async () => {
-    if (!pubky) return;
+    if (!displayPubky) return;
 
     try {
       await Libs.shareWithFallback(
         {
           title: 'My Pubky',
-          text: `Here is my Pubky:\n${pubky}`,
+          text: `Here is my Pubky:\n${displayPubky}`,
         },
         {
           onFallback: async () => {
-            const copied = await copyToClipboard(pubky);
+            const copied = await copyToClipboard(displayPubky);
 
             if (!copied) {
               throw new Error('Unable to copy pubky to clipboard');
@@ -74,7 +75,7 @@ export function PublicKeyCard() {
       icon: <Libs.Copy className="mr-2 h-4 w-4" />,
       onClick: handleCopyToClipboard,
       variant: 'secondary' as const,
-      disabled: !pubky,
+      disabled: !displayPubky,
     },
     ...(canUseWebShare
       ? [
@@ -83,7 +84,7 @@ export function PublicKeyCard() {
             icon: <Libs.Share className="mr-2 h-4 w-4" />,
             onClick: handleShare,
             variant: 'secondary' as const,
-            disabled: !pubky,
+            disabled: !displayPubky,
             className: 'md:hidden',
           },
         ]
@@ -107,14 +108,14 @@ export function PublicKeyCard() {
       </Atoms.Container>
       <Molecules.ActionSection actions={actions} className="w-full flex-col items-start justify-start gap-3">
         <Molecules.InputField
-          value={pubky ?? ''}
+          value={displayPubky}
           variant="dashed"
           readOnly
           onClick={handleCopyToClipboard}
-          loading={!pubky}
+          loading={!displayPubky}
           loadingText="Generating pubky..."
           icon={<Libs.Key className="h-4 w-4 text-brand" />}
-          status={pubky ? 'success' : 'default'}
+          status={displayPubky ? 'success' : 'default'}
           className="w-full max-w-[576px]"
           dataCy="pubky-display"
         />

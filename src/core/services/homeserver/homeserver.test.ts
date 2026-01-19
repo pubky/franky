@@ -106,7 +106,7 @@ vi.mock('@synonymdev/pubky', () => {
     },
     Keypair: {
       random: vi.fn(),
-      fromSecretKey: vi.fn(),
+      fromSecret: vi.fn(),
     },
     AuthFlowKind: {
       signin: () => mockState.authFlowKindSignin(),
@@ -147,7 +147,7 @@ const createMockKeypair = (): Keypair =>
     publicKey: {
       z32: () => 'test-public-key-z32',
     } as PublicKey,
-    secretKey: new Uint8Array(32).fill(1),
+    secret: vi.fn(() => new Uint8Array(32).fill(1)),
   }) as unknown as Keypair;
 
 // =============================================================================
