@@ -41,6 +41,15 @@ function Popover({
     }
   };
 
+  const blurActiveElement = () => {
+    setTimeout(() => {
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement?.blur) {
+        activeElement.blur();
+      }
+    }, 0);
+  };
+
   const handleMouseEnter = () => {
     // Cancel any pending close
     if (closeTimeoutRef.current) {
@@ -82,23 +91,11 @@ function Popover({
       if (hoverCloseDelay > 0) {
         closeTimeoutRef.current = setTimeout(() => {
           handleOpenChange?.(false);
-          // Remove focus from trigger when closing via hover
-          setTimeout(() => {
-            const activeElement = document.activeElement as HTMLElement;
-            if (activeElement && activeElement.blur) {
-              activeElement.blur();
-            }
-          }, 0);
+          blurActiveElement();
         }, hoverCloseDelay);
       } else {
         handleOpenChange?.(false);
-        // Remove focus from trigger when closing via hover
-        setTimeout(() => {
-          const activeElement = document.activeElement as HTMLElement;
-          if (activeElement && activeElement.blur) {
-            activeElement.blur();
-          }
-        }, 0);
+        blurActiveElement();
       }
     }
   };
