@@ -46,6 +46,8 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
 
   // Refs for stable callbacks
   const userIdsRef = useRef<Core.Pubky[]>([]);
+  // Track if initial fetch completed for own following list
+  const hasInitialFetchRef = useRef(false);
 
   // Build stream ID: userId:connectionType (e.g., 'user123:followers')
   const streamId = targetUserId ? (`${targetUserId}:${type}` as Core.UserStreamCompositeId) : null;
@@ -66,11 +68,18 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       // Only sync if we haven't paginated (user is still on first page)
       const hasPaginated = skip > Config.NEXUS_USERS_PER_PAGE;
       if (!hasPaginated) {
+        // For own following list, only skip sync when users were removed (unfollow)
+        // Allow sync when users were added (follow)
+        const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
+        if (isOwnFollowing && cachedStream.length < userIdsRef.current.length) {
+          return;
+        }
+
         userIdsRef.current = cachedStream;
         setUserIds(cachedStream);
       }
     }
-  }, [cachedStream, isLoading, skip]);
+  }, [cachedStream, isLoading, skip, targetUserId, currentUserPubky, type]);
 
   // Subscribe to user details from local database (reactive via Controller)
   const userDetailsMap = useLiveQuery(
@@ -190,10 +199,15 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       try {
         const currentSkip = isInitialLoad ? 0 : skip;
 
+        // For own following list, use localOnly after initial fetch to preserve local state
+        const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
+        const useLocalOnly = isOwnFollowing && hasInitialFetchRef.current;
+
         const result = await Core.StreamUserController.getOrFetchStreamSlice({
           streamId,
           skip: currentSkip,
           limit: Config.NEXUS_USERS_PER_PAGE,
+          localOnly: useLocalOnly,
         });
 
         // Handle empty results
@@ -227,12 +241,16 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       } finally {
         if (isInitialLoad) {
           setIsLoading(false);
+          // Mark initial fetch complete for own following list localOnly logic
+          if (targetUserId === currentUserPubky && type === 'following') {
+            hasInitialFetchRef.current = true;
+          }
         } else {
           setIsLoadingMore(false);
         }
       }
     },
-    [streamId, skip],
+    [streamId, skip, targetUserId, currentUserPubky, type],
   );
 
   /**
@@ -240,6 +258,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
    */
   const clearState = useCallback(() => {
     userIdsRef.current = [];
+    hasInitialFetchRef.current = false;
     setUserIds([]);
     setSkip(0);
     setHasMore(true);

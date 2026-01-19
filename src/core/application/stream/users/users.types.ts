@@ -13,6 +13,8 @@ export type TReadUserStreamChunkParams = {
   streamId: Core.UserStreamId;
   limit: number;
   skip: number;
+  /** When true, return cached data only, skip API fetch. */
+  localOnly?: boolean;
 };
 
 /**
