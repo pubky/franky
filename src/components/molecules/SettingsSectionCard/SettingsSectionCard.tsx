@@ -9,14 +9,11 @@ export function SettingsSectionCard({ icon: Icon, title, description, children, 
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn(
-        'inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12',
-        className,
-      )}
+      className={Libs.cn('flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12', className)}
     >
-      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start justify-start gap-3">
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
         {Icon && title && (
-          <Atoms.Container overrideDefaults className="inline-flex items-center justify-start gap-2">
+          <Atoms.Container overrideDefaults className="inline-flex items-center justify-start gap-3">
             <Icon size={24} />
             <Atoms.Heading level={2} size="lg" className="leading-8">
               {title}
@@ -33,6 +30,11 @@ export function SettingsSectionCard({ icon: Icon, title, description, children, 
             {description}
           </Atoms.Typography>
         )}
+      </Atoms.Container>
+      <Atoms.Container
+        overrideDefaults
+        className="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+      >
         {children}
       </Atoms.Container>
     </Atoms.Container>

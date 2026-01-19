@@ -24,24 +24,24 @@ export function LanguageSelector() {
   const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
 
   return (
-    <div className="inline-flex w-full flex-col items-start justify-start gap-2 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]">
-      <p className="text-xs font-bold text-muted-foreground uppercase">Display language</p>
+    <div className="flex w-full flex-col items-start gap-4">
+      <p className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">Display language</p>
 
       <div ref={dropdownRef} className="relative w-full">
         {/* Dropdown trigger */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={Libs.cn(
-            'flex w-full cursor-pointer items-center justify-between px-4 py-2 text-lg leading-7 font-light tracking-wide',
+            'flex h-8 w-full cursor-pointer items-center justify-between',
             'transition-opacity hover:opacity-80',
           )}
         >
-          <span className="flex items-center gap-2">
-            <span className="text-2xl">{selectedLang.flag}</span>
-            <span>{selectedLang.name}</span>
+          <span className="flex items-center gap-1">
+            <span className="w-4 text-[17px]">{selectedLang.flag}</span>
+            <span className="text-base leading-6 font-bold">{selectedLang.name}</span>
           </span>
           <Libs.ChevronDown
-            size={20}
+            size={24}
             className={Libs.cn('transition-transform duration-300', isOpen && 'rotate-180')}
           />
         </button>
