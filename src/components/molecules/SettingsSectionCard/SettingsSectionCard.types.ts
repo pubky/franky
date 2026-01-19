@@ -6,4 +6,6 @@ export interface SettingsSectionCardProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  /** When false, renders children directly without the bordered inner container. Default: true */
+  wrapChildren?: boolean;
 }

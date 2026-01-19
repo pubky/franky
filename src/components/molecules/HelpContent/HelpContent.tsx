@@ -2,7 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import { HelpCircle, FileText, MessageCircle } from '@/libs';
+import { HelpCircle, FileText, MessageCircle, Send } from '@/libs';
 import { FAQ_SECTIONS, SUPPORT_LINKS } from './HelpContent.constants';
 
 export function HelpContent() {
@@ -18,7 +18,7 @@ export function HelpContent() {
     <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-10">
       {/* FAQ Section */}
       <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
-        <Atoms.Container overrideDefaults className="inline-flex items-center gap-2">
+        <Atoms.Container overrideDefaults className="inline-flex items-center gap-3">
           <HelpCircle size={24} />
           <Atoms.Heading level={2} size="lg" className="leading-8">
             FAQ
@@ -43,28 +43,41 @@ export function HelpContent() {
       <Molecules.SettingsDivider />
 
       {/* User Guide Section */}
-      <Molecules.SettingsSection
-        icon={FileText}
-        title="User Guide"
-        description="The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of your Pubky experience."
-        buttonText="User guide"
-        buttonIcon={FileText}
-        buttonId="user-guide-btn"
-        buttonOnClick={handleUserGuideClick}
-      />
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
+        <Atoms.Container overrideDefaults className="inline-flex items-center gap-3">
+          <FileText size={24} />
+          <Atoms.Heading level={2} size="lg" className="leading-8">
+            User Guide
+          </Atoms.Heading>
+        </Atoms.Container>
+        <Atoms.Typography as="p" overrideDefaults className="text-base leading-6 font-medium text-secondary-foreground">
+          The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of
+          your Pubky experience.
+        </Atoms.Typography>
+        <Atoms.Button id="user-guide-btn" variant="secondary" size="default" onClick={handleUserGuideClick}>
+          <FileText size={16} />
+          User guide
+        </Atoms.Button>
+      </Atoms.Container>
 
       <Molecules.SettingsDivider />
 
       {/* Support Section */}
-      <Molecules.SettingsSection
-        icon={MessageCircle}
-        title="Support"
-        description="Cannot find the answer you're looking for? Pubky support will help you out in no time."
-        buttonText="Support (Telegram)"
-        buttonIcon={MessageCircle}
-        buttonId="support-btn"
-        buttonOnClick={handleSupportClick}
-      />
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
+        <Atoms.Container overrideDefaults className="inline-flex items-center gap-3">
+          <MessageCircle size={24} />
+          <Atoms.Heading level={2} size="lg" className="leading-8">
+            Support
+          </Atoms.Heading>
+        </Atoms.Container>
+        <Atoms.Typography as="p" overrideDefaults className="text-base leading-6 font-medium text-secondary-foreground">
+          Cannot find the answer you&apos;re looking for? Pubky support will help you out in no time.
+        </Atoms.Typography>
+        <Atoms.Button id="support-btn" variant="secondary" size="default" onClick={handleSupportClick}>
+          <Send size={16} />
+          Support (Telegram)
+        </Atoms.Button>
+      </Atoms.Container>
     </Atoms.Container>
   );
 }

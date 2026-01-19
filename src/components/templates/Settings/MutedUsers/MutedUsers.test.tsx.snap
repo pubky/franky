@@ -2,15 +2,15 @@
 
 exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
 <div
-  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
   data-testid="container"
 >
   <div
-    class="flex w-full flex-col items-start justify-start gap-3"
+    class="flex w-full flex-col items-start gap-6"
     data-testid="container"
   >
     <div
-      class="inline-flex items-center justify-start gap-2"
+      class="inline-flex items-center justify-start gap-3"
       data-testid="container"
     >
       <svg
@@ -55,6 +55,11 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
     >
       Here is an overview of all users you muted. You can choose to unmute users if you want.
     </p>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
     <div
       class="inline-flex w-full flex-col gap-3"
       data-testid="container"
