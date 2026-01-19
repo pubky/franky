@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 import * as Organisms from '@/organisms';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
@@ -21,6 +22,9 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     isFollowLoading,
     isFollowing,
   } = actions;
+
+  // Check if user is authenticated for conditional rendering
+  const { isAuthenticated } = Hooks.useRequireAuth();
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
@@ -119,35 +123,37 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                 <Icons.Link className="size-4" />
                 Link
               </Atoms.Button>
-              {/* Follow/Unfollow button */}
-              <Atoms.Button
-                data-cy="profile-follow-toggle-btn"
-                variant="secondary"
-                size="sm"
-                onClick={onFollowToggle}
-                disabled={isFollowLoading}
-              >
-                {isFollowLoading ? (
-                  <>
-                    <Icons.Loader2 className="size-4 animate-spin" />
-                    {isFollowing ? 'Unfollowing...' : 'Following...'}
-                  </>
-                ) : (
-                  <>
-                    {isFollowing ? (
-                      <>
-                        <Icons.Check className="size-4" />
-                        Following
-                      </>
-                    ) : (
-                      <>
-                        <Icons.UserPlus className="size-4" />
-                        Follow
-                      </>
-                    )}
-                  </>
-                )}
-              </Atoms.Button>
+              {/* Follow/Unfollow button - only shown for authenticated users */}
+              {isAuthenticated && (
+                <Atoms.Button
+                  data-cy="profile-follow-toggle-btn"
+                  variant="secondary"
+                  size="sm"
+                  onClick={onFollowToggle}
+                  disabled={isFollowLoading}
+                >
+                  {isFollowLoading ? (
+                    <>
+                      <Icons.Loader2 className="size-4 animate-spin" />
+                      {isFollowing ? 'Unfollowing...' : 'Following...'}
+                    </>
+                  ) : (
+                    <>
+                      {isFollowing ? (
+                        <>
+                          <Icons.Check className="size-4" />
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <Icons.UserPlus className="size-4" />
+                          Follow
+                        </>
+                      )}
+                    </>
+                  )}
+                </Atoms.Button>
+              )}
               {/* Status display inline with buttons */}
               {status && (
                 <Atoms.Container overrideDefaults={true} className="flex h-8 items-center gap-1">

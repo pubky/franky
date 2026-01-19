@@ -15,5 +15,6 @@ export interface TEditPostInput {
 
 export type TGetOrFetchPostParams = {
   compositeId: string;
-  viewerId: Core.Pubky;
+  /** Optional viewer ID for relationship data. Null/undefined for unauthenticated views. */
+  viewerId?: Core.Pubky | null;
 };
