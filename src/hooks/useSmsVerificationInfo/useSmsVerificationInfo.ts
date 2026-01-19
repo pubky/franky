@@ -2,26 +2,21 @@
 
 import { useEffect, useState } from 'react';
 
-import { HomegateController, THomegateSmsInfoResult } from '@/core';
+import { HomegateController, THomegateSmsInfoResult, homegateQueryClient } from '@/core';
+
+const QUERY_KEY = ['homegate', 'sms-verification-info'];
 
 /**
  * Fetch the SMS verification availability for the user's region.
- * Uses TanStack Query for caching - the result is cached for 30 minutes
- * and only one request is made regardless of how many components use this hook.
+ * Uses TanStack Query for caching - the result is cached for 30 minutes.
+ * Returns cached data immediately if available, avoiding loading states on navigation.
  *
  * @returns The availability info, or null if not loaded yet
- *
- * @example
- * ```tsx
- * const smsInfo = useSmsVerificationInfo();
- * if (smsInfo === null) return <div>Loading...</div>;
- * if (!smsInfo.available) return <div>Not available in your region</div>;
- *
- * return <div>SMS verification available!</div>;
- * ```
  */
 export function useSmsVerificationInfo(): THomegateSmsInfoResult | null {
-  const [info, setInfo] = useState<THomegateSmsInfoResult | null>(null);
+  // Read cached data synchronously to avoid skeleton flash on navigation
+  const cachedData = homegateQueryClient.getQueryData<THomegateSmsInfoResult>(QUERY_KEY);
+  const [info, setInfo] = useState<THomegateSmsInfoResult | null>(cachedData ?? null);
 
   useEffect(() => {
     let cancelled = false;

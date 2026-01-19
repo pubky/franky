@@ -4,23 +4,38 @@ import { useLnVerificationInfo } from './useLnVerificationInfo';
 
 // Mock @/core
 const mockGetLnVerificationInfo = vi.fn();
+const mockGetQueryData = vi.fn();
 vi.mock('@/core', () => ({
   HomegateController: {
     getLnVerificationInfo: () => mockGetLnVerificationInfo(),
+  },
+  homegateQueryClient: {
+    getQueryData: () => mockGetQueryData(),
   },
 }));
 
 describe('useLnVerificationInfo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetQueryData.mockReturnValue(undefined); // No cached data by default
   });
 
-  it('returns null initially while loading', () => {
+  it('returns null initially while loading when no cached data', () => {
     mockGetLnVerificationInfo.mockReturnValue(new Promise(() => {})); // Never resolves
 
     const { result } = renderHook(() => useLnVerificationInfo());
 
     expect(result.current).toBeNull();
+  });
+
+  it('returns cached data immediately when available', () => {
+    mockGetQueryData.mockReturnValue({ available: true, amountSat: 1000 });
+    mockGetLnVerificationInfo.mockReturnValue(new Promise(() => {})); // Never resolves
+
+    const { result } = renderHook(() => useLnVerificationInfo());
+
+    // Should return cached data synchronously, no need to wait
+    expect(result.current).toEqual({ available: true, amountSat: 1000 });
   });
 
   it('returns available: true with amountSat when LN verification is available', async () => {

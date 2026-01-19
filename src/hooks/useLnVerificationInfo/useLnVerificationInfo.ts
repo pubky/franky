@@ -2,26 +2,21 @@
 
 import { useEffect, useState } from 'react';
 
-import { HomegateController, THomegateLnInfoResult } from '@/core';
+import { HomegateController, THomegateLnInfoResult, homegateQueryClient } from '@/core';
+
+const QUERY_KEY = ['homegate', 'ln-verification-info'];
 
 /**
  * Fetch the Lightning Network verification availability and price.
- * Uses TanStack Query for caching - the result is cached for 30 minutes
- * and only one request is made regardless of how many components use this hook.
+ * Uses TanStack Query for caching - the result is cached for 30 minutes.
+ * Returns cached data immediately if available, avoiding loading states on navigation.
  *
  * @returns The availability and price info, or null if not loaded yet
- *
- * @example
- * ```tsx
- * const lnInfo = useLnVerificationInfo();
- * if (lnInfo === null) return <div>Loading...</div>;
- * if (!lnInfo.available) return <div>Not available in your region</div>;
- *
- * return <div>Price: {lnInfo.amountSat} sats</div>;
- * ```
  */
 export function useLnVerificationInfo(): THomegateLnInfoResult | null {
-  const [info, setInfo] = useState<THomegateLnInfoResult | null>(null);
+  // Read cached data synchronously to avoid skeleton flash on navigation
+  const cachedData = homegateQueryClient.getQueryData<THomegateLnInfoResult>(QUERY_KEY);
+  const [info, setInfo] = useState<THomegateLnInfoResult | null>(cachedData ?? null);
 
   useEffect(() => {
     let cancelled = false;

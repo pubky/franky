@@ -4,23 +4,38 @@ import { useSmsVerificationInfo } from './useSmsVerificationInfo';
 
 // Mock @/core
 const mockGetSmsVerificationInfo = vi.fn();
+const mockGetQueryData = vi.fn();
 vi.mock('@/core', () => ({
   HomegateController: {
     getSmsVerificationInfo: () => mockGetSmsVerificationInfo(),
+  },
+  homegateQueryClient: {
+    getQueryData: () => mockGetQueryData(),
   },
 }));
 
 describe('useSmsVerificationInfo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetQueryData.mockReturnValue(undefined); // No cached data by default
   });
 
-  it('returns null initially while loading', () => {
+  it('returns null initially while loading when no cached data', () => {
     mockGetSmsVerificationInfo.mockReturnValue(new Promise(() => {})); // Never resolves
 
     const { result } = renderHook(() => useSmsVerificationInfo());
 
     expect(result.current).toBeNull();
+  });
+
+  it('returns cached data immediately when available', () => {
+    mockGetQueryData.mockReturnValue({ available: true });
+    mockGetSmsVerificationInfo.mockReturnValue(new Promise(() => {})); // Never resolves
+
+    const { result } = renderHook(() => useSmsVerificationInfo());
+
+    // Should return cached data synchronously, no need to wait
+    expect(result.current).toEqual({ available: true });
   });
 
   it('returns available: true when SMS verification is available', async () => {
