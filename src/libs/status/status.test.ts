@@ -399,9 +399,9 @@ describe('status', () => {
         expect(result).toBe(STATUS_EMOJIS.sick);
       });
 
-      it('should return empty string for unknown status key (text-only custom)', () => {
+      it('should use default emoji for unknown status key (text-only custom)', () => {
         const result = extractEmojiFromStatus('unknownStatus', '🎯');
-        expect(result).toBe('');
+        expect(result).toBe('🎯');
       });
 
       it('should use default emoji when status key has no emoji mapping', () => {
@@ -468,19 +468,19 @@ describe('status', () => {
         expect(result).toBe('😊');
       });
 
-      it('should return empty string for text-only custom status', () => {
+      it('should use default emoji for text-only custom status', () => {
         const result = extractEmojiFromStatus('just text', '🎯');
-        expect(result).toBe('');
+        expect(result).toBe('🎯');
       });
 
-      it('should return empty string for whitespace-only status', () => {
+      it('should use default emoji for whitespace-only status', () => {
         const result = extractEmojiFromStatus('   ', '🎯');
-        expect(result).toBe('');
+        expect(result).toBe('🎯');
       });
 
-      it('should return empty string for status with special characters but no emoji', () => {
+      it('should use default emoji for status with special characters but no emoji', () => {
         const result = extractEmojiFromStatus('@#$%^&*()', '🎯');
-        expect(result).toBe('');
+        expect(result).toBe('🎯');
       });
 
       it('should handle very long status strings', () => {
@@ -516,9 +516,9 @@ describe('status', () => {
         });
       });
 
-      it('should return empty string for text-only custom statuses', () => {
+      it('should use default emoji for text-only custom statuses', () => {
         const result = extractEmojiFromStatus('custom text');
-        expect(result).toBe('');
+        expect(result).toBe(STATUS_EMOJIS.noStatus);
       });
     });
   });

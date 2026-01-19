@@ -74,12 +74,12 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
 }
 
 /**
- * Extracts just the emoji from a status string
- * Useful when you only need the emoji representation
+ * Extracts just the emoji from a status string for display purposes (e.g., badge)
+ * Uses defaultEmoji as fallback when status doesn't determine an emoji
  *
  * @param status - The status string to extract emoji from
- * @param defaultEmoji - Fallback emoji if none found (defaults to noStatus emoji)
- * @returns The emoji string
+ * @param defaultEmoji - Fallback emoji if none found (defaults to vacationing emoji)
+ * @returns The emoji string (uses defaultEmoji for text-only statuses)
  *
  * @example
  * extractEmojiFromStatus('vacationing')
@@ -90,8 +90,8 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
  * // => '🎉'
  *
  * @example
- * extractEmojiFromStatus('Working hard')
- * // => '' (text-only custom status)
+ * extractEmojiFromStatus('Working hard', '🎯')
+ * // => '🎯' (uses fallback for text-only status)
  */
 export function extractEmojiFromStatus(status: string, defaultEmoji: string = STATUS_EMOJIS[DEFAULT_STATUS]): string {
   if (!status) {
@@ -111,6 +111,6 @@ export function extractEmojiFromStatus(status: string, defaultEmoji: string = ST
     return STATUS_EMOJIS[statusKey] || defaultEmoji;
   }
 
-  // Text-only custom status - return empty string
-  return '';
+  // Text-only custom status - use fallback emoji for display purposes
+  return defaultEmoji;
 }

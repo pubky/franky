@@ -187,11 +187,6 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           type="button"
         >
           <span
-            class="text-base leading-6"
-          >
-            🌴
-          </span>
-          <span
             class="text-base leading-6 font-bold text-white"
           >
             Vacationing
