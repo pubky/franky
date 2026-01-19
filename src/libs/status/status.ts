@@ -13,7 +13,8 @@ function extractEmoji(status: string): string | null {
 
 /**
  * Parses a status string into its emoji and text components
- * Handles both predefined statuses (e.g., "vacationing") and custom statuses (e.g., "🎉 Birthday!")
+ * Handles predefined statuses (e.g., "vacationing"), custom statuses with emoji (e.g., "🎉 Birthday!"),
+ * and text-only custom statuses (e.g., "Working hard")
  *
  * @param status - The status string to parse
  * @param defaultEmoji - Fallback emoji if none found (defaults to vacationing emoji)
@@ -25,9 +26,14 @@ function extractEmoji(status: string): string | null {
  * // => { emoji: '🌴', text: 'Vacationing', isCustom: false }
  *
  * @example
- * // Custom status
+ * // Custom status with emoji
  * parseStatus('🎉 Birthday!')
  * // => { emoji: '🎉', text: 'Birthday!', isCustom: true }
+ *
+ * @example
+ * // Text-only custom status (no emoji)
+ * parseStatus('Working hard')
+ * // => { emoji: '', text: 'Working hard', isCustom: true }
  */
 export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS[DEFAULT_STATUS]): ParsedStatus {
   if (!status) {
@@ -47,12 +53,23 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
     };
   }
 
-  // Predefined status
+  // Check if it's a predefined status key
   const statusKey = status as StatusKey;
+  const isPredefined = statusKey in STATUS_LABELS;
+
+  if (isPredefined) {
+    return {
+      emoji: STATUS_EMOJIS[statusKey] || defaultEmoji,
+      text: STATUS_LABELS[statusKey],
+      isCustom: false,
+    };
+  }
+
+  // Text-only custom status - no emoji
   return {
-    emoji: STATUS_EMOJIS[statusKey] || defaultEmoji,
-    text: STATUS_LABELS[statusKey] || status,
-    isCustom: false,
+    emoji: '',
+    text: status,
+    isCustom: true,
   };
 }
 
@@ -62,7 +79,7 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
  *
  * @param status - The status string to extract emoji from
  * @param defaultEmoji - Fallback emoji if none found (defaults to vacationing emoji)
- * @returns The emoji string
+ * @returns The emoji string (empty string for text-only custom statuses)
  *
  * @example
  * extractEmojiFromStatus('vacationing')
@@ -71,6 +88,10 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
  * @example
  * extractEmojiFromStatus('🎉 Birthday!')
  * // => '🎉'
+ *
+ * @example
+ * extractEmojiFromStatus('Working hard')
+ * // => '' (text-only custom status)
  */
 export function extractEmojiFromStatus(status: string, defaultEmoji: string = STATUS_EMOJIS[DEFAULT_STATUS]): string {
   if (!status) {
@@ -82,6 +103,14 @@ export function extractEmojiFromStatus(status: string, defaultEmoji: string = ST
     return emoji;
   }
 
+  // Check if it's a predefined status key
   const statusKey = status as StatusKey;
-  return STATUS_EMOJIS[statusKey] || defaultEmoji;
+  const isPredefined = statusKey in STATUS_LABELS;
+
+  if (isPredefined) {
+    return STATUS_EMOJIS[statusKey] || defaultEmoji;
+  }
+
+  // Text-only custom status - return empty string
+  return '';
 }

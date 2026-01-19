@@ -37,12 +37,14 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
   };
 
   const isValidCustomStatus = () => {
-    return Boolean(customStatus && selectedEmoji);
+    return Boolean(customStatus.trim());
   };
 
   const handleCustomStatusSave = () => {
     if (isValidCustomStatus()) {
-      onStatusSelect(`${selectedEmoji}${customStatus}`);
+      // If emoji is selected, prepend it; otherwise just use text
+      const statusValue = selectedEmoji ? `${selectedEmoji}${customStatus.trim()}` : customStatus.trim();
+      onStatusSelect(statusValue);
       setCustomStatus('');
       setSelectedEmoji('');
     }
