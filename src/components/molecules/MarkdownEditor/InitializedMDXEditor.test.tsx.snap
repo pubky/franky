@@ -1,0 +1,294 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`InitializedMDXEditor - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="custom-editor-class"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-placeholder="Start writing your masterpiece"
+  data-plugins-count="9"
+  data-testid="mdx-editor"
+>
+  <div
+    data-testid="toolbar"
+  >
+    <button
+      data-testid="undo-redo"
+    >
+      Undo/Redo
+    </button>
+    <button
+      data-testid="block-type-select"
+    >
+      Block Type
+    </button>
+    <button
+      data-testid="bold-italic-toggles"
+    >
+      Bold/Italic
+    </button>
+    <button
+      data-testid="strikethrough-toggle"
+    >
+      Strikethrough
+    </button>
+    <button
+      data-testid="lists-toggle"
+    >
+      Lists
+    </button>
+    <button
+      data-testid="insert-thematic-break"
+    >
+      Insert Break
+    </button>
+    <button
+      data-testid="code-toggle"
+    >
+      Code
+    </button>
+    <button
+      data-testid="insert-code-block"
+    >
+      Insert Code Block
+    </button>
+    <button
+      data-testid="button-with-tooltip"
+      title="Emoji"
+    >
+      <svg
+        class="size-6"
+        data-testid="smile-icon"
+      >
+        <title>
+          Smile
+        </title>
+      </svg>
+    </button>
+  </div>
+  <div
+    data-testid="editor-content"
+  >
+    Editor Content
+  </div>
+</div>
+`;
+
+exports[`InitializedMDXEditor - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="dark-theme cursor-auto"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-placeholder="Start writing your masterpiece"
+  data-plugins-count="9"
+  data-testid="mdx-editor"
+>
+  <div
+    data-testid="toolbar"
+  >
+    <button
+      data-testid="undo-redo"
+    >
+      Undo/Redo
+    </button>
+    <button
+      data-testid="block-type-select"
+    >
+      Block Type
+    </button>
+    <button
+      data-testid="bold-italic-toggles"
+    >
+      Bold/Italic
+    </button>
+    <button
+      data-testid="strikethrough-toggle"
+    >
+      Strikethrough
+    </button>
+    <button
+      data-testid="lists-toggle"
+    >
+      Lists
+    </button>
+    <button
+      data-testid="insert-thematic-break"
+    >
+      Insert Break
+    </button>
+    <button
+      data-testid="code-toggle"
+    >
+      Code
+    </button>
+    <button
+      data-testid="insert-code-block"
+    >
+      Insert Code Block
+    </button>
+    <button
+      data-testid="button-with-tooltip"
+      title="Emoji"
+    >
+      <svg
+        class="size-6"
+        data-testid="smile-icon"
+      >
+        <title>
+          Smile
+        </title>
+      </svg>
+    </button>
+  </div>
+  <div
+    data-testid="editor-content"
+  >
+    Editor Content
+  </div>
+</div>
+`;
+
+exports[`InitializedMDXEditor - Snapshots > matches snapshot with emoji picker open 1`] = `
+<div
+  class="dark-theme cursor-auto"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-placeholder="Start writing your masterpiece"
+  data-plugins-count="9"
+  data-testid="mdx-editor"
+>
+  <div
+    data-testid="toolbar"
+  >
+    <button
+      data-testid="undo-redo"
+    >
+      Undo/Redo
+    </button>
+    <button
+      data-testid="block-type-select"
+    >
+      Block Type
+    </button>
+    <button
+      data-testid="bold-italic-toggles"
+    >
+      Bold/Italic
+    </button>
+    <button
+      data-testid="strikethrough-toggle"
+    >
+      Strikethrough
+    </button>
+    <button
+      data-testid="lists-toggle"
+    >
+      Lists
+    </button>
+    <button
+      data-testid="insert-thematic-break"
+    >
+      Insert Break
+    </button>
+    <button
+      data-testid="code-toggle"
+    >
+      Code
+    </button>
+    <button
+      data-testid="insert-code-block"
+    >
+      Insert Code Block
+    </button>
+    <button
+      data-testid="button-with-tooltip"
+      title="Emoji"
+    >
+      <svg
+        class="size-6"
+        data-testid="smile-icon"
+      >
+        <title>
+          Smile
+        </title>
+      </svg>
+    </button>
+  </div>
+  <div
+    data-testid="editor-content"
+  >
+    Editor Content
+  </div>
+</div>
+`;
+
+exports[`InitializedMDXEditor - Snapshots > matches snapshot with markdown content 1`] = `
+<div
+  class="dark-theme cursor-auto"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-placeholder="Start writing your masterpiece"
+  data-plugins-count="9"
+  data-testid="mdx-editor"
+  markdown="# Test Content"
+>
+  <div
+    data-testid="toolbar"
+  >
+    <button
+      data-testid="undo-redo"
+    >
+      Undo/Redo
+    </button>
+    <button
+      data-testid="block-type-select"
+    >
+      Block Type
+    </button>
+    <button
+      data-testid="bold-italic-toggles"
+    >
+      Bold/Italic
+    </button>
+    <button
+      data-testid="strikethrough-toggle"
+    >
+      Strikethrough
+    </button>
+    <button
+      data-testid="lists-toggle"
+    >
+      Lists
+    </button>
+    <button
+      data-testid="insert-thematic-break"
+    >
+      Insert Break
+    </button>
+    <button
+      data-testid="code-toggle"
+    >
+      Code
+    </button>
+    <button
+      data-testid="insert-code-block"
+    >
+      Insert Code Block
+    </button>
+    <button
+      data-testid="button-with-tooltip"
+      title="Emoji"
+    >
+      <svg
+        class="size-6"
+        data-testid="smile-icon"
+      >
+        <title>
+          Smile
+        </title>
+      </svg>
+    </button>
+  </div>
+  <div
+    data-testid="editor-content"
+  >
+    Editor Content
+  </div>
+</div>
+`;

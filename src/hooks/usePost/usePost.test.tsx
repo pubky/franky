@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { usePost } from './usePost';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 // Hoist mock data and functions
 const { mockCurrentUserId, setMockCurrentUserId, mockPostControllerCreate, mockToast, mockLoggerError } = vi.hoisted(
@@ -75,10 +76,14 @@ describe('usePost', () => {
       expect(result.current.content).toBe('');
       expect(result.current.tags).toEqual([]);
       expect(result.current.attachments).toEqual([]);
+      expect(result.current.isArticle).toBe(false);
+      expect(result.current.articleTitle).toBe('');
       expect(result.current.isSubmitting).toBe(false);
       expect(typeof result.current.setContent).toBe('function');
       expect(typeof result.current.setTags).toBe('function');
       expect(typeof result.current.setAttachments).toBe('function');
+      expect(typeof result.current.setIsArticle).toBe('function');
+      expect(typeof result.current.setArticleTitle).toBe('function');
       expect(typeof result.current.reply).toBe('function');
       expect(typeof result.current.post).toBe('function');
       expect(typeof result.current.repost).toBe('function');
@@ -108,6 +113,83 @@ describe('usePost', () => {
         result.current.setContent('Second');
       });
       expect(result.current.content).toBe('Second');
+    });
+  });
+
+  describe('setIsArticle', () => {
+    it('should update isArticle when setIsArticle is called', () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setIsArticle(true);
+      });
+
+      expect(result.current.isArticle).toBe(true);
+    });
+
+    it('should clear attachments when switching to article mode', () => {
+      const { result } = renderHook(() => usePost());
+      const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.setAttachments([mockFile]);
+      });
+
+      expect(result.current.attachments).toEqual([mockFile]);
+
+      act(() => {
+        result.current.setIsArticle(true);
+      });
+
+      expect(result.current.isArticle).toBe(true);
+      expect(result.current.attachments).toEqual([]);
+    });
+
+    // Note: This scenario doesn't occur in the actual UI (the form resets entirely),
+    // but we test it to verify the useEffect only triggers when isArticle becomes true
+    it('should not clear attachments when switching from article mode to regular mode', () => {
+      const { result } = renderHook(() => usePost());
+      const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+
+      act(() => {
+        result.current.setIsArticle(true);
+      });
+
+      act(() => {
+        result.current.setIsArticle(false);
+        result.current.setAttachments([mockFile]);
+      });
+
+      expect(result.current.isArticle).toBe(false);
+      expect(result.current.attachments).toEqual([mockFile]);
+    });
+  });
+
+  describe('setArticleTitle', () => {
+    it('should update articleTitle when setArticleTitle is called', () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setArticleTitle('My Article Title');
+      });
+
+      expect(result.current.articleTitle).toBe('My Article Title');
+    });
+
+    it('should update articleTitle multiple times', () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setArticleTitle('First Title');
+      });
+
+      expect(result.current.articleTitle).toBe('First Title');
+
+      act(() => {
+        result.current.setArticleTitle('Second Title');
+      });
+
+      expect(result.current.articleTitle).toBe('Second Title');
     });
   });
 
@@ -417,10 +499,13 @@ describe('usePost', () => {
         authorId: 'test-user-id',
         tags: ['tag1'],
         attachments: undefined,
+        kind: PubkyAppPostKind.Short,
       });
       expect(result.current.content).toBe('');
       expect(result.current.tags).toEqual([]);
       expect(result.current.attachments).toEqual([]);
+      expect(result.current.isArticle).toBe(false);
+      expect(result.current.articleTitle).toBe('');
       expect(mockToast).toHaveBeenCalledWith({
         title: 'Post created',
         description: 'Your post has been created successfully.',
@@ -447,6 +532,7 @@ describe('usePost', () => {
         authorId: 'test-user-id',
         tags: undefined,
         attachments: undefined,
+        kind: PubkyAppPostKind.Short,
       });
     });
 
@@ -472,6 +558,7 @@ describe('usePost', () => {
         authorId: 'test-user-id',
         tags: undefined,
         attachments: [mockFile1, mockFile2],
+        kind: PubkyAppPostKind.Short,
       });
       expect(result.current.attachments).toEqual([]);
       expect(mockOnSuccess).toHaveBeenCalled();
@@ -526,6 +613,7 @@ describe('usePost', () => {
         authorId: 'test-user-id',
         tags: undefined,
         attachments: [mockFile],
+        kind: PubkyAppPostKind.Short,
       });
       expect(result.current.attachments).toEqual([]);
       expect(result.current.content).toBe('');
@@ -626,6 +714,120 @@ describe('usePost', () => {
         authorId: 'test-user-id',
         tags: undefined,
         attachments: undefined,
+        kind: PubkyAppPostKind.Short,
+      });
+    });
+
+    it('should create an article post successfully', async () => {
+      const { result } = renderHook(() => usePost());
+      const mockOnSuccess = vi.fn();
+
+      act(() => {
+        result.current.setIsArticle(true);
+        result.current.setArticleTitle('My Article Title');
+        result.current.setContent('Article body content');
+        result.current.setTags(['article', 'test']);
+      });
+
+      await act(async () => {
+        await result.current.post({
+          onSuccess: mockOnSuccess,
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        content: JSON.stringify({ title: 'My Article Title', body: 'Article body content' }),
+        authorId: 'test-user-id',
+        tags: ['article', 'test'],
+        attachments: undefined,
+        kind: PubkyAppPostKind.Long,
+      });
+      expect(result.current.content).toBe('');
+      expect(result.current.tags).toEqual([]);
+      expect(result.current.isArticle).toBe(false);
+      expect(result.current.articleTitle).toBe('');
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Post created',
+        description: 'Your post has been created successfully.',
+      });
+      expect(mockOnSuccess).toHaveBeenCalled();
+    });
+
+    it('should not submit article when content is empty', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setIsArticle(true);
+        result.current.setArticleTitle('My Article Title');
+        result.current.setContent('');
+      });
+
+      await act(async () => {
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should not submit article when articleTitle is empty', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setIsArticle(true);
+        result.current.setArticleTitle('');
+        result.current.setContent('Article body content');
+      });
+
+      await act(async () => {
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should not submit article when articleTitle is only whitespace', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setIsArticle(true);
+        result.current.setArticleTitle('   ');
+        result.current.setContent('Article body content');
+      });
+
+      await act(async () => {
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).not.toHaveBeenCalled();
+    });
+
+    it('should trim articleTitle and content before submitting article', async () => {
+      const { result } = renderHook(() => usePost());
+
+      act(() => {
+        result.current.setIsArticle(true);
+        result.current.setArticleTitle('  Trimmed Title  ');
+        result.current.setContent('  Trimmed Body  ');
+      });
+
+      await act(async () => {
+        await result.current.post({
+          onSuccess: vi.fn(),
+        });
+      });
+
+      expect(mockPostControllerCreate).toHaveBeenCalledWith({
+        content: JSON.stringify({ title: 'Trimmed Title', body: 'Trimmed Body' }),
+        authorId: 'test-user-id',
+        tags: undefined,
+        attachments: undefined,
+        kind: PubkyAppPostKind.Long,
       });
     });
   });

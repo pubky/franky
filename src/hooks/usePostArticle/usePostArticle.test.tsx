@@ -1,0 +1,372 @@
+import { renderHook, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { usePostArticle } from './usePostArticle';
+import * as Core from '@/core';
+
+// Mock useToast
+const mockToast = vi.fn();
+vi.mock('@/molecules', () => ({
+  useToast: () => ({ toast: mockToast }),
+}));
+
+// Mock core
+vi.mock('@/core', () => ({
+  FileController: {
+    getMetadata: vi.fn(),
+    getFileUrl: vi.fn(),
+  },
+  FileVariant: {
+    MAIN: 'main',
+    FEED: 'feed',
+    SMALL: 'small',
+  },
+}));
+
+const mockGetMetadata = vi.mocked(Core.FileController.getMetadata);
+const mockGetFileUrl = vi.mocked(Core.FileController.getFileUrl);
+
+// Helper to create mock file metadata
+const createMockImageMetadata = (id: string, name = 'cover.jpg'): Core.NexusFileDetails => ({
+  id,
+  name,
+  content_type: 'image/jpeg',
+  size: 1024,
+  src: `https://example.com/files/${id}`,
+  created_at: Date.now(),
+  indexed_at: Date.now(),
+  metadata: {},
+  owner_id: id.split(':')[0],
+  uri: `pubky://${id.split(':')[0]}/pub/pubky.app/files/${id.split(':')[1]}`,
+  urls: {
+    main: `https://example.com/files/${id}/main`,
+    feed: `https://example.com/files/${id}/feed`,
+    small: `https://example.com/files/${id}/small`,
+  },
+});
+
+const createMockPdfMetadata = (id: string, name = 'document.pdf'): Core.NexusFileDetails => ({
+  id,
+  name,
+  content_type: 'application/pdf',
+  size: 4096,
+  src: `https://example.com/files/${id}`,
+  created_at: Date.now(),
+  indexed_at: Date.now(),
+  metadata: {},
+  owner_id: id.split(':')[0],
+  uri: `pubky://${id.split(':')[0]}/pub/pubky.app/files/${id.split(':')[1]}`,
+  urls: {
+    main: `https://example.com/files/${id}/main`,
+    feed: `https://example.com/files/${id}/feed`,
+    small: `https://example.com/files/${id}/small`,
+  },
+});
+
+describe('usePostArticle', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetFileUrl.mockImplementation(({ fileId, variant }) => `https://cdn.example.com/${fileId}/${variant}`);
+  });
+
+  describe('Content Parsing', () => {
+    it('parses title and body from JSON content', () => {
+      const content = JSON.stringify({ title: 'My Article Title', body: 'This is the article body content.' });
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments: null,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      expect(result.current.title).toBe('My Article Title');
+      expect(result.current.body).toBe('This is the article body content.');
+    });
+
+    it('handles empty title and body', () => {
+      const content = JSON.stringify({ title: '', body: '' });
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments: null,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      expect(result.current.title).toBe('');
+      expect(result.current.body).toBe('');
+    });
+
+    it('handles content with special characters', () => {
+      const content = JSON.stringify({
+        title: 'Title with "quotes" & <special> characters',
+        body: 'Body with\nnewlines\tand\ttabs',
+      });
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments: null,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      expect(result.current.title).toBe('Title with "quotes" & <special> characters');
+      expect(result.current.body).toBe('Body with\nnewlines\tand\ttabs');
+    });
+  });
+
+  describe('Cover Image Loading', () => {
+    it('returns null coverImage when attachments is null', () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments: null,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      expect(result.current.coverImage).toBeNull();
+      expect(mockGetMetadata).not.toHaveBeenCalled();
+    });
+
+    it('returns null coverImage when attachments is empty array', () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments: [],
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      expect(result.current.coverImage).toBeNull();
+      expect(mockGetMetadata).not.toHaveBeenCalled();
+    });
+
+    it('loads cover image when attachment is an image', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file456'];
+      const mockMetadata = createMockImageMetadata('user123:file456', 'beautiful-cover.jpg');
+
+      mockGetMetadata.mockResolvedValue([mockMetadata]);
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.coverImage).not.toBeNull();
+      });
+
+      expect(mockGetMetadata).toHaveBeenCalledWith({ fileAttachments: attachments });
+      expect(mockGetFileUrl).toHaveBeenCalledWith({
+        fileId: 'user123:file456',
+        variant: Core.FileVariant.FEED,
+      });
+      expect(result.current.coverImage).toEqual({
+        src: 'https://cdn.example.com/user123:file456/feed',
+        alt: 'beautiful-cover.jpg',
+      });
+    });
+
+    it('uses correct variant for cover image URL', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file456'];
+      const mockMetadata = createMockImageMetadata('user123:file456');
+
+      mockGetMetadata.mockResolvedValue([mockMetadata]);
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments,
+          coverImageVariant: Core.FileVariant.MAIN,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.coverImage).not.toBeNull();
+      });
+
+      expect(mockGetFileUrl).toHaveBeenCalledWith({
+        fileId: 'user123:file456',
+        variant: Core.FileVariant.MAIN,
+      });
+    });
+
+    it('does not set cover image when attachment is not an image', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file456'];
+      const mockMetadata = createMockPdfMetadata('user123:file456');
+
+      mockGetMetadata.mockResolvedValue([mockMetadata]);
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      // Wait for effect to complete
+      await waitFor(() => {
+        expect(mockGetMetadata).toHaveBeenCalled();
+      });
+
+      expect(result.current.coverImage).toBeNull();
+      expect(mockGetFileUrl).not.toHaveBeenCalled();
+    });
+
+    it('handles empty metadata response', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file456'];
+
+      mockGetMetadata.mockResolvedValue([]);
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(mockGetMetadata).toHaveBeenCalled();
+      });
+
+      expect(result.current.coverImage).toBeNull();
+    });
+
+    it('uses first attachment when multiple attachments provided', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file1', 'pubky://user123/pub/pubky.app/files/file2'];
+      const mockMetadata = createMockImageMetadata('user123:file1', 'first-image.jpg');
+
+      mockGetMetadata.mockResolvedValue([mockMetadata]);
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.coverImage).not.toBeNull();
+      });
+
+      expect(result.current.coverImage?.alt).toBe('first-image.jpg');
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('shows toast on metadata fetch error', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file456'];
+
+      mockGetMetadata.mockRejectedValue(new Error('Network error'));
+
+      const { result } = renderHook(() =>
+        usePostArticle({
+          content,
+          attachments,
+          coverImageVariant: Core.FileVariant.FEED,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalled();
+      });
+
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Failed to load article cover image',
+      });
+      expect(result.current.coverImage).toBeNull();
+    });
+  });
+
+  describe('Effect Dependencies', () => {
+    it('refetches when attachments change', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const initialAttachments = ['pubky://user123/pub/pubky.app/files/file1'];
+      const newAttachments = ['pubky://user123/pub/pubky.app/files/file2'];
+
+      const mockMetadata1 = createMockImageMetadata('user123:file1', 'image1.jpg');
+      const mockMetadata2 = createMockImageMetadata('user123:file2', 'image2.jpg');
+
+      mockGetMetadata.mockResolvedValueOnce([mockMetadata1]).mockResolvedValueOnce([mockMetadata2]);
+
+      const { result, rerender } = renderHook(
+        ({ attachments }) =>
+          usePostArticle({
+            content,
+            attachments,
+            coverImageVariant: Core.FileVariant.FEED,
+          }),
+        { initialProps: { attachments: initialAttachments } },
+      );
+
+      await waitFor(() => {
+        expect(result.current.coverImage?.alt).toBe('image1.jpg');
+      });
+
+      rerender({ attachments: newAttachments });
+
+      await waitFor(() => {
+        expect(result.current.coverImage?.alt).toBe('image2.jpg');
+      });
+
+      expect(mockGetMetadata).toHaveBeenCalledTimes(2);
+    });
+
+    it('refetches when coverImageVariant changes', async () => {
+      const content = JSON.stringify({ title: 'Test', body: 'Content' });
+      const attachments = ['pubky://user123/pub/pubky.app/files/file1'];
+      const mockMetadata = createMockImageMetadata('user123:file1', 'image.jpg');
+
+      mockGetMetadata.mockResolvedValue([mockMetadata]);
+
+      const { result, rerender } = renderHook(
+        ({ variant }) =>
+          usePostArticle({
+            content,
+            attachments,
+            coverImageVariant: variant,
+          }),
+        { initialProps: { variant: Core.FileVariant.FEED } },
+      );
+
+      await waitFor(() => {
+        expect(result.current.coverImage).not.toBeNull();
+      });
+
+      expect(mockGetFileUrl).toHaveBeenLastCalledWith({
+        fileId: 'user123:file1',
+        variant: Core.FileVariant.FEED,
+      });
+
+      rerender({ variant: Core.FileVariant.MAIN });
+
+      await waitFor(() => {
+        expect(mockGetFileUrl).toHaveBeenLastCalledWith({
+          fileId: 'user123:file1',
+          variant: Core.FileVariant.MAIN,
+        });
+      });
+    });
+  });
+});

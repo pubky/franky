@@ -21,6 +21,7 @@ import {
   getCharacterCount,
   sanitizeTagInput,
   TAG_BANNED_CHARS,
+  canSubmitPost,
 } from './utils';
 
 describe('Utils', () => {
@@ -1238,6 +1239,113 @@ describe('Utils', () => {
       expect('a'.match(TAG_BANNED_CHARS)).toBeNull();
       expect('-'.match(TAG_BANNED_CHARS)).toBeNull();
       expect('_'.match(TAG_BANNED_CHARS)).toBeNull();
+    });
+  });
+
+  describe('canSubmitPost', () => {
+    describe('when submitting is in progress', () => {
+      it('should return false regardless of content', () => {
+        expect(canSubmitPost('post', 'Hello', [], true)).toBe(false);
+        expect(canSubmitPost('reply', 'Hello', [], true)).toBe(false);
+        expect(canSubmitPost('repost', '', [], true)).toBe(false);
+      });
+    });
+
+    describe('for post variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('post', 'Hello world', [], false)).toBe(true);
+      });
+
+      it('should return true when attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', '', [mockFile], false)).toBe(true);
+      });
+
+      it('should return true when both content and attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', 'Hello', [mockFile], false)).toBe(true);
+      });
+
+      it('should return false when no content and no attachments', () => {
+        expect(canSubmitPost('post', '', [], false)).toBe(false);
+      });
+
+      it('should return false for whitespace-only content', () => {
+        expect(canSubmitPost('post', '   ', [], false)).toBe(false);
+        expect(canSubmitPost('post', '\n\t', [], false)).toBe(false);
+      });
+    });
+
+    describe('for reply variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('reply', 'Hello world', [], false)).toBe(true);
+      });
+
+      it('should return true when attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('reply', '', [mockFile], false)).toBe(true);
+      });
+
+      it('should return false when no content and no attachments', () => {
+        expect(canSubmitPost('reply', '', [], false)).toBe(false);
+      });
+    });
+
+    describe('for repost variant', () => {
+      it('should return true even with empty content', () => {
+        expect(canSubmitPost('repost', '', [], false)).toBe(true);
+      });
+
+      it('should return true with content', () => {
+        expect(canSubmitPost('repost', 'Adding my thoughts', [], false)).toBe(true);
+      });
+    });
+
+    describe('for article posts', () => {
+      it('should return true when both content and title are provided', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, 'Article Title')).toBe(true);
+      });
+
+      it('should return false when content is empty', () => {
+        expect(canSubmitPost('post', '', [], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when title is empty', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, '')).toBe(false);
+      });
+
+      it('should return false when title is undefined', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, undefined)).toBe(false);
+      });
+
+      it('should return false when content is whitespace-only', () => {
+        expect(canSubmitPost('post', '   ', [], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when title is whitespace-only', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, '   ')).toBe(false);
+      });
+
+      it('should ignore attachments for article validation', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', '', [mockFile], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when submitting even with valid content and title', () => {
+        expect(canSubmitPost('post', 'Article content', [], true, true, 'Article Title')).toBe(false);
+      });
+    });
+
+    describe('when isArticle is false or undefined', () => {
+      it('should use standard post validation when isArticle is false', () => {
+        expect(canSubmitPost('post', 'Hello', [], false, false, '')).toBe(true);
+        expect(canSubmitPost('post', '', [], false, false, 'Title')).toBe(false);
+      });
+
+      it('should use standard post validation when isArticle is undefined', () => {
+        expect(canSubmitPost('post', 'Hello', [], false, undefined, undefined)).toBe(true);
+        expect(canSubmitPost('post', '', [], false, undefined, undefined)).toBe(false);
+      });
     });
   });
 });
