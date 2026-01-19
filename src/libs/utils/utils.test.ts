@@ -573,8 +573,8 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
-      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-normalized');
+      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-normalized');
     });
 
     it('should not modify non-radix aria-controls attributes', () => {
@@ -612,7 +612,7 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-normalized');
       expect(buttons[1].getAttribute('aria-controls')).toBe('normal-id');
     });
 
@@ -626,9 +626,20 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const div = normalized.querySelector('div');
 
-      expect(div?.getAttribute('id')).toBe('radix-_r_0_');
-      expect(div?.getAttribute('aria-controls')).toBe('radix-_r_0_');
-      expect(div?.getAttribute('aria-labelledby')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('id')).toBe('radix-normalized');
+      expect(div?.getAttribute('aria-controls')).toBe('radix-normalized');
+      expect(div?.getAttribute('aria-labelledby')).toBe('radix-normalized');
+    });
+
+    it('should normalize radix IDs in aria-describedby attributes', () => {
+      const element = document.createElement('div');
+      element.setAttribute('aria-describedby', 'radix-_r_1u_');
+      mockContainer.appendChild(element);
+
+      const normalized = normaliseRadixIds(mockContainer);
+      const div = normalized.querySelector('div');
+
+      expect(div?.getAttribute('aria-describedby')).toBe('radix-normalized');
     });
 
     it('should return a cloned container', () => {
@@ -646,6 +657,19 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       expect(normalized).toBeDefined();
       expect(normalized.children.length).toBe(0);
+    });
+
+    it('should normalize radix IDs on the root container element itself', () => {
+      // This tests the case where the container element has radix attributes directly,
+      // not just its descendants (querySelectorAll only finds descendants)
+      const element = document.createElement('h2');
+      element.setAttribute('id', 'radix-_r_s_');
+      element.textContent = 'Title';
+
+      const normalized = normaliseRadixIds(element);
+
+      expect(normalized.getAttribute('id')).toBe('radix-normalized');
+      expect(normalized.textContent).toBe('Title');
     });
   });
 
@@ -1344,31 +1368,36 @@ describe('Utils', () => {
     });
 
     it('should format a specific date correctly', () => {
-      const testDate = new Date('2024-12-25');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 11, 25); // Dec 25, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('12/25/2024');
     });
 
     it('should pad single digit months and days with zeros', () => {
-      const testDate = new Date('2024-01-05');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 0, 5); // Jan 5, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('01/05/2024');
     });
 
     it('should handle different years', () => {
-      const testDate = new Date('2030-06-15');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2030, 5, 15); // Jun 15, 2030
       const result = formatUSDate(testDate);
       expect(result).toBe('06/15/2030');
     });
 
     it('should handle end of year date', () => {
-      const testDate = new Date('2024-12-31');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 11, 31); // Dec 31, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('12/31/2024');
     });
 
     it('should handle beginning of year date', () => {
-      const testDate = new Date('2024-01-01');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 0, 1); // Jan 1, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('01/01/2024');
     });
