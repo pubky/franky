@@ -231,8 +231,13 @@ describe('StatusPickerWrapper', () => {
     // Helper to normalize non-deterministic Radix UI IDs in DOM element
     const normalizeRadixIds = (element: Element | null) => {
       if (!element) return;
-      const button = element.querySelector('button[aria-controls]');
-      if (button && button.getAttribute('aria-controls')?.startsWith('radix-')) {
+      // Check if the element itself has aria-controls (when button is root element)
+      if (element.getAttribute('aria-controls')?.startsWith('radix-')) {
+        element.setAttribute('aria-controls', 'radix-normalized');
+      }
+      // Also check descendants
+      const button = element.querySelector('[aria-controls^="radix-"]');
+      if (button) {
         button.setAttribute('aria-controls', 'radix-normalized');
       }
     };

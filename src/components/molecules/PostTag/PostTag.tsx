@@ -1,4 +1,5 @@
 import * as Atoms from '@/atoms';
+import { COLORS } from '@/config';
 import * as Libs from '@/libs';
 import type { PostTagProps } from './PostTag.types';
 
@@ -13,7 +14,7 @@ export function PostTag({
   className,
 }: PostTagProps) {
   const tagColor = color || Libs.generateRandomColor(label);
-  const backgroundGradient = `linear-gradient(90deg, ${Libs.hexToRgba('#05050A', 0.7)} 0%, ${Libs.hexToRgba('#05050A', 0.7)} 100%), linear-gradient(90deg, ${tagColor} 0%, ${tagColor} 100%)`;
+  const backgroundGradient = `linear-gradient(90deg, ${Libs.hexToRgba(COLORS.background, 0.7)} 0%, ${Libs.hexToRgba(COLORS.background, 0.7)} 100%), linear-gradient(90deg, ${tagColor} 0%, ${tagColor} 100%)`;
 
   const handleClose = (e: React.MouseEvent) => {
     e.stopPropagation();
