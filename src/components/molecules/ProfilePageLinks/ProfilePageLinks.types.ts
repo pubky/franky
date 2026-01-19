@@ -9,4 +9,6 @@ export interface ProfilePageSidebarLink {
 
 export interface ProfilePageLinksProps {
   links?: Core.NexusUserDetails['links'];
+  /** Whether the user is viewing their own profile */
+  isOwnProfile?: boolean;
 }
