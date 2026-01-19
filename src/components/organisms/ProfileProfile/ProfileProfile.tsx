@@ -69,11 +69,10 @@ export function ProfileProfile() {
         isLoading={isLoadingTags}
         onTagClick={handleTagToggle}
         pubky={pubky ?? ''}
-        userName={profile?.name}
       />
 
       {/* Links section */}
-      <Molecules.ProfilePageLinks links={profile?.links} />
+      <Molecules.ProfilePageLinks links={profile?.links} isOwnProfile={isOwnProfile} />
     </Atoms.Container>
   );
 }
