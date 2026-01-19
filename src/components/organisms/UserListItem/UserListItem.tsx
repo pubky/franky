@@ -33,7 +33,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
         size="icon"
         onClick={onClick}
         disabled={showLoading}
-        className="size-10 shrink-0 rounded-full"
+        className="size-8 shrink-0 rounded-full"
         aria-label={isFollowing ? `Unfollow ${displayName}` : `Follow ${displayName}`}
       >
         {showLoading ? (
@@ -97,7 +97,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
       <Atoms.Button
         variant="secondary"
         size="icon"
-        className={Libs.cn('size-10 shrink-0 cursor-not-allowed rounded-full opacity-50', className)}
+        className={Libs.cn('size-8 shrink-0 cursor-not-allowed rounded-full opacity-50', className)}
         disabled
         aria-label="This is you"
       >
@@ -125,7 +125,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
  */
 function StatsSubtitle({ tags, posts }: StatsSubtitleProps) {
   return (
-    <Atoms.Container overrideDefaults className="flex items-center gap-2 text-sm text-muted-foreground/50">
+    <Atoms.Container overrideDefaults className="flex items-center gap-2 text-sm text-muted-foreground">
       <Atoms.Container overrideDefaults className="flex items-center gap-1">
         <Libs.Tag className="size-3.5" />
         <Atoms.Typography as="span" overrideDefaults>
@@ -224,16 +224,16 @@ function CompactVariant({
         className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition-opacity hover:opacity-80"
         aria-label={`View ${displayName}'s profile`}
       >
-        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="lg" className="shrink-0" />
+        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" className="shrink-0" />
 
         <Atoms.Container overrideDefaults className="flex min-w-0 flex-1 flex-col">
           <Atoms.Typography as="span" overrideDefaults className="truncate text-base font-bold text-foreground">
-            {displayName.slice(0, 10)}
+            {displayName}
           </Atoms.Typography>
           {showStats ? (
             <StatsSubtitle tags={stats.tags} posts={stats.posts} />
           ) : (
-            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground/50">
+            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground">
               {formattedPublicKey}
             </Atoms.Typography>
           )}
