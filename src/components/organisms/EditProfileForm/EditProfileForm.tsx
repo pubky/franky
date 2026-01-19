@@ -42,7 +42,7 @@ export const EditProfileForm = () => {
                 <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">NAME*</Atoms.Label>
                 <Molecules.InputField
                   id="profile-name-input"
-                  placeholder="Blue-Rabbit-Hat"
+                  placeholder="Enter your name"
                   variant="dashed"
                   value={state.name}
                   onChange={(e) => handlers.setName(e.target.value)}
