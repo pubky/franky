@@ -9,6 +9,7 @@ const mockJSZipConstructor = vi.fn();
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: (pubky: string) => `pubky://${pubky}/pub/pubky.app/`,
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
 // Mock config
