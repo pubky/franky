@@ -91,6 +91,12 @@ describe('CopyrightController', () => {
       await expect(CopyrightController.submit(params)).rejects.toThrow('Infringing content URL is required');
     });
 
+    it('should throw when infringingContentUrl is not a valid URL', async () => {
+      const params = createCopyrightParams({ infringingContentUrl: 'not-a-valid-url' });
+
+      await expect(CopyrightController.submit(params)).rejects.toThrow('Infringing content URL must be a valid URL');
+    });
+
     it('should throw when firstName is missing', async () => {
       const params = createCopyrightParams({ firstName: '' });
 

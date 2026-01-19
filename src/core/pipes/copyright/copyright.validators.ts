@@ -54,6 +54,23 @@ export class CopyrightValidators {
   }
 
   /**
+   * Validates URL format
+   *
+   * @param url - URL to validate
+   * @param fieldName - Name of the field (for error messages)
+   * @returns Normalized URL (trimmed)
+   * @throws AppError if URL is invalid
+   */
+  private static validateUrlFormat(url: string, fieldName: string): string {
+    try {
+      new URL(url);
+      return url.trim();
+    } catch {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, `${fieldName} must be a valid URL`, 400);
+    }
+  }
+
+  /**
    * Validates name of rights owner
    */
   static validateNameOwner(nameOwner: string | undefined | null): string {
@@ -78,7 +95,8 @@ export class CopyrightValidators {
    * Validates infringing content URL
    */
   static validateInfringingContentUrl(infringingContentUrl: string | undefined | null): string {
-    return this.validateRequiredString(infringingContentUrl, 'Infringing content URL');
+    const trimmed = this.validateRequiredString(infringingContentUrl, 'Infringing content URL');
+    return this.validateUrlFormat(trimmed, 'Infringing content URL');
   }
 
   /**
