@@ -4,6 +4,7 @@ import {
   cn,
   formatInviteCode,
   formatPublicKey,
+  isPubkyIdentifier,
   copyToClipboard,
   clearCookies,
   generateRandomColor,
@@ -121,16 +122,22 @@ describe('Utils', () => {
       expect(result).toBe('abcd...7890');
     });
 
-    it('should return the original key if shorter than or equal to length', () => {
+    it('should return the key if shorter than or equal to length', () => {
       const shortKey = 'short';
       const result = formatPublicKey({ key: shortKey, length: 12 });
       expect(result).toBe('short');
     });
 
-    it('should return the original key if equal to length', () => {
+    it('should return the key if equal to length', () => {
       const exactKey = 'exactlength1';
       const result = formatPublicKey({ key: exactKey, length: 12 });
       expect(result).toBe('exactlength1');
+    });
+
+    it('should include the pubky prefix when requested', () => {
+      const longKey = 'abcdefghijklmnopqrstuvwxyz1234567890';
+      const result = formatPublicKey({ key: longKey, length: 12, includePrefix: true });
+      expect(result).toBe('pubkyabcdef...567890');
     });
 
     it('should handle empty string', () => {
@@ -147,15 +154,102 @@ describe('Utils', () => {
     it('should handle odd length parameter', () => {
       const key = 'abcdefghijklmno';
       const result = formatPublicKey({ key, length: 5 });
-      expect(result).toBe('ab...no');
+      expect(result).toBe('ab...mno');
     });
 
     it('should handle length of 1', () => {
       const key = 'abcdefghij';
       const result = formatPublicKey({ key, length: 1 });
-      // When length is 1, length/2 = 0.5, which rounds down to 0
-      // So prefix = key.slice(0, 0) = '' and suffix = key.slice(-0) = entire key
-      expect(result).toBe('...abcdefghij');
+      // With length 1, only the last character of the key is shown.
+      expect(result).toBe('...j');
+    });
+  });
+
+  describe('isPubkyIdentifier', () => {
+    it('should return true for valid 52-char lowercase alphanumeric string', () => {
+      const validPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return true for another valid pubky', () => {
+      const validPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return false for string shorter than 52 characters', () => {
+      expect(isPubkyIdentifier('short')).toBe(false);
+      expect(isPubkyIdentifier('12345678901234567890')).toBe(false); // 20 chars
+      expect(isPubkyIdentifier('123456789012345678901234567890123456789012345678901')).toBe(false); // 51 chars
+    });
+
+    it('should return false for string longer than 52 characters', () => {
+      expect(isPubkyIdentifier('12345678901234567890123456789012345678901234567890123')).toBe(false); // 53 chars
+    });
+
+    it('should return false for string with uppercase characters', () => {
+      expect(isPubkyIdentifier('GUJX6QD8KSYDH1MAKDPHD3BXU351D9B8WAQKA8HFG6Q7HNQKXEXO')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexO')).toBe(false); // One uppercase
+    });
+
+    it('should return false for string with special characters', () => {
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex!')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex-')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex_')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isPubkyIdentifier('')).toBe(false);
+    });
+
+    it('should return false for common route names', () => {
+      expect(isPubkyIdentifier('posts')).toBe(false);
+      expect(isPubkyIdentifier('followers')).toBe(false);
+      expect(isPubkyIdentifier('following')).toBe(false);
+      expect(isPubkyIdentifier('notifications')).toBe(false);
+    });
+  });
+
+  describe('isPubkyIdentifier', () => {
+    it('should return true for valid 52-char lowercase alphanumeric string', () => {
+      const validPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return true for another valid pubky', () => {
+      const validPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return false for string shorter than 52 characters', () => {
+      expect(isPubkyIdentifier('short')).toBe(false);
+      expect(isPubkyIdentifier('12345678901234567890')).toBe(false); // 20 chars
+      expect(isPubkyIdentifier('123456789012345678901234567890123456789012345678901')).toBe(false); // 51 chars
+    });
+
+    it('should return false for string longer than 52 characters', () => {
+      expect(isPubkyIdentifier('12345678901234567890123456789012345678901234567890123')).toBe(false); // 53 chars
+    });
+
+    it('should return false for string with uppercase characters', () => {
+      expect(isPubkyIdentifier('GUJX6QD8KSYDH1MAKDPHD3BXU351D9B8WAQKA8HFG6Q7HNQKXEXO')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexO')).toBe(false); // One uppercase
+    });
+
+    it('should return false for string with special characters', () => {
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex!')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex-')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex_')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isPubkyIdentifier('')).toBe(false);
+    });
+
+    it('should return false for common route names', () => {
+      expect(isPubkyIdentifier('posts')).toBe(false);
+      expect(isPubkyIdentifier('followers')).toBe(false);
+      expect(isPubkyIdentifier('following')).toBe(false);
+      expect(isPubkyIdentifier('notifications')).toBe(false);
     });
   });
 

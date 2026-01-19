@@ -61,4 +61,8 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
   setHasHydrated: (hasHydrated: boolean) => {
     set({ hasHydrated }, false, AuthActionTypes.SET_HAS_HYDRATED);
   },
+
+  setShowSignInDialog: (showSignInDialog: boolean) => {
+    set({ showSignInDialog }, false, AuthActionTypes.SET_SHOW_SIGN_IN_DIALOG);
+  },
 });

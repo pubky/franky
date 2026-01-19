@@ -1,3 +1,5 @@
+import { isPubkyIdentifier } from '@/libs';
+
 export const ROOT_ROUTES = '/';
 
 export enum ONBOARDING_ROUTES {
@@ -55,6 +57,8 @@ export enum COPYRIGHT_ROUTES {
 
 // Public routes are accessible regardless of authentication status.
 // This includes routes that need to be accessible during auth transitions (like logout).
+// Note: Dynamic public routes like /profile/[pubky] and /post/[userId]/[postId]
+// are handled by isDynamicPublicRoute() in RouteGuardProvider.
 export const PUBLIC_ROUTES: string[] = [
   AUTH_ROUTES.LOGOUT,
   // Profile is public to prevent RouteGuard redirect during logout.
@@ -108,6 +112,34 @@ export const HOME_ROUTES = {
 };
 
 // ============================================================================
+// Dynamic Public Route Detection
+// ============================================================================
+
+/**
+ * Checks if a pathname is a dynamic public route accessible without authentication.
+ *
+ * Dynamic public routes:
+ * - /post/[userId]/[postId] - viewing a single post
+ * - /profile/[pubky] - viewing another user's profile
+ * - /profile/[pubky]/posts - viewing another user's posts
+ */
+export function isDynamicPublicRoute(pathname: string): boolean {
+  const segments = pathname.split('/').filter(Boolean);
+
+  switch (true) {
+    case segments[0] === 'post' && segments.length === 3:
+    case segments[0] === 'profile' && segments.length === 2 && isPubkyIdentifier(segments[1]):
+    case segments[0] === 'profile' &&
+      segments.length === 3 &&
+      isPubkyIdentifier(segments[1]) &&
+      segments[2] === 'posts':
+      return true;
+    default:
+      return false;
+  }
+}
+
+// ============================================================================
 // Profile Route Helpers
 // ============================================================================
 
@@ -125,7 +157,7 @@ export const HOME_ROUTES = {
  * getProfileRoute(PROFILE_ROUTES.FOLLOWERS) // => '/profile/followers'
  *
  * // For specific user
- * getProfileRoute(PROFILE_ROUTES.FOLLOWERS, 'pk:abc123') // => '/profile/pk:abc123/followers'
+ * getProfileRoute(PROFILE_ROUTES.FOLLOWERS, 'n1zpc53jzy') // => '/profile/n1zpc53jzy/followers'
  * ```
  */
 export function getProfileRoute(route: PROFILE_ROUTES, pubky?: string): string {
@@ -146,16 +178,3 @@ export function getProfileRoute(route: PROFILE_ROUTES, pubky?: string): string {
 
   return `/profile/${pubky}${subPath}`;
 }
-
-/**
- * Profile route page types for dynamic route generation
- */
-export const PROFILE_PAGE_PATHS = {
-  posts: '/posts',
-  replies: '/replies',
-  followers: '/followers',
-  following: '/following',
-  friends: '/friends',
-  tagged: '/tagged',
-  profile: '/profile',
-} as const;

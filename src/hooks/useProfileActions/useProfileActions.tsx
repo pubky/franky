@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { AUTH_ROUTES, SETTINGS_ROUTES } from '@/app';
 // Import directly to avoid circular dependency with @/hooks barrel
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
@@ -25,7 +26,7 @@ export interface UseProfileActionsProps {
  * Hook for profile action handlers (navigation and side effects).
  * Pure action handlers - no data fetching or transformation.
  *
- * @param publicKey - The user's public key to copy (format: pk:...)
+ * @param publicKey - The user's public key to copy (format: pubky...)
  * @param link - The profile link to copy
  * @returns Action handlers
  */
@@ -40,7 +41,7 @@ export function useProfileActions({ publicKey, link }: UseProfileActionsProps): 
   }, [router]);
 
   const onCopyPublicKey = useCallback(() => {
-    void copyToClipboard(publicKey);
+    void copyToClipboard(Libs.withPubkyPrefix(publicKey));
   }, [publicKey, copyToClipboard]);
 
   const onCopyLink = useCallback(() => {

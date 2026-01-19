@@ -12,11 +12,24 @@ export interface MobileFooterProps {
   className?: string;
 }
 
+/**
+ * MobileFooter - Bottom navigation for mobile devices
+ *
+ * Hidden for unauthenticated users on public routes (single post, profile)
+ * following pubky-app pattern.
+ */
 export function MobileFooter({ className }: MobileFooterProps) {
   const pathname = usePathname();
+  const isAuthenticated = Core.useAuthStore((state) => Boolean(state.currentUserPubky));
+  const { isPublicRoute } = Hooks.usePublicRoute();
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
   const isActive = (path: string) => pathname === path;
+
+  // Hide footer for unauthenticated users on public routes
+  if (!isAuthenticated && isPublicRoute) {
+    return null;
+  }
 
   // Get avatar URL and fallback initial - same logic as desktop header
   const avatarUrl = currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined;
