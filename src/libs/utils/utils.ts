@@ -80,36 +80,22 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
 
-  // Normalise all radix IDs to a consistent value
-  const elementsWithIds = clonedContainer.querySelectorAll('[id]');
-  elementsWithIds.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('id'))) {
-      el.setAttribute('id', normalizedId);
+  // Helper to normalise a specific attribute on an element
+  const normaliseAttribute = (el: Element, attr: string) => {
+    if (shouldNormalise(el.getAttribute(attr))) {
+      el.setAttribute(attr, normalizedId);
     }
-  });
+  };
 
-  // Normalise aria-controls attributes
-  const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
-  elementsWithAriaControls.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('aria-controls'))) {
-      el.setAttribute('aria-controls', normalizedId);
-    }
-  });
+  // List of attributes to normalise
+  const attributesToNormalise = ['id', 'aria-controls', 'aria-labelledby', 'aria-describedby', 'for'];
 
-  // Normalise aria-labelledby attributes
-  const elementsWithAriaLabelledBy = clonedContainer.querySelectorAll('[aria-labelledby]');
-  elementsWithAriaLabelledBy.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('aria-labelledby'))) {
-      el.setAttribute('aria-labelledby', normalizedId);
-    }
-  });
+  // Normalise attributes on the container element itself (querySelectorAll only finds descendants)
+  attributesToNormalise.forEach((attr) => normaliseAttribute(clonedContainer, attr));
 
-  // Normalise for attributes (e.g. labels)
-  const elementsWithFor = clonedContainer.querySelectorAll('[for]');
-  elementsWithFor.forEach((el) => {
-    if (shouldNormalise(el.getAttribute('for'))) {
-      el.setAttribute('for', normalizedId);
-    }
+  // Normalise attributes on all descendant elements
+  attributesToNormalise.forEach((attr) => {
+    clonedContainer.querySelectorAll(`[${attr}]`).forEach((el) => normaliseAttribute(el, attr));
   });
 
   return clonedContainer;

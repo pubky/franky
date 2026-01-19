@@ -536,6 +536,17 @@ describe('Utils', () => {
       expect(div?.getAttribute('aria-labelledby')).toBe('radix-_r_0_');
     });
 
+    it('should normalize radix IDs in aria-describedby attributes', () => {
+      const element = document.createElement('div');
+      element.setAttribute('aria-describedby', 'radix-_r_1u_');
+      mockContainer.appendChild(element);
+
+      const normalized = normaliseRadixIds(mockContainer);
+      const div = normalized.querySelector('div');
+
+      expect(div?.getAttribute('aria-describedby')).toBe('radix-_r_0_');
+    });
+
     it('should return a cloned container', () => {
       const element = document.createElement('div');
       element.textContent = 'Original';
@@ -551,6 +562,19 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       expect(normalized).toBeDefined();
       expect(normalized.children.length).toBe(0);
+    });
+
+    it('should normalize radix IDs on the root container element itself', () => {
+      // This tests the case where the container element has radix attributes directly,
+      // not just its descendants (querySelectorAll only finds descendants)
+      const element = document.createElement('h2');
+      element.setAttribute('id', 'radix-_r_s_');
+      element.textContent = 'Title';
+
+      const normalized = normaliseRadixIds(element);
+
+      expect(normalized.getAttribute('id')).toBe('radix-_r_0_');
+      expect(normalized.textContent).toBe('Title');
     });
   });
 
