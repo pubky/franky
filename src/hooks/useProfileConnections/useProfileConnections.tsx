@@ -199,9 +199,10 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       try {
         const currentSkip = isInitialLoad ? 0 : skip;
 
-        // For own following list, use localOnly after initial fetch to preserve local state
+        // For own following list, use localOnly on first-page reloads to preserve local state
+        // Skip localOnly for pagination (currentSkip > 0) to allow fetching more results
         const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
-        const useLocalOnly = isOwnFollowing && hasInitialFetchRef.current;
+        const useLocalOnly = isOwnFollowing && hasInitialFetchRef.current && currentSkip === 0;
 
         const result = await Core.StreamUserController.getOrFetchStreamSlice({
           streamId,
