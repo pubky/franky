@@ -61,7 +61,8 @@ export function usePostArticle({
         description: 'Failed to parse article content',
       });
     }
-  }, [content, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
+  }, [content]);
 
   useEffect(() => {
     const extractCoverImage = async () => {
@@ -84,7 +85,8 @@ export function usePostArticle({
     };
 
     extractCoverImage();
-  }, [attachments, coverImageVariant, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
+  }, [attachments, coverImageVariant]);
 
   return {
     title,

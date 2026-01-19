@@ -168,9 +168,14 @@ export function usePost() {
 
   // Clear attachments when switching to article mode
   useEffect(() => {
-    if (isArticle) {
+    if (isArticle && attachments.length > 0) {
+      toast({
+        title: 'Attachments cleared',
+        description: 'Articles support one cover image only.',
+      });
       setAttachments([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only trigger on isArticle change, not attachments
   }, [isArticle]);
 
   return {
