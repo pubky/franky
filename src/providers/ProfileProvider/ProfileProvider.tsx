@@ -33,7 +33,7 @@ const ProfileContext = React.createContext<ProfileContextValue>(defaultContextVa
  * </ProfileProvider>
  *
  * // For another user's profile
- * <ProfileProvider pubky="pk:abc123">
+ * <ProfileProvider pubky="n1zpc53jzy">
  *   <ProfilePageContent />
  * </ProfileProvider>
  * ```

@@ -31,11 +31,11 @@ export function DialogWelcome() {
     return null;
   }
 
-  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10 });
+  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10, includePrefix: true });
   const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(currentUserPubky);
+    copyToClipboard(Libs.withPubkyPrefix(currentUserPubky));
   };
 
   const handleExplorePubky = () => {
@@ -45,8 +45,8 @@ export function DialogWelcome() {
 
   return (
     <Atoms.Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
-      <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Welcome to Pubky!">
-        <Atoms.DialogHeader className="mb-6 gap-0 pr-6 text-left">
+      <Atoms.DialogContent className="w-full sm:w-xl" hiddenTitle="Welcome to Pubky!">
+        <Atoms.DialogHeader className="gap-0 pr-6 text-left">
           <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
           <Atoms.DialogDescription className="font-medium">
             Your keys, your content, your rules.

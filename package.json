@@ -42,7 +42,7 @@
     "@radix-ui/react-toast": "1.2.15",
     "@radix-ui/react-toggle": "1.1.10",
     "@serwist/next": "9.5.0",
-    "@synonymdev/pubky": "0.6.0-rc.7",
+    "@synonymdev/pubky": "0.6.0",
     "@tanstack/react-query": "5.90.16",
     "bip39": "3.1.0",
     "class-variance-authority": "0.7.1",

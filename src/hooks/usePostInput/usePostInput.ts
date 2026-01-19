@@ -10,8 +10,8 @@ import {
   ATTACHMENT_MAX_OTHER_SIZE,
   ARTICLE_ATTACHMENT_MAX_FILES,
   POST_ATTACHMENT_MAX_FILES,
-  ARTICLE_SUPPORTED_FILE_EXTENSIONS,
-  POST_SUPPORTED_FILE_EXTENSIONS,
+  ARTICLE_SUPPORTED_FILE_TYPES,
+  POST_SUPPORTED_FILE_TYPES,
   POST_SUPPORTED_ATTACHMENT_MIME_TYPES,
   ARTICLE_SUPPORTED_ATTACHMENT_MIME_TYPES,
   ARTICLE_TITLE_MAX_CHARACTER_LENGTH,
@@ -226,7 +226,7 @@ export function usePostInput({
       const SUPPORTED_ATTACHMENT_MIME_TYPES = isArticle
         ? ARTICLE_SUPPORTED_ATTACHMENT_MIME_TYPES
         : POST_SUPPORTED_ATTACHMENT_MIME_TYPES;
-      const SUPPORTED_FILE_EXTENSIONS = isArticle ? ARTICLE_SUPPORTED_FILE_EXTENSIONS : POST_SUPPORTED_FILE_EXTENSIONS;
+      const SUPPORTED_FILE_TYPES = isArticle ? ARTICLE_SUPPORTED_FILE_TYPES : POST_SUPPORTED_FILE_TYPES;
 
       const currentCount = attachments.length;
       const availableSlots = ATTACHMENT_MAX_FILES - currentCount;
@@ -249,10 +249,10 @@ export function usePostInput({
         }
 
         // Check against specific supported MIME types from pubky-app-specs
-        const isAcceptedType = (SUPPORTED_ATTACHMENT_MIME_TYPES as readonly string[]).includes(file.type);
+        const isAcceptedType = SUPPORTED_ATTACHMENT_MIME_TYPES.includes(file.type);
         if (!isAcceptedType) {
           errors.push(
-            `"${file.name}" has unsupported type "${file.type}". Supported formats: ${SUPPORTED_FILE_EXTENSIONS}.`,
+            `"${file.name}" has unsupported type "${file.type}". Supported formats: ${SUPPORTED_FILE_TYPES}.`,
           );
           continue;
         }

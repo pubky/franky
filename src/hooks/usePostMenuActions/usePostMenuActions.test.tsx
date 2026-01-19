@@ -335,7 +335,7 @@ describe('usePostMenuActions', () => {
         await copyPubkyItem?.onClick();
       });
 
-      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith(mockAuthorId);
+      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith(`pubky${mockAuthorId}`);
     });
 
     it('includes copy link action', () => {
