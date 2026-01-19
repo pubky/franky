@@ -228,7 +228,7 @@ describe('ProfileApplication', () => {
       await Core.UserDetailsModel.create(existingUser);
 
       const mockUserResult = {
-        user: { toJson: vi.fn(() => ({ name: 'Minimal User', bio: '', image: '', links: [], status: 'busy' })) },
+        user: { toJson: vi.fn(() => ({ name: 'Minimal User', bio: '', image: null, links: [], status: 'busy' })) },
         meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
       };
       const normalizerSpy = vi
@@ -243,7 +243,7 @@ describe('ProfileApplication', () => {
         {
           name: 'Minimal User',
           bio: '',
-          image: '',
+          image: null,
           links: [],
           status: 'busy',
         },
