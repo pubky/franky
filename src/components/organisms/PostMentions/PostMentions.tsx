@@ -4,18 +4,23 @@ import { RemarkAnchorProps } from '@/molecules/PostText/PostText.types';
 import { extractTextFromChildren } from '@/molecules/PostText/PostText.utils';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
-import { useUserDetails } from '@/hooks/useUserDetails';
+import * as Hooks from '@/hooks';
 
 export const PostMentions = (props: RemarkAnchorProps) => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
 
   const mentionText = extractTextFromChildren(children);
   const userId = Libs.Identity.extractPubkyPublicKey(mentionText);
-  const { userDetails } = useUserDetails(userId);
-  const shortenedText = Libs.truncateMiddle(mentionText, 20);
-  const finalMention = userDetails?.name ? `@${userDetails.name}` : shortenedText;
+  const { profile } = Hooks.useUserProfile(userId ?? '');
 
   if (!userId) return null;
+
+  const fallbackMention = Libs.formatPublicKey({
+    key: Libs.withPubkyPrefix(userId),
+    length: 20,
+    includePrefix: true,
+  });
+  const finalMention = profile?.name ? `@${profile.name}` : fallbackMention;
 
   return (
     <Atoms.Link

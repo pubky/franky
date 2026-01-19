@@ -152,6 +152,23 @@ export function usePostReplies(
     }
   }, [loadingMore, hasMore, loading, postId, newestTimestamp, newestPostId, limit, replyIds]);
 
+  // Prepend a newly created reply to the list (used after local reply creation)
+  // Since replies are displayed in chronological order (oldest first),
+  // the new reply goes at the END of the list (it's the newest)
+  const prependReply = useCallback(
+    (replyId: string) => {
+      // Check if already exists
+      if (replyIds.includes(replyId)) return;
+
+      // Add to the end (newest position in chronological order)
+      setReplyIds((prev) => [...prev, replyId]);
+
+      // Update cursor to point to this new reply
+      setNewestPostId(replyId);
+    },
+    [replyIds],
+  );
+
   // Refresh function
   const refresh = useCallback(async () => {
     if (!postId) return;
@@ -203,5 +220,6 @@ export function usePostReplies(
     hasMore,
     loadMore,
     refresh,
+    prependReply,
   };
 }

@@ -69,6 +69,8 @@ export function ClickableTagsList({
   } = Hooks.useEntityTags(taggedId, taggedKind, { providedTags });
 
   // Use tag input hook for input state management
+  // Only pass viewer's own tags as existingTags for duplicate checking
+  // This allows adding a tag that others have used but the viewer hasn't
   const tagInput = Hooks.useTagInput({
     onTagAdd: async (label) => {
       if (onTagAdd) {
@@ -80,7 +82,7 @@ export function ClickableTagsList({
         setIsAdding(false);
       }
     },
-    existingTags: fetchedTags.map((t) => t.label),
+    existingTags: fetchedTags.filter((t) => isViewerTagger(t)).map((t) => t.label),
   });
 
   // Refocus input after clearing value in addMode
@@ -135,7 +137,11 @@ export function ClickableTagsList({
   const handleInputClick = !isAuthenticated ? () => setShowSignInDialog(true) : undefined;
 
   return (
-    <Atoms.Container overrideDefaults className={Libs.cn('flex flex-wrap items-center gap-2', className)}>
+    <Atoms.Container
+      overrideDefaults
+      data-cy="clickable-tags-list"
+      className={Libs.cn('flex flex-wrap items-center gap-2', className)}
+    >
       {/* Render existing tags */}
       {visibleTags.map((tag, index) => (
         <Molecules.PostTag

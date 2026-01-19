@@ -26,7 +26,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
   // Check if user is authenticated for conditional rendering
   const { isAuthenticated } = Hooks.useRequireAuth();
 
-  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
+  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (

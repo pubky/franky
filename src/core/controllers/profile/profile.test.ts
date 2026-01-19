@@ -35,7 +35,7 @@ const mockIdentity = {
     secretKey: 'test-secret-key',
     mnemonic: 'test mnemonic phrase',
   })),
-  pubkyFromSecret: vi.fn(() => 'test-pubky'),
+  z32FromSecret: vi.fn(() => 'test-pubky'),
   keypairFromSecretKey: vi.fn(() => ({ keypair: 'test-keypair' })),
   createRecoveryFile: vi.fn(),
 };
@@ -74,7 +74,7 @@ describe('ProfileController', () => {
     mockProfileApplication.commitUpdate.mockReset();
     mockUserNormalizer.to.mockReset();
     mockIdentity.generateSecrets.mockReset();
-    mockIdentity.pubkyFromSecret.mockReset();
+    mockIdentity.z32FromSecret.mockReset();
     mockIdentity.keypairFromSecretKey.mockReset();
     mockIdentity.createRecoveryFile.mockReset();
     mockOnboardingStore.getState.mockReturnValue({
@@ -224,7 +224,7 @@ describe('ProfileController', () => {
         secretKey: 'generated-secret-key',
         mnemonic: 'generated mnemonic',
       });
-      mockIdentity.pubkyFromSecret.mockReturnValue('generated-pubky' as Pubky);
+      mockIdentity.z32FromSecret.mockReturnValue('generated-pubky' as Pubky);
 
       ProfileController.generateSecrets();
 
@@ -233,7 +233,7 @@ describe('ProfileController', () => {
         secretKey: 'generated-secret-key',
         mnemonic: 'generated mnemonic',
       });
-      expect(mockIdentity.pubkyFromSecret).toHaveBeenCalledWith('generated-secret-key');
+      expect(mockIdentity.z32FromSecret).toHaveBeenCalledWith('generated-secret-key');
       expect(mockSetCurrentUserPubky).toHaveBeenCalledWith('generated-pubky');
     });
   });

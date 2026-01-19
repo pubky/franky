@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import * as Types from './usePostDetails.types';
 
 /**
@@ -27,7 +28,7 @@ export function usePostDetails(compositeId: string | null | undefined): Types.Us
     // 4. Return data
     // Note: viewerId is omitted for unauthenticated views - Nexus handles this
     Core.PostController.getOrFetchDetails({ compositeId }).catch((error) => {
-      console.error('Failed to fetch post details:', error);
+      Libs.Logger.error('[usePostDetails] Failed to fetch post details:', { compositeId, error });
     });
   }, [compositeId]);
 

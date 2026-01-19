@@ -29,7 +29,7 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
   const { isAuthenticated } = Hooks.useRequireAuth();
 
   // Use the dedicated hook for fetching replies (only fetch if authenticated)
-  const { replyIds, loading, loadingMore, error, hasMore, loadMore, refresh } = Hooks.usePostReplies(
+  const { replyIds, loading, loadingMore, error, hasMore, loadMore, prependReply } = Hooks.usePostReplies(
     isAuthenticated ? postId : null,
   );
 
@@ -69,7 +69,7 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
                       ? Atoms.POST_THREAD_CONNECTOR_VARIANTS.REGULAR
                       : Atoms.POST_THREAD_CONNECTOR_VARIANTS.LAST
                   }
-                  onReplySubmitted={refresh}
+                  onReplySubmitted={prependReply}
                 />
               </Atoms.Container>
             )}

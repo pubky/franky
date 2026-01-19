@@ -20,6 +20,8 @@ export class LocalFollowService {
           const rel = await Core.UserRelationshipsModel.findById(followee);
           // Snapshot: whether followee already follows follower
           const isFollowedBy = !!rel?.followed_by;
+          // Snapshot: whether we're already following according to relationship model
+          const wasFollowing = !!rel?.following;
 
           // Connections first
           const [addedFollowing, addedFollower] = await Promise.all([
@@ -27,15 +29,20 @@ export class LocalFollowService {
             Core.UserConnectionsModel.createConnection(followee, follower, Core.UserConnectionsFields.FOLLOWERS),
           ]);
 
-          // Gate counts by actual mutations; do not upsert counts
+          // Gate counts by BOTH relationship state AND connection mutations
+          // This handles: 1) Nexus-synced data (relationship exists, connections don't)
+          //               2) Local-only data (connections exist, relationship may not)
+          const shouldIncrementFollowing = !wasFollowing && addedFollowing;
+          const shouldIncrementFollowers = !wasFollowing && addedFollower;
+
           const ops: Promise<unknown>[] = [];
-          if (addedFollowing) {
+          if (shouldIncrementFollowing) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { following: 1 } }));
           }
-          if (addedFollower) {
+          if (shouldIncrementFollowers) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { followers: 1 } }));
           }
-          if (isFollowedBy && addedFollowing) {
+          if (isFollowedBy && shouldIncrementFollowing) {
             becomingFriends = true;
             ops.push(
               Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { friends: 1 } }),
@@ -85,7 +92,9 @@ export class LocalFollowService {
         [Core.UserCountsModel.table, Core.UserConnectionsModel.table, Core.UserRelationshipsModel.table],
         async () => {
           const rel = await Core.UserRelationshipsModel.findById(followee);
-          const wasFriends = !!rel?.followed_by && !!rel?.following;
+          // Snapshot: whether we were following according to relationship model
+          const wasFollowing = !!rel?.following;
+          const wasFriends = !!rel?.followed_by && wasFollowing;
 
           // Connections first
           const [removedFollowing, removedFollower] = await Promise.all([
@@ -93,15 +102,20 @@ export class LocalFollowService {
             Core.UserConnectionsModel.deleteConnection(followee, follower, Core.UserConnectionsFields.FOLLOWERS),
           ]);
 
-          // Gate counts by actual mutations; do not upsert counts
+          // Gate counts by BOTH relationship state AND connection mutations
+          // This handles: 1) Nexus-synced data (relationship exists, connections don't)
+          //               2) Local-only data (connections exist, relationship may not)
+          const shouldDecrementFollowing = wasFollowing || removedFollowing;
+          const shouldDecrementFollowers = wasFollowing || removedFollower;
+
           const ops: Promise<unknown>[] = [];
-          if (removedFollowing) {
+          if (shouldDecrementFollowing) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { following: -1 } }));
           }
-          if (removedFollower) {
+          if (shouldDecrementFollowers) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { followers: -1 } }));
           }
-          if (wasFriends && removedFollowing) {
+          if (wasFriends || (removedFollowing && !!rel?.followed_by)) {
             breakingFriendship = true;
             ops.push(
               Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { friends: -1 } }),

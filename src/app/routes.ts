@@ -145,7 +145,7 @@ export function isDynamicPublicRoute(pathname: string): boolean {
  * getProfileRoute(PROFILE_ROUTES.FOLLOWERS) // => '/profile/followers'
  *
  * // For specific user
- * getProfileRoute(PROFILE_ROUTES.FOLLOWERS, 'pk:abc123') // => '/profile/pk:abc123/followers'
+ * getProfileRoute(PROFILE_ROUTES.FOLLOWERS, 'n1zpc53jzy') // => '/profile/n1zpc53jzy/followers'
  * ```
  */
 export function getProfileRoute(route: PROFILE_ROUTES, pubky?: string): string {

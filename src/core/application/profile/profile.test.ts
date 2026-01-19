@@ -3,7 +3,9 @@ import type { Pubky } from '@/core';
 import type { PubkyAppUser, UserResult } from 'pubky-app-specs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
-vi.mock('pubky-app-specs', () => ({}));
+vi.mock('pubky-app-specs', () => ({
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
+}));
 
 // Mock HomeserverService methods and provide enum-like HomeserverAction
 vi.mock('@/core/services/homeserver', () => ({
@@ -226,7 +228,7 @@ describe('ProfileApplication', () => {
       await Core.UserDetailsModel.create(existingUser);
 
       const mockUserResult = {
-        user: { toJson: vi.fn(() => ({ name: 'Minimal User', bio: '', image: '', links: [], status: 'busy' })) },
+        user: { toJson: vi.fn(() => ({ name: 'Minimal User', bio: '', image: null, links: [], status: 'busy' })) },
         meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
       };
       const normalizerSpy = vi
@@ -241,7 +243,7 @@ describe('ProfileApplication', () => {
         {
           name: 'Minimal User',
           bio: '',
-          image: '',
+          image: null,
           links: [],
           status: 'busy',
         },

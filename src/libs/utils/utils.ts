@@ -12,12 +12,51 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPublicKey({ key, length = 12 }: FormatPublicKeyProps) {
+const PUBKY_PREFIX = 'pubky';
+const LEGACY_PUBKY_PREFIX = 'pk:';
+
+export function withPubkyPrefix(key: string): string {
   if (!key) return '';
-  if (key.length <= length) return key;
-  const prefix = key.slice(0, length / 2);
-  const suffix = key.slice(-length / 2);
-  return `${prefix}...${suffix}`;
+  if (key.startsWith(PUBKY_PREFIX)) return key;
+  if (key.startsWith(LEGACY_PUBKY_PREFIX)) {
+    return `${PUBKY_PREFIX}${key.slice(LEGACY_PUBKY_PREFIX.length)}`;
+  }
+  return `${PUBKY_PREFIX}${key}`;
+}
+
+const stripPubkyPrefix = (key: string): string => {
+  if (!key) return '';
+  if (key.startsWith(PUBKY_PREFIX)) return key.slice(PUBKY_PREFIX.length);
+  if (key.startsWith(LEGACY_PUBKY_PREFIX)) return key.slice(LEGACY_PUBKY_PREFIX.length);
+  return key;
+};
+
+export function formatPublicKey({ key, length = 12, includePrefix = false }: FormatPublicKeyProps) {
+  if (!key) return '';
+  const rawKey = stripPubkyPrefix(key);
+  const prefixLabel = includePrefix ? PUBKY_PREFIX : '';
+  if (rawKey.length <= length) return `${prefixLabel}${rawKey}`;
+  const prefix = rawKey.slice(0, Math.floor(length / 2));
+  const suffix = rawKey.slice(-(length - prefix.length));
+  return `${prefixLabel}${prefix}...${suffix}`;
+}
+
+/**
+ * Checks if a string is a valid pubky identifier.
+ * Pubky identifiers are exactly 52 lowercase alphanumeric characters (z-base-32 encoded).
+ *
+ * @param value - The string to validate
+ * @returns true if the string is a valid pubky identifier
+ *
+ * @example
+ * ```ts
+ * isPubkyIdentifier('o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy') // true
+ * isPubkyIdentifier('posts') // false
+ * isPubkyIdentifier('ABC123...') // false (uppercase)
+ * ```
+ */
+export function isPubkyIdentifier(value: string): boolean {
+  return /^[a-z0-9]{52}$/.test(value);
 }
 
 /**
@@ -98,6 +137,23 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
 
+  // Normalise root element attributes too (querySelectorAll does not include the root)
+  if (shouldNormalise(clonedContainer.getAttribute('id'))) {
+    clonedContainer.setAttribute('id', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-controls'))) {
+    clonedContainer.setAttribute('aria-controls', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-labelledby'))) {
+    clonedContainer.setAttribute('aria-labelledby', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-describedby'))) {
+    clonedContainer.setAttribute('aria-describedby', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('for'))) {
+    clonedContainer.setAttribute('for', normalizedId);
+  }
+
   // Normalise all radix IDs to a consistent value
   const elementsWithIds = clonedContainer.querySelectorAll('[id]');
   elementsWithIds.forEach((el) => {
@@ -119,6 +175,14 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   elementsWithAriaLabelledBy.forEach((el) => {
     if (shouldNormalise(el.getAttribute('aria-labelledby'))) {
       el.setAttribute('aria-labelledby', normalizedId);
+    }
+  });
+
+  // Normalise aria-describedby attributes
+  const elementsWithAriaDescribedBy = clonedContainer.querySelectorAll('[aria-describedby]');
+  elementsWithAriaDescribedBy.forEach((el) => {
+    if (shouldNormalise(el.getAttribute('aria-describedby'))) {
+      el.setAttribute('aria-describedby', normalizedId);
     }
   });
 
