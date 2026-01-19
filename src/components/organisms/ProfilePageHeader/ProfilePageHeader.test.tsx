@@ -296,4 +296,17 @@ describe('ProfilePageHeader - Other User Profile', () => {
     expect(emojis.length).toBeGreaterThanOrEqual(2); // Badge + status
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
+
+  it('hides Follow button when user is not authenticated', async () => {
+    const Hooks = await import('@/hooks');
+    vi.mocked(Hooks.useRequireAuth).mockReturnValue({
+      isAuthenticated: false,
+      requireAuth: vi.fn(),
+    });
+
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    expect(screen.queryByText('Follow')).not.toBeInTheDocument();
+    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+  });
 });
