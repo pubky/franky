@@ -42,13 +42,13 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
         toast({
           title: 'Verification Code Invalid. Try again.',
         });
+        setIsVerifyingCode(false);
       }
     } catch {
       toast({
         title: 'Failed to verify sms code',
         description: 'Please try again later. If the problem persists, please contact support.',
       });
-    } finally {
       setIsVerifyingCode(false);
     }
   }
