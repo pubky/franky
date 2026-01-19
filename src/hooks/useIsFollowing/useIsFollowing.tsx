@@ -15,7 +15,7 @@ import type { UseIsFollowingResult } from './useIsFollowing.types';
  *
  * @example
  * ```tsx
- * const { isFollowing, isLoading } = useIsFollowing('pk:abc123');
+ * const { isFollowing, isLoading } = useIsFollowing('pubkyabc123');
  *
  * if (isLoading) return <Spinner />;
  * return isFollowing ? <UnfollowButton /> : <FollowButton />;

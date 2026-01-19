@@ -33,7 +33,7 @@ const ProfileContext = React.createContext<ProfileContextValue>(defaultContextVa
  * </ProfileProvider>
  *
  * // For another user's profile
- * <ProfileProvider pubky="pk:abc123">
+ * <ProfileProvider pubky="n1zpc53jzy">
  *   <ProfilePageContent />
  * </ProfileProvider>
  * ```
@@ -46,10 +46,17 @@ export function ProfileProvider({ pubky: externalPubky, children }: ProfileProvi
   const targetPubky = externalPubky ?? currentUserPubky;
 
   // Determine if this is the user's own profile
+  // Fixed: When viewing another user's profile while unauthenticated,
+  // isOwnProfile should be false, not true
   const isOwnProfile = React.useMemo(() => {
-    if (!currentUserPubky || !targetPubky) return true;
-    return currentUserPubky === targetPubky;
-  }, [currentUserPubky, targetPubky]);
+    // If external pubky is provided (viewing another user's profile)
+    if (externalPubky) {
+      // Only true if logged in AND viewing own profile
+      return Boolean(currentUserPubky) && currentUserPubky === externalPubky;
+    }
+    // Own profile route (/profile/*) - only true if authenticated
+    return Boolean(currentUserPubky);
+  }, [currentUserPubky, externalPubky]);
 
   // Loading state (only loading if we don't have a pubky yet)
   const isLoading = !targetPubky;

@@ -23,6 +23,10 @@ vi.mock('@/hooks', async (importOriginal) => {
   return {
     ...actual,
     usePostDetails: (postId: string) => mockUsePostDetails(postId),
+    useRequireAuth: vi.fn(() => ({
+      isAuthenticated: true,
+      requireAuth: vi.fn((action: () => void) => action()),
+    })),
   };
 });
 

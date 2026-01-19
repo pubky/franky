@@ -9,8 +9,12 @@ describe('StreamUserController', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock useAuthStore
-    vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockReturnValue(viewerId);
+    // Mock useAuthStore.getState() to return currentUserPubky directly
+    // (implementation accesses state.currentUserPubky instead of selectCurrentUserPubky())
+    vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+      ...Core.useAuthStore.getState(),
+      currentUserPubky: viewerId,
+    });
   });
 
   describe('getOrFetchStreamSlice', () => {
@@ -72,7 +76,6 @@ describe('StreamUserController', () => {
         limit: Config.NEXUS_USERS_PER_PAGE,
         viewerId,
       });
-      expect(Core.useAuthStore.getState().selectCurrentUserPubky).toHaveBeenCalled();
       expect(fetchMissingUsersSpy).toHaveBeenCalledWith({
         cacheMissUserIds,
         viewerId,
@@ -112,7 +115,10 @@ describe('StreamUserController', () => {
       const customViewerId = 'custom-viewer' as Core.Pubky;
 
       // Update mock to return custom viewer
-      vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockReturnValue(customViewerId);
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+        ...Core.useAuthStore.getState(),
+        currentUserPubky: customViewerId,
+      });
 
       const getOrFetchStreamSliceSpy = vi.spyOn(Core.UserStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
         nextPageIds: [],

@@ -107,6 +107,8 @@ export function ProfilePageFilterBar({
   onPageChangeAction,
   isOwnProfile = true,
 }: ProfilePageFilterBarProps) {
+  const { requireAuth } = Hooks.useRequireAuth();
+
   // Use provided items or generate default items with stats
   const filterItems = React.useMemo(() => {
     if (items) {
@@ -126,6 +128,11 @@ export function ProfilePageFilterBar({
     topOffset: Config.LAYOUT.HEADER_HEIGHT_PROFILE,
     bottomOffset: Config.LAYOUT.SIDEBAR_BOTTOM_OFFSET,
   });
+
+  // Handle item click - require auth for unauthenticated users
+  const handleItemClick = (pageType: Types.FilterBarPageType) => {
+    requireAuth(() => onPageChangeAction(pageType));
+  };
 
   return (
     <Atoms.Container
@@ -147,7 +154,7 @@ export function ProfilePageFilterBar({
             <Atoms.FilterItem
               key={index}
               isSelected={isActive}
-              onClick={() => onPageChangeAction(item.pageType)}
+              onClick={() => handleItemClick(item.pageType)}
               className="w-full items-start justify-between px-0 py-1"
             >
               <Atoms.Container

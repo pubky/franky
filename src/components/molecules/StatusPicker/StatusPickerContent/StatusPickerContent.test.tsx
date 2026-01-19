@@ -263,14 +263,14 @@ describe('StatusPickerContent', () => {
       });
     });
 
-    it('does not submit when Enter is pressed without emoji', () => {
+    it('submits when Enter is pressed without emoji (text-only status)', () => {
       render(<StatusPickerContent onStatusSelect={mockOnStatusSelect} />);
 
       const input = screen.getByPlaceholderText('Add status');
       fireEvent.change(input, { target: { value: 'Working' } });
       fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
 
-      expect(mockOnStatusSelect).not.toHaveBeenCalled();
+      expect(mockOnStatusSelect).toHaveBeenCalledWith('Working');
     });
 
     it('does not submit when Enter is pressed without text', async () => {

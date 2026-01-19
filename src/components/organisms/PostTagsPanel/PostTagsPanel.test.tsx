@@ -4,8 +4,13 @@ import { PostTagsPanel } from './PostTagsPanel';
 
 // Mock hooks
 const mockUsePostTags = vi.fn();
+const mockRequireAuth = vi.fn((action: () => void) => action());
 vi.mock('@/hooks', () => ({
   usePostTags: () => mockUsePostTags(),
+  useRequireAuth: () => ({
+    isAuthenticated: true,
+    requireAuth: mockRequireAuth,
+  }),
 }));
 
 // Mock molecules
