@@ -349,7 +349,7 @@ describe('CopyrightForm - Snapshots', () => {
     vi.clearAllMocks();
     // Mock the date to ensure consistent snapshots
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-01-15'));
+    vi.setSystemTime(new Date('2026-01-15T12:00:00'));
   });
 
   afterEach(() => {
