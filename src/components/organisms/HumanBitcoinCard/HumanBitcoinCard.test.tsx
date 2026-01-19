@@ -11,20 +11,20 @@ vi.mock('next/image', () => ({
 }));
 
 const mockUseBtcRate = vi.fn();
-const mockUseLnVerificationPrice = vi.fn();
+const mockUseLnVerificationInfo = vi.fn();
 
 vi.mock('@/hooks/useSatUsdRate', () => ({
   useBtcRate: () => mockUseBtcRate(),
 }));
 
-vi.mock('@/hooks/useLnVerificationPrice', () => ({
-  useLnVerificationPrice: () => mockUseLnVerificationPrice(),
+vi.mock('@/hooks/useLnVerificationInfo', () => ({
+  useLnVerificationInfo: () => mockUseLnVerificationInfo(),
 }));
 
 describe('BitcoinPaymentCard', () => {
   beforeEach(() => {
     mockUseBtcRate.mockReturnValue({ satUsd: 0.0005 });
-    mockUseLnVerificationPrice.mockReturnValue({ amountSat: 1000 });
+    mockUseLnVerificationInfo.mockReturnValue({ available: true, amountSat: 1000 });
   });
 
   afterEach(() => {
@@ -41,7 +41,7 @@ describe('BitcoinPaymentCard', () => {
   });
 
   it('renders skeleton when price is loading', () => {
-    mockUseLnVerificationPrice.mockReturnValue(null);
+    mockUseLnVerificationInfo.mockReturnValue(null);
     const { container } = render(<HumanBitcoinCard />);
 
     // Check for skeleton elements (they have animate-pulse class)
@@ -64,14 +64,37 @@ describe('BitcoinPaymentCard', () => {
     expect(screen.getByRole('button', { name: /Pay Once/i })).toBeDisabled();
   });
 
+  it('renders geoblocking overlay when not available', () => {
+    mockUseLnVerificationInfo.mockReturnValue({ available: false });
+    render(<HumanBitcoinCard />);
+
+    // Check for geoblocking alert
+    expect(screen.getByTestId('geoblock-alert')).toBeInTheDocument();
+    expect(screen.getByText(/Currently not available in your country/i)).toBeInTheDocument();
+
+    // Card should have blur class
+    const card = screen.getByTestId('bitcoin-payment-card');
+    expect(card).toHaveClass('blur-[5px]');
+    expect(card).toHaveClass('opacity-60');
+
+    // Button should be disabled
+    expect(screen.getByRole('button', { name: /Pay Once/i })).toBeDisabled();
+  });
+
   it('matches snapshot', () => {
     const { container } = render(<HumanBitcoinCard />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot when loading', () => {
-    mockUseLnVerificationPrice.mockReturnValue(null);
+    mockUseLnVerificationInfo.mockReturnValue(null);
     mockUseBtcRate.mockReturnValue(null);
+    const { container } = render(<HumanBitcoinCard />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when geoblocked', () => {
+    mockUseLnVerificationInfo.mockReturnValue({ available: false });
     const { container } = render(<HumanBitcoinCard />);
     expect(container.firstChild).toMatchSnapshot();
   });

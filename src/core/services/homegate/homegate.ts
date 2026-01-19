@@ -2,9 +2,10 @@ import {
   TLnVerificationStatus,
   TAwaitLnVerificationResult,
   TCreateLnVerificationResult,
-  TGetPriceResult,
   TVerifySmsCodeResult,
   ISendSmsCodeResult,
+  TSmsInfoResult,
+  TLnInfoResult,
 } from './homegate.types';
 import { homegateApi } from './homegate.api';
 import { homegateQueryClient } from './homegate.query-client';
@@ -58,6 +59,39 @@ function parseLnVerificationStatus(json: Record<string, unknown>): TLnVerificati
  */
 export class HomegateService {
   private constructor() {} // Prevent instantiation
+
+  /**
+   * Checks if SMS verification is available for the user's region.
+   * Returns available: true if service is accessible, false if geoblocked (403).
+   * Uses TanStack Query for caching - the result is cached for 30 minutes.
+   * @returns The availability status.
+   */
+  static async getSmsVerificationInfo(): Promise<TSmsInfoResult> {
+    return homegateQueryClient.fetchQuery({
+      queryKey: ['homegate', 'sms-verification-info'],
+      queryFn: async () => {
+        const url = homegateApi.getSmsVerificationInfo();
+        const response = await fetch(url, { method: 'GET' });
+
+        if (response.ok) {
+          return { available: true } as TSmsInfoResult;
+        }
+
+        // 403 means geoblocked - not an error, just unavailable
+        if (response.status === 403) {
+          return { available: false } as TSmsInfoResult;
+        }
+
+        await logRequestError(response, url);
+        throw createNexusError(
+          NexusErrorType.SERVICE_UNAVAILABLE,
+          'Failed to get SMS verification info',
+          response.status,
+          { url, action: 'getSmsVerificationInfo' },
+        );
+      },
+    });
+  }
 
   /**
    * Sends a SMS code to the user. This only errors on network errors.
@@ -127,28 +161,34 @@ export class HomegateService {
   }
 
   /**
-   * Gets the configured price in satoshis for Lightning Network verification.
-   * Uses TanStack Query for caching - the price is cached for 30 minutes.
-   * @returns The price in satoshis.
+   * Gets LN verification availability and price.
+   * Returns available: true with amountSat if service is accessible, false if geoblocked (403).
+   * Uses TanStack Query for caching - the result is cached for 30 minutes.
+   * @returns The availability status and price if available.
    */
-  static async getLnVerificationPrice(): Promise<TGetPriceResult> {
+  static async getLnVerificationInfo(): Promise<TLnInfoResult> {
     return homegateQueryClient.fetchQuery({
-      queryKey: ['homegate', 'ln-verification-price'],
+      queryKey: ['homegate', 'ln-verification-info'],
       queryFn: async () => {
-        const url = homegateApi.getLnVerificationPrice();
+        const url = homegateApi.getLnVerificationInfo();
         const response = await fetch(url, { method: 'GET' });
 
         if (response.ok) {
           const json = await response.json();
-          return { amountSat: json.amountSat };
+          return { available: true, amountSat: json.amountSat } as TLnInfoResult;
+        }
+
+        // 403 means geoblocked - not an error, just unavailable
+        if (response.status === 403) {
+          return { available: false } as TLnInfoResult;
         }
 
         await logRequestError(response, url);
         throw createNexusError(
           NexusErrorType.SERVICE_UNAVAILABLE,
-          'Failed to get Lightning verification price',
+          'Failed to get Lightning verification info',
           response.status,
-          { url, action: 'getLnVerificationPrice' },
+          { url, action: 'getLnVerificationInfo' },
         );
       },
     });
