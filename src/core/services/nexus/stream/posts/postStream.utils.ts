@@ -19,7 +19,7 @@ export function createPostStreamParams({
   const [sorting, invokeEndpoint, content, tags] = breakDownStreamId(streamId);
 
   const params: Core.TStreamBase = {};
-  params.viewer_id = viewerId;
+  params.viewer_id = viewerId ?? undefined;
   params.sorting = parseSorting(sorting);
   params.tags = tags;
   if (content && invokeEndpoint !== Core.StreamSource.REPLIES) {
