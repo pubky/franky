@@ -15,8 +15,8 @@ export function ProfilePageSidebar() {
   const pathname = usePathname();
   const { isAuthenticated, requireAuth } = Hooks.useRequireAuth();
 
-  // Get the profile pubky from context
-  const { pubky } = Providers.useProfileContext();
+  // Get the profile pubky and isOwnProfile from context
+  const { pubky, isOwnProfile } = Providers.useProfileContext();
 
   // Get user profile data for the target user
   const { profile } = Hooks.useUserProfile(pubky ?? '');
@@ -61,10 +61,9 @@ export function ProfilePageSidebar() {
           isLoading={isLoadingTags}
           onTagClick={handleTagClick}
           pubky={pubky ?? ''}
-          userName={profile?.name}
         />
       )}
-      <Molecules.ProfilePageLinks links={profile?.links} />
+      <Molecules.ProfilePageLinks links={profile?.links} isOwnProfile={isOwnProfile} />
       {isAuthenticated && <Organisms.FeedbackCard />}
     </Atoms.Container>
   );

@@ -7,22 +7,13 @@ import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
 import { PROFILE_ROUTES, getProfileRoute } from '@/app/routes';
 import type { ProfilePageTaggedAsProps } from './ProfilePageTaggedAs.types';
-import { MAX_NAME_LENGTH } from './ProfilePageTaggedAs.constants';
 
-export function ProfilePageTaggedAs({
-  tags,
-  isLoading = false,
-  onTagClick,
-  pubky,
-  userName,
-}: ProfilePageTaggedAsProps) {
+export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky }: ProfilePageTaggedAsProps) {
   const router = useRouter();
   const { requireAuth } = Hooks.useRequireAuth();
 
   const getButtonLabel = () => {
-    if (!pubky) return 'Tag Yourself';
-    if (userName) return `Tag ${Libs.truncateString(userName, MAX_NAME_LENGTH)}`;
-    return 'Tag User';
+    return 'Add Tag';
   };
 
   // Handle button click - require auth for unauthenticated users

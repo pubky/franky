@@ -5,6 +5,14 @@ import { ProfilePageLinks } from './ProfilePageLinks';
 import * as Core from '@/core';
 import { defaultPrivacyPreferences } from '@/core/stores/settings/settings.types';
 
+// Mock next/navigation
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
+
 // Mock organisms
 vi.mock('@/organisms', () => ({
   DialogCheckLink: ({
@@ -82,6 +90,29 @@ describe('ProfilePageLinks', () => {
   it('renders no links message when links array is empty', () => {
     render(<ProfilePageLinks links={[]} />);
     expect(screen.getByText('No links added yet.')).toBeInTheDocument();
+  });
+
+  it('does not render Add Link button when isOwnProfile is false', () => {
+    render(<ProfilePageLinks links={defaultLinks} isOwnProfile={false} />);
+    expect(screen.queryByText('Add Link')).not.toBeInTheDocument();
+  });
+
+  it('renders Add Link button when isOwnProfile is true', () => {
+    render(<ProfilePageLinks links={defaultLinks} isOwnProfile={true} />);
+    expect(screen.getByText('Add Link')).toBeInTheDocument();
+  });
+
+  it('Add Link button navigates to settings edit page when clicked', () => {
+    render(<ProfilePageLinks links={defaultLinks} isOwnProfile={true} />);
+    const addLinkButton = screen.getByText('Add Link').closest('button');
+    fireEvent.click(addLinkButton!);
+    expect(mockPush).toHaveBeenCalledWith('/settings/edit');
+  });
+
+  it('Add Link button has correct styling', () => {
+    render(<ProfilePageLinks links={defaultLinks} isOwnProfile={true} />);
+    const addLinkButton = screen.getByText('Add Link').closest('button');
+    expect(addLinkButton).toHaveClass('border', 'border-border', 'bg-foreground/5');
   });
 });
 
@@ -278,6 +309,16 @@ describe('ProfilePageLinks - Snapshots', () => {
   it('matches snapshot with tel link', () => {
     const linksWithPhone: Core.NexusUserDetails['links'] = [{ title: 'Call Us', url: 'tel:+1234567890' }];
     const { container } = render(<ProfilePageLinks links={linksWithPhone} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with isOwnProfile true', () => {
+    const { container } = render(<ProfilePageLinks links={defaultLinks} isOwnProfile={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with empty links and isOwnProfile true', () => {
+    const { container } = render(<ProfilePageLinks links={[]} isOwnProfile={true} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
