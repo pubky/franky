@@ -238,7 +238,7 @@ describe('ProfileApplication', () => {
 
       await ProfileApplication.commitUpdateStatus({ pubky: testPubky, status: 'busy' });
 
-      // Verify normalizer called with empty strings/arrays for null values
+      // Verify normalizer receives values as-is (normalizer handles null → '' conversion)
       expect(normalizerSpy).toHaveBeenCalledWith(
         {
           name: 'Minimal User',
