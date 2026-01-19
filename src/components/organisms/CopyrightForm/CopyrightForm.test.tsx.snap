@@ -26,7 +26,7 @@ exports[`CopyrightForm - Snapshots > matches snapshot for default state 1`] = `
           data-testid="typography"
         >
           Date: 
-          01/15/2026
+          01/14/2026
         </p>
         <p
           class="text-sm font-semibold text-foreground font-normal text-muted-foreground"

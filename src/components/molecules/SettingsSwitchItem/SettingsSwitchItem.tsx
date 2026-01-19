@@ -24,9 +24,9 @@ export function SettingsSwitchItem({
   className,
 }: SettingsSwitchItemProps) {
   return (
-    <div className={Libs.cn('flex w-full items-start justify-between gap-3', className)}>
-      <div className="flex flex-col items-start gap-2">
-        <Atoms.Typography as="label" htmlFor={id} size="sm" className="pt-[3px] leading-none font-medium">
+    <div className={Libs.cn('flex w-full items-center justify-between gap-3', className)}>
+      <div className="flex flex-1 flex-col items-start gap-2">
+        <Atoms.Typography as="label" htmlFor={id} size="sm" className="leading-5 font-medium">
           {label}
         </Atoms.Typography>
         {description && (

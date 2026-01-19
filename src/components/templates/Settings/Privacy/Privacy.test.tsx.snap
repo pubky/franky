@@ -55,13 +55,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       class="flex w-full flex-col items-start justify-start gap-6"
     >
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="show-confirmation-switch"
           >
@@ -84,13 +84,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="blur-censored-switch"
           >
@@ -113,13 +113,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="sign-out-inactive-switch"
           >
@@ -145,13 +145,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="require-pin-switch"
           >
@@ -177,13 +177,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="hide-who-to-follow-switch"
           >
@@ -209,13 +209,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="hide-active-friends-switch"
           >
@@ -241,13 +241,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="hide-search-switch"
           >
@@ -273,13 +273,13 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex w-full items-start justify-between gap-3"
+        class="flex w-full items-center justify-between gap-3"
       >
         <div
-          class="flex flex-col items-start gap-2"
+          class="flex flex-1 flex-col items-start gap-2"
         >
           <label
-            class="text-sm text-foreground pt-[3px] leading-none font-medium"
+            class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="never-show-posts-switch"
           >

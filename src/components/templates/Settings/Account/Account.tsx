@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -10,11 +10,23 @@ import * as App from '@/app';
 
 export function Account() {
   const router = useRouter();
+  const { toast } = Molecules.useToast();
   const [loadingSignOut, setLoadingSignOut] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const showErrorToast = useCallback(
+    (description: string) => {
+      toast({
+        title: 'Error',
+        description,
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
+      });
+    },
+    [toast],
+  );
 
   const handleSignOut = async () => {
     setLoadingSignOut(true);
@@ -23,6 +35,7 @@ export function Account() {
       router.push(App.AUTH_ROUTES.LOGOUT);
     } catch (error) {
       Libs.Logger.error('Failed to sign out:', { error });
+      showErrorToast('Failed to sign out. Please try again.');
       setLoadingSignOut(false);
     }
   };

@@ -5,13 +5,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
   class="flex w-full flex-col items-start justify-start gap-6"
 >
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-follow"
       >
@@ -34,13 +34,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-newFriend"
       >
@@ -63,13 +63,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-tagPost"
       >
@@ -92,13 +92,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-tagProfile"
       >
@@ -121,13 +121,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-mention"
       >
@@ -150,13 +150,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-reply"
       >
@@ -179,13 +179,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-repost"
       >
@@ -208,13 +208,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-postDeleted"
       >
@@ -237,13 +237,13 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
     </button>
   </div>
   <div
-    class="flex w-full items-start justify-between gap-3"
+    class="flex w-full items-center justify-between gap-3"
   >
     <div
-      class="flex flex-col items-start gap-2"
+      class="flex flex-1 flex-col items-start gap-2"
     >
       <label
-        class="text-sm text-foreground pt-[3px] leading-none font-medium"
+        class="text-sm text-foreground leading-5 font-medium"
         data-testid="typography"
         for="notification-switch-postEdited"
       >
