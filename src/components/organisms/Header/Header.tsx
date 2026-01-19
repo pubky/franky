@@ -13,6 +13,7 @@ export function Header() {
   const { isPublicRoute } = Hooks.usePublicRoute();
 
   const isOnboarding = pathname?.startsWith('/onboarding') ?? false;
+  const isCopyrightPage = pathname === '/copyright';
   const stepConfig = pathname ? pathToStepConfig[pathname] : undefined;
   const currentStep = stepConfig?.step ?? 1;
   const currentTitle = stepConfig?.title;
@@ -42,6 +43,15 @@ export function Header() {
     }
     return <Molecules.HeaderHome />;
   };
+
+  // Copyright page shows only logo (minimal header)
+  if (isCopyrightPage) {
+    return (
+      <Molecules.HeaderContainer>
+        <Molecules.Logo />
+      </Molecules.HeaderContainer>
+    );
+  }
 
   return (
     <Molecules.HeaderContainer className={shouldHideHeaderOnMobile ? 'hidden lg:block' : undefined}>
