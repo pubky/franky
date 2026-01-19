@@ -98,7 +98,7 @@ export class Identity {
    */
   static z32FromSecret(secretKey: string): Core.Pubky {
     const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-    const keypair = Keypair.fromSecret(secretKeyUint8Array);
+    const keypair = Keypair.fromSecretKey(secretKeyUint8Array);
     return keypair.publicKey.z32();
   }
 
@@ -118,7 +118,7 @@ export class Identity {
    */
   static pubkyFromSecret(secretKey: string): string {
     const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-    const keypair = Keypair.fromSecret(secretKeyUint8Array);
+    const keypair = Keypair.fromSecretKey(secretKeyUint8Array);
     return keypair.publicKey.toString();
   }
 
@@ -189,7 +189,7 @@ export class Identity {
   static keypairFromSecretKey(secretKey: string): Keypair {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      return Keypair.fromSecret(secretKeyUint8Array);
+      return Keypair.fromSecretKey(secretKeyUint8Array);
     } catch (error) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
@@ -251,7 +251,7 @@ export class Identity {
       // TODO: const secretKey = new Uint8Array(seedMnemonic.subarray(0, 32));
       const secretKey = seedMnemonic.slice(0, 32);
 
-      return Keypair.fromSecret(secretKey);
+      return Keypair.fromSecretKey(secretKey);
     } catch (error) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,

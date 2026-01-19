@@ -17,7 +17,7 @@ const mockKeypair = {
 
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
-    fromSecret: vi.fn(() => mockKeypair),
+    fromSecretKey: vi.fn(() => mockKeypair),
     fromRecoveryFile: vi.fn(() => mockKeypair),
   },
 }));
