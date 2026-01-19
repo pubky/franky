@@ -1368,31 +1368,36 @@ describe('Utils', () => {
     });
 
     it('should format a specific date correctly', () => {
-      const testDate = new Date('2024-12-25');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 11, 25); // Dec 25, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('12/25/2024');
     });
 
     it('should pad single digit months and days with zeros', () => {
-      const testDate = new Date('2024-01-05');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 0, 5); // Jan 5, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('01/05/2024');
     });
 
     it('should handle different years', () => {
-      const testDate = new Date('2030-06-15');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2030, 5, 15); // Jun 15, 2030
       const result = formatUSDate(testDate);
       expect(result).toBe('06/15/2030');
     });
 
     it('should handle end of year date', () => {
-      const testDate = new Date('2024-12-31');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 11, 31); // Dec 31, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('12/31/2024');
     });
 
     it('should handle beginning of year date', () => {
-      const testDate = new Date('2024-01-01');
+      // Use local date constructor to avoid timezone issues
+      const testDate = new Date(2024, 0, 1); // Jan 1, 2024
       const result = formatUSDate(testDate);
       expect(result).toBe('01/01/2024');
     });
