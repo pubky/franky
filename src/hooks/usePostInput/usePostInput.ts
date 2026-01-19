@@ -9,7 +9,7 @@ import {
   ATTACHMENT_MAX_IMAGE_SIZE,
   ATTACHMENT_MAX_OTHER_SIZE,
   ATTACHMENT_MAX_FILES,
-  SUPPORTED_FILE_EXTENSIONS,
+  SUPPORTED_FILE_TYPES,
 } from '@/config';
 import { useTimelineFeedContext } from '@/organisms/TimelineFeed/TimelineFeed';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
@@ -181,10 +181,10 @@ export function usePostInput({
         }
 
         // Check against specific supported MIME types from pubky-app-specs
-        const isAcceptedType = (SUPPORTED_ATTACHMENT_MIME_TYPES as readonly string[]).includes(file.type);
+        const isAcceptedType = SUPPORTED_ATTACHMENT_MIME_TYPES.includes(file.type);
         if (!isAcceptedType) {
           errors.push(
-            `"${file.name}" has unsupported type "${file.type}". Supported formats: ${SUPPORTED_FILE_EXTENSIONS}.`,
+            `"${file.name}" has unsupported type "${file.type}". Supported formats: ${SUPPORTED_FILE_TYPES}.`,
           );
           continue;
         }

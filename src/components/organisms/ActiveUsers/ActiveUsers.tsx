@@ -37,8 +37,7 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
   };
 
   const handleSeeAll = () => {
-    // TODO: Navigate to all active users page
-    Libs.Logger.debug('[ActiveUsers] See all clicked');
+    router.push(`${APP_ROUTES.HOT}`);
   };
 
   return (

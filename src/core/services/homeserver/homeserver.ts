@@ -136,7 +136,7 @@ export class HomeserverService {
         // Republish keypair's homeserver
         const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
         await signer.pkdns.publishHomeserverForce(homeserverPublicKey);
-        Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.pubkyFromKeypair(keypair) });
+        Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.z32FromKeypair(keypair) });
         // Return undefined to signal caller should retry signin after republish
         return undefined;
       } catch (republishError) {
@@ -146,7 +146,7 @@ export class HomeserverService {
           Libs.HomeserverErrorType.NOT_AUTHENTICATED,
           'Not authenticated. Please sign up first.',
           401,
-          { pubky: Libs.Identity.pubkyFromKeypair(keypair), originalSigninError: String(signinError) },
+          { pubky: Libs.Identity.z32FromKeypair(keypair), originalSigninError: String(signinError) },
         );
       }
     }
@@ -431,6 +431,13 @@ export class HomeserverService {
   }
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
+  /**
+   * Generates a signup token for dev/test environments.
+   * Calls the server-side API route to keep admin credentials secure.
+   *
+   * @security Admin credentials are never exposed to the client.
+   * The actual token generation happens server-side via /api/dev/signup-token.
+   */
   static async generateSignupToken() {
     // Allow in development or when Cypress is running (for E2E tests in production builds)
     const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
@@ -444,30 +451,25 @@ export class HomeserverService {
       );
     }
 
-    const endpoint = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
-    const password = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
-
-    const response = await fetch(endpoint, {
+    // Call server-side API route to generate token (keeps admin credentials secure)
+    const response = await fetch('/api/dev/signup-token', {
       method: 'GET',
-      headers: {
-        'X-Admin-Password': password,
-      },
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
       throw Libs.createCommonError(
         Libs.CommonErrorType.NETWORK_ERROR,
-        `Failed to generate signup token: ${response.status} ${errorText}`,
+        `Failed to generate signup token: ${response.status} ${errorData.error}`,
         response.status,
       );
     }
 
-    const token = (await response.text()).trim();
-    if (!token) {
+    const data = await response.json();
+    if (!data.token) {
       throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
     }
 
-    return token;
+    return data.token;
   }
 }

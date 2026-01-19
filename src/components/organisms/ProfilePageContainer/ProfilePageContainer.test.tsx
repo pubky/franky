@@ -24,7 +24,7 @@ vi.mock('@/providers', () => ({
 const mockProfile = {
   name: 'Test User',
   bio: 'Test bio',
-  publicKey: 'pk:user123',
+  publicKey: 'pubkyuser123',
   emoji: '🌴',
   status: 'Available',
   avatarUrl: 'https://example.com/avatar.jpg',

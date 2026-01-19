@@ -33,13 +33,14 @@ const mockState = vi.hoisted(() => ({
   currentSession: null as Session | null,
 }));
 
-// Mock global fetch for generateSignupToken tests
+// Mock global fetch for generateSignupToken tests (calls /api/dev/signup-token)
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
 // Mock Logger to suppress console output during tests
@@ -105,7 +106,7 @@ vi.mock('@synonymdev/pubky', () => {
     },
     Keypair: {
       random: vi.fn(),
-      fromSecretKey: vi.fn(),
+      fromSecret: vi.fn(),
     },
     AuthFlowKind: {
       signin: () => mockState.authFlowKindSignin(),
@@ -146,7 +147,7 @@ const createMockKeypair = (): Keypair =>
     publicKey: {
       z32: () => 'test-public-key-z32',
     } as PublicKey,
-    secretKey: new Uint8Array(32).fill(1),
+    secret: vi.fn(() => new Uint8Array(32).fill(1)),
   }) as unknown as Keypair;
 
 // =============================================================================
@@ -834,27 +835,29 @@ describe('HomeserverService', () => {
       });
     });
 
-    describe('generateSignupToken (admin utility)', () => {
-      it('should fetch token from admin endpoint with auth header', async () => {
+    describe('generateSignupToken (via API route)', () => {
+      it('should fetch token from server-side API route', async () => {
         const expectedToken = 'generated-signup-token-123';
-        mockFetch.mockResolvedValue(new Response(expectedToken, { status: 200 }));
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({ token: expectedToken }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         const result = await HomeserverService.generateSignupToken();
 
-        expect(mockFetch).toHaveBeenCalledWith(
-          expect.any(String), // Admin URL from env
-          expect.objectContaining({
-            method: 'GET',
-            headers: expect.objectContaining({
-              'X-Admin-Password': expect.any(String),
-            }),
-          }),
-        );
+        expect(mockFetch).toHaveBeenCalledWith('/api/dev/signup-token', { method: 'GET' });
         expect(result).toBe(expectedToken);
       });
 
       it('should throw NETWORK_ERROR for non-OK response', async () => {
-        mockFetch.mockResolvedValue(new Response('Forbidden', { status: 403 }));
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         await expect(HomeserverService.generateSignupToken()).rejects.toMatchObject({
           type: Libs.CommonErrorType.NETWORK_ERROR,
@@ -862,19 +865,30 @@ describe('HomeserverService', () => {
       });
 
       it('should throw UNEXPECTED_ERROR when no token received', async () => {
-        mockFetch.mockResolvedValue(new Response('', { status: 200 }));
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({}), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         await expect(HomeserverService.generateSignupToken()).rejects.toMatchObject({
           type: Libs.CommonErrorType.UNEXPECTED_ERROR,
         });
       });
 
-      it('should trim whitespace from received token', async () => {
-        mockFetch.mockResolvedValue(new Response('  token-with-spaces  \n', { status: 200 }));
+      it('should return token from JSON response', async () => {
+        const expectedToken = 'token-from-json';
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({ token: expectedToken }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         const result = await HomeserverService.generateSignupToken();
 
-        expect(result).toBe('token-with-spaces');
+        expect(result).toBe(expectedToken);
       });
     });
 

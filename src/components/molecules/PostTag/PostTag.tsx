@@ -27,6 +27,8 @@ export function PostTag({
         e.stopPropagation();
         onClick?.(e);
       }}
+      data-cy="post-tag"
+      data-tag-label={label}
       className={Libs.cn(
         'group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg',
         'border-0 text-sm leading-5 font-bold text-white',
@@ -45,8 +47,14 @@ export function PostTag({
     >
       {/* Tag content */}
       <span className="flex items-center gap-1.5 text-sm leading-5">
-        <span className="font-bold">{label}</span>
-        {count !== undefined && <span className="font-medium opacity-50">{count}</span>}
+        <span data-cy="post-tag-label" className="font-bold">
+          {label}
+        </span>
+        {count !== undefined && (
+          <span data-cy="post-tag-count" className="font-medium opacity-50">
+            {count}
+          </span>
+        )}
       </span>
 
       {/* Close button */}

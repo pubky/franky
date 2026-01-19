@@ -17,6 +17,21 @@ vi.mock('@/libs', async () => {
   return { ...actual };
 });
 
+// Mock Core - component now uses useAuthStore directly for isAuthenticated
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
+  return {
+    ...actual,
+    useAuthStore: vi.fn((selector) => {
+      const state = {
+        currentUserPubky: 'pk:test-user-pubky',
+        setShowSignInDialog: vi.fn(),
+      };
+      return selector(state);
+    }),
+  };
+});
+
 describe('MobileHeader', () => {
   it('renders with default props', () => {
     render(<MobileHeader />);
@@ -104,8 +119,8 @@ describe('MobileHeader', () => {
     const leftIcon = document.querySelector('.lucide-sliders-horizontal');
     const rightIcon = document.querySelector('.lucide-activity');
 
-    expect(leftIcon).toHaveClass('h-6', 'w-6');
-    expect(rightIcon).toHaveClass('h-6', 'w-6');
+    expect(leftIcon).toHaveClass('size-6');
+    expect(rightIcon).toHaveClass('size-6');
   });
 
   it('handles hover states correctly', () => {
