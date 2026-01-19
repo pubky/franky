@@ -9,6 +9,8 @@ export * from './Homeserver';
 export * from './ButtonFilters';
 export * from './ButtonsNavigation';
 export * from './Content';
+export * from './ControlledInputField';
+export * from './ControlledTextareaField';
 export * from './DialogConfirmDiscard';
 export * from './FAQAccordion';
 export * from './Header';
