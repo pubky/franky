@@ -627,17 +627,13 @@ export function shouldBypassLinkConfirmation(url: string): boolean {
 }
 
 /**
- * Count characters properly (grapheme-aware for short texts)
- *
- * For texts under 5K characters: Uses Array.from() to handle emojis correctly
- * For texts 5K+ characters: Uses string.length for performance (avoids UI lag)
- *
+ * Count characters properly (grapheme-aware)
+ * Uses Array.from() to handle emojis and Unicode correctly.
  * Standard string.length counts UTF-16 code units, which makes
- * emojis like 👍 count as 2 instead of 1. For short texts we handle this,
- * but for long texts the difference is negligible and performance matters more.
+ * emojis like 👍 count as 2 instead of 1.
  *
  * @param text - The string to count characters in
- * @returns The number of grapheme characters (approximate for large texts)
+ * @returns The number of grapheme characters
  *
  * @example
  * getCharacterCount('Hello') // 5
@@ -645,13 +641,6 @@ export function shouldBypassLinkConfirmation(url: string): boolean {
  * getCharacterCount('Hello 👍') // 7
  */
 export function getCharacterCount(text: string): number {
-  // For large texts, use simple length to prevent UI lag
-  // The difference (emojis counting as 2) is negligible at this scale
-  if (text.length > 5000) {
-    return text.length;
-  }
-
-  // For shorter texts, count graphemes properly (handles emojis)
   return Array.from(text).length;
 }
 
@@ -702,21 +691,6 @@ export function sanitizeTagInput(value: string): string {
  * canSubmitPost('post', 'Content', [], false, true, 'Title') // true (article)
  * canSubmitPost('post', 'Content', [], false, true, '') // false (article without title)
  */
-/**
- * Fast check if a string has non-whitespace content
- * Avoids creating new string objects like .trim() does
- */
-function hasNonWhitespaceContent(str: string | undefined): boolean {
-  if (!str) return false;
-  // For very long strings, just check first and last chars + existence
-  // This is much faster than .trim() on 50K+ character strings
-  if (str.length > 1000) {
-    // If it has content and doesn't start/end with only whitespace, it's valid
-    return str.length > 0 && !/^\s*$/.test(str.slice(0, 100) + str.slice(-100));
-  }
-  return str.trim().length > 0;
-}
-
 export function canSubmitPost(
   variant: 'post' | 'reply' | 'repost',
   content: string,
@@ -730,18 +704,12 @@ export function canSubmitPost(
   // Reposts allow empty content, posts and replies require content or attachments
   if (variant === 'repost') return true;
 
-  // Articles require both content and title, and must not exceed total limit
+  // Articles require both content and title
   if (isArticle) {
-    if (!hasNonWhitespaceContent(content) || !hasNonWhitespaceContent(articleTitle)) {
-      return false;
-    }
-    // Check total character limit (title + body + JSON overhead of 22)
-    const totalChars = (articleTitle?.length || 0) + content.length + 22;
-    const ARTICLE_TOTAL_MAX = 50000;
-    return totalChars <= ARTICLE_TOTAL_MAX;
+    return !!content.trim() && !!articleTitle?.trim();
   }
 
-  return hasNonWhitespaceContent(content) || attachments.length > 0;
+  return Boolean(content.trim()) || attachments.length > 0;
 }
 
 /**

@@ -1289,53 +1289,6 @@ describe('Utils', () => {
       expect(getCharacterCount('Tab\tHere')).toBe(8);
       expect(getCharacterCount('!@#$%^&*()')).toBe(10);
     });
-
-    describe('performance optimization for large strings', () => {
-      it('should use .length for strings over 5000 characters', () => {
-        // Create a large string with no emojis
-        const largeString = 'a'.repeat(6000);
-        // For large strings, uses .length directly
-        expect(getCharacterCount(largeString)).toBe(6000);
-      });
-
-      it('should handle large strings with emojis at start', () => {
-        // Large string starting with emoji
-        const largeWithEmoji = '👍' + 'a'.repeat(5500);
-        // For large strings, uses .length (emoji counts as 2 in .length)
-        expect(getCharacterCount(largeWithEmoji)).toBe(5502); // 2 (emoji) + 5500
-      });
-
-      it('should count properly for strings at the threshold (5000)', () => {
-        // Exactly at threshold - uses Array.from for accuracy
-        const atThreshold = 'a'.repeat(5000);
-        expect(getCharacterCount(atThreshold)).toBe(5000);
-      });
-
-      it('should count properly for strings just under threshold (4999)', () => {
-        const underThreshold = 'a'.repeat(4999);
-        expect(getCharacterCount(underThreshold)).toBe(4999);
-      });
-
-      it('should count properly for strings just over threshold (5001)', () => {
-        const overThreshold = 'a'.repeat(5001);
-        expect(getCharacterCount(overThreshold)).toBe(5001);
-      });
-
-      it('should handle very large article-sized content', () => {
-        // Simulate article content (50k chars)
-        const articleContent = 'a'.repeat(50000);
-        expect(getCharacterCount(articleContent)).toBe(50000);
-      });
-
-      it('should be performant for very large strings', () => {
-        const hugeString = 'a'.repeat(100000);
-        const start = performance.now();
-        getCharacterCount(hugeString);
-        const end = performance.now();
-        // Should complete in less than 10ms
-        expect(end - start).toBeLessThan(10);
-      });
-    });
   });
 
   describe('sanitizeTagInput', () => {
@@ -1500,69 +1453,6 @@ describe('Utils', () => {
 
       it('should return false when submitting even with valid content and title', () => {
         expect(canSubmitPost('post', 'Article content', [], true, true, 'Article Title')).toBe(false);
-      });
-    });
-
-    describe('article character limit validation', () => {
-      const ARTICLE_TOTAL_MAX = 50000;
-      const JSON_OVERHEAD = 22;
-
-      it('should return true when total is under the limit', () => {
-        const title = 'Test Title'; // 10 chars
-        const body = 'Test body content'; // 17 chars
-        // Total = 10 + 17 + 22 = 49 chars (well under 50000)
-        expect(canSubmitPost('post', body, [], false, true, title)).toBe(true);
-      });
-
-      it('should return true when exactly at the limit', () => {
-        const title = 'A'.repeat(100); // 100 chars
-        const bodyLength = ARTICLE_TOTAL_MAX - 100 - JSON_OVERHEAD; // 49878 chars
-        const body = 'A'.repeat(bodyLength);
-        // Total = 100 + 49878 + 22 = 50000
-        expect(canSubmitPost('post', body, [], false, true, title)).toBe(true);
-      });
-
-      it('should return false when 1 character over the limit', () => {
-        const title = 'A'.repeat(100); // 100 chars
-        const bodyLength = ARTICLE_TOTAL_MAX - 100 - JSON_OVERHEAD + 1; // 49879 chars
-        const body = 'A'.repeat(bodyLength);
-        // Total = 100 + 49879 + 22 = 50001
-        expect(canSubmitPost('post', body, [], false, true, title)).toBe(false);
-      });
-
-      it('should return false when significantly over the limit', () => {
-        const title = 'A'.repeat(100); // 100 chars
-        const body = 'A'.repeat(50000); // Way over
-        // Total = 100 + 50000 + 22 = 50122
-        expect(canSubmitPost('post', body, [], false, true, title)).toBe(false);
-      });
-
-      it('should correctly calculate limit with short title', () => {
-        const title = 'Hi'; // 2 chars
-        const bodyLength = ARTICLE_TOTAL_MAX - 2 - JSON_OVERHEAD; // 49976 chars
-        const body = 'A'.repeat(bodyLength);
-        // Total = 2 + 49976 + 22 = 50000
-        expect(canSubmitPost('post', body, [], false, true, title)).toBe(true);
-      });
-
-      it('should correctly reject when short title but body too long', () => {
-        const title = 'Hi'; // 2 chars
-        const bodyLength = ARTICLE_TOTAL_MAX - 2 - JSON_OVERHEAD + 1; // 49977 chars
-        const body = 'A'.repeat(bodyLength);
-        // Total = 2 + 49977 + 22 = 50001
-        expect(canSubmitPost('post', body, [], false, true, title)).toBe(false);
-      });
-
-      it('should handle empty title (still requires non-empty)', () => {
-        const body = 'A'.repeat(1000);
-        // Empty title should fail validation regardless of body
-        expect(canSubmitPost('post', body, [], false, true, '')).toBe(false);
-      });
-
-      it('should handle empty body (still requires non-empty)', () => {
-        const title = 'Test Title';
-        // Empty body should fail validation regardless of title
-        expect(canSubmitPost('post', '', [], false, true, title)).toBe(false);
       });
     });
 

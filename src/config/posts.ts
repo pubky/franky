@@ -10,29 +10,11 @@ export const POST_MAX_TAGS = 5;
 /** Maximum character length for post content */
 export const POST_MAX_CHARACTER_LENGTH = 2000;
 
-/**
- * Maximum TOTAL character length for article content (stored as JSON)
- * This includes: title + body + JSON overhead (22 chars for {"title":"","body":""})
- */
-export const ARTICLE_TOTAL_MAX_CHARACTER_LENGTH = 50000;
-
-/**
- * JSON overhead when storing article content
- * Format: {"title":"...","body":"..."}
- * Overhead: {"title":"","body":""} = 22 characters
- */
-export const ARTICLE_JSON_OVERHEAD = 22;
+/** Maximum character length for article content */
+export const ARTICLE_MAX_CHARACTER_LENGTH = 50000;
 
 /** Maximum character length for article title */
 export const ARTICLE_TITLE_MAX_CHARACTER_LENGTH = 100;
-
-/**
- * Maximum character length for article body
- * Calculated as: TOTAL - JSON_OVERHEAD - max title length
- * This ensures the total never exceeds ARTICLE_TOTAL_MAX_CHARACTER_LENGTH
- */
-export const ARTICLE_BODY_MAX_CHARACTER_LENGTH =
-  ARTICLE_TOTAL_MAX_CHARACTER_LENGTH - ARTICLE_JSON_OVERHEAD - ARTICLE_TITLE_MAX_CHARACTER_LENGTH;
 
 /** Maximum character length for a tag */
 export const TAG_MAX_LENGTH = 20;
