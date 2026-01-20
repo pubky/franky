@@ -114,7 +114,7 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
 // This is to ensure that the IDs are consistent across test runs
 export const normaliseRadixIds = (container: HTMLElement) => {
   const clonedContainer = container.cloneNode(true) as HTMLElement;
-  const normalizedId = 'radix-_r_0_';
+  const normalizedId = 'radix-normalized';
   const radixIdPatterns = [/^radix-_r_[\da-z]+_?$/i, /^_r_[\da-z]+_?$/i];
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
@@ -698,4 +698,126 @@ export function canSubmitPost(
   if (variant === 'repost') return true;
 
   return Boolean(content.trim()) || attachments.length > 0;
+}
+
+/**
+ * Formats a date to US locale format (MM/DD/YYYY)
+ *
+ * @param date - The date to format (defaults to current date)
+ * @returns Formatted date string in MM/DD/YYYY format
+ *
+ * @example
+ * formatUSDate() // "01/15/2026" (current date)
+ * formatUSDate(new Date('2024-12-25')) // "12/25/2024"
+ */
+export function formatUSDate(date: Date = new Date()): string {
+  return date.toLocaleDateString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Word lists for random username generation
+ * Format: Adjective-Noun-Noun (e.g., "Blue-Rabbit-Hat")
+ */
+const USERNAME_ADJECTIVES = [
+  'Blue',
+  'Red',
+  'Green',
+  'Golden',
+  'Silver',
+  'Purple',
+  'Orange',
+  'Pink',
+  'Cosmic',
+  'Bright',
+  'Swift',
+  'Noble',
+  'Brave',
+  'Calm',
+  'Bold',
+  'Wild',
+  'Wise',
+  'Lucky',
+  'Happy',
+  'Sunny',
+  'Misty',
+  'Rusty',
+  'Dusty',
+  'Frosty',
+  'Mighty',
+  'Gentle',
+  'Clever',
+  'Silent',
+  'Ancient',
+  'Mystic',
+];
+
+const USERNAME_NOUNS = [
+  'Rabbit',
+  'Fox',
+  'Wolf',
+  'Bear',
+  'Eagle',
+  'Hawk',
+  'Owl',
+  'Tiger',
+  'Lion',
+  'Panda',
+  'Koala',
+  'Dolphin',
+  'Falcon',
+  'Phoenix',
+  'Dragon',
+  'Raven',
+  'Sparrow',
+  'Otter',
+  'Badger',
+  'Lynx',
+  'Hat',
+  'Star',
+  'Moon',
+  'Sun',
+  'Cloud',
+  'Storm',
+  'Wave',
+  'Stone',
+  'Crystal',
+  'Flame',
+  'Frost',
+  'Wind',
+  'Thunder',
+  'Shadow',
+  'Light',
+  'Blade',
+  'Shield',
+  'Crown',
+  'Tower',
+  'Garden',
+];
+
+/**
+ * Generates a random username in the format "Adjective-Noun-Noun"
+ * Creates unique, memorable usernames like "Blue-Rabbit-Hat" or "Golden-Eagle-Star"
+ *
+ * @returns A random username string
+ *
+ * @example
+ * generateRandomUsername() // "Blue-Rabbit-Hat"
+ * generateRandomUsername() // "Golden-Eagle-Star"
+ * generateRandomUsername() // "Swift-Fox-Moon"
+ */
+export function generateRandomUsername(): string {
+  const randomAdjective = USERNAME_ADJECTIVES[Math.floor(Math.random() * USERNAME_ADJECTIVES.length)];
+  const randomNoun1 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+
+  // Ensure second noun is different from the first
+  let randomNoun2 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+  while (randomNoun2 === randomNoun1) {
+    randomNoun2 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+  }
+
+  return `${randomAdjective}-${randomNoun1}-${randomNoun2}`;
 }

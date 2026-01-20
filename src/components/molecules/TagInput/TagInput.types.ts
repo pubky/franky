@@ -21,4 +21,6 @@ export interface TagInputProps {
   limitReachedPlaceholder?: string;
   /** Callback when input loses focus */
   onBlur?: () => void;
+  /** Callback when the input container is clicked (useful for auth prompts) */
+  onClick?: (e: React.MouseEvent) => void;
 }

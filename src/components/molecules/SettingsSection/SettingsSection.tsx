@@ -16,8 +16,8 @@ export const SettingsSection = React.memo(function SettingsSection({
   iconClassName: _iconClassName,
 }: SettingsSectionProps) {
   return (
-    <Atoms.Container overrideDefaults className="flex flex-col items-start justify-start">
-      <Atoms.Container overrideDefaults className="inline-flex items-center justify-start pb-6">
+    <Atoms.Container overrideDefaults className="flex flex-col items-start justify-start gap-3">
+      <Atoms.Container overrideDefaults className="inline-flex items-center justify-start">
         <Atoms.Heading level={2} size="lg" className={titleClassName}>
           {title}
         </Atoms.Heading>
@@ -26,7 +26,7 @@ export const SettingsSection = React.memo(function SettingsSection({
         as="p"
         size="md"
         overrideDefaults
-        className="pb-6 text-base leading-6 font-medium text-secondary-foreground"
+        className="text-base leading-6 font-medium text-secondary-foreground"
       >
         {description}
       </Atoms.Typography>

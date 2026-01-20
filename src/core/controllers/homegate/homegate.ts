@@ -18,13 +18,23 @@ export class HomegateController {
   }
 
   /**
-   * Get the Lightning Network verification price.
+   * Get SMS verification availability info.
    *
-   * @returns The price in satoshis
+   * @returns The availability status
    * @throws AppError if retrieval fails
    */
-  static async getLnVerificationPrice(): Promise<Core.TGetLnVerificationPriceResult> {
-    return await Core.HomegateApplication.getLnVerificationPrice();
+  static async getSmsVerificationInfo(): Promise<Core.THomegateSmsInfoResult> {
+    return await Core.HomegateApplication.getSmsVerificationInfo();
+  }
+
+  /**
+   * Get Lightning Network verification availability and price.
+   *
+   * @returns The availability status and price if available
+   * @throws AppError if retrieval fails
+   */
+  static async getLnVerificationInfo(): Promise<Core.THomegateLnInfoResult> {
+    return await Core.HomegateApplication.getLnVerificationInfo();
   }
 
   /**

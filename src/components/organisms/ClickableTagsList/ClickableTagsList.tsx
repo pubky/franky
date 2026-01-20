@@ -5,6 +5,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import * as Core from '@/core';
 import type { ClickableTagsListProps } from './ClickableTagsList.types';
 import {
   CLICKABLE_TAGS_DEFAULT_MAX_LENGTH,
@@ -26,6 +27,10 @@ import {
  * - Optional input for adding new tags
  * - Optional add button
  * - Optional close button on tags
+ *
+ * For unauthenticated users:
+ * - All UI elements are visible
+ * - Any click opens sign-in dialog (following pubky-app pattern)
  */
 export function ClickableTagsList({
   taggedId,
@@ -50,6 +55,10 @@ export function ClickableTagsList({
   // State for add mode input visibility
   const [isAdding, setIsAdding] = React.useState(addMode ? false : showInput);
   const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Auth requirement for tag actions
+  const { isAuthenticated, requireAuth } = Hooks.useRequireAuth();
+  const setShowSignInDialog = Core.useAuthStore((state) => state.setShowSignInDialog);
 
   // Use unified entity tags hook
   const {
@@ -83,16 +92,18 @@ export function ClickableTagsList({
     }
   }, [addMode, isAdding, tagInput.inputValue]);
 
-  // Handle tag click (toggle or custom handler)
+  // Handle tag click with auth requirement (toggle or custom handler)
   const handleTagClick = React.useCallback(
     (tag: (typeof fetchedTags)[number], index: number, e: React.MouseEvent) => {
-      if (onTagClick) {
-        onTagClick(tag, index, e);
-      } else {
-        handleTagToggle(tag);
-      }
+      requireAuth(() => {
+        if (onTagClick) {
+          onTagClick(tag, index, e);
+        } else {
+          void handleTagToggle(tag);
+        }
+      });
     },
-    [onTagClick, handleTagToggle],
+    [onTagClick, handleTagToggle, requireAuth],
   );
 
   // Apply smart limiting based on character budget (memoized for performance)
@@ -108,10 +119,22 @@ export function ClickableTagsList({
 
   // Check if we should render anything
   const hasVisibleTags = visibleTags.length > 0;
+  // Show input for all users (unauthenticated users see dialog on click)
   const hasInput = showInput || isAdding;
   const hasAddButton = showAddButton && !showInput && !isAdding;
 
   if (!hasVisibleTags && !hasInput && !hasAddButton) return null;
+
+  // Handle add button click with auth requirement
+  const handleAddButtonClick = () => {
+    requireAuth(() => {
+      onAddButtonClick?.();
+      if (addMode) setIsAdding(true);
+    });
+  };
+
+  // For unauthenticated users, clicking input opens sign-in dialog
+  const handleInputClick = !isAuthenticated ? () => setShowSignInDialog(true) : undefined;
 
   return (
     <Atoms.Container
@@ -123,7 +146,7 @@ export function ClickableTagsList({
       {visibleTags.map((tag, index) => (
         <Molecules.PostTag
           key={`${taggedId}-${tag.label}`}
-          label={Libs.truncateString(tag.label, maxTagLength)}
+          label={tag.label}
           count={showCount ? tag.taggers_count : undefined}
           color={Libs.generateRandomColor(tag.label)}
           selected={isViewerTagger(tag)}
@@ -133,32 +156,27 @@ export function ClickableTagsList({
         />
       ))}
 
-      {/* Add tag input */}
+      {/* Add tag input - visible to all, clicks open dialog for unauthenticated */}
       {hasInput && (
         <Molecules.PostTagInput
           ref={inputRef}
           value={tagInput.inputValue}
-          onChange={tagInput.setInputValue}
-          onSubmit={tagInput.handleTagSubmit}
+          onChange={isAuthenticated ? tagInput.setInputValue : undefined}
+          onSubmit={isAuthenticated ? tagInput.handleTagSubmit : undefined}
           onBlur={() => {
             if (addMode && !tagInput.inputValue) setIsAdding(false);
           }}
           showEmojiPicker={showEmojiPicker}
-          onEmojiClick={onEmojiClick}
+          onEmojiClick={isAuthenticated ? onEmojiClick : () => setShowSignInDialog(true)}
           className="w-32 shrink-0"
-          autoFocus={isAdding}
+          autoFocus={isAuthenticated && isAdding}
+          disabled={!isAuthenticated}
+          onClick={handleInputClick}
         />
       )}
 
-      {/* Add button (alternative to input) */}
-      {hasAddButton && (
-        <Molecules.PostTagAddButton
-          onClick={() => {
-            onAddButtonClick?.();
-            if (addMode) setIsAdding(true);
-          }}
-        />
-      )}
+      {/* Add button (alternative to input) - shows sign-in dialog for unauthenticated */}
+      {hasAddButton && <Molecules.PostTagAddButton onClick={handleAddButtonClick} />}
     </Atoms.Container>
   );
 }

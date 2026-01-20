@@ -61,7 +61,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
         class="text-foreground text-sm font-bold"
         data-testid="typography"
       >
-        Tag User
+        Add Tag
       </span>
     </button>
   </div>
@@ -79,17 +79,46 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
       class="mx-auto w-full flex-col flex"
       data-testid="container"
     >
-      <div
-        class="mx-auto w-full mt-2 flex flex-col"
-        data-testid="container"
+      <span
+        class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
+        No links added yet.
+      </span>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs hover:text-accent-foreground hover:bg-input/50 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 mt-2 border border-border bg-foreground/5"
+        data-cy="profile-add-link-btn"
+        data-size="sm"
+        data-slot="button"
+        data-variant="outline"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-link text-foreground"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+          />
+          <path
+            d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+          />
+        </svg>
         <span
-          class="text-base font-medium text-muted-foreground"
+          class="text-foreground text-sm font-bold"
           data-testid="typography"
         >
-          No links added yet.
+          Add Link
         </span>
-      </div>
+      </button>
     </div>
   </div>
   <div

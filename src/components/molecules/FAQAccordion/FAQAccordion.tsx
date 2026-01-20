@@ -7,19 +7,19 @@ import type { FAQAccordionProps } from './FAQAccordion.types';
 
 export function FAQAccordion({ items, className }: FAQAccordionProps) {
   return (
-    <AccordionPrimitive.Root type="single" collapsible className={Libs.cn('flex w-full flex-col gap-4', className)}>
+    <AccordionPrimitive.Root type="single" collapsible className={Libs.cn('flex w-full flex-col gap-3', className)}>
       {items.map((item) => (
         <AccordionPrimitive.Item
           key={item.id}
           value={item.id}
-          className="w-full overflow-hidden rounded-lg border border-border"
+          className="w-full overflow-hidden rounded-md border border-border"
         >
           <AccordionPrimitive.Header>
             <AccordionPrimitive.Trigger className="group flex w-full cursor-pointer items-center justify-between px-6 py-4 transition-colors hover:bg-white/5">
-              <span className="text-left text-base font-semibold">{item.question}</span>
+              <span className="text-left text-sm leading-5 font-medium text-popover-foreground">{item.question}</span>
               <Libs.ChevronRight
                 size={16}
-                className="ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-90"
+                className="ml-4 shrink-0 transition-transform group-data-[state=open]:rotate-90"
               />
             </AccordionPrimitive.Trigger>
           </AccordionPrimitive.Header>

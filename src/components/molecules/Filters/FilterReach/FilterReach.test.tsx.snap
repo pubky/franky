@@ -10,7 +10,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,13 +20,13 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -163,7 +163,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All selected tab 1`] = 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -173,13 +173,13 @@ exports[`FilterReach - Snapshots > matches snapshot with All selected tab 1`] = 
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -316,7 +316,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -326,13 +326,13 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -469,7 +469,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -479,13 +479,13 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -622,7 +622,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -632,13 +632,13 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >

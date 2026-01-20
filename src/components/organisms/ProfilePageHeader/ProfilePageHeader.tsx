@@ -32,7 +32,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
   return (
     <Atoms.Container
       overrideDefaults={true}
-      className="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
+      className="flex min-w-0 flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
       data-testid="profile-page-header"
     >
       <Atoms.Container overrideDefaults={true} className="relative cursor-pointer lg:px-4" onClick={onAvatarClick}>
@@ -46,13 +46,18 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
         <Atoms.AvatarEmojiBadge emoji={displayEmoji} />
       </Atoms.Container>
 
-      <Atoms.Container overrideDefaults={true} className="flex flex-1 flex-col gap-5">
+      <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 flex-col gap-5">
         <Atoms.Container
           overrideDefaults={true}
-          className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}
+          className={Libs.cn('flex min-w-0 flex-col text-center lg:text-left', bio && 'gap-2')}
         >
-          <Atoms.Typography data-cy="profile-username-header" as="h1" size="lg" className="text-white lg:text-6xl">
-            {Libs.truncateString(name, 20)}
+          <Atoms.Typography
+            data-cy="profile-username-header"
+            as="h1"
+            size="lg"
+            className="truncate text-white lg:text-6xl"
+          >
+            {name}
           </Atoms.Typography>
           {bio && (
             <Atoms.Typography

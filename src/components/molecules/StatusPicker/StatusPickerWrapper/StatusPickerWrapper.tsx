@@ -34,7 +34,7 @@ export function StatusPickerWrapper({
       overrideDefaults={true}
       className="flex h-8 cursor-pointer items-center gap-1 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
     >
-      <span className="text-base leading-6">{parsed.emoji}</span>
+      {parsed.emoji && <span className="text-base leading-6">{parsed.emoji}</span>}
       <span className="text-base leading-6 font-bold text-white">{parsed.text}</span>
       <Icons.ChevronDown className={Libs.cn('size-6 transition-transform duration-300', open && 'rotate-180')} />
     </Atoms.Button>

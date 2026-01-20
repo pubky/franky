@@ -2,20 +2,25 @@
 
 exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
 <div
-  class="inline-flex w-full flex-col items-start justify-start gap-6 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
+  class="flex w-full flex-col items-start justify-start gap-6"
 >
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      New follower
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-follow"
+      >
+        New follower
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-follow"
       role="switch"
@@ -23,23 +28,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      New friend
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-newFriend"
+      >
+        New friend
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-newFriend"
       role="switch"
@@ -47,23 +57,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      Someone tagged your post
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-tagPost"
+      >
+        Someone tagged your post
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-tagPost"
       role="switch"
@@ -71,23 +86,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      Someone tagged your profile
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-tagProfile"
+      >
+        Someone tagged your profile
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-tagProfile"
       role="switch"
@@ -95,23 +115,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      Someone mentioned your profile
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-mention"
+      >
+        Someone mentioned your profile
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-mention"
       role="switch"
@@ -119,23 +144,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      New reply to your post
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-reply"
+      >
+        New reply to your post
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-reply"
       role="switch"
@@ -143,23 +173,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      New repost to your post
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-repost"
+      >
+        New repost to your post
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-repost"
       role="switch"
@@ -167,23 +202,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      Someone deleted the post you interacted with
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-postDeleted"
+      >
+        Someone deleted the post you interacted with
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-postDeleted"
       role="switch"
@@ -191,23 +231,28 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
-    class="inline-flex h-8 w-full items-center justify-between"
+    class="flex w-full items-center justify-between gap-3"
   >
-    <p
-      class="text-sm text-foreground font-semibold"
-      data-testid="typography"
+    <div
+      class="flex flex-1 flex-col items-start gap-2"
     >
-      Someone edited the post you interacted with
-    </p>
+      <label
+        class="text-sm text-foreground leading-5 font-medium"
+        data-testid="typography"
+        for="notification-switch-postEdited"
+      >
+        Someone edited the post you interacted with
+      </label>
+    </div>
     <button
       aria-checked="true"
-      class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
+      class="peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent px-0.5 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-muted data-[state=checked]:bg-brand"
       data-state="checked"
       id="notification-switch-postEdited"
       role="switch"
@@ -215,7 +260,7 @@ exports[`NotificationSettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>

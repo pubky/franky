@@ -1,18 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 import * as App from '@/app';
 
 export function Account() {
   const router = useRouter();
+  const { toast } = Molecules.useToast();
+  const [loadingSignOut, setLoadingSignOut] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const showErrorToast = useCallback(
+    (description: string) => {
+      toast({
+        title: 'Error',
+        description,
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
+      });
+    },
+    [toast],
+  );
+
+  const handleSignOut = async () => {
+    setLoadingSignOut(true);
+    try {
+      await Core.AuthController.logout();
+      router.push(App.AUTH_ROUTES.LOGOUT);
+    } catch (error) {
+      Libs.Logger.error('Failed to sign out:', { error });
+      showErrorToast('Failed to sign out. Please try again.');
+      setLoadingSignOut(false);
+    }
+  };
 
   const handleDownloadData = async () => {
     setLoadingDownload(true);
@@ -34,7 +60,20 @@ export function Account() {
 
   return (
     <>
-      <Molecules.SettingsSectionCard>
+      <Molecules.SettingsSectionCard icon={Libs.UserRound} title="Account">
+        <Molecules.SettingsSection
+          icon={Libs.LogOut}
+          title="Sign out from Pubky"
+          description="Sign out to protect your account from unauthorized access."
+          buttonText={loadingSignOut ? 'Signing out...' : 'Sign out'}
+          buttonIcon={Libs.LogOut}
+          buttonId="sign-out-btn"
+          buttonDisabled={loadingSignOut}
+          buttonOnClick={handleSignOut}
+        />
+
+        <Molecules.SettingsDivider />
+
         <Molecules.SettingsSection
           icon={Libs.Pencil}
           title="Edit your profile"
@@ -48,15 +87,15 @@ export function Account() {
         <Molecules.SettingsDivider />
 
         <Molecules.SettingsSection
-          icon={Libs.Lock}
-          title="Back up your account"
+          icon={Libs.LockKeyhole}
+          title="Backup your account"
           description={
             disposableAccount
               ? 'Without a backup you lose your account if you close your browser!'
               : 'You have already completed the backup, or closed your browser before doing so. Your recovery file and seed phrase have been deleted.'
           }
-          buttonText="Back up account"
-          buttonIcon={Libs.Lock}
+          buttonText="Back up"
+          buttonIcon={Libs.LockKeyhole}
           buttonId="backup-account-btn"
           buttonDisabled={!disposableAccount}
           buttonOnClick={() => {}}

@@ -5,20 +5,20 @@ exports[`DialogReportPost - Snapshots > matches snapshot for issue selection ste
   class="fixed inset-0 z-50 flex items-center justify-center"
 >
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
     data-cy="dialog-content"
     data-slot="dialog-content"
     data-state="open"
     data-testid="dialog-content"
-    id="radix-_r_0_"
+    id="radix-normalized"
     role="dialog"
     style="pointer-events: auto;"
     tabindex="-1"
   >
     <h2
       class="sr-only"
-      id="radix-_r_0_"
+      id="radix-normalized"
     >
       Report Post
     </h2>
@@ -31,14 +31,14 @@ exports[`DialogReportPost - Snapshots > matches snapshot for issue selection ste
         class="text-xl/[1.4] font-bold text-foreground sm:text-2xl/[1.333] sr-only"
         data-slot="dialog-title"
         data-testid="dialog-title"
-        id="radix-_r_0_"
+        id="radix-normalized"
       >
         Report Post
       </h2>
       <p
         class="text-sm leading-normal font-medium text-muted-foreground sr-only"
         data-slot="dialog-description"
-        id="radix-_r_0_"
+        id="radix-normalized"
       >
         Report post dialog
       </p>
@@ -89,20 +89,20 @@ exports[`DialogReportPost - Snapshots > matches snapshot for reason step 1`] = `
   class="fixed inset-0 z-50 flex items-center justify-center"
 >
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
     data-cy="dialog-content"
     data-slot="dialog-content"
     data-state="open"
     data-testid="dialog-content"
-    id="radix-_r_0_"
+    id="radix-normalized"
     role="dialog"
     style="pointer-events: auto;"
     tabindex="-1"
   >
     <h2
       class="sr-only"
-      id="radix-_r_0_"
+      id="radix-normalized"
     >
       Report Post
     </h2>
@@ -115,14 +115,14 @@ exports[`DialogReportPost - Snapshots > matches snapshot for reason step 1`] = `
         class="text-xl/[1.4] font-bold text-foreground sm:text-2xl/[1.333] sr-only"
         data-slot="dialog-title"
         data-testid="dialog-title"
-        id="radix-_r_0_"
+        id="radix-normalized"
       >
         Report Post
       </h2>
       <p
         class="text-sm leading-normal font-medium text-muted-foreground sr-only"
         data-slot="dialog-description"
-        id="radix-_r_0_"
+        id="radix-normalized"
       >
         Report post dialog
       </p>
@@ -183,20 +183,20 @@ exports[`DialogReportPost - Snapshots > matches snapshot for success state 1`] =
   class="fixed inset-0 z-50 flex items-center justify-center"
 >
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class="relative z-50 grid duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 m-4 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 max-h-[calc(100dvh-2rem)] gap-6 overflow-y-auto rounded-lg border bg-background p-6 shadow-lg sm:rounded-xl sm:p-8 w-xl"
     data-cy="dialog-content"
     data-slot="dialog-content"
     data-state="open"
     data-testid="dialog-content"
-    id="radix-_r_0_"
+    id="radix-normalized"
     role="dialog"
     style="pointer-events: auto;"
     tabindex="-1"
   >
     <h2
       class="sr-only"
-      id="radix-_r_0_"
+      id="radix-normalized"
     >
       Report Post
     </h2>
@@ -209,14 +209,14 @@ exports[`DialogReportPost - Snapshots > matches snapshot for success state 1`] =
         class="text-xl/[1.4] font-bold text-foreground sm:text-2xl/[1.333] sr-only"
         data-slot="dialog-title"
         data-testid="dialog-title"
-        id="radix-_r_0_"
+        id="radix-normalized"
       >
         Report Post
       </h2>
       <p
         class="text-sm leading-normal font-medium text-muted-foreground sr-only"
         data-slot="dialog-description"
-        id="radix-_r_0_"
+        id="radix-normalized"
       >
         Report post dialog
       </p>

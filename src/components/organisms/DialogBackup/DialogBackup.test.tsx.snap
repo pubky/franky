@@ -38,7 +38,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
       data-testid="container"
     >
       <div
-        class="w-full flex-[1_0_0] flex-col gap-3 px-0 py-0 md:gap-6"
+        class="w-full flex-[1_0_0] flex-col gap-3 rounded-md px-0 py-0 md:gap-6"
         data-testid="card"
       >
         <div
@@ -82,7 +82,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
         </div>
       </div>
       <div
-        class="w-full flex-[1_0_0] flex-col gap-3 px-0 py-0 md:gap-6"
+        class="w-full flex-[1_0_0] flex-col gap-3 rounded-md px-0 py-0 md:gap-6"
         data-testid="card"
       >
         <div
@@ -126,7 +126,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
         </div>
       </div>
       <div
-        class="w-full flex-[1_0_0] flex-col gap-3 px-0 py-0 md:gap-6"
+        class="w-full flex-[1_0_0] flex-col gap-3 rounded-md px-0 py-0 md:gap-6"
         data-testid="card"
       >
         <div
