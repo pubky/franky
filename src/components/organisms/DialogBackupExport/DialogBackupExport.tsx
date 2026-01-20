@@ -80,7 +80,7 @@ export function DialogBackupExport({ mnemonic, children }: DialogBackupExportPro
                     alt="Pubky Ring"
                     width={42}
                     height={42}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                   />
                 </Atoms.Container>
                 <Atoms.Container className="gap-4">
