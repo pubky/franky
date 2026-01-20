@@ -9,6 +9,10 @@ const mockUseBookmark = vi.fn();
 vi.mock('@/hooks', () => ({
   usePostCounts: (postId: string) => mockUsePostCounts(postId),
   useBookmark: (postId: string) => mockUseBookmark(postId),
+  useRequireAuth: () => ({
+    isAuthenticated: true,
+    requireAuth: <T,>(action: () => T) => action(),
+  }),
 }));
 
 // Use real libs - use actual implementations

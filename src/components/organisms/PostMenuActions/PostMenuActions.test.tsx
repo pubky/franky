@@ -13,6 +13,10 @@ const mockUsePostMenuActions = vi.fn((_postId: string) => ({
 vi.mock('@/hooks', () => ({
   useIsMobile: () => mockUseIsMobile(),
   usePostMenuActions: (postId: string) => mockUsePostMenuActions(postId),
+  useRequireAuth: vi.fn(() => ({
+    isAuthenticated: true,
+    requireAuth: vi.fn((action: () => void) => action()),
+  })),
 }));
 
 // Mock DialogReportPost

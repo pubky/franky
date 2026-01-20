@@ -17,6 +17,12 @@ function buildHomegateUrl(endpoint: string): string {
 
 export const homegateApi = {
   /**
+   * Gets SMS verification availability info.
+   * Returns empty object {} if available, 403 if geoblocked.
+   */
+  getSmsVerificationInfo: () => buildHomegateUrl('/sms_verification/info'),
+
+  /**
    * Sends a SMS verification code to a phone number
    */
   sendSmsCode: () => buildHomegateUrl('/sms_verification/send_code'),
@@ -27,9 +33,10 @@ export const homegateApi = {
   validateSmsCode: () => buildHomegateUrl('/sms_verification/validate_code'),
 
   /**
-   * Gets the configured price for Lightning Network verification
+   * Gets LN verification availability info and price.
+   * Returns { amountSat } if available, 403 if geoblocked.
    */
-  getLnVerificationPrice: () => buildHomegateUrl('/ln_verification/price'),
+  getLnVerificationInfo: () => buildHomegateUrl('/ln_verification/info'),
 
   /**
    * Creates a new Lightning Network verification request

@@ -2,19 +2,19 @@
 
 exports[`NotificationItem - Snapshots > matches snapshot for Follow notification 1`] = `
 <div
-  class="flex w-full items-center justify-between gap-2"
+  class="flex w-full min-w-0 items-center justify-between gap-2"
   data-testid="container"
 >
   <a
-    class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
+    class="flex w-full min-w-0 items-center justify-between gap-2 transition-opacity hover:opacity-80"
     href="/profile/user1"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex min-w-0 flex-1 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="lg:size-8"
+        class="shrink-0 lg:size-8"
         data-name="User"
         data-testid="avatar-with-fallback"
       >
@@ -23,11 +23,11 @@ exports[`NotificationItem - Snapshots > matches snapshot for Follow notification
         </span>
       </div>
       <div
-        class="flex items-center gap-2"
+        class="flex min-w-0 flex-1 items-center gap-2"
         data-testid="container"
       >
         <p
-          class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
+          class="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
           data-testid="typography"
         >
           User followed you
@@ -64,19 +64,19 @@ exports[`NotificationItem - Snapshots > matches snapshot for Follow notification
 
 exports[`NotificationItem - Snapshots > matches snapshot for Mention notification 1`] = `
 <div
-  class="flex w-full items-center justify-between gap-2"
+  class="flex w-full min-w-0 items-center justify-between gap-2"
   data-testid="container"
 >
   <a
-    class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
+    class="flex w-full min-w-0 items-center justify-between gap-2 transition-opacity hover:opacity-80"
     href="/post/user1/post123"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex min-w-0 flex-1 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="lg:size-8"
+        class="shrink-0 lg:size-8"
         data-name="User"
         data-testid="avatar-with-fallback"
       >
@@ -85,11 +85,11 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
         </span>
       </div>
       <div
-        class="flex items-center gap-2"
+        class="flex min-w-0 flex-1 items-center gap-2"
         data-testid="container"
       >
         <p
-          class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
+          class="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
           data-testid="typography"
         >
           User mentioned you in post
@@ -126,19 +126,19 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
 
 exports[`NotificationItem - Snapshots > matches snapshot for TagPost notification 1`] = `
 <div
-  class="flex w-full items-center justify-between gap-2"
+  class="flex w-full min-w-0 items-center justify-between gap-2"
   data-testid="container"
 >
   <a
-    class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
+    class="flex w-full min-w-0 items-center justify-between gap-2 transition-opacity hover:opacity-80"
     href="/post/user1/post123"
   >
     <div
-      class="flex items-center gap-2"
+      class="flex min-w-0 flex-1 items-center gap-2"
       data-testid="container"
     >
       <div
-        class="lg:size-8"
+        class="shrink-0 lg:size-8"
         data-name="User"
         data-testid="avatar-with-fallback"
       >
@@ -147,11 +147,11 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
         </span>
       </div>
       <div
-        class="flex items-center gap-2"
+        class="flex min-w-0 flex-1 items-center gap-2"
         data-testid="container"
       >
         <p
-          class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
+          class="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
           data-testid="typography"
         >
           User tagged your post

@@ -10,7 +10,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,13 +20,13 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -339,7 +339,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -349,13 +349,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -668,7 +668,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -678,13 +678,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -997,7 +997,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1007,13 +1007,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -1326,7 +1326,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1336,13 +1336,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -1655,7 +1655,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1665,13 +1665,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -1984,7 +1984,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1994,13 +1994,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -2313,7 +2313,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -2323,13 +2323,13 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >

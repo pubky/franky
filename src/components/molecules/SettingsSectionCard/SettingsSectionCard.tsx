@@ -5,36 +5,53 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import type { SettingsSectionCardProps } from './SettingsSectionCard.types';
 
-export function SettingsSectionCard({ icon: Icon, title, description, children, className }: SettingsSectionCardProps) {
+export function SettingsSectionCard({
+  icon: Icon,
+  title,
+  description,
+  children,
+  className,
+  wrapChildren = true,
+}: SettingsSectionCardProps) {
+  const hasHeader = Icon && title;
+
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn(
-        'inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12',
-        className,
-      )}
+      className={Libs.cn('flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12', className)}
     >
-      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start justify-start gap-3">
-        {Icon && title && (
-          <Atoms.Container overrideDefaults className="inline-flex items-center justify-start gap-2">
-            <Icon size={24} />
-            <Atoms.Heading level={2} size="lg" className="leading-8">
-              {title}
-            </Atoms.Heading>
-          </Atoms.Container>
-        )}
-        {description && (
-          <Atoms.Typography
-            as="p"
-            size="md"
-            overrideDefaults
-            className="text-base leading-6 font-medium text-secondary-foreground"
-          >
-            {description}
-          </Atoms.Typography>
-        )}
-        {children}
-      </Atoms.Container>
+      {(hasHeader || description) && (
+        <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
+          {hasHeader && (
+            <Atoms.Container overrideDefaults className="inline-flex items-center justify-start gap-3">
+              <Icon size={24} />
+              <Atoms.Heading level={2} size="lg" className="leading-8">
+                {title}
+              </Atoms.Heading>
+            </Atoms.Container>
+          )}
+          {description && (
+            <Atoms.Typography
+              as="p"
+              size="md"
+              overrideDefaults
+              className="text-base leading-6 font-medium text-secondary-foreground"
+            >
+              {description}
+            </Atoms.Typography>
+          )}
+        </Atoms.Container>
+      )}
+      {wrapChildren ? (
+        <Atoms.Container
+          overrideDefaults
+          className="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+        >
+          {children}
+        </Atoms.Container>
+      ) : (
+        children
+      )}
     </Atoms.Container>
   );
 }

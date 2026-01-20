@@ -17,7 +17,7 @@ vi.mock('@/core', async (importOriginal) => {
   return {
     ...actual,
     useAuthStore: vi.fn(() => ({
-      currentUserPubky: 'pk:1QX7GKW3abcdef1234567890',
+      currentUserPubky: 'pubky1QX7GKW3abcdef1234567890',
     })),
     useNotificationStore: vi.fn(() => 0),
   };
@@ -32,7 +32,7 @@ vi.mock('@/hooks', async (importOriginal) => {
       profile: {
         name: 'Satoshi Nakamoto',
         bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-        publicKey: 'pk:1QX7GKW3abcdef1234567890',
+        publicKey: 'pubky1QX7GKW3abcdef1234567890',
         emoji: '🌴',
         status: 'Vacationing',
         avatarUrl: undefined,
@@ -130,7 +130,7 @@ describe('ProfileProfile', () => {
     expect(
       screen.getByText('Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.'),
     ).toBeInTheDocument();
-    expect(screen.getByText('pk:1QX7GKW3abcdef1234567890')).toBeInTheDocument();
+    expect(screen.getByText('pubky1QX7GKW3abcdef1234567890')).toBeInTheDocument();
     expect(screen.getByText('🌴')).toBeInTheDocument();
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
   });

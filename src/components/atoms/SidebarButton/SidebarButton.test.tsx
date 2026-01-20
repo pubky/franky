@@ -21,7 +21,8 @@ describe('SidebarButton', () => {
       'rounded-full',
       'border',
       'border-border',
-      'hover:bg-secondary/80',
+      'bg-white/5',
+      'hover:bg-white/10',
       'cursor-pointer',
       'transition-colors',
     );

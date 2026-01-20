@@ -155,7 +155,16 @@ vi.mock('@/hooks', () => ({
     height: 150,
   })),
   usePostDetails: vi.fn(() => ({
-    postDetails: { content: 'Some post content' },
+    postDetails: {
+      id: 'post-123',
+      indexed_at: 0,
+      kind: 'short',
+      uri: 'pubky://test-user/pub/pubky.app/posts/post-123',
+      content: 'Some post content',
+      attachments: [],
+      is_moderated: false,
+      is_blurred: false,
+    },
   })),
   useRepostInfo: vi.fn(() => ({
     isRepost: false,
@@ -311,6 +320,8 @@ describe('PostMain', () => {
         uri: 'pubky://me/pub/pubky.app/posts/repost-with-attachments-1',
         content: '',
         attachments: ['attachment-1', 'attachment-2'],
+        is_moderated: false,
+        is_blurred: false,
       },
       isLoading: false,
     });
@@ -364,11 +375,25 @@ describe('PostMain - Snapshots', () => {
     vi.clearAllMocks();
     mockIsPostDeleted.mockReturnValue(false);
 
-    // Reset usePostHeaderVisibility to default (same as main describe block)
-    const mockUsePostHeaderVisibility = vi.mocked(Hooks.usePostHeaderVisibility);
-    mockUsePostHeaderVisibility.mockReturnValue({
+    // Reset mocked hook return values that are overridden in earlier (non-snapshot) tests.
+    // Without this, running the full suite (e.g. CI `test:coverage`) can leak mocked
+    // implementations into snapshot tests and cause snapshot drift.
+    vi.mocked(Hooks.usePostHeaderVisibility).mockReturnValue({
       showRepostHeader: false,
       shouldShowPostHeader: true,
+    });
+    vi.mocked(Hooks.usePostDetails).mockReturnValue({
+      postDetails: {
+        id: 'post-123',
+        indexed_at: 0,
+        kind: 'short',
+        uri: 'pubky://test-user/pub/pubky.app/posts/post-123',
+        content: 'Some post content',
+        attachments: [],
+        is_moderated: false,
+        is_blurred: false,
+      },
+      isLoading: false,
     });
   });
 

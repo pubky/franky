@@ -2,25 +2,23 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
 import { PROFILE_ROUTES, getProfileRoute } from '@/app/routes';
 import type { ProfilePageTaggedAsProps } from './ProfilePageTaggedAs.types';
-import { MAX_NAME_LENGTH } from './ProfilePageTaggedAs.constants';
 
-export function ProfilePageTaggedAs({
-  tags,
-  isLoading = false,
-  onTagClick,
-  pubky,
-  userName,
-}: ProfilePageTaggedAsProps) {
+export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky }: ProfilePageTaggedAsProps) {
   const router = useRouter();
+  const { requireAuth } = Hooks.useRequireAuth();
 
   const getButtonLabel = () => {
-    if (!pubky) return 'Tag Yourself';
-    if (userName) return `Tag ${Libs.truncateString(userName, MAX_NAME_LENGTH)}`;
-    return 'Tag User';
+    return 'Add Tag';
+  };
+
+  // Handle button click - require auth for unauthenticated users
+  const handleButtonClick = () => {
+    requireAuth(() => router.push(getProfileRoute(PROFILE_ROUTES.UNIQUE_TAGS, pubky)));
   };
 
   return (
@@ -40,7 +38,7 @@ export function ProfilePageTaggedAs({
         ) : (
           <>
             {tags.map((tag) => (
-              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} maxTagLength={10} hideAvatars />
+              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} hideAvatars />
             ))}
             {tags.length === 0 && (
               <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">
@@ -56,7 +54,7 @@ export function ProfilePageTaggedAs({
         variant="outline"
         size="sm"
         className="border border-border bg-foreground/5"
-        onClick={() => router.push(getProfileRoute(PROFILE_ROUTES.UNIQUE_TAGS, pubky))}
+        onClick={handleButtonClick}
       >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">

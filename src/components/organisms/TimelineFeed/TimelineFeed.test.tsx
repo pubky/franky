@@ -282,9 +282,9 @@ describe('TimelineFeed', () => {
 
 describe('TimelineFeed - Snapshots', () => {
   beforeEach(() => {
+    // Ensure snapshot tests are deterministic even when the non-snapshot tests in this file run too.
+    // (In CI we run the full suite, not just testNamePattern="Snapshots".)
     vi.clearAllMocks();
-
-    // Default mock implementations (same as main describe block)
     mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.TIMELINE_ALL_ALL);
     mockUseBookmarksStreamId.mockReturnValue(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
     mockUseStreamPagination.mockReturnValue(defaultPaginationResult);

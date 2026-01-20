@@ -28,6 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
           <Molecules.NewPostCTA />
           <Molecules.Toaster />
+          <Organisms.DialogSignIn />
         </Providers.RouteGuardProvider>
       </Providers.DatabaseProvider>
     </Molecules.RootContainer>

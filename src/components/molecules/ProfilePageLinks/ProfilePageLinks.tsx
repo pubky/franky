@@ -1,17 +1,24 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
+import { SETTINGS_ROUTES } from '@/app/routes';
 import type { ProfilePageLinksProps } from './ProfilePageLinks.types';
 
-export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
+export function ProfilePageLinks({ links, isOwnProfile = false }: ProfilePageLinksProps) {
+  const router = useRouter();
   const { privacy } = Core.useSettingsStore();
   const checkLinkEnabled = privacy.showConfirm;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [clickedLink, setClickedLink] = useState('');
+
+  const handleAddLinkClick = () => {
+    router.push(SETTINGS_ROUTES.EDIT);
+  };
 
   // Transform raw links from Nexus into the format we need for rendering
   const transformedLinks = useMemo(
@@ -63,11 +70,24 @@ export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
             );
           })}
           {transformedLinks.length === 0 && (
-            <Atoms.Container className="mt-2 flex flex-col">
-              <Atoms.Typography as="span" className="text-base font-medium text-muted-foreground">
-                No links added yet.
+            <Atoms.Typography as="span" className="text-base font-medium text-muted-foreground">
+              No links added yet.
+            </Atoms.Typography>
+          )}
+
+          {isOwnProfile && (
+            <Atoms.Button
+              data-cy="profile-add-link-btn"
+              variant="outline"
+              size="sm"
+              className="mt-2 border border-border bg-foreground/5"
+              onClick={handleAddLinkClick}
+            >
+              <Libs.Link size={16} className="text-foreground" />
+              <Atoms.Typography as="span" className="text-sm font-bold">
+                Add Link
               </Atoms.Typography>
-            </Atoms.Container>
+            </Atoms.Button>
           )}
         </Atoms.Container>
       </Atoms.Container>

@@ -2,7 +2,7 @@
 
 exports[`SettingsSwitchGroup - Snapshots > matches snapshot with children 1`] = `
 <div
-  class="inline-flex w-full flex-col items-start justify-start gap-6 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
+  class="flex w-full flex-col items-start justify-start gap-6"
 >
   <div>
     Child 1
@@ -15,7 +15,7 @@ exports[`SettingsSwitchGroup - Snapshots > matches snapshot with children 1`] = 
 
 exports[`SettingsSwitchGroup - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="inline-flex w-full flex-col items-start justify-start gap-6 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] custom-group"
+  class="flex w-full flex-col items-start justify-start gap-6 custom-group"
 >
   <div>
     Content

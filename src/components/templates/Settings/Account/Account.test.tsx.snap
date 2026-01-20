@@ -2,19 +2,116 @@
 
 exports[`Account - Snapshots > matches snapshot 1`] = `
 <div
-  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
   data-testid="container"
 >
   <div
-    class="flex w-full flex-col items-start justify-start gap-3"
+    class="flex w-full flex-col items-start gap-6"
     data-testid="container"
   >
     <div
-      class="flex flex-col items-start justify-start"
+      class="inline-flex items-center justify-start gap-3"
+      data-testid="container"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-user-round"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="8"
+          r="5"
+        />
+        <path
+          d="M20 21a8 8 0 0 0-16 0"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold text-foreground leading-8"
+        data-testid="heading-2"
+      >
+        Account
+      </h2>
+    </div>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
+    <div
+      class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
       <div
-        class="inline-flex items-center justify-start pb-6"
+        class="inline-flex items-center justify-start"
+        data-testid="container"
+      >
+        <h2
+          class="text-2xl font-bold text-foreground"
+          data-testid="heading-2"
+        >
+          Sign out from Pubky
+        </h2>
+      </div>
+      <p
+        class="text-base leading-6 font-medium text-secondary-foreground"
+        data-testid="typography"
+      >
+        Sign out to protect your account from unauthorized access.
+      </p>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+        data-size="default"
+        data-slot="button"
+        data-variant="secondary"
+        id="sign-out-btn"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-log-out"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m16 17 5-5-5-5"
+          />
+          <path
+            d="M21 12H9"
+          />
+          <path
+            d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+          />
+        </svg>
+        Sign out
+      </button>
+    </div>
+    <div
+      aria-hidden="true"
+      class="h-px w-full bg-white/10"
+      data-testid="container"
+    />
+    <div
+      class="flex flex-col items-start justify-start gap-3"
+      data-testid="container"
+    >
+      <div
+        class="inline-flex items-center justify-start"
         data-testid="container"
       >
         <h2
@@ -25,7 +122,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
+        class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
       >
         Update your bio or user picture, so friends can find you easier.
@@ -66,22 +163,22 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
       data-testid="container"
     />
     <div
-      class="flex flex-col items-start justify-start"
+      class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
       <div
-        class="inline-flex items-center justify-start pb-6"
+        class="inline-flex items-center justify-start"
         data-testid="container"
       >
         <h2
           class="text-2xl font-bold text-foreground"
           data-testid="heading-2"
         >
-          Back up your account
+          Backup your account
         </h2>
       </div>
       <p
-        class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
+        class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
       >
         You have already completed the backup, or closed your browser before doing so. Your recovery file and seed phrase have been deleted.
@@ -96,7 +193,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-lock"
+          class="lucide lucide-lock-keyhole"
           fill="none"
           height="16"
           stroke="currentColor"
@@ -107,19 +204,23 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <circle
+            cx="12"
+            cy="16"
+            r="1"
+          />
           <rect
-            height="11"
+            height="12"
             rx="2"
-            ry="2"
             width="18"
             x="3"
-            y="11"
+            y="10"
           />
           <path
-            d="M7 11V7a5 5 0 0 1 10 0v4"
+            d="M7 10V7a5 5 0 0 1 10 0v3"
           />
         </svg>
-        Back up account
+        Back up
       </button>
     </div>
     <div
@@ -128,11 +229,11 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
       data-testid="container"
     />
     <div
-      class="flex flex-col items-start justify-start"
+      class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
       <div
-        class="inline-flex items-center justify-start pb-6"
+        class="inline-flex items-center justify-start"
         data-testid="container"
       >
         <h2
@@ -143,7 +244,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
+        class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
       >
         Your data on Pubky is yours. Export your account data to use it elsewhere.
@@ -187,11 +288,11 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
       data-testid="container"
     />
     <div
-      class="flex flex-col items-start justify-start"
+      class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
       <div
-        class="inline-flex items-center justify-start pb-6"
+        class="inline-flex items-center justify-start"
         data-testid="container"
       >
         <h2
@@ -202,7 +303,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="pb-6 text-base leading-6 font-medium text-secondary-foreground"
+        class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
       >
         Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences.

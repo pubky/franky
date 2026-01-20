@@ -20,7 +20,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
       </h2>
     </div>
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >

@@ -241,7 +241,8 @@ export class PostStreamApplication {
     try {
       const postBatch = await Core.NexusPostStreamService.fetchByIds({
         post_ids: cacheMissPostIds,
-        viewer_id: viewerId,
+        // Only pass viewer_id if it's a valid string (not null/undefined)
+        ...(viewerId ? { viewer_id: viewerId } : {}),
       });
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
       // Persist the post attachments metadata
@@ -265,7 +266,14 @@ export class PostStreamApplication {
    * @param repostedUris - Array of pubky URIs pointing to original posts
    * @param viewerId - ID of the viewer
    */
-  static async fetchOriginalPostsByUris({ repostedUris, viewerId }: { repostedUris: string[]; viewerId: Core.Pubky }) {
+  static async fetchOriginalPostsByUris({
+    repostedUris,
+    viewerId,
+  }: {
+    repostedUris: string[];
+    /** Optional viewer ID for relationship data. Null/undefined for unauthenticated views. */
+    viewerId?: Core.Pubky | null;
+  }) {
     if (repostedUris.length === 0) return;
 
     // Convert URIs to composite IDs and deduplicate
@@ -298,7 +306,7 @@ export class PostStreamApplication {
     try {
       const originalPosts = await Core.NexusPostStreamService.fetchByIds({
         post_ids: missingOriginalPostIds,
-        viewer_id: viewerId,
+        viewer_id: viewerId ?? undefined,
       });
       const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: originalPosts });
       await Core.FileApplication.fetchFiles(postAttachments);
@@ -356,7 +364,7 @@ export class PostStreamApplication {
     if (cacheMissUserIds.length > 0) {
       const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
         user_ids: cacheMissUserIds,
-        viewer_id: viewerId,
+        viewer_id: viewerId ?? undefined,
       });
       const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
       await Core.LocalStreamUsersService.persistUsers(userBatch);
@@ -416,7 +424,32 @@ export class PostStreamApplication {
     streamId,
     compositePostIds,
   }: Core.TPersistUnreadNewStreamChunkParams) {
-    await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({ stream: compositePostIds, streamId });
+    const newToUnreadStream = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+      stream: compositePostIds,
+      streamId,
+    });
+
+    // Skip count updates if no new posts were added to unread stream
+    if (newToUnreadStream.length === 0) return;
+
+    // Filter out posts that already exist in the database (e.g., locally created posts).
+    // These posts have already been counted when they were created, so we should not
+    // increment counts again when they arrive via the unread stream.
+    const notInDatabase = await this.getNotPersistedPostsInCache(newToUnreadStream);
+
+    // Skip count updates if all posts already exist in the database
+    if (notInDatabase.length === 0) return;
+
+    // Also filter out posts that are already in the main post stream for this streamId.
+    // This catches locally created posts that were added to the stream but might not
+    // have been committed to PostDetailsModel yet due to transaction timing.
+    const existingStream = await Core.LocalStreamPostsService.read({ streamId });
+    const existingStreamIds = new Set(existingStream?.stream ?? []);
+    const trulyNewPostIds = notInDatabase.filter((id) => !existingStreamIds.has(id));
+
+    // Skip count updates if all posts are already in the stream
+    if (trulyNewPostIds.length === 0) return;
+
     // The authorId and postId are going to be use to identify the replies parent id
     const [replyParentAuthorId, invokeEndpoint, replyParentPostId] = Core.breakDownStreamId(streamId);
 
@@ -429,14 +462,14 @@ export class PostStreamApplication {
       });
       await Core.LocalPostService.updatePostCounts({
         postCompositeId: replyParentPostCompositeId,
-        countChanges: { replies: compositePostIds.length },
+        countChanges: { replies: trulyNewPostIds.length },
       });
     }
 
     // Update the related user counts of the authors of the posts
-    // Batch count updates to avoid race conditions and improve performance
+    // Only update counts for posts that are truly new (not in unread stream AND not in database)
     if (invokeEndpoint === Core.StreamSource.REPLIES || invokeEndpoint === Core.StreamSource.ALL) {
-      const countUpdates = compositePostIds.map(async (postId) => {
+      const countUpdates = trulyNewPostIds.map(async (postId) => {
         const { pubky: authorId } = Core.parseCompositeId(postId);
         const countChanges: Core.TUserCountsCountChanges = { posts: 1 };
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
