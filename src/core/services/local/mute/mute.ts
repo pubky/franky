@@ -66,7 +66,7 @@ export class LocalMuteService {
     } catch (error) {
       const operation = isMuting ? 'mute' : 'unmute';
       const errorType = isMuting ? DatabaseErrorCode.WRITE_FAILED : DatabaseErrorCode.DELETE_FAILED;
-      throw Err.database(errorType, `Failed to ${operation} mute relationship`, {
+      throw Err.database(errorType, `Failed to ${operation} user`, {
         service: ErrorService.Local,
         operation,
         context: { muter, mutee },

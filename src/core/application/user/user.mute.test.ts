@@ -143,7 +143,7 @@ describe('UserApplication.commitMute', () => {
             muter,
             mutee,
           }),
-        ).rejects.toThrow('Failed to mute mute relationship');
+        ).rejects.toThrow('Failed to mute user');
 
         expect(requestSpy).not.toHaveBeenCalled();
       } finally {
@@ -187,7 +187,7 @@ describe('UserApplication.commitMute', () => {
             muter,
             mutee,
           }),
-        ).rejects.toThrow('Failed to mute mute relationship');
+        ).rejects.toThrow('Failed to mute user');
 
         const rel = await Core.UserRelationshipsModel.findById(mutee);
         expect(rel?.muted).toBe(false);

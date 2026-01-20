@@ -3,7 +3,7 @@ import { Table } from 'dexie';
 import * as Core from '@/core';
 import { UserConnectionsFields, UserConnectionsModelSchema } from './userConnections.schema';
 import { TupleModelBase } from '@/core/models/shared/base/tuple/baseTuple';
-import { DatabaseErrorCode, Err, ErrorService } from '@/libs/error';
+import { DatabaseErrorCode, Err, ErrorService, isAppError } from '@/libs/error';
 
 export class UserConnectionsModel
   extends TupleModelBase<Core.Pubky, UserConnectionsModelSchema>
@@ -62,7 +62,7 @@ export class UserConnectionsModel
       }
       return didChange;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AppError') {
+      if (isAppError(error)) {
         throw error;
       }
       throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to create connection in ${this.table.name}`, {
@@ -92,7 +92,7 @@ export class UserConnectionsModel
         });
       return didChange;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AppError') {
+      if (isAppError(error)) {
         throw error;
       }
       throw Err.database(DatabaseErrorCode.DELETE_FAILED, `Failed to delete connection from ${this.table.name}`, {

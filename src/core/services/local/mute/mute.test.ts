@@ -21,8 +21,8 @@ describe('LocalMuteService', () => {
   });
 
   describe.each([
-    ['create', 'mute', true, 'Failed to mute mute relationship'],
-    ['delete', 'unmute', false, 'Failed to unmute mute relationship'],
+    ['create', 'mute', true, 'Failed to mute user'],
+    ['delete', 'unmute', false, 'Failed to unmute user'],
   ])('%s operation', (operation, action, expectedStatus, expectedErrorMessage) => {
     const service = Core.LocalMuteService[
       operation as keyof typeof Core.LocalMuteService

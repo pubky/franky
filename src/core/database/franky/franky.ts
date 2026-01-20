@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import { Err, ErrorService, DatabaseErrorCode, Logger } from '@/libs';
+import { Err, ErrorService, DatabaseErrorCode, Logger, isAppError } from '@/libs';
 import * as Config from '@/config';
 import * as Core from '@/core';
 
@@ -246,7 +246,7 @@ export class AppDatabase extends Dexie {
         Logger.debug('Database version is current');
       }
     } catch (error) {
-      if (error instanceof Error && error.name === 'AppError') throw error;
+      if (isAppError(error)) throw error;
 
       throw Err.database(DatabaseErrorCode.INIT_FAILED, 'Failed to initialize database, indexedDB', {
         service: ErrorService.Local,
