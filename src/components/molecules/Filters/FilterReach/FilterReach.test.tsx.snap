@@ -26,7 +26,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -179,7 +179,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All selected tab 1`] = 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -332,7 +332,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -485,7 +485,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -638,7 +638,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
