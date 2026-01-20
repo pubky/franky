@@ -11,6 +11,13 @@ export const backupDownloadFilePath = (filename?: string): string => {
   return path.join(downloadsFolder, filenameWithExtension);
 };
 
+export const userIdFromPubky = (pubky: string): string => {
+  if (!pubky.startsWith('pubky')) {
+    throw new Error(`Expected pubky to start with 'pubky': ${pubky}`);
+  }
+  return pubky.substring('pubky'.length);
+};
+
 export interface NetworkRequest {
   timestamp: string;
   method: string;
