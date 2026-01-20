@@ -57,8 +57,8 @@ const SignInProgress = () => {
               <Atoms.Typography
                 as="span"
                 className={Libs.cn(
-                  'text-base font-light leading-normal',
-                  status === 'completed' && 'text-foreground font-bold',
+                  'text-base leading-normal font-light',
+                  status === 'completed' && 'font-bold text-foreground',
                   status === 'running' && 'text-foreground',
                   status === 'pending' && 'text-muted-foreground',
                 )}
