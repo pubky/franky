@@ -32,7 +32,9 @@ export function DialogWelcome() {
   }
 
   const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10, includePrefix: true });
-  const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
+  const avatarImage = userDetails.image
+    ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)
+    : undefined;
 
   const handleCopyToClipboard = () => {
     copyToClipboard(Libs.withPubkyPrefix(currentUserPubky));
