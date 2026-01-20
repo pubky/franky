@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
@@ -9,11 +10,14 @@ import { APP_ROUTES } from '@/app/routes';
 import type { HotTagsOverviewProps } from './HotTagsOverview.types';
 
 const DEFAULT_TAGS_LIMIT = 50;
+// Skip first 3 tags as they're shown in featured cards (HotTagsCardsSection)
+const FEATURED_TAGS_OFFSET = 3;
 
 /**
  * HotTagsOverview
  *
- * Organism that displays a grid of trending tags.
+ * Organism that displays a grid of trending tags (starting from #4).
+ * Skips the first 3 tags which are shown as featured cards.
  * Fetches hot tags based on reach and timeframe filters from the hot store.
  */
 export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTagsOverviewProps) {
@@ -21,15 +25,23 @@ export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTa
   const { reach, timeframe } = Core.useHotStore();
 
   // Fetch hot tags using the hook
-  const { rawTags: tags, isLoading } = Hooks.useHotTags({
+  const { rawTags, isLoading } = Hooks.useHotTags({
     reach: reach === 'all' ? undefined : (reach as Core.UserStreamReach),
     timeframe,
     limit,
   });
 
+  // Skip the first 3 tags (already shown in featured cards)
+  const tags = useMemo(() => rawTags.slice(FEATURED_TAGS_OFFSET), [rawTags]);
+
   const handleTagClick = (tagName: string) => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
   };
+
+  // Don't render if no tags after skipping featured ones
+  if (!isLoading && tags.length === 0) {
+    return null;
+  }
 
   return (
     <Atoms.Container
@@ -37,14 +49,9 @@ export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTa
       className={Libs.cn('flex flex-col gap-2', className)}
       data-testid="hot-tags-overview"
     >
-      <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-        Hot tags
-      </Atoms.Heading>
       {isLoading ? (
         // TODO: Replace with Skeleton component
         <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
-      ) : tags.length === 0 ? (
-        <Atoms.Typography className="font-light text-muted-foreground">No tags to show</Atoms.Typography>
       ) : (
         <Atoms.Container overrideDefaults className="flex flex-wrap content-start gap-2">
           {tags.map((tag) => (

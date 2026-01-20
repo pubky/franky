@@ -64,7 +64,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
     return (
       <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-2', className)}>
         <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-          Trending
+          Hot tags
         </Atoms.Heading>
         <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
       </Atoms.Container>
