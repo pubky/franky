@@ -216,7 +216,8 @@ describe('BackupMethodCard', () => {
     });
   });
 
-  it('integrates correctly with onboarding store', () => {
+  // TODO: Re-enable when Pubky Ring export is ready
+  it.skip('integrates correctly with onboarding store', () => {
     const testMnemonic = 'integration test mnemonic phrase';
     mockUseOnboardingStore.mockReturnValue({
       mnemonic: testMnemonic,
