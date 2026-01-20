@@ -52,8 +52,22 @@ export class PostNormalizer {
     return result;
   }
 
-  static async toEdit({ compositePostId, content }: Core.TEditPostParams): Promise<PostResult> {
+  static async toEdit({ compositePostId, content, currentUserPubky }: Core.TEditPostParams): Promise<PostResult> {
     const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
+
+    if (authorId !== currentUserPubky) {
+      // TODO: With the new error handling, would be fixed the error type
+      throw Libs.createSanitizationError(
+        Libs.SanitizationErrorType.POST_NOT_FOUND,
+        'Current user is not the author of this post',
+        403,
+        {
+          postId,
+          currentUserPubky,
+        },
+      );
+    }
+
     const builder = Core.PubkySpecsSingleton.get(authorId);
 
     const postDetails = await Core.PostDetailsModel.findById(compositePostId);
