@@ -3,11 +3,10 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-import * as Stores from '@/core';
 import * as Libs from '@/libs';
 
 export const BackupMethodCard = () => {
-  const { mnemonic } = Stores.useOnboardingStore();
+  //const { mnemonic } = Stores.useOnboardingStore();
   return (
     <Molecules.ContentCard
       image={{
@@ -41,13 +40,14 @@ export const BackupMethodCard = () => {
               <span>Encrypted file</span>
             </Atoms.Button>
           </Organisms.DialogBackupEncrypted>
-          {/* TODO: Re-enable when Pubky Ring export is ready */}
-          { /*<Organisms.DialogBackupExport mnemonic={mnemonic}>
+          {/* TODO: Re-enable when Pubky Ring export is ready
+          <Organisms.DialogBackupExport mnemonic={mnemonic}>
             <Atoms.Button className="gap-2" disabled>
               <Libs.Scan className="h-4 w-4" />
               <span>{mnemonic ? 'Export recovery phrase' : 'Export to Pubky Ring'}</span>
             </Atoms.Button>
-          </Organisms.DialogBackupExport>*/ }
+          </Organisms.DialogBackupExport>
+          */}
         </Atoms.Container>
       </Atoms.Container>
     </Molecules.ContentCard>
