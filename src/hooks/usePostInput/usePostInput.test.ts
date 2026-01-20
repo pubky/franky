@@ -58,12 +58,12 @@ vi.mock('@/hooks', () => ({
   useEmojiInsert: vi.fn(() => vi.fn()),
 }));
 
-// Mock TimelineFeed context
-const mockPrependPosts = vi.fn();
-vi.mock('@/organisms/TimelineFeed/TimelineFeed', () => ({
-  useTimelineFeedContext: vi.fn(() => ({
-    prependPosts: mockPrependPosts,
-    removePosts: vi.fn(),
+// Mock NewPostProvider context
+const mockSignalNewPost = vi.fn();
+vi.mock('@/providers', () => ({
+  useNewPostContext: vi.fn(() => ({
+    signalNewPost: mockSignalNewPost,
+    subscribeToNewPosts: vi.fn(() => vi.fn()),
   })),
 }));
 
@@ -410,7 +410,7 @@ describe('usePostInput', () => {
       expect(mockPost).not.toHaveBeenCalled();
     });
 
-    it('calls onSuccess and prependPosts when submission succeeds for post variant', async () => {
+    it('calls onSuccess and signalNewPost when submission succeeds for post variant', async () => {
       mockContent = 'Test content';
       mockPost.mockImplementation(async ({ onSuccess }) => {
         onSuccess('created-post-id');
@@ -428,11 +428,11 @@ describe('usePostInput', () => {
         await result.current.handleSubmit();
       });
 
-      expect(mockPrependPosts).toHaveBeenCalledWith('created-post-id');
+      expect(mockSignalNewPost).toHaveBeenCalledWith('created-post-id');
       expect(mockOnSuccess).toHaveBeenCalledWith('created-post-id');
     });
 
-    it('calls onSuccess and prependPosts when submission succeeds for repost variant', async () => {
+    it('calls onSuccess and signalNewPost when submission succeeds for repost variant', async () => {
       mockContent = 'Test repost content';
       mockRepost.mockImplementation(async ({ onSuccess }) => {
         onSuccess('created-repost-id');
@@ -451,11 +451,11 @@ describe('usePostInput', () => {
         await result.current.handleSubmit();
       });
 
-      expect(mockPrependPosts).toHaveBeenCalledWith('created-repost-id');
+      expect(mockSignalNewPost).toHaveBeenCalledWith('created-repost-id');
       expect(mockOnSuccess).toHaveBeenCalledWith('created-repost-id');
     });
 
-    it('calls onSuccess but does NOT prependPosts for reply variant', async () => {
+    it('calls onSuccess but does NOT signalNewPost for reply variant', async () => {
       mockContent = 'Test reply content';
       mockReply.mockImplementation(async ({ onSuccess }) => {
         onSuccess('created-reply-id');
@@ -474,8 +474,8 @@ describe('usePostInput', () => {
         await result.current.handleSubmit();
       });
 
-      // Reply should NOT prepend to timeline (fix for issue #601)
-      expect(mockPrependPosts).not.toHaveBeenCalled();
+      // Reply should NOT signal new post (replies are local to thread)
+      expect(mockSignalNewPost).not.toHaveBeenCalled();
       // But onSuccess should still be called
       expect(mockOnSuccess).toHaveBeenCalledWith('created-reply-id');
     });

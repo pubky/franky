@@ -23,12 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <Molecules.RootContainer>
       <Providers.DatabaseProvider>
         <Providers.RouteGuardProvider>
-          <Organisms.CoordinatorsManager />
-          <Organisms.Header />
-          {children}
-          <Molecules.NewPostCTA />
-          <Molecules.Toaster />
-          <Organisms.DialogSignIn />
+          <Providers.NewPostProvider>
+            <Organisms.CoordinatorsManager />
+            <Organisms.Header />
+            {children}
+            <Molecules.NewPostCTA />
+            <Molecules.Toaster />
+            <Organisms.DialogSignIn />
+          </Providers.NewPostProvider>
         </Providers.RouteGuardProvider>
       </Providers.DatabaseProvider>
     </Molecules.RootContainer>

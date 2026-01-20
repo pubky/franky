@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
+import * as Providers from '@/providers';
 import {
   POST_MAX_CHARACTER_LENGTH,
   SUPPORTED_ATTACHMENT_MIME_TYPES,
@@ -11,7 +12,6 @@ import {
   ATTACHMENT_MAX_FILES,
   SUPPORTED_FILE_TYPES,
 } from '@/config';
-import { useTimelineFeedContext } from '@/organisms/TimelineFeed/TimelineFeed';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
 import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.types';
 
@@ -51,7 +51,7 @@ export function usePostInput({
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { content, setContent, tags, setTags, attachments, setAttachments, reply, post, repost, isSubmitting } =
     Hooks.usePost();
-  const timelineFeed = useTimelineFeedContext();
+  const { signalNewPost } = Providers.useNewPostContext();
   const { toast } = Molecules.useToast();
 
   // Notify parent of content changes
@@ -91,11 +91,12 @@ export function usePostInput({
     // For replies and posts, require content or attachments. For reposts, content is optional.
     if (variant !== POST_INPUT_VARIANT.REPOST && !content.trim() && attachments.length === 0) return;
 
-    // Wrapper that prepends to timeline and calls original onSuccess
+    // Wrapper that signals new post and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
-      // Only prepend to timeline for posts and reposts, not replies
+      // Signal new post for posts and reposts, not replies
+      // This allows TimelineFeed (HOME) to prepend the post optimistically
       if (variant !== POST_INPUT_VARIANT.REPLY) {
-        timelineFeed?.prependPosts(createdPostId);
+        signalNewPost(createdPostId);
       }
       // Call original onSuccess callback if provided
       onSuccess?.(createdPostId);
@@ -124,7 +125,7 @@ export function usePostInput({
     repost,
     isSubmitting,
     onSuccess,
-    timelineFeed,
+    signalNewPost,
   ]);
 
   // Handle textarea change with validation

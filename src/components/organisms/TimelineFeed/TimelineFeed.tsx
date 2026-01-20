@@ -1,16 +1,21 @@
 'use client';
 
-import { createContext, useContext, useCallback, useMemo } from 'react';
+import { createContext, useContext, useCallback, useMemo, useEffect } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
+import * as Providers from '@/providers';
 import type { TimelineFeedProps, TimelineFeedContextValue } from './TimelineFeed.types';
+import { TIMELINE_FEED_VARIANT, type TimelineFeedVariant } from './TimelineFeed.types';
 import { useTimelineFeedStreamId } from './useTimelineFeedStreamId';
 
 /**
- * Context for timeline feed operations
- * Allows children (like PostInput) to access prependPosts
+ * Context for timeline feed operations.
+ * Provides access to removePosts for delete functionality.
+ *
+ * Note: For new post prepending, use NewPostProvider.signalNewPost() instead.
+ * The TimelineFeed (HOME variant) subscribes to those signals automatically.
  */
 const TimelineFeedContext = createContext<TimelineFeedContextValue | null>(null);
 
@@ -21,11 +26,12 @@ const TimelineFeedContext = createContext<TimelineFeedContextValue | null>(null)
  *
  * @example
  * ```tsx
- * function PostInput() {
+ * // For removing posts (e.g., in useDeletePost)
+ * function useDeletePost(postId: string) {
  *   const timelineFeed = useTimelineFeedContext();
  *
- *   const handlePostSuccess = (postId: string) => {
- *     timelineFeed?.prependPosts(postId);
+ *   const handleDelete = () => {
+ *     timelineFeed?.removePosts(postId);
  *   };
  * }
  * ```
@@ -75,10 +81,11 @@ export function TimelineFeed({ variant, children }: TimelineFeedProps) {
  */
 function TimelineFeedContent({
   streamId,
+  variant,
   children,
 }: {
   streamId: Core.PostStreamId;
-  variant: TimelineFeedProps['variant'];
+  variant: TimelineFeedVariant;
   children?: TimelineFeedProps['children'];
 }) {
   const {
@@ -93,6 +100,24 @@ function TimelineFeedContent({
   } = Hooks.useStreamPagination({
     streamId,
   });
+
+  // Subscribe to new post signals from NewPostProvider
+  // Only HOME variant should auto-prepend posts created from anywhere in the app
+  const { subscribeToNewPosts } = Providers.useNewPostContext();
+
+  useEffect(() => {
+    // Only subscribe for HOME variant - other feeds shouldn't auto-add posts
+    if (variant !== TIMELINE_FEED_VARIANT.HOME) {
+      return;
+    }
+
+    // Subscribe and prepend posts when signaled
+    const unsubscribe = subscribeToNewPosts((postId) => {
+      prependPosts(postId);
+    });
+
+    return unsubscribe;
+  }, [variant, subscribeToNewPosts, prependPosts]);
 
   // Deduplicate postIds to prevent React key errors from race conditions
   const postIds = useMemo(() => [...new Set(rawPostIds)], [rawPostIds]);

@@ -21,8 +21,9 @@ export interface TimelineFeedProps {
    */
   variant: TimelineFeedVariant;
   /**
-   * Optional children to render above the timeline (e.g., PostInput)
-   * Children can access prependPosts via TimelineFeedContext
+   * Optional children to render above the timeline (e.g., PostInput).
+   * Note: For new post prepending, use NewPostProvider.signalNewPost() instead of
+   * accessing TimelineFeedContext directly. The HOME variant subscribes automatically.
    */
   children?: ReactNode;
 }

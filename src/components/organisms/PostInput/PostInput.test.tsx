@@ -99,8 +99,11 @@ vi.mock('@/organisms', () => ({
   )),
 }));
 
-vi.mock('../TimelineFeed/TimelineFeed', () => ({
-  useTimelineFeedContext: vi.fn(() => null),
+vi.mock('@/providers', () => ({
+  useNewPostContext: vi.fn(() => ({
+    signalNewPost: vi.fn(),
+    subscribeToNewPosts: vi.fn(() => vi.fn()),
+  })),
 }));
 
 vi.mock('../PostInputTags', () => ({

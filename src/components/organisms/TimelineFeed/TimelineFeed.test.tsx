@@ -39,11 +39,23 @@ vi.mock('@/hooks/useIsScrolledFromTop', () => ({
   useIsScrolledFromTop: vi.fn(() => false),
 }));
 
+// Mock for NewPostProvider subscription
+const mockSubscribeToNewPosts = vi.fn();
+let capturedSubscribeCallback: ((postId: string) => void) | null = null;
+
 vi.mock('@/providers', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/providers')>();
   return {
     ...actual,
     ProfileContext: actual.ProfileContext,
+    useNewPostContext: vi.fn(() => ({
+      signalNewPost: vi.fn(),
+      subscribeToNewPosts: (callback: (postId: string) => void) => {
+        capturedSubscribeCallback = callback;
+        mockSubscribeToNewPosts(callback);
+        return vi.fn(); // unsubscribe
+      },
+    })),
   };
 });
 
@@ -107,6 +119,8 @@ const defaultPaginationResult = {
 describe('TimelineFeed', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    capturedSubscribeCallback = null;
+    mockSubscribeToNewPosts.mockClear();
 
     // Default mock implementations
     mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.TIMELINE_ALL_ALL);
@@ -278,6 +292,48 @@ describe('TimelineFeed', () => {
       expect(contextValues[contextValues.length - 1]).toBeNull();
     });
   });
+
+  describe('NewPostProvider Subscription', () => {
+    it('should subscribe to new posts for HOME variant', () => {
+      render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+
+      expect(mockSubscribeToNewPosts).toHaveBeenCalledTimes(1);
+      expect(typeof capturedSubscribeCallback).toBe('function');
+    });
+
+    it('should call prependPosts when new post signal is received for HOME variant', async () => {
+      render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
+
+      // Simulate a new post signal
+      if (capturedSubscribeCallback) {
+        capturedSubscribeCallback('new-post-id');
+      }
+
+      await waitFor(() => {
+        expect(mockPrependPosts).toHaveBeenCalledWith('new-post-id');
+      });
+    });
+
+    it('should NOT subscribe to new posts for BOOKMARKS variant', () => {
+      render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.BOOKMARKS} />);
+
+      // subscribeToNewPosts is called but callback should not be captured
+      // because the effect returns early for non-HOME variants
+      expect(mockSubscribeToNewPosts).not.toHaveBeenCalled();
+    });
+
+    it('should NOT subscribe to new posts for PROFILE variant', () => {
+      render(
+        <Providers.ProfileProvider>
+          <TimelineFeed variant={TIMELINE_FEED_VARIANT.PROFILE} />
+        </Providers.ProfileProvider>,
+      );
+
+      // Profile variant shows loading when no pubky is available
+      // But even if it rendered, it should not subscribe
+      expect(mockSubscribeToNewPosts).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('TimelineFeed - Snapshots', () => {
@@ -285,6 +341,8 @@ describe('TimelineFeed - Snapshots', () => {
     // Ensure snapshot tests are deterministic even when the non-snapshot tests in this file run too.
     // (In CI we run the full suite, not just testNamePattern="Snapshots".)
     vi.clearAllMocks();
+    capturedSubscribeCallback = null;
+    mockSubscribeToNewPosts.mockClear();
     mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.TIMELINE_ALL_ALL);
     mockUseBookmarksStreamId.mockReturnValue(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
     mockUseStreamPagination.mockReturnValue(defaultPaginationResult);
