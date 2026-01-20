@@ -7,11 +7,10 @@ import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
+import { HOT_TAGS_FEATURED_COUNT } from '@/config';
 import type { HotTagsOverviewProps } from './HotTagsOverview.types';
 
 const DEFAULT_TAGS_LIMIT = 50;
-// Skip first 3 tags as they're shown in featured cards (HotTagsCardsSection)
-const FEATURED_TAGS_OFFSET = 3;
 
 /**
  * HotTagsOverview
@@ -31,8 +30,8 @@ export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTa
     limit,
   });
 
-  // Skip the first 3 tags (already shown in featured cards)
-  const tags = useMemo(() => rawTags.slice(FEATURED_TAGS_OFFSET), [rawTags]);
+  // Skip the featured tags (already shown in HotTagsCardsSection)
+  const tags = useMemo(() => rawTags.slice(HOT_TAGS_FEATURED_COUNT), [rawTags]);
 
   const handleTagClick = (tagName: string) => {
     router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
