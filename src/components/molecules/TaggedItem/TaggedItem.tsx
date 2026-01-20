@@ -9,12 +9,11 @@ import { APP_ROUTES } from '@/app/routes';
 import type { TaggedItemProps } from './TaggedItem.types';
 import { MAX_VISIBLE_AVATARS } from './TaggedItem.constants';
 
-export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideAvatars = false }: TaggedItemProps) {
+export function TaggedItem({ tag, onTagClick, onSearchClick, hideAvatars = false }: TaggedItemProps) {
   const router = useRouter();
   const { requireAuth } = Hooks.useRequireAuth();
   const visibleTaggers = tag.taggers.slice(0, MAX_VISIBLE_AVATARS);
   const overflowCount = tag.taggers.length - MAX_VISIBLE_AVATARS;
-  const displayLabel = maxTagLength ? Libs.truncateString(tag.label, maxTagLength) : tag.label;
 
   const handleTagClick = () => {
     onTagClick(tag);
@@ -37,7 +36,7 @@ export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideA
     <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
       {/* Tag badge with count - clickable to toggle */}
       <Atoms.Tag
-        name={displayLabel}
+        name={tag.label}
         count={tag.taggers_count}
         clicked={!!tag.relationship}
         onClick={handleTagClick}

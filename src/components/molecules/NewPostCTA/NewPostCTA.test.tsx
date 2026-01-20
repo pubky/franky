@@ -196,7 +196,7 @@ describe('NewPostCTA', () => {
 describe('NewPostCTA - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset to authenticated state for snapshot test
+    // Reset to authenticated state for snapshot tests
     mockUseAuthStatus.mockReturnValue({
       isFullyAuthenticated: true,
       isLoading: false,
@@ -205,6 +205,7 @@ describe('NewPostCTA - Snapshots', () => {
       hasProfile: true,
     });
     mockIsPublicRoute.mockReturnValue(false);
+    mockRequireAuth.mockImplementation((action: () => void) => action());
   });
 
   it('matches snapshot with default state', () => {

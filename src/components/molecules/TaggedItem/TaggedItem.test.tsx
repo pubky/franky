@@ -107,11 +107,6 @@ describe('TaggedItem', () => {
     expect(screen.getByText('bitcoin (3)')).toBeInTheDocument();
   });
 
-  it('truncates tag label when maxTagLength is set', () => {
-    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} maxTagLength={4} />);
-    expect(screen.getByText(/bitc\.\.\./)).toBeInTheDocument();
-  });
-
   it('matches snapshot', () => {
     const { container } = render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
     expect(container.firstChild).toMatchSnapshot();
@@ -125,9 +120,7 @@ describe('TaggedItem - Snapshots', () => {
   });
 
   it('matches snapshot with hideAvatars', () => {
-    const { container } = render(
-      <TaggedItem tag={mockTag} onTagClick={mockOnTagClick} hideAvatars maxTagLength={10} />,
-    );
+    const { container } = render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} hideAvatars />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
