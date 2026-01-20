@@ -23,7 +23,6 @@ export class UserStreamApplication {
    * @param skip - Number of users to skip (for pagination)
    * @param limit - Number of users to return
    * @param viewerId - The current authenticated user (for relationship data)
-   * @param localOnly - When true, return cached data only, skip API fetch
    * @returns Next page of user IDs, cache miss IDs, and pagination offset
    */
   static async getOrFetchStreamSlice({
@@ -31,7 +30,6 @@ export class UserStreamApplication {
     skip,
     limit,
     viewerId,
-    localOnly,
   }: Core.TFetchUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
     // Try cache first
     const cachedStream = await Core.LocalStreamUsersService.findById(streamId);
@@ -41,16 +39,6 @@ export class UserStreamApplication {
         // Cache hit - return undefined skip to signal cache source
         return { nextPageIds, cacheMissUserIds: [], skip: undefined };
       }
-
-      // Cache exists but incomplete; in localOnly mode, return available data
-      if (localOnly) {
-        const availableIds = cachedStream.stream.slice(skip);
-        return { nextPageIds: availableIds, cacheMissUserIds: [], skip: undefined };
-      }
-    }
-
-    if (localOnly) {
-      return { nextPageIds: [], cacheMissUserIds: [], skip: undefined };
     }
 
     // Cache miss - fetch from Nexus
