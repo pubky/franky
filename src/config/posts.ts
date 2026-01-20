@@ -10,11 +10,11 @@ export const POST_MAX_TAGS = 5;
 /** Maximum character length for post content */
 export const POST_MAX_CHARACTER_LENGTH = 2000;
 
-/** Maximum character length for article content */
-export const ARTICLE_MAX_CHARACTER_LENGTH = 50000;
-
 /** Maximum character length for article title */
 export const ARTICLE_TITLE_MAX_CHARACTER_LENGTH = 100;
+
+/** Maximum character length for article content (22 characters reserved for JSON string) */
+export const ARTICLE_MAX_CHARACTER_LENGTH = 50000 - ARTICLE_TITLE_MAX_CHARACTER_LENGTH - 22;
 
 /** Maximum character length for a tag */
 export const TAG_MAX_LENGTH = 20;

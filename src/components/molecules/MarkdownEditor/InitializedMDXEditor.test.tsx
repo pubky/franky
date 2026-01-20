@@ -1,16 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { createRef } from 'react';
 import type { MDXEditorMethods } from '@mdxeditor/editor';
 import InitializedMDXEditor from './InitializedMDXEditor';
 
+// Mock config - use a smaller value for easier testing
+const MOCK_MAX_LENGTH = 1000;
+vi.mock('@/config', () => ({
+  ARTICLE_MAX_CHARACTER_LENGTH: 1000,
+}));
+
 // Store toolbar contents renderer to invoke it during tests
 let toolbarContentsRenderer: (() => React.ReactNode) | null = null;
+// Store onChange handler to invoke it during tests
+let capturedOnChange: ((markdown: string, initialMarkdownNormalize?: boolean) => void) | null = null;
 
 // Mock @mdxeditor/editor
 vi.mock('@mdxeditor/editor', () => {
   const MockMDXEditor = vi.fn(
-    ({ placeholder, className, contentEditableClassName, plugins, ...props }: Record<string, unknown>) => {
+    ({ placeholder, className, contentEditableClassName, plugins, onChange, ...props }: Record<string, unknown>) => {
+      // Capture onChange handler for testing
+      capturedOnChange = onChange as typeof capturedOnChange;
+
       // Find and render toolbar contents if available
       const toolbarContent = toolbarContentsRenderer ? toolbarContentsRenderer() : null;
 
@@ -123,6 +134,39 @@ vi.mock('@/libs/icons', () => ({
       <title>Smile</title>
     </svg>
   ),
+  AlertTriangle: ({ className }: { className?: string }) => (
+    <svg data-testid="alert-triangle-icon" className={className}>
+      <title>Alert Triangle</title>
+    </svg>
+  ),
+}));
+
+// Mock @/atoms
+vi.mock('@/atoms', () => ({
+  Container: ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => (
+    <div className={className} {...props}>
+      {children}
+    </div>
+  ),
+  Typography: ({
+    children,
+    className,
+    overrideDefaults,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <span className={className} data-override-defaults={overrideDefaults} {...props}>
+      {children}
+    </span>
+  ),
+}));
+
+// Mock @/libs/utils
+vi.mock('@/libs/utils', () => ({
+  cn: (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' '),
 }));
 
 describe('InitializedMDXEditor', () => {
@@ -130,6 +174,7 @@ describe('InitializedMDXEditor', () => {
     vi.clearAllMocks();
     toolbarContentsRenderer = null;
     capturedOnEmojiSelect = null;
+    capturedOnChange = null;
   });
 
   it('renders the MDXEditor component', () => {
@@ -256,12 +301,92 @@ describe('InitializedMDXEditor', () => {
     // Dialog should be closed
     expect(screen.queryByTestId('emoji-picker-dialog')).not.toBeInTheDocument();
   });
+
+  it('does not show max length warning initially', () => {
+    render(<InitializedMDXEditor editorRef={null} />);
+
+    expect(screen.queryByTestId('max-length-warning')).not.toBeInTheDocument();
+  });
+
+  it('shows approaching warning when less than 100 characters remaining', () => {
+    render(<InitializedMDXEditor editorRef={null} />);
+
+    // Simulate typing content that leaves 99 characters remaining
+    const contentLength = MOCK_MAX_LENGTH - 99;
+    act(() => {
+      capturedOnChange?.('a'.repeat(contentLength));
+    });
+
+    const warning = screen.getByTestId('max-length-warning');
+    expect(warning).toBeInTheDocument();
+    expect(warning).toHaveClass('bg-yellow-500/15');
+    expect(warning).toHaveClass('text-yellow-500');
+    expect(screen.getByText("You're approaching the maximum character limit.")).toBeInTheDocument();
+  });
+
+  it('shows reached warning when at maximum length', () => {
+    render(<InitializedMDXEditor editorRef={null} />);
+
+    // Simulate typing content that reaches exactly the max length
+    act(() => {
+      capturedOnChange?.('a'.repeat(MOCK_MAX_LENGTH));
+    });
+
+    const warning = screen.getByTestId('max-length-warning');
+    expect(warning).toBeInTheDocument();
+    expect(warning).toHaveClass('bg-red-500/15');
+    expect(warning).toHaveClass('text-red-500');
+    expect(screen.getByText("You've reached the maximum character limit.")).toBeInTheDocument();
+  });
+
+  it('clears warning when content is reduced below threshold', () => {
+    render(<InitializedMDXEditor editorRef={null} />);
+
+    // First, trigger the warning
+    act(() => {
+      capturedOnChange?.('a'.repeat(MOCK_MAX_LENGTH - 50));
+    });
+    expect(screen.getByTestId('max-length-warning')).toBeInTheDocument();
+
+    // Then reduce content to clear warning (more than 100 chars remaining)
+    act(() => {
+      capturedOnChange?.('a'.repeat(MOCK_MAX_LENGTH - 150));
+    });
+    expect(screen.queryByTestId('max-length-warning')).not.toBeInTheDocument();
+  });
+
+  it('calls props.onChange when provided', () => {
+    const mockOnChange = vi.fn();
+    render(<InitializedMDXEditor editorRef={null} onChange={mockOnChange} />);
+
+    const testMarkdown = '# Test content';
+    act(() => {
+      capturedOnChange?.(testMarkdown);
+    });
+
+    expect(mockOnChange).toHaveBeenCalledWith(testMarkdown, undefined);
+  });
+
+  it('renders alert triangle icon in max length warning', () => {
+    render(<InitializedMDXEditor editorRef={null} />);
+
+    // Trigger the warning
+    act(() => {
+      capturedOnChange?.('a'.repeat(MOCK_MAX_LENGTH - 50));
+    });
+
+    const alertIcon = screen.getByTestId('alert-triangle-icon');
+    expect(alertIcon).toBeInTheDocument();
+    expect(alertIcon).toHaveClass('size-4');
+    expect(alertIcon).toHaveClass('shrink-0');
+  });
 });
 
 describe('InitializedMDXEditor - Snapshots', () => {
   beforeEach(() => {
     toolbarContentsRenderer = null;
     capturedOnEmojiSelect = null;
+    capturedOnChange = null;
   });
 
   it('matches snapshot with default props', () => {
@@ -286,5 +411,27 @@ describe('InitializedMDXEditor - Snapshots', () => {
   it('matches snapshot with custom className', () => {
     const { container } = render(<InitializedMDXEditor editorRef={null} className="custom-editor-class" />);
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with approaching max length warning', () => {
+    const { container } = render(<InitializedMDXEditor editorRef={null} />);
+
+    // Trigger approaching warning
+    act(() => {
+      capturedOnChange?.('a'.repeat(MOCK_MAX_LENGTH - 50));
+    });
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot with reached max length warning', () => {
+    const { container } = render(<InitializedMDXEditor editorRef={null} />);
+
+    // Trigger reached warning
+    act(() => {
+      capturedOnChange?.('a'.repeat(MOCK_MAX_LENGTH));
+    });
+
+    expect(container).toMatchSnapshot();
   });
 });

@@ -1,9 +1,103 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`InitializedMDXEditor - Snapshots > matches snapshot with approaching max length warning 1`] = `
+<div>
+  <div
+    class="dark-theme cursor-auto"
+    data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
+    data-placeholder="Start writing your masterpiece"
+    data-plugins-count="9"
+    data-testid="mdx-editor"
+  >
+    <div
+      data-testid="toolbar"
+    >
+      <button
+        data-testid="undo-redo"
+      >
+        Undo/Redo
+      </button>
+      <button
+        data-testid="block-type-select"
+      >
+        Block Type
+      </button>
+      <button
+        data-testid="bold-italic-toggles"
+      >
+        Bold/Italic
+      </button>
+      <button
+        data-testid="strikethrough-toggle"
+      >
+        Strikethrough
+      </button>
+      <button
+        data-testid="lists-toggle"
+      >
+        Lists
+      </button>
+      <button
+        data-testid="insert-thematic-break"
+      >
+        Insert Break
+      </button>
+      <button
+        data-testid="code-toggle"
+      >
+        Code
+      </button>
+      <button
+        data-testid="insert-code-block"
+      >
+        Insert Code Block
+      </button>
+      <button
+        data-testid="button-with-tooltip"
+        title="Emoji"
+      >
+        <svg
+          class="size-6"
+          data-testid="smile-icon"
+        >
+          <title>
+            Smile
+          </title>
+        </svg>
+      </button>
+    </div>
+    <div
+      data-testid="editor-content"
+    >
+      Editor Content
+    </div>
+  </div>
+  <div
+    class="cursor-auto flex-row items-center gap-x-2 rounded-md p-2 bg-yellow-500/15 text-yellow-500"
+    data-testid="max-length-warning"
+  >
+    <svg
+      class="size-4 shrink-0"
+      data-testid="alert-triangle-icon"
+    >
+      <title>
+        Alert Triangle
+      </title>
+    </svg>
+    <span
+      class="text-sm"
+      data-override-defaults="true"
+    >
+      You're approaching the maximum character limit.
+    </span>
+  </div>
+</div>
+`;
+
 exports[`InitializedMDXEditor - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="custom-editor-class"
-  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
   data-placeholder="Start writing your masterpiece"
   data-plugins-count="9"
   data-testid="mdx-editor"
@@ -76,7 +170,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with custom classNa
 exports[`InitializedMDXEditor - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="dark-theme cursor-auto"
-  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
   data-placeholder="Start writing your masterpiece"
   data-plugins-count="9"
   data-testid="mdx-editor"
@@ -149,7 +243,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with default props 
 exports[`InitializedMDXEditor - Snapshots > matches snapshot with emoji picker open 1`] = `
 <div
   class="dark-theme cursor-auto"
-  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
   data-placeholder="Start writing your masterpiece"
   data-plugins-count="9"
   data-testid="mdx-editor"
@@ -222,7 +316,7 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with emoji picker o
 exports[`InitializedMDXEditor - Snapshots > matches snapshot with markdown content 1`] = `
 <div
   class="dark-theme cursor-auto"
-  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+  data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
   data-placeholder="Start writing your masterpiece"
   data-plugins-count="9"
   data-testid="mdx-editor"
@@ -289,6 +383,100 @@ exports[`InitializedMDXEditor - Snapshots > matches snapshot with markdown conte
     data-testid="editor-content"
   >
     Editor Content
+  </div>
+</div>
+`;
+
+exports[`InitializedMDXEditor - Snapshots > matches snapshot with reached max length warning 1`] = `
+<div>
+  <div
+    class="dark-theme cursor-auto"
+    data-content-editable-class="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
+    data-placeholder="Start writing your masterpiece"
+    data-plugins-count="9"
+    data-testid="mdx-editor"
+  >
+    <div
+      data-testid="toolbar"
+    >
+      <button
+        data-testid="undo-redo"
+      >
+        Undo/Redo
+      </button>
+      <button
+        data-testid="block-type-select"
+      >
+        Block Type
+      </button>
+      <button
+        data-testid="bold-italic-toggles"
+      >
+        Bold/Italic
+      </button>
+      <button
+        data-testid="strikethrough-toggle"
+      >
+        Strikethrough
+      </button>
+      <button
+        data-testid="lists-toggle"
+      >
+        Lists
+      </button>
+      <button
+        data-testid="insert-thematic-break"
+      >
+        Insert Break
+      </button>
+      <button
+        data-testid="code-toggle"
+      >
+        Code
+      </button>
+      <button
+        data-testid="insert-code-block"
+      >
+        Insert Code Block
+      </button>
+      <button
+        data-testid="button-with-tooltip"
+        title="Emoji"
+      >
+        <svg
+          class="size-6"
+          data-testid="smile-icon"
+        >
+          <title>
+            Smile
+          </title>
+        </svg>
+      </button>
+    </div>
+    <div
+      data-testid="editor-content"
+    >
+      Editor Content
+    </div>
+  </div>
+  <div
+    class="cursor-auto flex-row items-center gap-x-2 rounded-md p-2 bg-red-500/15 text-red-500"
+    data-testid="max-length-warning"
+  >
+    <svg
+      class="size-4 shrink-0"
+      data-testid="alert-triangle-icon"
+    >
+      <title>
+        Alert Triangle
+      </title>
+    </svg>
+    <span
+      class="text-sm"
+      data-override-defaults="true"
+    >
+      You've reached the maximum character limit.
+    </span>
   </div>
 </div>
 `;

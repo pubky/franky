@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { usePostInput } from './usePostInput';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
 import {
@@ -1162,7 +1162,15 @@ describe('usePostInput', () => {
   });
 
   describe('handleArticleTitleChange', () => {
-    it('calls setArticleTitle when value is within character limit', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('calls setArticleTitle when value is within character limit (after debounce)', () => {
       const { result } = renderHook(() =>
         usePostInput({
           variant: 'post',
@@ -1175,6 +1183,14 @@ describe('usePostInput', () => {
 
       act(() => {
         result.current.handleArticleTitleChange(mockEvent);
+      });
+
+      // Should not be called immediately due to debounce
+      expect(mockSetArticleTitle).not.toHaveBeenCalled();
+
+      // Advance timers by 500ms to trigger debounced callback
+      act(() => {
+        vi.advanceTimersByTime(500);
       });
 
       expect(mockSetArticleTitle).toHaveBeenCalledWith('Test Title');
@@ -1197,6 +1213,11 @@ describe('usePostInput', () => {
         result.current.handleArticleTitleChange(mockEvent);
       });
 
+      // Advance timers by 500ms to trigger debounced callback
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
       expect(mockSetArticleTitle).not.toHaveBeenCalled();
     });
 
@@ -1217,12 +1238,25 @@ describe('usePostInput', () => {
         result.current.handleArticleTitleChange(mockEvent);
       });
 
+      // Advance timers by 500ms to trigger debounced callback
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
+
       expect(mockSetArticleTitle).toHaveBeenCalledWith(exactLimitText);
     });
   });
 
   describe('handleArticleBodyChange', () => {
-    it('calls setContent with markdown value', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('calls setContent with markdown value (after debounce)', () => {
       const { result } = renderHook(() =>
         usePostInput({
           variant: 'post',
@@ -1232,6 +1266,14 @@ describe('usePostInput', () => {
       act(() => {
         // MDXEditor onChange expects (markdown: string, initialMarkdownNormalize: boolean)
         result.current.handleArticleBodyChange('# Heading\n\nSome content', false);
+      });
+
+      // Should not be called immediately due to debounce
+      expect(mockSetContent).not.toHaveBeenCalled();
+
+      // Advance timers by 500ms to trigger debounced callback
+      act(() => {
+        vi.advanceTimersByTime(500);
       });
 
       expect(mockSetContent).toHaveBeenCalledWith('# Heading\n\nSome content');

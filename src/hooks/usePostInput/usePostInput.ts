@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { type MDXEditorProps, type MDXEditorMethods } from '@mdxeditor/editor';
+import { useDebounceCallback } from 'usehooks-ts';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import {
@@ -194,20 +195,17 @@ export function usePostInput({
   );
 
   // Handle article title change with validation
-  const handleArticleTitleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      if (value.length <= ARTICLE_TITLE_MAX_CHARACTER_LENGTH) {
-        setArticleTitle(value);
-      }
-    },
-    [setArticleTitle],
-  );
+  const handleArticleTitleChange = useDebounceCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= ARTICLE_TITLE_MAX_CHARACTER_LENGTH) {
+      setArticleTitle(value);
+    }
+  }, 500);
 
   // Handle article body change - length validation is handled via MDXEditor's maxLength plugin
-  const handleArticleBodyChange = useCallback<NonNullable<MDXEditorProps['onChange']>>(
+  const handleArticleBodyChange = useDebounceCallback<NonNullable<MDXEditorProps['onChange']>>(
     (markdown) => setContent(markdown),
-    [setContent],
+    500,
   );
 
   // Emoji insert handler

@@ -106,7 +106,6 @@ export function PostInput({
         {isArticle && (
           <Atoms.Input
             placeholder="Article Title"
-            value={articleTitle}
             onChange={handleArticleTitleChange}
             maxLength={ARTICLE_TITLE_MAX_CHARACTER_LENGTH}
             disabled={isSubmitting}

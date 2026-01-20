@@ -28,8 +28,10 @@ import '@mdxeditor/editor/style.css';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { languages } from '@codemirror/language-data';
 import { ARTICLE_MAX_CHARACTER_LENGTH } from '@/config';
-import * as Icons from '@/libs/icons';
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Icons from '@/libs/icons';
+import * as Utils from '@/libs/utils';
 
 /**
  * Common programming languages for code blocks in the Markdown editor.
@@ -102,13 +104,14 @@ export default function InitializedMDXEditor({
   ...props
 }: { editorRef: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [maxLengthWarning, setMaxLengthWarning] = useState<null | 'approaching' | 'reached'>(null);
 
   return (
     <>
       <MDXEditor
         placeholder="Start writing your masterpiece"
         className="dark-theme cursor-auto"
-        contentEditableClassName="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4!"
+        contentEditableClassName="prose prose-neutral prose-invert prose-code:before:content-none prose-code:after:content-none max-w-none px-0! pb-0! pt-4! max-h-[60dvh] overflow-y-auto"
         plugins={[
           toolbarPlugin({
             toolbarClassName: 'bg-background! border rounded-md! flex-wrap',
@@ -141,6 +144,22 @@ export default function InitializedMDXEditor({
           maxLengthPlugin(ARTICLE_MAX_CHARACTER_LENGTH),
         ]}
         {...props}
+        onChange={(markdown, initialMarkdownNormalize) => {
+          const remaining = ARTICLE_MAX_CHARACTER_LENGTH - markdown.length;
+
+          switch (true) {
+            case remaining === 0:
+              setMaxLengthWarning('reached');
+              break;
+            case remaining < 100:
+              setMaxLengthWarning('approaching');
+              break;
+            default:
+              setMaxLengthWarning(null);
+          }
+
+          props.onChange?.(markdown, initialMarkdownNormalize);
+        }}
         ref={editorRef}
       />
 
@@ -155,6 +174,24 @@ export default function InitializedMDXEditor({
           }
         }}
       />
+
+      {maxLengthWarning && (
+        <Atoms.Container
+          className={Utils.cn(
+            'cursor-auto flex-row items-center gap-x-2 rounded-md p-2',
+            maxLengthWarning === 'approaching' && 'bg-yellow-500/15 text-yellow-500',
+            maxLengthWarning === 'reached' && 'bg-red-500/15 text-red-500',
+          )}
+          data-testid="max-length-warning"
+        >
+          <Icons.AlertTriangle className="size-4 shrink-0" />
+
+          <Atoms.Typography overrideDefaults className="text-sm">
+            {maxLengthWarning === 'approaching' && `You're approaching the maximum character limit.`}
+            {maxLengthWarning === 'reached' && `You've reached the maximum character limit.`}
+          </Atoms.Typography>
+        </Atoms.Container>
+      )}
     </>
   );
 }
