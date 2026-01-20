@@ -11,7 +11,6 @@ export const Tag = ({
   clicked = false,
   onClick,
   className,
-  maxLength,
   'data-testid': dataTestId,
   ...props
 }: TagProps) => {
@@ -24,9 +23,6 @@ export const Tag = ({
       borderColor: Libs.hexToRgba(base, 0.5),
     };
   }, [name]);
-
-  // Truncate name if maxLength is provided
-  const displayName = maxLength && name.length > maxLength ? `${name.slice(0, maxLength)}…` : name;
 
   const handleClick = () => {
     onClick?.(name);
@@ -59,7 +55,7 @@ export const Tag = ({
       {...props}
     >
       <Atoms.Typography size="sm" className="truncate" data-testid="tag-name">
-        {displayName}
+        {name}
       </Atoms.Typography>
 
       {count !== undefined && (

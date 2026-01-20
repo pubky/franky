@@ -23,11 +23,11 @@ export function PostHeaderUserInfo({
       overrideDefaults
       className={Libs.cn('flex min-w-0 items-center', size === 'large' ? 'gap-5' : 'gap-3')}
     >
-      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size={size === 'large' ? 'xl' : 'default'} />
+      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size={size === 'large' ? 'xl' : 'default'} className="shrink-0" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
         <Atoms.Typography
           className={Libs.cn(
-            'inline-block cursor-pointer truncate leading-6 font-bold text-foreground hover:underline',
+            'block max-w-full cursor-pointer truncate leading-6 font-bold text-foreground hover:underline',
             size === 'large' ? 'text-2xl' : 'text-base',
           )}
           overrideDefaults

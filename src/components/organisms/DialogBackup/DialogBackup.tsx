@@ -20,7 +20,7 @@ interface BackupMethodCardProps {
 
 function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCardProps) {
   return (
-    <Atoms.Card className="w-full flex-[1_0_0] flex-col gap-3 px-0 py-0 md:gap-6">
+    <Atoms.Card className="w-full flex-[1_0_0] flex-col gap-3 rounded-md px-0 py-0 md:gap-6">
       {/* Card Header */}
       <div className="flex flex-col gap-2 px-6 py-0 pt-5 md:pt-6">
         <Atoms.Typography size="md" className="text-base leading-none font-bold text-card-foreground">

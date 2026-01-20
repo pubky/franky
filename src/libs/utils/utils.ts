@@ -761,3 +761,107 @@ export function formatUSDate(date: Date = new Date()): string {
     year: 'numeric',
   });
 }
+
+/**
+ * Word lists for random username generation
+ * Format: Adjective-Noun-Noun (e.g., "Blue-Rabbit-Hat")
+ */
+const USERNAME_ADJECTIVES = [
+  'Blue',
+  'Red',
+  'Green',
+  'Golden',
+  'Silver',
+  'Purple',
+  'Orange',
+  'Pink',
+  'Cosmic',
+  'Bright',
+  'Swift',
+  'Noble',
+  'Brave',
+  'Calm',
+  'Bold',
+  'Wild',
+  'Wise',
+  'Lucky',
+  'Happy',
+  'Sunny',
+  'Misty',
+  'Rusty',
+  'Dusty',
+  'Frosty',
+  'Mighty',
+  'Gentle',
+  'Clever',
+  'Silent',
+  'Ancient',
+  'Mystic',
+];
+
+const USERNAME_NOUNS = [
+  'Rabbit',
+  'Fox',
+  'Wolf',
+  'Bear',
+  'Eagle',
+  'Hawk',
+  'Owl',
+  'Tiger',
+  'Lion',
+  'Panda',
+  'Koala',
+  'Dolphin',
+  'Falcon',
+  'Phoenix',
+  'Dragon',
+  'Raven',
+  'Sparrow',
+  'Otter',
+  'Badger',
+  'Lynx',
+  'Hat',
+  'Star',
+  'Moon',
+  'Sun',
+  'Cloud',
+  'Storm',
+  'Wave',
+  'Stone',
+  'Crystal',
+  'Flame',
+  'Frost',
+  'Wind',
+  'Thunder',
+  'Shadow',
+  'Light',
+  'Blade',
+  'Shield',
+  'Crown',
+  'Tower',
+  'Garden',
+];
+
+/**
+ * Generates a random username in the format "Adjective-Noun-Noun"
+ * Creates unique, memorable usernames like "Blue-Rabbit-Hat" or "Golden-Eagle-Star"
+ *
+ * @returns A random username string
+ *
+ * @example
+ * generateRandomUsername() // "Blue-Rabbit-Hat"
+ * generateRandomUsername() // "Golden-Eagle-Star"
+ * generateRandomUsername() // "Swift-Fox-Moon"
+ */
+export function generateRandomUsername(): string {
+  const randomAdjective = USERNAME_ADJECTIVES[Math.floor(Math.random() * USERNAME_ADJECTIVES.length)];
+  const randomNoun1 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+
+  // Ensure second noun is different from the first
+  let randomNoun2 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+  while (randomNoun2 === randomNoun1) {
+    randomNoun2 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+  }
+
+  return `${randomAdjective}-${randomNoun1}-${randomNoun2}`;
+}
