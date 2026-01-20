@@ -88,7 +88,7 @@ export const ScanContent = () => {
                     alt="Pubky Ring"
                     width={48}
                     height={48}
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                   />
                 </>
               )}

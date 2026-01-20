@@ -52,7 +52,7 @@ exports[`Scan Components - Snapshots > ScanContent - Snapshots > matches snapsho
         />
       </div>
       <p
-        class="text-2xl font-semibold tracking-widest text-brand"
+        class="text-lg font-semibold tracking-widest text-brand"
         data-testid="typography"
       >
         A9KM-7MJP-ERM9
