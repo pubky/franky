@@ -18,10 +18,10 @@ export function PostHeaderUserInfo({
 
   const content = (
     <Atoms.Container overrideDefaults className="flex min-w-0 items-center gap-3">
-      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" />
+      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" className="shrink-0" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
         <Atoms.Typography
-          className="inline-block cursor-pointer truncate text-base leading-6 font-bold text-foreground hover:underline"
+          className="block max-w-full cursor-pointer truncate text-base leading-6 font-bold text-foreground hover:underline"
           overrideDefaults
         >
           {userName}

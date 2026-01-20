@@ -2,103 +2,324 @@
 
 exports[`SmsVerificationCard > matches snapshot 1`] = `
 <div
-  class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
-  data-slot="card"
-  data-testid="sms-verification-card"
+  class="mx-auto w-full flex-col flex relative flex-1"
+  data-testid="container"
 >
   <div
-    class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-center"
-    data-testid="container"
+    class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
+    data-slot="card"
+    data-testid="sms-verification-card"
   >
     <div
-      class="mx-auto flex-col hidden h-full w-full flex-1 items-center lg:block lg:w-auto"
-      data-testid="container"
-    >
-      <img
-        alt="Lime Pubky phone representing SMS verification"
-        class="h-auto w-[192px] max-w-full"
-        height="600"
-        src="/images/sms-verification-phone.png"
-        width="800"
-      />
-    </div>
-    <div
-      class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12"
       data-testid="container"
     >
       <div
-        class="mx-auto w-full flex-col flex gap-3"
+        class="mx-auto flex-col hidden h-full w-full flex-1 items-center lg:block lg:w-auto"
         data-testid="container"
       >
-        <h3
-          class="text-2xl leading-[32px] font-semibold whitespace-nowrap text-foreground sm:text-[28px]"
-          data-testid="typography"
-        >
-          SMS Verification
-        </h3>
-        <p
-          class="text-5xl leading-none font-semibold text-brand lg:text-6xl"
-          data-testid="typography"
-        >
-          Free
-        </p>
-        <p
-          class="text-xs font-medium tracking-[0.1em] whitespace-nowrap text-muted-foreground uppercase"
-          data-testid="typography"
-        >
-          LESS PRIVATE, BUT EASY
-        </p>
+        <img
+          alt="Lime Pubky phone representing SMS verification"
+          class="max-w-full size-48"
+          height="600"
+          src="/images/sms-verification-phone.png"
+          width="800"
+        />
+      </div>
+      <div
+        class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+        data-testid="container"
+      >
         <div
-          class="mx-auto w-full flex-col flex gap-1"
+          class="mx-auto w-full flex-col flex gap-3"
           data-testid="container"
         >
-          <p
-            class="text-base leading-6 font-medium text-secondary-foreground/80"
+          <h3
+            class="text-2xl leading-8 font-semibold text-foreground"
             data-testid="typography"
           >
-            1GB storage
-          </p>
+            SMS Verification
+          </h3>
           <p
-            class="text-base leading-6 font-medium text-secondary-foreground/80"
+            class="text-5xl leading-none font-semibold text-brand lg:text-6xl"
             data-testid="typography"
           >
-            1MB/s speed limit
+            Free
           </p>
+          <p
+            class="text-xs font-medium tracking-widest text-muted-foreground uppercase"
+            data-testid="typography"
+          >
+            LESS PRIVATE, BUT EASY
+          </p>
+          <div
+            class="mx-auto w-full flex-col flex gap-1"
+            data-testid="container"
+          >
+            <p
+              class="text-base leading-6 font-medium text-secondary-foreground/80"
+              data-testid="typography"
+            >
+              1GB storage
+            </p>
+            <p
+              class="text-base leading-6 font-medium text-secondary-foreground/80"
+              data-testid="typography"
+            >
+              1MB/s speed limit
+            </p>
+          </div>
         </div>
-      </div>
-      <button
-        class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-secondary hover:bg-secondary/80 gap-1 has-[>svg]:px-4 h-12 w-auto rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark"
-        data-slot="button"
-        data-testid="human-sms-card-receive-sms-btn"
-        data-variant="secondary"
-      >
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-smartphone mr-2 h-4 w-4"
-          fill="none"
-          height="24"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 gap-1 py-2 has-[>svg]:px-4 h-10 rounded-full px-4 text-sm font-semibold shadow-xs-dark"
+          data-slot="button"
+          data-testid="human-sms-card-receive-sms-btn"
+          data-variant="secondary"
         >
-          <rect
-            height="20"
-            rx="2"
-            ry="2"
-            width="14"
-            x="5"
-            y="2"
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-smartphone mr-2 size-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              height="20"
+              rx="2"
+              ry="2"
+              width="14"
+              x="5"
+              y="2"
+            />
+            <path
+              d="M12 18h.01"
+            />
+          </svg>
+          Receive SMS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SmsVerificationCard > matches snapshot when geoblocked 1`] = `
+<div
+  class="mx-auto w-full flex-col flex relative flex-1"
+  data-testid="container"
+>
+  <div
+    class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12 pointer-events-none opacity-60 blur-[5px]"
+    data-slot="card"
+    data-testid="sms-verification-card"
+  >
+    <div
+      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12"
+      data-testid="container"
+    >
+      <div
+        class="mx-auto flex-col hidden h-full w-full flex-1 items-center lg:block lg:w-auto"
+        data-testid="container"
+      >
+        <img
+          alt="Lime Pubky phone representing SMS verification"
+          class="max-w-full size-48"
+          height="600"
+          src="/images/sms-verification-phone.png"
+          width="800"
+        />
+      </div>
+      <div
+        class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+        data-testid="container"
+      >
+        <div
+          class="mx-auto w-full flex-col flex gap-3"
+          data-testid="container"
+        >
+          <h3
+            class="text-2xl leading-8 font-semibold text-foreground"
+            data-testid="typography"
+          >
+            SMS Verification
+          </h3>
+          <p
+            class="text-5xl leading-none font-semibold text-brand lg:text-6xl"
+            data-testid="typography"
+          >
+            Free
+          </p>
+          <p
+            class="text-xs font-medium tracking-widest text-muted-foreground uppercase"
+            data-testid="typography"
+          >
+            LESS PRIVATE, BUT EASY
+          </p>
+          <div
+            class="mx-auto w-full flex-col flex gap-1"
+            data-testid="container"
+          >
+            <p
+              class="text-base leading-6 font-medium text-secondary-foreground/80"
+              data-testid="typography"
+            >
+              1GB storage
+            </p>
+            <p
+              class="text-base leading-6 font-medium text-secondary-foreground/80"
+              data-testid="typography"
+            >
+              1MB/s speed limit
+            </p>
+          </div>
+        </div>
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 gap-1 py-2 has-[>svg]:px-4 h-10 rounded-full px-4 text-sm font-semibold shadow-xs-dark"
+          data-slot="button"
+          data-testid="human-sms-card-receive-sms-btn"
+          data-variant="secondary"
+          disabled=""
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-smartphone mr-2 size-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect
+              height="20"
+              rx="2"
+              ry="2"
+              width="14"
+              x="5"
+              y="2"
+            />
+            <path
+              d="M12 18h.01"
+            />
+          </svg>
+          Receive SMS
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    class="absolute top-1/2 left-1/2 flex h-11 -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-md bg-destructive/60 px-6 py-3 shadow-xl"
+    data-testid="geoblock-alert"
+  >
+    <div
+      class="pt-0.5"
+      data-testid="container"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-triangle-alert text-destructive-foreground size-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
+        />
+        <path
+          d="M12 9v4"
+        />
+        <path
+          d="M12 17h.01"
+        />
+      </svg>
+    </div>
+    <p
+      class="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
+      data-testid="typography"
+    >
+      Currently not available in your country
+    </p>
+  </div>
+</div>
+`;
+
+exports[`SmsVerificationCard > matches snapshot when loading 1`] = `
+<div
+  class="mx-auto w-full flex-col flex relative flex-1"
+  data-testid="container"
+>
+  <div
+    class="flex flex-col rounded-xl bg-card text-card-foreground shadow-sm flex-1 gap-0 p-6 md:p-12"
+    data-slot="card"
+    data-testid="sms-verification-card-skeleton"
+  >
+    <div
+      class="mx-auto w-full flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-12"
+      data-testid="container"
+    >
+      <div
+        class="mx-auto flex-col hidden h-full w-full flex-1 items-center lg:block lg:w-auto"
+        data-testid="container"
+      >
+        <div
+          class="size-48 animate-pulse rounded bg-muted"
+          data-testid="container"
+        />
+      </div>
+      <div
+        class="mx-auto flex-col flex w-full flex-1 items-start gap-6"
+        data-testid="container"
+      >
+        <div
+          class="mx-auto flex-col flex w-full gap-3"
+          data-testid="container"
+        >
+          <div
+            class="h-8 w-48 animate-pulse rounded bg-muted"
+            data-testid="container"
           />
-          <path
-            d="M12 18h.01"
+          <div
+            class="h-12 w-20 animate-pulse rounded bg-muted lg:h-15"
+            data-testid="container"
           />
-        </svg>
-        Receive SMS
-      </button>
+          <div
+            class="h-4 w-44 animate-pulse rounded bg-muted"
+            data-testid="container"
+          />
+          <div
+            class="mx-auto w-full flex-col flex gap-1"
+            data-testid="container"
+          >
+            <div
+              class="h-6 w-24 animate-pulse rounded bg-muted"
+              data-testid="container"
+            />
+            <div
+              class="h-6 w-32 animate-pulse rounded bg-muted"
+              data-testid="container"
+            />
+          </div>
+        </div>
+        <div
+          class="h-10 w-36 animate-pulse rounded-full bg-muted"
+          data-testid="container"
+        />
+      </div>
     </div>
   </div>
 </div>

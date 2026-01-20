@@ -1,3 +1,5 @@
+import { isPubkyIdentifier } from '@/libs';
+
 export const ROOT_ROUTES = '/';
 
 export enum ONBOARDING_ROUTES {
@@ -49,13 +51,21 @@ export enum POST_ROUTES {
   POST = '/post',
 }
 
+export enum COPYRIGHT_ROUTES {
+  COPYRIGHT = '/copyright',
+}
+
 // Public routes are accessible regardless of authentication status.
 // This includes routes that need to be accessible during auth transitions (like logout).
+// Note: Dynamic public routes like /profile/[pubky] and /post/[userId]/[postId]
+// are handled by isDynamicPublicRoute() in RouteGuardProvider.
 export const PUBLIC_ROUTES: string[] = [
   AUTH_ROUTES.LOGOUT,
   // Profile is public to prevent RouteGuard redirect during logout.
   // The profile page components handle unauthenticated state gracefully.
   APP_ROUTES.PROFILE,
+  // Copyright page should be accessible without authentication
+  COPYRIGHT_ROUTES.COPYRIGHT,
 ];
 
 export const ALLOWED_ROUTES = [
@@ -81,6 +91,7 @@ export const UNAUTHENTICATED_ROUTES = {
     ONBOARDING_ROUTES.BACKUP,
     ONBOARDING_ROUTES.HUMAN,
     AUTH_ROUTES.LOGOUT,
+    COPYRIGHT_ROUTES.COPYRIGHT,
   ],
   redirectTo: ROOT_ROUTES,
 };
@@ -99,6 +110,34 @@ export const AUTHENTICATED_ROUTES = {
 export const HOME_ROUTES = {
   HOME: APP_ROUTES.HOME,
 };
+
+// ============================================================================
+// Dynamic Public Route Detection
+// ============================================================================
+
+/**
+ * Checks if a pathname is a dynamic public route accessible without authentication.
+ *
+ * Dynamic public routes:
+ * - /post/[userId]/[postId] - viewing a single post
+ * - /profile/[pubky] - viewing another user's profile
+ * - /profile/[pubky]/posts - viewing another user's posts
+ */
+export function isDynamicPublicRoute(pathname: string): boolean {
+  const segments = pathname.split('/').filter(Boolean);
+
+  switch (true) {
+    case segments[0] === 'post' && segments.length === 3:
+    case segments[0] === 'profile' && segments.length === 2 && isPubkyIdentifier(segments[1]):
+    case segments[0] === 'profile' &&
+      segments.length === 3 &&
+      isPubkyIdentifier(segments[1]) &&
+      segments[2] === 'posts':
+      return true;
+    default:
+      return false;
+  }
+}
 
 // ============================================================================
 // Profile Route Helpers
@@ -139,16 +178,3 @@ export function getProfileRoute(route: PROFILE_ROUTES, pubky?: string): string {
 
   return `/profile/${pubky}${subPath}`;
 }
-
-/**
- * Profile route page types for dynamic route generation
- */
-export const PROFILE_PAGE_PATHS = {
-  posts: '/posts',
-  replies: '/replies',
-  followers: '/followers',
-  following: '/following',
-  friends: '/friends',
-  tagged: '/tagged',
-  profile: '/profile',
-} as const;

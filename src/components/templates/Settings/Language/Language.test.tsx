@@ -12,7 +12,7 @@ describe('Language', () => {
   it('renders language selector', () => {
     render(<Language />);
     expect(screen.getByText('Display language')).toBeInTheDocument();
-    expect(screen.getByText('English')).toBeInTheDocument();
+    expect(screen.getByText('US English')).toBeInTheDocument();
   });
 });
 

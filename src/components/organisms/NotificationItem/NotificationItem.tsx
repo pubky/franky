@@ -85,38 +85,38 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
 
   const contentElement = (
     <>
-      <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
+      <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 items-center gap-2">
         {/* Avatar - navigation handled by parent notificationLink wrapper */}
-        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="lg:size-8" />
+        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="shrink-0 lg:size-8" />
 
-        <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
+        <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 items-center gap-2">
           <Atoms.Typography
             as="p"
-            className="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
+            className="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
           >
             {notificationText}
           </Atoms.Typography>
 
           {/* Post preview text for desktop - dynamically fetched from database */}
           {previewText && (
-            <Atoms.Typography as="p" className="hidden text-base font-medium text-muted-foreground xl:inline">
+            <Atoms.Typography as="p" className="hidden shrink-0 text-base font-medium text-muted-foreground xl:inline">
               {previewText}
             </Atoms.Typography>
           )}
 
           {/* Tag badge for tagged post notifications */}
           {notification.type === NotificationType.TagPost && 'tag_label' in notification && (
-            <Molecules.PostTag label={notification.tag_label} showClose={false} />
+            <Molecules.PostTag label={notification.tag_label} showClose={false} className="shrink-0" />
           )}
 
           {/* Tag badge for tagged profile notifications */}
           {notification.type === NotificationType.TagProfile && 'tag_label' in notification && (
-            <Molecules.PostTag label={notification.tag_label} showClose={false} />
+            <Molecules.PostTag label={notification.tag_label} showClose={false} className="shrink-0" />
           )}
 
           {/* Friend notification extra text */}
           {notification.type === NotificationType.NewFriend && (
-            <Atoms.Typography as="p" className="hidden text-base font-medium text-muted-foreground xl:inline">
+            <Atoms.Typography as="p" className="hidden shrink-0 text-base font-medium text-muted-foreground xl:inline">
               (you follow each other)
             </Atoms.Typography>
           )}
@@ -145,11 +145,11 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   );
 
   return (
-    <Atoms.Container overrideDefaults={true} className="flex w-full items-center justify-between gap-2">
+    <Atoms.Container overrideDefaults={true} className="flex w-full min-w-0 items-center justify-between gap-2">
       {notificationLink ? (
         <Link
           href={notificationLink}
-          className="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
+          className="flex w-full min-w-0 items-center justify-between gap-2 transition-opacity hover:opacity-80"
         >
           {contentElement}
         </Link>

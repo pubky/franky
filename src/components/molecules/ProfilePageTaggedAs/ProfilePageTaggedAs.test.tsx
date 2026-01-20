@@ -55,40 +55,21 @@ describe('ProfilePageTaggedAs', () => {
     expect(taggedItems).toHaveLength(defaultTags.length);
   });
 
-  it('renders Tag Yourself button when viewing own profile', () => {
+  it('renders Add Tag button', () => {
     render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} />);
-    const addTagButton = screen.getByText(/Tag Yourself/);
+    const addTagButton = screen.getByText(/Add Tag/);
     expect(addTagButton).toBeInTheDocument();
   });
 
-  it('renders Tag User button when viewing other profile without userName', () => {
+  it('renders Add Tag button when viewing other profile', () => {
     render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} pubky="pk:abc123" />);
-    const addTagButton = screen.getByText(/Tag User/);
+    const addTagButton = screen.getByText(/Add Tag/);
     expect(addTagButton).toBeInTheDocument();
   });
 
-  it('renders Tag with userName when viewing other profile with userName', () => {
-    render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} pubky="pk:abc123" userName="Alice" />);
-    const addTagButton = screen.getByText(/Tag Alice/);
-    expect(addTagButton).toBeInTheDocument();
-  });
-
-  it('renders truncated userName when name is too long', () => {
-    render(
-      <ProfilePageTaggedAs
-        tags={defaultTags}
-        onTagClick={mockOnTagClick}
-        pubky="pk:abc123"
-        userName="SuperLongUserName"
-      />,
-    );
-    const addTagButton = screen.getByText(/Tag SuperLongU\.\.\./);
-    expect(addTagButton).toBeInTheDocument();
-  });
-
-  it('Tag button has correct styling', () => {
+  it('Add Tag button has correct styling', () => {
     render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} />);
-    const addTagButton = screen.getByText(/Tag Yourself/).closest('button');
+    const addTagButton = screen.getByText(/Add Tag/).closest('button');
     expect(addTagButton).toHaveClass('border', 'border-border', 'bg-foreground/5');
   });
 

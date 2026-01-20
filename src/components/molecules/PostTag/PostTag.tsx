@@ -30,7 +30,7 @@ export function PostTag({
       data-cy="post-tag"
       data-tag-label={label}
       className={Libs.cn(
-        'group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg',
+        'group relative h-8 max-w-full gap-1 rounded-md px-3 backdrop-blur-lg',
         'border-0 text-sm leading-5 font-bold text-white',
         'transition-all duration-200',
         // Override Toggle default hover styles - keep text white
@@ -46,12 +46,12 @@ export function PostTag({
       aria-label={count !== undefined ? `${label} tag (${count} posts)` : `${label} tag`}
     >
       {/* Tag content */}
-      <span className="flex items-center gap-1.5 text-sm leading-5">
-        <span data-cy="post-tag-label" className="font-bold">
+      <span className="flex min-w-0 items-center gap-1.5 text-sm leading-5">
+        <span data-cy="post-tag-label" className="truncate font-bold">
           {label}
         </span>
         {count !== undefined && (
-          <span data-cy="post-tag-count" className="font-medium opacity-50">
+          <span data-cy="post-tag-count" className="shrink-0 font-medium opacity-50">
             {count}
           </span>
         )}

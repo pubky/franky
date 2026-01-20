@@ -60,7 +60,10 @@ export function ProfileProfile() {
   );
 
   return (
-    <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-6 lg:mt-0 lg:hidden">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="mt-6 flex min-w-0 flex-col gap-6 overflow-hidden lg:mt-0 lg:hidden"
+    >
       {!isLoading && <ProfilePageHeader profile={profile} actions={mergedActions} isOwnProfile={isOwnProfile} />}
 
       {/* Tagged as section */}
@@ -69,11 +72,10 @@ export function ProfileProfile() {
         isLoading={isLoadingTags}
         onTagClick={handleTagToggle}
         pubky={pubky ?? ''}
-        userName={profile?.name}
       />
 
       {/* Links section */}
-      <Molecules.ProfilePageLinks links={profile?.links} />
+      <Molecules.ProfilePageLinks links={profile?.links} isOwnProfile={isOwnProfile} />
     </Atoms.Container>
   );
 }

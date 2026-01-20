@@ -18,7 +18,7 @@ exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snaps
     class="min-w-0 flex-1 flex-col items-start"
   >
     <span
-      class="block truncate text-sm font-bold text-foreground"
+      class="block max-w-full truncate text-sm font-bold text-foreground"
       data-testid="user-name"
     >
       John Doe
@@ -51,7 +51,7 @@ exports[`SearchUserSuggestion > SearchUserSuggestion - Snapshots > matches snaps
     class="min-w-0 flex-1 flex-col items-start"
   >
     <span
-      class="block truncate text-sm font-bold text-foreground"
+      class="block max-w-full truncate text-sm font-bold text-foreground"
       data-testid="user-name"
     >
       Jane Doe
