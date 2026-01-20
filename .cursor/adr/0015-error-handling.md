@@ -36,7 +36,8 @@ This ADR describes the **intended architecture**, but some observability feature
 - ✅ **JSON parsing guard is implemented**: `parseResponseOrThrow` is in `src/libs/http/response.utils.ts`.
 - ✅ **TanStack Query retry integration is implemented**: `createQueryClient` reads `error.context.statusCode` in `src/libs/query-client/query-client.factory.ts`.
 - ✅ **Logging currently happens in `Err.*` factories** (`src/libs/error/error.factories.ts`) via `Logger.error(...)`.
-- ⚠️ **Sentry + traceId inheritance + log de-duplication are NOT implemented yet** (see “Future Work”). Until then, avoid patterns that double-log (e.g., logging in a `catch` and then throwing `Err.*` again).
+- ✅ **React Error Boundary is implemented**: `ErrorBoundaryProvider` wraps the app root and catches unhandled render errors (see Section 8 for limitations).
+- ⚠️ **Sentry + traceId inheritance + log de-duplication are NOT implemented yet** (see "Future Work"). Until then, avoid patterns that double-log (e.g., logging in a `catch` and then throwing `Err.*` again).
 
 ### Design Principle: Error Bubbling
 
@@ -406,6 +407,100 @@ Since logging (and future Sentry reporting) happen automatically in the `Err.*` 
 3. **Don't log manually** — `Err.*` factories handle logging automatically (and will be the Sentry integration point)
 4. **Handle by category first, then code** — Category determines routing; code enables precise UI
 5. **Never swallow errors silently** — Either handle explicitly or show user feedback
+
+---
+
+### 8. React Error Boundary Limitations
+
+The application uses a root-level `ErrorBoundaryProvider` (via `react-error-boundary`) to catch unhandled render errors. However, **React Error Boundaries have fundamental limitations** that affect our error handling strategy.
+
+#### 8.1 What Error Boundaries Do NOT Catch
+
+React Error Boundaries **cannot catch** errors in:
+
+| Context | Why | Example in Franky |
+|---------|-----|-------------------|
+| **Async callbacks** | Errors occur outside React's synchronous render cycle | `useLiveQuery` callbacks (Dexie) |
+| **`useEffect` callbacks** | Effects run after render, outside error boundary scope | Data fetching, subscriptions |
+| **Event handlers** | User interactions are async by nature | `onClick`, `onSubmit` handlers |
+| **Promises** | Async resolution happens outside render | Any async operation |
+
+#### 8.2 Impact on Franky's Local-First Architecture
+
+1. **`useLiveQuery` is used extensively** (~40 hooks) — All Dexie database queries use async callbacks that won't be caught by error boundaries
+2. **Controller calls are often in `useEffect` or event handlers** — The try/catch requirement from Section 7 is critical
+3. **TanStack Query callbacks** — `onError`, `onSuccess`, and mutation callbacks are async
+
+#### 8.3 `useLiveQuery` Error Handling (Under Discussion)
+
+##### Current State
+
+Errors in `useLiveQuery` must be handled with manual try/catch:
+
+```typescript
+const postDetails = useLiveQuery(
+  async () => {
+    try {
+      if (!compositeId) return null;
+      return await Core.PostController.getDetails({ compositeId });
+    } catch (error) {
+      Libs.Logger.error('[usePostDetails] Query failed', { compositeId, error });
+      return null; // or undefined, depending on desired behavior
+    }
+  },
+  [compositeId],
+);
+```
+
+This pattern must be repeated in every hook that uses `useLiveQuery` (~40 hooks).
+
+##### Potential Solution: `useSafeLiveQuery` Wrapper
+
+```typescript
+// src/hooks/useSafeLiveQuery/useSafeLiveQuery.ts
+import { useState, type DependencyList } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import * as Libs from '@/libs';
+
+export interface UseSafeLiveQueryResult<T> {
+  data: T | undefined;
+  error: Error | null;
+  isLoading: boolean;
+}
+
+export function useSafeLiveQuery<T>(
+  queryFn: () => Promise<T>,
+  deps: DependencyList,
+  context: string,
+): UseSafeLiveQueryResult<T> {
+  const [error, setError] = useState<Error | null>(null);
+
+  const data = useLiveQuery(async () => {
+    try {
+      setError(null);
+      return await queryFn();
+    } catch (e) {
+      Libs.Logger.error(`[${context}] Query failed`, { error: e });
+      setError(e instanceof Error ? e : new Error(String(e)));
+      return undefined;
+    }
+  }, deps);
+
+  return {
+    data,
+    error,
+    isLoading: data === undefined && error === null,
+  };
+}
+```
+
+| Pros | Cons |
+|------|------|
+| Single abstraction, consistent interface | Migration effort (~40 hooks) |
+| Matches TanStack Query `{ data, error, isLoading }` pattern | Abstraction over Dexie |
+| Centralized logging | |
+
+**Status: Under Discussion**
 
 ---
 

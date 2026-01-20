@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import type {
   UsePostParticipantsResult,
@@ -41,8 +42,13 @@ export function usePostParticipants(
   // Use liveQuery to get replies from local cache (reactive)
   const replyRelationships = useLiveQuery(
     async () => {
-      if (!postId) return [];
-      return await Core.PostController.getReplies({ compositeId: postId });
+      try {
+        if (!postId) return [];
+        return await Core.PostController.getReplies({ compositeId: postId });
+      } catch (error) {
+        Libs.Logger.error('[usePostParticipants] Failed to query post replies', { postId, error });
+        return [];
+      }
     },
     [postId],
     [],
