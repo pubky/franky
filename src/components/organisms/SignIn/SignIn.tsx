@@ -75,7 +75,7 @@ export const SignInContent = () => {
         <SignInHeader />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="items-center justify-center">
-            <div className="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
+            <div className="relative flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
               {isLoading || !url ? (
                 <Atoms.Container className="items-center gap-2">
                   <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
@@ -84,7 +84,16 @@ export const SignInContent = () => {
                   </Atoms.Typography>
                 </Atoms.Container>
               ) : (
-                <QRCodeSVG value={url} size={220} />
+                <>
+                  <QRCodeSVG value={url} size={220} />
+                  <Image
+                    src="/images/ring-logo.svg"
+                    alt="Pubky Ring"
+                    width={48}
+                    height={48}
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                  />
+                </>
               )}
             </div>
           </Atoms.Container>

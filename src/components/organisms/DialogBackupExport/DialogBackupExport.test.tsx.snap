@@ -65,7 +65,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
             data-testid="container"
           >
             <div
-              class="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
+              class="relative mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
               data-testid="container"
             >
               <div
@@ -75,6 +75,14 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
               >
                 QR Code
               </div>
+              <img
+                alt="Pubky Ring"
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                data-testid="next-image"
+                height="42"
+                src="/images/ring-logo.svg"
+                width="42"
+              />
             </div>
             <div
               class="gap-4"
@@ -209,7 +217,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
             data-testid="container"
           >
             <div
-              class="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
+              class="relative mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
               data-testid="container"
             >
               <div
@@ -219,6 +227,14 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
               >
                 QR Code
               </div>
+              <img
+                alt="Pubky Ring"
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                data-testid="next-image"
+                height="42"
+                src="/images/ring-logo.svg"
+                width="42"
+              />
             </div>
             <div
               class="gap-4"
@@ -351,7 +367,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
             data-testid="container"
           >
             <div
-              class="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
+              class="relative mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
               data-testid="container"
             >
               <div
@@ -361,6 +377,14 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
               >
                 QR Code
               </div>
+              <img
+                alt="Pubky Ring"
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                data-testid="next-image"
+                height="42"
+                src="/images/ring-logo.svg"
+                width="42"
+              />
             </div>
             <div
               class="gap-4"
