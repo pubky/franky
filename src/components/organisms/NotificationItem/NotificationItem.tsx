@@ -91,7 +91,8 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   const handleTagClick = (tagLabel: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    router.push(buildSearchUrl([tagLabel]));
+    const normalizedTag = tagLabel.trim().toLowerCase();
+    router.push(buildSearchUrl([normalizedTag]));
   };
 
   const contentElement = (
