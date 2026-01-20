@@ -15,14 +15,16 @@ import type { HumanInviteCodeProps } from './HumanInviteCode.types';
  */
 export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => {
   const [inviteCode, setInviteCode] = useState('');
+  const [loading, setLoading] = useState(false);
   const trimmedInviteCode = inviteCode.trim();
   const isInviteCodeEntered = trimmedInviteCode.length === 14;
 
   function handleSubmit() {
-    if (!isInviteCodeEntered) {
+    if (!isInviteCodeEntered || loading) {
       return;
     }
 
+    setLoading(true);
     onSuccess(trimmedInviteCode);
   }
 
@@ -101,10 +103,14 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
-          disabled={!isInviteCodeEntered}
+          disabled={!isInviteCodeEntered || loading}
           onClick={handleSubmit}
         >
-          <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          {loading ? (
+            <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          )}
           Continue
         </Atoms.Button>
       </Atoms.Container>
