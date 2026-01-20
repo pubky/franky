@@ -186,7 +186,7 @@ export class HomegateService {
           ErrorService.Homegate,
           'getLnVerificationInfo',
         );
-        
+
         if (response.ok) {
           const json = await response.json();
           return { available: true, amountSat: json.amountSat } as TLnInfoResult;

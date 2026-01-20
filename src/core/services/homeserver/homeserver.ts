@@ -227,7 +227,7 @@ export class HomeserverService {
     try {
       await session.signout();
     } catch (error) {
-      handleError({ error, additionalContext: { url: 'signout' } });
+      return handleError({ error, additionalContext: { url: 'signout' } });
     }
   }
 
@@ -331,7 +331,7 @@ export class HomeserverService {
         await owned.session.storage.putBytes(owned.path, blob);
         return;
       } catch (error) {
-        handleError({ error, additionalContext: { url, method: HttpMethod.PUT } });
+        return handleError({ error, additionalContext: { url, method: HttpMethod.PUT } });
       }
     }
 

@@ -41,7 +41,7 @@ export class ProfileApplication {
         context: { pubky },
       });
     }
-    
+
     // Build complete user object with updated fields
     const { user, meta } = Core.UserNormalizer.to(
       {
@@ -64,7 +64,6 @@ export class ProfileApplication {
    * Updates user status in both homeserver and local database.
    */
   static async commitUpdateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
-
     // Get current user details from local DB
     const currentUser = await Core.UserDetailsModel.findById(pubky);
     if (!currentUser) {
@@ -95,7 +94,7 @@ export class ProfileApplication {
     await Core.UserDetailsModel.upsert({
       ...currentUser,
       status: status || null,
-    });    
+    });
   }
 
   /**

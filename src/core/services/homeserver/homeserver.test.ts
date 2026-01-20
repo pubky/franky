@@ -888,7 +888,7 @@ describe('HomeserverService', () => {
         expect(result).toBe(expectedToken);
       });
 
-      it('should throw NETWORK_ERROR for non-OK response', async () => {
+      it('should throw FORBIDDEN error for 403 response', async () => {
         mockFetch.mockResolvedValue(
           new Response(JSON.stringify({ error: 'Forbidden' }), {
             status: 403,
@@ -897,8 +897,8 @@ describe('HomeserverService', () => {
         );
 
         await expect(HomeserverService.generateSignupToken()).rejects.toMatchObject({
-          category: ErrorCategory.Server,
-          code: ServerErrorCode.INTERNAL_ERROR,
+          category: ErrorCategory.Auth,
+          code: AuthErrorCode.FORBIDDEN,
         });
       });
 

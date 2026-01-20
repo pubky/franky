@@ -21,7 +21,8 @@ describe('HomegateApplication', () => {
       cancelAuthFlow: vi.fn(),
     });
 
-    vi.spyOn(Core.HomegateService, 'getLnVerificationPrice').mockResolvedValue({
+    vi.spyOn(Core.HomegateService, 'getLnVerificationInfo').mockResolvedValue({
+      available: true,
       amountSat: 1000,
     });
 
@@ -77,12 +78,12 @@ describe('HomegateApplication', () => {
     });
   });
 
-  describe('getLnVerificationPrice', () => {
-    it('should delegate to HomegateService and return price', async () => {
-      const result = await HomegateApplication.getLnVerificationPrice();
+  describe('getLnVerificationInfo', () => {
+    it('should delegate to HomegateService and return LN info', async () => {
+      const result = await HomegateApplication.getLnVerificationInfo();
 
-      expect(Core.HomegateService.getLnVerificationPrice).toHaveBeenCalled();
-      expect(result).toEqual({ amountSat: 1000 });
+      expect(Core.HomegateService.getLnVerificationInfo).toHaveBeenCalled();
+      expect(result).toEqual({ available: true, amountSat: 1000 });
     });
   });
 
