@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
@@ -68,14 +69,17 @@ export const InstallHeader = () => {
 
 export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   const router = useRouter();
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingContinue, setLoadingContinue] = useState(false);
 
   const handleCreate = () => {
     // Reset any existing keypair to ensure a fresh one is generated
-
+    setLoadingCreate(true);
     router.push(App.ONBOARDING_ROUTES.PUBKY);
   };
 
   const handleContinue = () => {
+    setLoadingContinue(true);
     router.push(App.ONBOARDING_ROUTES.SCAN);
   };
 
@@ -87,14 +91,29 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
           variant="outline"
           className="flex-1 rounded-full md:flex-none"
           onClick={handleCreate}
+          disabled={loadingCreate || loadingContinue}
         >
-          <Libs.AppWindow className="mr-2 h-4 w-4" />
+          {loadingCreate ? (
+            <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Libs.AppWindow className="mr-2 h-4 w-4" />
+          )}
           Create keys in browser
         </Atoms.Button>
         <Molecules.PopoverTradeoffs />
       </Atoms.Container>
-      <Atoms.Button id="continue-with-pubky-ring-btn" size="lg" className="rounded-full" onClick={handleContinue}>
-        <Libs.ArrowRight className="mr-2 h-4 w-4" />
+      <Atoms.Button
+        id="continue-with-pubky-ring-btn"
+        size="lg"
+        className="rounded-full"
+        onClick={handleContinue}
+        disabled={loadingCreate || loadingContinue}
+      >
+        {loadingContinue ? (
+          <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <Libs.ArrowRight className="mr-2 h-4 w-4" />
+        )}
         Continue with Pubky Ring
       </Atoms.Button>
     </Atoms.Container>
