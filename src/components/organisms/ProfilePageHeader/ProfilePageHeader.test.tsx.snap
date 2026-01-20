@@ -3,7 +3,7 @@
 exports[`ProfilePageHeader > matches snapshot 1`] = `
 <div>
   <div
-    class="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
+    class="flex min-w-0 flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
     data-testid="profile-page-header"
   >
     <div
@@ -29,15 +29,15 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-1 flex-col gap-5"
+      class="flex min-w-0 flex-1 flex-col gap-5"
       data-testid="container"
     >
       <div
-        class="flex flex-col text-center lg:text-left gap-2"
+        class="flex min-w-0 flex-col text-center lg:text-left gap-2"
         data-testid="container"
       >
         <h1
-          class="text-2xl font-bold text-white lg:text-6xl"
+          class="text-2xl font-bold truncate text-white lg:text-6xl"
           data-cy="profile-username-header"
           data-testid="typography"
         >

@@ -38,7 +38,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
         ) : (
           <>
             {tags.map((tag) => (
-              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} maxTagLength={10} hideAvatars />
+              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} hideAvatars />
             ))}
             {tags.length === 0 && (
               <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">

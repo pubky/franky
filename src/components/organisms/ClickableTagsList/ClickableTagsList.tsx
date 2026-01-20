@@ -146,7 +146,7 @@ export function ClickableTagsList({
       {visibleTags.map((tag, index) => (
         <Molecules.PostTag
           key={`${taggedId}-${tag.label}`}
-          label={Libs.truncateString(tag.label, maxTagLength)}
+          label={tag.label}
           count={showCount ? tag.taggers_count : undefined}
           color={Libs.generateRandomColor(tag.label)}
           selected={isViewerTagger(tag)}
