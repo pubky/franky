@@ -164,9 +164,8 @@ describe('BackupMethodCard', () => {
 
     render(<BackupMethodCard />);
 
-    const dialogExport = screen.getByTestId('dialog-export');
-    expect(dialogExport).toHaveAttribute('data-mnemonic', testMnemonic);
-    expect(dialogExport).toHaveTextContent('Export recovery phrase');
+    expect(screen.getByTestId('content-card')).toBeInTheDocument();
+    expect(screen.getByTestId('heading-2')).toHaveTextContent('Choose backup method');
   });
 
   it('renders all backup options', () => {
@@ -178,7 +177,7 @@ describe('BackupMethodCard', () => {
 
     expect(screen.getByTestId('dialog-backup-phrase')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-backup-encrypted')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-export')).toBeInTheDocument();
+    // DialogBackupExport is temporarily disabled
   });
 
   it('renders content card with shield image', () => {
@@ -193,7 +192,8 @@ describe('BackupMethodCard', () => {
     expect(contentCard).toHaveAttribute('data-image-alt', 'Shield');
   });
 
-  it('passes mnemonic correctly to DialogBackupExport based on store state', () => {
+  // TODO: Re-enable when Pubky Ring export is ready
+  it.skip('passes mnemonic correctly to DialogBackupExport based on store state', () => {
     const testCases = [
       { mnemonic: '', expectedDisplay: 'Export to Pubky Ring' },
       { mnemonic: 'test phrase', expectedDisplay: 'Export recovery phrase' },
@@ -230,9 +230,8 @@ describe('BackupMethodCard', () => {
     // Should call the store hook
     expect(mockUseOnboardingStore).toHaveBeenCalled();
 
-    // Should pass the mnemonic to DialogBackupExport
-    const dialogExport = screen.getByTestId('dialog-export');
-    expect(dialogExport).toHaveAttribute('data-mnemonic', testMnemonic);
+    // Component should render with store data
+    expect(screen.getByTestId('content-card')).toBeInTheDocument();
   });
 
   describe('organism behavior', () => {
@@ -243,10 +242,10 @@ describe('BackupMethodCard', () => {
 
       render(<BackupMethodCard />);
 
-      const dialogExport = screen.getByTestId('dialog-export');
-      // When mnemonic is undefined, it should be treated as empty string
-      expect(dialogExport).toHaveAttribute('data-mnemonic', '');
-      expect(dialogExport).toHaveTextContent('Export to Pubky Ring');
+      // Component should render without errors
+      expect(screen.getByTestId('content-card')).toBeInTheDocument();
+      expect(screen.getByTestId('dialog-backup-phrase')).toBeInTheDocument();
+      expect(screen.getByTestId('dialog-backup-encrypted')).toBeInTheDocument();
     });
 
     it('maintains component structure regardless of store state', () => {
@@ -264,7 +263,7 @@ describe('BackupMethodCard', () => {
         expect(screen.getByTestId('typography')).toBeInTheDocument();
         expect(screen.getByTestId('dialog-backup-phrase')).toBeInTheDocument();
         expect(screen.getByTestId('dialog-backup-encrypted')).toBeInTheDocument();
-        expect(screen.getByTestId('dialog-export')).toBeInTheDocument();
+        // DialogBackupExport is temporarily disabled
 
         unmount();
       });
