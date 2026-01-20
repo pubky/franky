@@ -17,14 +17,12 @@ export class StreamUserController {
    * @param streamId - Composite user stream identifier (userId:reach) e.g., 'user123:followers'
    * @param skip - Number of users to skip (for pagination)
    * @param limit - Number of users to return
-   * @param localOnly - When true, return cached data only, skip API fetch
    * @returns Next page of user IDs and pagination offset
    */
   static async getOrFetchStreamSlice({
     streamId,
     limit = Config.NEXUS_USERS_PER_PAGE,
     skip,
-    localOnly,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TReadUserStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
@@ -37,7 +35,6 @@ export class StreamUserController {
       skip,
       limit,
       viewerId,
-      localOnly,
     });
 
     // Background fetch for missing users (non-blocking)
