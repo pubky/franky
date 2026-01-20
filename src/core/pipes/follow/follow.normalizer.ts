@@ -1,6 +1,6 @@
 import { FollowResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export class FollowNormalizer {
   private constructor() {}
@@ -11,10 +11,14 @@ export class FollowNormalizer {
       const result = builder.createFollow(followee);
       return result;
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createFollow',
         context: { follower, followee },
+        cause: error,
       });
     }
   }

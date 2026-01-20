@@ -1,6 +1,6 @@
 import { TagResult, postUriBuilder, userUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export class TagNormalizer {
   private constructor() {}
@@ -25,10 +25,14 @@ export class TagNormalizer {
         tagJson: tag.toJson(),
       };
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createTagFromParams',
         context: { taggedKind, taggedId, label, taggerId },
+        cause: error,
       });
     }
   }
@@ -38,10 +42,14 @@ export class TagNormalizer {
       const builder = Core.PubkySpecsSingleton.get(pubky);
       return builder.createTag(uri, label);
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createTag',
         context: { uri, label, pubky },
+        cause: error,
       });
     }
   }

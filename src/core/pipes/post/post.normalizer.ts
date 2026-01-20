@@ -1,6 +1,6 @@
 import { PostResult, PubkyAppPostEmbed, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService, AppError } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export class PostNormalizer {
   private constructor() {}
@@ -37,13 +37,14 @@ export class PostNormalizer {
 
       return builder.createPost(post.content, post.kind, post.parentUri ?? null, embedObject, attachments);
     } catch (error) {
-      if (error instanceof AppError) {
+      if (isAppError(error)) {
         throw error;
       }
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createPost',
         context: { post, specsPubky },
+        cause: error,
       });
     }
   }

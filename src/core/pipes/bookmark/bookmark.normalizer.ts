@@ -1,6 +1,6 @@
 import { BookmarkResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Logger, Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Logger, Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export class BookmarkNormalizer {
   private constructor() {}
@@ -12,10 +12,14 @@ export class BookmarkNormalizer {
       Logger.debug('Bookmark validated', { result });
       return result;
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createBookmark',
         context: { postUri, userId },
+        cause: error,
       });
     }
   }

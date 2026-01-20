@@ -1,6 +1,6 @@
 import { UserResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export type UiLink = { label: string; url: string };
 
@@ -20,10 +20,14 @@ export class UserNormalizer {
       const builder = Core.PubkySpecsSingleton.get(pubky);
       return builder.createUser(user.name, user.bio, user.image, user.links, user.status || undefined);
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createUser',
         context: { user, pubky },
+        cause: error,
       });
     }
   }

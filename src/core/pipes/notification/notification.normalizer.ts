@@ -1,6 +1,6 @@
 import { LastReadResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 
 export class NotificationNormalizer {
@@ -11,10 +11,14 @@ export class NotificationNormalizer {
       const builder = Core.PubkySpecsSingleton.get(pubky);
       return builder.createLastRead();
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createLastRead',
         context: { pubky },
+        cause: error,
       });
     }
   }

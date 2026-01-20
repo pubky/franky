@@ -1,6 +1,6 @@
 import { BlobResult, FileResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export class FileNormalizer {
   private constructor() {}
@@ -11,10 +11,14 @@ export class FileNormalizer {
       const fileResult = this.toFile({ file, url: blobResult.meta.url, pubky });
       return { blobResult, fileResult };
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'toFileAttachment',
         context: { file, pubky },
+        cause: error,
       });
     }
   }
@@ -27,10 +31,14 @@ export class FileNormalizer {
       const builder = Core.PubkySpecsSingleton.get(pubky);
       return builder.createBlob(blobData);
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createBlob',
         context: { file, pubky },
+        cause: error,
       });
     }
   }
@@ -40,10 +48,14 @@ export class FileNormalizer {
       const builder = Core.PubkySpecsSingleton.get(pubky);
       return builder.createFile(file.name, url, file.type, file.size);
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createFile',
         context: { file, url, pubky },
+        cause: error,
       });
     }
   }

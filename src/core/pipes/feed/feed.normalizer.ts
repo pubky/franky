@@ -1,6 +1,6 @@
 import { FeedResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService } from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, getErrorMessage, isAppError } from '@/libs';
 
 export type TFeedNormalizerInput = {
   params: Core.TFeedCreateParams;
@@ -28,10 +28,14 @@ export class FeedNormalizer {
         params.name.trim(),
       );
     } catch (error) {
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+      if (isAppError(error)) {
+        throw error;
+      }
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'createFeed',
         context: { params, userId },
+        cause: error,
       });
     }
   }
