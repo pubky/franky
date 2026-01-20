@@ -29,22 +29,22 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex min-w-0 flex-1 flex-col gap-5"
+      class="flex min-w-0 flex-1 flex-col gap-3"
       data-testid="container"
     >
       <div
-        class="flex min-w-0 flex-col text-center lg:text-left gap-2"
+        class="flex min-w-0 flex-col text-center lg:text-left gap-1"
         data-testid="container"
       >
         <h1
-          class="text-2xl font-bold truncate text-white lg:text-6xl"
+          class="text-2xl font-bold truncate leading-tight text-white lg:text-6xl"
           data-cy="profile-username-header"
           data-testid="typography"
         >
           Satoshi Nakamoto
         </h1>
         <p
-          class="text-sm font-medium text-secondary-foreground lg:text-base"
+          class="text-sm font-medium leading-tight text-secondary-foreground lg:text-base"
           data-cy="profile-bio-header"
           data-testid="typography"
         >
