@@ -66,7 +66,7 @@ export function usePostArticle({
 
   useEffect(() => {
     let cancelled = false;
-    
+
     const extractCoverImage = async () => {
       if (!attachments?.length) return;
 
@@ -74,7 +74,7 @@ export function usePostArticle({
         const attachment = (await Core.FileController.getMetadata({ fileAttachments: attachments }))[0];
 
         if (cancelled) return;
-        
+
         if (attachment && attachment.content_type.startsWith('image')) {
           const src = Core.FileController.getFileUrl({ fileId: attachment.id, variant: coverImageVariant });
           const coverImage = { src, alt: attachment.name };
@@ -82,7 +82,7 @@ export function usePostArticle({
         }
       } catch {
         if (cancelled) return;
-        
+
         toast({
           title: 'Error',
           description: 'Failed to load article cover image',
@@ -91,12 +91,10 @@ export function usePostArticle({
     };
 
     extractCoverImage();
-    
+
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
-  }, [attachments, coverImageVariant]);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
   }, [attachments, coverImageVariant]);
 
