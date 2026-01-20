@@ -26,7 +26,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -124,7 +124,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default value 1`] 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -222,7 +222,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -321,7 +321,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >

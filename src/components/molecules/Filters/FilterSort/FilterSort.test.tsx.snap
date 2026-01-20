@@ -26,7 +26,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -144,7 +144,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -262,7 +262,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >

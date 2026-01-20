@@ -49,12 +49,7 @@ function FilterHeader({
 
 function FilterList({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) {
   return (
-    <Atoms.Container
-      data-slot="filter-list"
-      data-testid="filter-list"
-      className={Libs.cn('gap-2', className)}
-      {...props}
-    >
+    <Atoms.Container data-slot="filter-list" data-testid="filter-list" className={className} {...props}>
       {children}
     </Atoms.Container>
   );

@@ -26,7 +26,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -355,7 +355,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -684,7 +684,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -1013,7 +1013,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -1342,7 +1342,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -1671,7 +1671,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -2000,7 +2000,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -2329,7 +2329,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
