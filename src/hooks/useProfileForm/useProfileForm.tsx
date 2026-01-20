@@ -367,7 +367,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   ]);
 
   const handleCancel = useCallback(() => {
-    router.push(App.SETTINGS_ROUTES.ACCOUNT);
+    router.back();
   }, [router]);
 
   // Computed values
