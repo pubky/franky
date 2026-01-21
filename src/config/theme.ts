@@ -19,6 +19,16 @@
 export const COLORS = {
   /** Core black - matches --background CSS variable */
   background: '#05050A',
+  /**
+   * Search bar gradient colors - matches Figma design spec
+   * Used for the closed state pill-shaped search bar
+   */
+  searchGradient: {
+    /** Top of gradient */
+    start: '#07040a',
+    /** Bottom of gradient */
+    end: '#1b1820',
+  },
 } as const;
 
 /**

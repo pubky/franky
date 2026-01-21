@@ -1,3 +1,5 @@
+import { COLORS } from './theme';
+
 /**
  * Maximum height for search suggestions dropdown
  * - Prevents dropdown from taking up entire screen on mobile
@@ -12,7 +14,7 @@ const SEARCH_SUGGESTIONS_MAX_HEIGHT = 300;
  * - Backdrop blur for glass effect
  */
 export const SEARCH_CLOSED_STYLE = {
-  background: 'linear-gradient(180deg, #07040a 0%, #1b1820 100%)',
+  background: `linear-gradient(180deg, ${COLORS.searchGradient.start} 0%, ${COLORS.searchGradient.end} 100%)`,
   backdropFilter: 'blur(20px)',
 } as const;
 
