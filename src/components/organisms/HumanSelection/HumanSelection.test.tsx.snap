@@ -20,7 +20,15 @@ exports[`HumanSelection > matches snapshot 1`] = `
     <h2
       class="text-xl leading-normal font-light text-muted-foreground lg:text-2xl"
     >
-      No email needed. Verify quickly using SMS or a small payment.
+      No email needed. Verify quickly using SMS or a small payment. Or use an
+       
+      <button
+        class="text-brand hover:font-bold cursor-pointer"
+        data-testid="invite-code-link"
+        type="button"
+      >
+        invite code.
+      </button>
     </h2>
   </div>
   <div

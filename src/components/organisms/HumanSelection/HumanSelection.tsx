@@ -4,7 +4,7 @@ import * as Organisms from '@/organisms';
 import React from 'react';
 import type { HumanSelectionProps } from './HumanSelection.types';
 
-export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
+export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanSelectionProps) => {
   // Show dev mode options if in development mode or Cypress is running (for E2E tests)
   const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
   const isDevMode = process.env.NODE_ENV === 'development' || isCypressRunning;
@@ -14,7 +14,17 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
         <Molecules.PageTitle size="large">
           Prove <span className="text-brand">you&apos;re not a Robot.</span>
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>No email needed. Verify quickly using SMS or a small payment.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>
+          No email needed. Verify quickly using SMS or a small payment. Or use an{' '}
+          <button
+            type="button"
+            onClick={onInviteCodeClick}
+            className="cursor-pointer text-brand hover:font-bold"
+            data-testid="invite-code-link"
+          >
+            invite code.
+          </button>
+        </Atoms.PageSubtitle>
       </Atoms.PageHeader>
 
       <Atoms.Container data-testid="human-verification-cards" className="gap-6 lg:flex-row lg:items-stretch lg:gap-8">
