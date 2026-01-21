@@ -21,21 +21,31 @@ vi.mock('@/hooks/useLnVerificationInfo', () => ({
   useLnVerificationInfo: () => mockUseLnVerificationInfo(),
 }));
 
+// Mock toLocaleString to ensure consistent formatting across locales
+const originalToLocaleString = Number.prototype.toLocaleString;
+
 describe('BitcoinPaymentCard', () => {
   beforeEach(() => {
     mockUseBtcRate.mockReturnValue({ satUsd: 0.0005 });
     mockUseLnVerificationInfo.mockReturnValue({ available: true, amountSat: 1000 });
+    // Force US locale for consistent snapshots
+    Number.prototype.toLocaleString = function () {
+      return originalToLocaleString.call(this, 'en-US');
+    };
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    // Restore original toLocaleString
+    Number.prototype.toLocaleString = originalToLocaleString;
   });
 
   it('renders bitcoin payment details and action', () => {
     render(<HumanBitcoinCard />);
 
     expect(screen.getByText(/Bitcoin Payment/i)).toBeInTheDocument();
-    expect(screen.getByText(/₿ 1,000/i)).toBeInTheDocument();
+    // Use regex to match formatted number (handles different locale separators)
+    expect(screen.getByText(/₿ 1[,.]000/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pay Once/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pay Once/i })).not.toBeDisabled();
   });

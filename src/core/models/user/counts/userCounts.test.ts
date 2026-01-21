@@ -51,7 +51,7 @@ describe('UserCountsModel', () => {
       };
 
       const result = await Core.UserCountsModel.create(mockUserCountsData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockUserCountsData.id);
     });
 
     it('should find user counts by id', async () => {

@@ -16,7 +16,8 @@ export function PostInputActionBar({
   postButtonLabel = 'Post',
   postButtonAriaLabel = 'Post',
   postButtonIcon,
-  hideArticle = false,
+  hideArticleButton,
+  isArticle,
 }: PostInputActionBarProps) {
   const commonButtonProps = React.useMemo(
     () => ({
@@ -29,28 +30,32 @@ export function PostInputActionBar({
 
   const actionButtons: ActionButtonConfig[] = React.useMemo(() => {
     const buttons: ActionButtonConfig[] = [
-      {
-        icon: Libs.Smile,
-        onClick: onEmojiClick,
-        ariaLabel: 'Add emoji',
-        disabled: !onEmojiClick || isSubmitting,
-      },
-      {
-        icon: Libs.Image,
-        onClick: onImageClick,
-        ariaLabel: 'Add image',
-        disabled: !onImageClick || isSubmitting,
-      },
-      {
-        icon: Libs.Paperclip,
-        onClick: onFileClick,
-        ariaLabel: 'Add file',
-        disabled: !onFileClick || isSubmitting,
-      },
+      ...(isArticle
+        ? []
+        : [
+            {
+              icon: Libs.Smile,
+              onClick: onEmojiClick,
+              ariaLabel: 'Add emoji',
+              disabled: !onEmojiClick || isSubmitting,
+            },
+            {
+              icon: Libs.Image,
+              onClick: onImageClick,
+              ariaLabel: 'Add image',
+              disabled: !onImageClick || isSubmitting,
+            },
+            {
+              icon: Libs.Paperclip,
+              onClick: onFileClick,
+              ariaLabel: 'Add file',
+              disabled: !onFileClick || isSubmitting,
+            },
+          ]),
     ];
 
     // Only add article button if not hidden
-    if (!hideArticle) {
+    if (!hideArticleButton) {
       buttons.push({
         icon: Libs.Newspaper,
         onClick: onArticleClick,
@@ -71,6 +76,7 @@ export function PostInputActionBar({
 
     return buttons;
   }, [
+    isArticle,
     onEmojiClick,
     onImageClick,
     onFileClick,
@@ -81,11 +87,11 @@ export function PostInputActionBar({
     postButtonLabel,
     postButtonAriaLabel,
     postButtonIcon,
-    hideArticle,
+    hideArticleButton,
   ]);
 
   return (
-    <Atoms.Container className="flex items-center justify-end gap-2" overrideDefaults>
+    <Atoms.Container className="flex items-center gap-2" overrideDefaults>
       {actionButtons.map(
         ({
           icon: Icon,

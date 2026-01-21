@@ -36,8 +36,13 @@ export function usePostDetails(compositeId: string | null | undefined): Types.Us
   // This will reactively update when the database changes
   const postDetails = useLiveQuery(
     async () => {
-      if (!compositeId) return null;
-      return await Core.PostController.getDetails({ compositeId });
+      try {
+        if (!compositeId) return null;
+        return await Core.PostController.getDetails({ compositeId });
+      } catch (error) {
+        Libs.Logger.error('[usePostDetails] Failed to query post details', { compositeId, error });
+        return null;
+      }
     },
     [compositeId],
     undefined,

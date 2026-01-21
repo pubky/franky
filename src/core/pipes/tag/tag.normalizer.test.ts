@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { TagResult, postUriBuilder } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -38,13 +38,12 @@ describe('TagNormalizer', () => {
       afterEach(restoreMocks);
 
       describe('successful creation', () => {
-        it('should create tag and log debug message', () => {
+        it('should create tag with tag and meta properties', () => {
           const uri = buildPubkyUri(TEST_PUBKY.USER_2, `posts/${TEST_POST_IDS.POST_1}`);
           const result = Core.TagNormalizer.to(uri, 'technology', TEST_PUBKY.USER_1);
 
           expect(result).toHaveProperty('tag');
           expect(result).toHaveProperty('meta');
-          expect(Libs.Logger.debug).toHaveBeenCalledWith('Tag validated', { result });
         });
 
         it('should call PubkySpecsSingleton.get with pubky and createTag with uri/label', () => {
@@ -85,33 +84,35 @@ describe('TagNormalizer', () => {
       });
 
       describe('error handling', () => {
-        it.each([
-          [
-            'createTag',
-            () =>
-              mockBuilder.createTag.mockImplementation(() => {
-                throw new Error('Builder error');
-              }),
-          ],
-          [
-            'PubkySpecsSingleton.get',
-            () =>
-              vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
-                throw new Error('Singleton error');
-              }),
-          ],
-        ])('should propagate errors from %s', (_, setupError) => {
-          setupError();
-          expect(() => Core.TagNormalizer.to('uri', 'label', TEST_PUBKY.USER_1)).toThrow();
+        it('should throw AppError with correct properties when createTag fails', () => {
+          const errorMessage = 'Invalid tag';
+          mockBuilder.createTag.mockImplementation(() => {
+            throw errorMessage;
+          });
+          const uri = 'pubky://test/uri';
+          const label = 'testlabel';
+
+          try {
+            Core.TagNormalizer.to(uri, label, TEST_PUBKY.USER_1);
+            expect.fail('Should have thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(AppError);
+            const appError = error as AppError;
+            expect(appError.category).toBe(ErrorCategory.Validation);
+            expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+            expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+            expect(appError.operation).toBe('createTag');
+            expect(appError.context).toEqual({ uri, label, pubky: TEST_PUBKY.USER_1 });
+            expect(appError.message).toBe(errorMessage);
+          }
         });
 
-        it('should not call logger when error occurs', () => {
-          mockBuilder.createTag.mockImplementation(() => {
-            throw new Error('Error');
+        it('should throw AppError when PubkySpecsSingleton.get fails', () => {
+          vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+            throw 'Singleton error';
           });
 
-          expect(() => Core.TagNormalizer.to('uri', 'label', TEST_PUBKY.USER_1)).toThrow();
-          expect(Libs.Logger.debug).not.toHaveBeenCalled();
+          expect(() => Core.TagNormalizer.to('uri', 'label', TEST_PUBKY.USER_1)).toThrow(AppError);
         });
       });
     });
@@ -156,16 +157,26 @@ describe('TagNormalizer', () => {
       });
 
       describe('validation with real library', () => {
-        it('should throw error for empty label', () => {
+        it('should throw AppError for empty label', () => {
           const uri = postUriBuilder(TEST_PUBKY.USER_2, TEST_POST_IDS.POST_1);
 
-          expect(() => Core.TagNormalizer.to(uri, '', TEST_PUBKY.USER_1)).toThrow();
+          try {
+            Core.TagNormalizer.to(uri, '', TEST_PUBKY.USER_1);
+            expect.fail('Should have thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(AppError);
+            const appError = error as AppError;
+            expect(appError.category).toBe(ErrorCategory.Validation);
+            expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+            expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+            expect(appError.operation).toBe('createTag');
+          }
         });
 
-        it('should throw error for null label', () => {
+        it('should throw AppError for null label', () => {
           const uri = postUriBuilder(TEST_PUBKY.USER_2, TEST_POST_IDS.POST_1);
 
-          expect(() => Core.TagNormalizer.to(uri, null as unknown as string, TEST_PUBKY.USER_1)).toThrow();
+          expect(() => Core.TagNormalizer.to(uri, null as unknown as string, TEST_PUBKY.USER_1)).toThrow(AppError);
         });
       });
 
@@ -181,14 +192,14 @@ describe('TagNormalizer', () => {
           expect(result.tag.label).toBe(maxLengthLabel.toLowerCase());
         });
 
-        it('should throw error for label exceeding maximum length', () => {
+        it('should throw AppError for label exceeding maximum length', () => {
           const tooLongLabel = 'A'.repeat(21);
-          expect(() => Core.TagNormalizer.to(uri, tooLongLabel, TEST_PUBKY.USER_1)).toThrow();
+          expect(() => Core.TagNormalizer.to(uri, tooLongLabel, TEST_PUBKY.USER_1)).toThrow(AppError);
         });
 
-        it('should throw error for label with emojis exceeding maximum length', () => {
+        it('should throw AppError for label with emojis exceeding maximum length', () => {
           const tooLongEmojiLabel = '🎉'.repeat(21);
-          expect(() => Core.TagNormalizer.to(uri, tooLongEmojiLabel, TEST_PUBKY.USER_1)).toThrow();
+          expect(() => Core.TagNormalizer.to(uri, tooLongEmojiLabel, TEST_PUBKY.USER_1)).toThrow(AppError);
         });
 
         it('should accept mixed label at maximum length', () => {
@@ -199,9 +210,9 @@ describe('TagNormalizer', () => {
           expect(result.tag.label).toBe('a'.repeat(15) + '🎉'.repeat(5));
         });
 
-        it('should throw error for mixed label exceeding maximum length', () => {
+        it('should throw AppError for mixed label exceeding maximum length', () => {
           const tooLongMixedLabel = 'A'.repeat(16) + '🎉'.repeat(5);
-          expect(() => Core.TagNormalizer.to(uri, tooLongMixedLabel, TEST_PUBKY.USER_1)).toThrow();
+          expect(() => Core.TagNormalizer.to(uri, tooLongMixedLabel, TEST_PUBKY.USER_1)).toThrow(AppError);
         });
       });
 
@@ -237,7 +248,7 @@ describe('TagNormalizer', () => {
           ['colon', 'tag:value'],
           ['comma', 'tag,value'],
         ])('should reject label with %s: "%s"', (_, label) => {
-          expect(() => Core.TagNormalizer.to(uri, label, TEST_PUBKY.USER_1)).toThrow();
+          expect(() => Core.TagNormalizer.to(uri, label, TEST_PUBKY.USER_1)).toThrow(AppError);
         });
       });
     });
@@ -338,9 +349,9 @@ describe('TagNormalizer', () => {
       });
 
       describe('error handling', () => {
-        it('should propagate errors from parseCompositeId', () => {
+        it('should throw AppError with correct properties when parseCompositeId fails', () => {
           vi.spyOn(Core, 'parseCompositeId').mockImplementation(() => {
-            throw new Error('Invalid composite ID');
+            throw 'Invalid composite ID';
           });
 
           const params: Core.TTagEventParams = {
@@ -350,16 +361,27 @@ describe('TagNormalizer', () => {
             taggedKind: Core.TagKind.POST,
           };
 
-          expect(() => Core.TagNormalizer.from(params)).toThrow('Invalid composite ID');
+          try {
+            Core.TagNormalizer.from(params);
+            expect.fail('Should have thrown');
+          } catch (error) {
+            expect(error).toBeInstanceOf(AppError);
+            const appError = error as AppError;
+            expect(appError.category).toBe(ErrorCategory.Validation);
+            expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+            expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+            expect(appError.operation).toBe('createTagFromParams');
+            expect(appError.context).toEqual(params);
+          }
         });
 
-        it('should propagate errors from createTag', () => {
+        it('should throw AppError when createTag fails', () => {
           vi.spyOn(Core, 'parseCompositeId').mockReturnValue({
             pubky: TEST_PUBKY.USER_2,
             id: TEST_POST_IDS.POST_1,
           });
           mockBuilder.createTag.mockImplementation(() => {
-            throw new Error('Builder error');
+            throw 'Builder error';
           });
 
           const params: Core.TTagEventParams = {
@@ -369,7 +391,7 @@ describe('TagNormalizer', () => {
             taggedKind: Core.TagKind.POST,
           };
 
-          expect(() => Core.TagNormalizer.from(params)).toThrow('Builder error');
+          expect(() => Core.TagNormalizer.from(params)).toThrow(AppError);
         });
       });
     });
@@ -434,7 +456,7 @@ describe('TagNormalizer', () => {
         /**
          * Note: The pubky-app-specs library rejects labels with internal whitespace.
          */
-        it('should throw error for label with internal whitespace', () => {
+        it('should throw AppError for label with internal whitespace', () => {
           const params: Core.TTagEventParams = {
             taggerId: TEST_PUBKY.USER_1,
             taggedId: TEST_PUBKY.USER_2,
@@ -442,7 +464,7 @@ describe('TagNormalizer', () => {
             taggedKind: Core.TagKind.USER,
           };
 
-          expect(() => Core.TagNormalizer.from(params)).toThrow();
+          expect(() => Core.TagNormalizer.from(params)).toThrow(AppError);
         });
       });
     });
