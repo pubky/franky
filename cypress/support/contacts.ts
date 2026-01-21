@@ -1,11 +1,14 @@
+import { userIdFromPubky } from './common';
 import { clickFollowButton } from './profile';
 
 export const searchForProfileByPubky = (pubky: string, profileName: string) => {
   // type pubky into search bar
-  cy.get('[data-cy="header-search-input"]').should('be.visible').type(`pk:${pubky}`);
+  cy.get('[data-cy="header-search-input"]').should('be.visible').type(`${pubky}`);
 
   // wait for autocomplete suggestions to appear and click on the user
-  cy.get(`[data-cy="search-user-suggestion-${pubky}"]`).should('be.visible').click();
+  cy.get(`[data-cy="search-user-suggestion-${userIdFromPubky(pubky)}"]`)
+    .should('be.visible')
+    .click();
 
   // check that profile page is displayed
   cy.get('[data-cy="profile-username-header"]').should('have.text', profileName);

@@ -1,16 +1,22 @@
 import { LastReadResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 
 export class NotificationNormalizer {
   private constructor() {}
 
   static to(pubky: Core.Pubky): LastReadResult {
-    const builder = Core.PubkySpecsSingleton.get(pubky);
-    const result = builder.createLastRead();
-    Libs.Logger.debug('LastRead validated', { result });
-    return result;
+    try {
+      const builder = Core.PubkySpecsSingleton.get(pubky);
+      return builder.createLastRead();
+    } catch (error) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'createLastRead',
+        context: { pubky },
+      });
+    }
   }
 
   static toFlatNotification(nexusNotification: Core.NexusNotification): Core.FlatNotification {

@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Dexie, { Table } from 'dexie';
 import { indexedDB, IDBKeyRange } from 'fake-indexeddb';
 import { TupleModelBase } from './baseTuple';
+import { AppError, DatabaseErrorCode, ErrorCategory, ErrorService } from '@/libs';
 
 interface TestTupleSchema {
   id: string;
@@ -60,5 +61,47 @@ describe('TupleModelBase', () => {
     expect(byId.get('40')).toEqual({ id: '40', value: 'first' });
     expect(byId.get('41')).toEqual({ id: '41', value: 'second-updated' });
     expect(byId.get('42')).toEqual({ id: '42', value: 'third' });
+  });
+});
+
+describe('TupleModelBase error handling', () => {
+  let db: Dexie;
+
+  beforeEach(async () => {
+    globalThis.indexedDB = indexedDB;
+    globalThis.IDBKeyRange = IDBKeyRange;
+
+    db = new Dexie('tuple-model-base-error-test');
+    db.version(1).stores({ test_tuples: 'id' });
+    await db.open();
+
+    TestTupleModel.table = db.table<TestTupleSchema>('test_tuples');
+    await TestTupleModel.table.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('bulkSave throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestTupleModel.table, 'bulkPut').mockRejectedValueOnce(new Error('DB bulk write error'));
+
+    try {
+      await TestTupleModel.bulkSave([
+        ['1', { value: 'a' }],
+        ['2', { value: 'b' }],
+        ['3', { value: 'c' }],
+      ]);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('bulkSave');
+      expect(appError.context).toMatchObject({ table: 'test_tuples', count: 3 });
+      expect(appError.cause).toBeInstanceOf(Error);
+    }
   });
 });

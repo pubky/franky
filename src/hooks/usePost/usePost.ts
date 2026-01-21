@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 interface UsePostReplyOptions {
   postId: string;
@@ -22,7 +23,7 @@ interface UsePostRepostOptions {
 /**
  * Custom hook to handle post creation (replies, reposts, and root posts)
  *
- * @returns Object containing content state, setContent function, tags state, setTags function, attachments state, setAttachments function, reply method, post method, repost method, isSubmitting state, and error state
+ * @returns Object containing content state, setContent function, tags state, setTags function, attachments state, setAttachments function, isArticle state, setIsArticle function, articleTitle state, setArticleTitle function, reply method, post method, repost method, isSubmitting state, and error state
  *
  * @example
  * ```tsx
@@ -42,6 +43,8 @@ export function usePost() {
   const [content, setContent] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [isArticle, setIsArticle] = useState(false);
+  const [articleTitle, setArticleTitle] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   // selectCurrentUserPubky() throws an error when user is not authenticated;
   // access currentUserPubky directly to get null instead (post actions return early if null)
@@ -101,21 +104,29 @@ export function usePost() {
 
   const post = useCallback(
     async ({ onSuccess }: UsePostPostOptions) => {
-      // allow empty content and attachments
-      if ((!content.trim() && attachments.length === 0) || !currentUserId) return;
+      // allow empty content and attachments if not article
+      if (
+        (!content.trim() && attachments.length === 0) ||
+        (isArticle && (!content.trim() || !articleTitle.trim())) ||
+        !currentUserId
+      )
+        return;
 
       setIsSubmitting(true);
 
       try {
         const createdPostId = await Core.PostController.commitCreate({
-          content: content.trim(),
+          content: isArticle ? JSON.stringify({ title: articleTitle.trim(), body: content.trim() }) : content.trim(),
           authorId: currentUserId,
           tags: tags.length > 0 ? tags : undefined,
           attachments: attachments.length > 0 ? attachments : undefined,
+          kind: isArticle ? PubkyAppPostKind.Long : PubkyAppPostKind.Short,
         });
         setContent('');
         setTags([]);
         setAttachments([]);
+        setIsArticle(false);
+        setArticleTitle('');
         showSuccessToast('Post created', 'Your post has been created successfully.');
         onSuccess?.(createdPostId);
       } catch (err) {
@@ -125,7 +136,7 @@ export function usePost() {
         setIsSubmitting(false);
       }
     },
-    [content, tags, attachments, currentUserId, showErrorToast, showSuccessToast],
+    [content, tags, attachments, isArticle, articleTitle, currentUserId, showErrorToast, showSuccessToast],
   );
 
   const repost = useCallback(
@@ -155,6 +166,18 @@ export function usePost() {
     [content, tags, currentUserId, showErrorToast, showSuccessToast],
   );
 
+  // Clear attachments when switching to article mode
+  useEffect(() => {
+    if (isArticle && attachments.length > 0) {
+      toast({
+        title: 'Attachments cleared',
+        description: 'Articles support one cover image only.',
+      });
+      setAttachments([]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only trigger on isArticle change, not attachments
+  }, [isArticle]);
+
   return {
     content,
     setContent,
@@ -162,6 +185,10 @@ export function usePost() {
     setTags,
     attachments,
     setAttachments,
+    isArticle,
+    setIsArticle,
+    articleTitle,
+    setArticleTitle,
     reply,
     post,
     repost,

@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 /**
  * Tag application service implementing local-first architecture.
@@ -28,7 +29,7 @@ export class TagApplication {
         } else {
           await Core.LocalUserTagService.create({ taggerId, taggedId, label });
         }
-        await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
+        await Core.HomeserverService.request({ method: HttpMethod.PUT, url: tagUrl, bodyJson: tagJson });
       }),
     );
   }
@@ -43,11 +44,17 @@ export class TagApplication {
    * @param params.taggedKind - The kind of the tagged entity
    */
   static async commitDelete({ taggerId, taggedId, label, tagUrl, taggedKind }: Core.TDeleteTagInput) {
+    let wasDeleted = false;
+
     if (taggedKind === Core.TagKind.POST) {
-      await Core.LocalPostTagService.delete({ taggerId, taggedId, label });
+      wasDeleted = await Core.LocalPostTagService.delete({ taggerId, taggedId, label });
     } else {
-      await Core.LocalUserTagService.delete({ taggerId, taggedId, label });
+      wasDeleted = await Core.LocalUserTagService.delete({ taggerId, taggedId, label });
     }
-    await Core.HomeserverService.request(Core.HomeserverAction.DELETE, tagUrl);
+
+    // Only send to homeserver if something was actually deleted locally
+    if (wasDeleted) {
+      await Core.HomeserverService.request({ method: HttpMethod.DELETE, url: tagUrl });
+    }
   }
 }

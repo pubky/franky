@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
+import { SinglePostArticle } from '../SinglePostArticle';
 import { SinglePostCard } from '../SinglePostCard';
 import { SinglePostParticipants } from '../SinglePostParticipants';
 import { QuickReply } from '../QuickReply';
@@ -48,10 +49,24 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
     debounceMs: 20,
   });
 
+  // TODO - Add loading skeleton
+  if (!postDetails) return 'Loading post...';
+
+  const isArticle = postDetails.kind === 'long';
+
   return (
     <>
-      {/* Main post card - FULL WIDTH - always visible */}
-      <SinglePostCard postId={postId} />
+      {/* Main post - FULL WIDTH - always visible */}
+      {isArticle ? (
+        <SinglePostArticle
+          postId={postId}
+          content={postDetails.content}
+          attachments={postDetails.attachments}
+          isBlurred={postDetails.is_blurred}
+        />
+      ) : (
+        <SinglePostCard postId={postId} />
+      )}
 
       {/* Replies section - only visible for authenticated users */}
       {isAuthenticated && (

@@ -26,14 +26,14 @@ exports[`HotTagCard - Snapshots > matches snapshot with default props 1`] = `
         </p>
       </div>
       <p
-        class="text-foreground truncate text-2xl font-bold"
+        class="text-2xl font-bold text-foreground truncate"
         data-testid="typography"
       >
         bitcoin
       </p>
     </div>
     <p
-      class="text-xl font-semibold text-secondary-foreground"
+      class="font-semibold text-base text-secondary-foreground"
       data-testid="typography"
     >
       371
@@ -73,14 +73,14 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </p>
       </div>
       <p
-        class="text-foreground truncate text-2xl font-bold"
+        class="text-2xl font-bold text-foreground truncate"
         data-testid="typography"
       >
         defi
       </p>
     </div>
     <p
-      class="text-xl font-semibold text-secondary-foreground"
+      class="font-semibold text-base text-secondary-foreground"
       data-testid="typography"
     >
       100
@@ -96,7 +96,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
       data-testid="container"
     >
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: 0px; z-index: 6;"
       >
@@ -111,7 +111,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </span>
       </div>
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 5;"
       >
@@ -126,7 +126,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </span>
       </div>
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 4;"
       >
@@ -141,7 +141,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </span>
       </div>
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 3;"
       >
@@ -156,7 +156,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </span>
       </div>
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 2;"
       >
@@ -171,7 +171,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </span>
       </div>
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 1;"
       >
@@ -186,7 +186,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
         </span>
       </div>
       <div
-        class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+        class="relative flex size-8 items-center justify-center rounded-full border border-muted-foreground bg-background text-sm font-medium shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 0;"
       >
@@ -223,14 +223,14 @@ exports[`HotTagCard - Snapshots > matches snapshot with small postCount 1`] = `
         </p>
       </div>
       <p
-        class="text-foreground truncate text-2xl font-bold"
+        class="text-2xl font-bold text-foreground truncate"
         data-testid="typography"
       >
         nft
       </p>
     </div>
     <p
-      class="text-xl font-semibold text-secondary-foreground"
+      class="font-semibold text-base text-secondary-foreground"
       data-testid="typography"
     >
       50
@@ -270,14 +270,14 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
         </p>
       </div>
       <p
-        class="text-foreground truncate text-2xl font-bold"
+        class="text-2xl font-bold text-foreground truncate"
         data-testid="typography"
       >
         ethereum
       </p>
     </div>
     <p
-      class="text-xl font-semibold text-secondary-foreground"
+      class="font-semibold text-base text-secondary-foreground"
       data-testid="typography"
     >
       250
@@ -293,7 +293,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
       data-testid="container"
     >
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: 0px; z-index: 2;"
       >
@@ -302,7 +302,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
         />
       </div>
       <div
-        class="relative rounded-full shadow-sm"
+        class="relative rounded-full shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 1;"
       >
@@ -311,7 +311,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
         />
       </div>
       <div
-        class="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+        class="relative flex size-8 items-center justify-center rounded-full border border-muted-foreground bg-background text-sm font-medium shadow-xs-dark"
         data-testid="container"
         style="margin-left: -8px; z-index: 0;"
       >

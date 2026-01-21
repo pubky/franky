@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PubkyAppFeedReach, PubkyAppFeedSort, FeedResult, PubkyAppFeedLayout } from 'pubky-app-specs';
 import { FeedApplication } from './feed';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 // Mock the LocalFeedService
 vi.mock('@/core/services/local/feed', () => ({
@@ -105,11 +106,11 @@ describe('FeedApplication', () => {
           tags: ['bitcoin', 'lightning'],
         }),
       );
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.stringContaining('pubky://'),
-        expect.any(Object),
-      );
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: expect.stringContaining('pubky://'),
+        bodyJson: expect.any(Object),
+      });
       expect(result).toBeTruthy();
       expect(result!.id).toBe(1);
     });
@@ -188,7 +189,10 @@ describe('FeedApplication', () => {
       const result = await FeedApplication.commitDelete({ userId: testUserId, params: mockParams });
 
       expect(deleteSpy).toHaveBeenCalledWith({ feedId: 123 });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, expect.stringContaining('pubky://'));
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.DELETE,
+        url: expect.stringContaining('pubky://'),
+      });
       expect(result).toBeUndefined();
     });
 

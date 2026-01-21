@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { createCommonError, CommonErrorType } from '@/libs';
+import { Err, ErrorService, ValidationErrorCode } from '@/libs';
 
 /**
  * Environment Variables Schema with Zod validation
@@ -134,7 +134,7 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
-  NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app'),
+  NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app,https://pkarr.pubky.org'),
 
   NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
@@ -266,16 +266,17 @@ function parseEnv(): z.infer<typeof envSchema> {
         {} as Record<string, string>,
       );
 
-      throw createCommonError(
-        CommonErrorType.ENV_VALIDATION_ERROR,
-        'Environment configuration validation failed',
-        500,
-        { details },
-      );
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Environment configuration validation failed', {
+        service: ErrorService.Local,
+        operation: 'parseEnv',
+        context: { details },
+      });
     }
 
-    throw createCommonError(CommonErrorType.ENV_TYPE_ERROR, 'Unexpected error during environment configuration', 500, {
-      error,
+    throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Unexpected error during environment configuration', {
+      service: ErrorService.Local,
+      operation: 'parseEnv',
+      cause: error,
     });
   }
 }
