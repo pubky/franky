@@ -185,10 +185,6 @@ const { mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
   mockLoggerInfo: vi.fn(),
 }));
 
-const { mockIsWebShareSupported } = vi.hoisted(() => ({
-  mockIsWebShareSupported: vi.fn(() => true),
-}));
-
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
@@ -202,7 +198,6 @@ vi.mock('@/libs', async () => {
       pubkyFromKeypair: vi.fn(() => 'generated-pubky'),
     },
     shareWithFallback: mockShareWithFallback,
-    isWebShareSupported: mockIsWebShareSupported,
     Logger: {
       error: mockLoggerError,
       info: mockLoggerInfo,
@@ -216,7 +211,6 @@ describe('PublicKeyCard', () => {
     mockToast.mockReturnValue({ dismiss: mockDismiss });
     mockCopyToClipboard.mockResolvedValue(true);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
-    mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
       secretKey: 'test-secret-key',
       setKeypair: mockSetKeypair,
@@ -260,22 +254,16 @@ describe('PublicKeyCard', () => {
     expect(document.querySelector('.lucide-share')).toBeInTheDocument();
   });
 
-  it('shows share button even when Web Share API is unavailable (uses fallback)', () => {
-    // Override the default mock to return false
-    mockIsWebShareSupported.mockReturnValue(false);
-
+  it('always renders share button with responsive visibility class', () => {
     render(<PublicKeyCard />);
 
     expect(screen.getByTestId('action-section')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-0')).toBeInTheDocument();
-    // Share button should ALWAYS be rendered on mobile, regardless of Web Share API support
-    // The visibility is controlled by responsive CSS (md:hidden), not by Web Share API availability
-    // When clicked without Web Share API support, it falls back to clipboard copy
+    // Share button is ALWAYS rendered regardless of Web Share API support.
+    // Visibility is controlled by responsive CSS (md:hidden), not by API availability.
+    // When Web Share API is unavailable, the handler falls back to clipboard copy.
     expect(screen.getByTestId('action-button-1')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-1').className).toContain('md:hidden');
-
-    // Restore the default for other tests
-    mockIsWebShareSupported.mockReturnValue(true);
   });
 
   it('hides the share button on medium screens and larger via responsive classes', () => {
@@ -377,7 +365,7 @@ describe('PublicKeyCard', () => {
 
   it('handles share action with fallback to clipboard', async () => {
     // Mock shareWithFallback to simulate fallback scenario
-    mockShareWithFallback.mockImplementation(async (data, options) => {
+    mockShareWithFallback.mockImplementation(async (_data, options) => {
       // Simulate fallback being called
       await options.onFallback?.();
       // Simulate success callback with fallback method
@@ -402,7 +390,7 @@ describe('PublicKeyCard', () => {
 
   it('handles share action error', async () => {
     // Mock shareWithFallback to simulate error scenario
-    mockShareWithFallback.mockImplementation(async (data, options) => {
+    mockShareWithFallback.mockImplementation(async (_data, options) => {
       const error = new Error('Share failed');
       options.onError?.(error);
       throw error;
@@ -515,7 +503,6 @@ describe('PublicKeyCard - Key Generation', () => {
     mockToast.mockReturnValue({ dismiss: mockDismiss });
     mockCopyToClipboard.mockResolvedValue(true);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
-    mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
       secretKey: 'test-secret-key',
       setKeypair: mockSetKeypair,
