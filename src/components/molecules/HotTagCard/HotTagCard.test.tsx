@@ -17,10 +17,11 @@ describe('HotTagCard', () => {
     expect(screen.getByText('371 posts')).toBeInTheDocument();
   });
 
-  it('formats large post counts with commas', () => {
+  it('formats large post counts with locale separators', () => {
     render(<HotTagCard {...defaultProps} postCount={1234567} />);
 
-    expect(screen.getByText('1,234,567 posts')).toBeInTheDocument();
+    // Use regex to match formatted number (handles different locale separators)
+    expect(screen.getByText(/1[,.]234[,.]567 posts/)).toBeInTheDocument();
   });
 
   it('calls onClick when clicked', () => {
