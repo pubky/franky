@@ -69,7 +69,13 @@ describe('SignInStore', () => {
 
   describe('Error Handling', () => {
     it('should set error state', () => {
-      const mockError = new Libs.AppError(Libs.CommonErrorType.NETWORK_ERROR, 'Network failed', 500);
+      const mockError = new Libs.AppError({
+        category: Libs.ErrorCategory.Network,
+        code: Libs.NetworkErrorCode.CONNECTION_FAILED,
+        message: 'Network failed',
+        service: Libs.ErrorService.Local,
+        operation: 'test',
+      });
 
       useSignInStore.getState().setError(mockError);
 
@@ -77,7 +83,13 @@ describe('SignInStore', () => {
     });
 
     it('should clear error state', () => {
-      const mockError = new Libs.AppError(Libs.CommonErrorType.NETWORK_ERROR, 'Network failed', 500);
+      const mockError = new Libs.AppError({
+        category: Libs.ErrorCategory.Network,
+        code: Libs.NetworkErrorCode.CONNECTION_FAILED,
+        message: 'Network failed',
+        service: Libs.ErrorService.Local,
+        operation: 'test',
+      });
 
       useSignInStore.getState().setError(mockError);
       useSignInStore.getState().setError(null);
@@ -89,7 +101,13 @@ describe('SignInStore', () => {
   describe('Reset', () => {
     it('should reset all state to initial values', () => {
       const store = useSignInStore.getState();
-      const mockError = new Libs.AppError(Libs.CommonErrorType.NETWORK_ERROR, 'Network failed', 500);
+      const mockError = new Libs.AppError({
+        category: Libs.ErrorCategory.Network,
+        code: Libs.NetworkErrorCode.CONNECTION_FAILED,
+        message: 'Network failed',
+        service: Libs.ErrorService.Local,
+        operation: 'test',
+      });
 
       // Set all state
       store.setAuthUrlResolved(true);
