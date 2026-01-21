@@ -38,6 +38,34 @@ export function getNotificationText(notification: FlatNotification, userName: st
 }
 
 /**
+ * Get notification action text (without the username) based on type
+ */
+export function getNotificationActionText(notification: FlatNotification): string {
+  switch (notification.type) {
+    case NotificationType.Follow:
+      return 'followed you';
+    case NotificationType.NewFriend:
+      return 'is now your friend';
+    case NotificationType.TagPost:
+      return 'tagged your post';
+    case NotificationType.TagProfile:
+      return 'tagged your profile';
+    case NotificationType.Reply:
+      return 'replied to your post';
+    case NotificationType.Repost:
+      return 'reposted your post';
+    case NotificationType.Mention:
+      return 'mentioned you in post';
+    case NotificationType.PostDeleted:
+      return 'deleted a post';
+    case NotificationType.PostEdited:
+      return 'edited a post';
+    default:
+      return 'New notification';
+  }
+}
+
+/**
  * Extract user ID from notification based on type
  */
 export function getUserIdFromNotification(notification: FlatNotification): string {
