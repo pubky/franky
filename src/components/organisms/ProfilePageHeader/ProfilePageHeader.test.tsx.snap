@@ -44,7 +44,7 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           Satoshi Nakamoto
         </h1>
         <p
-          class="text-sm font-medium leading-tight text-secondary-foreground lg:text-base"
+          class="text-sm leading-tight font-medium text-secondary-foreground lg:text-base"
           data-cy="profile-bio-header"
           data-testid="typography"
         >
