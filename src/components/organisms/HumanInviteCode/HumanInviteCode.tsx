@@ -67,6 +67,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
               <Atoms.Container className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand px-5 py-2 shadow-xs-dark">
                 <Atoms.Input
                   data-cy="human-invite-code-input"
+                  data-testid="human-invite-code-input"
                   type="text"
                   autoFocus
                   value={inviteCode}
