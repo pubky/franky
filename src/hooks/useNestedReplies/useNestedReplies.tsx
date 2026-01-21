@@ -45,16 +45,21 @@ export function useNestedReplies(
   // Get nested replies from local cache (in chronological order - oldest first)
   const nestedReplyIds = useLiveQuery(
     async () => {
-      if (!replyId || depth >= maxDepth) return [];
+      try {
+        if (!replyId || depth >= maxDepth) return [];
 
-      const streamId = Core.buildPostReplyStreamId(replyId);
-      const stream = await Core.StreamPostsController.getLocalStream({ streamId });
+        const streamId = Core.buildPostReplyStreamId(replyId);
+        const stream = await Core.StreamPostsController.getLocalStream({ streamId });
 
-      if (!stream || stream.stream.length === 0) return [];
+        if (!stream || stream.stream.length === 0) return [];
 
-      // Stream is stored newest-first, reverse for chronological and take last N
-      const chronological = [...stream.stream].reverse();
-      return chronological.slice(-maxNestedReplies);
+        // Stream is stored newest-first, reverse for chronological and take last N
+        const chronological = [...stream.stream].reverse();
+        return chronological.slice(-maxNestedReplies);
+      } catch (error) {
+        Libs.Logger.error('[useNestedReplies] Failed to query nested replies', { replyId, error });
+        return [];
+      }
     },
     [replyId, maxNestedReplies, depth, maxDepth],
     [],

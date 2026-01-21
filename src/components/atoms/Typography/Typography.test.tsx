@@ -66,6 +66,11 @@ describe('Typography - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
+  it('matches snapshot for 2xl size', () => {
+    const { container } = render(<Typography size="2xl">2XL text</Typography>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
   it('matches snapshot with custom className', () => {
     const { container } = render(<Typography className="custom-typography">Custom typography</Typography>);
     expect(container.firstChild).toMatchSnapshot();

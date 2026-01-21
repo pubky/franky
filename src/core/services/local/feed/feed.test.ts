@@ -113,8 +113,8 @@ describe('LocalFeedService', () => {
     it('should throw RECORD_NOT_FOUND error when not found', async () => {
       await expect(Core.LocalFeedService.read({ feedId: 99999 })).rejects.toMatchObject({
         name: 'AppError',
-        type: 'RECORD_NOT_FOUND',
-        statusCode: 404,
+        code: 'RECORD_NOT_FOUND',
+        category: 'database',
       });
     });
   });

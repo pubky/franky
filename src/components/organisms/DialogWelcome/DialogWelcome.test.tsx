@@ -39,6 +39,7 @@ vi.mock('dexie-react-hooks', () => ({
       name: 'Test User',
       bio: 'Test bio',
       image: 'test-image.jpg',
+      indexed_at: 1234567890,
     };
   }),
 }));
@@ -224,8 +225,23 @@ describe('DialogWelcome', () => {
     expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkytest-pubky-123');
   });
 
-  it('uses generated avatar url', () => {
+  it('uses generated avatar url when user has image', () => {
     render(<DialogWelcome />);
-    expect(mockGetAvatarUrl).toHaveBeenCalledWith('test-pubky-123');
+    expect(mockGetAvatarUrl).toHaveBeenCalledWith('test-pubky-123', 1234567890);
+  });
+
+  it('does not generate avatar url when user has no image', async () => {
+    const { useLiveQuery } = await import('dexie-react-hooks');
+    vi.mocked(useLiveQuery).mockReturnValue({
+      name: 'Test User',
+      bio: 'Test bio',
+      image: null,
+      indexed_at: 1234567890,
+    });
+
+    mockGetAvatarUrl.mockClear();
+    render(<DialogWelcome />);
+
+    expect(mockGetAvatarUrl).not.toHaveBeenCalled();
   });
 });

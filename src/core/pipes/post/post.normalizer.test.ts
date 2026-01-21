@@ -104,13 +104,12 @@ describe('PostNormalizer', () => {
       afterEach(restoreMocks);
 
       describe('successful creation', () => {
-        it('should create post and log debug message', async () => {
+        it('should create post successfully', async () => {
           const post = createBasicPost();
           const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
           expect(result).toHaveProperty('post');
           expect(result).toHaveProperty('meta');
-          expect(Libs.Logger.debug).toHaveBeenCalledWith('Post validated', { result });
         });
 
         it('should call PubkySpecsSingleton.get with pubky and createPost with content/kind', async () => {
