@@ -24,7 +24,7 @@ export const InstallCard = () => {
       <Atoms.Container className="gap-3">
         <Atoms.Container className="flex-col items-center sm:items-start">
           <Image
-            src="/images/logo-pubky-ring.svg"
+            src="/images/logo-pubky-ring-blue.svg"
             alt="Pubky Ring"
             className="w-[137px] sm:w-auto"
             width={220}
@@ -32,7 +32,7 @@ export const InstallCard = () => {
           />
         </Atoms.Container>
         <Atoms.Typography className="text-base font-medium text-secondary-foreground opacity-80">
-          Download and install the mobile app to start creating your account.
+          Download and install the mobile app. Then continue to the next step.
         </Atoms.Typography>
       </Atoms.Container>
       <StoreButtons />

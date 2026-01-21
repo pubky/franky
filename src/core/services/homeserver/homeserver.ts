@@ -11,6 +11,7 @@ import {
   resolvePubky,
   AuthFlowKind,
   Session,
+  Client,
 } from '@synonymdev/pubky';
 import {
   isHttpUrl,
@@ -39,7 +40,13 @@ export class HomeserverService {
    */
   private static getPubkySdk(): Pubky {
     if (!this.pubkySdk) {
-      this.pubkySdk = TESTNET ? Pubky.testnet() : new Pubky();
+      if (TESTNET) {
+        this.pubkySdk = Pubky.testnet();
+      } else {
+        const relays = Config.PKARR_RELAYS.split(',').map((r) => r.trim());
+        const client = new Client({ pkarr: { relays } });
+        this.pubkySdk = Pubky.withClient(client);
+      }
     }
     return this.pubkySdk;
   }

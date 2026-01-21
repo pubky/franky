@@ -134,7 +134,7 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
-  NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app'),
+  NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app,https://pkarr.pubky.org'),
 
   NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
