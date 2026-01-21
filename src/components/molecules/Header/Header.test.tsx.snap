@@ -36,7 +36,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`] = `
 <header
-  class="sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background)/95 to-(--transparent) py-6 backdrop-blur-sm"
+  class="sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background) from-50% to-transparent py-6"
   data-testid="container"
 >
   <div
@@ -189,7 +189,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/home"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -222,7 +222,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/hot"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -252,7 +252,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/bookmarks"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -282,7 +282,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/settings"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -339,7 +339,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/home"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -372,7 +372,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/hot"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -402,7 +402,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/bookmarks"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -432,7 +432,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   >
     <button
       aria-label="/settings"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -475,13 +475,13 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
       TU
     </div>
     <div
-      class="inline-flex items-center justify-center border px-2 py-0.5 text-xs font-medium whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
+      class="inline-flex items-center justify-center border px-2 py-0.5 text-xs font-medium whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand shadow-sm"
       data-cy="header-notification-counter"
       data-slot="badge"
       data-variant="secondary"
     >
       <p
-        class="text-sm font-semibold text-primary-foreground"
+        class="text-xs font-semibold text-primary-foreground"
         data-testid="typography"
       >
         5
@@ -521,7 +521,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     >
       <button
         aria-label="/home"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -554,7 +554,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     >
       <button
         aria-label="/hot"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -584,7 +584,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     >
       <button
         aria-label="/bookmarks"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -614,7 +614,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     >
       <button
         aria-label="/settings"
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 backdrop-blur-md border bg-white/5"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"

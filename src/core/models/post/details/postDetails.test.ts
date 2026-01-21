@@ -60,7 +60,7 @@ describe('PostDetailsModel', () => {
       const mockPostDetailsData = createPostDetailsData(testPostId1, MOCK_NEXUS_POST_DETAILS);
 
       const result = await Core.PostDetailsModel.create(mockPostDetailsData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockPostDetailsData.id);
     });
 
     it('should find post details by id', async () => {

@@ -66,8 +66,9 @@ export function SearchInput() {
     }
   };
 
-  const hasRecentContent = hotTags.length > 0 || recentUsers.length > 0 || recentTags.length > 0;
-  const hasSuggestions = isFocused && (hasInput || hasRecentContent);
+  // Show dropdown immediately when focused
+  // The dropdown will display hot tags, recent searches, or empty state
+  const hasSuggestions = isFocused;
   const suggestionsId = 'search-suggestions';
 
   return (

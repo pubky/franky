@@ -1,14 +1,15 @@
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 export type TUserApplicationFollowParams = Core.TFollowParams & {
-  eventType: Core.HomeserverAction;
+  eventType: HttpMethod;
   followUrl: string;
   followJson: Record<string, unknown>;
   activeStreamId?: Core.PostStreamTypes | null;
 };
 
 export type TUserApplicationMuteParams = Core.TMuteParams & {
-  eventType: Core.HomeserverAction;
+  eventType: HttpMethod;
   muteUrl: string;
   muteJson: Record<string, unknown>;
 };

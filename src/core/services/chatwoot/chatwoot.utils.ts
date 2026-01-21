@@ -1,4 +1,4 @@
-import * as Libs from '@/libs';
+import { Err, ErrorService, ServerErrorCode } from '@/libs';
 import type { TChatwootContact } from './chatwoot.types';
 
 /**
@@ -29,9 +29,10 @@ export function buildChatwootEmail(pubky: string): string {
  */
 export function extractSourceId(contact: TChatwootContact, email: string): string {
   if (!contact.contact_inboxes || contact.contact_inboxes.length === 0) {
-    throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Contact has no inbox associations', 500, {
-      contactId: contact.id,
-      email,
+    throw Err.server(ServerErrorCode.INVALID_RESPONSE, 'Contact has no inbox associations', {
+      service: ErrorService.Chatwoot,
+      operation: 'extractSourceId',
+      context: { contactId: contact.id, email },
     });
   }
   return contact.contact_inboxes[0].source_id;

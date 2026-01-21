@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST, GET, OPTIONS } from './route';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ServerErrorCode, ErrorService, HttpStatusCode, Logger } from '@/libs';
 
 const testData = {
   nameOwner: 'John Doe',
@@ -26,9 +26,7 @@ const testData = {
 const createPostRequest = (body: Record<string, unknown>) => {
   return new NextRequest('http://localhost:3000/api/copyright', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
 };
@@ -37,6 +35,7 @@ describe('API Route: /api/copyright', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(Core.CopyrightController, 'submit').mockResolvedValue(undefined);
+    vi.spyOn(Logger, 'error').mockImplementation(() => {});
   });
 
   describe('POST', () => {
@@ -51,41 +50,45 @@ describe('API Route: /api/copyright', () => {
       expect(Core.CopyrightController.submit).toHaveBeenCalledWith(testData);
     });
 
-    it('should handle AppError from controller layer with correct status code', async () => {
-      const appError = new Libs.AppError('INVALID_INPUT', 'Validation failed', 400);
+    it('should handle validation errors with 500 status (no statusCode in context)', async () => {
+      const appError = Err.validation(ValidationErrorCode.MISSING_FIELD, 'Validation failed', {
+        service: ErrorService.Local,
+        operation: 'validateNameOwner',
+      });
       vi.spyOn(Core.CopyrightController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest(testData);
-
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
       expect(data.error).toBe('Validation failed');
     });
 
-    it('should handle AppError with different status codes', async () => {
-      const appError = new Libs.AppError('INTERNAL_ERROR', 'Server error', 500);
+    it('should handle AppError with statusCode in context', async () => {
+      const appError = Err.server(ServerErrorCode.SERVICE_UNAVAILABLE, 'Service unavailable', {
+        service: ErrorService.Chatwoot,
+        operation: 'createConversation',
+        context: { statusCode: 503 },
+      });
       vi.spyOn(Core.CopyrightController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest(testData);
-
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(data.error).toBe('Server error');
+      expect(response.status).toBe(503);
+      expect(data.error).toBe('Service unavailable');
     });
 
     it('should handle unexpected errors with 500 status', async () => {
       vi.spyOn(Core.CopyrightController, 'submit').mockRejectedValue(new Error('Unexpected error'));
 
       const request = createPostRequest(testData);
-
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(HttpStatusCode.INTERNAL_SERVER_ERROR);
       expect(data.error).toBe('Internal Server Error');
     });
   });
@@ -95,7 +98,7 @@ describe('API Route: /api/copyright', () => {
       const response = await GET();
       const data = await response.json();
 
-      expect(response.status).toBe(405);
+      expect(response.status).toBe(HttpStatusCode.METHOD_NOT_ALLOWED);
       expect(data.error).toBe('Method not allowed. Use POST instead.');
     });
   });
