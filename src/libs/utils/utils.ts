@@ -662,17 +662,25 @@ export function sanitizeTagInput(value: string): string {
  * canSubmitPost('post', '', [], false) // false
  * canSubmitPost('repost', '', [], false) // true
  * canSubmitPost('post', 'Hello', [], true) // false (submitting)
+ * canSubmitPost('post', 'Content', [], false, true, 'Title') // true (article)
  */
 export function canSubmitPost(
   variant: 'post' | 'reply' | 'repost',
   content: string,
   attachments: File[],
   isSubmitting: boolean,
+  isArticle?: boolean,
+  articleTitle?: string,
 ): boolean {
   if (isSubmitting) return false;
 
   // Reposts allow empty content, posts and replies require content or attachments
   if (variant === 'repost') return true;
+
+  // Articles require both content and title
+  if (isArticle) {
+    return !!content.trim() && !!articleTitle?.trim();
+  }
 
   return Boolean(content.trim()) || attachments.length > 0;
 }
