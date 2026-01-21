@@ -21,14 +21,23 @@ vi.mock('@/hooks/useLnVerificationInfo', () => ({
   useLnVerificationInfo: () => mockUseLnVerificationInfo(),
 }));
 
+// Mock toLocaleString to ensure consistent formatting across locales
+const originalToLocaleString = Number.prototype.toLocaleString;
+
 describe('BitcoinPaymentCard', () => {
   beforeEach(() => {
     mockUseBtcRate.mockReturnValue({ satUsd: 0.0005 });
     mockUseLnVerificationInfo.mockReturnValue({ available: true, amountSat: 1000 });
+    // Force US locale for consistent snapshots
+    Number.prototype.toLocaleString = function () {
+      return originalToLocaleString.call(this, 'en-US');
+    };
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    // Restore original toLocaleString
+    Number.prototype.toLocaleString = originalToLocaleString;
   });
 
   it('renders bitcoin payment details and action', () => {
