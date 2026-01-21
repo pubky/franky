@@ -32,7 +32,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
     const codeValue = code.join('');
     try {
       setIsVerifyingCode(true);
-      const result = await Core.HomegateController.verifySmsCode(phoneNumber, codeValue);
+      const result = await Core.HomegateController.verifySmsCode({ phoneNumber, code: codeValue });
       if (result.valid && result.signupCode) {
         toast({
           title: 'Verification Code Valid',

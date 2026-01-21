@@ -24,7 +24,14 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
   const [replyIds, setReplyIds] = useState<string[]>([]);
 
   // Watch for changes in post_counts to trigger refetch when replies count changes
-  const postCounts = useLiveQuery(() => Core.PostController.getCounts({ compositeId: postId }), [postId]);
+  const postCounts = useLiveQuery(async () => {
+    try {
+      return await Core.PostController.getCounts({ compositeId: postId });
+    } catch (error) {
+      Libs.Logger.error('[PostReplies] Failed to query post counts', { postId, error });
+      return null;
+    }
+  }, [postId]);
 
   // Check if parent post is deleted to determine replyability
   const { postDetails } = Hooks.usePostDetails(postId);

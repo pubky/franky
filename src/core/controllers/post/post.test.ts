@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 // Mock HomeserverService
 vi.mock('@/core/services/homeserver', () => ({
@@ -222,11 +223,11 @@ describe('PostController', () => {
       expect(savedPost.kind).toBe('short'); // PubkyAppPostKind.Short
 
       // Verify homeserver sync was called
-      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.stringContaining('pubky://'),
-        expect.any(Object),
-      );
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: expect.stringContaining('pubky://'),
+        bodyJson: expect.any(Object),
+      });
     });
 
     it('should create a reply when parentPostId is provided', async () => {
@@ -242,11 +243,11 @@ describe('PostController', () => {
       expect(replyPost!.kind).toBe('short'); // PubkyAppPostKind.Short
 
       // Verify homeserver sync was called
-      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.stringContaining('pubky://'),
-        expect.any(Object),
-      );
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: expect.stringContaining('pubky://'),
+        bodyJson: expect.any(Object),
+      });
     });
 
     it('should throw error when parent post not found', async () => {
@@ -291,11 +292,11 @@ describe('PostController', () => {
       expect(repost!.kind).toBe('short');
 
       // Verify homeserver sync was called
-      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.stringContaining('pubky://'),
-        expect.any(Object),
-      );
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: expect.stringContaining('pubky://'),
+        bodyJson: expect.any(Object),
+      });
     });
 
     it('should throw error when original post not found for repost', async () => {
@@ -326,11 +327,11 @@ describe('PostController', () => {
       expect(repost).toBeTruthy();
 
       // Verify homeserver sync was called
-      expect(Core.HomeserverService.request).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.stringContaining('pubky://'),
-        expect.any(Object),
-      );
+      expect(Core.HomeserverService.request).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: expect.stringContaining('pubky://'),
+        bodyJson: expect.any(Object),
+      });
     });
   });
 

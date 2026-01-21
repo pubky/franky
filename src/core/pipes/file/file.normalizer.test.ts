@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { BlobResult, FileResult } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -77,14 +77,12 @@ describe('FileNormalizer', () => {
     afterEach(restoreMocks);
 
     describe('toFileAttachment - successful creation', () => {
-      it('should create file attachment and log debug messages', async () => {
+      it('should create file attachment with blobResult and fileResult', async () => {
         const file = createMockFile();
         const result = await Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 });
 
         expect(result).toHaveProperty('blobResult');
         expect(result).toHaveProperty('fileResult');
-        expect(Libs.Logger.debug).toHaveBeenCalledWith('Blob validated', expect.any(Object));
-        expect(Libs.Logger.debug).toHaveBeenCalledWith('File validated', expect.any(Object));
       });
 
       it('should read file content and call createBlob with Uint8Array', async () => {
@@ -142,43 +140,72 @@ describe('FileNormalizer', () => {
     });
 
     describe('toFileAttachment - error handling', () => {
-      it.each([
-        [
-          'file.arrayBuffer',
-          () => (createMockFile().arrayBuffer as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Read error')),
-        ],
-        [
-          'createBlob',
-          () =>
-            mockBuilder.createBlob.mockImplementation(() => {
-              throw new Error('Blob error');
-            }),
-        ],
-        [
-          'createFile',
-          () =>
-            mockBuilder.createFile.mockImplementation(() => {
-              throw new Error('File error');
-            }),
-        ],
-      ])('should propagate errors from %s', async (errorSource, setupError) => {
+      it('should throw AppError with correct properties when createBlob fails', async () => {
+        const errorMessage = 'Invalid blob data';
+        mockBuilder.createBlob.mockImplementation(() => {
+          throw errorMessage;
+        });
         const file = createMockFile();
-        if (errorSource === 'file.arrayBuffer') {
-          (file.arrayBuffer as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Read error'));
-        } else {
-          setupError();
-        }
 
-        await expect(Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 })).rejects.toThrow();
+        try {
+          await Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('toFileAttachment');
+        }
+      });
+
+      it('should throw AppError with correct properties when createFile fails', async () => {
+        const errorMessage = 'Invalid file metadata';
+        mockBuilder.createFile.mockImplementation(() => {
+          throw errorMessage;
+        });
+        const file = createMockFile();
+
+        try {
+          await Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('toFileAttachment');
+        }
+      });
+
+      it('should throw AppError when file.arrayBuffer fails', async () => {
+        const file = createMockFile();
+        (file.arrayBuffer as ReturnType<typeof vi.fn>).mockRejectedValue('Read error');
+
+        try {
+          await Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('toFileAttachment');
+        }
       });
 
       it('should not call createFile when createBlob throws', async () => {
         mockBuilder.createBlob.mockImplementation(() => {
-          throw new Error('Blob error');
+          throw 'Blob error';
         });
         const file = createMockFile();
 
-        await expect(Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 })).rejects.toThrow();
+        await expect(Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 })).rejects.toThrow(
+          AppError,
+        );
         expect(mockBuilder.createFile).not.toHaveBeenCalled();
       });
     });
@@ -246,12 +273,19 @@ describe('FileNormalizer', () => {
       /**
        * Note: The pubky-app-specs library validates that file size must be > 0.
        */
-      it('should throw error for empty file content (size validation)', async () => {
+      it('should throw AppError for empty file content (size validation)', async () => {
         const emptyFile = createMockFile('empty.txt', 'text/plain', 0, new Uint8Array([]));
 
-        await expect(
-          Core.FileNormalizer.toFileAttachment({ file: emptyFile, pubky: TEST_PUBKY.USER_1 }),
-        ).rejects.toThrow();
+        try {
+          await Core.FileNormalizer.toFileAttachment({ file: emptyFile, pubky: TEST_PUBKY.USER_1 });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+        }
       });
 
       it('should handle minimum valid file size', async () => {

@@ -2,6 +2,7 @@ import { Table } from 'dexie';
 
 import * as Core from '@/core';
 import { TupleModelBase } from '@/core/models/shared/base/tuple/baseTuple';
+import { DatabaseErrorCode, Err, ErrorService } from '@/libs';
 
 export class PostRelationshipsModel
   extends TupleModelBase<string, Core.PostRelationshipsModelSchema>
@@ -26,16 +27,34 @@ export class PostRelationshipsModel
   }
 
   // Query methods
-  static async getReplies(postId: string) {
-    return this.table.where('replied').equals(postId).toArray();
+  static async getReplies(postId: string): Promise<Core.PostRelationshipsModelSchema[]> {
+    try {
+      return await this.table.where('replied').equals(postId).toArray();
+    } catch (error) {
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, 'Failed to get replies', {
+        service: ErrorService.Local,
+        operation: 'getReplies',
+        context: { table: this.table.name, postId },
+        cause: error,
+      });
+    }
   }
 
   /**
    * Get the parent post ID for a given post ID
    * @param postId - The ID of the post to get the parent post ID for
-   * @returns The parent post ID
+   * @returns The parent post ID or undefined if not found
    */
-  static async getParentPostId(postId: string) {
-    return (await this.table.where('replied').equals(postId).first())?.replied;
+  static async getParentPostId(postId: string): Promise<string | null | undefined> {
+    try {
+      return (await this.table.where('replied').equals(postId).first())?.replied;
+    } catch (error) {
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, 'Failed to get parent post ID', {
+        service: ErrorService.Local,
+        operation: 'getParentPostId',
+        context: { table: this.table.name, postId },
+        cause: error,
+      });
+    }
   }
 }

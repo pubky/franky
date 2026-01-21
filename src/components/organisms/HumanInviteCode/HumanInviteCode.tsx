@@ -15,23 +15,29 @@ import type { HumanInviteCodeProps } from './HumanInviteCode.types';
  */
 export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => {
   const [inviteCode, setInviteCode] = useState('');
+  const [loading, setLoading] = useState(false);
   const trimmedInviteCode = inviteCode.trim();
   const isInviteCodeEntered = trimmedInviteCode.length === 14;
 
   function handleSubmit() {
-    if (!isInviteCodeEntered) {
+    if (!isInviteCodeEntered || loading) {
       return;
     }
 
+    setLoading(true);
     onSuccess(trimmedInviteCode);
   }
 
   // generate an invite code and put it in console log if you are in development mode
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      Core.AuthController.generateSignupToken().then((token) => {
-        Libs.Logger.info(token, token);
-      });
+      Core.AuthController.generateSignupToken()
+        .then((token) => {
+          Libs.Logger.info(token, token);
+        })
+        .catch((error) => {
+          Libs.Logger.error('[HumanInviteCode] Failed to generate signup token', { error });
+        });
     }
   }, []);
 
@@ -65,6 +71,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
               <Atoms.Container className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand px-5 py-2 shadow-xs-dark">
                 <Atoms.Input
                   data-cy="human-invite-code-input"
+                  data-testid="human-invite-code-input"
                   type="text"
                   autoFocus
                   value={inviteCode}
@@ -101,10 +108,14 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
-          disabled={!isInviteCodeEntered}
+          disabled={!isInviteCodeEntered || loading}
           onClick={handleSubmit}
         >
-          <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          {loading ? (
+            <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          )}
           Continue
         </Atoms.Button>
       </Atoms.Container>

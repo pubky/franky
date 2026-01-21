@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger } from '@/libs';
 import { LastReadResult } from 'pubky-app-specs';
 import { NotificationApplication } from './notification';
 
@@ -184,7 +184,7 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
     it('should log warning and return empty on Nexus failure', async () => {
       vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue([]);
       vi.spyOn(Core.NexusUserService, 'notifications').mockRejectedValue(new Error('network-error'));
-      const loggerSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+      const loggerSpy = vi.spyOn(Logger, 'warn').mockImplementation(() => {});
 
       const result = await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
@@ -226,11 +226,11 @@ describe('NotificationApplication.markAllAsRead', () => {
 
     NotificationApplication.markAllAsRead(mockLastReadResult);
 
-    expect(homeserverSpy).toHaveBeenCalledWith(
-      Core.HomeserverAction.PUT,
-      mockLastReadUrl,
-      mockLastReadResult.last_read.toJson(),
-    );
+    expect(homeserverSpy).toHaveBeenCalledWith({
+      method: HttpMethod.PUT,
+      url: mockLastReadUrl,
+      bodyJson: mockLastReadResult.last_read.toJson(),
+    });
   });
 
   it('should log warning if homeserver fails (fire and forget)', async () => {
@@ -244,7 +244,7 @@ describe('NotificationApplication.markAllAsRead', () => {
     } as unknown as LastReadResult;
 
     vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
-    const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+    const loggerWarnSpy = vi.spyOn(Logger, 'warn').mockImplementation(() => {});
 
     NotificationApplication.markAllAsRead(mockLastReadResult);
 
