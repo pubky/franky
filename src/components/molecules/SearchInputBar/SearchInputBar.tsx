@@ -3,7 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import { SEARCH_EXPANDED_STYLE } from '@/config/search';
+import { SEARCH_CLOSED_STYLE, SEARCH_INPUT_EXPANDED_STYLE } from '@/config/search';
 import type { SearchInputBarProps } from './SearchInputBar.types';
 
 export function SearchInputBar({
@@ -25,10 +25,10 @@ export function SearchInputBar({
     <Atoms.Container
       data-testid="search-input-bar"
       className={Libs.cn(
-        'relative flex min-h-12 items-center gap-3 border border-border px-6 py-3',
-        isFocused ? 'rounded-t-2xl border-b-transparent' : 'rounded-full',
+        'relative flex h-12 items-center gap-3 border border-border px-6 py-3',
+        isFocused ? 'rounded-t-2xl rounded-b-none border-b-transparent' : 'rounded-full',
       )}
-      style={isFocused ? SEARCH_EXPANDED_STYLE : undefined}
+      style={isFocused ? SEARCH_INPUT_EXPANDED_STYLE : SEARCH_CLOSED_STYLE}
       overrideDefaults
     >
       {hasActiveTags && (
@@ -60,7 +60,7 @@ export function SearchInputBar({
         aria-expanded={isExpanded}
         aria-haspopup={suggestionsId ? 'dialog' : undefined}
         className={Libs.cn(
-          'min-w-20 flex-1 border-none bg-transparent pr-0 text-base font-medium text-foreground md:text-base',
+          'h-auto min-w-20 flex-1 border-none bg-transparent pr-0 text-base font-medium text-foreground md:text-base',
           hasActiveTags ? 'pl-2.5' : 'pl-0',
         )}
       />

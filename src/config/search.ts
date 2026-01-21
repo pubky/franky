@@ -7,11 +7,32 @@
 const SEARCH_SUGGESTIONS_MAX_HEIGHT = 300;
 
 /**
- * Shared style for search expanded state and dropdown
- * Matches header gradient with backdrop blur
+ * Search bar closed state style (pill shape)
+ * - Gradient background matching Figma design
+ * - Backdrop blur for glass effect
+ */
+export const SEARCH_CLOSED_STYLE = {
+  background: 'linear-gradient(180deg, #07040a 0%, #1b1820 100%)',
+  backdropFilter: 'blur(20px)',
+} as const;
+
+/**
+ * Search input expanded state style (when dropdown is open)
+ * - Solid background to seamlessly connect with dropdown
+ */
+export const SEARCH_INPUT_EXPANDED_STYLE = {
+  background: 'linear-gradient(180deg, var(--background) 0%, var(--background) 100%)',
+} as const;
+
+/**
+ * Search suggestions dropdown style
+ * - Gradient that fades to transparent
+ * - Backdrop blur for glass effect
+ * - Drop shadow for depth
  */
 export const SEARCH_EXPANDED_STYLE = {
   background: 'linear-gradient(180deg, var(--background) 0%, rgba(5, 5, 10, 0.50) 100%)',
-  backdropFilter: 'blur(12px)',
+  backdropFilter: 'blur(25px)',
+  boxShadow: '0px 50px 100px rgba(0, 0, 0, 1)',
   maxHeight: `${SEARCH_SUGGESTIONS_MAX_HEIGHT}px`,
 } as const;
