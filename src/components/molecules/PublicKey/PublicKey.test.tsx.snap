@@ -33,6 +33,7 @@ exports[`PublicKey Components - Snapshots > PublicKeyNavigation - Snapshots > ma
     Back
   </button>
   <button
+    data-loading="false"
     data-testid="continue-button"
   >
     Continue

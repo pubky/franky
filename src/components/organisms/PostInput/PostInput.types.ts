@@ -19,10 +19,10 @@ interface PostInputBaseProps {
    * @default false
    */
   expanded?: boolean;
-  /** Hide article button in action bar (default: false) */
-  hideArticle?: boolean;
-  /** Callback when content, tags, or attachments change, receives content, tags, and attachments */
-  onContentChange?: (content: string, tags: string[], attachments: File[]) => void;
+  /** Callback when content, tags, attachments, or article title change, receives content, tags, attachments, and article title */
+  onContentChange?: (content: string, tags: string[], attachments: File[], articleTitle: string) => void;
+  /** Callback when article mode changes */
+  onArticleModeChange?: (isArticle: boolean) => void;
   /** Data Cy for the post input */
   dataCy?: string;
 }

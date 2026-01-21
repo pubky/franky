@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ErrorService, ClientErrorCode } from '@/libs';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export class PostController {
@@ -165,15 +165,11 @@ export class PostController {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
     if (authorId !== userId) {
-      throw Libs.createSanitizationError(
-        Libs.SanitizationErrorType.POST_NOT_FOUND,
-        'User is not the author of this post',
-        403,
-        {
-          postId,
-          userId,
-        },
-      );
+      throw Err.client(ClientErrorCode.NOT_FOUND, 'User is not the author of this post', {
+        service: ErrorService.Local,
+        operation: 'commitDelete',
+        context: { postId, userId },
+      });
     }
 
     await Core.PostApplication.commitDelete({ compositePostId });

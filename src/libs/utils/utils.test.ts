@@ -22,6 +22,7 @@ import {
   getCharacterCount,
   sanitizeTagInput,
   TAG_BANNED_CHARS,
+  canSubmitPost,
   formatUSDate,
   generateRandomUsername,
 } from './utils';
@@ -1361,46 +1362,182 @@ describe('Utils', () => {
     });
   });
 
-  describe('formatUSDate', () => {
-    it('should format current date in US locale format', () => {
-      const result = formatUSDate();
-      // Should match MM/DD/YYYY format
-      expect(result).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
+  describe('canSubmitPost', () => {
+    describe('when submitting is in progress', () => {
+      it('should return false regardless of content', () => {
+        expect(canSubmitPost('post', 'Hello', [], true)).toBe(false);
+        expect(canSubmitPost('reply', 'Hello', [], true)).toBe(false);
+        expect(canSubmitPost('repost', '', [], true)).toBe(false);
+      });
     });
 
-    it('should format a specific date correctly', () => {
-      // Use local date constructor to avoid timezone issues
-      const testDate = new Date(2024, 11, 25); // Dec 25, 2024
-      const result = formatUSDate(testDate);
-      expect(result).toBe('12/25/2024');
+    describe('for post variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('post', 'Hello world', [], false)).toBe(true);
+      });
+
+      it('should return true when attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', '', [mockFile], false)).toBe(true);
+      });
+
+      it('should return true when both content and attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', 'Hello', [mockFile], false)).toBe(true);
+      });
+
+      it('should return false when no content and no attachments', () => {
+        expect(canSubmitPost('post', '', [], false)).toBe(false);
+      });
+
+      it('should return false for whitespace-only content', () => {
+        expect(canSubmitPost('post', '   ', [], false)).toBe(false);
+        expect(canSubmitPost('post', '\n\t', [], false)).toBe(false);
+      });
     });
 
-    it('should pad single digit months and days with zeros', () => {
-      // Use local date constructor to avoid timezone issues
-      const testDate = new Date(2024, 0, 5); // Jan 5, 2024
-      const result = formatUSDate(testDate);
-      expect(result).toBe('01/05/2024');
+    describe('for reply variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('reply', 'Hello world', [], false)).toBe(true);
+      });
+
+      it('should return true when attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('reply', '', [mockFile], false)).toBe(true);
+      });
+
+      it('should return false when no content and no attachments', () => {
+        expect(canSubmitPost('reply', '', [], false)).toBe(false);
+      });
     });
 
-    it('should handle different years', () => {
-      // Use local date constructor to avoid timezone issues
-      const testDate = new Date(2030, 5, 15); // Jun 15, 2030
-      const result = formatUSDate(testDate);
-      expect(result).toBe('06/15/2030');
+    describe('for repost variant', () => {
+      it('should return true even with empty content', () => {
+        expect(canSubmitPost('repost', '', [], false)).toBe(true);
+      });
+
+      it('should return true with content', () => {
+        expect(canSubmitPost('repost', 'Adding my thoughts', [], false)).toBe(true);
+      });
     });
 
-    it('should handle end of year date', () => {
-      // Use local date constructor to avoid timezone issues
-      const testDate = new Date(2024, 11, 31); // Dec 31, 2024
-      const result = formatUSDate(testDate);
-      expect(result).toBe('12/31/2024');
+    describe('for article posts', () => {
+      it('should return true when both content and title are provided', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, 'Article Title')).toBe(true);
+      });
+
+      it('should return false when content is empty', () => {
+        expect(canSubmitPost('post', '', [], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when title is empty', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, '')).toBe(false);
+      });
+
+      it('should return false when title is undefined', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, undefined)).toBe(false);
+      });
+
+      it('should return false when content is whitespace-only', () => {
+        expect(canSubmitPost('post', '   ', [], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when title is whitespace-only', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, '   ')).toBe(false);
+      });
+
+      it('should ignore attachments for article validation', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', '', [mockFile], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when submitting even with valid content and title', () => {
+        expect(canSubmitPost('post', 'Article content', [], true, true, 'Article Title')).toBe(false);
+      });
     });
 
-    it('should handle beginning of year date', () => {
-      // Use local date constructor to avoid timezone issues
-      const testDate = new Date(2024, 0, 1); // Jan 1, 2024
-      const result = formatUSDate(testDate);
-      expect(result).toBe('01/01/2024');
+    describe('when isArticle is false or undefined', () => {
+      it('should use standard post validation when isArticle is false', () => {
+        expect(canSubmitPost('post', 'Hello', [], false, false, '')).toBe(true);
+        expect(canSubmitPost('post', '', [], false, false, 'Title')).toBe(false);
+      });
+
+      it('should use standard post validation when isArticle is undefined', () => {
+        expect(canSubmitPost('post', 'Hello', [], false, undefined, undefined)).toBe(true);
+        expect(canSubmitPost('post', '', [], false, undefined, undefined)).toBe(false);
+      });
+    });
+    describe('formatUSDate', () => {
+      it('should format current date in US locale format', () => {
+        const result = formatUSDate();
+        // Should match MM/DD/YYYY format
+        expect(result).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
+      });
+
+      it('should format a specific date correctly', () => {
+        const testDate = new Date(2024, 11, 25); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/25/2024');
+      });
+
+      it('should pad single digit months and days with zeros', () => {
+        const testDate = new Date(2024, 0, 5); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/05/2024');
+      });
+
+      it('should handle different years', () => {
+        const testDate = new Date(2030, 5, 15); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('06/15/2030');
+      });
+
+      it('should handle end of year date', () => {
+        const testDate = new Date(2024, 11, 31); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/31/2024');
+      });
+
+      it('should handle beginning of year date', () => {
+        const testDate = new Date(2024, 0, 1); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/01/2024');
+      });
+
+      it('should format a specific date correctly', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 11, 25); // Dec 25, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/25/2024');
+      });
+
+      it('should pad single digit months and days with zeros', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 0, 5); // Jan 5, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/05/2024');
+      });
+
+      it('should handle different years', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2030, 5, 15); // Jun 15, 2030
+        const result = formatUSDate(testDate);
+        expect(result).toBe('06/15/2030');
+      });
+
+      it('should handle end of year date', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 11, 31); // Dec 31, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/31/2024');
+      });
+
+      it('should handle beginning of year date', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 0, 1); // Jan 1, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/01/2024');
+      });
     });
   });
 

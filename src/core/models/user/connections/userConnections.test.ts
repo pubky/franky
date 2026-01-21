@@ -39,7 +39,7 @@ describe('UserConnectionsModel', () => {
     it('should create user connections', async () => {
       const mockData = { id: testUserId1, ...MOCK_CONNECTIONS_1 };
       const result = await Core.UserConnectionsModel.create(mockData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockData.id);
     });
 
     it('should find user connections by id', async () => {
