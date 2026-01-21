@@ -13,6 +13,7 @@ import {
 } from '@/config';
 import { useTimelineFeedContext } from '@/organisms/TimelineFeed/TimelineFeed';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
+import { useMentionAutocomplete, getContentWithMention } from '@/hooks/useMentionAutocomplete';
 import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.types';
 
 /**
@@ -26,6 +27,7 @@ import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.typ
  * - Click outside detection for collapse
  * - Content change notifications to parent
  * - File drag and drop handling
+ * - Mention autocomplete (@username and pk:id patterns)
  */
 export function usePostInput({
   variant,
@@ -53,6 +55,28 @@ export function usePostInput({
     Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
   const { toast } = Molecules.useToast();
+
+  // Handle mention selection - inserts pk:{userId} into content
+  const handleMentionSelect = useCallback(
+    (userId: string) => {
+      const newContent = getContentWithMention(content, userId);
+      if (newContent.length <= POST_MAX_CHARACTER_LENGTH) {
+        setContent(newContent);
+      }
+      // Focus textarea after selection
+      textareaRef.current?.focus();
+    },
+    [content, setContent],
+  );
+
+  // Mention autocomplete
+  const {
+    users: mentionUsers,
+    isOpen: mentionIsOpen,
+    selectedIndex: mentionSelectedIndex,
+    setSelectedIndex: setMentionSelectedIndex,
+    handleKeyDown: mentionHandleKeyDown,
+  } = useMentionAutocomplete({ content, onSelect: handleMentionSelect });
 
   // Notify parent of content changes
   useEffect(() => {
@@ -305,6 +329,12 @@ export function usePostInput({
     showEmojiPicker,
     setShowEmojiPicker,
 
+    // Mention autocomplete state
+    mentionUsers,
+    mentionIsOpen,
+    mentionSelectedIndex,
+    setMentionSelectedIndex,
+
     // Derived values
     hasContent,
     displayPlaceholder,
@@ -321,5 +351,7 @@ export function usePostInput({
     handleDragLeave,
     handleDragOver,
     handleDrop,
+    handleMentionSelect,
+    handleMentionKeyDown: mentionHandleKeyDown,
   };
 }

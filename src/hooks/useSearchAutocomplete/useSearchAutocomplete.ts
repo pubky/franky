@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { debounce } from 'lodash-es';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { useUserDetailsFromIds } from '@/hooks/useUserDetailsFromIds';
 import type {
   UseSearchAutocompleteParams,
   UseSearchAutocompleteResult,
   AutocompleteTag,
-  AutocompleteUserData,
 } from './useSearchAutocomplete.types';
 import {
   AUTOCOMPLETE_DEBOUNCE_MS,
@@ -29,31 +28,8 @@ export function useSearchAutocomplete({
   // Guards against out-of-order async responses overwriting newer results.
   const requestIdRef = useRef(0);
 
-  const userDetailsMap = useLiveQuery(
-    async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.getManyDetails({ userIds });
-    },
-    [userIds],
-    new Map<Core.Pubky, Core.NexusUserDetails>(),
-  );
-
-  // Transform user details map to AutocompleteUserData array
-  // Note: This runs on every render but is fast (O(n) where n is typically small)
-  const users: AutocompleteUserData[] = [];
-  if (userDetailsMap.size > 0) {
-    for (const userId of userIds) {
-      const details = userDetailsMap.get(userId);
-      if (details) {
-        const avatarUrl = details.image ? Core.FileController.getAvatarUrl(details.id) : undefined;
-        users.push({
-          id: userId,
-          name: details.name || 'Unknown User',
-          avatarUrl,
-        });
-      }
-    }
-  }
+  // Get user details from IDs using shared hook
+  const { users, isLoading: isLoadingUsers } = useUserDetailsFromIds({ userIds });
 
   // Debounced search function
   const debouncedSearchRef = useRef(
@@ -132,19 +108,8 @@ export function useSearchAutocomplete({
           .map((id) => id as Core.Pubky)
           .slice(0, AUTOCOMPLETE_USER_LIMIT);
 
-        // Update user IDs (useLiveQuery will reactively read details from cache)
+        // Update user IDs (useUserDetailsFromIds will handle cache reads and prefetching)
         setUserIds(uniqueUserIds);
-
-        // Fetch user details for all users (getOrFetchDetails handles cache check internally)
-        if (uniqueUserIds.length > 0) {
-          void Promise.all(
-            uniqueUserIds.map((userId) =>
-              Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
-                Libs.Logger.error('[useSearchAutocomplete] Failed to fetch user details:', { userId, error });
-              }),
-            ),
-          );
-        }
       } catch (error) {
         Libs.Logger.error('[useSearchAutocomplete] Search failed:', error);
         if (requestId === requestIdRef.current) {
@@ -181,7 +146,7 @@ export function useSearchAutocomplete({
   }, [query, enabled]);
 
   // Loading state: searching OR waiting for user details to load
-  const isLoading = isSearching || (userIds.length > 0 && userDetailsMap.size === 0);
+  const isLoading = isSearching || isLoadingUsers;
 
   return {
     tags,

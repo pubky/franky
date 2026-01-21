@@ -28,10 +28,16 @@ exports[`PostInput - Snapshots > matches snapshot for post variant when dragging
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="What's on your mind?"
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="What's on your mind?"
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -105,11 +111,17 @@ exports[`PostInput - Snapshots > matches snapshot for post variant when submitti
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      disabled=""
-      placeholder="What's on your mind?"
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        disabled=""
+        placeholder="What's on your mind?"
+      />
+    </div>
     <div
       data-submitting="true"
       data-testid="post-input-attachments"
@@ -183,10 +195,16 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with attachme
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="What's on your mind?"
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="What's on your mind?"
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -265,12 +283,18 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with content 
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="What's on your mind?"
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
     >
-      Test content
-    </textarea>
+      <textarea
+        data-testid="textarea"
+        placeholder="What's on your mind?"
+      >
+        Test content
+      </textarea>
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -343,10 +367,16 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with custom p
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="Custom placeholder"
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="Custom placeholder"
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -420,10 +450,16 @@ exports[`PostInput - Snapshots > matches snapshot for post variant without conte
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="What's on your mind?"
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="What's on your mind?"
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -497,10 +533,16 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant without cont
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="Write a reply..."
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="Write a reply..."
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -578,10 +620,16 @@ exports[`PostInput - Snapshots > matches snapshot for reply with thread connecto
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="Write a reply..."
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="Write a reply..."
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"
@@ -655,10 +703,16 @@ exports[`PostInput - Snapshots > matches snapshot for repost variant without con
       data-post-id="test-user-id:pubkey"
       data-testid="post-header"
     />
-    <textarea
-      data-testid="textarea"
-      placeholder="Optional comment"
-    />
+    <div
+      class="relative"
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <textarea
+        data-testid="textarea"
+        placeholder="Optional comment"
+      />
+    </div>
     <div
       data-submitting="false"
       data-testid="post-input-attachments"

@@ -186,6 +186,29 @@ body {
   --popover-bio-max-height: 150px;
 
   /**
+   * Mention popover width
+   * - Width for user suggestion popover in post input
+   * - Applied to: MentionPopover component
+   * 
+   * Rationale for 300px:
+   * - Provides adequate space for user avatar, name, and truncated ID
+   * - Consistent with other popover widths in the app
+   */
+  --mention-popover-width: 300px;
+
+  /**
+   * Mention popover max height
+   * - Maximum height for mention suggestions before scrolling
+   * - Applied to: MentionPopover component
+   * 
+   * Rationale for 200px:
+   * - Shows approximately 4-5 user suggestions at once
+   * - Prevents popover from obscuring too much of the textarea
+   * - Enables scrolling when more results are available
+   */
+  --mention-popover-max-height: 200px;
+
+  /**
    * Avatar zoom modal size
    * - Size of the avatar when displayed in the zoom modal
    * - Used for full-screen avatar preview on profile page
