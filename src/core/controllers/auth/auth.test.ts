@@ -300,11 +300,13 @@ describe('AuthController', () => {
         expect.any(Function), // onProgress callback
       );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
+      // Session stored early with hasProfile: null, then setHasProfile called after bootstrap
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: true,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -332,11 +334,13 @@ describe('AuthController', () => {
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
+      // Session stored early with hasProfile: null, then setHasProfile called after check
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: false,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -410,11 +414,13 @@ describe('AuthController', () => {
         expect.any(Function), // onProgress callback
       );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
+      // Session stored early with hasProfile: null, then setHasProfile called after bootstrap
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: true,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -443,11 +449,13 @@ describe('AuthController', () => {
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
+      // Session stored early with hasProfile: null, then setHasProfile called after check
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: false,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -677,11 +685,13 @@ describe('AuthController', () => {
         expect.any(Function), // onProgress callback
       );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
+      // Session stored early with hasProfile: null, then setHasProfile called after bootstrap
       expect(authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: true,
+        hasProfile: null,
       });
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(true);
     });
 
     it('should initialize session without bootstrap if user is not signed up', async () => {
@@ -705,11 +715,13 @@ describe('AuthController', () => {
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(signInStore.setProfileChecked).toHaveBeenCalledWith(true);
       expect(initializeSpy).not.toHaveBeenCalled();
+      // Session stored early with hasProfile: null, then setHasProfile called after check
       expect(authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: false,
+        hasProfile: null,
       });
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
     });
   });
 

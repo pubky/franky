@@ -27,15 +27,15 @@ export function useAuthStatus(): AuthStatusResult {
     // Determine the authentication status
     let status: AuthStatus;
 
-    // User has session but no profile - needs to complete onboarding
-    if (hasKeypair && !hasProfile) {
+    // User has session but explicitly no profile - needs to complete onboarding submitting the profile.json
+    if (hasKeypair && hasProfile === false) {
       status = AuthStatus.NEEDS_PROFILE_CREATION;
     }
     // User has profile - fully authenticated
-    else if (hasKeypair && hasProfile) {
+    else if (hasKeypair && hasProfile === true) {
       status = AuthStatus.AUTHENTICATED;
     }
-    // No session - unauthenticated
+    // No session OR hasProfile is null (still determining) - unauthenticated
     else {
       status = AuthStatus.UNAUTHENTICATED;
     }
