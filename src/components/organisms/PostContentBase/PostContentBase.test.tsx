@@ -46,7 +46,12 @@ const mockPostContentBlurred = vi.mocked(Organisms.PostContentBlurred);
 
 // Helper to create complete PostDetails mock
 const createMockPostDetails = (
-  overrides: Partial<{ content: string; attachments: string[] | null; is_blurred: boolean }> = {},
+  overrides: Partial<{
+    content: string;
+    attachments: string[] | null;
+    is_blurred: boolean;
+    is_moderated: boolean;
+  }> = {},
 ) => ({
   id: 'test-author:test-post',
   indexed_at: Date.now(),
@@ -55,6 +60,7 @@ const createMockPostDetails = (
   content: 'Mock content',
   attachments: null as string[] | null,
   is_blurred: false,
+  is_moderated: false,
   ...overrides,
 });
 

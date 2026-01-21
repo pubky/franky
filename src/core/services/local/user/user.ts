@@ -38,7 +38,7 @@ export class LocalUserService {
    * @param userId - The user ID to read counts for
    * @returns Promise resolving to user counts or null if not found
    */
-  static async readCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+  static async readCounts({ userId }: Core.TReadProfileParams): Promise<Core.UserCountsModelSchema | null> {
     return await Core.UserCountsModel.findById(userId);
   }
 

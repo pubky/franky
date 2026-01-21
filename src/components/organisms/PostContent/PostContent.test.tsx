@@ -51,6 +51,8 @@ const createMockPostDetails = (overrides: Partial<{ content: string; attachments
   uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
   content: 'Mock content',
   attachments: null as string[] | null,
+  is_moderated: false,
+  is_blurred: false,
   ...overrides,
 });
 

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Generic } from './ProviderGeneric';
 import { GenericPreview } from './GenericPreview';
+import * as ProviderTypes from '../Provider.types';
 
 // Mock the hooks module
 vi.mock('@/hooks', () => ({
@@ -122,6 +123,8 @@ describe('ProviderGeneric', () => {
     });
 
     it('returns null for metadata embed data (old format)', () => {
+      // Using a cast because 'metadata' type is no longer part of the EmbedData union
+      // but we still want to ensure the function handles unexpected input gracefully
       const embedData = {
         type: 'metadata' as const,
         value: {
@@ -129,7 +132,7 @@ describe('ProviderGeneric', () => {
           title: 'Test',
           image: null,
         },
-      };
+      } as unknown as ProviderTypes.EmbedData;
 
       const result = Generic.renderEmbed(embedData);
 

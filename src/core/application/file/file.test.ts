@@ -114,8 +114,8 @@ describe('FileApplication', () => {
       const blobResult = createMockBlobResult();
       const fileResult = createMockFileResult(undefined, fileJson);
 
-      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as never);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as never);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockResolvedValue(undefined);
 
       await FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] });
@@ -159,7 +159,7 @@ describe('FileApplication', () => {
       const blobResult = createMockBlobResult();
       const fileResult = createMockFileResult(undefined, fileJson);
 
-      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
+      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as never);
       const requestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
         .mockRejectedValueOnce(new Error('file record upload failed'));
@@ -182,8 +182,8 @@ describe('FileApplication', () => {
       const fileResult1 = createMockFileResult('pubky://user/pub/pubky.app/files/file1', fileJson1);
       const fileResult2 = createMockFileResult('pubky://user/pub/pubky.app/files/file2', fileJson2);
 
-      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as never);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as never);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockResolvedValue(undefined);
 
       await FileApplication.commitCreate({
@@ -223,8 +223,8 @@ describe('FileApplication', () => {
       const fileResult = createMockFileResult(undefined, fileJson);
 
       const error = new Error('Local persistence failed');
-      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as never);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as never);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockRejectedValue(error);
 
       await expect(FileApplication.commitCreate({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow(

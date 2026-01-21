@@ -20,6 +20,8 @@ const createMockPostDetails = (overrides: Partial<{ content: string; attachments
   uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
   content: '',
   attachments: null as string[] | null,
+  is_moderated: false,
+  is_blurred: false,
   ...overrides,
 });
 
@@ -98,8 +100,10 @@ describe('usePostHeaderVisibility', () => {
         content: '',
         attachments: ['attachment-1', 'attachment-2'],
         indexed_at: Date.now(),
-        kind: 'short',
+        kind: 'short' as const,
         uri: 'https://example.com/post/me:repost-with-attachments-1',
+        is_moderated: false,
+        is_blurred: false,
       },
       isLoading: false,
     });
@@ -125,8 +129,10 @@ describe('usePostHeaderVisibility', () => {
         content: '   \n\t  ',
         attachments: null,
         indexed_at: Date.now(),
-        kind: 'short',
+        kind: 'short' as const,
         uri: 'https://example.com/post/me:repost-whitespace-1',
+        is_moderated: false,
+        is_blurred: false,
       },
       isLoading: false,
     });

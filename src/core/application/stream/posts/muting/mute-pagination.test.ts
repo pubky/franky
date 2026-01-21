@@ -58,6 +58,7 @@ const createStreamWithPosts = async (streamId: Core.PostStreamId, postIds: strin
 };
 
 const setupMutedUsers = async (mutedUserIds: string[]) => {
+  // @ts-expect-error - BaseStreamModel generic type constraint
   await Core.UserStreamModel.create(Core.UserStreamTypes.MUTED, mutedUserIds);
 };
 

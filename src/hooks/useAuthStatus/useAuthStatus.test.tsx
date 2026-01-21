@@ -11,7 +11,18 @@ const mockOnboardingStore = {
   setHydrated: vi.fn(),
 };
 
-const mockAuthStore = {
+const mockAuthStore: {
+  session: unknown;
+  sessionExport: string | null;
+  isRestoringSession: boolean;
+  hasProfile: boolean;
+  hasHydrated: boolean;
+  selectIsAuthenticated: ReturnType<typeof vi.fn>;
+  reset: ReturnType<typeof vi.fn>;
+  setHasProfile: ReturnType<typeof vi.fn>;
+  setSession: ReturnType<typeof vi.fn>;
+  setHasHydrated: ReturnType<typeof vi.fn>;
+} = {
   session: null,
   sessionExport: null,
   isRestoringSession: false,

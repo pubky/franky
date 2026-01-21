@@ -129,7 +129,9 @@ describe('PostHeader', () => {
         uri: 'pubky://userpubkykey/pub/pubky.app/posts/post456',
         content: '',
         attachments: null,
-      } as Core.PostDetailsModelSchema,
+        is_moderated: false,
+        is_blurred: false,
+      },
       isLoading: false,
     });
     mockUseUserDetails.mockReturnValue({
@@ -189,7 +191,9 @@ describe('PostHeader - Snapshots', () => {
         uri: 'pubky://userpubkykey/pub/pubky.app/posts/post456',
         content: '',
         attachments: null,
-      } as Core.PostDetailsModelSchema,
+        is_moderated: false,
+        is_blurred: false,
+      },
       isLoading: false,
     });
     mockUseUserDetails.mockReturnValue({

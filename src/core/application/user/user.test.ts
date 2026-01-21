@@ -299,7 +299,8 @@ describe('UserApplication.getOrFetchDetails', () => {
 
 describe('UserApplication.getCounts', () => {
   const userId = 'pubky_user' as Core.Pubky;
-  const mockUserCounts: Core.NexusUserCounts = {
+  const mockUserCounts: Core.UserCountsModelSchema = {
+    id: userId,
     posts: 42,
     replies: 15,
     followers: 100,
@@ -342,7 +343,8 @@ describe('UserApplication.getCounts', () => {
 
 describe('UserApplication.getOrFetchCounts', () => {
   const userId = 'pubky_user' as Core.Pubky;
-  const mockUserCounts: Core.NexusUserCounts = {
+  const mockUserCounts: Core.UserCountsModelSchema = {
+    id: userId,
     posts: 42,
     replies: 15,
     followers: 100,
