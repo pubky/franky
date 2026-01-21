@@ -154,8 +154,11 @@ describe('BackupNavigation', () => {
     });
   });
 
-  it('shows error toast with correct message for 401 error', async () => {
-    const error = new Libs.AppError('SESSION_EXPIRED', 'Session expired', 401);
+  it('shows error toast with correct message for auth error', async () => {
+    const error = Libs.Err.auth(Libs.AuthErrorCode.SESSION_EXPIRED, 'Session expired', {
+      service: Libs.ErrorService.Homeserver,
+      operation: 'signUp',
+    });
     mockSignUp.mockRejectedValue(error);
 
     render(<BackupNavigation />);
@@ -171,8 +174,11 @@ describe('BackupNavigation', () => {
     });
   });
 
-  it('shows error message from AppError for non-401 errors', async () => {
-    const error = new Libs.AppError('SIGNUP_FAILED', 'Custom error message', 500);
+  it('shows error message from AppError for non-auth errors', async () => {
+    const error = Libs.Err.server(Libs.ServerErrorCode.INTERNAL_ERROR, 'Custom error message', {
+      service: Libs.ErrorService.Homeserver,
+      operation: 'signUp',
+    });
     mockSignUp.mockRejectedValue(error);
 
     render(<BackupNavigation />);
