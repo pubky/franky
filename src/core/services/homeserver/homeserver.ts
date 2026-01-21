@@ -1,6 +1,17 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 import * as Config from '@/config';
+import {
+  HttpMethod,
+  HttpStatusCode,
+  Logger,
+  Identity,
+  Env,
+  Err,
+  ValidationErrorCode,
+  httpResponseToError,
+  ServerErrorCode,
+  ErrorService,
+} from '@/libs';
 import {
   Pubky,
   PublicKey,
@@ -11,6 +22,7 @@ import {
   resolvePubky,
   AuthFlowKind,
   Session,
+  Client,
 } from '@synonymdev/pubky';
 import {
   isHttpUrl,
@@ -18,16 +30,27 @@ import {
   createCancelableAuthApproval,
   resolveOwnedSessionPath,
   assertOk,
-  handleError,
   getOwnedResponse,
   PUBKY_PREFIX,
 } from './homeserver.utils';
+import { handleError } from './error.utils';
 
-import type { PubPath } from './homeserver.types';
+import type {
+  PubPath,
+  TOwnedSessionPath,
+  TGenerateSignupAuthUrlParams,
+  THomeserverFetchParams,
+  THomeserverRequestParams,
+  TPutBlobParams,
+  THomeserverListParams,
+} from './homeserver.types';
 
 const TESTNET = Config.TESTNET.toString() === 'true';
+
 const CAPABILITIES = '/pub/pubky.app/:rw';
 const PUB_PATH_PREFIX = '/pub/' as const;
+/** Default limit for list operations */
+const LIST_DEFAULT_LIMIT = 500;
 
 export class HomeserverService {
   private constructor() {}
@@ -39,14 +62,20 @@ export class HomeserverService {
    */
   private static getPubkySdk(): Pubky {
     if (!this.pubkySdk) {
-      this.pubkySdk = TESTNET ? Pubky.testnet() : new Pubky();
+      if (TESTNET) {
+        this.pubkySdk = Pubky.testnet();
+      } else {
+        const relays = Config.PKARR_RELAYS.split(',').map((r) => r.trim());
+        const client = new Client({ pkarr: { relays } });
+        this.pubkySdk = Pubky.withClient(client);
+      }
     }
     return this.pubkySdk;
   }
 
-  private static resolveOwnedSessionPath(url: string): { session: Session; path: PubPath<string> } | null {
+  private static resolveOwnedSessionPath(url: string): TOwnedSessionPath | null {
     const session = Core.useAuthStore.getState().selectSession();
-    return resolveOwnedSessionPath(url, session, PUB_PATH_PREFIX);
+    return resolveOwnedSessionPath({ url, session, pubPathPrefix: PUB_PATH_PREFIX });
   }
 
   /**
@@ -70,25 +99,15 @@ export class HomeserverService {
       const homeserver = await pubkySdk.getHomeserverOf(publicKey);
 
       if (!homeserver) {
-        throw Libs.createHomeserverError(
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Failed to get homeserver. Try again.',
-          401,
-        );
+        throw Error('Homeserver not found');
       }
-
-      Libs.Logger.debug('Homeserver successful', { homeserver });
       return homeserver;
     } catch (error) {
-      return handleError(
+      return handleError({
         error,
-        Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-        'Failed to get homeserver. Try again.',
-        401,
-        {
-          publicKey: publicKey?.z32?.(),
-        },
-      );
+        additionalContext: { publicKey: publicKey?.z32?.() },
+        statusCode: HttpStatusCode.UNAUTHORIZED,
+      });
     }
   }
 
@@ -104,25 +123,27 @@ export class HomeserverService {
       const signer = this.getSigner(keypair);
       const session = await signer.signup(homeserverPublicKey, signupToken);
 
-      Libs.Logger.debug('Signup successful', { session });
+      Logger.debug('Signup successful', { session });
 
       return { session };
     } catch (error) {
-      return handleError(
+      return handleError({
         error,
-        Libs.HomeserverErrorType.SIGNUP_FAILED,
-        'Signup failed',
-        500,
-        { signupTokenProvided: Boolean(signupToken) },
-        true,
-      );
+        additionalContext: { signupTokenProvided: Boolean(signupToken) },
+        statusCode: HttpStatusCode.INTERNAL_SERVER_ERROR,
+        alwaysUseHomeserverError: true,
+      });
     }
   }
 
   /**
-   * Signs in a user to the homeserver
+   * Signs in a user to the homeserver.
+   *
+   * If signin fails due to missing homeserver records, this method will attempt to republish
+   * the homeserver and return `undefined` to signal the caller should retry the signin.
+   *
    * @param keypair - The keypair to sign in with
-   * @returns The session
+   * @returns The session result, or `undefined` if homeserver was republished and caller should retry
    */
   static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
     const signer = this.getSigner(keypair);
@@ -136,18 +157,16 @@ export class HomeserverService {
         // Republish keypair's homeserver
         const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
         await signer.pkdns.publishHomeserverForce(homeserverPublicKey);
-        Libs.Logger.debug('Republish homeserver successful', { keypair: Libs.Identity.z32FromKeypair(keypair) });
+        Logger.debug('Republish homeserver successful', { keypair: Identity.pubkyFromKeypair(keypair) });
         // Return undefined to signal caller should retry signin after republish
         return undefined;
       } catch (republishError) {
         // Report the republish error since that's what actually failed
-        return handleError(
-          republishError,
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Not authenticated. Please sign up first.',
-          401,
-          { pubky: Libs.Identity.z32FromKeypair(keypair), originalSigninError: String(signinError) },
-        );
+        return handleError({
+          error: republishError,
+          additionalContext: { pubky: Identity.pubkyFromKeypair(keypair), originalSigninError: String(signinError) },
+          statusCode: HttpStatusCode.UNAUTHORIZED,
+        });
       }
     }
   }
@@ -171,10 +190,7 @@ export class HomeserverService {
         cancelAuthFlow: approval.cancel,
       };
     } catch (error) {
-      return handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
-        capabilities,
-        relay: Config.DEFAULT_HTTP_RELAY,
-      });
+      return handleError({ error, additionalContext: { capabilities, relay: Config.DEFAULT_HTTP_RELAY } });
     }
   }
 
@@ -188,12 +204,22 @@ export class HomeserverService {
    * @param caps - The capabilities to use
    * @returns The authentication URL and approval promise
    */
-  static async generateSignupAuthUrl(inviteCode: string, caps?: Capabilities): Promise<Core.TGenerateAuthUrlResult> {
+  static async generateSignupAuthUrl({
+    inviteCode,
+    caps,
+  }: TGenerateSignupAuthUrlParams): Promise<Core.TGenerateAuthUrlResult> {
     const res = await this.generateAuthUrl(caps);
-    const url = URL.parse(res.authorizationUrl)!;
+    const url = URL.parse(res.authorizationUrl);
+    if (!url) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid authorization URL format', {
+        service: ErrorService.Homeserver,
+        operation: 'generateSignupAuthUrl',
+        context: { authorizationUrl: res.authorizationUrl },
+      });
+    }
     url.host = 'signup';
     url.pathname = '';
-    url.searchParams.set('hs', Libs.Env.NEXT_PUBLIC_HOMESERVER);
+    url.searchParams.set('hs', Env.NEXT_PUBLIC_HOMESERVER);
     url.searchParams.set('st', inviteCode);
     res.authorizationUrl = url.toString();
     return res;
@@ -208,11 +234,11 @@ export class HomeserverService {
     try {
       await session.signout();
     } catch (error) {
-      handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500, { url: 'signout' });
+      return handleError({ error, additionalContext: { url: 'signout' } });
     }
   }
 
-  private static async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+  private static async fetch({ url, options }: THomeserverFetchParams): Promise<Response> {
     try {
       const pubkySdk = this.getPubkySdk();
       const httpBridge = pubkySdk.client;
@@ -224,14 +250,11 @@ export class HomeserverService {
         credentials: 'include',
       });
 
-      Libs.Logger.debug('Response from homeserver', { response });
+      Logger.debug('Response from homeserver', { response });
 
       return response;
     } catch (error) {
-      return handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
-        url,
-        method: options?.method,
-      });
+      return handleError({ error, additionalContext: { url, method: options?.method } });
     }
   }
 
@@ -241,11 +264,11 @@ export class HomeserverService {
    * Sends a JSON payload when provided and throws if the response is not OK.
    * Note: Under the hood this uses `fetch` with `credentials: 'include'`.
    *
-   * @param {HomeserverAction} method - HTTP method to use (e.g. PUT, POST, DELETE).
+   * @param {HttpMethod} method - HTTP method to use (e.g. PUT, POST, DELETE).
    * @param {string} url - Pubky URL.
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
-  static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
+  static async request<T>({ method, url, bodyJson }: THomeserverRequestParams): Promise<T> {
     const owned = this.resolveOwnedSessionPath(url);
 
     // Handle owned session paths
@@ -253,55 +276,50 @@ export class HomeserverService {
       const { session, path } = owned;
 
       switch (method) {
-        case Core.HomeserverAction.GET: {
-          const response = await getOwnedResponse(session, path, url);
-          return (await parseResponseOrUndefined<T>(response)) as T;
+        case HttpMethod.GET: {
+          const response = await getOwnedResponse({ session, path, url });
+          return (await parseResponseOrUndefined<T>({ response })) as T;
         }
-        case Core.HomeserverAction.PUT:
+        case HttpMethod.PUT:
           await session.storage
             .putJson(path, bodyJson ?? {})
-            .catch((error) =>
-              handleError(error, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT data', 500, { url, method }),
-            );
+            .catch((error) => handleError({ error, additionalContext: { url, method } }));
           return undefined as T;
-        case Core.HomeserverAction.DELETE:
+        case HttpMethod.DELETE:
           await session.storage
             .delete(path)
-            .catch((error) =>
-              handleError(error, Libs.HomeserverErrorType.DELETE_FAILED, 'Failed to delete data', 500, { url, method }),
-            );
+            .catch((error) => handleError({ error, additionalContext: { url, method } }));
           return undefined as T;
       }
     }
 
     // Non-owned: only GET allowed on non-HTTP URLs
-    if (method !== Core.HomeserverAction.GET && !isHttpUrl(url)) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
+    if (method !== HttpMethod.GET && !isHttpUrl(url)) {
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         `Authenticated writes must target an owned ${PUB_PATH_PREFIX}* path for the current session.`,
-        400,
-        { url, method },
+        {
+          service: ErrorService.Homeserver,
+          operation: 'request',
+          context: { url, method, statusCode: HttpStatusCode.BAD_REQUEST },
+        },
       );
     }
 
     // Handle public requests
     const pubkySdk = this.getPubkySdk();
     const fetchPromise =
-      method === Core.HomeserverAction.GET
+      method === HttpMethod.GET
         ? isHttpUrl(url)
           ? pubkySdk.client.fetch(url)
           : pubkySdk.publicStorage.get(url as Address)
-        : this.fetch(url, { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined });
+        : this.fetch({ url, options: { method, body: bodyJson ? JSON.stringify(bodyJson) : undefined } });
 
-    const response = await fetchPromise.catch((error) =>
-      handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url, method }),
-    );
+    const response = await fetchPromise.catch((error) => handleError({ error, additionalContext: { url, method } }));
 
-    await assertOk(response, url, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data');
+    await assertOk({ response, url, operation: 'request' });
 
-    return method === Core.HomeserverAction.GET
-      ? ((await parseResponseOrUndefined<T>(response)) as T)
-      : (undefined as T);
+    return method === HttpMethod.GET ? ((await parseResponseOrUndefined<T>({ response })) as T) : (undefined as T);
   }
 
   /**
@@ -313,31 +331,31 @@ export class HomeserverService {
    * @param {string} url - Pubky URL.
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
-  static async putBlob(url: string, blob: Uint8Array) {
+  static async putBlob({ url, blob }: TPutBlobParams) {
     const owned = this.resolveOwnedSessionPath(url);
     if (owned) {
       try {
         await owned.session.storage.putBytes(owned.path, blob);
         return;
       } catch (error) {
-        handleError(error, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', 500, {
-          url,
-          method: Core.HomeserverAction.PUT,
-        });
+        return handleError({ error, additionalContext: { url, method: HttpMethod.PUT } });
       }
     }
 
     if (!isHttpUrl(url)) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         `Blob uploads must target an owned ${PUB_PATH_PREFIX}* path for the current session.`,
-        400,
-        { url },
+        {
+          service: ErrorService.Homeserver,
+          operation: 'putBlob',
+          context: { url, statusCode: HttpStatusCode.BAD_REQUEST },
+        },
       );
     }
 
-    const response = await this.fetch(url, { method: Core.HomeserverAction.PUT, body: blob });
-    await assertOk(response, url, Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data');
+    const response = await this.fetch({ url, options: { method: HttpMethod.PUT, body: blob } });
+    await assertOk({ response, url, operation: 'putBlob' });
   }
 
   /**
@@ -351,30 +369,27 @@ export class HomeserverService {
    * @param {number} [limit=500] - Maximum number of files to return.
    * @returns {Promise<string[]>} Array of file URLs.
    */
-  static async list(
-    baseDirectory: string,
-    cursor?: string,
-    reverse: boolean = false,
-    limit: number = 500,
-  ): Promise<string[]> {
+  static async list({
+    baseDirectory,
+    cursor,
+    reverse = false,
+    limit = LIST_DEFAULT_LIMIT,
+  }: THomeserverListParams): Promise<string[]> {
     const pubkySdk = this.getPubkySdk();
     try {
       const owned = this.resolveOwnedSessionPath(baseDirectory);
       if (owned) {
         const dirPath = owned.path.endsWith('/') ? owned.path : (`${owned.path}/` as PubPath<string>);
         const files = await owned.session.storage.list(dirPath, cursor ?? null, reverse, limit, false);
-        Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
+        Logger.debug('List successful', { baseDirectory, filesCount: files.length });
         return files;
       }
 
       const files = await pubkySdk.publicStorage.list(baseDirectory as Address, cursor ?? null, reverse, limit, false);
-      Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
+      Logger.debug('List successful', { baseDirectory, filesCount: files.length });
       return files;
     } catch (error) {
-      return handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to list files', 500, {
-        url: baseDirectory,
-        baseDirectory,
-      });
+      return handleError({ error, additionalContext: { url: baseDirectory, baseDirectory } });
     }
   }
 
@@ -384,18 +399,17 @@ export class HomeserverService {
    * @param {string} url - Pubky URL of the file to delete.
    */
   static async delete(url: string) {
-    await this.request(Core.HomeserverAction.DELETE, url);
-    Libs.Logger.debug('Delete successful', { url });
+    await this.request({ method: HttpMethod.DELETE, url });
+    Logger.debug('Delete successful', { url });
   }
 
   /**
    * Fetches a resource from the homeserver.
    *
    * @param {string} url - Pubky URL to fetch.
-   * @param {Core.FetchOptions} [options] - Optional fetch options.
    * @returns {Promise<Response>} The fetch response.
    */
-  static async get(url: string, _options?: Core.FetchOptions): Promise<Response> {
+  static async get(url: string): Promise<Response> {
     const pubkySdk = this.getPubkySdk();
     try {
       if (isHttpUrl(url)) {
@@ -404,15 +418,12 @@ export class HomeserverService {
 
       const owned = this.resolveOwnedSessionPath(url);
       if (owned) {
-        return await getOwnedResponse(owned.session, owned.path, url);
+        return await getOwnedResponse({ session: owned.session, path: owned.path, url });
       }
 
       return await pubkySdk.publicStorage.get(url as Address);
     } catch (error) {
-      return handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
-        url,
-        method: Core.HomeserverAction.GET,
-      });
+      return handleError({ error, additionalContext: { url, method: HttpMethod.GET } });
     }
   }
 
@@ -424,13 +435,14 @@ export class HomeserverService {
       const pubkySdk = this.getPubkySdk();
       return await pubkySdk.restoreSession(sessionExport);
     } catch (error) {
-      return handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to restore session', 401, {
-        sessionExport: Boolean(sessionExport),
+      return handleError({
+        error,
+        additionalContext: { sessionExport: Boolean(sessionExport) },
+        statusCode: HttpStatusCode.UNAUTHORIZED,
       });
     }
   }
 
-  // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
   /**
    * Generates a signup token for dev/test environments.
    * Calls the server-side API route to keep admin credentials secure.
@@ -444,10 +456,14 @@ export class HomeserverService {
     const isProduction = process.env.NODE_ENV === 'production';
 
     if (isProduction && !isCypressRunning) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         'generateSignupToken is only available in non-production environments.',
-        400,
+        {
+          service: ErrorService.Homeserver,
+          operation: 'generateSignupToken',
+          context: { isProduction, isCypressRunning },
+        },
       );
     }
 
@@ -457,17 +473,15 @@ export class HomeserverService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.NETWORK_ERROR,
-        `Failed to generate signup token: ${response.status} ${errorData.error}`,
-        response.status,
-      );
+      throw httpResponseToError(response, ErrorService.Homeserver, 'generateSignupToken', '/api/dev/signup-token');
     }
 
     const data = await response.json();
     if (!data.token) {
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
+      throw Err.server(ServerErrorCode.UNKNOWN_ERROR, 'No token received from server', {
+        service: ErrorService.Homeserver,
+        operation: 'generateSignupToken',
+      });
     }
 
     return data.token;

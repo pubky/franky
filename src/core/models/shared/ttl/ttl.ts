@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import { ModelBase } from '@/core/models/shared/base/baseModel';
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService } from '@/libs';
 import { Table } from 'dexie';
 
 // Each domain row will have its own TTL row. e.g. UserTtlModel, PostTtlModel, etc.
@@ -20,15 +20,12 @@ export abstract class Ttl<Id, Schema extends Core.TtlModelSchema<Id>> extends Mo
       const toSave = records.map((tuple) => ({ id: tuple[0] as TId, ...tuple[1] }) as TSchema);
       return await this.table.bulkPut(toSave);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
-        `Failed to bulk save TTL in ${this.table.name}`,
-        500,
-        {
-          error,
-          records,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to bulk save TTL in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'bulkSave',
+        context: { table: this.table.name, count: records.length },
+        cause: error,
+      });
     }
   }
 }

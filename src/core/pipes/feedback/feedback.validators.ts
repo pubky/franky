@@ -1,5 +1,5 @@
 import * as Config from '@/config';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 import * as Core from '@/core';
 
 export class FeedbackValidators {
@@ -15,11 +15,11 @@ export class FeedbackValidators {
    */
   static validatePubky(pubky: string | undefined | null): Core.Pubky {
     if (!pubky || pubky.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Pubky is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Pubky is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validatePubky',
+        context: { field: 'pubky' },
+      });
     }
     return pubky.trim() as Core.Pubky;
   }
@@ -34,18 +34,22 @@ export class FeedbackValidators {
    */
   static validateComment(comment: string | undefined | null): string {
     if (!comment || comment.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Comment is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Comment is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validateComment',
+        context: { field: 'comment' },
+      });
     }
 
     if (comment.length > Config.FEEDBACK_MAX_CHARACTER_LENGTH) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
-        400,
+        {
+          service: ErrorService.Local,
+          operation: 'validateComment',
+          context: { field: 'comment', maxLength: Config.FEEDBACK_MAX_CHARACTER_LENGTH, actualLength: comment.length },
+        },
       );
     }
 
@@ -62,11 +66,11 @@ export class FeedbackValidators {
    */
   static validateName(name: string | undefined | null): string {
     if (!name || name.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Name is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Name is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validateName',
+        context: { field: 'name' },
+      });
     }
     return name.trim();
   }
