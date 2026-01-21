@@ -24,8 +24,8 @@ export const BackupNavigation = () => {
       let description = 'Something went wrong. Please try again.';
 
       if (Libs.isAppError(error)) {
-        // 401 errors during signup typically mean invalid/expired invite code
-        if (error.statusCode === 401) {
+        // Auth errors during signup typically mean invalid/expired invite code
+        if (Libs.isAuthError(error)) {
           description = 'Invalid or expired invite code. Please get or request a new invite code.';
         } else if (error.message) {
           description = error.message;
