@@ -35,7 +35,8 @@ describe('BitcoinPaymentCard', () => {
     render(<HumanBitcoinCard />);
 
     expect(screen.getByText(/Bitcoin Payment/i)).toBeInTheDocument();
-    expect(screen.getByText(/₿ 1,000/i)).toBeInTheDocument();
+    // Use regex to match any locale format (commas or periods as separators)
+    expect(screen.getByText(/₿ 1[.,]000/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pay Once/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pay Once/i })).not.toBeDisabled();
   });

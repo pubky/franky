@@ -11,9 +11,7 @@ export class FileNormalizer {
       const fileResult = this.toFile({ file, url: blobResult.meta.url, pubky });
       return { blobResult, fileResult };
     } catch (error) {
-      if (isAppError(error)) {
-        throw error;
-      }
+      // Always wrap as toFileAttachment operation at this boundary
       throw Err.validation(ValidationErrorCode.INVALID_INPUT, getErrorMessage(error), {
         service: ErrorService.PubkyAppSpecs,
         operation: 'toFileAttachment',
