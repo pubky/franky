@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 /**
  * Adds a user as tagger to a tag (optimistically)
@@ -71,24 +72,34 @@ export function createOptimisticTag(label: string, userId: string): Core.NexusTa
  * Creates tag in backend
  */
 export async function createTagInBackend(taggedId: string, label: string, taggerId: string): Promise<void> {
-  await Core.TagController.commitCreate({
-    taggedId: taggedId as Core.Pubky,
-    label,
-    taggerId,
-    taggedKind: Core.TagKind.USER,
-  });
+  try {
+    await Core.TagController.commitCreate({
+      taggedId: taggedId as Core.Pubky,
+      label,
+      taggerId,
+      taggedKind: Core.TagKind.USER,
+    });
+  } catch (error) {
+    Libs.Logger.error('[useTagged.utils] Failed to create tag in backend', { taggedId, label, taggerId, error });
+    throw error;
+  }
 }
 
 /**
  * Deletes tag from backend
  */
 export async function deleteTagFromBackend(taggedId: string, label: string, taggerId: string): Promise<void> {
-  await Core.TagController.commitDelete({
-    taggedId: taggedId as Core.Pubky,
-    label,
-    taggerId,
-    taggedKind: Core.TagKind.USER,
-  });
+  try {
+    await Core.TagController.commitDelete({
+      taggedId: taggedId as Core.Pubky,
+      label,
+      taggerId,
+      taggedKind: Core.TagKind.USER,
+    });
+  } catch (error) {
+    Libs.Logger.error('[useTagged.utils] Failed to delete tag from backend', { taggedId, label, taggerId, error });
+    throw error;
+  }
 }
 
 /**

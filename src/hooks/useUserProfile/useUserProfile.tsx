@@ -47,15 +47,20 @@ export function useUserProfile(userId: string): UseUserProfileResult {
     // 3. Write to local DB
     // 4. Return data
     Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
-      console.error('Failed to fetch user profile:', error);
+      Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
     });
   }, [userId]);
 
   // Separate concern: Read current data from local database
   // This will reactively update when the database changes
   const userDetails = useLiveQuery(async () => {
-    if (!userId) return null;
-    return await Core.UserController.getDetails({ userId });
+    try {
+      if (!userId) return null;
+      return await Core.UserController.getDetails({ userId });
+    } catch (error) {
+      Libs.Logger.error('[useUserProfile] Failed to query user details', { userId, error });
+      return null;
+    }
   }, [userId]);
 
   // Distinguish between:

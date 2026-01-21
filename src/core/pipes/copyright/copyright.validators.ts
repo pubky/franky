@@ -1,5 +1,5 @@
 import * as Config from '@/config';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 
 /**
  * Copyright input validators
@@ -19,7 +19,11 @@ export class CopyrightValidators {
    */
   private static validateEmailFormat(email: string): string {
     if (!Config.VALIDATION_PATTERNS.EMAIL.test(email)) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, Config.VALIDATION_MESSAGES.INVALID_EMAIL, 400);
+      throw Err.validation(ValidationErrorCode.FORMAT_ERROR, Config.VALIDATION_MESSAGES.INVALID_EMAIL, {
+        service: ErrorService.Local,
+        operation: 'validateEmailFormat',
+        context: { field: 'email', value: email },
+      });
     }
     return email.toLowerCase().trim();
   }
@@ -29,12 +33,21 @@ export class CopyrightValidators {
    *
    * @param value - Field value to validate
    * @param fieldName - Name of the field (for error messages)
+   * @param operation - Name of the calling operation (for error context)
    * @returns Normalized value (trimmed)
    * @throws AppError if value is invalid
    */
-  private static validateRequiredString(value: string | undefined | null, fieldName: string): string {
+  private static validateRequiredString(
+    value: string | undefined | null,
+    fieldName: string,
+    operation: string,
+  ): string {
     if (!value || value.trim() === '') {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, `${fieldName} is required`, 400);
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, `${fieldName} is required`, {
+        service: ErrorService.Local,
+        operation,
+        context: { field: fieldName },
+      });
     }
     return value.trim();
   }
@@ -48,7 +61,11 @@ export class CopyrightValidators {
    */
   private static validatePhoneNumberFormat(phoneNumber: string): string {
     if (!Config.VALIDATION_PATTERNS.PHONE.test(phoneNumber)) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, Config.VALIDATION_MESSAGES.INVALID_PHONE, 400);
+      throw Err.validation(ValidationErrorCode.FORMAT_ERROR, Config.VALIDATION_MESSAGES.INVALID_PHONE, {
+        service: ErrorService.Local,
+        operation: 'validatePhoneNumberFormat',
+        context: { field: 'phoneNumber', value: phoneNumber },
+      });
     }
     return phoneNumber.trim();
   }
@@ -66,7 +83,11 @@ export class CopyrightValidators {
       new URL(url);
       return url.trim();
     } catch {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, `${fieldName} must be a valid URL`, 400);
+      throw Err.validation(ValidationErrorCode.FORMAT_ERROR, `${fieldName} must be a valid URL`, {
+        service: ErrorService.Local,
+        operation: 'validateUrlFormat',
+        context: { field: fieldName, value: url },
+      });
     }
   }
 
@@ -74,28 +95,32 @@ export class CopyrightValidators {
    * Validates name of rights owner
    */
   static validateNameOwner(nameOwner: string | undefined | null): string {
-    return this.validateRequiredString(nameOwner, 'Name of rights owner');
+    return this.validateRequiredString(nameOwner, 'Name of rights owner', 'validateNameOwner');
   }
 
   /**
    * Validates original content URLs
    */
   static validateOriginalContentUrls(originalContentUrls: string | undefined | null): string {
-    return this.validateRequiredString(originalContentUrls, 'Original content URLs');
+    return this.validateRequiredString(originalContentUrls, 'Original content URLs', 'validateOriginalContentUrls');
   }
 
   /**
    * Validates brief description
    */
   static validateBriefDescription(briefDescription: string | undefined | null): string {
-    return this.validateRequiredString(briefDescription, 'Brief description');
+    return this.validateRequiredString(briefDescription, 'Brief description', 'validateBriefDescription');
   }
 
   /**
    * Validates infringing content URL
    */
   static validateInfringingContentUrl(infringingContentUrl: string | undefined | null): string {
-    const trimmed = this.validateRequiredString(infringingContentUrl, 'Infringing content URL');
+    const trimmed = this.validateRequiredString(
+      infringingContentUrl,
+      'Infringing content URL',
+      'validateInfringingContentUrl',
+    );
     return this.validateUrlFormat(trimmed, 'Infringing content URL');
   }
 
@@ -103,21 +128,21 @@ export class CopyrightValidators {
    * Validates first name
    */
   static validateFirstName(firstName: string | undefined | null): string {
-    return this.validateRequiredString(firstName, 'First name');
+    return this.validateRequiredString(firstName, 'First name', 'validateFirstName');
   }
 
   /**
    * Validates last name
    */
   static validateLastName(lastName: string | undefined | null): string {
-    return this.validateRequiredString(lastName, 'Last name');
+    return this.validateRequiredString(lastName, 'Last name', 'validateLastName');
   }
 
   /**
    * Validates email address
    */
   static validateEmail(email: string | undefined | null): string {
-    const trimmed = this.validateRequiredString(email, 'Email');
+    const trimmed = this.validateRequiredString(email, 'Email', 'validateEmail');
     return this.validateEmailFormat(trimmed);
   }
 
@@ -125,7 +150,7 @@ export class CopyrightValidators {
    * Validates phone number
    */
   static validatePhoneNumber(phoneNumber: string | undefined | null): string {
-    const trimmed = this.validateRequiredString(phoneNumber, 'Phone number');
+    const trimmed = this.validateRequiredString(phoneNumber, 'Phone number', 'validatePhoneNumber');
     return this.validatePhoneNumberFormat(trimmed);
   }
 
@@ -133,42 +158,42 @@ export class CopyrightValidators {
    * Validates street address
    */
   static validateStreetAddress(streetAddress: string | undefined | null): string {
-    return this.validateRequiredString(streetAddress, 'Street address');
+    return this.validateRequiredString(streetAddress, 'Street address', 'validateStreetAddress');
   }
 
   /**
    * Validates country
    */
   static validateCountry(country: string | undefined | null): string {
-    return this.validateRequiredString(country, 'Country');
+    return this.validateRequiredString(country, 'Country', 'validateCountry');
   }
 
   /**
    * Validates city
    */
   static validateCity(city: string | undefined | null): string {
-    return this.validateRequiredString(city, 'City');
+    return this.validateRequiredString(city, 'City', 'validateCity');
   }
 
   /**
    * Validates state/province
    */
   static validateStateProvince(stateProvince: string | undefined | null): string {
-    return this.validateRequiredString(stateProvince, 'State/Province');
+    return this.validateRequiredString(stateProvince, 'State/Province', 'validateStateProvince');
   }
 
   /**
    * Validates zip code
    */
   static validateZipCode(zipCode: string | undefined | null): string {
-    return this.validateRequiredString(zipCode, 'Zip code');
+    return this.validateRequiredString(zipCode, 'Zip code', 'validateZipCode');
   }
 
   /**
    * Validates signature
    */
   static validateSignature(signature: string | undefined | null): string {
-    return this.validateRequiredString(signature, 'Signature');
+    return this.validateRequiredString(signature, 'Signature', 'validateSignature');
   }
 
   /**
@@ -179,7 +204,11 @@ export class CopyrightValidators {
     isReportingOnBehalf: boolean | undefined | null,
   ): void {
     if (!isRightsOwner && !isReportingOnBehalf) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, Config.VALIDATION_MESSAGES.ROLE_REQUIRED, 400);
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, Config.VALIDATION_MESSAGES.ROLE_REQUIRED, {
+        service: ErrorService.Local,
+        operation: 'validateRole',
+        context: { field: 'role', isRightsOwner, isReportingOnBehalf },
+      });
     }
   }
 }

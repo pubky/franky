@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useRef } from 'react';
 
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
@@ -69,28 +70,38 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   // First: Get parent post ID from relationships
   // UI → Controller → Service → Model
   const parentPostId = useLiveQuery(async () => {
-    const relationships = await Core.PostController.getRelationships({ compositeId: replyPostId });
+    try {
+      const relationships = await Core.PostController.getRelationships({ compositeId: replyPostId });
 
-    if (!relationships?.replied) {
+      if (!relationships?.replied) {
+        return null;
+      }
+
+      const parentCompositeId = Core.buildCompositeIdFromPubkyUri({
+        uri: relationships.replied,
+        domain: Core.CompositeIdDomain.POSTS,
+      });
+
+      return parentCompositeId;
+    } catch (error) {
+      Libs.Logger.error('[RepliesWithParent] Failed to query post relationships', { replyPostId, error });
       return null;
     }
-
-    const parentCompositeId = Core.buildCompositeIdFromPubkyUri({
-      uri: relationships.replied,
-      domain: Core.CompositeIdDomain.POSTS,
-    });
-
-    return parentCompositeId;
   }, [replyPostId]);
 
   // Second: Observe parent post details reactively
   // UI → Controller → Service → Model
   const parentPost = useLiveQuery(async () => {
-    if (!parentPostId) return null;
+    try {
+      if (!parentPostId) return null;
 
-    const post = await Core.PostController.getDetails({ compositeId: parentPostId });
+      const post = await Core.PostController.getDetails({ compositeId: parentPostId });
 
-    return post;
+      return post;
+    } catch (error) {
+      Libs.Logger.error('[RepliesWithParent] Failed to query parent post details', { parentPostId, error });
+      return null;
+    }
   }, [parentPostId]);
 
   // Fetch parent post if missing (user-initiated action)
@@ -105,12 +116,16 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
       if (!viewerId) return;
       // Parent post ID exists but post details are missing
       // Fetch via Controller (fire-and-forget, useLiveQuery will react to DB updates)
-      Core.PostController.getOrFetchDetails({ compositeId: parentPostId, viewerId }).finally(() => {
-        // Only clean up if this effect hasn't been cancelled (component still mounted and parentPostId unchanged)
-        if (!cancelled) {
-          fetchingSet.delete(parentPostId);
-        }
-      });
+      Core.PostController.getOrFetchDetails({ compositeId: parentPostId, viewerId })
+        .catch((error) => {
+          Libs.Logger.error('[RepliesWithParent] Failed to fetch parent post details', { parentPostId, error });
+        })
+        .finally(() => {
+          // Only clean up if this effect hasn't been cancelled (component still mounted and parentPostId unchanged)
+          if (!cancelled) {
+            fetchingSet.delete(parentPostId);
+          }
+        });
     }
 
     // Cleanup: Mark as cancelled when effect re-runs or component unmounts

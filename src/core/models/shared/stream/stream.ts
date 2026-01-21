@@ -1,5 +1,5 @@
 import { Table, IndexableType } from 'dexie';
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService } from '@/libs';
 import { BaseStreamModelSchema } from './stream.type';
 
 /**
@@ -52,16 +52,14 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
     try {
       const streamData = { id, stream } as TSchema;
       await this.table.add(streamData);
-
-      Libs.Logger.debug(`${this.table.name} row created successfully`, { streamId: id, stream });
       return streamData;
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.CREATE_FAILED,
-        `Failed to create stream in ${this.table.name} with ID: ${String(id)}`,
-        500,
-        { error, streamId: id, streamLength: stream?.length ?? 0 },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to create stream in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'create',
+        context: { table: this.table.name, id, streamLength: stream?.length ?? 0 },
+        cause: error,
+      });
     }
   }
 
@@ -88,16 +86,14 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
     try {
       const streamData = { id, stream } as TSchema;
       await this.table.put(streamData);
-
-      Libs.Logger.debug(`${this.table.name} row upserted successfully`, { streamId: id, stream });
       return streamData;
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPSERT_FAILED,
-        `Failed to upsert stream in ${this.table.name} with ID: ${String(id)}`,
-        500,
-        { error, streamId: id, streamLength: stream?.length ?? 0 },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to upsert stream in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'upsert',
+        context: { table: this.table.name, id, streamLength: stream?.length ?? 0 },
+        cause: error,
+      });
     }
   }
 
@@ -129,15 +125,12 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
       }
       return new this(stream);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.FIND_FAILED,
-        `Failed to find stream in ${this.table.name}: ${String(id)}`,
-        500,
-        {
-          error,
-          streamId: id,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to find stream in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'findById',
+        context: { table: this.table.name, id },
+        cause: error,
+      });
     }
   }
 
@@ -159,14 +152,13 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
   ): Promise<void> {
     try {
       await this.table.delete(id);
-      Libs.Logger.debug(`${this.table.name} row deleted by ID`, { streamId: id });
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        `Failed to delete stream in ${this.table.name} with ID: ${String(id)}`,
-        500,
-        { error, streamId: id },
-      );
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, `Failed to delete stream in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'deleteById',
+        context: { table: this.table.name, id },
+        cause: error,
+      });
     }
   }
 
@@ -186,14 +178,13 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
   }): Promise<void> {
     try {
       await this.table.clear();
-      Libs.Logger.debug(`${this.table.name} cleared successfully`);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        `Failed to clear table ${this.table.name}`,
-        500,
-        { error },
-      );
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, `Failed to clear table ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'clear',
+        context: { table: this.table.name },
+        cause: error,
+      });
     }
   }
 
@@ -212,12 +203,12 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
       // Return the first element of the stream array (head)
       return stream.stream[0] ?? null;
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.FIND_FAILED,
-        `Failed to get stream head in ${this.table.name} with ID: ${String(id)}`,
-        500,
-        { error, streamId: id },
-      );
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to get stream head in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'getStreamHead',
+        context: { table: this.table.name, id },
+        cause: error,
+      });
     }
   }
 
@@ -263,18 +254,13 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
         // Create new stream with the items
         await this.upsert(id, items);
       }
-
-      Libs.Logger.debug(`${this.table.name} items prepended to stream successfully`, {
-        streamId: id,
-        itemsAdded: items.length,
-      });
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPDATE_FAILED,
-        `Failed to prepend items to stream in ${this.table.name} with ID: ${String(id)}`,
-        500,
-        { error, streamId: id, itemsCount: items.length },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to prepend items to stream in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'prependItems',
+        context: { table: this.table.name, id, itemsCount: items.length },
+        cause: error,
+      });
     }
   }
 
@@ -311,25 +297,15 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
             // Filter out the items that need to be removed
             stream.stream = stream.stream.filter((item) => !items.includes(item));
           });
-
-        Libs.Logger.debug(`${this.table.name} items removed from stream successfully`, {
-          streamId: id,
-          itemsRemoved: items.length,
-        });
-      } else {
-        // Stream doesn't exist, nothing to remove - silently succeed
-        Libs.Logger.debug(`${this.table.name} stream does not exist, skipping removal`, {
-          streamId: id,
-          itemsToRemove: items.length,
-        });
       }
+      // Stream doesn't exist, nothing to remove - silently succeed
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPDATE_FAILED,
-        `Failed to remove items from stream in ${this.table.name} with ID: ${String(id)}`,
-        500,
-        { error, streamId: id, itemsCount: items.length },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to remove items from stream in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'removeItems',
+        context: { table: this.table.name, id, itemsCount: items.length },
+        cause: error,
+      });
     }
   }
 }

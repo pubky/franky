@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import type { TBookmarkEventParams } from './bookmark.types';
 
 // Mock pubky-app-specs
@@ -53,7 +54,7 @@ describe('BookmarkController', () => {
 
       await BookmarkController.commitCreate(createBookmarkParams());
 
-      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, {
+      expect(persistSpy).toHaveBeenCalledWith(HttpMethod.PUT, {
         postId: testData.compositePostId,
         bookmarkUrl: expect.stringContaining('pubky://'),
         bookmarkJson: expect.objectContaining({ uri: expect.any(String) }),
@@ -67,7 +68,7 @@ describe('BookmarkController', () => {
 
       await BookmarkController.commitDelete(createBookmarkParams());
 
-      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
+      expect(persistSpy).toHaveBeenCalledWith(HttpMethod.DELETE, {
         postId: testData.compositePostId,
         bookmarkUrl: expect.stringContaining('pubky://'),
       });
