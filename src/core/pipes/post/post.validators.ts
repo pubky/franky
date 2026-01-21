@@ -1,4 +1,4 @@
-import { createSanitizationError, SanitizationErrorType } from '@/libs/error';
+import { Err, ErrorService, ClientErrorCode } from '@/libs/error';
 import * as Core from '@/core';
 
 export type TValidatePostIdParams = {
@@ -12,8 +12,10 @@ export class PostValidators {
   static async validatePostId({ postId, message }: TValidatePostIdParams): Promise<string> {
     const parentPost = await Core.PostController.getDetails({ compositeId: postId });
     if (!parentPost) {
-      throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, `${message} not found`, 404, {
-        postId,
+      throw Err.client(ClientErrorCode.NOT_FOUND, `${message} not found`, {
+        service: ErrorService.Local,
+        operation: 'validatePostId',
+        context: { postId },
       });
     }
     return parentPost.uri;

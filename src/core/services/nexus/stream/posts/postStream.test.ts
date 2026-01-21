@@ -669,10 +669,10 @@ describe('NexusPostStreamService', () => {
       await NexusPostStreamService.fetch(fetchParams);
 
       expect(queryNexusSpy).toHaveBeenCalledTimes(1);
-      const calledUrl = queryNexusSpy.mock.calls[0][0];
+      const calledArgs = queryNexusSpy.mock.calls[0][0] as { url: string };
 
       expectedInUrl.forEach((fragment) => {
-        expect(calledUrl).toContain(fragment);
+        expect(calledArgs.url).toContain(fragment);
       });
     });
   });
@@ -765,11 +765,11 @@ describe('NexusPostStreamService', () => {
 
       // Assert
       expect(queryNexusSpy).toHaveBeenCalledTimes(1);
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        expect.stringContaining('/stream/posts/by_ids'),
-        'POST',
-        JSON.stringify({ post_ids: mockPostIds, viewer_id: mockViewerId }),
-      );
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('/stream/posts/by_ids'),
+        method: 'POST',
+        body: JSON.stringify({ post_ids: mockPostIds, viewer_id: mockViewerId }),
+      });
       expect(result).toEqual(mockPosts);
     });
 
@@ -783,11 +783,11 @@ describe('NexusPostStreamService', () => {
       const result = await NexusPostStreamService.fetchByIds({ post_ids: mockPostIds });
 
       // Assert
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        expect.stringContaining('/stream/posts/by_ids'),
-        'POST',
-        JSON.stringify({ post_ids: mockPostIds }),
-      );
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('/stream/posts/by_ids'),
+        method: 'POST',
+        body: JSON.stringify({ post_ids: mockPostIds }),
+      });
       expect(result).toEqual(mockPosts);
     });
 
@@ -799,11 +799,11 @@ describe('NexusPostStreamService', () => {
       const result = await NexusPostStreamService.fetchByIds({ post_ids: [] });
 
       // Assert
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        expect.stringContaining('/stream/posts/by_ids'),
-        'POST',
-        JSON.stringify({ post_ids: [] }),
-      );
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('/stream/posts/by_ids'),
+        method: 'POST',
+        body: JSON.stringify({ post_ids: [] }),
+      });
       expect(result).toEqual([]);
     });
   });

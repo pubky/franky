@@ -31,8 +31,13 @@ export function useSearchAutocomplete({
 
   const userDetailsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.getManyDetails({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
+        return await Core.UserController.getManyDetails({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useSearchAutocomplete] Failed to query user details', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserDetails>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),

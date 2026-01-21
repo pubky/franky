@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import * as Types from './useUserDetails.types';
 
 /**
@@ -24,8 +25,13 @@ import * as Types from './useUserDetails.types';
 export function useUserDetails(userId: string | null | undefined): Types.UseUserDetailsResult {
   const userDetails = useLiveQuery(
     async () => {
-      if (!userId) return null;
-      return await Core.UserController.getDetails({ userId });
+      try {
+        if (!userId) return null;
+        return await Core.UserController.getDetails({ userId });
+      } catch (error) {
+        Libs.Logger.error('[useUserDetails] Failed to query user details', { userId, error });
+        return null;
+      }
     },
     [userId],
     undefined,

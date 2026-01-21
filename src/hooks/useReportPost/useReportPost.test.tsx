@@ -3,6 +3,7 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useReportPost } from './useReportPost';
 import { REPORT_POST_STEPS, REPORT_API_ENDPOINT } from './useReportPost.constants';
 import { REPORT_ISSUE_TYPES, REPORT_REASON_MAX_LENGTH } from '@/core/pipes/report';
+import { HttpMethod, JSON_HEADERS } from '@/libs';
 
 // Mock fetch
 global.fetch = vi.fn();
@@ -259,10 +260,8 @@ describe('useReportPost', () => {
       });
 
       expect(global.fetch).toHaveBeenCalledWith(REPORT_API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: HttpMethod.POST,
+        headers: JSON_HEADERS,
         body: JSON.stringify({
           pubky: TEST_USER_PUBKY,
           postUrl: TEST_POST_URL,

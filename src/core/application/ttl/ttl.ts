@@ -78,12 +78,10 @@ export class TtlApplication {
     const uniqueIds = Array.from(new Set(params.userIds));
     if (uniqueIds.length === 0) return;
 
-    const { url, body } = Core.userStreamApi.usersByIds({
+    const userBatch = await Core.NexusUserStreamService.fetchByIds({
       user_ids: uniqueIds,
       viewer_id: params.viewerId,
     });
-
-    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
 
     await Core.LocalStreamUsersService.persistUsers(userBatch);
   }
@@ -101,12 +99,10 @@ export class TtlApplication {
     const cacheMissUserIds = await Core.LocalStreamUsersService.getNotPersistedUsersInCache(authors);
     if (cacheMissUserIds.length === 0) return;
 
-    const { url, body } = Core.userStreamApi.usersByIds({
+    const userBatch = await Core.NexusUserStreamService.fetchByIds({
       user_ids: cacheMissUserIds,
       viewer_id: params.viewerId,
     });
-
-    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
     await Core.LocalStreamUsersService.persistUsers(userBatch);
   }
 }

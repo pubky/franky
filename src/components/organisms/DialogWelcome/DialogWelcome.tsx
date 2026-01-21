@@ -19,9 +19,14 @@ export function DialogWelcome() {
 
   // Fetch current user details from database
   const userDetails = useLiveQuery(async () => {
-    if (!currentUserPubky) return null;
-    const details = await Core.UserController.getDetails({ userId: currentUserPubky });
-    return details || null;
+    try {
+      if (!currentUserPubky) return null;
+      const details = await Core.UserController.getDetails({ userId: currentUserPubky });
+      return details || null;
+    } catch (error) {
+      Libs.Logger.error('[DialogWelcome] Failed to query user details', { error });
+      return null;
+    }
   }, [currentUserPubky]);
 
   const { copyToClipboard } = Hooks.useCopyToClipboard();
