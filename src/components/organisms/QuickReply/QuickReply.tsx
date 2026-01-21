@@ -78,16 +78,10 @@ export function QuickReply({
   });
 
   // Combined keyboard handler: mention popover takes priority, then enter submit
-  const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      // Let mention popover handle navigation keys first
-      if (handleMentionKeyDown(e)) {
-        return;
-      }
-      enterSubmitHandler(e);
-    },
-    [handleMentionKeyDown, enterSubmitHandler],
-  );
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (handleMentionKeyDown(e)) return;
+    enterSubmitHandler(e);
+  };
 
   // Account for spacing between main post and QuickReply in connector calculation
   const connectorHeight = cardHeight ? cardHeight + QUICK_REPLY_CONNECTOR_SPACER_HEIGHT : undefined;
