@@ -3,11 +3,27 @@ import { NotificationType } from '@/core/models/notification/notification.types'
 import { buildCompositeIdFromPubkyUri, parseCompositeId, CompositeIdDomain } from '@/core';
 import { APP_ROUTES, POST_ROUTES, PROFILE_ROUTES } from '@/app';
 import { truncateString, Logger } from '@/libs';
-import { USER_CENTRIC_NOTIFICATION_TYPES, NOTIFICATION_ACTION_TEXT } from './NotificationItem.constants';
+import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
 
 // ============================================================================
 // NOTIFICATION TEXT UTILITIES
 // ============================================================================
+
+/**
+ * Human-readable action text for each notification type
+ * TODO: Replace with translation keys when i18n is implemented
+ */
+const NOTIFICATION_ACTION_TEXT: Record<NotificationType, string> = {
+  [NotificationType.Follow]: 'followed you',
+  [NotificationType.NewFriend]: 'is now your friend',
+  [NotificationType.TagPost]: 'tagged your post',
+  [NotificationType.TagProfile]: 'tagged your profile',
+  [NotificationType.Reply]: 'replied to your post',
+  [NotificationType.Repost]: 'reposted your post',
+  [NotificationType.Mention]: 'mentioned you in post',
+  [NotificationType.PostDeleted]: 'deleted a post',
+  [NotificationType.PostEdited]: 'edited a post',
+};
 
 /**
  * Get notification action text (without the username) based on type
