@@ -51,14 +51,14 @@ exports[`BitcoinPaymentCard > matches snapshot 1`] = `
             data-testid="typography"
           >
             ₿ 
-            1.000
+            1,000
           </p>
           <p
             class="text-xs font-medium tracking-widest text-muted-foreground uppercase"
             data-testid="typography"
           >
             ₿
-            1.000
+            1,000
              = $
             0.5
           </p>
