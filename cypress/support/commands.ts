@@ -30,12 +30,22 @@ Cypress.Commands.add(
     cy.get('#create-account-btn').click();
     cy.location('pathname').should('eq', '/onboarding/human');
 
-    // Human verification step: Use dev mode skip button
-    // The Skip button is visible in dev mode or when Cypress is detected (window.Cypress)
-    cy.get('[data-testid="human-verification-cards"]').should('exist');
+    // Click 'enter invite code' button
+    cy.get('[data-testid="human-dev-invite-code-btn"]').should('exist').click();
 
-    // Click the dev mode Skip button which generates an invite code automatically
-    cy.get('[data-testid="human-dev-skip-btn"]').should('exist').click();
+    // use cy.request to get the invite code from the HOMESERVER_ADMIN_URL using the HOMESERVER_ADMIN_PASSWORD
+    cy.request({
+      method: 'GET',
+      url: Cypress.env('homeserverAdminUrl'),
+      headers: {
+        'X-Admin-Password': Cypress.env('homeserverAdminPassword'),
+      },
+    }).then((response) => {
+      const inviteCode = response.body;
+      console.log('inviteCode', inviteCode);
+      cy.get('[data-cy="human-invite-code-input"]').type(inviteCode);
+      cy.get('[data-cy="human-invite-code-continue-btn"]').click();
+    });
 
     cy.location('pathname').should('eq', '/onboarding/install');
 
@@ -99,7 +109,7 @@ Cypress.Commands.add(
     cy.get('#backup-navigation-continue-btn').click();
     cy.location('pathname').should('eq', '/onboarding/profile');
 
-    cy.get('#profile-name-input').type(profileName);
+    cy.get('#profile-name-input').clear().type(profileName);
     if (profileBio) {
       cy.get('#profile-bio-input').type(profileBio);
     }
@@ -319,8 +329,8 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
       win.focus();
       // requires browser to be in focus
       return win.navigator.clipboard.readText().then((text) => {
-        // todo: add format assertion once we use `pubky` prefix
-        //expect(text).to.match(/^pk:/);
+        // format assertion for `pubky` prefix
+        expect(text).to.match(/^pubky/);
         return text;
       });
       // previous 'then' is callback of a promise which doesn't guarantee synchronous execution

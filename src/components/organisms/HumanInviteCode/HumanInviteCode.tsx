@@ -62,12 +62,9 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
             </Atoms.Container>
 
             <Atoms.Container className="gap-2">
-              <Atoms.Container
-                data-testid="human-invite-code-input-wrapper"
-                className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand px-5 py-2 shadow-xs-dark"
-              >
+              <Atoms.Container className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand px-5 py-2 shadow-xs-dark">
                 <Atoms.Input
-                  data-testid="human-invite-code-input"
+                  data-cy="human-invite-code-input"
                   type="text"
                   autoFocus
                   value={inviteCode}
@@ -100,6 +97,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
         </Atoms.Button>
         <Atoms.Button
           id="human-invite-continue-btn"
+          data-cy="human-invite-code-continue-btn"
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
