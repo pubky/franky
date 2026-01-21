@@ -166,7 +166,7 @@ export const SignInContent = () => {
           <Atoms.Container className="items-center justify-center">
             <button
               type="button"
-              className="flex h-[220px] w-[220px] cursor-pointer items-center justify-center rounded-lg bg-foreground p-4 transition-opacity hover:opacity-90 active:opacity-80"
+              className="relative flex h-[220px] w-[220px] cursor-pointer items-center justify-center rounded-lg bg-foreground p-4 transition-opacity hover:opacity-90 active:opacity-80"
               onClick={handleQRClick}
               disabled={isLoading || !url}
               aria-label="Copy authentication link"
@@ -179,7 +179,16 @@ export const SignInContent = () => {
                   </Atoms.Typography>
                 </Atoms.Container>
               ) : (
-                <QRCodeSVG value={url} size={220} />
+                <>
+                  <QRCodeSVG value={url} size={220} />
+                  <Image
+                    src="/images/ring-logo.svg"
+                    alt="Pubky Ring"
+                    width={48}
+                    height={48}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  />
+                </>
               )}
             </button>
           </Atoms.Container>

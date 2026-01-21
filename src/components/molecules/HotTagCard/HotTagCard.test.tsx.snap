@@ -33,7 +33,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with default props 1`] = `
       </p>
     </div>
     <p
-      class="font-semibold text-base text-secondary-foreground"
+      class="text-xl font-semibold text-secondary-foreground"
       data-testid="typography"
     >
       371
@@ -80,7 +80,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
       </p>
     </div>
     <p
-      class="font-semibold text-base text-secondary-foreground"
+      class="text-xl font-semibold text-secondary-foreground"
       data-testid="typography"
     >
       100
@@ -230,7 +230,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with small postCount 1`] = `
       </p>
     </div>
     <p
-      class="font-semibold text-base text-secondary-foreground"
+      class="text-xl font-semibold text-secondary-foreground"
       data-testid="typography"
     >
       50
@@ -277,7 +277,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
       </p>
     </div>
     <p
-      class="font-semibold text-base text-secondary-foreground"
+      class="text-xl font-semibold text-secondary-foreground"
       data-testid="typography"
     >
       250
