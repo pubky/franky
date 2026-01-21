@@ -102,7 +102,11 @@ describe('HotApplication', () => {
         timeframe: Core.UserStreamTimeframe.TODAY,
       };
 
-      const appError = Libs.createCommonError(Libs.CommonErrorType.NETWORK_ERROR, 'Network error', 500, {});
+      const appError = Libs.Err.network(Libs.NetworkErrorCode.REQUEST_FAILED, 'Network error', {
+        service: Libs.ErrorService.Nexus,
+        operation: 'fetch',
+        context: { statusCode: 500 },
+      });
       vi.spyOn(Core.NexusHotService, 'fetch').mockRejectedValue(appError);
 
       const result = await HotApplication.getOrFetch(params);

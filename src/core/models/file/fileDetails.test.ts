@@ -43,7 +43,7 @@ describe('FileDetailsModel', () => {
   describe('Static Methods', () => {
     it('should create file details', async () => {
       const result = await Core.FileDetailsModel.create(MOCK_FILE_DETAILS);
-      expect(result).toBeUndefined();
+      expect(result).toBe(MOCK_FILE_DETAILS.id);
     });
 
     it('should find file details by id', async () => {
