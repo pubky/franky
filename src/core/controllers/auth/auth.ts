@@ -172,6 +172,9 @@ export class AuthController {
         Libs.Logger.warn('Homeserver logout failed, clearing local state anyway', { error });
       }
     }
+    // Reset PubkySpecsSingleton here to ensure it's always called even when homeserver logout fails.
+    // This allows users to sign out even when their profile pubky cannot be resolved (issue #538).
+    Core.PubkySpecsSingleton.reset();
     this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();

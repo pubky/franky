@@ -700,6 +700,7 @@ describe('AuthController', () => {
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
@@ -710,6 +711,7 @@ describe('AuthController', () => {
       await AuthController.logout();
 
       expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
+      expect(resetSpy).toHaveBeenCalledOnce();
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
@@ -735,6 +737,23 @@ describe('AuthController', () => {
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reset PubkySpecsSingleton even when homeserver logout fails (issue #538)', async () => {
+      vi.spyOn(Core.AuthApplication, 'logout').mockRejectedValue(new Error('Pubky resolution failed'));
+      vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+      vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+      vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
+      vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+
+      await AuthController.logout();
+
+      // PubkySpecsSingleton should be reset even when homeserver logout fails
+      // This ensures users can sign out even when their profile pubky cannot be resolved
+      expect(resetSpy).toHaveBeenCalledOnce();
     });
 
     it('should clear all existing cookies', async () => {
