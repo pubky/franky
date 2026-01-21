@@ -163,6 +163,9 @@ vi.mock('@/molecules', async (importOriginal) => {
         </div>
       </div>
     ),
+    PostHeaderTimestamp: ({ timeAgo }: { timeAgo: string }) => (
+      <span data-testid="post-header-timestamp">{timeAgo}</span>
+    ),
   };
 });
 
@@ -304,6 +307,39 @@ describe('PostHeaderUserInfo', () => {
     expect(screen.getByTestId('popover-trigger')).toBeInTheDocument();
     expect(screen.getByTestId('popover-content')).toBeInTheDocument();
   });
+
+  it('renders with normal size by default', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
+
+    const avatar = screen.getAllByTestId('avatar')[0];
+    expect(avatar).toHaveAttribute('data-size', 'default');
+  });
+
+  it('renders with large size when size prop is "large"', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" size="large" />);
+
+    const avatar = screen.getAllByTestId('avatar')[0];
+    expect(avatar).toHaveAttribute('data-size', 'xl');
+  });
+
+  it('renders timeAgo when provided', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" timeAgo="2h ago" />);
+
+    expect(screen.getByTestId('post-header-timestamp')).toBeInTheDocument();
+    expect(screen.getByText('2h ago')).toBeInTheDocument();
+  });
+
+  it('does not render timeAgo when not provided', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
+
+    expect(screen.queryByTestId('post-header-timestamp')).not.toBeInTheDocument();
+  });
+
+  it('does not render timeAgo when null', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" timeAgo={null} />);
+
+    expect(screen.queryByTestId('post-header-timestamp')).not.toBeInTheDocument();
+  });
 });
 
 describe('PostHeaderUserInfo - Snapshots', () => {
@@ -416,6 +452,31 @@ describe('PostHeaderUserInfo - Snapshots', () => {
     });
 
     const { container } = render(<PostHeaderUserInfo userId="otherUser123" userName="Other User" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with large size', () => {
+    const { container } = render(<PostHeaderUserInfo userId="snapshotUserKey" userName="Snapshot User" size="large" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with timeAgo', () => {
+    const { container } = render(
+      <PostHeaderUserInfo userId="snapshotUserKey" userName="Snapshot User" timeAgo="5m ago" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with all new props', () => {
+    const { container } = render(
+      <PostHeaderUserInfo
+        userId="snapshotUserKey"
+        userName="Snapshot User"
+        avatarUrl="https://example.com/avatar.png"
+        size="large"
+        timeAgo="1h ago"
+      />,
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 });

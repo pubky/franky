@@ -26,8 +26,10 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@codemirror/theme-one-dark": "6.1.3",
     "@emoji-mart/data": "1.2.1",
     "@hookform/resolvers": "5.2.2",
+    "@mdxeditor/editor": "3.52.3",
     "@radix-ui/react-accordion": "1.2.12",
     "@radix-ui/react-avatar": "1.1.11",
     "@radix-ui/react-checkbox": "1.3.3",
@@ -72,6 +74,7 @@
     "sonner": "2.0.7",
     "tailwind-merge": "3.4.0",
     "unist-util-visit": "5.0.0",
+    "usehooks-ts": "3.1.1",
     "zod": "4.3.5",
     "zustand": "5.0.10"
   },
@@ -85,6 +88,7 @@
     "@storybook/addon-vitest": "10.1.11",
     "@storybook/nextjs-vite": "10.1.11",
     "@tailwindcss/postcss": "4.1.18",
+    "@tailwindcss/typography": "0.5.19",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
