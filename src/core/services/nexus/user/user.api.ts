@@ -10,7 +10,7 @@ const PREFIX = 'v0/user';
 export const userApi = {
   view: (params: Core.TUserViewParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({ baseRoute: `${PREFIX}/${userId}`, params, excludeKeys: Core.USER_PATH_PARAMS });
   },
   counts: (params: Core.TUserId) => {
     const userId = Core.encodePathSegment(params.user_id);
@@ -22,23 +22,43 @@ export const userApi = {
   },
   followers: (params: Core.TUserViewParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/followers`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/followers`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
   following: (params: Core.TUserViewParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/following`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/following`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
   friends: (params: Core.TUserViewParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/friends`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/friends`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
   muted: (params: Core.TUserViewParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/muted`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/muted`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
   notifications: (params: Core.TUserPaginationParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/notifications`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/notifications`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
   relationship: (params: Core.TUserRelationshipParams) => {
     const userId = Core.encodePathSegment(params.user_id);
@@ -48,11 +68,19 @@ export const userApi = {
   taggers: (params: Core.TUserTaggersParams) => {
     const userId = Core.encodePathSegment(params.user_id);
     const label = Core.encodePathSegment(params.label);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/taggers/${label}`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/taggers/${label}`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
   tags: (params: Core.TUserTagsParams) => {
     const userId = Core.encodePathSegment(params.user_id);
-    return Core.buildUrlWithQuery(`${PREFIX}/${userId}/tags`, params, Core.USER_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/${userId}/tags`,
+      params,
+      excludeKeys: Core.USER_PATH_PARAMS,
+    });
   },
 };
 

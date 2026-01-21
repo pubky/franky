@@ -31,9 +31,13 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
   // generate an invite code and put it in console log if you are in development mode
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      Core.AuthController.generateSignupToken().then((token) => {
-        Libs.Logger.info(token, token);
-      });
+      Core.AuthController.generateSignupToken()
+        .then((token) => {
+          Libs.Logger.info(token, token);
+        })
+        .catch((error) => {
+          Libs.Logger.error('[HumanInviteCode] Failed to generate signup token', { error });
+        });
     }
   }, []);
 

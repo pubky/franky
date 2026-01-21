@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import type { UseBulkUserAvatarsResult, UserWithAvatar } from './useBulkUserAvatars.types';
 
 /**
@@ -27,8 +28,13 @@ export function useBulkUserAvatars(userIds: Core.Pubky[]): UseBulkUserAvatarsRes
   // Fetch user details from local DB (reactive)
   const userDetailsMap = useLiveQuery(
     async () => {
-      if (uniqueUserIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.getManyDetails({ userIds: uniqueUserIds });
+      try {
+        if (uniqueUserIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
+        return await Core.UserController.getManyDetails({ userIds: uniqueUserIds });
+      } catch (error) {
+        Libs.Logger.error('[useBulkUserAvatars] Failed to query user details', { userIds: uniqueUserIds, error });
+        return new Map<Core.Pubky, Core.NexusUserDetails>();
+      }
     },
     [uniqueUserIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),
