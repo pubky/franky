@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
@@ -8,6 +9,8 @@ import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import type { DialogNewPostProps } from './DialogNewPost.types';
 
 export function DialogNewPost({ open, onOpenChangeAction }: DialogNewPostProps) {
+  const [isArticle, setIsArticle] = useState(false);
+  const title = isArticle ? 'New Article' : 'New Post';
   const { showConfirmDialog, setShowConfirmDialog, resetKey, handleContentChange, handleOpenChange, handleDiscard } =
     Hooks.useConfirmableDialog({
       onClose: () => onOpenChangeAction(false),
@@ -21,10 +24,10 @@ export function DialogNewPost({ open, onOpenChangeAction }: DialogNewPostProps) 
         onConfirm={handleDiscard}
       />
       <Atoms.Dialog open={open} onOpenChange={handleOpenChange}>
-        <Atoms.DialogContent className="w-3xl" hiddenTitle="New post">
+        <Atoms.DialogContent className="w-3xl" hiddenTitle={title}>
           <Atoms.DialogHeader>
-            <Atoms.DialogTitle>New Post</Atoms.DialogTitle>
-            <Atoms.DialogDescription className="sr-only">New post dialog</Atoms.DialogDescription>
+            <Atoms.DialogTitle>{title}</Atoms.DialogTitle>
+            <Atoms.DialogDescription className="sr-only">{title} dialog</Atoms.DialogDescription>
           </Atoms.DialogHeader>
           <Atoms.Container className="gap-3">
             <Organisms.PostInput
@@ -34,6 +37,7 @@ export function DialogNewPost({ open, onOpenChangeAction }: DialogNewPostProps) 
               onSuccess={() => onOpenChangeAction(false)}
               expanded={true}
               onContentChange={handleContentChange}
+              onArticleModeChange={setIsArticle}
             />
           </Atoms.Container>
         </Atoms.DialogContent>
