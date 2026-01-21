@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import * as Hooks from '@/hooks';
+// Direct imports to avoid circular dependency (this hook is exported from @/hooks)
+import { useMutedUsers } from '@/hooks/useMutedUsers';
+import { usePostCounts } from '@/hooks/usePostCounts';
 import { DEFAULT_MAX_NESTED, DEFAULT_MAX_DEPTH } from './useNestedReplies.constants';
 import type { UseNestedRepliesOptions, UseNestedRepliesResult } from './useNestedReplies.types';
 
@@ -38,8 +40,14 @@ export function useNestedReplies(
 
   const [hasFetched, setHasFetched] = useState(false);
 
+  /**
+   * Mute filtering for nested replies.
+   * This ensures nested reply previews are consistent with timeline mute behavior.
+   */
+  const { mutedUserIdSet } = useMutedUsers();
+
   // Get post counts to check reply count
-  const { postCounts } = Hooks.usePostCounts(depth < maxDepth ? replyId : null);
+  const { postCounts } = usePostCounts(depth < maxDepth ? replyId : null);
   const replyCount = postCounts?.replies ?? 0;
 
   // Get nested replies from local cache (in chronological order - oldest first)
@@ -53,11 +61,30 @@ export function useNestedReplies(
       if (!stream || stream.stream.length === 0) return [];
 
       // Stream is stored newest-first, reverse for chronological and take last N
+      // Apply mute filter so nested previews match timeline mute behavior.
       const chronological = [...stream.stream].reverse();
-      return chronological.slice(-maxNestedReplies);
+      const filtered = Core.MuteFilter.filterPostsSafe(chronological, mutedUserIdSet);
+      return filtered.slice(-maxNestedReplies);
     },
-    [replyId, maxNestedReplies, depth, maxDepth],
+    [replyId, maxNestedReplies, depth, maxDepth, mutedUserIdSet],
     [],
+  );
+
+  /**
+   * Track muted replies count to adjust "View more replies" counter.
+   * This ensures the UI shows accurate counts excluding muted users.
+   */
+  const mutedRepliesCount = useLiveQuery(
+    async () => {
+      if (!replyId) return 0;
+      const streamId = Core.buildPostReplyStreamId(replyId);
+      const stream = await Core.StreamPostsController.getLocalStream({ streamId });
+      if (!stream || stream.stream.length === 0) return 0;
+      // Count how many replies are from muted users
+      return stream.stream.filter((id) => Core.MuteFilter.isPostMuted(id, mutedUserIdSet)).length;
+    },
+    [replyId, mutedUserIdSet],
+    0,
   );
 
   // Fetch from Nexus if post has replies but we don't have them locally
@@ -102,13 +129,15 @@ export function useNestedReplies(
     };
   }, [replyId, replyCount, nestedReplyIds.length, depth, maxDepth, maxNestedReplies, hasFetched]);
 
-  const hasMoreReplies = replyCount > nestedReplyIds.length;
+  // Use adjusted count so "View more replies" excludes muted users.
+  const adjustedReplyCount = Math.max(0, replyCount - mutedRepliesCount);
+  const hasMoreReplies = adjustedReplyCount > nestedReplyIds.length;
   const hasNestedReplies = nestedReplyIds.length > 0;
 
   return {
     nestedReplyIds,
     hasMoreReplies,
     hasNestedReplies,
-    replyCount,
+    replyCount: adjustedReplyCount,
   };
 }

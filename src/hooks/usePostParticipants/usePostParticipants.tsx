@@ -3,7 +3,9 @@
 import { useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Hooks from '@/hooks';
+// Direct imports to avoid circular dependency (this hook is exported from @/hooks)
+import { useMutedUsers } from '@/hooks/useMutedUsers';
+import { useBulkUserAvatars } from '@/hooks/useBulkUserAvatars';
 import type {
   UsePostParticipantsResult,
   UsePostParticipantsOptions,
@@ -25,6 +27,11 @@ export function usePostParticipants(
   postId: string | null | undefined,
   options: UsePostParticipantsOptions = {},
 ): UsePostParticipantsResult {
+  /**
+   * Mute filtering for participant lists.
+   * Ensures participant avatars exclude muted users, matching timeline behavior.
+   */
+  const { mutedUserIdSet } = useMutedUsers();
   const { limit = DEFAULT_LIMIT } = options;
 
   // Parse post author from composite ID
@@ -67,11 +74,13 @@ export function usePostParticipants(
       }
     }
 
-    return Array.from(ids).slice(0, limit);
-  }, [authorId, replyRelationships, limit]);
+    // Exclude muted users from participants to keep lists consistent with other surfaces.
+    const filtered = Array.from(ids).filter((id) => !mutedUserIdSet.has(id));
+    return filtered.slice(0, limit);
+  }, [authorId, replyRelationships, limit, mutedUserIdSet]);
 
   // Use existing hook for bulk user avatars and details (cache-first)
-  const { usersMap, isLoading: isLoadingUsers } = Hooks.useBulkUserAvatars(participantIds as Core.Pubky[]);
+  const { usersMap, isLoading: isLoadingUsers } = useBulkUserAvatars(participantIds as Core.Pubky[]);
 
   // Transform to PostParticipant format
   const participants: PostParticipant[] = useMemo(() => {
