@@ -3,66 +3,17 @@ import { NotificationType } from '@/core/models/notification/notification.types'
 import { buildCompositeIdFromPubkyUri, parseCompositeId, CompositeIdDomain } from '@/core';
 import { APP_ROUTES, POST_ROUTES, PROFILE_ROUTES } from '@/app';
 import { truncateString, Logger } from '@/libs';
-import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
+import { USER_CENTRIC_NOTIFICATION_TYPES, NOTIFICATION_ACTION_TEXT } from './NotificationItem.constants';
 
 // ============================================================================
 // NOTIFICATION TEXT UTILITIES
 // ============================================================================
 
 /**
- * Get notification text based on type
- */
-export function getNotificationText(notification: FlatNotification, userName: string = 'User'): string {
-  switch (notification.type) {
-    case NotificationType.Follow:
-      return `${userName} followed you`;
-    case NotificationType.NewFriend:
-      return `${userName} is now your friend`;
-    case NotificationType.TagPost:
-      return `${userName} tagged your post`;
-    case NotificationType.TagProfile:
-      return `${userName} tagged your profile`;
-    case NotificationType.Reply:
-      return `${userName} replied to your post`;
-    case NotificationType.Repost:
-      return `${userName} reposted your post`;
-    case NotificationType.Mention:
-      return `${userName} mentioned you in post`;
-    case NotificationType.PostDeleted:
-      return `${userName} deleted a post`;
-    case NotificationType.PostEdited:
-      return `${userName} edited a post`;
-    default:
-      return 'New notification';
-  }
-}
-
-/**
  * Get notification action text (without the username) based on type
  */
 export function getNotificationActionText(notification: FlatNotification): string {
-  switch (notification.type) {
-    case NotificationType.Follow:
-      return 'followed you';
-    case NotificationType.NewFriend:
-      return 'is now your friend';
-    case NotificationType.TagPost:
-      return 'tagged your post';
-    case NotificationType.TagProfile:
-      return 'tagged your profile';
-    case NotificationType.Reply:
-      return 'replied to your post';
-    case NotificationType.Repost:
-      return 'reposted your post';
-    case NotificationType.Mention:
-      return 'mentioned you in post';
-    case NotificationType.PostDeleted:
-      return 'deleted a post';
-    case NotificationType.PostEdited:
-      return 'edited a post';
-    default:
-      return 'New notification';
-  }
+  return NOTIFICATION_ACTION_TEXT[notification.type] ?? 'New notification';
 }
 
 /**
