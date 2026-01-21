@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
 import { MAX_AVATARS } from '../../PostHeaderUserInfoPopoverWrapper.constants';
 import { normalizeStatsValue, transformConnectionsToAvatarItems } from '../../PostHeaderUserInfoPopoverWrapper.utils';
 import type { PostHeaderUserInfoPopoverContentProps } from './PostHeaderUserInfoPopoverContent.types';
@@ -63,12 +64,9 @@ export function PostHeaderUserInfoPopoverContent({
         avatarUrl={profileAvatarUrl || avatarUrl}
       />
       {profileBio ? (
-        <Atoms.Typography
-          className="max-h-(--popover-bio-max-height) overflow-y-auto text-base leading-6 font-medium break-words whitespace-pre-wrap text-secondary-foreground"
-          overrideDefaults
-        >
-          {profileBio}
-        </Atoms.Typography>
+        <Atoms.Container className="max-h-(--popover-bio-max-height) overflow-y-auto" overrideDefaults>
+          <Molecules.PostText content={profileBio} />
+        </Atoms.Container>
       ) : null}
       <PostHeaderUserInfoPopoverStats
         followersCount={normalizedFollowers}
