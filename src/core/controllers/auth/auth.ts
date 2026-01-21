@@ -55,10 +55,27 @@ export class AuthController {
    * @param params.pubky - The user's public key identifier
    */
   private static async hydrateMeImAlive({ pubky }: Core.TPubkyParams) {
+    const signInStore = Core.useSignInStore.getState();
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
-    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
+
+    // Progress callback to update signInStore from Controller layer (respecting architecture rules)
+    const onProgress: Core.BootstrapProgressCallback = (step) => {
+      switch (step) {
+        case 'bootstrapFetched':
+          signInStore.setBootstrapFetched(true); // Step 3 complete (60%)
+          break;
+        case 'dataPersisted':
+          signInStore.setDataPersisted(true); // Step 4 complete (80%)
+          break;
+        case 'homeserverSynced':
+          signInStore.setHomeserverSynced(true); // Step 5 complete (100%)
+          break;
+      }
+    };
+
+    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url }, onProgress);
     Core.useNotificationStore.getState().setState(notification);
   }
 

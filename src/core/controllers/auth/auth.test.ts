@@ -191,10 +191,13 @@ describe('AuthController', () => {
       await AuthController.bootstrapWithDelay();
 
       expect(sleepSpy).toHaveBeenCalledWith(5000);
-      expect(initializeSpy).toHaveBeenCalledWith({
-        pubky: TEST_PUBKY,
-        lastReadUrl: getLastReadUrl(TEST_PUBKY),
-      });
+      expect(initializeSpy).toHaveBeenCalledWith(
+        {
+          pubky: TEST_PUBKY,
+          lastReadUrl: getLastReadUrl(TEST_PUBKY),
+        },
+        expect.any(Function), // onProgress callback
+      );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
       expect(authStoreState.setHasProfile).toHaveBeenCalledWith(true);
     });
@@ -289,10 +292,13 @@ describe('AuthController', () => {
       expect(signInSpy).toHaveBeenCalledWith({ keypair: mockKeypair });
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
-      expect(initializeSpy).toHaveBeenCalledWith({
-        pubky: mockPubky,
-        lastReadUrl: getLastReadUrl('test-pubky'),
-      });
+      expect(initializeSpy).toHaveBeenCalledWith(
+        {
+          pubky: mockPubky,
+          lastReadUrl: getLastReadUrl('test-pubky'),
+        },
+        expect.any(Function), // onProgress callback
+      );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
@@ -396,10 +402,13 @@ describe('AuthController', () => {
       expect(signInSpy).toHaveBeenCalledWith({ keypair: mockKeypair });
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
-      expect(initializeSpy).toHaveBeenCalledWith({
-        pubky: mockPubky,
-        lastReadUrl: getLastReadUrl('test-pubky'),
-      });
+      expect(initializeSpy).toHaveBeenCalledWith(
+        {
+          pubky: mockPubky,
+          lastReadUrl: getLastReadUrl('test-pubky'),
+        },
+        expect.any(Function), // onProgress callback
+      );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
@@ -660,10 +669,13 @@ describe('AuthController', () => {
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(signInStore.setProfileChecked).toHaveBeenCalledWith(true);
-      expect(initializeSpy).toHaveBeenCalledWith({
-        pubky: mockPubky,
-        lastReadUrl: getLastReadUrl(TEST_PUBKY),
-      });
+      expect(initializeSpy).toHaveBeenCalledWith(
+        {
+          pubky: mockPubky,
+          lastReadUrl: getLastReadUrl(TEST_PUBKY),
+        },
+        expect.any(Function), // onProgress callback
+      );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
       expect(authStore.init).toHaveBeenCalledWith({
         session: mockSession,

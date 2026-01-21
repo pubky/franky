@@ -9,13 +9,6 @@ vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
 }));
 
-// SignIn store mocks
-const signInStoreMocks = {
-  setBootstrapFetched: vi.fn(),
-  setDataPersisted: vi.fn(),
-  setHomeserverSynced: vi.fn(),
-};
-
 const TEST_PUBKY = '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y';
 const MOCK_LAST_READ_URL = 'http://example.com/last-read';
 const MOCK_LAST_READ = 1234567890;
@@ -269,12 +262,6 @@ describe('BootstrapApplication', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.clearAllMocks();
-    // Clear signIn store mocks
-    signInStoreMocks.setBootstrapFetched.mockClear();
-    signInStoreMocks.setDataPersisted.mockClear();
-    signInStoreMocks.setHomeserverSynced.mockClear();
-    // Mock signIn store
-    vi.spyOn(Core.useSignInStore, 'getState').mockReturnValue(signInStoreMocks as unknown as Core.SignInStore);
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
     } as LastReadResult);
@@ -295,15 +282,30 @@ describe('BootstrapApplication', () => {
       const notifications = [createMockNotification()];
       const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
 
-      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+      // Create progress callback mock
+      const onProgress = vi.fn();
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY), onProgress);
 
       assertCommonCalls(mocks, bootstrapData, notifications);
       expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
 
-      // Verify signIn store progress tracking
-      expect(signInStoreMocks.setBootstrapFetched).toHaveBeenCalledWith(true);
-      expect(signInStoreMocks.setDataPersisted).toHaveBeenCalledWith(true);
-      expect(signInStoreMocks.setHomeserverSynced).toHaveBeenCalledWith(true);
+      // Verify progress callback is called with correct steps (Controller handles store updates)
+      expect(onProgress).toHaveBeenCalledWith('bootstrapFetched');
+      expect(onProgress).toHaveBeenCalledWith('dataPersisted');
+      expect(onProgress).toHaveBeenCalledWith('homeserverSynced');
+    });
+
+    it('should work without progress callback', async () => {
+      const bootstrapData = createMockBootstrapData();
+      const notifications = [createMockNotification()];
+      const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
+
+      // Call without progress callback
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      assertCommonCalls(mocks, bootstrapData, notifications);
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {
