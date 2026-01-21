@@ -1,15 +1,21 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { type MDXEditorProps, type MDXEditorMethods } from '@mdxeditor/editor';
+import { useDebounceCallback } from 'usehooks-ts';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import {
   POST_MAX_CHARACTER_LENGTH,
-  SUPPORTED_ATTACHMENT_MIME_TYPES,
   ATTACHMENT_MAX_IMAGE_SIZE,
   ATTACHMENT_MAX_OTHER_SIZE,
-  ATTACHMENT_MAX_FILES,
-  SUPPORTED_FILE_TYPES,
+  ARTICLE_ATTACHMENT_MAX_FILES,
+  POST_ATTACHMENT_MAX_FILES,
+  ARTICLE_SUPPORTED_FILE_TYPES,
+  POST_SUPPORTED_FILE_TYPES,
+  POST_SUPPORTED_ATTACHMENT_MIME_TYPES,
+  ARTICLE_SUPPORTED_ATTACHMENT_MIME_TYPES,
+  ARTICLE_TITLE_MAX_CHARACTER_LENGTH,
 } from '@/config';
 import { useTimelineFeedContext } from '@/organisms/TimelineFeed/TimelineFeed';
 import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
@@ -19,7 +25,7 @@ import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.typ
  * Hook that encapsulates all PostInput logic.
  *
  * Manages:
- * - Content, tags, and attachments state (via usePost)
+ * - Content, tags, attachments, article state (via usePost)
  * - Expand/collapse behavior
  * - Emoji picker integration
  * - Form submission (post or reply)
@@ -35,6 +41,7 @@ export function usePostInput({
   placeholder,
   expanded = false,
   onContentChange,
+  onArticleModeChange,
 }: UsePostInputOptions): UsePostInputReturn {
   // State
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -43,31 +50,64 @@ export function usePostInput({
 
   // Refs
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const markdownEditorRef = useRef<MDXEditorMethods>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragCounterRef = useRef(0);
 
   // Hooks
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
-  const { content, setContent, tags, setTags, attachments, setAttachments, reply, post, repost, isSubmitting } =
-    Hooks.usePost();
+  const {
+    content,
+    setContent,
+    tags,
+    setTags,
+    attachments,
+    setAttachments,
+    isArticle,
+    setIsArticle,
+    articleTitle,
+    setArticleTitle,
+    reply,
+    post,
+    repost,
+    isSubmitting,
+  } = Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
   const { toast } = Molecules.useToast();
 
   // Notify parent of content changes
   useEffect(() => {
-    onContentChange?.(content, tags, attachments);
-  }, [content, tags, attachments, onContentChange]);
+    onContentChange?.(content, tags, attachments, articleTitle);
+  }, [content, tags, attachments, articleTitle, onContentChange]);
+
+  // Notify parent of article mode changes
+  useEffect(() => {
+    onArticleModeChange?.(isArticle);
+  }, [isArticle, onArticleModeChange]);
 
   // Handle click outside to collapse (only when expanded prop is false)
   useEffect(() => {
     if (expanded) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        if (!content.trim() && tags.length === 0 && attachments.length === 0) {
-          setIsExpanded(false);
-        }
+      const target = event.target as Node;
+
+      // Check if click is inside the container
+      if (containerRef.current?.contains(target)) return;
+
+      // Check if click is inside MDXEditor popup containers (portaled outside the container)
+      const mdxEditorPopup = document.querySelector('.mdxeditor-popup-container');
+      if (mdxEditorPopup?.contains(target)) return;
+
+      // Check if click is inside a dialog (portaled outside the container, e.g., EmojiPickerDialog)
+      const dialogContent = document.querySelector('[data-slot="dialog-content"]');
+      if (dialogContent?.contains(target)) return;
+
+      // Collapse only if there's no content
+      if (!content.trim() && tags.length === 0 && attachments.length === 0 && !articleTitle.trim()) {
+        setIsExpanded(false);
+        setIsArticle(false);
       }
     };
 
@@ -75,7 +115,7 @@ export function usePostInput({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [expanded, content, tags, attachments]);
+  }, [expanded, content, tags, attachments, setIsArticle, articleTitle]);
 
   // Handle expand on interaction
   const handleExpand = useCallback(() => {
@@ -88,8 +128,12 @@ export function usePostInput({
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) return;
 
-    // For replies and posts, require content or attachments. For reposts, content is optional.
-    if (variant !== POST_INPUT_VARIANT.REPOST && !content.trim() && attachments.length === 0) return;
+    // For replies and posts, require content or attachments. For reposts, content is optional. Content and title is required for articles.
+    if (
+      (variant !== POST_INPUT_VARIANT.REPOST && !content.trim() && attachments.length === 0) ||
+      (isArticle && (!content.trim() || !articleTitle.trim()))
+    )
+      return;
 
     // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
@@ -116,6 +160,8 @@ export function usePostInput({
   }, [
     content,
     attachments,
+    isArticle,
+    articleTitle,
     variant,
     postId,
     originalPostId,
@@ -148,6 +194,20 @@ export function usePostInput({
     [setContent],
   );
 
+  // Handle article title change with validation
+  const handleArticleTitleChange = useDebounceCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= ARTICLE_TITLE_MAX_CHARACTER_LENGTH) {
+      setArticleTitle(value);
+    }
+  }, 500);
+
+  // Handle article body change - length validation is handled via MDXEditor's maxLength plugin
+  const handleArticleBodyChange = useDebounceCallback<NonNullable<MDXEditorProps['onChange']>>(
+    (markdown) => setContent(markdown),
+    500,
+  );
+
   // Emoji insert handler
   const handleEmojiSelect = Hooks.useEmojiInsert({
     inputRef: textareaRef,
@@ -159,6 +219,12 @@ export function usePostInput({
   const handleFilesAdded = useCallback(
     (files: File[]) => {
       if (isSubmitting || files.length === 0) return;
+
+      const ATTACHMENT_MAX_FILES = isArticle ? ARTICLE_ATTACHMENT_MAX_FILES : POST_ATTACHMENT_MAX_FILES;
+      const SUPPORTED_ATTACHMENT_MIME_TYPES = isArticle
+        ? ARTICLE_SUPPORTED_ATTACHMENT_MIME_TYPES
+        : POST_SUPPORTED_ATTACHMENT_MIME_TYPES;
+      const SUPPORTED_FILE_TYPES = isArticle ? ARTICLE_SUPPORTED_FILE_TYPES : POST_SUPPORTED_FILE_TYPES;
 
       const currentCount = attachments.length;
       const availableSlots = ATTACHMENT_MAX_FILES - currentCount;
@@ -212,7 +278,7 @@ export function usePostInput({
         setAttachments((prev) => [...prev, ...validFiles]);
       }
     },
-    [isSubmitting, attachments.length, setAttachments, toast],
+    [isArticle, isSubmitting, attachments.length, setAttachments, toast],
   );
 
   // Drag and drop handlers
@@ -283,6 +349,8 @@ export function usePostInput({
     fileInputRef.current?.click();
   }, []);
 
+  const handleArticleClick = () => setIsArticle(true);
+
   // Derived values
   const hasContent = content.trim().length > 0;
   const displayPlaceholder = placeholder ?? POST_INPUT_PLACEHOLDER[variant];
@@ -290,6 +358,7 @@ export function usePostInput({
   return {
     // Refs
     textareaRef,
+    markdownEditorRef,
     containerRef,
     fileInputRef,
 
@@ -299,6 +368,8 @@ export function usePostInput({
     setTags,
     attachments,
     setAttachments,
+    isArticle,
+    articleTitle,
     isDragging,
     isExpanded,
     isSubmitting,
@@ -314,6 +385,9 @@ export function usePostInput({
     handleExpand,
     handleSubmit,
     handleChange,
+    handleArticleClick,
+    handleArticleTitleChange,
+    handleArticleBodyChange,
     handleEmojiSelect,
     handleFilesAdded,
     handleFileClick,
