@@ -260,7 +260,7 @@ describe('PublicKeyCard', () => {
     expect(document.querySelector('.lucide-share')).toBeInTheDocument();
   });
 
-  it('hides the share action when Web Share API is unavailable', () => {
+  it('shows share button even when Web Share API is unavailable (uses fallback)', () => {
     // Override the default mock to return false
     mockIsWebShareSupported.mockReturnValue(false);
 
@@ -268,7 +268,11 @@ describe('PublicKeyCard', () => {
 
     expect(screen.getByTestId('action-section')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-0')).toBeInTheDocument();
-    expect(screen.queryByTestId('action-button-1')).not.toBeInTheDocument();
+    // Share button should ALWAYS be rendered on mobile, regardless of Web Share API support
+    // The visibility is controlled by responsive CSS (md:hidden), not by Web Share API availability
+    // When clicked without Web Share API support, it falls back to clipboard copy
+    expect(screen.getByTestId('action-button-1')).toBeInTheDocument();
+    expect(screen.getByTestId('action-button-1').className).toContain('md:hidden');
 
     // Restore the default for other tests
     mockIsWebShareSupported.mockReturnValue(true);
