@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { NotificationType, type FlatNotification } from '@/core';
 // Direct import to avoid circular dependency (this hook is exported from @/hooks)
 import { useMutedUsers } from '@/hooks/useMutedUsers';
@@ -72,9 +73,15 @@ export function useNotifications(): UseNotificationsResult {
       case NotificationType.PostEdited:
         return notification.edited_by;
 
-      // System notifications or unknown types - no actor to filter
-      default:
+      // Exhaustiveness check - if we reach here, a new notification type was added
+      // Log a warning but still pass through (fail-open for mute filter)
+      default: {
+        const unhandledType: never = notification;
+        Libs.Logger.warn(
+          `[useNotifications] Unhandled notification type for mute filtering: ${(unhandledType as FlatNotification).type}`,
+        );
         return '';
+      }
     }
   }, []);
 
