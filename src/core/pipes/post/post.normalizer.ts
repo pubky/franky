@@ -1,6 +1,7 @@
 import { PostResult, PubkyAppPostEmbed, PubkyAppPostKind, PubkyAppPost } from 'pubky-app-specs';
 import * as Core from '@/core';
-import { Err, ValidationErrorCode, ErrorService, AppError } from '@/libs';
+import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService, AppError, AuthErrorCode, ClientErrorCode } from '@/libs';
 
 export class PostNormalizer {
   private constructor() {}
@@ -64,24 +65,21 @@ export class PostNormalizer {
     const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
 
     if (authorId !== currentUserPubky) {
-      // TODO: With the new error handling, would be fixed the error type
-      throw Libs.createSanitizationError(
-        Libs.SanitizationErrorType.POST_NOT_FOUND,
-        'Current user is not the author of this post',
-        403,
-        {
-          postId,
-          currentUserPubky,
-        },
-      );
+      throw Err.auth(AuthErrorCode.FORBIDDEN, 'Current user is not the author of this post', {
+        service: ErrorService.Local,
+        operation: 'toEdit',
+        context: { postId, currentUserPubky },
+      });
     }
 
     const builder = Core.PubkySpecsSingleton.get(authorId);
 
     const postDetails = await Core.PostDetailsModel.findById(compositePostId);
     if (!postDetails) {
-      throw Libs.createSanitizationError(Libs.SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, {
-        postId: compositePostId,
+      throw Err.client(ClientErrorCode.NOT_FOUND, 'Post not found', {
+        service: ErrorService.Local,
+        operation: 'toEdit',
+        context: { postId: compositePostId },
       });
     }
 

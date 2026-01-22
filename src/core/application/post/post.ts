@@ -130,6 +130,6 @@ export class PostApplication {
     await Core.LocalPostService.edit({ compositePostId, content: post.content });
 
     // Sync to homeserver
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
+    await Core.HomeserverService.request({ method: HttpMethod.PUT, url: postUrl, bodyJson: post.toJson() });
   }
 }
