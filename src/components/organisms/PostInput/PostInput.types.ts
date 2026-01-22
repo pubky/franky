@@ -8,7 +8,7 @@ export type PostInputVariant =
 
 interface PostInputBaseProps {
   /** Callback after successful post, receives the created post ID */
-  onSuccess?: (createdPostId?: string) => void;
+  onSuccess?: (createdPostId: string) => void;
   /** Custom placeholder text (default depends on variant) */
   placeholder?: string;
   /** Show the thread connector (for replies, default: false) */

@@ -180,7 +180,7 @@ export function usePostInput({
         await repost({ originalPostId: originalPostId!, onSuccess: handleSuccess });
         break;
       case POST_INPUT_VARIANT.EDIT:
-        await edit({ editPostId: editPostId!, onSuccess });
+        await edit({ editPostId: editPostId!, onSuccess: handleSuccess });
         break;
       case POST_INPUT_VARIANT.POST:
       default:

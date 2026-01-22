@@ -22,7 +22,7 @@ interface UsePostRepostOptions {
 
 interface UsePostEditOptions {
   editPostId: string;
-  onSuccess?: () => void;
+  onSuccess?: (createdPostId: string) => void;
 }
 
 /**
@@ -191,7 +191,7 @@ export function usePost() {
         setIsArticle(false);
         setArticleTitle('');
         showSuccessToast('Post edited', 'Your post has been edited successfully.');
-        onSuccess?.();
+        onSuccess?.(editPostId);
       } catch (err) {
         Libs.Logger.error('[usePost] Failed to edit post:', err);
         showErrorToast('Failed to edit post. Please try again.');

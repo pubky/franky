@@ -13,7 +13,7 @@ export interface UsePostInputOptions {
   /** Optional edit post ID (required if variant is 'edit') */
   editPostId?: string;
   /** Callback after successful post, receives the created post ID */
-  onSuccess?: (createdPostId?: string) => void;
+  onSuccess?: (createdPostId: string) => void;
   /** Custom placeholder text */
   placeholder?: string;
   /**
