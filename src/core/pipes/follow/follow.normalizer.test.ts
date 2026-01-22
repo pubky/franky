@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { FollowResult } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -37,12 +37,11 @@ describe('FollowNormalizer', () => {
     afterEach(restoreMocks);
 
     describe('to - successful creation', () => {
-      it('should create follow and log debug message', () => {
+      it('should create follow with follow and meta properties', () => {
         const result = Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 });
 
         expect(result).toHaveProperty('follow');
         expect(result).toHaveProperty('meta');
-        expect(Libs.Logger.debug).toHaveBeenCalledWith('Follow validated', { result });
       });
 
       it('should call PubkySpecsSingleton.get with follower and createFollow with followee', () => {
@@ -79,33 +78,35 @@ describe('FollowNormalizer', () => {
     });
 
     describe('to - error handling', () => {
-      it.each([
-        [
-          'createFollow',
-          () =>
-            mockBuilder.createFollow.mockImplementation(() => {
-              throw new Error('Builder error');
-            }),
-        ],
-        [
-          'PubkySpecsSingleton.get',
-          () =>
-            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
-              throw new Error('Singleton error');
-            }),
-        ],
-      ])('should propagate errors from %s', (_, setupError) => {
-        setupError();
-        expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 })).toThrow();
-      });
-
-      it('should not call logger when error occurs', () => {
+      it('should throw AppError with correct properties when createFollow fails', () => {
+        const errorMessage = 'Invalid followee';
         mockBuilder.createFollow.mockImplementation(() => {
-          throw new Error('Error');
+          throw errorMessage;
         });
 
-        expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 })).toThrow();
-        expect(Libs.Logger.debug).not.toHaveBeenCalled();
+        try {
+          Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createFollow');
+          expect(appError.context).toEqual({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 });
+          expect(appError.message).toBe(errorMessage);
+        }
+      });
+
+      it('should throw AppError when PubkySpecsSingleton.get fails', () => {
+        vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+          throw 'Singleton error';
+        });
+
+        expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 })).toThrow(
+          AppError,
+        );
       });
     });
 
@@ -169,8 +170,18 @@ describe('FollowNormalizer', () => {
         ['null', INVALID_INPUTS.NULL],
         ['undefined', INVALID_INPUTS.UNDEFINED],
         ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
-      ])('should throw error for %s followee', (_, invalidFollowee) => {
-        expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: invalidFollowee })).toThrow();
+      ])('should throw AppError for %s followee', (_, invalidFollowee) => {
+        try {
+          Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: invalidFollowee });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createFollow');
+        }
       });
     });
   });

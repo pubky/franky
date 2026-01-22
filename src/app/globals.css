@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@plugin '@tailwindcss/typography';
 
 body {
   font-family: 'Inter Tight', sans-serif;
@@ -131,14 +132,14 @@ body {
    * Main content header offset
    * - Vertical offset for sticky sidebars and floating elements below main header
    * - Used by: ContentLayout sidebars, NewPostsButton when in fixed/floating mode
-   * 
+   *
    * Value rationale (150px):
    * - Header outer container: py-6 (24px top + 24px bottom) = 48px
-   * - Header inner container: py-6 (24px top + 24px bottom) = 48px  
+   * - Header inner container: py-6 (24px top + 24px bottom) = 48px
    * - Header content height (buttons h-12) = 48px
    * - Total header visual height ~144px, rounded up to 150px for spacing
    * - Ensures sidebars and floating elements appear clearly below header
-   * 
+   *
    * Note: Profile pages use --header-height (146px) for ProfilePageHeader.
    */
   --header-offset-main: 150px;
@@ -149,13 +150,13 @@ body {
    * - Ensures consistent layout across different sidebar types
    * - Applied to: LeftSidebar, RightSidebar, ProfilePageSidebar, ProfilePageFilterBar
    * - Responsive: Desktop only (hidden on mobile, sidebars use drawers instead)
-   * 
+   *
    * Rationale:
    * - 180px provides optimal content width for navigation/filter items
    * - Balances readability with efficient use of horizontal space
    * - Maintains 3-column layout (sidebar-content-sidebar) on wide screens
    * - Consistent with Figma design specifications
-   * 
+   *
    * Non-responsive by design:
    * - On mobile (<lg): sidebars are hidden, content uses full width
    * - On desktop (≥lg): fixed 180px ensures predictable layout
@@ -187,18 +188,41 @@ body {
   --popover-bio-max-height: 150px;
 
   /**
+   * Mention popover width
+   * - Width for user suggestion popover in post input
+   * - Applied to: MentionPopover component
+   * 
+   * Rationale for 300px:
+   * - Provides adequate space for user avatar, name, and truncated ID
+   * - Consistent with other popover widths in the app
+   */
+  --mention-popover-width: 300px;
+
+  /**
+   * Mention popover max height
+   * - Maximum height for mention suggestions before scrolling
+   * - Applied to: MentionPopover component
+   * 
+   * Rationale for 200px:
+   * - Shows approximately 4-5 user suggestions at once
+   * - Prevents popover from obscuring too much of the textarea
+   * - Enables scrolling when more results are available
+   */
+  --mention-popover-max-height: 200px;
+
+  /**
    * Avatar zoom modal size
    * - Size of the avatar when displayed in the zoom modal
    * - Used for full-screen avatar preview on profile page
    * - Applied to: AvatarZoomModal component
-   * 
+   *
    * Rationale:
    * - 362px provides optimal viewing size on desktop
    * - min() function ensures responsive sizing on mobile devices
    * - 90vw (90% of viewport width) prevents overflow on small screens
    * - Maintains aspect ratio across all device sizes
    * - Ensures avatar is prominently displayed without overwhelming the viewport
-   * 
+   *
    * Responsive behavior:
    * - Desktop (≥402px width): 362px (max size)
    * - Mobile (<402px width):  90% of viewport width
@@ -219,7 +243,7 @@ body {
    * - Ensures headers stay above scrolling content
    * - Used by: Header component (desktop main header)
    * - Also used by: SettingsMobileMenu (fixed positioning)
-   * 
+   *
    * Rationale for value 20:
    * - Higher than content (0) and typical component overlays (1-10)
    * - Lower than mobile menu (30) to ensure proper mobile stacking
@@ -232,13 +256,13 @@ body {
    * Z-index for mobile-specific UI elements
    * - Ensures mobile header and menu appear above sticky headers
    * - Used by: MobileHeader, ProfilePageMobileMenu
-   * 
+   *
    * Rationale for value 30:
    * - Must be higher than sticky header (20) for proper mobile layering
    * - Ensures mobile navigation is always accessible
    * - Lower than modals/dialogs (typically 40-50+) to allow overlays
    * - Part of a consistent z-index scale: content(0) < header(20) < mobile(30) < modal(40+)
-   * 
+   *
    * Responsive behavior:
    * - Only applied to mobile-only components (lg:hidden)
    * - Desktop uses different layout without mobile menu
@@ -267,6 +291,84 @@ body {
   }
   .hover\:bg-brand\/90:hover {
     background-color: oklch(from var(--brand) calc(l * 0.9) c h);
+  }
+
+  /**
+   * MDXEditor code block dark mode fixes
+   * Organized from outermost container to innermost elements:
+   * 1. Wrapper container (outer border)
+   * 2. Toolbar (language select + delete button)
+   * 3. Select trigger button (default + hover)
+   * 4. Select dropdown (portaled)
+   * 5. CodeMirror editor
+   * 6. CodeMirror gutters (background + active line)
+   */
+
+  /* 1. CodeMirror wrapper - outermost container with border */
+  .mdxeditor.dark-theme [class*='codeMirrorWrapper'] {
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--border) !important;
+    overflow: hidden; /* ensures inner content respects border radius */
+  }
+
+  /* 2. Code block toolbar (contains language select and delete button) */
+  .mdxeditor.dark-theme [class*='codeMirrorToolbar'] {
+    background-color: var(--card) !important;
+  }
+
+  /* 3a. Select trigger button (language picker) - default state */
+  .mdxeditor.dark-theme [role='combobox'] {
+    background-color: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--card-foreground) !important;
+  }
+
+  /* 3b. Select trigger button (language picker) - hover state */
+  .mdxeditor.dark-theme [role='combobox']:hover {
+    background-color: var(--muted) !important;
+    border-color: var(--accent) !important;
+  }
+
+  /**
+     * 4a. MDXEditor popup z-index
+     * - Ensures MDXEditor popups (toolbars, dropdowns) appear above dialogs
+     * - Must be higher than Radix Dialog overlay (typically z-50)
+     * - Applied to: MDXEditor toolbar popups and dropdown menus
+     */
+  .mdxeditor-popup-container {
+    z-index: 60 !important;
+  }
+
+  /* 4b. Select dropdown content (portaled to body, outside editor DOM) */
+  .mdxeditor-popup-container .mdxeditor-select-content {
+    background-color: var(--card) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--card-foreground) !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+  }
+
+  /* 5. CodeMirror editor - main code editing area */
+  .mdxeditor.dark-theme .cm-editor {
+    background-color: var(--card) !important;
+    border-radius: var(--radius-md) !important;
+    margin-top: 2.5rem !important; /* spacing below language selector toolbar */
+  }
+
+  /* 5b. CodeMirror cursor (caret) */
+  .mdxeditor.dark-theme .cm-cursor,
+  .mdxeditor.dark-theme .cm-dropCursor {
+    border-left-color: var(--brand) !important;
+  }
+
+  /* 6a. CodeMirror gutter (line numbers) background */
+  .mdxeditor.dark-theme .cm-gutters {
+    background-color: var(--card) !important;
+  }
+
+  /* 6b. CodeMirror active line gutter highlight */
+  .mdxeditor.dark-theme .cm-activeLineGutter {
+    background-color: var(--muted) !important;
   }
 }
 

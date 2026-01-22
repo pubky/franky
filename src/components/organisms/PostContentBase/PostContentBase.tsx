@@ -23,8 +23,18 @@ export function PostContentBase({ postId, className }: PostContentBaseProps) {
 
   const hasContent = postDetails.content.trim().length > 0;
   const isBlurred = postDetails.is_blurred;
+  const isArticle = postDetails.kind === 'long';
 
   if (isBlurred) return <Organisms.PostContentBlurred postId={postId} className={className} />;
+
+  if (isArticle)
+    return (
+      <Organisms.PostArticle
+        content={postDetails.content}
+        attachments={postDetails.attachments}
+        className={className}
+      />
+    );
 
   return (
     <Atoms.Container className={Libs.cn('gap-3', className)}>

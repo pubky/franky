@@ -3,6 +3,7 @@ import { Table } from 'dexie';
 import * as Core from '@/core';
 import { UserConnectionsFields, UserConnectionsModelSchema } from './userConnections.schema';
 import { TupleModelBase } from '@/core/models/shared/base/tuple/baseTuple';
+import { DatabaseErrorCode, Err, ErrorService } from '@/libs/error';
 
 export class UserConnectionsModel
   extends TupleModelBase<Core.Pubky, UserConnectionsModelSchema>
@@ -37,45 +38,69 @@ export class UserConnectionsModel
    * @param key - The type of connection list: `following` or `followers`
    */
   static async createConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields): Promise<boolean> {
-    let didChange = false;
-    const exists = await this.findById(from);
-    // Might be a case, that we did not yet download the user connections, cover that case
-    if (!exists) {
-      const model = new UserConnectionsModel({ id: from, following: [], followers: [] });
-      model[key].push(to);
-      await this.create(model);
-      didChange = true;
-    } else {
+    try {
+      let didChange = false;
+      const exists = await this.findById(from);
+      // Might be a case, that we did not yet download the user connections, cover that case
+      if (!exists) {
+        const model = new UserConnectionsModel({ id: from, following: [], followers: [] });
+        model[key].push(to);
+        await this.create(model);
+        didChange = true;
+      } else {
+        await this.table
+          .where('id')
+          .equals(from)
+          .modify((row) => {
+            const list = row[key] ?? [];
+            if (!list.includes(to)) {
+              list.push(to);
+              row[key] = list;
+              didChange = true;
+            }
+          });
+      }
+      return didChange;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AppError') {
+        throw error;
+      }
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to create connection in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'createConnection',
+        context: { table: this.table.name, from, to, key },
+        cause: error,
+      });
+    }
+  }
+
+  static async deleteConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields): Promise<boolean> {
+    try {
+      let didChange = false;
+      const exists = await this.findById(from);
+      if (!exists) return false;
       await this.table
         .where('id')
         .equals(from)
         .modify((row) => {
           const list = row[key] ?? [];
-          if (!list.includes(to)) {
-            list.push(to);
-            row[key] = list;
+          const next = list.filter((item) => item !== to);
+          if (next.length !== list.length) {
+            row[key] = next;
             didChange = true;
           }
         });
-    }
-    return didChange;
-  }
-
-  static async deleteConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields): Promise<boolean> {
-    let didChange = false;
-    const exists = await this.findById(from);
-    if (!exists) return false;
-    await this.table
-      .where('id')
-      .equals(from)
-      .modify((row) => {
-        const list = row[key] ?? [];
-        const next = list.filter((item) => item !== to);
-        if (next.length !== list.length) {
-          row[key] = next;
-          didChange = true;
-        }
+      return didChange;
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AppError') {
+        throw error;
+      }
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, `Failed to delete connection from ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'deleteConnection',
+        context: { table: this.table.name, from, to, key },
+        cause: error,
       });
-    return didChange;
+    }
   }
 }

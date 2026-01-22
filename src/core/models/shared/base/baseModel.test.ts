@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Dexie, { Table, UpdateSpec } from 'dexie';
 import { indexedDB, IDBKeyRange } from 'fake-indexeddb';
 import { ModelBase } from './baseModel';
+import { AppError, DatabaseErrorCode, ErrorCategory, ErrorService } from '@/libs';
 
 interface TestSchema {
   id: string;
@@ -97,5 +98,208 @@ describe('DexieModelBase (shared CRUD/query)', () => {
     await TestBaseModel.create({ id: '60', name: 'exists' });
     expect(await TestBaseModel.exists('60')).toBe(true);
     expect(await TestBaseModel.exists('61')).toBe(false);
+  });
+
+  it('deleteById removes a record', async () => {
+    await TestBaseModel.create({ id: '70', name: 'to-delete' });
+    expect(await TestBaseModel.exists('70')).toBe(true);
+    await TestBaseModel.deleteById('70');
+    expect(await TestBaseModel.exists('70')).toBe(false);
+  });
+
+  it('deleteById is idempotent (no error if not found)', async () => {
+    await expect(TestBaseModel.deleteById('non-existent')).resolves.toBeUndefined();
+  });
+
+  it('clear removes all records', async () => {
+    await TestBaseModel.create({ id: '80', name: 'a' });
+    await TestBaseModel.create({ id: '81', name: 'b' });
+    expect(await TestBaseModel.table.count()).toBe(2);
+    await TestBaseModel.clear();
+    expect(await TestBaseModel.table.count()).toBe(0);
+  });
+});
+
+describe('DexieModelBase error handling', () => {
+  let db: Dexie;
+
+  beforeEach(async () => {
+    globalThis.indexedDB = indexedDB;
+    globalThis.IDBKeyRange = IDBKeyRange;
+
+    db = new Dexie('dexie-model-base-error-test');
+    db.version(1).stores({ base_records: 'id' });
+    await db.open();
+
+    TestBaseModel.table = db.table<TestSchema>('base_records');
+    await TestBaseModel.table.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('create throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'add').mockRejectedValueOnce(new Error('DB write error'));
+
+    try {
+      await TestBaseModel.create({ id: '1', name: 'test' });
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('create');
+      expect(appError.context).toMatchObject({ table: 'base_records', id: '1' });
+      expect(appError.cause).toBeInstanceOf(Error);
+    }
+  });
+
+  it('upsert throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'put').mockRejectedValueOnce(new Error('DB write error'));
+
+    try {
+      await TestBaseModel.upsert({ id: '2', name: 'test' });
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('upsert');
+      expect(appError.context).toMatchObject({ table: 'base_records', id: '2' });
+    }
+  });
+
+  it('update throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'update').mockRejectedValueOnce(new Error('DB write error'));
+
+    try {
+      await TestBaseModel.update('3', { name: 'updated' } as UpdateSpec<TestSchema>);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('update');
+      expect(appError.context).toMatchObject({ table: 'base_records', id: '3' });
+    }
+  });
+
+  it('findById throws QUERY_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'get').mockRejectedValueOnce(new Error('DB read error'));
+
+    try {
+      await TestBaseModel.findById('4');
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('findById');
+      expect(appError.context).toMatchObject({ table: 'base_records', id: '4' });
+    }
+  });
+
+  it('findByIds throws QUERY_FAILED with correct context on failure', async () => {
+    const mockWhere = {
+      anyOf: vi.fn().mockReturnValue({
+        toArray: vi.fn().mockRejectedValueOnce(new Error('DB read error')),
+      }),
+    };
+    vi.spyOn(TestBaseModel.table, 'where').mockReturnValue(mockWhere as never);
+
+    try {
+      await TestBaseModel.findByIds(['5', '6']);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('findByIds');
+      expect(appError.context).toMatchObject({ table: 'base_records', count: 2 });
+    }
+  });
+
+  it('findByIdsPreserveOrder throws QUERY_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'bulkGet').mockRejectedValueOnce(new Error('DB read error'));
+
+    try {
+      await TestBaseModel.findByIdsPreserveOrder(['7', '8']);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('findByIdsPreserveOrder');
+      expect(appError.context).toMatchObject({ table: 'base_records', count: 2 });
+    }
+  });
+
+  it('exists throws QUERY_FAILED with correct context on failure', async () => {
+    const mockWhere = {
+      equals: vi.fn().mockReturnValue({
+        count: vi.fn().mockRejectedValueOnce(new Error('DB read error')),
+      }),
+    };
+    vi.spyOn(TestBaseModel.table, 'where').mockReturnValue(mockWhere as never);
+
+    try {
+      await TestBaseModel.exists('9');
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.QUERY_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('exists');
+      expect(appError.context).toMatchObject({ table: 'base_records', id: '9' });
+    }
+  });
+
+  it('deleteById throws DELETE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'delete').mockRejectedValueOnce(new Error('DB delete error'));
+
+    try {
+      await TestBaseModel.deleteById('10');
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.DELETE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('deleteById');
+      expect(appError.context).toMatchObject({ table: 'base_records', id: '10' });
+    }
+  });
+
+  it('clear throws DELETE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestBaseModel.table, 'clear').mockRejectedValueOnce(new Error('DB delete error'));
+
+    try {
+      await TestBaseModel.clear();
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.DELETE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('clear');
+      expect(appError.context).toMatchObject({ table: 'base_records' });
+    }
   });
 });

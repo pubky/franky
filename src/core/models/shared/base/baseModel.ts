@@ -1,5 +1,5 @@
 import { IndexableType, Table, UpdateSpec } from 'dexie';
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService } from '@/libs';
 
 /**
  * Shared base class for Dexie-backed models exposing common CRUD/query helpers.
@@ -14,19 +14,16 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
   /**
    * Create a new record (strict insert). Fails if the key already exists.
    */
-  static async create<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }, data: TSchema) {
+  static async create<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }, data: TSchema): Promise<TId> {
     try {
-      await this.table.add(data);
+      return await this.table.add(data);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.CREATE_FAILED,
-        `Failed to create record in ${this.table.name}`,
-        500,
-        {
-          error,
-          data,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to create record in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'create',
+        context: { table: this.table.name, id: data.id },
+        cause: error,
+      });
     }
   }
 
@@ -37,15 +34,12 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
     try {
       await this.table.put(data);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPSERT_FAILED,
-        `Failed to upsert record in ${this.table.name}`,
-        500,
-        {
-          error,
-          data,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to upsert record in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'upsert',
+        context: { table: this.table.name, id: data.id },
+        cause: error,
+      });
     }
   }
 
@@ -60,14 +54,14 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
     try {
       return await this.table.update(id, changes);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPDATE_FAILED,
+      throw Err.database(
+        DatabaseErrorCode.WRITE_FAILED,
         `Failed to update record in ${this.table.name}: ${String(id)}`,
-        500,
         {
-          error,
-          id,
-          changes,
+          service: ErrorService.Local,
+          operation: 'update',
+          context: { table: this.table.name, id },
+          cause: error,
         },
       );
     }
@@ -91,16 +85,12 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
       }
       return new this(record);
     } catch (error) {
-      if (error instanceof Error && error.name === 'AppError') throw error;
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        `Failed to find record in ${this.table.name}: ${String(id)}`,
-        500,
-        {
-          error,
-          id,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to find record in ${this.table.name}: ${String(id)}`, {
+        service: ErrorService.Local,
+        operation: 'findById',
+        context: { table: this.table.name, id },
+        cause: error,
+      });
     }
   }
 
@@ -120,15 +110,12 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
         .anyOf(ids as IndexableType[])
         .toArray();
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        `Failed to find records in ${this.table.name}`,
-        500,
-        {
-          error,
-          ids,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to find records in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'findByIds',
+        context: { table: this.table.name, count: ids.length },
+        cause: error,
+      });
     }
   }
 
@@ -148,15 +135,12 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
     try {
       return await this.table.bulkGet(ids as IndexableType[]);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        `Failed to find records (with nulls) in ${this.table.name}`,
-        500,
-        {
-          error,
-          ids,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to find records (with nulls) in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'findByIdsPreserveOrder',
+        context: { table: this.table.name, count: ids.length },
+        cause: error,
+      });
     }
   }
 
@@ -172,15 +156,12 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
           .count()) > 0
       );
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        `Failed to check if record exists in ${this.table.name}`,
-        500,
-        {
-          error,
-          id,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to check if record exists in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'exists',
+        context: { table: this.table.name, id },
+        cause: error,
+      });
     }
   }
 
@@ -191,13 +172,14 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
     try {
       await this.table.delete(id);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
+      throw Err.database(
+        DatabaseErrorCode.DELETE_FAILED,
         `Failed to delete record in ${this.table.name}: ${String(id)}`,
-        500,
         {
-          error,
-          id,
+          service: ErrorService.Local,
+          operation: 'deleteById',
+          context: { table: this.table.name, id },
+          cause: error,
         },
       );
     }
@@ -210,14 +192,12 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
     try {
       await this.table.clear();
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        `Failed to clear table ${this.table.name}`,
-        500,
-        {
-          error,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, `Failed to clear table ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'clear',
+        context: { table: this.table.name },
+        cause: error,
+      });
     }
   }
 }

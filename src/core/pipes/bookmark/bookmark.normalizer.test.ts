@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { BookmarkResult, postUriBuilder } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -88,32 +89,54 @@ describe('BookmarkNormalizer', () => {
     });
 
     describe('to - error handling', () => {
-      it.each([
-        [
-          'createBookmark',
-          () =>
-            mockBuilder.createBookmark.mockImplementation(() => {
-              throw new Error('Builder error');
-            }),
-        ],
-        [
-          'PubkySpecsSingleton.get',
-          () =>
-            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
-              throw new Error('Singleton error');
-            }),
-        ],
-      ])('should propagate errors from %s', (_, setupError) => {
-        setupError();
-        expect(() => Core.BookmarkNormalizer.to(createPostUri(), TEST_PUBKY.USER_1)).toThrow();
+      it('should throw AppError with correct properties when createBookmark fails', () => {
+        const errorMessage = 'Invalid bookmark URI';
+        mockBuilder.createBookmark.mockImplementation(() => {
+          throw errorMessage;
+        });
+        const postUri = createPostUri();
+
+        try {
+          Core.BookmarkNormalizer.to(postUri, TEST_PUBKY.USER_1);
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createBookmark');
+          expect(appError.context).toEqual({ postUri, userId: TEST_PUBKY.USER_1 });
+          expect(appError.message).toBe(errorMessage);
+        }
+      });
+
+      it('should throw AppError when PubkySpecsSingleton.get fails', () => {
+        const errorMessage = 'Singleton initialization failed';
+        vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+          throw errorMessage;
+        });
+        const postUri = createPostUri();
+
+        try {
+          Core.BookmarkNormalizer.to(postUri, TEST_PUBKY.USER_1);
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createBookmark');
+        }
       });
 
       it('should not call logger when error occurs', () => {
         mockBuilder.createBookmark.mockImplementation(() => {
-          throw new Error('Error');
+          throw 'Error';
         });
 
-        expect(() => Core.BookmarkNormalizer.to(createPostUri(), TEST_PUBKY.USER_1)).toThrow();
+        expect(() => Core.BookmarkNormalizer.to(createPostUri(), TEST_PUBKY.USER_1)).toThrow(AppError);
         expect(Libs.Logger.debug).not.toHaveBeenCalled();
       });
     });
@@ -187,8 +210,20 @@ describe('BookmarkNormalizer', () => {
         ['null', INVALID_INPUTS.NULL],
         ['undefined', INVALID_INPUTS.UNDEFINED],
         ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
-      ])('should throw error for %s post URI', (_, invalidUri) => {
-        expect(() => Core.BookmarkNormalizer.to(invalidUri, TEST_PUBKY.USER_1)).toThrow();
+      ])('should throw AppError for %s post URI', (_, invalidUri) => {
+        try {
+          Core.BookmarkNormalizer.to(invalidUri, TEST_PUBKY.USER_1);
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createBookmark');
+          expect(appError.context).toHaveProperty('postUri', invalidUri);
+          expect(appError.context).toHaveProperty('userId', TEST_PUBKY.USER_1);
+        }
       });
 
       /**
