@@ -89,7 +89,9 @@ export function TagInput({
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value.toLowerCase();
+      // Sanitize input: remove banned characters (colons, commas, spaces)
+      const sanitized = Libs.sanitizeTagInput(e.target.value);
+      const value = sanitized.toLowerCase();
       setInputValue(value);
       if (!hideSuggestions) {
         setShowSuggestions(value.trim().length > 0);
