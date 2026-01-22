@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Dexie, { Table } from 'dexie';
 import { indexedDB, IDBKeyRange } from 'fake-indexeddb';
 import * as Core from '@/core';
 import { TagCollection } from './tagCollection';
+import { AppError, DatabaseErrorCode, ErrorCategory, ErrorService } from '@/libs';
 
 type TestTagSchema = Core.TagCollectionModelSchema<string>;
 
@@ -84,5 +85,55 @@ describe('TagCollection', () => {
 
     expect(byId.get('x')?.tags.map((t) => t.label)).toEqual(['x1']);
     expect(byId.get('y')?.tags.map((t) => t.label)).toEqual(['y1', 'y2']);
+  });
+});
+
+describe('TagCollection error handling', () => {
+  let db: Dexie;
+
+  const makeTag = (label: string, taggers: Core.Pubky[] = []): Core.NexusTag => ({
+    label,
+    taggers,
+    taggers_count: taggers.length,
+    relationship: false,
+  });
+
+  beforeEach(async () => {
+    globalThis.indexedDB = indexedDB;
+    globalThis.IDBKeyRange = IDBKeyRange;
+
+    db = new Dexie('tag-collection-error-test');
+    db.version(1).stores({ test_tags: 'id' });
+    await db.open();
+
+    TestTagCollection.table = db.table<TestTagSchema>('test_tags');
+    await TestTagCollection.table.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('bulkSave throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestTagCollection.table, 'bulkPut').mockRejectedValueOnce(new Error('DB error'));
+
+    const tuples: TestTagTuple[] = [
+      ['x', [makeTag('x1')]],
+      ['y', [makeTag('y1')]],
+    ];
+
+    try {
+      await TestTagCollection.bulkSave(tuples);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('bulkSave');
+      expect(appError.context).toMatchObject({ table: 'test_tags', count: 2 });
+      expect(appError.cause).toBeInstanceOf(Error);
+    }
   });
 });

@@ -67,7 +67,7 @@ describe('PostRelationshipsModel', () => {
       };
 
       const result = await Core.PostRelationshipsModel.create(mockPostRelationshipsData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockPostRelationshipsData.id);
     });
 
     it('should find post relationships by id', async () => {
