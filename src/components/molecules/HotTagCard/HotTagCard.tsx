@@ -70,7 +70,7 @@ export function HotTagCard({
 
         {/* Post Count */}
         <Atoms.Typography size="md" className="text-secondary-foreground">
-          {postCount.toLocaleString()} posts
+          {postCount.toLocaleString('en-US')} posts
         </Atoms.Typography>
       </Atoms.Container>
 

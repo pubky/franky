@@ -102,8 +102,6 @@ export class AuthApplication {
    */
   static async logout(data: Core.THomeserverSessionResult) {
     await Core.HomeserverService.logout(data);
-    // Reset the PubkySpecsSingleton to ensure clean state for subsequent sign-ins
-    Core.PubkySpecsSingleton.reset();
   }
 
   /**

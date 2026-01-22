@@ -65,6 +65,13 @@ export function PostInput({
     handleDragLeave,
     handleDragOver,
     handleDrop,
+    // Mention autocomplete
+    mentionUsers,
+    mentionIsOpen,
+    mentionSelectedIndex,
+    setMentionSelectedIndex,
+    handleMentionSelect,
+    handleMentionKeyDown,
   } = Hooks.usePostInput({
     variant,
     postId,
@@ -81,9 +88,15 @@ export function PostInput({
     return Libs.canSubmitPost(variant, content, attachments, isSubmitting, isArticle, articleTitle);
   }, [variant, content, attachments, isSubmitting, isArticle, articleTitle]);
 
-  const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
+  const enterSubmitHandler = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
   });
+  
+  // Combined keyboard handler: mention popover takes priority, then enter submit
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (handleMentionKeyDown(e)) return;
+    enterSubmitHandler(e);
+  };
 
   const isEdit = variant === POST_INPUT_VARIANT.EDIT;
 
@@ -160,18 +173,31 @@ export function PostInput({
         )}
 
         {!isArticle && (
-          <Atoms.Textarea
-            ref={textareaRef}
-            placeholder={displayPlaceholder}
-            className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            value={content}
-            onChange={handleChange}
-            onFocus={handleExpand}
-            onKeyDown={handleKeyDown}
-            maxLength={POST_MAX_CHARACTER_LENGTH}
-            rows={1}
-            disabled={isSubmitting}
-          />
+          <Atoms.Container overrideDefaults className="relative">
+            <Atoms.Textarea
+              ref={textareaRef}
+              placeholder={displayPlaceholder}
+              className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              value={content}
+              onChange={handleChange}
+              onFocus={handleExpand}
+              onKeyDown={handleKeyDown}
+              maxLength={POST_MAX_CHARACTER_LENGTH}
+              rows={1}
+              disabled={isSubmitting}
+              aria-haspopup="listbox"
+            />
+
+            {/* Mention autocomplete popover */}
+            {mentionIsOpen && (
+              <Molecules.MentionPopover
+                users={mentionUsers}
+                selectedIndex={mentionSelectedIndex}
+                onSelect={handleMentionSelect}
+                onHover={setMentionSelectedIndex}
+              />
+            )}
+          </Atoms.Container>
         )}
 
         {!isEdit && (

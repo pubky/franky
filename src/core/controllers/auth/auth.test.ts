@@ -300,11 +300,13 @@ describe('AuthController', () => {
         expect.any(Function), // onProgress callback
       );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
+      // Session stored early with hasProfile: null, then setHasProfile called after bootstrap
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: true,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -332,11 +334,13 @@ describe('AuthController', () => {
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
+      // Session stored early with hasProfile: null, then setHasProfile called after check
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: false,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -410,11 +414,13 @@ describe('AuthController', () => {
         expect.any(Function), // onProgress callback
       );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
+      // Session stored early with hasProfile: null, then setHasProfile called after bootstrap
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: true,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(true);
       expect(result).toBe(true);
     });
 
@@ -443,11 +449,13 @@ describe('AuthController', () => {
       expect(z32FromSessionSpy).toHaveBeenCalledWith({ session: mockSession });
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(initializeSpy).not.toHaveBeenCalled();
+      // Session stored early with hasProfile: null, then setHasProfile called after check
       expect(_authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: false,
+        hasProfile: null,
       });
+      expect(_authStore.setHasProfile).toHaveBeenCalledWith(false);
       expect(result).toBe(true);
     });
 
@@ -677,11 +685,13 @@ describe('AuthController', () => {
         expect.any(Function), // onProgress callback
       );
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
+      // Session stored early with hasProfile: null, then setHasProfile called after bootstrap
       expect(authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: true,
+        hasProfile: null,
       });
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(true);
     });
 
     it('should initialize session without bootstrap if user is not signed up', async () => {
@@ -705,11 +715,13 @@ describe('AuthController', () => {
       expect(userIsSignedUpSpy).toHaveBeenCalledWith({ pubky: mockPubky });
       expect(signInStore.setProfileChecked).toHaveBeenCalledWith(true);
       expect(initializeSpy).not.toHaveBeenCalled();
+      // Session stored early with hasProfile: null, then setHasProfile called after check
       expect(authStore.init).toHaveBeenCalledWith({
         session: mockSession,
         currentUserPubky: mockPubky,
-        hasProfile: false,
+        hasProfile: null,
       });
+      expect(authStore.setHasProfile).toHaveBeenCalledWith(false);
     });
   });
 
@@ -748,6 +760,7 @@ describe('AuthController', () => {
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       const signInStore = createSignInStore();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
@@ -760,6 +773,7 @@ describe('AuthController', () => {
       await AuthController.logout();
 
       expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
+      expect(resetSpy).toHaveBeenCalledOnce();
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(signInStore.reset).toHaveBeenCalled();
@@ -786,6 +800,23 @@ describe('AuthController', () => {
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reset PubkySpecsSingleton even when homeserver logout fails (issue #538)', async () => {
+      vi.spyOn(Core.AuthApplication, 'logout').mockRejectedValue(new Error('Pubky resolution failed'));
+      vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+      vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+      vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
+      vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+
+      await AuthController.logout();
+
+      // PubkySpecsSingleton should be reset even when homeserver logout fails
+      // This ensures users can sign out even when their profile pubky cannot be resolved
+      expect(resetSpy).toHaveBeenCalledOnce();
     });
 
     it('should clear all existing cookies', async () => {
