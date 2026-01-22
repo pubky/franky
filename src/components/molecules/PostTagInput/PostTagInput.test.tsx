@@ -103,6 +103,58 @@ describe('PostTagInput', () => {
   });
 });
 
+describe('PostTagInput - Banned Character Sanitization', () => {
+  it('strips colons from typed input', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'hello:world' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('helloworld');
+  });
+
+  it('strips commas from typed input', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'hello,world' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('helloworld');
+  });
+
+  it('strips spaces from typed input', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'hello world' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('helloworld');
+  });
+
+  it('strips multiple banned characters from typed input', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'hello: world, test' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('helloworldtest');
+  });
+
+  it('sanitizes and lowercases input together', () => {
+    const mockOnChange = vi.fn();
+    render(<PostTagInput onChange={mockOnChange} />);
+
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'BIT:COIN' } });
+
+    expect(mockOnChange).toHaveBeenCalledWith('bitcoin');
+  });
+});
+
 describe('PostTagInput - Snapshots', () => {
   it('matches snapshot with empty state', () => {
     const { container } = render(<PostTagInput />);
