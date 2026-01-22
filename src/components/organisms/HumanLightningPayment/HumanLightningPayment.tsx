@@ -6,6 +6,7 @@ import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useBtcRate } from '@/hooks/useSatUsdRate';
+import { useIsMobile } from '@/hooks';
 import { VerificationHandler } from './HumanLightningPayment.utils';
 import { QRCodeSkeleton, PriceSkeleton } from './HumanLightningPayment.skeleton';
 import type { HumanLightningPaymentProps } from './HumanLightningPayment.types';
@@ -16,6 +17,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
   const [isLoading, setIsLoading] = useState(true);
   const [isPaymentExpired, setIsPaymentExpired] = useState(false);
   const { toast } = Molecules.useToast();
+  const isMobile = useIsMobile();
 
   /**
    * Request a new lightning invoice if the verification is expired or not set.
@@ -66,11 +68,19 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally run only on mount
   }, []);
 
-  function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: 'Invoice copied to clipboard',
-    });
+  async function copyToClipboard(text: string) {
+    try {
+      await Libs.copyToClipboard({ text });
+      if (isMobile) {
+        toast({
+          title: 'Invoice copied to clipboard',
+        });
+      }
+    } catch {
+      toast({
+        title: 'Failed to copy invoice',
+      });
+    }
   }
 
   const isDataAvailable = verification !== null && !isLoading;
