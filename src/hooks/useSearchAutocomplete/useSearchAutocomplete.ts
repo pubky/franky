@@ -38,21 +38,22 @@ export function useSearchAutocomplete({
       setIsSearching(true);
 
       try {
-        // Determine if this is a user ID search
+        // Determine if this is an explicit user ID search (has pk: or pubky prefix)
         const matchedPrefix = USER_ID_PREFIXES.find((prefix) => searchQuery.startsWith(prefix));
-        const isUserIdSearch = Boolean(matchedPrefix);
-        const userIdPrefix = matchedPrefix ? searchQuery.slice(matchedPrefix.length) : '';
+        const isExplicitIdSearch = Boolean(matchedPrefix);
+        const userIdPrefix = matchedPrefix ? searchQuery.slice(matchedPrefix.length) : searchQuery;
 
-        // Check if user ID search has a minimum length
-        const shouldSearchUserId = isUserIdSearch && userIdPrefix.length >= MIN_USER_ID_SEARCH_LENGTH;
+        // Search by user ID if the query (stripped of prefix) is long enough
+        // This works for both explicit prefix searches AND raw pubky input
+        const shouldSearchUserId = userIdPrefix.length >= MIN_USER_ID_SEARCH_LENGTH;
 
         // Prepare parallel API calls
         let tagPromise: Promise<string[]> | null = null;
         let userByNamePromise: Promise<string[]> | null = null;
         let userByIdPromise: Promise<string[]> | null = null;
 
-        // Search tags (skip for user ID searches)
-        if (!isUserIdSearch) {
+        // Search tags (skip for explicit user ID searches)
+        if (!isExplicitIdSearch) {
           tagPromise = Core.SearchController.getTagsByPrefix({
             prefix: searchQuery,
             limit: AUTOCOMPLETE_TAG_LIMIT,
@@ -62,8 +63,8 @@ export function useSearchAutocomplete({
           });
         }
 
-        // Search users by name (always, unless it's a user ID search)
-        if (!isUserIdSearch) {
+        // Search users by name (skip for explicit user ID searches)
+        if (!isExplicitIdSearch) {
           userByNamePromise = Core.SearchController.getUsersByName({
             prefix: searchQuery,
             limit: AUTOCOMPLETE_USER_LIMIT,
@@ -73,7 +74,7 @@ export function useSearchAutocomplete({
           });
         }
 
-        // Search users by ID if prefix search
+        // Search users by ID (works for explicit prefix or raw pubky input)
         if (shouldSearchUserId) {
           userByIdPromise = Core.SearchController.fetchUsersById({
             prefix: userIdPrefix,
