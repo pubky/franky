@@ -114,27 +114,23 @@ describe('AuthApplication', () => {
   });
 
   describe('logout', () => {
-    it('should successfully logout and reset PubkySpecsSingleton', async () => {
+    it('should successfully logout', async () => {
       const mockSession = { signout: vi.fn() } as unknown as Session;
       const params = { session: mockSession };
       const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(undefined);
-      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await Core.AuthApplication.logout(params);
 
       expect(logoutSpy).toHaveBeenCalledWith(params);
-      expect(resetSpy).toHaveBeenCalledOnce();
     });
 
-    it('should propagate error when logout fails and not reset PubkySpecsSingleton', async () => {
+    it('should propagate error when logout fails', async () => {
       const mockSession = { signout: vi.fn() } as unknown as Session;
       const params = { session: mockSession };
       const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockRejectedValue(new Error('Logout failed'));
-      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await expect(Core.AuthApplication.logout(params)).rejects.toThrow('Logout failed');
       expect(logoutSpy).toHaveBeenCalledOnce();
-      expect(resetSpy).not.toHaveBeenCalled();
     });
   });
 

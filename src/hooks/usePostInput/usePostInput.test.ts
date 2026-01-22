@@ -18,6 +18,7 @@ const mockSetArticleTitle = vi.fn();
 const mockReply = vi.fn();
 const mockPost = vi.fn();
 const mockRepost = vi.fn();
+const mockEdit = vi.fn();
 let mockContent = '';
 let mockTags: string[] = [];
 let mockAttachments: File[] = [];
@@ -43,6 +44,7 @@ vi.mock('@/hooks', () => ({
     reply: mockReply,
     post: mockPost,
     repost: mockRepost,
+    edit: mockEdit,
     isSubmitting: mockIsSubmitting,
   })),
   useEmojiInsert: vi.fn(() => vi.fn()),
@@ -75,6 +77,7 @@ describe('usePostInput', () => {
     mockArticleTitle = '';
     mockIsSubmitting = false;
     mockRepost.mockClear();
+    mockEdit.mockClear();
   });
 
   describe('initial state', () => {
@@ -330,6 +333,66 @@ describe('usePostInput', () => {
       });
       expect(mockPost).not.toHaveBeenCalled();
       expect(mockReply).not.toHaveBeenCalled();
+      expect(mockEdit).not.toHaveBeenCalled();
+    });
+
+    it('calls edit method for edit variant with editPostId', async () => {
+      mockContent = 'Updated post content';
+
+      const mockOnSuccess = vi.fn();
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'edit',
+          editPostId: 'post-to-edit-id',
+          onSuccess: mockOnSuccess,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(mockEdit).toHaveBeenCalledWith({
+        editPostId: 'post-to-edit-id',
+        onSuccess: expect.any(Function),
+      });
+      expect(mockPost).not.toHaveBeenCalled();
+      expect(mockReply).not.toHaveBeenCalled();
+      expect(mockRepost).not.toHaveBeenCalled();
+    });
+
+    it('does not submit edit when content is empty', async () => {
+      mockContent = '';
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'edit',
+          editPostId: 'post-to-edit-id',
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(mockEdit).not.toHaveBeenCalled();
+    });
+
+    it('does not submit edit when content is only whitespace', async () => {
+      mockContent = '   \n\t  ';
+
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'edit',
+          editPostId: 'post-to-edit-id',
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      expect(mockEdit).not.toHaveBeenCalled();
     });
 
     it('allows repost with empty content', async () => {
@@ -548,6 +611,31 @@ describe('usePostInput', () => {
       expect(mockPrependPosts).not.toHaveBeenCalled();
       // But onSuccess should still be called
       expect(mockOnSuccess).toHaveBeenCalledWith('created-reply-id');
+    });
+
+    it('calls onSuccess but does NOT prependPosts for edit variant', async () => {
+      mockContent = 'Updated post content';
+      mockEdit.mockImplementation(async ({ onSuccess }) => {
+        onSuccess('edited-post-id');
+      });
+
+      const mockOnSuccess = vi.fn();
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'edit',
+          editPostId: 'post-to-edit-id',
+          onSuccess: mockOnSuccess,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.handleSubmit();
+      });
+
+      // Edit should NOT prepend to timeline
+      expect(mockPrependPosts).not.toHaveBeenCalled();
+      // But onSuccess should still be called
+      expect(mockOnSuccess).toHaveBeenCalledWith('edited-post-id');
     });
   });
 
@@ -1870,6 +1958,146 @@ describe('usePostInput', () => {
       });
 
       expect(mockSetAttachments).toHaveBeenCalled();
+    });
+  });
+
+  describe('handlePaste', () => {
+    it('extracts files from clipboard and adds them as attachments', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.png', { type: 'image/png' });
+      const pasteEvent = {
+        clipboardData: {
+          items: [{ kind: 'file', getAsFile: () => file }],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).toHaveBeenCalled();
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('does not prevent default when pasting text (no files)', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: {
+          items: [{ kind: 'string', getAsFile: () => null }],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+    });
+
+    it('handles multiple files from clipboard', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file1 = new File(['test1'], 'test1.png', { type: 'image/png' });
+      const file2 = new File(['test2'], 'test2.jpg', { type: 'image/jpeg' });
+      const pasteEvent = {
+        clipboardData: {
+          items: [
+            { kind: 'file', getAsFile: () => file1 },
+            { kind: 'file', getAsFile: () => file2 },
+          ],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).toHaveBeenCalled();
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('handles null clipboardData gracefully', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: null,
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      expect(() => {
+        act(() => {
+          result.current.handlePaste(pasteEvent);
+        });
+      }).not.toThrow();
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it('handles null items gracefully', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: {
+          items: null,
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      expect(() => {
+        act(() => {
+          result.current.handlePaste(pasteEvent);
+        });
+      }).not.toThrow();
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it('ignores items where getAsFile returns null', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: {
+          items: [{ kind: 'file', getAsFile: () => null }],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+      expect(mockSetAttachments).not.toHaveBeenCalled();
     });
   });
 });

@@ -79,6 +79,8 @@ describe('useSearchAutocomplete', () => {
           map.set(userId, { id: 'pk:user1', name: 'User One', image: 'avatar1.jpg' } as Core.NexusUserDetails);
         } else if (userId === 'pk:user2') {
           map.set(userId, { id: 'pk:user2', name: 'User Two', image: null } as Core.NexusUserDetails);
+        } else if (userId === 'pk:user3') {
+          map.set(userId, { id: 'pk:user3', name: 'User Three', image: null } as Core.NexusUserDetails);
         } else if (userId === 'pk:abc123') {
           map.set(userId, { id: 'pk:abc123', name: 'ABC User', image: 'avatar2.jpg' } as Core.NexusUserDetails);
         }
@@ -91,6 +93,9 @@ describe('useSearchAutocomplete', () => {
       }
       if (userId === 'pk:user2') {
         return Promise.resolve({ id: 'pk:user2', name: 'User Two', image: null });
+      }
+      if (userId === 'pk:user3') {
+        return Promise.resolve({ id: 'pk:user3', name: 'User Three', image: null });
       }
       if (userId === 'pk:abc123') {
         return Promise.resolve({ id: 'pk:abc123', name: 'ABC User', image: 'avatar2.jpg' });
@@ -157,7 +162,8 @@ describe('useSearchAutocomplete', () => {
 
     expect(mockGetTagsByPrefix).toHaveBeenCalledWith({ prefix: 'tech', limit: 3 });
     expect(mockGetUsersByName).toHaveBeenCalledWith({ prefix: 'tech', limit: 10 });
-    expect(mockGetManyDetails).toHaveBeenCalledWith({ userIds: ['pk:user1', 'pk:user2'] });
+    // Should also search by user ID for non-prefixed queries
+    expect(mockFetchUsersById).toHaveBeenCalledWith({ prefix: 'tech', limit: 10 });
     expect(result.current.tags).toEqual([{ name: 'tech' }, { name: 'technology' }, { name: 'techno' }]);
     expect(result.current.users).toEqual([
       { id: 'pk:user1', name: 'User One', avatarUrl: 'https://example.com/pk:user1/avatar' },
@@ -181,9 +187,31 @@ describe('useSearchAutocomplete', () => {
     });
 
     expect(mockFetchUsersById).toHaveBeenCalledWith({ prefix: 'abc', limit: 10 });
-    // Should not search by name or tags when doing ID search
+    // Should not search by name or tags when doing explicit ID search with prefix
     expect(mockGetUsersByName).not.toHaveBeenCalled();
     expect(mockGetTagsByPrefix).not.toHaveBeenCalled();
+  });
+
+  it('searches by user ID AND name AND tags for non-prefixed queries', async () => {
+    renderHook(() => useSearchAutocomplete({ query: 'abc123' }));
+
+    // Fast-forward past debounce and run all pending timers
+    await act(async () => {
+      vi.advanceTimersByTime(AUTOCOMPLETE_DEBOUNCE_MS);
+      await vi.runOnlyPendingTimersAsync();
+    });
+
+    // Wait for promises to resolve
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // Should search by ID (using the raw query as prefix)
+    expect(mockFetchUsersById).toHaveBeenCalledWith({ prefix: 'abc123', limit: 10 });
+    // Should also search by name and tags
+    expect(mockGetUsersByName).toHaveBeenCalledWith({ prefix: 'abc123', limit: 10 });
+    expect(mockGetTagsByPrefix).toHaveBeenCalledWith({ prefix: 'abc123', limit: 3 });
   });
 
   it('does not search by ID if prefix is too short', async () => {
@@ -204,7 +232,8 @@ describe('useSearchAutocomplete', () => {
     expect(mockFetchUsersById).not.toHaveBeenCalled();
   });
 
-  it('deduplicates user results', async () => {
+  it('deduplicates user results from ID and name searches', async () => {
+    // Both searches return pk:user1, demonstrating deduplication
     mockGetUsersByName.mockResolvedValue(['pk:user1', 'pk:user2']);
     mockFetchUsersById.mockResolvedValue(['pk:user1', 'pk:user3']);
 
@@ -222,10 +251,11 @@ describe('useSearchAutocomplete', () => {
       await Promise.resolve();
     });
 
-    // Set mock user details map
+    // Set mock user details map for all users (including user3 from ID search)
     const userDetailsMap = new Map<Core.Pubky, Core.NexusUserDetails>();
     userDetailsMap.set('pk:user1', { id: 'pk:user1', name: 'User One', image: null } as Core.NexusUserDetails);
     userDetailsMap.set('pk:user2', { id: 'pk:user2', name: 'User Two', image: null } as Core.NexusUserDetails);
+    userDetailsMap.set('pk:user3', { id: 'pk:user3', name: 'User Three', image: null } as Core.NexusUserDetails);
     setMockUserDetailsMap(userDetailsMap);
 
     // Re-render to trigger useLiveQuery update
@@ -234,10 +264,13 @@ describe('useSearchAutocomplete', () => {
       await Promise.resolve();
     });
 
-    // When searching by name, user2 should be there
+    // Should have all 3 users (pk:user1 deduplicated, appearing only once)
     const userIds = result.current.users.map((u) => u.id);
     expect(userIds).toContain('pk:user1');
     expect(userIds).toContain('pk:user2');
+    expect(userIds).toContain('pk:user3');
+    // Verify no duplicates
+    expect(userIds.filter((id) => id === 'pk:user1').length).toBe(1);
   });
 
   it('returns empty arrays on API error', async () => {

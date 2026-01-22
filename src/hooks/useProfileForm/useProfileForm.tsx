@@ -367,7 +367,14 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   ]);
 
   const handleCancel = useCallback(() => {
-    router.push(App.SETTINGS_ROUTES.ACCOUNT);
+    // Check if there's navigation history to go back to
+    // history.length > 1 indicates the user has navigation history
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back();
+    } else {
+      // Fallback to settings account page if no history (direct URL access)
+      router.push(App.SETTINGS_ROUTES.ACCOUNT);
+    }
   }, [router]);
 
   // Computed values

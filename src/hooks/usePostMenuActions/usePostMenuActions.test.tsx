@@ -62,6 +62,7 @@ vi.mock('@/libs', async () => {
     FileText: vi.fn(() => <span>FileText</span>),
     MegaphoneOff: vi.fn(() => <span>MegaphoneOff</span>),
     Flag: vi.fn(() => <span>Flag</span>),
+    Edit: vi.fn(() => <span>Edit</span>),
     Trash: vi.fn(() => <span>Trash</span>),
     isAppError: mockIsAppError,
   };
@@ -246,6 +247,13 @@ describe('usePostMenuActions', () => {
       expect(reportItem?.disabled).toBeUndefined();
     });
 
+    it('does not include edit action for other user posts', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId, { onReportClick: vi.fn() }));
+
+      const editItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.EDIT);
+      expect(editItem).toBeUndefined();
+    });
+
     it('does not include delete action for other user posts', () => {
       const { result } = renderHook(() => usePostMenuActions(mockPostId, { onReportClick: vi.fn() }));
 
@@ -280,6 +288,33 @@ describe('usePostMenuActions', () => {
 
       const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
       expect(reportItem).toBeUndefined();
+    });
+
+    it('includes edit action', () => {
+      const mockOnEditClick = vi.fn();
+      const { result } = renderHook(() =>
+        usePostMenuActions(mockPostId, { onReportClick: vi.fn(), onEditClick: mockOnEditClick }),
+      );
+
+      const editItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.EDIT);
+      expect(editItem).toBeDefined();
+      expect(editItem?.label).toBe('Edit post');
+      expect(editItem?.variant).toBe('default');
+    });
+
+    it('calls onEditClick on edit action click', async () => {
+      const mockOnEditClick = vi.fn();
+      const { result } = renderHook(() =>
+        usePostMenuActions(mockPostId, { onReportClick: vi.fn(), onEditClick: mockOnEditClick }),
+      );
+
+      const editItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.EDIT);
+
+      await act(async () => {
+        await editItem?.onClick();
+      });
+
+      expect(mockOnEditClick).toHaveBeenCalled();
     });
 
     it('includes delete action', () => {
@@ -497,6 +532,7 @@ describe('usePostMenuActions', () => {
         POST_MENU_ACTION_IDS.COPY_PUBKY,
         POST_MENU_ACTION_IDS.COPY_LINK,
         POST_MENU_ACTION_IDS.COPY_TEXT,
+        POST_MENU_ACTION_IDS.EDIT,
         POST_MENU_ACTION_IDS.DELETE,
       ]);
     });

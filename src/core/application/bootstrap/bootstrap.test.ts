@@ -282,6 +282,26 @@ describe('BootstrapApplication', () => {
       const notifications = [createMockNotification()];
       const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
 
+      // Create progress callback mock
+      const onProgress = vi.fn();
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY), onProgress);
+
+      assertCommonCalls(mocks, bootstrapData, notifications);
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
+
+      // Verify progress callback is called with correct steps (Controller handles store updates)
+      expect(onProgress).toHaveBeenCalledWith('bootstrapFetched');
+      expect(onProgress).toHaveBeenCalledWith('dataPersisted');
+      expect(onProgress).toHaveBeenCalledWith('homeserverSynced');
+    });
+
+    it('should work without progress callback', async () => {
+      const bootstrapData = createMockBootstrapData();
+      const notifications = [createMockNotification()];
+      const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
+
+      // Call without progress callback
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       assertCommonCalls(mocks, bootstrapData, notifications);

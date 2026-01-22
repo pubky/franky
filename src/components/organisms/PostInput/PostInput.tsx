@@ -13,18 +13,22 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 import { PostInputExpandableSection } from '../PostInputExpandableSection';
 import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
+import type { ArticleJSON } from '@/hooks';
 
 export function PostInput({
   dataCy,
   variant,
   postId,
   originalPostId,
+  editPostId,
   onSuccess,
   placeholder,
   showThreadConnector = false,
   expanded = false,
   onContentChange,
   onArticleModeChange,
+  editContent,
+  editIsArticle,
 }: PostInputProps) {
   const {
     textareaRef,
@@ -32,13 +36,16 @@ export function PostInput({
     containerRef,
     fileInputRef,
     content,
+    setContent,
     tags,
     setTags,
     attachments,
     setAttachments,
     isArticle,
+    setIsArticle,
     handleArticleClick,
     articleTitle,
+    setArticleTitle,
     handleArticleTitleChange,
     handleArticleBodyChange,
     isDragging,
@@ -58,10 +65,19 @@ export function PostInput({
     handleDragLeave,
     handleDragOver,
     handleDrop,
+    handlePaste,
+    // Mention autocomplete
+    mentionUsers,
+    mentionIsOpen,
+    mentionSelectedIndex,
+    setMentionSelectedIndex,
+    handleMentionSelect,
+    handleMentionKeyDown,
   } = Hooks.usePostInput({
     variant,
     postId,
     originalPostId,
+    editPostId,
     onSuccess,
     placeholder,
     expanded,
@@ -73,9 +89,41 @@ export function PostInput({
     return Libs.canSubmitPost(variant, content, attachments, isSubmitting, isArticle, articleTitle);
   }, [variant, content, attachments, isSubmitting, isArticle, articleTitle]);
 
-  const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
+  const enterSubmitHandler = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
   });
+
+  // Combined keyboard handler: mention popover takes priority, then enter submit
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (handleMentionKeyDown(e)) return;
+    enterSubmitHandler(e);
+  };
+
+  const isEdit = variant === POST_INPUT_VARIANT.EDIT;
+
+  const { toast } = Molecules.useToast();
+
+  React.useEffect(() => {
+    if (isEdit) {
+      if (editIsArticle) {
+        setIsArticle(true);
+
+        try {
+          const parsed = JSON.parse(editContent) as ArticleJSON;
+          setArticleTitle(parsed.title || '');
+          setContent(parsed.body || '');
+        } catch {
+          toast({
+            title: 'Error',
+            description: 'Failed to parse article content',
+          });
+        }
+      } else {
+        setContent(editContent);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
+  }, [variant, editContent, editIsArticle]);
 
   return (
     <Atoms.Container
@@ -86,10 +134,10 @@ export function PostInput({
         isDragging ? 'border-brand' : 'border-input',
       )}
       onClick={handleExpand}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      onDragEnter={isEdit ? undefined : handleDragEnter}
+      onDragLeave={isEdit ? undefined : handleDragLeave}
+      onDragOver={isEdit ? undefined : handleDragOver}
+      onDrop={isEdit ? undefined : handleDrop}
     >
       {/* Drag overlay */}
       {isDragging && (
@@ -106,6 +154,7 @@ export function PostInput({
         {isArticle && (
           <Atoms.Input
             placeholder="Article Title"
+            defaultValue={articleTitle}
             onChange={handleArticleTitleChange}
             maxLength={ARTICLE_TITLE_MAX_CHARACTER_LENGTH}
             disabled={isSubmitting}
@@ -125,33 +174,50 @@ export function PostInput({
         )}
 
         {!isArticle && (
-          <Atoms.Textarea
-            ref={textareaRef}
-            placeholder={displayPlaceholder}
-            className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            value={content}
-            onChange={handleChange}
-            onFocus={handleExpand}
-            onKeyDown={handleKeyDown}
-            maxLength={POST_MAX_CHARACTER_LENGTH}
-            rows={1}
-            disabled={isSubmitting}
-          />
+          <Atoms.Container overrideDefaults className="relative">
+            <Atoms.Textarea
+              ref={textareaRef}
+              placeholder={displayPlaceholder}
+              className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              value={content}
+              onChange={handleChange}
+              onFocus={handleExpand}
+              onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
+              maxLength={POST_MAX_CHARACTER_LENGTH}
+              rows={1}
+              disabled={isSubmitting}
+              aria-haspopup="listbox"
+            />
+
+            {/* Mention autocomplete popover */}
+            {mentionIsOpen && (
+              <Molecules.MentionPopover
+                users={mentionUsers}
+                selectedIndex={mentionSelectedIndex}
+                onSelect={handleMentionSelect}
+                onHover={setMentionSelectedIndex}
+              />
+            )}
+          </Atoms.Container>
         )}
 
-        <PostInputAttachments
-          ref={fileInputRef}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          handleFilesAdded={handleFilesAdded}
-          isSubmitting={isSubmitting}
-          isArticle={isArticle}
-          handleFileClick={handleFileClick}
-        />
+        {!isEdit && (
+          <PostInputAttachments
+            ref={fileInputRef}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            handleFilesAdded={handleFilesAdded}
+            isSubmitting={isSubmitting}
+            isArticle={isArticle}
+            handleFileClick={handleFileClick}
+          />
+        )}
 
         {isArticle && (
           <Molecules.MarkdownEditor
             ref={markdownEditorRef}
+            autoFocus
             markdown={content}
             onChange={handleArticleBodyChange}
             readOnly={isSubmitting}

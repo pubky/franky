@@ -71,7 +71,7 @@ describe('usePostHeaderVisibility', () => {
     expect(result.current.shouldShowPostHeader).toBe(false);
   });
 
-  it('shows PostHeader for quote repost (with text content) by current user', () => {
+  it('hides RepostHeader for quote repost (with text content) by current user', () => {
     mockUsePostDetails.mockReturnValue({
       postDetails: createMockPostDetails({ content: 'This is a quote repost' }),
       isLoading: false,
@@ -87,11 +87,12 @@ describe('usePostHeaderVisibility', () => {
 
     const { result } = renderHook(() => usePostHeaderVisibility('me:quote-repost-1'));
 
-    expect(result.current.showRepostHeader).toBe(true);
+    // Quote reposts should not show "You reposted" header
+    expect(result.current.showRepostHeader).toBe(false);
     expect(result.current.shouldShowPostHeader).toBe(true);
   });
 
-  it('shows PostHeader for repost with attachments but no text by current user', () => {
+  it('hides RepostHeader for repost with attachments but no text by current user', () => {
     mockUsePostDetails.mockReturnValue({
       postDetails: {
         id: 'me:repost-with-attachments-1',
@@ -114,7 +115,8 @@ describe('usePostHeaderVisibility', () => {
 
     const { result } = renderHook(() => usePostHeaderVisibility('me:repost-with-attachments-1'));
 
-    expect(result.current.showRepostHeader).toBe(true);
+    // Reposts with attachments should not show "You reposted" header
+    expect(result.current.showRepostHeader).toBe(false);
     expect(result.current.shouldShowPostHeader).toBe(true);
   });
 
@@ -165,7 +167,7 @@ describe('usePostHeaderVisibility', () => {
     expect(result.current.shouldShowPostHeader).toBe(true);
   });
 
-  it('shows PostHeader when postDetails is loading (undefined)', () => {
+  it('hides RepostHeader when postDetails is loading (undefined)', () => {
     mockUsePostDetails.mockReturnValue({
       postDetails: undefined,
       isLoading: true,
@@ -181,12 +183,12 @@ describe('usePostHeaderVisibility', () => {
 
     const { result } = renderHook(() => usePostHeaderVisibility('me:loading-repost-1'));
 
-    // When loading, show header to avoid layout shift
-    expect(result.current.showRepostHeader).toBe(true);
+    // When loading, hide RepostHeader to avoid layout shift (we don't know if it has content yet)
+    expect(result.current.showRepostHeader).toBe(false);
     expect(result.current.shouldShowPostHeader).toBe(true);
   });
 
-  it('shows PostHeader when postDetails is null', () => {
+  it('hides RepostHeader when postDetails is null', () => {
     mockUsePostDetails.mockReturnValue({
       postDetails: null,
       isLoading: false,
@@ -202,8 +204,8 @@ describe('usePostHeaderVisibility', () => {
 
     const { result } = renderHook(() => usePostHeaderVisibility('me:null-repost-1'));
 
-    // When null, show header to avoid layout shift
-    expect(result.current.showRepostHeader).toBe(true);
+    // When null, hide RepostHeader (we can't determine content)
+    expect(result.current.showRepostHeader).toBe(false);
     expect(result.current.shouldShowPostHeader).toBe(true);
   });
 });
