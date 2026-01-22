@@ -7,6 +7,7 @@ import type {
   FormatPublicKeyProps,
   GetDisplayTagsOptions,
 } from './utils.types';
+import type { PostInputVariant } from '@/organisms';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -669,7 +670,7 @@ export function sanitizeTagInput(value: string): string {
 /**
  * Determines if a post can be submitted based on variant, content, attachments, submission state, and article options.
  *
- * @param variant - The post input variant ('post', 'reply', or 'repost')
+ * @param variant - The post input variant ('post', 'reply', 'repost', or 'edit')
  * @param content - The text content of the post
  * @param attachments - Array of attached files
  * @param isSubmitting - Whether a submission is currently in progress
@@ -692,7 +693,7 @@ export function sanitizeTagInput(value: string): string {
  * canSubmitPost('post', 'Content', [], false, true, '') // false (article without title)
  */
 export function canSubmitPost(
-  variant: 'post' | 'reply' | 'repost',
+  variant: PostInputVariant,
   content: string,
   attachments: File[],
   isSubmitting: boolean,
@@ -708,6 +709,9 @@ export function canSubmitPost(
   if (isArticle) {
     return !!content.trim() && !!articleTitle?.trim();
   }
+
+  // Edit mode requires content to submit
+  if (variant === 'edit') return !!content.trim();
 
   return Boolean(content.trim()) || attachments.length > 0;
 }

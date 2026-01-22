@@ -42,6 +42,7 @@ export function Human() {
               setState(States.Payment);
             }
           }}
+          onInviteCodeClick={() => setState(States.InviteCode)}
           onDevMode={async (variant) => {
             if (variant === 'inviteCode') {
               setState(States.InviteCode);

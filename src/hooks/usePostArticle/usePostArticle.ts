@@ -4,6 +4,7 @@ import type { PostDetailsModel } from '@/core';
 import { useEffect, useState } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
+import type { ArticleJSON } from './usePostArticle.types';
 
 interface CoverImage {
   src: string;
@@ -52,7 +53,7 @@ export function usePostArticle({
 
   useEffect(() => {
     try {
-      const parsed = JSON.parse(content) as { title: string; body: string };
+      const parsed = JSON.parse(content) as ArticleJSON;
       setTitle(parsed.title || '');
       setBody(parsed.body || '');
     } catch {

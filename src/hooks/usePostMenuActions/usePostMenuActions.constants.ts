@@ -9,6 +9,7 @@ export const POST_MENU_ACTION_IDS = {
   COPY_TEXT: 'copy-text',
   MUTE: 'mute',
   REPORT: 'report',
+  EDIT: 'edit',
   DELETE: 'delete',
 } as const;
 
