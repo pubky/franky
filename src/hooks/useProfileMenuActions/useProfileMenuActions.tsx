@@ -4,7 +4,7 @@ import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import { PROFILE_ROUTES } from '@/app/routes';
-import { PROFILE_MENU_ACTION_IDS, PROFILE_MENU_ACTION_VARIANTS } from './useProfileMenuActions.constants';
+import { PROFILE_MENU_ACTION_IDS } from './useProfileMenuActions.constants';
 import type { UseProfileMenuActionsResult, ProfileMenuActionItem } from './useProfileMenuActions.types';
 
 /**
@@ -54,7 +54,6 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
         });
       }
     },
-    variant: PROFILE_MENU_ACTION_VARIANTS.DEFAULT,
     disabled: isFollowLoading || isUserLoading(userId),
   });
 
@@ -73,7 +72,6 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
         });
       }
     },
-    variant: PROFILE_MENU_ACTION_VARIANTS.DEFAULT,
   });
 
   // Copy profile link
@@ -91,7 +89,6 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
         });
       }
     },
-    variant: PROFILE_MENU_ACTION_VARIANTS.DEFAULT,
   });
 
   // Mute/Unmute
@@ -113,7 +110,6 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
         });
       }
     },
-    variant: PROFILE_MENU_ACTION_VARIANTS.DEFAULT,
     disabled: isMuteLoading || isMuteUserLoading(userId),
   });
 
