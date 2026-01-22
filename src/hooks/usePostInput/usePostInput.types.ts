@@ -1,6 +1,7 @@
 import type { RefObject } from 'react';
 import { type MDXEditorProps, type MDXEditorMethods } from '@mdxeditor/editor';
 import type { PostInputVariant } from '@/organisms/PostInput/PostInput.types';
+import type { AutocompleteUserData } from '@/hooks/useUserDetailsFromIds';
 
 export interface UsePostInputOptions {
   /** Variant determines if this is a reply, repost, or a new post */
@@ -45,6 +46,12 @@ export interface UsePostInputReturn {
   showEmojiPicker: boolean;
   setShowEmojiPicker: (show: boolean) => void;
 
+  // Mention autocomplete state
+  mentionUsers: AutocompleteUserData[];
+  mentionIsOpen: boolean;
+  mentionSelectedIndex: number | null;
+  setMentionSelectedIndex: (index: number | null) => void;
+
   // Derived values
   hasContent: boolean;
   displayPlaceholder: string;
@@ -64,4 +71,6 @@ export interface UsePostInputReturn {
   handleDragLeave: (e: React.DragEvent) => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent) => void;
+  handleMentionSelect: (userId: string) => void;
+  handleMentionKeyDown: (e: React.KeyboardEvent) => boolean;
 }
