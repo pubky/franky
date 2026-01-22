@@ -17,7 +17,7 @@ import type {
  *
  * Hook for generating menu items for post actions menu.
  * Returns a list of menu items based on post ownership, post type, and user relationships.
- * Handles follow/unfollow, copy actions (pubky, link, text), mute (disabled), report, and delete.
+ * Handles follow/unfollow, copy actions (pubky, link, text), mute, report, and delete.
  *
  * @param postId - Composite post ID in format "author:postId"
  * @param options - Optional configuration including callbacks
@@ -34,6 +34,8 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   const { isFollowing, isLoading: isFollowingLoading } = Hooks.useIsFollowing(postAuthorId);
 
   const { toggleFollow, isLoading: isFollowLoading, isUserLoading } = Hooks.useFollowUser();
+  const { toggleMute, isLoading: isMuteLoading, isUserLoading: isMuteUserLoading } = Hooks.useMuteUser();
+  const { isMuted } = Hooks.useMutedUsers();
   const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
   const { copyToClipboard: copyPubky } = Hooks.useCopyToClipboard({
     successTitle: 'Pubky copied to clipboard',
@@ -46,6 +48,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   });
 
   const isOwnPost = currentUserPubky === postAuthorId;
+  const isUserMuted = isMuted(postAuthorId);
   const rawUsername = authorProfile?.name || postAuthorId;
   const username = Libs.truncateString(rawUsername, 15);
   const isArticle = postDetails?.kind === 'long';
@@ -130,11 +133,24 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   if (!isOwnPost) {
     menuItems.push({
       id: POST_MENU_ACTION_IDS.MUTE,
-      label: `Mute ${username}`,
-      icon: Libs.MegaphoneOff,
-      onClick: () => {},
+      label: `${isUserMuted ? 'Unmute' : 'Mute'} ${username}`,
+      icon: isUserMuted ? Libs.Megaphone : Libs.MegaphoneOff,
+      onClick: async () => {
+        try {
+          await toggleMute(postAuthorId, isUserMuted);
+          Molecules.toast({
+            title: isUserMuted ? 'User unmuted' : 'User muted',
+            description: `${username} has been ${isUserMuted ? 'unmuted' : 'muted'}.`,
+          });
+        } catch (error) {
+          Molecules.toast({
+            title: 'Error',
+            description: Libs.isAppError(error) ? error.message : 'Failed to update mute status',
+          });
+        }
+      },
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
-      disabled: true,
+      disabled: isMuteLoading || isMuteUserLoading(postAuthorId),
     });
 
     menuItems.push({
