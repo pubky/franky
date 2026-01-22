@@ -402,7 +402,12 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = CheckForNewPosts.No, waitForNewPosts = WaitForNewPosts.No) => {
+const findPostInFeed = (
+  postIdx = 0,
+  filterText?: string,
+  checkForNewPosts = CheckForNewPosts.No,
+  waitForNewPosts = WaitForNewPosts.No,
+) => {
   var filteredPosts: JQuery<HTMLElement>;
   // find the post in the timeline
   return cy
@@ -427,10 +432,10 @@ const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = Che
         cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
         // Recursively call findPostInFeed without checking for new posts
         return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
-      };
-      
+      }
+
       // Post not found - if waitForNewPosts is enabled, wait for new posts and try again
-      if(waitForNewPosts) {
+      if (waitForNewPosts) {
         cy.log(`Waiting for new posts to appear`);
         cy.wait(500);
         return findPostInFeed(postIdx, filterText, checkForNewPosts, WaitForNewPosts.No);
@@ -449,9 +454,12 @@ Cypress.Commands.add('findFirstPostInFeed', (checkForNewPosts = CheckForNewPosts
 });
 
 // useful for finding a specific post by text
-Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkForNewPosts = CheckForNewPosts.No, waitForNewPosts = WaitForNewPosts.No) => {
-  return findPostInFeed(0, filterText, checkForNewPosts, waitForNewPosts);
-});
+Cypress.Commands.add(
+  'findFirstPostInFeedFiltered',
+  (filterText, checkForNewPosts = CheckForNewPosts.No, waitForNewPosts = WaitForNewPosts.No) => {
+    return findPostInFeed(0, filterText, checkForNewPosts, waitForNewPosts);
+  },
+);
 
 // useful for finding a specific post by index with optional filter text
 Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkForNewPosts = CheckForNewPosts.No) => {

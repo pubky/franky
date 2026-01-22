@@ -179,7 +179,7 @@ describe('posts', () => {
 
     latestPostInFeedContentEq(postContent);
 
-    deletePost({type: PostOrReply.Post});
+    deletePost({ type: PostOrReply.Post });
 
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', postContent);
 
@@ -318,7 +318,8 @@ describe('posts', () => {
 
     // unbookmark both posts
     cy.get('[data-cy="timeline-posts"]')
-      .children().then(($posts) => {
+      .children()
+      .then(($posts) => {
         cy.wrap($posts.slice(0, 2)).each(($post) => {
           cy.wrap($post).find('[data-cy="post-bookmark-btn"]').click();
         });
@@ -341,7 +342,7 @@ describe('posts', () => {
       cy.contains('[data-cy="post-text"]', postContent).should('be.visible');
     });
 
-    deletePost({type: PostOrReply.Post});
+    deletePost({ type: PostOrReply.Post });
 
     cy.findFirstPostInFeed().within(() => {
       cy.contains('[data-cy="post-text"]', postContent).should('be.visible');
@@ -391,7 +392,8 @@ describe('posts', () => {
     });
   });
 
-  it('cannot see reply of a deleted post in feed', () => {
+  // used to be 'cannot' be decided to allow replies to show when a post is deleted
+  it('can see reply of a deleted post in feed', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
 
@@ -404,7 +406,9 @@ describe('posts', () => {
 
     deletePost({ type: PostOrReply.Post });
 
-    cy.get('[data-cy="timeline-posts"]').should('not.contain.text', replyContent);
+    cy.findPostInFeed(0, replyContent, CheckForNewPosts.Yes);
+
+    cy.get('[data-cy="timeline-posts"]').should('contain.text', replyContent);
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', postContent);
   });
 
