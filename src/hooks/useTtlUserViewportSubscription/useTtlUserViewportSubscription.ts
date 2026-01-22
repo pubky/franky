@@ -74,9 +74,9 @@ export function useTtlUserViewportSubscription({
   const unsubscribe = useCallback(() => {
     const subscription = currentSubscriptionRef.current;
     if (!subscription) return;
-    
+
     const coordinator = Core.TtlCoordinator.getInstance();
-    
+
     console.warn('unsubscribe USER for TTL tracking', subscription);
     // Unsubscribe user
     coordinator.unsubscribeUser({ pubky: subscription as Core.Pubky });
@@ -87,10 +87,13 @@ export function useTtlUserViewportSubscription({
   // Setup IntersectionObserver
   useEffect(() => {
     console.warn('[useTtlUserViewportSubscription] useEffect running', { element: !!element, pubky });
-    
+
     // Skip if no element or no pubky
     if (!element || !pubky) {
-      console.warn('[useTtlUserViewportSubscription] Skipping - missing element or pubky', { element: !!element, pubky });
+      console.warn('[useTtlUserViewportSubscription] Skipping - missing element or pubky', {
+        element: !!element,
+        pubky,
+      });
       return;
     }
 
