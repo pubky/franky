@@ -5,13 +5,13 @@ import 'cypress-slow-down/commands';
 import {
   latestPostInFeedContentEq,
   createQuickPost,
-  waitForFeedToLoad,
   createPostFromDialog,
   deletePost,
   replyToPost,
   repostPost,
   MAX_POST_LENGTH,
   addImage,
+  PostOrReply,
 } from '../support/posts';
 import { defaultMs } from '../support/slow-down';
 import { BackupType, CheckForNewPosts, HasBackedUp } from '../support/types/enums';
@@ -35,7 +35,6 @@ describe('posts', () => {
     cy.location('pathname').then((currentPath) => {
       if (currentPath !== '/home') {
         cy.signInWithEncryptedFile(backupDownloadFilePath(username));
-        waitForFeedToLoad();
       }
     });
   });
@@ -101,7 +100,7 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  it.only('can post with image upload', () => {
+  it('can post with image upload', () => {
     const postContent = `I can post with an image! ${Date.now()}`;
 
     cy.get('[data-cy="home-post-input"]').within(() => {
@@ -158,7 +157,6 @@ describe('posts', () => {
     );
     cy.signOut(HasBackedUp.Yes);
     cy.signInWithEncryptedFile(backupDownloadFilePath(username));
-    waitForFeedToLoad();
 
     cy.get(`@${pubkyAlias}`).then((pubky) => {
       const pubkyText = String(pubky);
@@ -181,12 +179,12 @@ describe('posts', () => {
 
     latestPostInFeedContentEq(postContent);
 
-    deletePost({});
+    deletePost({type: PostOrReply.Post});
 
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', postContent);
 
+    // Reload and check post is still deleted
     cy.reload();
-    waitForFeedToLoad();
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', postContent);
   });
 
@@ -199,13 +197,12 @@ describe('posts', () => {
 
     cy.signOut(HasBackedUp.Yes);
     cy.signInWithEncryptedFile(backupDownloadFilePath(username));
-    waitForFeedToLoad();
 
     cy.findPostInFeed(0, postContent, CheckForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-more-btn"]').click();
-      cy.get('[data-cy="post-menu-action-copy-link"]').should('be.visible');
-      cy.get('[data-cy="post-menu-action-delete"]').should('not.exist');
     });
+    cy.get('[data-cy="post-menu-action-copy-pubky"]').should('be.visible');
+    cy.get('[data-cy="post-menu-action-delete"]').should('not.exist');
   });
 
   it('can tag whilst creating post', () => {
@@ -225,7 +222,7 @@ describe('posts', () => {
     cy.findFirstPostInFeed().within(() => {
       cy.get('[data-cy="post-text"]').should('contain.text', postContent);
       tags.forEach((tag) => {
-        cy.contains('button', tag).should('be.visible').should('have.attr', 'data-state', 'on');
+        cy.contains('button', tag).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
       });
     });
   });
@@ -253,7 +250,6 @@ describe('posts', () => {
     });
 
     cy.reload();
-    waitForFeedToLoad();
 
     cy.findFirstPostInFeed().within(() => {
       [tag1, tag2, tag3].forEach((tag) => {
@@ -264,7 +260,6 @@ describe('posts', () => {
     });
 
     cy.reload();
-    waitForFeedToLoad();
 
     cy.findFirstPostInFeed().within(() => {
       cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
@@ -317,7 +312,6 @@ describe('posts', () => {
 
     cy.get('a[href="/bookmarks"]').first().click();
     cy.location('pathname').should('eq', '/bookmarks');
-    waitForFeedToLoad();
 
     cy.get('[data-cy="timeline-posts"]').should('contain.text', postContent1);
     cy.get('[data-cy="timeline-posts"]').should('contain.text', postContent2);
@@ -345,7 +339,7 @@ describe('posts', () => {
       cy.contains('[data-cy="post-text"]', postContent).should('be.visible');
     });
 
-    deletePost({});
+    deletePost({type: PostOrReply.Post});
 
     cy.findFirstPostInFeed().within(() => {
       cy.contains('[data-cy="post-text"]', postContent).should('be.visible');
@@ -382,14 +376,13 @@ describe('posts', () => {
     createQuickPost(postContent);
     repostPost({ repostContent, filterText: postContent });
 
-    deletePost({ postIdx: 1 });
+    deletePost({ postIdx: 1, type: PostOrReply.Post });
 
     cy.findFirstPostInFeed(CheckForNewPosts.Yes).within(() => {
       cy.contains('[data-cy="post-text"]', repostContent).should('be.visible');
     });
 
     cy.reload();
-    waitForFeedToLoad();
 
     cy.findFirstPostInFeed().within(() => {
       cy.contains('This post has been deleted by its author.').should('be.visible');
@@ -408,7 +401,7 @@ describe('posts', () => {
       cy.contains(replyContent).should('be.visible');
     });
 
-    deletePost({});
+    deletePost({ type: PostOrReply.Post });
 
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', replyContent);
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', postContent);
