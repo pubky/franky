@@ -94,7 +94,6 @@ export class LocalPostService {
       await Core.PostDetailsModel.update(compositePostId, { content });
       Logger.debug('Post edited successfully', { compositePostId });
     } catch (error) {
-      Logger.error('Failed to edit post', { compositePostId, error });
       throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to edit post', {
         service: ErrorService.Local,
         operation: 'edit',
