@@ -13,18 +13,22 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
 import { PostInputExpandableSection } from '../PostInputExpandableSection';
 import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
+import type { ArticleJSON } from '@/hooks';
 
 export function PostInput({
   dataCy,
   variant,
   postId,
   originalPostId,
+  editPostId,
   onSuccess,
   placeholder,
   showThreadConnector = false,
   expanded = false,
   onContentChange,
   onArticleModeChange,
+  editContent,
+  editIsArticle,
 }: PostInputProps) {
   const {
     textareaRef,
@@ -32,13 +36,16 @@ export function PostInput({
     containerRef,
     fileInputRef,
     content,
+    setContent,
     tags,
     setTags,
     attachments,
     setAttachments,
     isArticle,
+    setIsArticle,
     handleArticleClick,
     articleTitle,
+    setArticleTitle,
     handleArticleTitleChange,
     handleArticleBodyChange,
     isDragging,
@@ -70,6 +77,7 @@ export function PostInput({
     variant,
     postId,
     originalPostId,
+    editPostId,
     onSuccess,
     placeholder,
     expanded,
@@ -91,6 +99,32 @@ export function PostInput({
     enterSubmitHandler(e);
   };
 
+  const isEdit = variant === POST_INPUT_VARIANT.EDIT;
+
+  const { toast } = Molecules.useToast();
+
+  React.useEffect(() => {
+    if (isEdit) {
+      if (editIsArticle) {
+        setIsArticle(true);
+
+        try {
+          const parsed = JSON.parse(editContent) as ArticleJSON;
+          setArticleTitle(parsed.title || '');
+          setContent(parsed.body || '');
+        } catch {
+          toast({
+            title: 'Error',
+            description: 'Failed to parse article content',
+          });
+        }
+      } else {
+        setContent(editContent);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
+  }, [variant, editContent, editIsArticle]);
+
   return (
     <Atoms.Container
       data-cy={dataCy}
@@ -100,10 +134,10 @@ export function PostInput({
         isDragging ? 'border-brand' : 'border-input',
       )}
       onClick={handleExpand}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      onDragEnter={isEdit ? undefined : handleDragEnter}
+      onDragLeave={isEdit ? undefined : handleDragLeave}
+      onDragOver={isEdit ? undefined : handleDragOver}
+      onDrop={isEdit ? undefined : handleDrop}
     >
       {/* Drag overlay */}
       {isDragging && (
@@ -120,6 +154,7 @@ export function PostInput({
         {isArticle && (
           <Atoms.Input
             placeholder="Article Title"
+            defaultValue={articleTitle}
             onChange={handleArticleTitleChange}
             maxLength={ARTICLE_TITLE_MAX_CHARACTER_LENGTH}
             disabled={isSubmitting}
@@ -167,19 +202,22 @@ export function PostInput({
           </Atoms.Container>
         )}
 
-        <PostInputAttachments
-          ref={fileInputRef}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          handleFilesAdded={handleFilesAdded}
-          isSubmitting={isSubmitting}
-          isArticle={isArticle}
-          handleFileClick={handleFileClick}
-        />
+        {!isEdit && (
+          <PostInputAttachments
+            ref={fileInputRef}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            handleFilesAdded={handleFilesAdded}
+            isSubmitting={isSubmitting}
+            isArticle={isArticle}
+            handleFileClick={handleFileClick}
+          />
+        )}
 
         {isArticle && (
           <Molecules.MarkdownEditor
             ref={markdownEditorRef}
+            autoFocus
             markdown={content}
             onChange={handleArticleBodyChange}
             readOnly={isSubmitting}
