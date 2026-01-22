@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostHeaderUserInfo } from './PostHeaderUserInfo';
 import * as Libs from '@/libs';
@@ -85,6 +85,21 @@ vi.mock('@/atoms', async (importOriginal) => {
       <p data-testid="typography" className={className}>
         {children}
       </p>
+    ),
+    Link: ({
+      children,
+      href,
+      onClick,
+      className,
+    }: {
+      children: React.ReactNode;
+      href: string;
+      onClick?: (e: React.MouseEvent) => void;
+      className?: string;
+    }) => (
+      <a data-testid="profile-link" href={href} onClick={onClick} className={className}>
+        {children}
+      </a>
     ),
     Button: ({
       children,
@@ -339,6 +354,84 @@ describe('PostHeaderUserInfo', () => {
     render(<PostHeaderUserInfo userId="user123" userName="Test User" timeAgo={null} />);
 
     expect(screen.queryByTestId('post-header-timestamp')).not.toBeInTheDocument();
+  });
+});
+
+describe('PostHeaderUserInfo - Navigation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'currentUser123' });
+    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'currentUser123' });
+    mockUseUserProfile.mockReturnValue({
+      profile: { name: 'Test User', bio: '', avatarUrl: undefined, publicKey: 'pk:user123' },
+      isLoading: false,
+    });
+    mockUseIsFollowing.mockReturnValue({ isFollowing: false, isLoading: false });
+    mockUseFollowUser.mockReturnValue({ toggleFollow: vi.fn(), isUserLoading: vi.fn(() => false) });
+    mockUseProfileStats.mockReturnValue({
+      stats: { followers: 0, following: 0, posts: 0, replies: 0, friends: 0, uniqueTags: 0, notifications: 0 },
+      isLoading: false,
+    });
+    mockUseProfileConnections.mockReturnValue({
+      connections: [],
+      count: 0,
+      isLoading: false,
+      isLoadingMore: false,
+      error: null,
+      hasMore: false,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
+  });
+
+  it('renders profile links for avatar and username', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    expect(profileLinks.length).toBe(2); // One for avatar, one for username
+
+    // Both should link to the same profile
+    profileLinks.forEach((link) => {
+      expect(link).toHaveAttribute('href', '/profile/testuser123');
+    });
+  });
+
+  it('stops propagation when clicking on avatar link', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    const avatarLink = profileLinks[0];
+
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
+
+    fireEvent(avatarLink, clickEvent);
+
+    expect(stopPropagationSpy).toHaveBeenCalled();
+  });
+
+  it('stops propagation when clicking on username link', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    const usernameLink = profileLinks[1];
+
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
+
+    fireEvent(usernameLink, clickEvent);
+
+    expect(stopPropagationSpy).toHaveBeenCalled();
+  });
+
+  it('renders profile links when showPopover is false', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" showPopover={false} />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    expect(profileLinks.length).toBe(2);
+    profileLinks.forEach((link) => {
+      expect(link).toHaveAttribute('href', '/profile/testuser123');
+    });
   });
 });
 
