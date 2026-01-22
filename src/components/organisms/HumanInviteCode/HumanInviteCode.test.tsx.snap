@@ -93,7 +93,8 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for complete code state 
     data-testid="human-invite-code-card"
   >
     <div
-      class="hidden shrink-0 lg:flex lg:h-48 lg:w-48"
+      class="mx-auto w-full flex-col hidden shrink-0 lg:flex lg:h-48 lg:w-48"
+      data-testid="container"
     >
       <img
         alt="Gift"
@@ -108,7 +109,8 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for complete code state 
       />
     </div>
     <div
-      class="flex max-w-[576px] min-w-0 flex-1 flex-col gap-6"
+      class="mx-auto w-full flex max-w-xl min-w-0 flex-1 flex-col gap-6"
+      data-testid="container"
     >
       <div
         class="mx-auto w-full flex-col flex gap-3"
@@ -177,13 +179,13 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for complete code state 
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex flex-row items-center gap-3 rounded-md border border-dashed bg-[rgba(5,5,10,0.1)] px-5 py-4 shadow-xs border-brand"
+          class="mx-auto w-full flex flex-row items-center gap-3 rounded-md border border-dashed bg-background/10 px-5 py-4 shadow-xs border-brand"
           data-testid="container"
         >
           <input
             class="file:text-foreground selection:bg-primary selection:text-primary-foreground border-input flex w-full min-w-0 rounded-md border shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:outline-none hover:ring-0 focus:ring-offset-0 h-auto flex-1 border-none bg-transparent p-0 text-base placeholder:text-muted-foreground focus:ring-0 focus:outline-none font-bold text-brand"
             data-cy="human-invite-code-input"
-            data-testid="input"
+            data-testid="human-invite-code-input"
             maxlength="14"
             placeholder="XXXX-XXXX-XXXX"
             type="text"
@@ -442,7 +444,8 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for empty state 1`] = `
     data-testid="human-invite-code-card"
   >
     <div
-      class="hidden shrink-0 lg:flex lg:h-48 lg:w-48"
+      class="mx-auto w-full flex-col hidden shrink-0 lg:flex lg:h-48 lg:w-48"
+      data-testid="container"
     >
       <img
         alt="Gift"
@@ -457,7 +460,8 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for empty state 1`] = `
       />
     </div>
     <div
-      class="flex max-w-[576px] min-w-0 flex-1 flex-col gap-6"
+      class="mx-auto w-full flex max-w-xl min-w-0 flex-1 flex-col gap-6"
+      data-testid="container"
     >
       <div
         class="mx-auto w-full flex-col flex gap-3"
@@ -526,13 +530,13 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for empty state 1`] = `
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex flex-row items-center gap-3 rounded-md border border-dashed bg-[rgba(5,5,10,0.1)] px-5 py-4 shadow-xs border-[#525252]"
+          class="mx-auto w-full flex flex-row items-center gap-3 rounded-md border border-dashed bg-background/10 px-5 py-4 shadow-xs border-input"
           data-testid="container"
         >
           <input
             class="file:text-foreground selection:bg-primary selection:text-primary-foreground border-input flex w-full min-w-0 rounded-md border shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:outline-none hover:ring-0 focus:ring-offset-0 h-auto flex-1 border-none bg-transparent p-0 text-base font-medium placeholder:text-muted-foreground focus:ring-0 focus:outline-none text-foreground"
             data-cy="human-invite-code-input"
-            data-testid="input"
+            data-testid="human-invite-code-input"
             maxlength="14"
             placeholder="XXXX-XXXX-XXXX"
             type="text"

@@ -2,10 +2,12 @@
 
 import * as Atoms from '@/atoms';
 import * as Config from '@/config';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
-import * as Core from '@/core';
+
+import { formatInviteCode } from './HumanInviteCode.utils';
 import type { HumanInviteCodeProps } from './HumanInviteCode.types';
 
 /**
@@ -18,35 +20,6 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const trimmedInviteCode = inviteCode.trim();
   const isInviteCodeEntered = trimmedInviteCode.length === 14;
-
-  /**
-   * Formats the invite code input by:
-   * - Converting to uppercase
-   * - Removing non-alphanumeric characters
-   * - Auto-inserting dashes after the 4th and 8th characters
-   * - Limiting to 12 alphanumeric characters (14 with dashes)
-   */
-  function formatInviteCode(value: string): string {
-    // Remove all non-alphanumeric characters and convert to uppercase
-    const alphanumeric = value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-
-    // Limit to 12 characters (the format is XXXX-XXXX-XXXX = 12 alphanumeric chars)
-    const limited = alphanumeric.slice(0, 12);
-
-    // Insert dashes after 4th and 8th characters
-    const parts: string[] = [];
-    if (limited.length > 0) {
-      parts.push(limited.slice(0, 4));
-    }
-    if (limited.length > 4) {
-      parts.push(limited.slice(4, 8));
-    }
-    if (limited.length > 8) {
-      parts.push(limited.slice(8, 12));
-    }
-
-    return parts.join('-');
-  }
 
   function handleSubmit() {
     if (!isInviteCodeEntered || isSubmitting) {
@@ -89,7 +62,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
 
       <Atoms.Card data-testid="human-invite-code-card" className="flex-row items-start gap-12 overflow-hidden p-12">
         {/* Gift Image */}
-        <div className="hidden shrink-0 lg:flex lg:h-48 lg:w-48">
+        <Atoms.Container className="hidden shrink-0 lg:flex lg:h-48 lg:w-48">
           <Atoms.Image
             src="/images/gift.png"
             alt="Gift"
@@ -97,10 +70,10 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
             height={192}
             className="h-full w-full object-cover"
           />
-        </div>
+        </Atoms.Container>
 
         {/* Content */}
-        <div className="flex max-w-[576px] min-w-0 flex-1 flex-col gap-6">
+        <Atoms.Container className="flex max-w-xl min-w-0 flex-1 flex-col gap-6">
           {/* Header */}
           <Atoms.Container className="gap-3">
             <Atoms.Container className="flex-row items-center gap-1">
@@ -119,11 +92,12 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
             {/* Input */}
             <Atoms.Container
               className={Libs.cn(
-                'flex-row items-center gap-3 rounded-md border border-dashed bg-[rgba(5,5,10,0.1)] px-5 py-4 shadow-xs',
-                isInviteCodeEntered ? 'border-brand' : 'border-[#525252]',
+                'flex-row items-center gap-3 rounded-md border border-dashed bg-background/10 px-5 py-4 shadow-xs',
+                isInviteCodeEntered ? 'border-brand' : 'border-input',
               )}
             >
               <Atoms.Input
+                data-testid="human-invite-code-input"
                 data-cy="human-invite-code-input"
                 type="text"
                 autoFocus
@@ -160,7 +134,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
               </Atoms.Typography>
             </Atoms.Container>
           </Atoms.Container>
-        </div>
+        </Atoms.Container>
       </Atoms.Card>
 
       <Molecules.HumanFooter />

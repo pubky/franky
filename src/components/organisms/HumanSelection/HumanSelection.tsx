@@ -16,14 +16,14 @@ export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanS
         </Molecules.PageTitle>
         <Atoms.PageSubtitle>
           No email needed. Verify quickly using SMS or a small payment. Or use an{' '}
-          <button
-            type="button"
+          <Atoms.Button
+            overrideDefaults
             onClick={onInviteCodeClick}
-            className="cursor-pointer text-brand hover:font-bold"
+            className="inline cursor-pointer text-brand transition-all hover:font-bold"
             data-testid="invite-code-link"
           >
             invite code.
-          </button>
+          </Atoms.Button>
         </Atoms.PageSubtitle>
       </Atoms.PageHeader>
 
