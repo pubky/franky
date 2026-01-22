@@ -10,3 +10,9 @@ export type PostValidatorData = {
 };
 
 export type UserValidatorData = Omit<Core.NexusUserDetails, 'id' | 'indexed_at'>;
+
+export type ToEditPostParams = {
+  compositePostId: string;
+  content: string;
+  currentUserPubky: Core.Pubky;
+};
