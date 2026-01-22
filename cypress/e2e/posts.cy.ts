@@ -296,7 +296,7 @@ describe('posts', () => {
     cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
   });
 
-  it.only('can bookmark multiple posts then remove bookmarks', () => {
+  it('can bookmark multiple posts then remove bookmarks', () => {
     const postContent1 = `This post will be bookmarked! ${Date.now()}`;
     const postContent2 = `This post will also be bookmarked! ${Date.now()}`;
 
@@ -349,6 +349,7 @@ describe('posts', () => {
     });
   });
 
+  // todo: will need changing once undo is moved to toast, see https://github.com/pubky/franky/issues/711
   it('can repost without content then delete the repost', () => {
     const postContent = `This post will be reposted without content! ${Date.now()}`;
     createQuickPost(postContent);
@@ -371,7 +372,6 @@ describe('posts', () => {
     });
   });
 
-  // failing
   it('can see repost of a deleted post', () => {
     const postContent = `This post will be reposted and deleted! ${Date.now()}`;
     const repostContent = `Reposted with this content! ${Date.now()}`;
@@ -384,8 +384,6 @@ describe('posts', () => {
     cy.findFirstPostInFeed(CheckForNewPosts.Yes).within(() => {
       cy.contains('[data-cy="post-text"]', repostContent).should('be.visible');
     });
-
-    cy.reload();
 
     cy.findFirstPostInFeed().within(() => {
       cy.contains('This post has been deleted by its author.').should('be.visible');
