@@ -20,7 +20,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
       overrideDefaults
       as="header"
       className={Libs.cn(
-        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background)/95 to-(--transparent) py-6 backdrop-blur-sm',
+        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background) from-50% to-transparent py-6',
         className,
       )}
     >
@@ -97,7 +97,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
 const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isActive: boolean }) => (
   <Atoms.Link href={href}>
     <Atoms.Button
-      className={Libs.cn('h-12 w-12', isActive ? '' : 'border bg-transparent')}
+      className={Libs.cn('h-12 w-12 backdrop-blur-md', isActive ? '' : 'border bg-white/5')}
       variant="secondary"
       size="icon"
       aria-label={href}
@@ -128,10 +128,13 @@ export function HeaderNavigationButtons({ counter = 0, avatarImage, avatarName =
         {counter > 0 && (
           <Atoms.Badge
             data-cy="header-notification-counter"
-            className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
+            className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand shadow-sm"
             variant="secondary"
           >
-            <Atoms.Typography className={Libs.cn('text-primary-foreground', counter > 21 && 'text-xs')} size="sm">
+            <Atoms.Typography
+              className={Libs.cn('font-semibold text-primary-foreground', counter > 21 && 'text-xs')}
+              size="xs"
+            >
               {counterString}
             </Atoms.Typography>
           </Atoms.Badge>
