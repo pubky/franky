@@ -18,6 +18,7 @@ export function PostInputActionBar({
   postButtonIcon,
   hideArticleButton,
   isArticle,
+  isEdit,
 }: PostInputActionBarProps) {
   const commonButtonProps = React.useMemo(
     () => ({
@@ -39,18 +40,22 @@ export function PostInputActionBar({
               ariaLabel: 'Add emoji',
               disabled: !onEmojiClick || isSubmitting,
             },
-            {
-              icon: Libs.Image,
-              onClick: onImageClick,
-              ariaLabel: 'Add image',
-              disabled: !onImageClick || isSubmitting,
-            },
-            {
-              icon: Libs.Paperclip,
-              onClick: onFileClick,
-              ariaLabel: 'Add file',
-              disabled: !onFileClick || isSubmitting,
-            },
+            ...(isEdit
+              ? []
+              : [
+                  {
+                    icon: Libs.Image,
+                    onClick: onImageClick,
+                    ariaLabel: 'Add image',
+                    disabled: !onImageClick || isSubmitting,
+                  },
+                  {
+                    icon: Libs.Paperclip,
+                    onClick: onFileClick,
+                    ariaLabel: 'Add file',
+                    disabled: !onFileClick || isSubmitting,
+                  },
+                ]),
           ]),
     ];
 
@@ -77,6 +82,7 @@ export function PostInputActionBar({
     return buttons;
   }, [
     isArticle,
+    isEdit,
     onEmojiClick,
     onImageClick,
     onFileClick,

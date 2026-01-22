@@ -3,11 +3,12 @@ import { POST_INPUT_VARIANT } from './PostInput.constants';
 export type PostInputVariant =
   | typeof POST_INPUT_VARIANT.REPLY
   | typeof POST_INPUT_VARIANT.POST
-  | typeof POST_INPUT_VARIANT.REPOST;
+  | typeof POST_INPUT_VARIANT.REPOST
+  | typeof POST_INPUT_VARIANT.EDIT;
 
 interface PostInputBaseProps {
   /** Callback after successful post, receives the created post ID */
-  onSuccess?: (createdPostId: string) => void;
+  onSuccess?: (createdPostId?: string) => void;
   /** Custom placeholder text (default depends on variant) */
   placeholder?: string;
   /** Show the thread connector (for replies, default: false) */
@@ -34,6 +35,9 @@ export type PostInputProps =
       /** Parent post ID (required for replies) */
       postId: string;
       originalPostId?: never;
+      editPostId?: never;
+      editContent?: never;
+      editIsArticle?: never;
     })
   | (PostInputBaseProps & {
       /** Variant: repost */
@@ -41,10 +45,28 @@ export type PostInputProps =
       /** Original post ID (required for reposts) */
       originalPostId: string;
       postId?: never;
+      editPostId?: never;
+      editContent?: never;
+      editIsArticle?: never;
     })
   | (PostInputBaseProps & {
       /** Variant: new root post */
       variant: typeof POST_INPUT_VARIANT.POST;
       postId?: never;
       originalPostId?: never;
+      editPostId?: never;
+      editContent?: never;
+      editIsArticle?: never;
+    })
+  | (PostInputBaseProps & {
+      /** Variant: edit post */
+      variant: typeof POST_INPUT_VARIANT.EDIT;
+      postId?: never;
+      originalPostId?: never;
+      /** Edit post ID (required for edit) */
+      editPostId: string;
+      /** Editable content (required for edit) */
+      editContent: string;
+      /** Editable article mode (required for edit) */
+      editIsArticle: boolean;
     });

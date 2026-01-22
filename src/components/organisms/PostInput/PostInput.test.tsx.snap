@@ -82,6 +82,157 @@ exports[`PostInput - Snapshots > matches snapshot for article mode 1`] = `
 </div>
 `;
 
+exports[`PostInput - Snapshots > matches snapshot for edit variant 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="21"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Edit post"
+    >
+      Existing post content
+    </textarea>
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="true"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for edit variant with article mode 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <input
+      class="h-auto border-none p-0 text-3xl font-bold md:text-6xl"
+      data-testid="input"
+    />
+    <div
+      data-is-reply="true"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <div
+      contenteditable="true"
+      data-readonly="false"
+      data-testid="markdown-editor"
+    >
+      Existing article body
+    </div>
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="true"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`PostInput - Snapshots > matches snapshot for post variant when dragging 1`] = `
 <div
   class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-brand"

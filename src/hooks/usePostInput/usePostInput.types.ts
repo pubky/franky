@@ -9,8 +9,10 @@ export interface UsePostInputOptions {
   postId?: string;
   /** Optional original post ID (required if variant is 'repost') */
   originalPostId?: string;
+  /** Optional edit post ID (required if variant is 'edit') */
+  editPostId?: string;
   /** Callback after successful post, receives the created post ID */
-  onSuccess?: (createdPostId: string) => void;
+  onSuccess?: (createdPostId?: string) => void;
   /** Custom placeholder text */
   placeholder?: string;
   /**
@@ -33,12 +35,15 @@ export interface UsePostInputReturn {
 
   // State
   content: string;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
   tags: string[];
   setTags: React.Dispatch<React.SetStateAction<string[]>>;
   attachments: File[];
   setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
   isArticle: boolean;
+  setIsArticle: React.Dispatch<React.SetStateAction<boolean>>;
   articleTitle: string;
+  setArticleTitle: React.Dispatch<React.SetStateAction<string>>;
   isDragging: boolean;
   isExpanded: boolean;
   isSubmitting: boolean;

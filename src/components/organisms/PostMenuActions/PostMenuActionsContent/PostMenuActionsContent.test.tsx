@@ -131,6 +131,13 @@ describe('PostMenuActionsContent', () => {
           variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
         },
         {
+          id: POST_MENU_ACTION_IDS.EDIT,
+          label: 'Edit post',
+          icon: Libs.Edit,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
           id: POST_MENU_ACTION_IDS.DELETE,
           label: 'Delete post',
           icon: Libs.Trash,
@@ -147,12 +154,14 @@ describe('PostMenuActionsContent', () => {
         variant={MENU_VARIANT.DROPDOWN}
         onActionComplete={vi.fn()}
         onReportClick={vi.fn()}
+        onEditClick={vi.fn()}
       />,
     );
 
     expect(screen.getByText('Copy pubky')).toBeInTheDocument();
     expect(screen.getByText('Copy link to post')).toBeInTheDocument();
     expect(screen.getByText('Copy text of post')).toBeInTheDocument();
+    expect(screen.getByText('Edit post')).toBeInTheDocument();
     expect(screen.getByText('Delete post')).toBeInTheDocument();
     expect(screen.queryByText(/Follow|Unfollow/)).not.toBeInTheDocument();
   });
@@ -213,6 +222,7 @@ describe('PostMenuActionsContent', () => {
         variant={MENU_VARIANT.DROPDOWN}
         onActionComplete={vi.fn()}
         onReportClick={vi.fn()}
+        onEditClick={vi.fn()}
       />,
     );
 
@@ -271,6 +281,7 @@ describe('PostMenuActionsContent', () => {
         variant={MENU_VARIANT.DROPDOWN}
         onActionComplete={vi.fn()}
         onReportClick={vi.fn()}
+        onEditClick={vi.fn()}
       />,
     );
 
@@ -339,6 +350,7 @@ describe('PostMenuActionsContent - Snapshots', () => {
         variant={MENU_VARIANT.DROPDOWN}
         onActionComplete={vi.fn()}
         onReportClick={vi.fn()}
+        onEditClick={vi.fn()}
       />,
     );
     const normalizedContainer = normaliseRadixIds(container);
@@ -371,6 +383,13 @@ describe('PostMenuActionsContent - Snapshots', () => {
           variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
         },
         {
+          id: POST_MENU_ACTION_IDS.EDIT,
+          label: 'Edit post',
+          icon: Libs.Edit,
+          onClick: vi.fn(),
+          variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+        },
+        {
           id: POST_MENU_ACTION_IDS.DELETE,
           label: 'Delete post',
           icon: Libs.Trash,
@@ -387,6 +406,7 @@ describe('PostMenuActionsContent - Snapshots', () => {
         variant={MENU_VARIANT.DROPDOWN}
         onActionComplete={vi.fn()}
         onReportClick={vi.fn()}
+        onEditClick={vi.fn()}
       />,
     );
     const normalizedContainer = normaliseRadixIds(container);
@@ -449,6 +469,7 @@ describe('PostMenuActionsContent - Snapshots', () => {
         variant={MENU_VARIANT.SHEET}
         onActionComplete={vi.fn()}
         onReportClick={vi.fn()}
+        onEditClick={vi.fn()}
       />,
     );
     const normalizedContainer = normaliseRadixIds(container);
