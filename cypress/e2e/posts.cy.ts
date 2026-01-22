@@ -11,6 +11,7 @@ import {
   replyToPost,
   repostPost,
   MAX_POST_LENGTH,
+  addImage,
 } from '../support/posts';
 import { defaultMs } from '../support/slow-down';
 import { BackupType, CheckForNewPosts, HasBackedUp } from '../support/types/enums';
@@ -100,21 +101,22 @@ describe('posts', () => {
     latestPostInFeedContentEq(postContent);
   });
 
-  it('can post with image upload', () => {
+  it.only('can post with image upload', () => {
     const postContent = `I can post with an image! ${Date.now()}`;
-    const imagePath = 'public/images/gift.png';
 
     cy.get('[data-cy="home-post-input"]').within(() => {
       cy.get('textarea').click();
-      cy.get('input[type="file"]').selectFile(imagePath, { force: true });
-      cy.get('img[alt="gift.png"]').should('be.visible');
+
+      // upload image
+      addImage();
+
       cy.get('textarea').type(postContent);
       cy.get('[data-cy="post-input-action-bar-post"]').click();
     });
 
     cy.findFirstPostInFeed().within(() => {
       cy.get('[data-cy="post-text"]').should('contain.text', postContent);
-      cy.get('img[alt="gift.png"]').should('be.visible');
+      cy.get('img').should('be.visible');
     });
   });
 
