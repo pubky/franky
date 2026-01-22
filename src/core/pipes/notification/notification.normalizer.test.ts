@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { LastReadResult } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -40,12 +40,11 @@ describe('NotificationNormalizer', () => {
 
       afterEach(restoreMocks);
 
-      it('should create last read and log debug message', () => {
+      it('should create last read with last_read and meta properties', () => {
         const result = Core.NotificationNormalizer.to(TEST_PUBKY.USER_1);
 
         expect(result).toHaveProperty('last_read');
         expect(result).toHaveProperty('meta');
-        expect(Libs.Logger.debug).toHaveBeenCalledWith('LastRead validated', { result });
       });
 
       it('should call PubkySpecsSingleton.get with pubky and createLastRead without params', () => {
@@ -55,24 +54,33 @@ describe('NotificationNormalizer', () => {
         expect(mockBuilder.createLastRead).toHaveBeenCalledWith();
       });
 
-      it.each([
-        [
-          'createLastRead',
-          () =>
-            mockBuilder.createLastRead.mockImplementation(() => {
-              throw new Error('Builder error');
-            }),
-        ],
-        [
-          'PubkySpecsSingleton.get',
-          () =>
-            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
-              throw new Error('Singleton error');
-            }),
-        ],
-      ])('should propagate errors from %s', (_, setupError) => {
-        setupError();
-        expect(() => Core.NotificationNormalizer.to(TEST_PUBKY.USER_1)).toThrow();
+      it('should throw AppError with correct properties when createLastRead fails', () => {
+        const errorMessage = 'Invalid last read';
+        mockBuilder.createLastRead.mockImplementation(() => {
+          throw errorMessage;
+        });
+
+        try {
+          Core.NotificationNormalizer.to(TEST_PUBKY.USER_1);
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createLastRead');
+          expect(appError.context).toEqual({ pubky: TEST_PUBKY.USER_1 });
+          expect(appError.message).toBe(errorMessage);
+        }
+      });
+
+      it('should throw AppError when PubkySpecsSingleton.get fails', () => {
+        vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+          throw 'Singleton error';
+        });
+
+        expect(() => Core.NotificationNormalizer.to(TEST_PUBKY.USER_1)).toThrow(AppError);
       });
     });
 

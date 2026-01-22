@@ -120,3 +120,4 @@ export * from './User';
 export * from './UsersList';
 export * from './SearchHeader';
 export * from './SearchEmptyState';
+export * from './MentionPopover';

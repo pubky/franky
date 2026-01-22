@@ -907,8 +907,12 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      // Mock ProfileController.commitCreate to throw a HomeserverError
-      const profileError = new Libs.AppError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to create profile', 500);
+      // Mock ProfileController.commitCreate to throw a server error
+      const profileError = Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to create profile', {
+        service: Libs.ErrorService.Homeserver,
+        operation: 'commitCreate',
+        context: { statusCode: 500 },
+      });
       vi.mocked(Core.ProfileController.commitCreate).mockRejectedValue(profileError);
 
       render(<CreateProfileForm />);
