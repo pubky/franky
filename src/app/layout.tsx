@@ -23,16 +23,18 @@ export const metadata = Molecules.Metadata({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <Molecules.RootContainer>
-      <Providers.DatabaseProvider>
-        <Providers.RouteGuardProvider>
-          <Organisms.CoordinatorsManager />
-          <Organisms.Header />
-          {children}
-          <Molecules.NewPostCTA />
-          <Molecules.Toaster />
-          <Organisms.DialogSignIn />
-        </Providers.RouteGuardProvider>
-      </Providers.DatabaseProvider>
+      <Providers.ErrorBoundaryProvider>
+        <Providers.DatabaseProvider>
+          <Providers.RouteGuardProvider>
+            <Organisms.CoordinatorsManager />
+            <Organisms.Header />
+            {children}
+            <Molecules.NewPostCTA />
+            <Molecules.Toaster />
+            <Organisms.DialogSignIn />
+          </Providers.RouteGuardProvider>
+        </Providers.DatabaseProvider>
+      </Providers.ErrorBoundaryProvider>
     </Molecules.RootContainer>
   );
 }

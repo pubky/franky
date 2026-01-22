@@ -320,7 +320,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     } catch (error) {
       if (error instanceof Libs.AppError) {
         // Handle session expiration - user needs to re-authenticate
-        if (error.type === Libs.HomeserverErrorType.SESSION_EXPIRED) {
+        if (Libs.requiresLogin(error)) {
           Libs.Logger.error('Session expired while saving profile', error);
           setSubmitText('Try again!');
           toast({
@@ -330,8 +330,8 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
           return;
         }
 
-        // Handle other homeserver errors
-        if (Object.values(Libs.HomeserverErrorType).includes(error.type as Libs.HomeserverErrorType)) {
+        // Handle auth errors from homeserver
+        if (Libs.isAuthError(error)) {
           Libs.Logger.error('Failed to save profile in Homeserver', error);
           setSubmitText('Try again!');
           toast({

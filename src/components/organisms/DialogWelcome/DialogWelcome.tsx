@@ -19,9 +19,14 @@ export function DialogWelcome() {
 
   // Fetch current user details from database
   const userDetails = useLiveQuery(async () => {
-    if (!currentUserPubky) return null;
-    const details = await Core.UserController.getDetails({ userId: currentUserPubky });
-    return details || null;
+    try {
+      if (!currentUserPubky) return null;
+      const details = await Core.UserController.getDetails({ userId: currentUserPubky });
+      return details || null;
+    } catch (error) {
+      Libs.Logger.error('[DialogWelcome] Failed to query user details', { error });
+      return null;
+    }
   }, [currentUserPubky]);
 
   const { copyToClipboard } = Hooks.useCopyToClipboard();
@@ -32,7 +37,9 @@ export function DialogWelcome() {
   }
 
   const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10, includePrefix: true });
-  const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
+  const avatarImage = userDetails.image
+    ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)
+    : undefined;
 
   const handleCopyToClipboard = () => {
     copyToClipboard(Libs.withPubkyPrefix(currentUserPubky));
@@ -45,16 +52,16 @@ export function DialogWelcome() {
 
   return (
     <Atoms.Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
-      <Atoms.DialogContent className="w-full sm:w-xl" hiddenTitle="Welcome to Pubky!">
-        <Atoms.DialogHeader className="gap-0 pr-6 text-left">
+      <Atoms.DialogContent className="sm:max-w-2xl" hiddenTitle="Welcome to Pubky!">
+        <Atoms.DialogHeader className="mb-3 gap-0 pr-6 text-left">
           <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
           <Atoms.DialogDescription className="font-medium">
             Your keys, your content, your rules.
           </Atoms.DialogDescription>
         </Atoms.DialogHeader>
         <Atoms.Container className="max-h-[420px] overflow-y-auto">
-          <Atoms.Container className="flex flex-col gap-6">
-            <Atoms.Card className="flex flex-col items-center justify-center gap-6 self-stretch overflow-hidden rounded-lg bg-card p-6 sm:flex-row sm:items-start sm:justify-start">
+          <Atoms.Container className="flex flex-col gap-4">
+            <Atoms.Card className="flex flex-col items-center justify-center gap-4 self-stretch overflow-hidden rounded-lg bg-card p-6 sm:flex-row sm:items-start sm:justify-start">
               <Organisms.AvatarWithFallback
                 avatarUrl={avatarImage}
                 name={userDetails.name}

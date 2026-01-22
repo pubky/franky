@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -9,6 +10,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import { NotificationType } from '@/core';
+import { buildSearchUrl } from '@/hooks/useTagSearch/useTagSearch.utils';
 import {
   getNotificationLink,
   getUserIdFromNotification,
@@ -21,6 +23,8 @@ import {
 import type { NotificationItemProps } from './NotificationItem.types';
 
 export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
+  const router = useRouter();
+
   // Extract the user ID from the notification (the actor who triggered it)
   const actorUserId = getUserIdFromNotification(notification);
 
@@ -83,6 +87,14 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   // Calculate notification links (business logic separated in pure function)
   const { notificationLink } = getNotificationLink(notification);
 
+  // Handle tag click - navigate to search with the tag
+  const handleTagClick = (tagLabel: string) => (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const normalizedTag = tagLabel.trim().toLowerCase();
+    router.push(buildSearchUrl([normalizedTag]));
+  };
+
   const contentElement = (
     <>
       <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 items-center gap-2">
@@ -104,15 +116,16 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
             </Atoms.Typography>
           )}
 
-          {/* Tag badge for tagged post notifications */}
-          {notification.type === NotificationType.TagPost && 'tag_label' in notification && (
-            <Molecules.PostTag label={notification.tag_label} showClose={false} className="shrink-0" />
-          )}
-
-          {/* Tag badge for tagged profile notifications */}
-          {notification.type === NotificationType.TagProfile && 'tag_label' in notification && (
-            <Molecules.PostTag label={notification.tag_label} showClose={false} className="shrink-0" />
-          )}
+          {/* Tag badge for tagged notifications - click navigates to search */}
+          {(notification.type === NotificationType.TagPost || notification.type === NotificationType.TagProfile) &&
+            'tag_label' in notification && (
+              <Molecules.PostTag
+                label={notification.tag_label}
+                showClose={false}
+                className="shrink-0"
+                onClick={handleTagClick(notification.tag_label)}
+              />
+            )}
 
           {/* Friend notification extra text */}
           {notification.type === NotificationType.NewFriend && (

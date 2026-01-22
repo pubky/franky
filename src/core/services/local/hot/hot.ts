@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Logger } from '@/libs';
 
 /**
  * Local Hot Service
@@ -41,6 +41,6 @@ export class LocalHotService {
    */
   static async clear(): Promise<void> {
     await Core.HotTagsModel.clear();
-    Libs.Logger.info('Cleared all hot tags from cache');
+    Logger.info('Cleared all hot tags from cache');
   }
 }

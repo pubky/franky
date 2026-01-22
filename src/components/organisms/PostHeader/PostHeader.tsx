@@ -6,7 +6,14 @@ import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import type { PostHeaderProps } from './PostHeader.types';
 
-export function PostHeader({ postId, isReplyInput = false, characterLimit, showPopover = true }: PostHeaderProps) {
+export function PostHeader({
+  postId,
+  isReplyInput = false,
+  characterLimit,
+  showPopover = true,
+  size = 'normal',
+  timeAgoPlacement = 'top-right',
+}: PostHeaderProps) {
   // Extract userId from postId (format: userId:postId or just userId if isReplyInput is true)
   const userId = isReplyInput ? postId : postId.split(':')[0];
 
@@ -39,8 +46,10 @@ export function PostHeader({ postId, isReplyInput = false, characterLimit, showP
         avatarUrl={avatarUrl}
         characterLimit={characterLimit}
         showPopover={showPopover}
+        size={size}
+        timeAgo={timeAgoPlacement === 'bottom-left' ? timeAgo : null}
       />
-      {timeAgo && <Molecules.PostHeaderTimestamp timeAgo={timeAgo} />}
+      {timeAgo && timeAgoPlacement === 'top-right' && <Molecules.PostHeaderTimestamp timeAgo={timeAgo} />}
     </Atoms.Container>
   );
 }
