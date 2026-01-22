@@ -2,7 +2,7 @@
 
 exports[`Language - Snapshots > matches snapshot 1`] = `
 <div
-  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
+  class="flex flex-col items-start gap-8 rounded-md bg-card px-6 py-8 md:p-12"
   data-testid="container"
 >
   <div
@@ -15,7 +15,7 @@ exports[`Language - Snapshots > matches snapshot 1`] = `
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-languages"
+        class="lucide lucide-globe"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -26,23 +26,16 @@ exports[`Language - Snapshots > matches snapshot 1`] = `
         width="24"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d="m5 8 6 6"
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
         />
         <path
-          d="m4 14 6-6 2-3"
+          d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"
         />
         <path
-          d="M2 5h12"
-        />
-        <path
-          d="M7 2h1"
-        />
-        <path
-          d="m22 22-5-10-5 10"
-        />
-        <path
-          d="M14 18h6"
+          d="M2 12h20"
         />
       </svg>
       <h2

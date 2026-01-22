@@ -65,7 +65,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
       </svg>
     </button>
     <button
-      aria-label="Privacy & Safety"
+      aria-label="Privacy and Safety"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
     >
@@ -88,7 +88,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
       </svg>
     </button>
     <button
-      aria-label="Muted Users"
+      aria-label="Muted users"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
     >
@@ -154,7 +154,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
       </svg>
     </button>
     <button
-      aria-label="Help"
+      aria-label="FAQ"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
     >
@@ -253,7 +253,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
       </svg>
     </button>
     <button
-      aria-label="Privacy & Safety"
+      aria-label="Privacy and Safety"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
     >
@@ -276,7 +276,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
       </svg>
     </button>
     <button
-      aria-label="Muted Users"
+      aria-label="Muted users"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
     >
@@ -342,7 +342,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
       </svg>
     </button>
     <button
-      aria-label="Help"
+      aria-label="FAQ"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
     >

@@ -2,7 +2,8 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import { HelpCircle, FileText, MessageCircle, Send } from '@/libs';
+import * as Organisms from '@/organisms';
+import { HelpCircle, FileText, MessageCircle, Send, LockKeyhole } from '@/libs';
 import { FAQ_SECTIONS, SUPPORT_LINKS } from './HelpContent.constants';
 
 export function HelpContent() {
@@ -77,6 +78,34 @@ export function HelpContent() {
           <Send size={16} />
           Support (Telegram)
         </Atoms.Button>
+      </Atoms.Container>
+
+      {/* Terms of Service & Privacy - Mobile only (hidden on lg screens where sidebar is visible) */}
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6 lg:hidden">
+        <Molecules.SettingsDivider />
+        <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
+          <Atoms.Container overrideDefaults className="inline-flex items-center gap-3">
+            <LockKeyhole size={24} />
+            <Atoms.Heading level={2} size="lg" className="leading-8">
+              Terms of Service & Privacy
+            </Atoms.Heading>
+          </Atoms.Container>
+          <Atoms.Typography
+            as="p"
+            overrideDefaults
+            className="text-base leading-6 font-medium text-secondary-foreground"
+          >
+            Read our terms carefully.
+          </Atoms.Typography>
+          <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
+            <Organisms.DialogTerms
+              trigger={<Atoms.SidebarButton icon={FileText}>Terms of service</Atoms.SidebarButton>}
+            />
+            <Organisms.DialogPrivacy
+              trigger={<Atoms.SidebarButton icon={LockKeyhole}>Privacy policy</Atoms.SidebarButton>}
+            />
+          </Atoms.Container>
+        </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>
   );

@@ -18,10 +18,10 @@ describe('SettingsMenu', () => {
 
     expect(screen.getByText('Account')).toBeInTheDocument();
     expect(screen.getByText('Notifications')).toBeInTheDocument();
-    expect(screen.getByText('Privacy & Safety')).toBeInTheDocument();
-    expect(screen.getByText('Muted Users')).toBeInTheDocument();
+    expect(screen.getByText('Privacy and Safety')).toBeInTheDocument();
+    expect(screen.getByText('Muted users')).toBeInTheDocument();
     expect(screen.getByText('Language')).toBeInTheDocument();
-    expect(screen.getByText('Help')).toBeInTheDocument();
+    expect(screen.getByText('FAQ')).toBeInTheDocument();
   });
 });
 

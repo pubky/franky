@@ -19,12 +19,15 @@ describe('SettingsInfo', () => {
 
   it('renders subtitle for Terms section', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Please read our terms carefully.')).toBeInTheDocument();
+    expect(screen.getByText('Read our terms carefully.')).toBeInTheDocument();
   });
 
   it('renders version text', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Pubky v0.12 © Synonym Software Ltd')).toBeInTheDocument();
+    expect(screen.getByText(/v0\.12/)).toBeInTheDocument();
+    expect(screen.getByText(/v0\.15/)).toBeInTheDocument();
+    expect(screen.getByText(/v0\.17/)).toBeInTheDocument();
+    expect(screen.getByText(/© 2025 Synonym Software/)).toBeInTheDocument();
   });
 });
 

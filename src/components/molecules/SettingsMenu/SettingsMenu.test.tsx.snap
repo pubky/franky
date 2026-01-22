@@ -133,7 +133,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           <span
             class=""
           >
-            Privacy & Safety
+            Privacy and Safety
           </span>
         </button>
       </a>
@@ -180,7 +180,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           <span
             class=""
           >
-            Muted Users
+            Muted users
           </span>
         </button>
       </a>
@@ -266,7 +266,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           <span
             class=""
           >
-            Help
+            FAQ
           </span>
         </button>
       </a>

@@ -2,7 +2,7 @@
 
 exports[`Privacy - Snapshots > matches snapshot 1`] = `
 <div
-  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
+  class="flex flex-col items-start gap-8 rounded-md bg-card px-6 py-8 md:p-12"
   data-testid="container"
 >
   <div
@@ -15,7 +15,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-shield-check"
+        class="lucide lucide-shield"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -28,9 +28,6 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       >
         <path
           d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
-        />
-        <path
-          d="m9 12 2 2 4-4"
         />
       </svg>
       <h2
@@ -52,13 +49,16 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
     data-testid="container"
   >
     <div
-      class="flex w-full flex-col items-start justify-start gap-6"
+      class="flex w-full flex-col items-start gap-6"
+      data-testid="container"
     >
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -78,16 +78,18 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -107,16 +109,18 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -138,7 +142,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-disabled=""
             data-state="unchecked"
           />
@@ -146,9 +150,11 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -170,7 +176,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-disabled=""
             data-state="unchecked"
           />
@@ -178,9 +184,11 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -202,7 +210,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-disabled=""
             data-state="unchecked"
           />
@@ -210,9 +218,11 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -234,7 +244,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-disabled=""
             data-state="unchecked"
           />
@@ -242,9 +252,11 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -266,7 +278,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-disabled=""
             data-state="unchecked"
           />
@@ -274,9 +286,11 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -298,7 +312,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-disabled=""
             data-state="unchecked"
           />

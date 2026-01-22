@@ -4,6 +4,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
 <div>
   <div
     class="flex flex-col gap-6"
+    data-testid="container"
   >
     <div
       class="w-full flex-col flex m-0 gap-2 bg-background p-0"
@@ -25,11 +26,11 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           class="text-base leading-normal font-medium text-secondary-foreground"
           data-testid="typography"
         >
-          Please read our terms carefully.
+          Read our terms carefully.
         </p>
       </div>
       <div
-        class="mx-auto w-full flex-col flex"
+        class="mx-auto w-full flex-col flex gap-2"
         data-slot="filter-list"
         data-testid="filter-list"
       >
@@ -145,7 +146,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <div
-        class="mx-auto w-full flex-col flex"
+        class="mx-auto w-full flex-col flex gap-2"
         data-slot="filter-list"
         data-testid="filter-list"
       >
@@ -154,48 +155,17 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         >
           <div
             class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            data-testid="container"
           >
             <span
-              class="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]"
-            >
-              How can I update my profile information?
-            </span>
-            <div
-              class="absolute top-1/2 right-3 -translate-y-1/2"
-            >
-              <svg
-                aria-hidden="true"
-                class="lucide lucide-chevron-right"
-                fill="none"
-                height="16"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="m9 18 6-6-6-6"
-                />
-              </svg>
-            </div>
-          </div>
-        </a>
-        <a
-          href="/settings/help"
-        >
-          <div
-            class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
-          >
-            <span
-              class="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]"
+              class="block pr-6 leading-normal font-bold text-popover-foreground"
+              data-testid="typography"
             >
               How can I delete my post?
             </span>
             <div
               class="absolute top-1/2 right-3 -translate-y-1/2"
+              data-testid="container"
             >
               <svg
                 aria-hidden="true"
@@ -222,14 +192,17 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         >
           <div
             class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            data-testid="container"
           >
             <span
-              class="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]"
+              class="block pr-6 leading-normal font-bold text-popover-foreground"
+              data-testid="typography"
             >
               How do I mute someone?
             </span>
             <div
               class="absolute top-1/2 right-3 -translate-y-1/2"
+              data-testid="container"
             >
               <svg
                 aria-hidden="true"
@@ -256,14 +229,17 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         >
           <div
             class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            data-testid="container"
           >
             <span
-              class="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]"
+              class="block pr-6 leading-normal font-bold text-popover-foreground"
+              data-testid="typography"
             >
-              How can I restore my account?
+              How do I restore my account?
             </span>
             <div
               class="absolute top-1/2 right-3 -translate-y-1/2"
+              data-testid="container"
             >
               <svg
                 aria-hidden="true"
@@ -290,14 +266,17 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         >
           <div
             class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            data-testid="container"
           >
             <span
-              class="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]"
+              class="block pr-6 leading-normal font-bold text-popover-foreground"
+              data-testid="typography"
             >
-              How is Pubky different from other social platforms?
+              How is Pubky different from other social platforms
             </span>
             <div
               class="absolute top-1/2 right-3 -translate-y-1/2"
+              data-testid="container"
             >
               <svg
                 aria-hidden="true"
@@ -327,7 +306,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-circle-question-mark h-4 w-4"
+              class="lucide lucide-message-circle-question-mark h-4 w-4"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -338,10 +317,8 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
+              <path
+                d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"
               />
               <path
                 d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
@@ -377,15 +354,106 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <div
-        class="mx-auto w-full flex-col flex gap-2"
+        class="mx-auto w-full flex-col flex"
         data-slot="filter-list"
         data-testid="filter-list"
       >
-        <p
-          class="text-base leading-normal font-medium text-[var(--base-secondary-foreground,#D4D4DB)]"
+        <div
+          class="flex flex-col"
+          data-testid="container"
         >
-          Pubky v0.12 © Synonym Software Ltd
-        </p>
+          <p
+            class="leading-normal font-medium text-secondary-foreground"
+            data-testid="typography"
+          >
+            Pubky
+             
+            <span
+              class="text-xl font-semibold text-muted-foreground"
+              data-testid="typography"
+            >
+              v0.12
+            </span>
+          </p>
+          <p
+            class="leading-normal font-medium text-secondary-foreground"
+            data-testid="typography"
+          >
+            Homeserver
+             
+            <span
+              class="text-xl font-semibold text-muted-foreground"
+              data-testid="typography"
+            >
+              v0.15
+            </span>
+          </p>
+          <p
+            class="leading-normal font-medium text-secondary-foreground"
+            data-testid="typography"
+          >
+            Nexus
+             
+            <span
+              class="text-xl font-semibold text-muted-foreground"
+              data-testid="typography"
+            >
+              v0.17
+            </span>
+          </p>
+          <p
+            class="mt-4 leading-normal font-medium text-secondary-foreground"
+            data-testid="typography"
+          >
+            © 2025 Synonym Software, S.A. DE C.V.
+          </p>
+        </div>
+        <div
+          class="flex flex-col items-start pt-4"
+          data-testid="container"
+        >
+          <div
+            class="flex items-center gap-1"
+            data-testid="container"
+          >
+            <svg
+              fill="none"
+              height="24"
+              viewBox="0 0 200 200"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M127.394 75.7495H99.9979L107.982 44.26L73.6099 75.5811V94.9463L127.394 95.0305V75.7495ZM93.0227 155.736L127.394 124.415V104.966H73.6099V124.247H100.922L93.0227 155.736Z"
+                fill="white"
+              />
+              <path
+                clip-rule="evenodd"
+                d="M110.525 0.563843C165.505 6.37341 205.246 55.6284 199.436 110.525C193.627 165.505 144.372 205.246 89.4754 199.436C34.4951 193.627 -5.24572 144.372 0.563843 89.4754C6.37341 34.4951 55.6284 -5.24572 110.525 0.563843ZM108.335 21.4446C65.1426 16.8138 25.9912 48.4717 21.4446 91.6645C16.8138 134.857 48.4717 174.009 91.6645 178.555C134.857 183.186 174.009 151.528 178.555 108.335C183.186 65.1426 151.528 25.9912 108.335 21.4446Z"
+                fill="#FF6600"
+                fill-rule="evenodd"
+              />
+            </svg>
+            <span
+              class="font-medium text-foreground"
+              data-testid="typography"
+            >
+              Synonym
+            </span>
+          </div>
+          <span
+            class="text-muted-foreground"
+            data-testid="typography"
+          >
+            a 
+            <span
+              class="font-semibold"
+            >
+              tether.
+            </span>
+             company
+          </span>
+        </div>
       </div>
     </div>
   </div>

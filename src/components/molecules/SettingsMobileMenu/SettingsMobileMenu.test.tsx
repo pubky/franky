@@ -18,10 +18,10 @@ describe('SettingsMobileMenu', () => {
     render(<SettingsMobileMenu />);
     expect(screen.getByLabelText('Account')).toBeInTheDocument();
     expect(screen.getByLabelText('Notifications')).toBeInTheDocument();
-    expect(screen.getByLabelText('Privacy & Safety')).toBeInTheDocument();
-    expect(screen.getByLabelText('Muted Users')).toBeInTheDocument();
+    expect(screen.getByLabelText('Privacy and Safety')).toBeInTheDocument();
+    expect(screen.getByLabelText('Muted users')).toBeInTheDocument();
     expect(screen.getByLabelText('Language')).toBeInTheDocument();
-    expect(screen.getByLabelText('Help')).toBeInTheDocument();
+    expect(screen.getByLabelText('FAQ')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {

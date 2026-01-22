@@ -1,9 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import { usePathname } from 'next/navigation';
 import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import * as App from '@/app';
 
 export interface SettingsProps {
   children: React.ReactNode;
@@ -44,9 +46,12 @@ export function SettingsLeftSidebar() {
 }
 
 export function SettingsRightSidebar() {
+  const pathname = usePathname();
+  const isOnFAQPage = pathname === App.SETTINGS_ROUTES.HELP;
+
   return (
     <div className="sticky top-[100px] self-start">
-      <Molecules.SettingsInfo />
+      <Molecules.SettingsInfo hideFAQ={isOnFAQPage} />
     </div>
   );
 }
@@ -56,5 +61,8 @@ export function SettingsLeftDrawer() {
 }
 
 export function SettingsRightDrawer() {
-  return <Molecules.SettingsInfo />;
+  const pathname = usePathname();
+  const isOnFAQPage = pathname === App.SETTINGS_ROUTES.HELP;
+
+  return <Molecules.SettingsInfo hideFAQ={isOnFAQPage} />;
 }
