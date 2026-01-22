@@ -82,6 +82,15 @@ describe('MuteFilter', () => {
 
       expect(result).toEqual([]);
     });
+
+    it('throws error when encountering invalid ID format', () => {
+      const postIds = ['user1:post1', 'invalid-no-colon', 'user2:post2'];
+      const mutedUserIds = new Set<Pubky>(['muted' as Pubky]);
+
+      // filterPosts does not catch parse errors - it throws
+      // Use filterPostsSafe for safe handling of invalid IDs
+      expect(() => MuteFilter.filterPosts(postIds, mutedUserIds)).toThrow();
+    });
   });
 
   describe('filterPostsSafe', () => {
