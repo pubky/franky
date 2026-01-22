@@ -91,7 +91,7 @@ export function PostInput({
   const enterSubmitHandler = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
   });
-  
+
   // Combined keyboard handler: mention popover takes priority, then enter submit
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (handleMentionKeyDown(e)) return;
