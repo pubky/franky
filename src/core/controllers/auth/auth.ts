@@ -89,22 +89,26 @@ export class AuthController {
     signInStore.reset(); // Reset for fresh sign-in
     signInStore.setAuthUrlResolved(true); // Step 1 complete (20%)
 
+    const authStore = Core.useAuthStore.getState();
+
     try {
       this.cancelActiveAuthFlow();
       const pubky = Libs.Identity.z32FromSession({ session });
-      const authStore = Core.useAuthStore.getState();
+
+      authStore.init({ session, currentUserPubky: pubky, hasProfile: null });
 
       const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
       signInStore.setProfileChecked(true); // Step 2 complete (40%)
 
       if (isSignedUp) {
-        // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
-        // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
         await this.hydrateMeImAlive({ pubky });
       }
-      const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
-      authStore.init(initialState);
+
+      // Update hasProfile after bootstrap completes - triggers redirect via useAuthStatus
+      authStore.setHasProfile(isSignedUp);
     } catch (error) {
+      // Clean up early-stored session to prevent dangling state
+      authStore.reset();
       signInStore.setError(error as Libs.AppError);
       throw error;
     }
@@ -202,6 +206,9 @@ export class AuthController {
         Libs.Logger.warn('Homeserver logout failed, clearing local state anyway', { error });
       }
     }
+    // Reset PubkySpecsSingleton here to ensure it's always called even when homeserver logout fails.
+    // This allows users to sign out even when their profile pubky cannot be resolved (issue #538).
+    Core.PubkySpecsSingleton.reset();
     this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();
