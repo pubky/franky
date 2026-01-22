@@ -175,6 +175,13 @@ export class PostController {
     await Core.PostApplication.commitDelete({ compositePostId });
   }
 
+  static async commitEdit({ compositePostId, content }: Core.TEditPostParams) {
+    const currentUserPubky = Core.useAuthStore.getState().selectCurrentUserPubky();
+    const { post, meta } = await Core.PostNormalizer.toEdit({ compositePostId, content, currentUserPubky });
+
+    await Core.PostApplication.commitEdit({ compositePostId, post, postUrl: meta.url });
+  }
+
   /**
    * Normalize file attachments
    * @param params - Parameters object

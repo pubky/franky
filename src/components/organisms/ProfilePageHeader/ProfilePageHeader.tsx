@@ -46,16 +46,16 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
         <Atoms.AvatarEmojiBadge emoji={displayEmoji} />
       </Atoms.Container>
 
-      <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 flex-col gap-5">
+      <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 flex-col gap-3">
         <Atoms.Container
           overrideDefaults={true}
-          className={Libs.cn('flex min-w-0 flex-col text-center lg:text-left', bio && 'gap-2')}
+          className={Libs.cn('flex min-w-0 flex-col text-center lg:text-left', bio && 'gap-1')}
         >
           <Atoms.Typography
             data-cy="profile-username-header"
             as="h1"
             size="lg"
-            className="truncate text-white lg:text-6xl"
+            className="truncate leading-tight text-white lg:text-6xl"
           >
             {name}
           </Atoms.Typography>

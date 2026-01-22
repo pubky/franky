@@ -124,4 +124,12 @@ export class PostApplication {
       await Core.FileApplication.commitDelete(post.attachments);
     }
   }
+
+  static async commitEdit({ compositePostId, post, postUrl }: Core.TEditPostInput) {
+    // Update local database
+    await Core.LocalPostService.edit({ compositePostId, content: post.content });
+
+    // Sync to homeserver
+    await Core.HomeserverService.request({ method: HttpMethod.PUT, url: postUrl, bodyJson: post.toJson() });
+  }
 }
