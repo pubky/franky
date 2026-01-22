@@ -14,7 +14,9 @@ describe('NexusSearchService', () => {
 
       const result = await NexusSearchService.usersById({ prefix: 'pxnu33', skip: 0, limit: 5 });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/users/by_id/pxnu33'));
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('/v0/search/users/by_id/pxnu33'),
+      });
       expect(result).toEqual(mockUserIds);
     });
 
@@ -31,8 +33,12 @@ describe('NexusSearchService', () => {
 
       await NexusSearchService.usersById({ prefix: 'test', skip: 10, limit: 20 });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('skip=10'));
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('limit=20'));
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('skip=10'),
+      });
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('limit=20'),
+      });
     });
   });
 
@@ -43,7 +49,9 @@ describe('NexusSearchService', () => {
 
       const result = await NexusSearchService.usersByName({ prefix: 'Test', skip: 0, limit: 5 });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/users/by_name/Test'));
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('/v0/search/users/by_name/Test'),
+      });
       expect(result).toEqual(mockUserIds);
     });
 
@@ -63,7 +71,9 @@ describe('NexusSearchService', () => {
 
       const result = await NexusSearchService.tags({ prefix: 'bit', skip: 0, limit: 5 });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/tags/by_prefix/bit'));
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('/v0/search/tags/by_prefix/bit'),
+      });
       expect(result).toEqual(mockTags);
     });
 
@@ -80,7 +90,9 @@ describe('NexusSearchService', () => {
 
       await NexusSearchService.tags({ prefix: 'tag#123', skip: 0, limit: 5 });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('tag%23123'));
+      expect(queryNexusSpy).toHaveBeenCalledWith({
+        url: expect.stringContaining('tag%23123'),
+      });
     });
   });
 });

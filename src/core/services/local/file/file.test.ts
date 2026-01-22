@@ -90,19 +90,22 @@ describe('LocalFileService', () => {
 
     it('propagates database error when bulkSave fails', async () => {
       const file = createMockFile(testFileId1);
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
+      const databaseError = Libs.Err.database(
+        Libs.DatabaseErrorCode.WRITE_FAILED,
         'Failed to bulk save records in file_details',
-        500,
-        { error: new Error('Database connection lost'), rowsCount: 1 },
+        {
+          service: Libs.ErrorService.Local,
+          operation: 'bulkSave',
+          context: { rowsCount: 1 },
+        },
       );
 
       vi.spyOn(Core.FileDetailsModel, 'bulkSave').mockRejectedValueOnce(databaseError);
 
       await expect(LocalFileService.createMany({ files: [file] })).rejects.toMatchObject({
-        type: 'BULK_OPERATION_FAILED',
+        category: Libs.ErrorCategory.Database,
+        code: Libs.DatabaseErrorCode.WRITE_FAILED,
         message: 'Failed to bulk save records in file_details',
-        statusCode: 500,
       });
     });
 
@@ -289,19 +292,22 @@ describe('LocalFileService', () => {
     it('propagates database error when create fails', async () => {
       const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-error`);
       const fileResult = createMockFileResult(testFileId1);
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.CREATE_FAILED,
+      const databaseError = Libs.Err.database(
+        Libs.DatabaseErrorCode.WRITE_FAILED,
         'Failed to create record in file_details',
-        500,
-        { error: new Error('Database constraint violation') },
+        {
+          service: Libs.ErrorService.Local,
+          operation: 'create',
+          context: { error: 'Database constraint violation' },
+        },
       );
 
       vi.spyOn(Core.FileDetailsModel, 'create').mockRejectedValueOnce(databaseError);
 
       await expect(LocalFileService.create({ blobResult, fileResult })).rejects.toMatchObject({
-        type: 'CREATE_FAILED',
+        category: Libs.ErrorCategory.Database,
+        code: Libs.DatabaseErrorCode.WRITE_FAILED,
         message: 'Failed to create record in file_details',
-        statusCode: 500,
       });
     });
 

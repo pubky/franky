@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger, Err, ValidationErrorCode, ErrorService } from '@/libs';
 import { userUriBuilder } from 'pubky-app-specs';
 
 export class AuthApplication {
@@ -31,10 +31,10 @@ export class AuthApplication {
       authStore.setIsRestoringSession(true);
       try {
         const session = await Core.HomeserverService.restoreSession({ sessionExport: authStore.sessionExport! });
-        Libs.Logger.info('Session restored successfully');
+        Logger.info('Session restored successfully');
         return { session };
       } catch (error) {
-        Libs.Logger.error('Failed to restore session from persisted export', error);
+        Logger.error('Failed to restore session from persisted export', error);
         const initialState = { session: null, currentUserPubky: null, hasProfile: false };
         authStore.init(initialState);
         return null;
@@ -70,10 +70,13 @@ export class AuthApplication {
    */
   static async signIn({ keypair }: Core.TKeypairParams): Promise<Core.THomeserverSessionResult | undefined> {
     if (!keypair) {
-      throw new Libs.AppError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         'Keypair not found in onboarding store. Please regenerate your keys and try again.',
-        400,
+        {
+          service: ErrorService.Local,
+          operation: 'signIn',
+        },
       );
     }
     return await Core.HomeserverService.signIn({ keypair });
@@ -123,10 +126,10 @@ export class AuthApplication {
    */
   static async userIsSignedUp({ pubky }: Core.TPubkyParams): Promise<boolean> {
     try {
-      await Core.HomeserverService.request(Core.HomeserverAction.GET, userUriBuilder(pubky));
+      await Core.HomeserverService.request({ method: HttpMethod.GET, url: userUriBuilder(pubky) });
       return true;
     } catch {
-      Libs.Logger.error('User profile.json missing in homeserver. Please PUT that file first.', { pubky });
+      Logger.error('User profile.json missing in homeserver. Please PUT that file first.', { pubky });
       return false;
     }
   }

@@ -210,20 +210,19 @@ describe('LocalTagService', () => {
       expect(userCounts!.tagged).toBe(9);
     });
 
-    it('should throw error if post has no tags when deleting tag', async () => {
+    it('should return false if post has no tags when deleting tag (idempotent)', async () => {
       await Core.PostTagsModel.table.clear();
 
-      await expect(Core.LocalPostTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
-        'Failed to delete post tag',
-      );
+      const result = await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
+      expect(result).toBe(false);
     });
 
-    it('should throw error if user has not created tag post with this label when deleting tag', async () => {
+    it('should return false if user has not tagged with this label when deleting (idempotent)', async () => {
       await setupExistingTag('javascript', [testData.taggerPubky], false);
 
-      await expect(Core.LocalPostTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
-        'Failed to delete post tag',
-      );
+      // Different user trying to delete - should return false
+      const result = await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
+      expect(result).toBe(false);
     });
 
     it('should delete only the tagger but keep tag if other taggers exist', async () => {
