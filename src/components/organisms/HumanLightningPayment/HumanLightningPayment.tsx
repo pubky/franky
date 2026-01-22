@@ -78,7 +78,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
   // Format the payment description with optional USD conversion
   const getPaymentDescription = () => {
     if (!verification) return '';
-    const amountFormatted = verification.data.amountSat.toLocaleString();
+    const amountFormatted = verification.data.amountSat.toLocaleString('en-US');
     const usdAmount = rate?.satUsd
       ? ` (approximately $${Math.round(rate.satUsd * verification.data.amountSat * 100) / 100})`
       : '';
@@ -152,7 +152,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
           {isDataAvailable ? (
             <React.Fragment>
               <Atoms.Typography as="p" className="text-5xl leading-none font-semibold text-brand lg:text-6xl">
-                ₿ {verification.data.amountSat.toLocaleString()}
+                ₿ {verification.data.amountSat.toLocaleString('en-US')}
               </Atoms.Typography>
               <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
                 {getPaymentDescription()}
