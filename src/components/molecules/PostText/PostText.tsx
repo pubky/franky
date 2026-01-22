@@ -20,6 +20,20 @@ import * as Organisms from '@/organisms';
 import { usePathname } from 'next/navigation';
 import { POST_ROUTES } from '@/app/routes';
 
+/**
+ * Renders formatted text content with markdown, hashtags, mentions, and links.
+ *
+ * Used for:
+ * - Post content in feeds and post pages
+ * - User bio in profile popovers
+ *
+ * Features:
+ * - Markdown formatting (bold, italic, code, lists, etc.)
+ * - Hashtag parsing (#tag → clickable search link)
+ * - Mention parsing (pk:... or pubky... → clickable profile link)
+ * - URL detection and linking
+ * - Content truncation with "Show more" on non-post pages (500 char limit)
+ */
 export const PostText = ({ content, isArticle, className }: PostTextProps) => {
   const pathname = usePathname();
 

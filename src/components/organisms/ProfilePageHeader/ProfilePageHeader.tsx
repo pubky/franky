@@ -60,14 +60,9 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
             {name}
           </Atoms.Typography>
           {bio && (
-            <Atoms.Typography
-              data-cy="profile-bio-header"
-              as="p"
-              size="sm"
-              className="leading-tight font-medium text-secondary-foreground lg:text-base"
-            >
-              {bio}
-            </Atoms.Typography>
+            <Atoms.Container data-cy="profile-bio-header" overrideDefaults>
+              <Molecules.PostText content={bio} />
+            </Atoms.Container>
           )}
         </Atoms.Container>
 
