@@ -54,6 +54,17 @@ export class VerificationHandler {
   }
 
   /**
+   * Confirm the payment and invoke the callback.
+   * Returns true if this call confirmed the payment, false if already confirmed.
+   */
+  private confirmPayment(signupCode: string, homeserverPubky: string): boolean {
+    if (this.paymentConfirmed || this.aborted) return false;
+    this.paymentConfirmed = true;
+    this.onPaymentConfirmed?.(signupCode, homeserverPubky);
+    return true;
+  }
+
+  /**
    * Listen for the payment expiration.
    */
   private listenPaymentExpired() {
@@ -77,10 +88,10 @@ export class VerificationHandler {
         return undefined;
       }
       const result = await HomegateController.awaitLnVerification(this.data.id);
-      if (result.success && result.data.isPaid && result.data.signupCode && !this.aborted && !this.paymentConfirmed) {
-        this.paymentConfirmed = true;
-        this.onPaymentConfirmed?.(result.data.signupCode, result.data.homeserverPubky);
-        return;
+      if (result.success && result.data.isPaid && result.data.signupCode) {
+        if (this.confirmPayment(result.data.signupCode, result.data.homeserverPubky)) {
+          return;
+        }
       }
       if ('timeout' in result && result.timeout) {
         // Try again
@@ -118,9 +129,8 @@ export class VerificationHandler {
     if (this.aborted || this.isExpired || this.paymentConfirmed) return;
 
     const result = await HomegateController.awaitLnVerification(this.data.id);
-    if (result.success && result.data.isPaid && result.data.signupCode && !this.aborted && !this.paymentConfirmed) {
-      this.paymentConfirmed = true;
-      this.onPaymentConfirmed?.(result.data.signupCode, result.data.homeserverPubky);
+    if (result.success && result.data.isPaid && result.data.signupCode) {
+      this.confirmPayment(result.data.signupCode, result.data.homeserverPubky);
     }
   }
 }
