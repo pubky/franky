@@ -29,8 +29,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when collapse
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="false"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="false"
           data-submitting="false"
           data-testid="post-input-action-bar"
@@ -86,8 +88,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when disabled
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="false"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="true"
           data-submitting="false"
           data-testid="post-input-action-bar"
@@ -144,8 +148,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when expanded
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="false"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="false"
           data-submitting="false"
           data-testid="post-input-action-bar"
@@ -234,8 +240,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when expanded
           </span>
         </div>
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="false"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="false"
           data-submitting="false"
           data-testid="post-input-action-bar"
@@ -286,8 +294,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when isArticl
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="true"
           data-is-article="true"
+          data-is-edit="false"
           data-post-disabled="false"
           data-submitting="false"
           data-testid="post-input-action-bar"
@@ -338,8 +348,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when submitti
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="false"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="true"
           data-submitting="true"
           data-testid="post-input-action-bar"
@@ -359,6 +371,60 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot when submitti
             data-testid="action-bar-article"
           >
             Article
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputExpandableSection - Snapshots > matches snapshot with EDIT submit mode 1`] = `
+<div
+  class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="overflow-hidden"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        data-testid="post-link-embeds"
+      >
+        Editing content
+      </div>
+      <div
+        class="justify-between gap-4 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-disabled="true"
+          data-testid="post-input-tags"
+        />
+        <div
+          data-has-post-button-icon="true"
+          data-hide-article-button="true"
+          data-is-article="false"
+          data-is-edit="true"
+          data-post-disabled="false"
+          data-submitting="false"
+          data-testid="post-input-action-bar"
+        >
+          <button
+            data-testid="action-bar-post"
+          >
+            Post
+          </button>
+          <button
+            data-testid="action-bar-emoji"
+          >
+            Emoji
           </button>
         </div>
       </div>
@@ -396,8 +462,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot with REPLY su
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="true"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="false"
           data-submitting="false"
           data-testid="post-input-action-bar"
@@ -448,8 +516,10 @@ exports[`PostInputExpandableSection - Snapshots > matches snapshot with emoji pi
           data-testid="post-input-tags"
         />
         <div
+          data-has-post-button-icon="false"
           data-hide-article-button="false"
           data-is-article="false"
+          data-is-edit="false"
           data-post-disabled="false"
           data-submitting="false"
           data-testid="post-input-action-bar"

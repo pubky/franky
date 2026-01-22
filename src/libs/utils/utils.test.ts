@@ -1368,6 +1368,7 @@ describe('Utils', () => {
         expect(canSubmitPost('post', 'Hello', [], true)).toBe(false);
         expect(canSubmitPost('reply', 'Hello', [], true)).toBe(false);
         expect(canSubmitPost('repost', '', [], true)).toBe(false);
+        expect(canSubmitPost('edit', 'Hello', [], true)).toBe(false);
       });
     });
 
@@ -1418,6 +1419,39 @@ describe('Utils', () => {
 
       it('should return true with content', () => {
         expect(canSubmitPost('repost', 'Adding my thoughts', [], false)).toBe(true);
+      });
+    });
+
+    describe('for edit variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('edit', 'Updated content', [], false)).toBe(true);
+      });
+
+      it('should return false when content is empty', () => {
+        expect(canSubmitPost('edit', '', [], false)).toBe(false);
+      });
+
+      it('should return false for whitespace-only content', () => {
+        expect(canSubmitPost('edit', '   ', [], false)).toBe(false);
+        expect(canSubmitPost('edit', '\n\t', [], false)).toBe(false);
+      });
+
+      it('should return true with content even without attachments', () => {
+        expect(canSubmitPost('edit', 'Updated content', [], false)).toBe(true);
+      });
+
+      it('should return false with attachments but no content', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('edit', '', [mockFile], false)).toBe(false);
+      });
+
+      it('should require both content and title when isArticle is true', () => {
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, 'Article Title')).toBe(true);
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, '')).toBe(false);
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, undefined)).toBe(false);
+        expect(canSubmitPost('edit', '', [], false, true, 'Article Title')).toBe(false);
+        expect(canSubmitPost('edit', '   ', [], false, true, 'Article Title')).toBe(false);
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, '   ')).toBe(false);
       });
     });
 
