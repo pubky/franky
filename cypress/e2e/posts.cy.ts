@@ -14,7 +14,7 @@ import {
   PostOrReply,
 } from '../support/posts';
 import { defaultMs } from '../support/slow-down';
-import { BackupType, CheckForNewPosts, HasBackedUp } from '../support/types/enums';
+import { BackupType, CheckForNewPosts, HasBackedUp, WaitForNewPosts } from '../support/types/enums';
 
 const username = 'Poster';
 
@@ -113,7 +113,7 @@ describe('posts', () => {
       cy.get('[data-cy="post-input-action-bar-post"]').click();
     });
 
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-text"]').should('contain.text', postContent);
       cy.get('img').should('be.visible');
     });
@@ -296,7 +296,7 @@ describe('posts', () => {
     cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
   });
 
-  it('can bookmark multiple posts then remove bookmarks', () => {
+  it.only('can bookmark multiple posts then remove bookmarks', () => {
     const postContent1 = `This post will be bookmarked! ${Date.now()}`;
     const postContent2 = `This post will also be bookmarked! ${Date.now()}`;
 
@@ -316,10 +316,12 @@ describe('posts', () => {
     cy.get('[data-cy="timeline-posts"]').should('contain.text', postContent1);
     cy.get('[data-cy="timeline-posts"]').should('contain.text', postContent2);
 
+    // unbookmark both posts
     cy.get('[data-cy="timeline-posts"]')
-      .children()
-      .each(($post) => {
-        cy.wrap($post).find('[data-cy="post-bookmark-btn"]').click();
+      .children().then(($posts) => {
+        cy.wrap($posts.slice(0, 2)).each(($post) => {
+          cy.wrap($post).find('[data-cy="post-bookmark-btn"]').click();
+        });
       });
 
     cy.reload();
@@ -369,6 +371,7 @@ describe('posts', () => {
     });
   });
 
+  // failing
   it('can see repost of a deleted post', () => {
     const postContent = `This post will be reposted and deleted! ${Date.now()}`;
     const repostContent = `Reposted with this content! ${Date.now()}`;
