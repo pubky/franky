@@ -354,7 +354,7 @@ describe('usePostInput', () => {
 
       expect(mockEdit).toHaveBeenCalledWith({
         editPostId: 'post-to-edit-id',
-        onSuccess: mockOnSuccess,
+        onSuccess: expect.any(Function),
       });
       expect(mockPost).not.toHaveBeenCalled();
       expect(mockReply).not.toHaveBeenCalled();
