@@ -227,7 +227,8 @@ describe('posts', () => {
     });
   });
 
-  it('can tag and remove tags from existing post on feed page ', () => {
+  // todo: update test to handle 0 count when FR addressed, see https://github.com/pubky/franky/issues/973
+  it('can tag and remove tags from existing post on feed page', () => {
     const postContent = `I can add and remove tags from my existing post on the feed page! ${Date.now()}`;
     const tag1 = 'bananas';
     const tag2 = 'pyjamas';
@@ -241,29 +242,28 @@ describe('posts', () => {
         cy.get('[data-cy="add-tag-input"]').type(`${tag}{enter}`);
       });
       [tag1, tag2, tag3].forEach((tag) => {
-        cy.contains('button', tag).should('be.visible').should('have.attr', 'data-state', 'on');
+        cy.contains('button', tag).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
       });
       cy.contains('button', tag2).click();
-      cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
-      cy.contains('button', tag2).click();
-      cy.contains('button', tag2).should('have.attr', 'data-state', 'on');
+      cy.contains('button', tag2).should('not.exist');
+      // cy.contains('button', tag2).click();
+      // cy.contains('button', tag2).find('[data-cy="post-tag-count"]').should('have.text', '1');
     });
 
     cy.reload();
 
     cy.findFirstPostInFeed().within(() => {
-      [tag1, tag2, tag3].forEach((tag) => {
-        cy.contains('button', tag).should('be.visible').should('have.attr', 'data-state', 'on');
+      [tag1, tag3].forEach((tag) => {
+        cy.contains('button', tag).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
       });
-      cy.contains('button', tag2).click();
-      cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
+      cy.contains('button', tag2).should('not.exist');
     });
 
-    cy.reload();
+    // cy.reload();
 
-    cy.findFirstPostInFeed().within(() => {
-      cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
-    });
+    // cy.findFirstPostInFeed().within(() => {
+    //   cy.contains('button', tag2).find('[data-cy="post-tag-count"]').should('have.text', '0');
+    // });
   });
 
   it('can tag and remove tags from existing post on post page', () => {
