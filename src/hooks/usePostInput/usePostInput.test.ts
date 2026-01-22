@@ -1872,4 +1872,144 @@ describe('usePostInput', () => {
       expect(mockSetAttachments).toHaveBeenCalled();
     });
   });
+
+  describe('handlePaste', () => {
+    it('extracts files from clipboard and adds them as attachments', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file = new File(['test'], 'test.png', { type: 'image/png' });
+      const pasteEvent = {
+        clipboardData: {
+          items: [{ kind: 'file', getAsFile: () => file }],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).toHaveBeenCalled();
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('does not prevent default when pasting text (no files)', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: {
+          items: [{ kind: 'string', getAsFile: () => null }],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+    });
+
+    it('handles multiple files from clipboard', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const file1 = new File(['test1'], 'test1.png', { type: 'image/png' });
+      const file2 = new File(['test2'], 'test2.jpg', { type: 'image/jpeg' });
+      const pasteEvent = {
+        clipboardData: {
+          items: [
+            { kind: 'file', getAsFile: () => file1 },
+            { kind: 'file', getAsFile: () => file2 },
+          ],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).toHaveBeenCalled();
+      expect(mockSetAttachments).toHaveBeenCalled();
+    });
+
+    it('handles null clipboardData gracefully', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: null,
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      expect(() => {
+        act(() => {
+          result.current.handlePaste(pasteEvent);
+        });
+      }).not.toThrow();
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it('handles null items gracefully', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: {
+          items: null,
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      expect(() => {
+        act(() => {
+          result.current.handlePaste(pasteEvent);
+        });
+      }).not.toThrow();
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+    });
+
+    it('ignores items where getAsFile returns null', () => {
+      const { result } = renderHook(() =>
+        usePostInput({
+          variant: 'post',
+        }),
+      );
+
+      const pasteEvent = {
+        clipboardData: {
+          items: [{ kind: 'file', getAsFile: () => null }],
+        },
+        preventDefault: vi.fn(),
+      } as unknown as React.ClipboardEvent;
+
+      act(() => {
+        result.current.handlePaste(pasteEvent);
+      });
+
+      expect(pasteEvent.preventDefault).not.toHaveBeenCalled();
+      expect(mockSetAttachments).not.toHaveBeenCalled();
+    });
+  });
 });
