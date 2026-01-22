@@ -24,7 +24,7 @@ import type {
  * @returns Menu items array, loading state, and report post data
  */
 export function usePostMenuActions(postId: string, options: UsePostMenuActionsOptions): UsePostMenuActionsResult {
-  const { onReportClick } = options;
+  const { onReportClick, onEditClick } = options;
   const parsedId = Core.parseCompositeId(postId);
   const postAuthorId = parsedId.pubky;
 
@@ -147,6 +147,14 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   }
 
   if (isOwnPost) {
+    menuItems.push({
+      id: POST_MENU_ACTION_IDS.EDIT,
+      label: 'Edit post',
+      icon: Libs.Edit,
+      onClick: onEditClick,
+      variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
+    });
+
     menuItems.push({
       id: POST_MENU_ACTION_IDS.DELETE,
       label: 'Delete post',
