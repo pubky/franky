@@ -23,7 +23,7 @@ exports[`HumanSelection > matches snapshot 1`] = `
       No email needed. Verify quickly using SMS or a small payment. Or use an
        
       <button
-        class="text-brand hover:font-bold cursor-pointer"
+        class="cursor-pointer text-brand hover:font-bold"
         data-testid="invite-code-link"
         type="button"
       >

@@ -107,9 +107,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
               <Atoms.Typography as="h3" className="text-2xl leading-8 font-bold text-foreground">
                 Invite code for homeserver
               </Atoms.Typography>
-              <Atoms.Button variant="ghost" size="icon" className="h-6 w-6 opacity-80" aria-label="Help">
-                <Libs.CircleHelp className="h-4 w-4" />
-              </Atoms.Button>
+              <Molecules.PopoverInviteHomeserver className="h-6 w-6 opacity-80" />
             </Atoms.Container>
             <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
               You get 1GB of storage, used for your posts, photos, videos, and your profile.
