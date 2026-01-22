@@ -29,7 +29,6 @@ export function ProfileMenuActionsContent({ userId, variant, onActionComplete }:
     <>
       {menuItems.map((item) => {
         const Icon = item.icon;
-        const color = item.variant === 'destructive' ? 'text-destructive' : 'text-muted-foreground';
 
         return variant === MENU_VARIANT.SHEET ? (
           <Atoms.Button
@@ -41,8 +40,12 @@ export function ProfileMenuActionsContent({ userId, variant, onActionComplete }:
             className="justify-start overflow-hidden"
           >
             <Atoms.Container overrideDefaults className="flex items-center gap-2 overflow-hidden">
-              <Icon className={Libs.cn('size-4 shrink-0', color)} />
-              <Atoms.Typography as="span" overrideDefaults className={Libs.cn('truncate text-base font-medium', color)}>
+              <Icon className="size-4 shrink-0 text-muted-foreground" />
+              <Atoms.Typography
+                as="span"
+                overrideDefaults
+                className="truncate text-base font-medium text-muted-foreground"
+              >
                 {item.label}
               </Atoms.Typography>
             </Atoms.Container>
@@ -56,15 +59,11 @@ export function ProfileMenuActionsContent({ userId, variant, onActionComplete }:
             className="group p-0"
           >
             <Atoms.Container overrideDefaults className="flex items-center gap-2 overflow-hidden p-0">
-              <Icon className={Libs.cn('size-4 shrink-0 transition-colors', color, 'group-hover:text-foreground')} />
+              <Icon className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" />
               <Atoms.Typography
                 as="span"
                 overrideDefaults
-                className={Libs.cn(
-                  'truncate text-base font-medium transition-colors',
-                  color,
-                  'group-hover:text-foreground',
-                )}
+                className="truncate text-base font-medium text-muted-foreground transition-colors group-hover:text-foreground"
               >
                 {item.label}
               </Atoms.Typography>

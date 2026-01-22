@@ -8,12 +8,3 @@ export const PROFILE_MENU_ACTION_IDS = {
   COPY_LINK: 'copy-link',
   MUTE: 'mute',
 } as const;
-
-/**
- * Profile Menu Action Variants
- * Note: DESTRUCTIVE is reserved for future actions like block user
- */
-export const PROFILE_MENU_ACTION_VARIANTS = {
-  DEFAULT: 'default',
-  DESTRUCTIVE: 'destructive',
-} as const;

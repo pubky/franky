@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
-import type { MutedUser } from './MutedUsersList.types';
+import { mapUserIdsToMutedUsers } from './MutedUsersList.utils';
 
 export function MutedUsersList() {
   const { mutedUserIds, isLoading: isMutedLoading } = Hooks.useMutedUsers();
@@ -13,15 +13,7 @@ export function MutedUsersList() {
   const { toggleMute, isLoading: isMuteLoading, isUserLoading: isMuteUserLoading } = Hooks.useMuteUser();
   const [isLoadingUnmuteAll, setIsLoadingUnmuteAll] = React.useState(false);
 
-  // Convert muted user IDs to MutedUser objects
-  const mutedUsers: MutedUser[] = mutedUserIds.map((id) => {
-    const user = usersMap.get(id);
-    return {
-      id,
-      name: user?.name,
-      avatar: user?.avatarUrl ?? undefined,
-    };
-  });
+  const mutedUsers = mapUserIdsToMutedUsers(mutedUserIds, usersMap);
 
   const isLoading = isMutedLoading || isUsersLoading;
 
@@ -77,7 +69,7 @@ export function MutedUsersList() {
     <Atoms.Container overrideDefaults className="inline-flex w-full flex-col gap-6">
       {isLoading ? (
         <Atoms.Container overrideDefaults className="w-full">
-          <Atoms.Typography size="md" className="font-medium text-muted-foreground">
+          <Atoms.Typography as="span" overrideDefaults className="text-base font-medium text-muted-foreground">
             Loading...
           </Atoms.Typography>
         </Atoms.Container>
@@ -98,11 +90,17 @@ export function MutedUsersList() {
                   {mutedUser?.avatar && <Atoms.AvatarImage src={mutedUser.avatar} alt={mutedUser?.name ?? 'User'} />}
                   <Atoms.AvatarFallback>{mutedUser?.name?.[0] || 'U'}</Atoms.AvatarFallback>
                 </Atoms.Avatar>
-                <Atoms.Container overrideDefaults className="inline-flex flex-col items-start justify-center">
-                  <span className="text-base font-bold">{mutedUser?.name || 'Unknown User'}</span>
-                  <span className="text-xs tracking-widest text-muted-foreground uppercase">
+                <Atoms.Container overrideDefaults className="inline-flex flex-col items-start">
+                  <Atoms.Typography as="span" overrideDefaults className="text-base font-bold">
+                    {mutedUser?.name || 'Unknown User'}
+                  </Atoms.Typography>
+                  <Atoms.Typography
+                    as="span"
+                    overrideDefaults
+                    className="text-xs tracking-widest text-muted-foreground uppercase"
+                  >
                     {Libs.truncateString(mutedUser?.id || '', 12)}
-                  </span>
+                  </Atoms.Typography>
                 </Atoms.Container>
               </Atoms.Link>
               <Atoms.Button
@@ -132,7 +130,7 @@ export function MutedUsersList() {
           )}
         </>
       ) : (
-        <Atoms.Typography as="p" size="lg" overrideDefaults className="w-full py-4 text-center text-muted-foreground">
+        <Atoms.Typography as="p" overrideDefaults className="w-full py-4 text-center text-lg text-muted-foreground">
           No muted users yet
         </Atoms.Typography>
       )}

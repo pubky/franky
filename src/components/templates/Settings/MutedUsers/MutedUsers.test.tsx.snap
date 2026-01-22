@@ -68,12 +68,12 @@ exports[`MutedUsers - Snapshots > matches snapshot with loading state 1`] = `
         class="w-full"
         data-testid="container"
       >
-        <p
-          class="text-xl font-medium text-muted-foreground"
+        <span
+          class="text-base font-medium text-muted-foreground"
           data-testid="typography"
         >
           Loading...
-        </p>
+        </span>
       </div>
     </div>
   </div>
@@ -162,16 +162,18 @@ exports[`MutedUsers - Snapshots > matches snapshot with muted users 1`] = `
             </span>
           </span>
           <div
-            class="inline-flex flex-col items-start justify-center"
+            class="inline-flex flex-col items-start"
             data-testid="container"
           >
             <span
               class="text-base font-bold"
+              data-testid="typography"
             >
               Test User 1
             </span>
             <span
               class="text-xs tracking-widest text-muted-foreground uppercase"
+              data-testid="typography"
             >
               user-1
             </span>
@@ -228,16 +230,18 @@ exports[`MutedUsers - Snapshots > matches snapshot with muted users 1`] = `
             </span>
           </span>
           <div
-            class="inline-flex flex-col items-start justify-center"
+            class="inline-flex flex-col items-start"
             data-testid="container"
           >
             <span
               class="text-base font-bold"
+              data-testid="typography"
             >
               Test User 2
             </span>
             <span
               class="text-xs tracking-widest text-muted-foreground uppercase"
+              data-testid="typography"
             >
               user-2
             </span>
@@ -377,7 +381,7 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
       data-testid="container"
     >
       <p
-        class="w-full py-4 text-center text-muted-foreground"
+        class="w-full py-4 text-center text-lg text-muted-foreground"
         data-testid="typography"
       >
         No muted users yet
