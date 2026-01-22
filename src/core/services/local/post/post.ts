@@ -92,12 +92,14 @@ export class LocalPostService {
   static async edit({ compositePostId, content }: { compositePostId: string; content: string }) {
     try {
       await Core.PostDetailsModel.update(compositePostId, { content });
-      Libs.Logger.debug('Post edited successfully', { compositePostId });
+      Logger.debug('Post edited successfully', { compositePostId });
     } catch (error) {
-      Libs.Logger.error('Failed to edit post', { compositePostId, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to edit post', 500, {
-        error,
-        compositePostId,
+      Logger.error('Failed to edit post', { compositePostId, error });
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to edit post', {
+        service: ErrorService.Local,
+        operation: 'edit',
+        context: { compositePostId },
+        cause: error,
       });
     }
   }
