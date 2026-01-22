@@ -4,23 +4,30 @@ import { usePost } from './usePost';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 // Hoist mock data and functions
-const { mockCurrentUserId, setMockCurrentUserId, mockPostControllerCreate, mockToast, mockLoggerError } = vi.hoisted(
-  () => {
-    const userId = { current: 'test-user-id' as string | null };
-    const postControllerCreate = vi.fn();
-    const toast = vi.fn();
-    const loggerError = vi.fn();
-    return {
-      mockCurrentUserId: userId,
-      setMockCurrentUserId: (value: string | null) => {
-        userId.current = value;
-      },
-      mockPostControllerCreate: postControllerCreate,
-      mockToast: toast,
-      mockLoggerError: loggerError,
-    };
-  },
-);
+const {
+  mockCurrentUserId,
+  setMockCurrentUserId,
+  mockPostControllerCreate,
+  mockPostControllerEdit,
+  mockToast,
+  mockLoggerError,
+} = vi.hoisted(() => {
+  const userId = { current: 'test-user-id' as string | null };
+  const postControllerCreate = vi.fn();
+  const postControllerEdit = vi.fn();
+  const toast = vi.fn();
+  const loggerError = vi.fn();
+  return {
+    mockCurrentUserId: userId,
+    setMockCurrentUserId: (value: string | null) => {
+      userId.current = value;
+    },
+    mockPostControllerCreate: postControllerCreate,
+    mockPostControllerEdit: postControllerEdit,
+    mockToast: toast,
+    mockLoggerError: loggerError,
+  };
+});
 
 // Mock Core
 vi.mock('@/core', async (importOriginal) => {
@@ -29,6 +36,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     PostController: {
       commitCreate: mockPostControllerCreate,
+      commitEdit: mockPostControllerEdit,
     },
     useAuthStore: vi.fn((selector) => {
       const state = {
@@ -67,7 +75,8 @@ describe('usePost', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setMockCurrentUserId('test-user-id');
-    mockPostControllerCreate.mockResolvedValue(undefined);
+    mockPostControllerCreate.mockResolvedValue('created-post-id');
+    mockPostControllerEdit.mockResolvedValue(undefined);
   });
 
   describe('Initial State', () => {
@@ -1117,6 +1126,339 @@ describe('usePost', () => {
         content: 'Trimmed repost content',
         authorId: 'test-user-id',
         tags: undefined,
+      });
+    });
+
+    describe('edit method', () => {
+      it('should be an async function', () => {
+        const { result } = renderHook(() => usePost());
+        expect(result.current.edit).toBeInstanceOf(Function);
+      });
+
+      it('should edit a post successfully', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setContent('Edited content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).toHaveBeenCalledWith({
+          compositePostId: 'test-post-123',
+          content: 'Edited content',
+        });
+        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Post edited',
+          description: 'Your post has been edited successfully.',
+        });
+      });
+
+      it('should not submit edit when content is empty', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should not submit edit when content is only whitespace', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setContent('   ');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should not submit edit when editPostId is missing', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setContent('Edited content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: '',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should not submit edit when currentUserId is null', async () => {
+        setMockCurrentUserId(null);
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setContent('Edited content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should handle edit error and show toast', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockError = new Error('Edit failed');
+        mockPostControllerEdit.mockRejectedValueOnce(mockError);
+
+        act(() => {
+          result.current.setContent('Edited content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: vi.fn(),
+          });
+        });
+
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Error',
+          description: 'Failed to edit post. Please try again.',
+          className: 'destructive border-destructive bg-destructive text-destructive-foreground',
+        });
+        expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to edit post:', mockError);
+      });
+
+      it('should set isSubmitting to true during edit submission', async () => {
+        const { result } = renderHook(() => usePost());
+        let resolvePromise: () => void;
+        const promise = new Promise<void>((resolve) => {
+          resolvePromise = resolve;
+        });
+        mockPostControllerEdit.mockReturnValueOnce(promise);
+
+        act(() => {
+          result.current.setContent('Edited content');
+        });
+
+        let editPromise: Promise<void>;
+        act(() => {
+          editPromise = result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: vi.fn(),
+          });
+        });
+
+        await waitFor(() => {
+          expect(result.current.isSubmitting).toBe(true);
+        });
+
+        await act(async () => {
+          resolvePromise!();
+          await editPromise;
+        });
+
+        expect(result.current.isSubmitting).toBe(false);
+      });
+
+      it('should trim content before submitting edit', async () => {
+        const { result } = renderHook(() => usePost());
+
+        act(() => {
+          result.current.setContent('  Trimmed content  ');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: vi.fn(),
+          });
+        });
+
+        expect(mockPostControllerEdit).toHaveBeenCalledWith({
+          compositePostId: 'test-post-123',
+          content: 'Trimmed content',
+        });
+      });
+
+      it('should edit an article post successfully', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setIsArticle(true);
+          result.current.setArticleTitle('Article Title');
+          result.current.setContent('Article body content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).toHaveBeenCalledWith({
+          compositePostId: 'test-post-123',
+          content: JSON.stringify({ title: 'Article Title', body: 'Article body content' }),
+        });
+        expect(mockOnSuccess).toHaveBeenCalled();
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Post edited',
+          description: 'Your post has been edited successfully.',
+        });
+      });
+
+      it('should not submit article edit when content is empty', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setIsArticle(true);
+          result.current.setArticleTitle('Article Title');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should not submit article edit when articleTitle is empty', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setIsArticle(true);
+          result.current.setContent('Article body content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should not submit article edit when articleTitle is only whitespace', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+
+        act(() => {
+          result.current.setIsArticle(true);
+          result.current.setArticleTitle('   ');
+          result.current.setContent('Article body content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockPostControllerEdit).not.toHaveBeenCalled();
+        expect(mockOnSuccess).not.toHaveBeenCalled();
+      });
+
+      it('should trim articleTitle and content before submitting article edit', async () => {
+        const { result } = renderHook(() => usePost());
+
+        act(() => {
+          result.current.setIsArticle(true);
+          result.current.setArticleTitle('  Article Title  ');
+          result.current.setContent('  Article body content  ');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: vi.fn(),
+          });
+        });
+
+        expect(mockPostControllerEdit).toHaveBeenCalledWith({
+          compositePostId: 'test-post-123',
+          content: JSON.stringify({ title: 'Article Title', body: 'Article body content' }),
+        });
+      });
+
+      it('should reset state after successful edit', async () => {
+        const { result } = renderHook(() => usePost());
+
+        act(() => {
+          result.current.setIsArticle(true);
+          result.current.setArticleTitle('Article Title');
+          result.current.setContent('Article body content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: vi.fn(),
+          });
+        });
+
+        expect(result.current.content).toBe('');
+        expect(result.current.isArticle).toBe(false);
+        expect(result.current.articleTitle).toBe('');
+      });
+
+      it('should not call onSuccess when edit fails', async () => {
+        const { result } = renderHook(() => usePost());
+        const mockOnSuccess = vi.fn();
+        mockPostControllerEdit.mockRejectedValueOnce(new Error('Edit failed'));
+
+        act(() => {
+          result.current.setContent('Edited content');
+        });
+
+        await act(async () => {
+          await result.current.edit({
+            editPostId: 'test-post-123',
+            onSuccess: mockOnSuccess,
+          });
+        });
+
+        expect(mockOnSuccess).not.toHaveBeenCalled();
       });
     });
   });

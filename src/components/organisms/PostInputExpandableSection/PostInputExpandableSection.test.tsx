@@ -90,6 +90,8 @@ vi.mock('../PostInputActionBar', () => ({
     isSubmitting,
     hideArticleButton,
     isArticle,
+    isEdit,
+    postButtonIcon,
   }: {
     onPostClick?: () => void;
     onEmojiClick?: () => void;
@@ -98,6 +100,8 @@ vi.mock('../PostInputActionBar', () => ({
     isSubmitting?: boolean;
     hideArticleButton?: boolean;
     isArticle?: boolean;
+    isEdit?: boolean;
+    postButtonIcon?: React.ComponentType;
   }) => (
     <div
       data-testid="post-input-action-bar"
@@ -105,6 +109,8 @@ vi.mock('../PostInputActionBar', () => ({
       data-submitting={isSubmitting}
       data-hide-article-button={hideArticleButton}
       data-is-article={isArticle}
+      data-is-edit={isEdit}
+      data-has-post-button-icon={!!postButtonIcon}
     >
       <button data-testid="action-bar-post" onClick={onPostClick} disabled={isPostDisabled}>
         Post
@@ -330,6 +336,47 @@ describe('PostInputExpandableSection', () => {
 
     expect(onArticleClick).toHaveBeenCalledTimes(1);
   });
+
+  it('disables tags when submitMode is EDIT', () => {
+    render(<PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.EDIT} isDisabled={false} />);
+
+    const tagsComponent = screen.getByTestId('post-input-tags');
+    expect(tagsComponent).toHaveAttribute('data-disabled', 'true');
+  });
+
+  it('passes isEdit=true to PostInputActionBar when submitMode is EDIT', () => {
+    render(<PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.EDIT} />);
+
+    const actionBar = screen.getByTestId('post-input-action-bar');
+    expect(actionBar).toHaveAttribute('data-is-edit', 'true');
+  });
+
+  it('passes isEdit=false to PostInputActionBar when submitMode is not EDIT', () => {
+    render(<PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.POST} />);
+
+    const actionBar = screen.getByTestId('post-input-action-bar');
+    expect(actionBar).toHaveAttribute('data-is-edit', 'false');
+  });
+
+  it('passes postButtonIcon when submitMode is EDIT', () => {
+    render(<PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.EDIT} />);
+
+    const actionBar = screen.getByTestId('post-input-action-bar');
+    expect(actionBar).toHaveAttribute('data-has-post-button-icon', 'true');
+  });
+
+  it('does not pass postButtonIcon when submitMode is not EDIT', () => {
+    render(<PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.POST} />);
+
+    const actionBar = screen.getByTestId('post-input-action-bar');
+    expect(actionBar).toHaveAttribute('data-has-post-button-icon', 'false');
+  });
+
+  it('hides article button when submitMode is EDIT', () => {
+    render(<PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.EDIT} isArticle={false} />);
+
+    expect(screen.queryByTestId('action-bar-article')).not.toBeInTheDocument();
+  });
 });
 
 describe('PostInputExpandableSection - Snapshots', () => {
@@ -396,6 +443,13 @@ describe('PostInputExpandableSection - Snapshots', () => {
   it('matches snapshot when isArticle is true', () => {
     const { container } = render(
       <PostInputExpandableSection {...defaultProps} isArticle={true} content="Article content" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with EDIT submit mode', () => {
+    const { container } = render(
+      <PostInputExpandableSection {...defaultProps} submitMode={POST_INPUT_VARIANT.EDIT} content="Editing content" />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });

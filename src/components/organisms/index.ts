@@ -21,6 +21,7 @@ export * from './DialogDeleteAccount';
 export * from './EditProfileForm';
 export * from './EditProfileHeader';
 export * from './DialogDownloadPubkyRing';
+export * from './DialogEditPost';
 export * from './DialogFeedback';
 export * from './DialogReportPost';
 export * from './DialogSignIn';
