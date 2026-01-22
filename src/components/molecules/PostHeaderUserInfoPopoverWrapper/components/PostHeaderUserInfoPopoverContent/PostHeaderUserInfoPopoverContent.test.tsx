@@ -27,6 +27,10 @@ vi.mock('@/hooks/usePostHeaderUserInfoPopoverActions', () => ({
   }),
 }));
 
+vi.mock('@/molecules', () => ({
+  PostText: ({ content }: { content: string }) => <div data-testid="post-text">{content}</div>,
+}));
+
 vi.mock('../PostHeaderUserInfoPopoverHeader', () => ({
   PostHeaderUserInfoPopoverHeader: () => <div data-testid="header" />,
 }));

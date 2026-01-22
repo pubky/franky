@@ -1,13 +1,7 @@
-import type { Pubky } from '@/core';
+import type { AutocompleteUserData } from '@/hooks/useUserDetailsFromIds';
 
 export interface AutocompleteTag {
   name: string;
-}
-
-export interface AutocompleteUserData {
-  id: Pubky;
-  name: string;
-  avatarUrl?: string;
 }
 
 export interface UseSearchAutocompleteParams {

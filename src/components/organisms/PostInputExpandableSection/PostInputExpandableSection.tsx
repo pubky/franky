@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Icons from '@/libs/icons';
 import { PostInputActionBar } from '../PostInputActionBar';
 import { PostInputTags } from '../PostInputTags';
 import { getButtonLabel } from './PostInputExpandableSection.utils';
@@ -35,6 +36,8 @@ export function PostInputExpandableSection({
   const postButtonLabel = getButtonLabel(submitMode, isArticle);
   const postButtonAriaLabel = postButtonLabel;
 
+  const isEdit = submitMode === POST_INPUT_VARIANT.EDIT;
+
   return (
     <>
       <Atoms.Container
@@ -63,7 +66,8 @@ export function PostInputExpandableSection({
             )}
 
             <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-              <PostInputTags tags={tags} onTagsChange={setTags} disabled={isUiDisabled} />
+              <PostInputTags tags={tags} onTagsChange={setTags} disabled={isUiDisabled || isEdit} />
+
               <PostInputActionBar
                 onPostClick={onSubmit}
                 onEmojiClick={() => setShowEmojiPicker(true)}
@@ -76,6 +80,8 @@ export function PostInputExpandableSection({
                 postButtonAriaLabel={postButtonAriaLabel}
                 hideArticleButton={submitMode !== POST_INPUT_VARIANT.POST || !!isArticle}
                 isArticle={isArticle}
+                isEdit={isEdit}
+                postButtonIcon={isEdit ? Icons.Edit : undefined}
               />
             </Atoms.Container>
           </Atoms.Container>

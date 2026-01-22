@@ -2,6 +2,12 @@ import { HttpMethod, HttpStatusCode, Logger, AppError, Env } from '@/libs';
 import * as Core from '@/core';
 import * as Config from '@/config';
 
+/**
+ * Callback type for reporting bootstrap progress to the Controller layer.
+ * This allows the Controller to update stores without violating architecture rules.
+ */
+export type BootstrapProgressCallback = (step: 'bootstrapFetched' | 'dataPersisted' | 'homeserverSynced') => void;
+
 export class BootstrapApplication {
   private constructor() {}
 
@@ -11,10 +17,16 @@ export class BootstrapApplication {
    * @param params, Bootstrap parameters
    * @param params.pubky, The user's public key identifier
    * @param params.lastReadUrl, URL to fetch user's last read timestamp from homeserver
+   * @param onProgress, Optional callback to report progress to the Controller layer
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
-  static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
+  static async initialize(
+    params: Core.TBootstrapParams,
+    onProgress?: BootstrapProgressCallback,
+  ): Promise<Core.TBootstrapResponse> {
     const data = await Core.NexusBootstrapService.fetch(params.pubky);
+    onProgress?.('bootstrapFetched'); // Step 3 complete (60%)
+
     if (!data.indexed) {
       Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
         pubky: params.pubky,
@@ -51,6 +63,7 @@ export class BootstrapApplication {
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
       // Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead }),
     ]);
+    onProgress?.('dataPersisted'); // Step 4 complete (80%)
 
     const [_, notification] = await Promise.all([
       // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
@@ -59,6 +72,7 @@ export class BootstrapApplication {
       // Initialize settings from homeserver (non-blocking, errors are logged but don't fail bootstrap)
       this.initializeSettings(params.pubky),
     ]);
+    onProgress?.('homeserverSynced'); // Step 5 complete (100%)
 
     return { notification };
   }

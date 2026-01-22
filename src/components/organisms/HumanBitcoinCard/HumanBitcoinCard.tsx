@@ -58,14 +58,14 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
                     as="p"
                     className="text-5xl leading-none font-semibold whitespace-nowrap text-brand lg:text-6xl"
                   >
-                    ₿ {priceSat.toLocaleString()}
+                    ₿ {priceSat.toLocaleString('en-US')}
                   </Atoms.Typography>
 
                   <Atoms.Typography
                     as="p"
                     className="text-xs font-medium tracking-widest text-muted-foreground uppercase"
                   >
-                    ₿{priceSat.toLocaleString()} = ${Math.round(satUsdRate * priceSat * 100) / 100}
+                    ₿{priceSat.toLocaleString('en-US')} = ${Math.round(satUsdRate * priceSat * 100) / 100}
                   </Atoms.Typography>
                 </>
               ) : (
