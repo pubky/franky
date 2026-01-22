@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import * as Core from '@/core';
-import type { FlatNotification } from '@/core';
+import { NotificationType, type FlatNotification } from '@/core';
+// Direct import to avoid circular dependency (this hook is exported from @/hooks)
+import { useMutedUsers } from '@/hooks/useMutedUsers';
 import type { UseNotificationsResult } from './useNotifications.types';
 
 /**
@@ -20,6 +22,12 @@ export function useNotifications(): UseNotificationsResult {
   const loadingRef = useRef(false);
 
   const { currentUserPubky } = Core.useAuthStore();
+
+  /**
+   * Mute filtering for notifications.
+   * Ensures notifications from muted users are hidden, consistent with timeline behavior.
+   */
+  const { mutedUserIdSet } = useMutedUsers();
   const lastRead = Core.useNotificationStore((s) => s.lastRead);
   const unread = Core.useNotificationStore((s) => s.unread);
   const lastReadRef = useRef(lastRead);
@@ -30,6 +38,55 @@ export function useNotifications(): UseNotificationsResult {
       lastReadRef.current = lastRead;
     }
   }, [lastRead]);
+
+  /**
+   * Extracts the actor (initiator) user ID from a notification.
+   * Used for mute filtering - if the actor is muted, the notification is hidden.
+   *
+   * Returns empty string for notification types without a clear actor,
+   * which causes them to pass through the mute filter (not hidden).
+   */
+  const getActorUserId = useCallback((notification: FlatNotification) => {
+    switch (notification.type) {
+      // Social interactions - actor is the person who followed/friended
+      case NotificationType.Follow:
+      case NotificationType.NewFriend:
+        return notification.followed_by;
+
+      // Tagging - actor is the person who tagged you
+      case NotificationType.TagPost:
+      case NotificationType.TagProfile:
+        return notification.tagged_by;
+
+      // Content interactions - actor is the person who replied/reposted/mentioned
+      case NotificationType.Reply:
+        return notification.replied_by;
+      case NotificationType.Repost:
+        return notification.reposted_by;
+      case NotificationType.Mention:
+        return notification.mentioned_by;
+
+      // Moderation actions - actor is the moderator/editor
+      case NotificationType.PostDeleted:
+        return notification.deleted_by;
+      case NotificationType.PostEdited:
+        return notification.edited_by;
+
+      // System notifications or unknown types - no actor to filter
+      default:
+        return '';
+    }
+  }, []);
+
+  // Filter out activity from muted users to match timeline mute behavior.
+  const filterMutedNotifications = useCallback(
+    (items: FlatNotification[]) =>
+      items.filter((notification) => {
+        const actorId = getActorUserId(notification);
+        return actorId ? !mutedUserIdSet.has(actorId) : true;
+      }),
+    [getActorUserId, mutedUserIdSet],
+  );
 
   /**
    * Perform initial load - fetches first page of notifications
@@ -46,7 +103,7 @@ export function useNotifications(): UseNotificationsResult {
         {},
       );
 
-      setNotifications(notifications);
+      setNotifications(filterMutedNotifications(notifications));
       olderThanRef.current = olderThan;
       setHasMore(olderThan !== undefined);
     } catch {
@@ -55,7 +112,7 @@ export function useNotifications(): UseNotificationsResult {
       loadingRef.current = false;
       setIsLoading(false);
     }
-  }, [currentUserPubky]);
+  }, [currentUserPubky, filterMutedNotifications]);
 
   /**
    * Load more notifications using timestamp-based pagination
@@ -81,7 +138,8 @@ export function useNotifications(): UseNotificationsResult {
       setNotifications((prev) => {
         // Deduplicate using id (business key). Defensive code for edge cases.
         const existingIds = new Set(prev.map((n) => n.id));
-        const newNotifications = notifications.filter((n) => !existingIds.has(n.id));
+        const filtered = filterMutedNotifications(notifications);
+        const newNotifications = filtered.filter((n) => !existingIds.has(n.id));
         return [...prev, ...newNotifications];
       });
       olderThanRef.current = olderThan;
@@ -92,7 +150,7 @@ export function useNotifications(): UseNotificationsResult {
       loadingRef.current = false;
       setIsLoadingMore(false);
     }
-  }, [hasMore, currentUserPubky]);
+  }, [hasMore, currentUserPubky, filterMutedNotifications]);
 
   /**
    * Refresh notifications - resets pagination and fetches from start
@@ -111,7 +169,7 @@ export function useNotifications(): UseNotificationsResult {
         {},
       );
 
-      setNotifications(notifications);
+      setNotifications(filterMutedNotifications(notifications));
       olderThanRef.current = olderThan;
       setHasMore(olderThan !== undefined);
     } catch {
@@ -120,7 +178,7 @@ export function useNotifications(): UseNotificationsResult {
       loadingRef.current = false;
       setIsLoading(false);
     }
-  }, [currentUserPubky]);
+  }, [currentUserPubky, filterMutedNotifications]);
 
   /**
    * Mark all notifications as read
@@ -150,6 +208,27 @@ export function useNotifications(): UseNotificationsResult {
     if (!currentUserPubky) return;
     performInitialLoad();
   }, [currentUserPubky, performInitialLoad]);
+
+  /**
+   * Reactively filter notifications when mute state changes.
+   * This handles the case where a user mutes someone while viewing notifications.
+   * Note: We only depend on mutedUserIdSet to avoid infinite loops since setNotifications
+   * is called within this effect. The functional update ensures we always filter
+   * the latest notifications state.
+   */
+  useEffect(() => {
+    if (mutedUserIdSet.size === 0) return;
+
+    setNotifications((prev) => {
+      if (prev.length === 0) return prev;
+      const filtered = prev.filter((notification) => {
+        const actorId = getActorUserId(notification);
+        return actorId ? !mutedUserIdSet.has(actorId) : true;
+      });
+      // Only update if content actually changed to prevent unnecessary re-renders
+      return filtered.length !== prev.length ? filtered : prev;
+    });
+  }, [mutedUserIdSet, getActorUserId]);
 
   // Refresh list when new notifications come in via polling
   useEffect(() => {
