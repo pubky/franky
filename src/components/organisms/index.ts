@@ -51,6 +51,7 @@ export * from './LanguageSelector';
 export * from './LeftSidebar';
 export * from './MutedUsersList';
 export * from './PostActionsBar';
+export * from './PostArticle';
 export * from './PostAttachments';
 export * from './PostContent';
 export * from './PostContentBase';
@@ -69,6 +70,7 @@ export * from './PostMenuActions';
 export * from './PostMentions';
 export * from './PublicKeyCard';
 // SinglePost page components
+export * from './SinglePostArticle';
 export * from './SinglePostCard';
 export * from './SinglePostContent';
 export * from './SinglePostParticipants';

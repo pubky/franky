@@ -318,10 +318,10 @@ describe('PostText', () => {
   });
 
   describe('Unwrapped disallowed elements', () => {
-    it('unwraps headings but keeps content', () => {
+    it('unwraps headings but keeps content when not an article', () => {
       render(<PostText content="# Heading text" />);
 
-      // Heading should be unwrapped but text preserved
+      // Heading should be unwrapped but text preserved when isArticle is false/undefined
       expect(screen.getByText('Heading text')).toBeInTheDocument();
       expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     });
@@ -339,6 +339,99 @@ describe('PostText', () => {
 
       // Table should be unwrapped but content preserved
       expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Article mode (isArticle prop)', () => {
+    it('renders h1 heading when isArticle is true', () => {
+      render(<PostText content="# Heading 1" isArticle />);
+
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Heading 1');
+    });
+
+    it('renders h2 heading when isArticle is true', () => {
+      render(<PostText content="## Heading 2" isArticle />);
+
+      const heading = screen.getByRole('heading', { level: 2 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Heading 2');
+    });
+
+    it('renders h3 heading when isArticle is true', () => {
+      render(<PostText content="### Heading 3" isArticle />);
+
+      const heading = screen.getByRole('heading', { level: 3 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Heading 3');
+    });
+
+    it('renders h4 heading when isArticle is true', () => {
+      render(<PostText content="#### Heading 4" isArticle />);
+
+      const heading = screen.getByRole('heading', { level: 4 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Heading 4');
+    });
+
+    it('renders h5 heading when isArticle is true', () => {
+      render(<PostText content="##### Heading 5" isArticle />);
+
+      const heading = screen.getByRole('heading', { level: 5 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Heading 5');
+    });
+
+    it('renders h6 heading when isArticle is true', () => {
+      render(<PostText content="###### Heading 6" isArticle />);
+
+      const heading = screen.getByRole('heading', { level: 6 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveTextContent('Heading 6');
+    });
+
+    it('renders multiple heading levels in article', () => {
+      render(<PostText content={'# Title\n## Section\n### Subsection'} isArticle />);
+
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Title');
+      expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Section');
+      expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('Subsection');
+    });
+
+    it('does not show "Show more" button in article mode even with long content', () => {
+      const longContent = generateContent(600);
+      render(<PostText content={longContent} isArticle />);
+
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
+    });
+
+    it('truncates content in article mode but without Show more button', () => {
+      const longContent = generateContent(600);
+      const { container } = render(<PostText content={longContent} isArticle />);
+
+      // Content can still be truncated (ellipsis present), but no "Show more" button
+      // The isArticle prop only prevents the "Show more" button, not the truncation itself
+      expect(container.textContent).toContain('...');
+      expect(screen.queryByRole('button', { name: 'Show full post content' })).not.toBeInTheDocument();
+    });
+  });
+
+  describe('className prop', () => {
+    it('passes custom className to Container', () => {
+      render(<PostText content="Test content" className="custom-class" />);
+
+      const container = screen.getByTestId('container');
+      expect(container).toHaveClass('custom-class');
+    });
+
+    it('merges custom className with default classes', () => {
+      render(<PostText content="Test content" className="my-custom-class" />);
+
+      const container = screen.getByTestId('container');
+      expect(container).toHaveClass('my-custom-class');
+      // Should also have default classes
+      expect(container.className).toContain('text-base');
     });
   });
 
@@ -901,6 +994,45 @@ Third line`}
     const longContent =
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
     const { container } = render(<PostText content={longContent} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for article with h1 heading', () => {
+    const { container } = render(<PostText content="# Main Title" isArticle />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for article with multiple headings', () => {
+    const { container } = render(
+      <PostText
+        content={`# Article Title
+
+## Introduction
+
+Some introductory text here.
+
+### Details
+
+More detailed content.
+
+#### Sub-details
+
+Even more specific information.`}
+        isArticle
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for article with long content (truncated without Show more button)', () => {
+    const longContent =
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
+    const { container } = render(<PostText content={longContent} isArticle />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<PostText content="Content with custom class" className="my-custom-class" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

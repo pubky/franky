@@ -1,6 +1,8 @@
 import { feedUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
 import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './feed.types';
+import { HttpMethod } from '@/libs';
+
 export class FeedApplication {
   private constructor() {}
 
@@ -44,7 +46,7 @@ export class FeedApplication {
 
     await Promise.all([
       Core.LocalFeedService.delete({ feedId: (params as Core.TFeedPersistDeleteParams).feedId }),
-      Core.HomeserverService.request(Core.HomeserverAction.DELETE, feedUrl),
+      Core.HomeserverService.request({ method: HttpMethod.DELETE, url: feedUrl }),
     ]);
   }
 
@@ -77,7 +79,7 @@ export class FeedApplication {
     const feedUrl = feedUriBuilder(userId, String(persistedFeed.id));
     const feedJson = normalizedFeed.feed.toJson() as Record<string, unknown>;
 
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, feedUrl, feedJson);
+    await Core.HomeserverService.request({ method: HttpMethod.PUT, url: feedUrl, bodyJson: feedJson });
 
     return persistedFeed;
   }

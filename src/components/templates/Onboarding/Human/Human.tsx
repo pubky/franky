@@ -3,6 +3,7 @@
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ONBOARDING_ROUTES } from '@/app';
@@ -45,8 +46,12 @@ export function Human() {
             if (variant === 'inviteCode') {
               setState(States.InviteCode);
             } else if (variant === 'skip') {
-              const code = await Core.AuthController.generateSignupToken();
-              onSuccess(code);
+              try {
+                const code = await Core.AuthController.generateSignupToken();
+                onSuccess(code);
+              } catch (error) {
+                Libs.Logger.error('[Human] Failed to generate signup token:', error);
+              }
             }
           }}
         />

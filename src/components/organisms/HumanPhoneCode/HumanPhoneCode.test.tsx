@@ -73,7 +73,7 @@ describe('HumanPhoneCode', () => {
     fireEvent.click(r.getByTestId('human-phone-send-code-btn'));
 
     await waitFor(() => {
-      expect(verifySmsCodeMock).toHaveBeenCalledWith('1234567890', '123456');
+      expect(verifySmsCodeMock).toHaveBeenCalledWith({ phoneNumber: '1234567890', code: '123456' });
       expect(isVerifyCodeClicked).toBe(true);
       expect(inviteCode).toBe('mock-invite-code');
     });
