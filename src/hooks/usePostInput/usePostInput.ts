@@ -39,6 +39,7 @@ export function usePostInput({
   variant,
   postId,
   originalPostId,
+  editPostId,
   onSuccess,
   placeholder,
   expanded = false,
@@ -73,6 +74,7 @@ export function usePostInput({
     reply,
     post,
     repost,
+    edit,
     isSubmitting,
   } = Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
@@ -148,21 +150,22 @@ export function usePostInput({
     }
   }, [isExpanded]);
 
-  // Handle submit using reply, repost, or post method from hook
+  // Handle submit using reply, repost, post, or edit method from hook
   const handleSubmit = useCallback(async () => {
     if (isSubmitting) return;
 
-    // For replies and posts, require content or attachments. For reposts, content is optional. Content and title is required for articles.
+    // For replies and posts, require content or attachments. For reposts, content is optional. Content and title is required for articles. Content is required for edits.
     if (
       (variant !== POST_INPUT_VARIANT.REPOST && !content.trim() && attachments.length === 0) ||
-      (isArticle && (!content.trim() || !articleTitle.trim()))
+      (isArticle && (!content.trim() || !articleTitle.trim())) ||
+      (variant === POST_INPUT_VARIANT.EDIT && !content.trim())
     )
       return;
 
     // Wrapper that prepends to timeline and calls original onSuccess
     const handleSuccess = (createdPostId: string) => {
-      // Only prepend to timeline for posts and reposts, not replies
-      if (variant !== POST_INPUT_VARIANT.REPLY) {
+      // Only prepend to timeline for posts and reposts, not replies or edits
+      if (variant !== POST_INPUT_VARIANT.REPLY && variant !== POST_INPUT_VARIANT.EDIT) {
         timelineFeed?.prependPosts(createdPostId);
       }
       // Call original onSuccess callback if provided
@@ -175,6 +178,9 @@ export function usePostInput({
         break;
       case POST_INPUT_VARIANT.REPOST:
         await repost({ originalPostId: originalPostId!, onSuccess: handleSuccess });
+        break;
+      case POST_INPUT_VARIANT.EDIT:
+        await edit({ editPostId: editPostId!, onSuccess: handleSuccess });
         break;
       case POST_INPUT_VARIANT.POST:
       default:
@@ -192,6 +198,8 @@ export function usePostInput({
     reply,
     post,
     repost,
+    edit,
+    editPostId,
     isSubmitting,
     onSuccess,
     timelineFeed,
@@ -388,12 +396,15 @@ export function usePostInput({
 
     // State
     content,
+    setContent,
     tags,
     setTags,
     attachments,
     setAttachments,
     isArticle,
+    setIsArticle,
     articleTitle,
+    setArticleTitle,
     isDragging,
     isExpanded,
     isSubmitting,
