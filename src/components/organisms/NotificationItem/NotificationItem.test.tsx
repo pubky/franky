@@ -137,7 +137,9 @@ describe('NotificationItem', () => {
 
   it('renders notification text correctly', () => {
     render(<NotificationItem notification={baseNotification} isUnread={false} />);
-    expect(screen.getByText(/User followed you/i)).toBeInTheDocument();
+    // Username and action text are now separate links
+    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(screen.getByText('followed you')).toBeInTheDocument();
   });
 
   it('renders avatar with user data', () => {
@@ -203,8 +205,9 @@ describe('NotificationItem', () => {
       post_uri: 'user1:post123',
     } as Core.FlatNotification;
     render(<NotificationItem notification={mentionNotification} isUnread={false} />);
-    // Should render the notification text
-    expect(screen.getByText(/User mentioned you in post/i)).toBeInTheDocument();
+    // Username and action text are now separate links
+    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(screen.getByText('mentioned you in post')).toBeInTheDocument();
     // Preview text is not rendered since post data is not loaded in this test
   });
 
@@ -214,7 +217,9 @@ describe('NotificationItem', () => {
       followed_by: 'unknown-user',
     };
     render(<NotificationItem notification={notificationWithUnknownUser} isUnread={false} />);
-    expect(screen.getByText(/User followed you/i)).toBeInTheDocument();
+    // Username and action text are now separate links
+    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(screen.getByText('followed you')).toBeInTheDocument();
   });
 
   it('navigates to search when tag is clicked in TagPost notification', () => {
