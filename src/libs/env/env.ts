@@ -290,8 +290,8 @@ function parsePkarrRelays(val: string): string {
       new URL(relay);
     }
     return relays.join(',');
-  } catch {
-    console.warn(`Invalid NEXT_PUBLIC_PKARR_RELAYS value: "${val}", using defaults`);
+  } catch (error) {
+    Logger.warn(`Invalid NEXT_PUBLIC_PKARR_RELAYS value: "${val}", using defaults`, { error });
     return DEFAULT_PKARR_RELAYS;
   }
 }
