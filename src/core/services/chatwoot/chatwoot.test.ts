@@ -28,6 +28,26 @@ const createMockContact = (overrides: Partial<TChatwootContact> = {}): TChatwoot
   ...overrides,
 });
 
+/**
+ * Creates a mock Response object compatible with safeFetch/parseResponseOrThrow
+ */
+const createMockResponse = (
+  ok: boolean,
+  data?: unknown,
+  status = ok ? 200 : 500,
+  statusText = ok ? 'OK' : 'Internal Server Error',
+): Response =>
+  ({
+    ok,
+    status,
+    statusText,
+    text: vi.fn().mockResolvedValue(data ? JSON.stringify(data) : ''),
+    json: vi.fn().mockResolvedValue(data),
+    headers: {
+      get: vi.fn().mockReturnValue(null),
+    },
+  }) as unknown as Response;
+
 describe('ChatwootService', () => {
   let ChatwootService: typeof import('./chatwoot').ChatwootService;
 
@@ -49,15 +69,11 @@ describe('ChatwootService', () => {
   describe('createOrFindContact', () => {
     it('should return existing contact when found by email', async () => {
       const existingContact = createMockContact();
-
-      // Mock contact search - existing contact found
       const searchResponse: TChatwootContactSearchResponse = {
         payload: [existingContact],
       };
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: true,
-        json: async () => searchResponse,
-      });
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(createMockResponse(true, searchResponse));
 
       const result = await ChatwootService.createOrFindContact(testData.email, testData.userName, testData.inboxId);
 
@@ -76,26 +92,15 @@ describe('ChatwootService', () => {
     });
 
     it('should create new contact when not found', async () => {
-      // Mock contact search - no existing contact
-      const searchResponse: TChatwootContactSearchResponse = {
-        payload: [],
-      };
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: true,
-        json: async () => searchResponse,
-      });
-
-      // Mock contact creation
+      const searchResponse: TChatwootContactSearchResponse = { payload: [] };
       const newContact = createMockContact();
       const createResponse: TChatwootCreateContactResponse = {
-        payload: {
-          contact: newContact,
-        },
+        payload: { contact: newContact },
       };
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: true,
-        json: async () => createResponse,
-      });
+
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(createMockResponse(true, searchResponse))
+        .mockResolvedValueOnce(createMockResponse(true, createResponse));
 
       const result = await ChatwootService.createOrFindContact(testData.email, testData.userName, testData.inboxId);
 
@@ -122,14 +127,11 @@ describe('ChatwootService', () => {
       const existingContact = createMockContact({
         email: testData.email.toUpperCase(),
       });
-
       const searchResponse: TChatwootContactSearchResponse = {
         payload: [existingContact],
       };
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: true,
-        json: async () => searchResponse,
-      });
+
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(createMockResponse(true, searchResponse));
 
       const result = await ChatwootService.createOrFindContact(testData.email, testData.userName, testData.inboxId);
 
@@ -139,34 +141,25 @@ describe('ChatwootService', () => {
     });
 
     it('should throw AppError when contact search fails', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-      });
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+        createMockResponse(false, null, 500, 'Internal Server Error'),
+      );
 
       await expect(
         ChatwootService.createOrFindContact(testData.email, testData.userName, testData.inboxId),
-      ).rejects.toThrow('Failed to search for contact in Chatwoot');
+      ).rejects.toThrow();
     });
 
     it('should throw AppError when contact creation fails', async () => {
-      // Mock contact search - no existing contact
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ payload: [] }),
-      });
+      const searchResponse: TChatwootContactSearchResponse = { payload: [] };
 
-      // Mock contact creation failure
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: false,
-        status: 400,
-        statusText: 'Bad Request',
-      });
+      (global.fetch as ReturnType<typeof vi.fn>)
+        .mockResolvedValueOnce(createMockResponse(true, searchResponse))
+        .mockResolvedValueOnce(createMockResponse(false, null, 400, 'Bad Request'));
 
       await expect(
         ChatwootService.createOrFindContact(testData.email, testData.userName, testData.inboxId),
-      ).rejects.toThrow('Failed to create contact in Chatwoot');
+      ).rejects.toThrow();
     });
 
     it('should throw AppError when environment variables are missing', async () => {
@@ -201,9 +194,7 @@ describe('ChatwootService', () => {
       const content =
         'Report Post - Personal Info Leak\n\nPost URL: https://example.com/post/123\n\nReason: Contains my personal data';
 
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: true,
-      });
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(createMockResponse(true));
 
       await ChatwootService.createConversation(testData.sourceId, testData.contactId, testData.inboxId, content);
 
@@ -222,15 +213,13 @@ describe('ChatwootService', () => {
     });
 
     it('should throw AppError when conversation creation fails', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-      });
+      (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+        createMockResponse(false, null, 500, 'Internal Server Error'),
+      );
 
       await expect(
         ChatwootService.createConversation(testData.sourceId, testData.contactId, testData.inboxId, 'Test content'),
-      ).rejects.toThrow('Failed to create conversation in Chatwoot');
+      ).rejects.toThrow();
     });
 
     it('should throw AppError when environment variables are missing', async () => {

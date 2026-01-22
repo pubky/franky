@@ -31,4 +31,6 @@ export interface SearchSuggestionsProps {
   onSearchAsTagClick?: (query: string) => void;
   /** Callback to clear all recent searches */
   onClearRecentSearches?: () => void;
+  /** Whether inside a wrapper that handles gradient (no absolute positioning) */
+  isInsideWrapper?: boolean;
 }

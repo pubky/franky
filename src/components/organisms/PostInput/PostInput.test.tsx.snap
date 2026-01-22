@@ -1,5 +1,87 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostInput - Snapshots > matches snapshot for article mode 1`] = `
+<div
+  class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-input"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <input
+      class="h-auto border-none p-0 text-3xl font-bold md:text-6xl"
+      data-testid="input"
+    />
+    <div
+      data-is-reply="true"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <div
+      data-is-article="true"
+      data-submitting="false"
+      data-testid="post-input-attachments"
+    />
+    <div
+      contenteditable="true"
+      data-readonly="false"
+      data-testid="markdown-editor"
+    >
+      Article body content
+    </div>
+    <div
+      class="grid transition-all duration-300 ease-in-out grid-rows-[1fr] opacity-100 "
+      data-override-defaults="true"
+      data-testid="container"
+    >
+      <div
+        class="overflow-hidden"
+        data-override-defaults="true"
+        data-testid="container"
+      >
+        <div
+          class="gap-6"
+          data-testid="container"
+        >
+          <div
+            class="justify-between gap-4 md:flex-row md:gap-0"
+            data-testid="container"
+          >
+            <div
+              data-disabled="false"
+              data-testid="post-input-tags"
+            />
+            <div
+              data-testid="post-input-action-bar"
+            >
+              <button
+                aria-label="Add emoji"
+                data-testid="emoji-button"
+              >
+                Emoji
+              </button>
+              <button
+                aria-label="Add file"
+                data-testid="file-button"
+              >
+                File
+              </button>
+              <button
+                aria-label="Post"
+                data-testid="post-button"
+              >
+                Post
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`PostInput - Snapshots > matches snapshot for post variant when dragging 1`] = `
 <div
   class="relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200 border-brand"
@@ -39,6 +121,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant when dragging
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />
@@ -123,6 +206,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant when submitti
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="true"
       data-testid="post-input-attachments"
     />
@@ -206,6 +290,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with attachme
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     >
@@ -296,6 +381,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with content 
       </textarea>
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />
@@ -378,6 +464,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with custom p
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />
@@ -461,6 +548,7 @@ exports[`PostInput - Snapshots > matches snapshot for post variant without conte
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />
@@ -544,6 +632,7 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant without cont
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />
@@ -631,6 +720,7 @@ exports[`PostInput - Snapshots > matches snapshot for reply with thread connecto
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />
@@ -714,6 +804,7 @@ exports[`PostInput - Snapshots > matches snapshot for repost variant without con
       />
     </div>
     <div
+      data-is-article="false"
       data-submitting="false"
       data-testid="post-input-attachments"
     />

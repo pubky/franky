@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Typography - Snapshots > matches snapshot for 2xl size 1`] = `
+<p
+  class="text-6xl font-bold text-foreground"
+  data-testid="typography"
+>
+  2XL text
+</p>
+`;
+
 exports[`Typography - Snapshots > matches snapshot for em element 1`] = `
 <em
   class="text-xl font-semibold text-foreground"

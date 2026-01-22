@@ -28,6 +28,7 @@ export * from './HumanPhoneCodeInput';
 export * from './HumanSmsCard';
 export * from './HumanFooter';
 export * from './Logo';
+export * from './MarkdownEditor';
 export * from './Metadata';
 export * from './NewPostCTA';
 export * from './NewPostsButton';

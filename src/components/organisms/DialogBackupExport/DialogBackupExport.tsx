@@ -73,8 +73,15 @@ export function DialogBackupExport({ mnemonic, children }: DialogBackupExportPro
               </Atoms.Container>
 
               <Atoms.Container className="gap-6">
-                <Atoms.Container className="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]">
+                <Atoms.Container className="relative mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]">
                   <QRCodeSVG value={qrValue} size={174} />
+                  <Image
+                    src="/images/ring-logo.svg"
+                    alt="Pubky Ring"
+                    width={42}
+                    height={42}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  />
                 </Atoms.Container>
                 <Atoms.Container className="gap-4">
                   <Atoms.Link href={Config.APP_STORE_URL} target="_blank">

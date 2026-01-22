@@ -53,8 +53,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Subscribe to stream changes for reactive updates (follow/unfollow)
   const cachedStream = useLiveQuery(
     async () => {
-      if (!streamId) return null;
-      return (await Core.LocalStreamUsersService.findById(streamId))?.stream ?? null;
+      try {
+        if (!streamId) return null;
+        return (await Core.LocalStreamUsersService.findById(streamId))?.stream ?? null;
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query cached stream', { streamId, error });
+        return null;
+      }
     },
     [streamId],
     null,
@@ -80,8 +85,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Subscribe to user details from local database (reactive via Controller)
   const userDetailsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.getManyDetails({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
+        return await Core.UserController.getManyDetails({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query user details', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserDetails>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),
@@ -90,8 +100,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Subscribe to user counts from local database (reactive via Controller)
   const userCountsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
-      return await Core.UserController.getManyCounts({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
+        return await Core.UserController.getManyCounts({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query user counts', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserCounts>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserCounts>(),
@@ -101,8 +116,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // This tracks whether the current user is following each connection
   const userRelationshipsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      return await Core.UserController.getManyRelationships({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+        return await Core.UserController.getManyRelationships({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query user relationships', { userIds, error });
+        return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),

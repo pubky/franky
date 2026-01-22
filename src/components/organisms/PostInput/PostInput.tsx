@@ -7,7 +7,7 @@ import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
-import { POST_MAX_CHARACTER_LENGTH } from '@/config';
+import { ARTICLE_TITLE_MAX_CHARACTER_LENGTH, POST_MAX_CHARACTER_LENGTH } from '@/config';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import type { PostInputProps } from './PostInput.types';
@@ -24,9 +24,11 @@ export function PostInput({
   showThreadConnector = false,
   expanded = false,
   onContentChange,
+  onArticleModeChange,
 }: PostInputProps) {
   const {
     textareaRef,
+    markdownEditorRef,
     containerRef,
     fileInputRef,
     content,
@@ -34,6 +36,11 @@ export function PostInput({
     setTags,
     attachments,
     setAttachments,
+    isArticle,
+    handleArticleClick,
+    articleTitle,
+    handleArticleTitleChange,
+    handleArticleBodyChange,
     isDragging,
     isExpanded,
     isSubmitting,
@@ -66,11 +73,12 @@ export function PostInput({
     placeholder,
     expanded,
     onContentChange,
+    onArticleModeChange,
   });
 
   const isValid = React.useCallback(() => {
-    return Libs.canSubmitPost(variant, content, attachments, isSubmitting);
-  }, [variant, content, attachments, isSubmitting]);
+    return Libs.canSubmitPost(variant, content, attachments, isSubmitting, isArticle, articleTitle);
+  }, [variant, content, attachments, isSubmitting, isArticle, articleTitle]);
 
   const enterSubmitHandler = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
@@ -108,40 +116,54 @@ export function PostInput({
 
       {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
       <Atoms.Container className="gap-4">
+        {isArticle && (
+          <Atoms.Input
+            placeholder="Article Title"
+            onChange={handleArticleTitleChange}
+            maxLength={ARTICLE_TITLE_MAX_CHARACTER_LENGTH}
+            disabled={isSubmitting}
+            className="h-auto border-none p-0 text-3xl font-bold md:text-6xl"
+          />
+        )}
+
         {currentUserPubky && (
           <Organisms.PostHeader
             postId={currentUserPubky}
             isReplyInput={true}
-            characterLimit={{ count: Libs.getCharacterCount(content), max: POST_MAX_CHARACTER_LENGTH }}
+            characterLimit={
+              isArticle ? undefined : { count: Libs.getCharacterCount(content), max: POST_MAX_CHARACTER_LENGTH }
+            }
             showPopover={false}
           />
         )}
 
-        <Atoms.Container overrideDefaults className="relative">
-          <Atoms.Textarea
-            ref={textareaRef}
-            placeholder={displayPlaceholder}
-            className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            value={content}
-            onChange={handleChange}
-            onFocus={handleExpand}
-            onKeyDown={handleKeyDown}
-            maxLength={POST_MAX_CHARACTER_LENGTH}
-            rows={1}
-            disabled={isSubmitting}
-            aria-haspopup="listbox"
-          />
-
-          {/* Mention autocomplete popover */}
-          {mentionIsOpen && (
-            <Molecules.MentionPopover
-              users={mentionUsers}
-              selectedIndex={mentionSelectedIndex}
-              onSelect={handleMentionSelect}
-              onHover={setMentionSelectedIndex}
+        {!isArticle && (
+          <Atoms.Container overrideDefaults className="relative">
+            <Atoms.Textarea
+              ref={textareaRef}
+              placeholder={displayPlaceholder}
+              className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              value={content}
+              onChange={handleChange}
+              onFocus={handleExpand}
+              onKeyDown={handleKeyDown}
+              maxLength={POST_MAX_CHARACTER_LENGTH}
+              rows={1}
+              disabled={isSubmitting}
+              aria-haspopup="listbox"
             />
-          )}
-        </Atoms.Container>
+
+            {/* Mention autocomplete popover */}
+            {mentionIsOpen && (
+              <Molecules.MentionPopover
+                users={mentionUsers}
+                selectedIndex={mentionSelectedIndex}
+                onSelect={handleMentionSelect}
+                onHover={setMentionSelectedIndex}
+              />
+            )}
+          </Atoms.Container>
+        )}
 
         <PostInputAttachments
           ref={fileInputRef}
@@ -149,7 +171,18 @@ export function PostInput({
           setAttachments={setAttachments}
           handleFilesAdded={handleFilesAdded}
           isSubmitting={isSubmitting}
+          isArticle={isArticle}
+          handleFileClick={handleFileClick}
         />
+
+        {isArticle && (
+          <Molecules.MarkdownEditor
+            ref={markdownEditorRef}
+            markdown={content}
+            onChange={handleArticleBodyChange}
+            readOnly={isSubmitting}
+          />
+        )}
 
         {/* Show original post preview for reposts */}
         {variant === POST_INPUT_VARIANT.REPOST && originalPostId && (
@@ -161,6 +194,7 @@ export function PostInput({
           content={content}
           tags={tags}
           isSubmitting={isSubmitting}
+          isArticle={isArticle}
           setTags={setTags}
           onSubmit={handleSubmit}
           showEmojiPicker={showEmojiPicker}
@@ -168,6 +202,7 @@ export function PostInput({
           onEmojiSelect={handleEmojiSelect}
           onFileClick={handleFileClick}
           onImageClick={handleFileClick}
+          onArticleClick={handleArticleClick}
           isPostDisabled={!isValid()}
           submitMode={variant}
         />
