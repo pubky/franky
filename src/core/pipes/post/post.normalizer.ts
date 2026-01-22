@@ -61,7 +61,11 @@ export class PostNormalizer {
     }
   }
 
-  static async toEdit({ compositePostId, content, currentUserPubky }: Core.TEditPostParams): Promise<PostResult> {
+  static async toEdit({
+    compositePostId,
+    content,
+    currentUserPubky,
+  }: Core.TEditPostParams & { currentUserPubky: Core.Pubky }): Promise<PostResult> {
     const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
 
     if (authorId !== currentUserPubky) {
