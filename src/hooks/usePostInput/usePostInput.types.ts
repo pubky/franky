@@ -76,6 +76,7 @@ export interface UsePostInputReturn {
   handleDragLeave: (e: React.DragEvent) => void;
   handleDragOver: (e: React.DragEvent) => void;
   handleDrop: (e: React.DragEvent) => void;
+  handlePaste: (e: React.ClipboardEvent) => void;
   handleMentionSelect: (userId: string) => void;
   handleMentionKeyDown: (e: React.KeyboardEvent) => boolean;
 }
