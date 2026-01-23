@@ -118,12 +118,40 @@ export class HomegateService {
       return { success: false, errorType: 'blocked' };
     }
 
-    // Rate limited (weekly/annual limit exceeded)
+    // Rate limited - differentiate between temporary and permanent limits
     if (response.status === 429) {
       const retryAfter = response.headers.get('retry-after');
+
+      // Parse the response body to determine the specific rate limit type
+      let responseBody: { error?: string } | undefined;
+      try {
+        const clonedResponse = response.clone();
+        responseBody = await clonedResponse.json();
+      } catch {
+        // Failed to parse body, will use default error type
+      }
+
+      const errorMessage = responseBody?.error?.toLowerCase() ?? '';
+
+      // Check for permanent weekly/yearly limits
+      if (errorMessage.includes('weekly')) {
+        return {
+          success: false,
+          errorType: 'rate_limited_weekly',
+        };
+      }
+
+      if (errorMessage.includes('yearly') || errorMessage.includes('annual')) {
+        return {
+          success: false,
+          errorType: 'rate_limited_yearly',
+        };
+      }
+
+      // Default to temporary rate limit (external service rate limit)
       return {
         success: false,
-        errorType: 'rate_limited',
+        errorType: 'rate_limited_temporary',
         retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
       };
     }

@@ -32,10 +32,25 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
             title: 'Phone number blocked',
             description: 'This phone number cannot be used for verification.',
           });
-        } else if (result.errorType === 'rate_limited') {
+        } else if (result.errorType === 'rate_limited_temporary') {
+          const retryMessage = result.retryAfter
+            ? `Please wait ${result.retryAfter} seconds before trying again.`
+            : 'Please wait a moment before trying again.';
           Molecules.toast({
-            title: 'Too many verification attempts',
-            description: 'You have reached the maximum number of verifications for this phone number.',
+            title: 'Please slow down',
+            description: retryMessage,
+          });
+        } else if (result.errorType === 'rate_limited_weekly') {
+          Molecules.toast({
+            title: 'Weekly limit reached',
+            description:
+              'This phone number has reached the weekly verification limit. Please try again next week or use a different verification method.',
+          });
+        } else if (result.errorType === 'rate_limited_yearly') {
+          Molecules.toast({
+            title: 'Yearly limit reached',
+            description:
+              'This phone number has reached the yearly verification limit. Please use a different phone number or verification method.',
           });
         } else {
           Molecules.toast({

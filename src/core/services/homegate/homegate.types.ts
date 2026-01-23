@@ -90,13 +90,28 @@ export type TAwaitLnVerificationResult =
   | { success: false; notFound: true };
 
 /**
+ * Error types for SMS code sending failures.
+ * - `blocked`: Phone number is blocked and cannot be used
+ * - `rate_limited_temporary`: External service rate limit, user can retry after waiting
+ * - `rate_limited_weekly`: Phone number has exceeded weekly verification limit (2 per week)
+ * - `rate_limited_yearly`: Phone number has exceeded yearly verification limit (4 per year)
+ * - `unknown`: An unknown error occurred
+ */
+export type TSendSmsCodeErrorType =
+  | 'blocked'
+  | 'rate_limited_temporary'
+  | 'rate_limited_weekly'
+  | 'rate_limited_yearly'
+  | 'unknown';
+
+/**
  * Result of sending a SMS code.
  * @property success - True if the request was successful, false otherwise.
- * @property retryAfter - The number of seconds to wait before retrying the request. Only set if the request was not successful.
+ * @property retryAfter - The number of seconds to wait before retrying the request. Only set if rate_limited_temporary.
  * @property errorType - The type of error that occurred. Only set if the request was not successful.
  */
 export interface ISendSmsCodeResult {
   success: boolean;
   retryAfter?: number;
-  errorType?: 'blocked' | 'rate_limited' | 'unknown';
+  errorType?: TSendSmsCodeErrorType;
 }
