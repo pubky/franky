@@ -290,8 +290,10 @@ function parsePkarrRelays(val: string): string {
       new URL(relay);
     }
     return relays.join(',');
-  } catch (error) {
-    Logger.warn(`Invalid NEXT_PUBLIC_PKARR_RELAYS value: "${val}", using defaults`, { error });
+  } catch {
+    // Using console.warn here instead of Logger.warn due to circular dependency:
+    // env.ts must load before Logger is available (env -> libs -> logger)
+    console.warn(`Invalid NEXT_PUBLIC_PKARR_RELAYS value: "${val}", using defaults`);
     return DEFAULT_PKARR_RELAYS;
   }
 }
