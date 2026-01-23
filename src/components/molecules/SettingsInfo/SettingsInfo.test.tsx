@@ -14,7 +14,6 @@ describe('SettingsInfo', () => {
 
     expect(screen.getByText('Terms of Service & Privacy')).toBeInTheDocument();
     expect(screen.getByText('FAQ')).toBeInTheDocument();
-    expect(screen.getByText('Version')).toBeInTheDocument();
   });
 
   it('renders subtitle for Terms section', () => {
@@ -22,12 +21,9 @@ describe('SettingsInfo', () => {
     expect(screen.getByText('Read our terms carefully.')).toBeInTheDocument();
   });
 
-  it('renders version text', () => {
+  it('renders copyright text', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText(/v0\.12/)).toBeInTheDocument();
-    expect(screen.getByText(/v0\.15/)).toBeInTheDocument();
-    expect(screen.getByText(/v0\.17/)).toBeInTheDocument();
-    expect(screen.getByText(/© 2025 Synonym Software/)).toBeInTheDocument();
+    expect(screen.getByText(/© 2026 Synonym Software/)).toBeInTheDocument();
   });
 });
 

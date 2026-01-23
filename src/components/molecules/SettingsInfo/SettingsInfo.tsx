@@ -22,12 +22,7 @@ const FAQ_QUESTIONS = [
   },
 ];
 
-const VERSION_INFO = {
-  pubky: 'v0.12',
-  homeserver: 'v0.15',
-  nexus: 'v0.17',
-  copyright: '© 2025 Synonym Software, S.A. DE C.V.',
-};
+const COPYRIGHT_TEXT = '© 2026 Synonym Software, S.A. DE C.V.';
 
 export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) {
   return (
@@ -77,67 +72,41 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
         </Atoms.FilterRoot>
       )}
 
-      {/* Version Section */}
-      <Atoms.FilterRoot>
-        <Atoms.FilterHeader title="Version" />
-        <Atoms.FilterList>
-          <Atoms.Container overrideDefaults className="flex flex-col">
-            <Atoms.Typography
-              as="p"
-              size="md"
-              overrideDefaults
-              className="leading-normal font-medium text-secondary-foreground"
-            >
-              Pubky{' '}
-              <Atoms.Typography as="span" className="text-muted-foreground">
-                {VERSION_INFO.pubky}
-              </Atoms.Typography>
+      {/* Feedback Section */}
+      <Organisms.FeedbackCard />
+
+      {/* Copyright & Branding Section */}
+      <Atoms.Container overrideDefaults className="flex flex-col gap-4">
+        <Atoms.Typography
+          as="p"
+          size="md"
+          overrideDefaults
+          className="leading-normal font-medium text-secondary-foreground"
+        >
+          {COPYRIGHT_TEXT}
+        </Atoms.Typography>
+        {/* Synonym Logo with Tether tagline */}
+        <Atoms.Container overrideDefaults className="flex flex-col items-start">
+          <a
+            href="https://synonym.to"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block h-6"
+            aria-label="Synonym"
+          >
+            <Libs.SynonymLogo />
+          </a>
+          <Atoms.Container overrideDefaults className="flex h-4 items-center gap-[5px]">
+            <Atoms.Typography as="span" overrideDefaults className="text-[10px] leading-none text-white/50">
+              a
             </Atoms.Typography>
-            <Atoms.Typography
-              as="p"
-              size="md"
-              overrideDefaults
-              className="leading-normal font-medium text-secondary-foreground"
-            >
-              Homeserver{' '}
-              <Atoms.Typography as="span" className="text-muted-foreground">
-                {VERSION_INFO.homeserver}
-              </Atoms.Typography>
-            </Atoms.Typography>
-            <Atoms.Typography
-              as="p"
-              size="md"
-              overrideDefaults
-              className="leading-normal font-medium text-secondary-foreground"
-            >
-              Nexus{' '}
-              <Atoms.Typography as="span" className="text-muted-foreground">
-                {VERSION_INFO.nexus}
-              </Atoms.Typography>
-            </Atoms.Typography>
-            <Atoms.Typography
-              as="p"
-              size="md"
-              overrideDefaults
-              className="mt-4 leading-normal font-medium text-secondary-foreground"
-            >
-              {VERSION_INFO.copyright}
+            <Libs.TetherLogo />
+            <Atoms.Typography as="span" overrideDefaults className="text-[10px] leading-none text-white/50">
+              company
             </Atoms.Typography>
           </Atoms.Container>
-          {/* Synonym Logo with Tether tagline */}
-          <Atoms.Container overrideDefaults className="flex flex-col items-start pt-4">
-            <Atoms.Container overrideDefaults className="flex items-center gap-1">
-              <Libs.Synonym size={24} />
-              <Atoms.Typography as="span" size="sm" overrideDefaults className="font-medium text-foreground">
-                Synonym
-              </Atoms.Typography>
-            </Atoms.Container>
-            <Atoms.Typography as="span" size="xs" overrideDefaults className="text-muted-foreground">
-              a <span className="font-semibold">tether.</span> company
-            </Atoms.Typography>
-          </Atoms.Container>
-        </Atoms.FilterList>
-      </Atoms.FilterRoot>
+        </Atoms.Container>
+      </Atoms.Container>
     </Atoms.Container>
   );
 }
