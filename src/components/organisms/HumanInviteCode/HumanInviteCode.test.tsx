@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 
 import { normaliseRadixIds } from '@/libs/utils/utils';
 import { HumanInviteCode } from './HumanInviteCode';
-import { normaliseRadixIds } from '@/libs/utils/utils';
 
 vi.mock('@/molecules', async () => {
   const actual = await vi.importActual<Record<string, unknown>>('@/molecules');
