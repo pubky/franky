@@ -74,7 +74,7 @@ export function PostInput({
       data-cy={dataCy}
       ref={containerRef}
       className={Libs.cn(
-        'relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
+        'relative cursor-pointer rounded-md border border-dashed p-4 transition-colors duration-200',
         isDragging ? 'border-brand' : 'border-input',
       )}
       onClick={handleExpand}
@@ -94,7 +94,7 @@ export function PostInput({
       )}
 
       {showThreadConnector && <Atoms.PostThreadConnector variant={POST_THREAD_CONNECTOR_VARIANTS.DIALOG_REPLY} />}
-      <Atoms.Container className="gap-4">
+      <Atoms.Container className="gap-2">
         {currentUserPubky && (
           <Organisms.PostHeader
             postId={currentUserPubky}

@@ -85,7 +85,7 @@ export function QuickReply({
       <Atoms.Container
         ref={containerRef}
         className={Utils.cn(
-          'relative w-full cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
+          'relative w-full cursor-pointer rounded-md border border-dashed p-4 transition-colors duration-200',
           isDragging ? 'border-brand' : 'border-input',
         )}
         onClick={handleExpand}
@@ -105,7 +105,7 @@ export function QuickReply({
           </Atoms.Container>
         )}
 
-        <Atoms.Container ref={cardRef} className="gap-4" overrideDefaults>
+        <Atoms.Container ref={cardRef} className="gap-2" overrideDefaults>
           {/* Collapsed header row (avatar + input) */}
           <Atoms.Container className="flex items-center gap-4" overrideDefaults>
             <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
