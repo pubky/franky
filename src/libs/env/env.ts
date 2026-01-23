@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Err, ErrorService, ValidationErrorCode } from '@/libs';
 
-const DEFAULT_PKARR_RELAYS = 'https://pkarr.pubky.app,https://pkarr.pubky.org';
+const DEFAULT_PKARR_RELAYS = ['https://pkarr.pubky.app', 'https://pkarr.pubky.org'];
 
 /**
  * Environment Variables Schema with Zod validation
@@ -136,7 +136,11 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
-  NEXT_PUBLIC_PKARR_RELAYS: z.string().default(DEFAULT_PKARR_RELAYS).transform(parsePkarrRelays),
+  NEXT_PUBLIC_PKARR_RELAYS: z
+    .string()
+    .default(JSON.stringify(DEFAULT_PKARR_RELAYS))
+    .transform(parsePkarrRelays)
+    .pipe(z.array(z.string().url()).min(1)),
 
   NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
@@ -283,16 +287,20 @@ function parseEnv(): z.infer<typeof envSchema> {
   }
 }
 
-function parsePkarrRelays(val: string): string {
+function parsePkarrRelays(val: string): string[] {
   try {
-    const relays = val
-      .split(',')
-      .map((r) => r.trim())
-      .filter((r) => r.length > 0);
+    const relays = JSON.parse(val) as unknown;
+    if (!Array.isArray(relays)) {
+      throw new Error('NEXT_PUBLIC_PKARR_RELAYS must be a JSON array');
+    }
+    // Validate each relay is a valid URL
     for (const relay of relays) {
+      if (typeof relay !== 'string') {
+        throw new Error('Each relay must be a string');
+      }
       new URL(relay);
     }
-    return relays.join(',');
+    return relays;
   } catch {
     // Using console.warn here instead of Logger.warn due to circular dependency:
     // env.ts must load before Logger is available (env -> libs -> logger)
