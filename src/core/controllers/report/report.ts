@@ -28,7 +28,6 @@ export class ReportController {
     const reason = Core.ReportValidators.validateReason(params.reason);
     const name = Core.ReportValidators.validateName(params.name);
 
-    // Delegate to application layer
     await Core.ReportApplication.submit({ pubky, postUrl, issueType, reason, name });
   }
 }

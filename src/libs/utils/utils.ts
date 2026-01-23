@@ -7,6 +7,7 @@ import type {
   FormatPublicKeyProps,
   GetDisplayTagsOptions,
 } from './utils.types';
+import type { PostInputVariant } from '@/organisms';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -667,17 +668,20 @@ export function sanitizeTagInput(value: string): string {
 }
 
 /**
- * Determines if a post can be submitted based on variant, content, attachments, and submission state.
+ * Determines if a post can be submitted based on variant, content, attachments, submission state, and article options.
  *
- * @param variant - The post input variant ('post', 'reply', or 'repost')
+ * @param variant - The post input variant ('post', 'reply', 'repost', or 'edit')
  * @param content - The text content of the post
  * @param attachments - Array of attached files
  * @param isSubmitting - Whether a submission is currently in progress
+ * @param isArticle - Whether the post is an article (optional)
+ * @param articleTitle - The title of the article (optional)
  * @returns true if the post can be submitted, false otherwise
  *
  * @remarks
  * - Reposts allow empty content
  * - Posts and replies require either content or attachments
+ * - Articles require both content and title
  * - Cannot submit if already submitting
  *
  * @example
@@ -685,17 +689,29 @@ export function sanitizeTagInput(value: string): string {
  * canSubmitPost('post', '', [], false) // false
  * canSubmitPost('repost', '', [], false) // true
  * canSubmitPost('post', 'Hello', [], true) // false (submitting)
+ * canSubmitPost('post', 'Content', [], false, true, 'Title') // true (article)
+ * canSubmitPost('post', 'Content', [], false, true, '') // false (article without title)
  */
 export function canSubmitPost(
-  variant: 'post' | 'reply' | 'repost',
+  variant: PostInputVariant,
   content: string,
   attachments: File[],
   isSubmitting: boolean,
+  isArticle?: boolean,
+  articleTitle?: string,
 ): boolean {
   if (isSubmitting) return false;
 
   // Reposts allow empty content, posts and replies require content or attachments
   if (variant === 'repost') return true;
+
+  // Articles require both content and title
+  if (isArticle) {
+    return !!content.trim() && !!articleTitle?.trim();
+  }
+
+  // Edit mode requires content to submit
+  if (variant === 'edit') return !!content.trim();
 
   return Boolean(content.trim()) || attachments.length > 0;
 }

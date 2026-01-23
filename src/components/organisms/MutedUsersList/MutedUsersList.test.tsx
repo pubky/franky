@@ -1,41 +1,56 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { MutedUsersList } from './MutedUsersList';
 
-// Mock settings store
-const mockRemoveMutedUser = vi.fn();
-const mockClearMutedUsers = vi.fn();
-const mockUseSettingsStore = vi.fn();
+const { mockUseMutedUsers, mockUseBulkUserAvatars, mockUseMuteUser, mockToast } = vi.hoisted(() => ({
+  mockUseMutedUsers: vi.fn(),
+  mockUseBulkUserAvatars: vi.fn(),
+  mockUseMuteUser: vi.fn(),
+  mockToast: vi.fn(),
+}));
 
-vi.mock('@/core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/core')>();
-  return {
-    ...actual,
-    useSettingsStore: () => mockUseSettingsStore(),
-  };
-});
+vi.mock('@/hooks', () => ({
+  useMutedUsers: () => mockUseMutedUsers(),
+  useBulkUserAvatars: (ids: string[]) => mockUseBulkUserAvatars(ids),
+  useMuteUser: () => mockUseMuteUser(),
+}));
+
+vi.mock('@/molecules', () => ({
+  toast: (props: unknown) => mockToast(props),
+}));
 
 describe('MutedUsersList', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: vi.fn(() => false),
+      isLoading: false,
+    });
+    mockUseBulkUserAvatars.mockReturnValue({
+      usersMap: new Map(),
+      isLoading: false,
+    });
+    mockUseMuteUser.mockReturnValue({
+      toggleMute: vi.fn(),
+      isLoading: false,
+      isUserLoading: vi.fn(() => false),
+      error: null,
+    });
   });
 
   it('renders empty state when no muted users', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: [],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
-    });
-
     render(<MutedUsersList />);
     expect(screen.getByText('No muted users yet')).toBeInTheDocument();
   });
 
   it('renders muted user with unmute button', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-123'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: ['user-123'],
+      mutedUserIdSet: new Set(['user-123']),
+      isMuted: vi.fn((id: string) => id === 'user-123'),
+      isLoading: false,
     });
 
     render(<MutedUsersList />);
@@ -44,56 +59,88 @@ describe('MutedUsersList', () => {
     expect(screen.getByText('Unmute')).toBeInTheDocument();
   });
 
-  it('calls removeMutedUser when clicking unmute', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-123'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
+  it('calls toggleMute when clicking unmute', () => {
+    const toggleMute = vi.fn();
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: ['user-123'],
+      mutedUserIdSet: new Set(['user-123']),
+      isMuted: vi.fn((id: string) => id === 'user-123'),
+      isLoading: false,
+    });
+    mockUseMuteUser.mockReturnValue({
+      toggleMute,
+      isLoading: false,
+      isUserLoading: vi.fn(() => false),
+      error: null,
     });
 
     render(<MutedUsersList />);
     const unmuteButton = screen.getByText('Unmute');
     fireEvent.click(unmuteButton);
 
-    expect(mockRemoveMutedUser).toHaveBeenCalledWith('user-123');
+    expect(toggleMute).toHaveBeenCalledWith('user-123', true);
   });
 
-  it('calls clearMutedUsers when clicking unmute all', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-1', 'user-2'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
+  it('calls toggleMute for each user when clicking unmute all', async () => {
+    const toggleMute = vi.fn().mockResolvedValue(undefined);
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: ['user-1', 'user-2'],
+      mutedUserIdSet: new Set(['user-1', 'user-2']),
+      isMuted: vi.fn((id: string) => id === 'user-1' || id === 'user-2'),
+      isLoading: false,
+    });
+    mockUseMuteUser.mockReturnValue({
+      toggleMute,
+      isLoading: false,
+      isUserLoading: vi.fn(() => false),
+      error: null,
     });
 
     render(<MutedUsersList />);
     const unmuteAllButton = screen.getByText('Unmute all users');
-    fireEvent.click(unmuteAllButton);
+    await act(async () => {
+      fireEvent.click(unmuteAllButton);
+    });
 
-    expect(mockClearMutedUsers).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(toggleMute).toHaveBeenCalledWith('user-1', true);
+      expect(toggleMute).toHaveBeenCalledWith('user-2', true);
+    });
   });
 });
 
 describe('MutedUsersList - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: vi.fn(() => false),
+      isLoading: false,
+    });
+    mockUseBulkUserAvatars.mockReturnValue({
+      usersMap: new Map(),
+      isLoading: false,
+    });
+    mockUseMuteUser.mockReturnValue({
+      toggleMute: vi.fn(),
+      isLoading: false,
+      isUserLoading: vi.fn(() => false),
+      error: null,
+    });
   });
 
   it('matches snapshot - empty state', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: [],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
-    });
-
     const { container } = render(<MutedUsersList />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot - with muted users', () => {
-    mockUseSettingsStore.mockReturnValue({
-      muted: ['user-1', 'user-2', 'user-3'],
-      removeMutedUser: mockRemoveMutedUser,
-      clearMutedUsers: mockClearMutedUsers,
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: ['user-1', 'user-2', 'user-3'],
+      mutedUserIdSet: new Set(['user-1', 'user-2', 'user-3']),
+      isMuted: vi.fn(() => true),
+      isLoading: false,
     });
 
     const { container } = render(<MutedUsersList />);

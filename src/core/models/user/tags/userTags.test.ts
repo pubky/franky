@@ -67,7 +67,7 @@ describe('UserTagsModel', () => {
     it('should create user tags', async () => {
       const rec = { id: testUserId1, tags: MOCK_TAGS_1 };
       const result = await Core.UserTagsModel.create(rec);
-      expect(result).toBeUndefined();
+      expect(result).toBe(rec.id);
     });
 
     it('should find user tags by id', async () => {

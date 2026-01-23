@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Utils from '@/libs/utils';
 import * as Libs from '@/libs';
@@ -51,6 +52,13 @@ export function QuickReply({
     handleDragOver,
     handleDrop,
     setTags,
+    // Mention autocomplete
+    mentionUsers,
+    mentionIsOpen,
+    mentionSelectedIndex,
+    setMentionSelectedIndex,
+    handleMentionSelect,
+    handleMentionKeyDown,
   } = Hooks.usePostInput({
     variant: POST_INPUT_VARIANT.REPLY,
     postId: parentPostId,
@@ -65,9 +73,15 @@ export function QuickReply({
     return Libs.canSubmitPost(POST_INPUT_VARIANT.REPLY, content, attachments, isSubmitting);
   }, [content, attachments, isSubmitting]);
 
-  const handleKeyDown = Hooks.useEnterSubmit(isValid, handleSubmit, {
+  const enterSubmitHandler = Hooks.useEnterSubmit(isValid, handleSubmit, {
     requireModifier: true,
   });
+
+  // Combined keyboard handler: mention popover takes priority, then enter submit
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (handleMentionKeyDown(e)) return;
+    enterSubmitHandler(e);
+  };
 
   // Account for spacing between main post and QuickReply in connector calculation
   const connectorHeight = cardHeight ? cardHeight + QUICK_REPLY_CONNECTOR_SPACER_HEIGHT : undefined;
@@ -110,19 +124,32 @@ export function QuickReply({
           <Atoms.Container className="flex items-center gap-4" overrideDefaults>
             <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
 
-            <Atoms.Textarea
-              ref={textareaRef}
-              aria-label="Reply"
-              placeholder={displayPlaceholder}
-              className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-              value={content}
-              onChange={handleChange}
-              onFocus={handleExpand}
-              onKeyDown={handleKeyDown}
-              rows={1}
-              disabled={isSubmitting}
-              data-testid="quick-reply-textarea"
-            />
+            <Atoms.Container overrideDefaults className="relative flex-1">
+              <Atoms.Textarea
+                ref={textareaRef}
+                aria-label="Reply"
+                placeholder={displayPlaceholder}
+                className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                value={content}
+                onChange={handleChange}
+                onFocus={handleExpand}
+                onKeyDown={handleKeyDown}
+                rows={1}
+                disabled={isSubmitting}
+                data-testid="quick-reply-textarea"
+                aria-haspopup="listbox"
+              />
+
+              {/* Mention autocomplete popover */}
+              {mentionIsOpen && (
+                <Molecules.MentionPopover
+                  users={mentionUsers}
+                  selectedIndex={mentionSelectedIndex}
+                  onSelect={handleMentionSelect}
+                  onHover={setMentionSelectedIndex}
+                />
+              )}
+            </Atoms.Container>
           </Atoms.Container>
 
           <PostInputAttachments

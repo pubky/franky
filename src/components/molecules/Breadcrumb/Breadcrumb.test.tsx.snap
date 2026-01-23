@@ -3,10 +3,10 @@
 exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with custom className 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5 custom-breadcrumb"
+  class="inline-flex custom-breadcrumb"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -29,10 +29,10 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with c
 exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with default props 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -55,10 +55,10 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with d
 exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with medium size 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -81,10 +81,10 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with m
 exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with small size 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-1.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-1.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -107,10 +107,10 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with s
 exports[`Breadcrumb - Snapshots > BreadcrumbEllipsis > matches snapshot with custom className 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <span
       aria-hidden="true"
@@ -159,10 +159,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbEllipsis > matches snapshot with cus
 exports[`Breadcrumb - Snapshots > BreadcrumbEllipsis > matches snapshot with default props 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <span
       aria-hidden="true"
@@ -211,10 +211,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbEllipsis > matches snapshot with def
 exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with current variant 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-foreground"
@@ -237,10 +237,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with current
 exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with custom className 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer custom-item"
@@ -263,10 +263,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with custom 
 exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with dropdown variant 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded overflow-hidden"
@@ -306,10 +306,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with dropdow
 exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with href prop 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -332,10 +332,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with href pr
 exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with link variant 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -358,10 +358,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with link va
 exports[`Breadcrumb - Snapshots > BreadcrumbPage > matches snapshot with custom className 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <span
       aria-current="page"
@@ -378,10 +378,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbPage > matches snapshot with custom 
 exports[`Breadcrumb - Snapshots > BreadcrumbPage > matches snapshot with default props 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <span
       aria-current="page"
@@ -398,10 +398,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbPage > matches snapshot with default
 exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with custom className 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -447,10 +447,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
 exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with custom icon 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -484,10 +484,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
 exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with default icon 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -533,10 +533,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with de
 exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with medium size 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -582,10 +582,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with me
 exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with small size 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -603,7 +603,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with sm
     </li>
     <li
       aria-hidden="true"
-      class="text-muted-foreground shrink-0 w-4 h-4"
+      class="text-muted-foreground shrink-0 w-[15px] h-[15px]"
       role="presentation"
     >
       <svg
@@ -631,10 +631,10 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with sm
 exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapshot for complex breadcrumb 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -842,10 +842,10 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
 exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapshot for simple breadcrumb 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -899,10 +899,10 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
 exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapshot for small size breadcrumb 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-1.5"
+  class="inline-flex"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-1.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -920,7 +920,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     </li>
     <li
       aria-hidden="true"
-      class="text-muted-foreground shrink-0 w-4 h-4"
+      class="text-muted-foreground shrink-0 w-[15px] h-[15px]"
       role="presentation"
     >
       <svg
@@ -957,7 +957,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     </li>
     <li
       aria-hidden="true"
-      class="text-muted-foreground shrink-0 w-4 h-4"
+      class="text-muted-foreground shrink-0 w-[15px] h-[15px]"
       role="presentation"
     >
       <svg
@@ -993,10 +993,10 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
 exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapshot with custom styling 1`] = `
 <nav
   aria-label="breadcrumb"
-  class="flex items-center flex-wrap gap-2.5 custom-breadcrumb"
+  class="inline-flex custom-breadcrumb"
 >
   <ol
-    class="gap-inherit flex flex-wrap items-center"
+    class="flex flex-wrap items-center gap-2.5"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer custom-link"

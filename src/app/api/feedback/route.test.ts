@@ -48,7 +48,11 @@ describe('API Route: /api/feedback', () => {
     });
 
     it('should handle AppError from application layer with correct status code', async () => {
-      const appError = new Libs.AppError(Libs.CommonErrorType.INVALID_INPUT, 'Validation failed', 400);
+      const appError = Libs.Err.validation(Libs.ValidationErrorCode.INVALID_INPUT, 'Validation failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'submit',
+        context: { statusCode: 400 },
+      });
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest({
@@ -65,7 +69,11 @@ describe('API Route: /api/feedback', () => {
     });
 
     it('should handle AppError with different status codes', async () => {
-      const appError = new Libs.AppError(Libs.CommonErrorType.INTERNAL_ERROR, 'Server error', 500);
+      const appError = Libs.Err.server(Libs.ServerErrorCode.INTERNAL_ERROR, 'Server error', {
+        service: Libs.ErrorService.Local,
+        operation: 'submit',
+        context: { statusCode: 500 },
+      });
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest({
@@ -135,10 +143,10 @@ describe('API Route: /api/feedback', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
         'Pubky is required and must be a non-empty string',
-        400,
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
       );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
@@ -156,10 +164,10 @@ describe('API Route: /api/feedback', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
         'Comment is required and must be a non-empty string',
-        400,
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
       );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
@@ -177,10 +185,10 @@ describe('API Route: /api/feedback', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
         'Name is required and must be a non-empty string',
-        400,
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
       );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
@@ -200,10 +208,10 @@ describe('API Route: /api/feedback', () => {
       });
 
       // The controller will validate and throw AppError
-      const appError = new Libs.AppError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
         `Comment must be no more than ${Config.FEEDBACK_MAX_CHARACTER_LENGTH} characters`,
-        400,
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
       );
       vi.spyOn(Core.FeedbackController, 'submit').mockRejectedValue(appError);
 
