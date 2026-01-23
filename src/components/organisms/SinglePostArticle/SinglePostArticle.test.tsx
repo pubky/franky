@@ -194,7 +194,7 @@ describe('SinglePostArticle', () => {
     expect(postText).toHaveAttribute('data-is-article', 'true');
   });
 
-  it('renders PostTagsPanel twice (mobile and desktop)', () => {
+  it('renders PostTagsPanel twice (always visible on both mobile and desktop)', () => {
     render(<SinglePostArticle {...defaultProps} />);
 
     const tagsPanels = screen.getAllByTestId('post-tags-panel');
@@ -331,6 +331,20 @@ describe('SinglePostArticle', () => {
       const closeButton = screen.getByTestId('close-repost-dialog');
       fireEvent.click(closeButton);
       expect(screen.getByTestId('dialog-repost')).toHaveAttribute('data-open', 'false');
+    });
+  });
+
+  describe('tags visibility', () => {
+    it('always shows both mobile and desktop tags panels (no toggle)', () => {
+      render(<SinglePostArticle {...defaultProps} />);
+
+      const tagsPanels = screen.getAllByTestId('post-tags-panel');
+      expect(tagsPanels).toHaveLength(2);
+      // Mobile tags panel
+      expect(tagsPanels[0]).toHaveClass('lg:hidden');
+      // Desktop tags panel
+      expect(tagsPanels[1]).toHaveClass('hidden');
+      expect(tagsPanels[1]).toHaveClass('lg:flex');
     });
   });
 

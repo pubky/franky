@@ -130,3 +130,26 @@ export const findPostByContent = (postContent: string) => {
     .filter((_idx, element) => element.innerText.includes(postContent))
     .first();
 };
+
+/**
+ * Click the tag button in the post actions bar to toggle expanded view
+ * Must be used within a post context
+ */
+export const clickTagToggleButton = () => {
+  cy.get('[data-cy="post-tag-btn"]').should('be.visible').click();
+};
+
+/**
+ * Assert that the expanded tags panel is visible
+ */
+export const assertTagsPanelExpanded = () => {
+  cy.get('[data-cy="post-tags-panel"]').should('be.visible');
+};
+
+/**
+ * Assert that the compact tags list is visible (collapsed state)
+ */
+export const assertTagsPanelCollapsed = () => {
+  cy.get('[data-cy="clickable-tags-list"]').should('be.visible');
+  cy.get('[data-cy="post-tags-panel"]').should('not.exist');
+};
