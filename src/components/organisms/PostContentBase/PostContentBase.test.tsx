@@ -203,7 +203,10 @@ describe('PostContentBase - Snapshots', () => {
     vi.clearAllMocks();
     const actualMolecules = await vi.importActual<typeof import('@/molecules')>('@/molecules');
     // Replace the mock implementations with real ones for snapshots
-    vi.mocked(Molecules.PostText).mockImplementation(actualMolecules.PostText);
+    // PostText is wrapped with React.memo(), so we need to access the underlying function via .type
+    const PostTextComponent = (actualMolecules.PostText as React.MemoExoticComponent<React.FC>)
+      .type as typeof Molecules.PostText;
+    vi.mocked(Molecules.PostText).mockImplementation(PostTextComponent);
     vi.mocked(Molecules.PostLinkEmbeds).mockImplementation(actualMolecules.PostLinkEmbeds);
     // PostAttachments stays mocked - it has its own test file
   }, 30000); // Increase timeout to 30 seconds
