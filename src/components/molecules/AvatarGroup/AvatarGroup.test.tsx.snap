@@ -40,7 +40,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with custom maxAvatars 1`] =
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U0
       </span>
@@ -55,7 +55,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with custom maxAvatars 1`] =
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U1
       </span>
@@ -70,7 +70,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with custom maxAvatars 1`] =
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U2
       </span>
@@ -100,7 +100,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with items without avatarUrl
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         A
       </span>
@@ -115,7 +115,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with items without avatarUrl
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         B
       </span>
@@ -138,7 +138,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] 
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U0
       </span>
@@ -153,7 +153,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] 
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U1
       </span>
@@ -168,7 +168,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] 
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U2
       </span>
@@ -183,7 +183,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] 
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U3
       </span>
@@ -198,7 +198,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] 
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U4
       </span>
@@ -213,7 +213,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with max overflow (+99) 1`] 
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U5
       </span>
@@ -243,7 +243,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U0
       </span>
@@ -258,7 +258,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U1
       </span>
@@ -273,7 +273,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U2
       </span>
@@ -288,7 +288,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U3
       </span>
@@ -303,7 +303,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U4
       </span>
@@ -318,7 +318,7 @@ exports[`AvatarGroup - Snapshots > matches snapshot with overflow 1`] = `
       class="relative flex shrink-0 overflow-hidden rounded-full h-8 w-8"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
       >
         U5
       </span>

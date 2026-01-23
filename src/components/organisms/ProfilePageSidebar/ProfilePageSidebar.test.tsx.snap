@@ -147,7 +147,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
             class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
           >
             <span
-              class="flex h-full w-full items-center justify-center rounded-full bg-muted text-sm"
+              class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted text-sm"
             >
               YN
             </span>
