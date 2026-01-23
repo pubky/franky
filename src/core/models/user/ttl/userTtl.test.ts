@@ -39,7 +39,7 @@ describe('UserTtlModel', () => {
       };
 
       const result = await Core.UserTtlModel.create(mockData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockData.id);
     });
 
     it('should find user ttl by id', async () => {

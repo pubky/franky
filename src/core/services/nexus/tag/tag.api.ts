@@ -14,10 +14,15 @@ export const tagApi = {
     const tagId = Core.encodePathSegment(params.tagId);
     return Core.buildNexusUrl(`${PREFIX}/${taggerId}/${tagId}`);
   },
-  hot: (params: Core.TTagHotParams) => Core.buildUrlWithQuery(`${PREFIX}/hot`, params, Core.TAGS_PATH_PARAMS),
+  hot: (params: Core.TTagHotParams) =>
+    Core.buildUrlWithQuery({ baseRoute: `${PREFIX}/hot`, params, excludeKeys: Core.TAGS_PATH_PARAMS }),
   taggers: (params: Core.TTagTaggersParams) => {
     const label = Core.encodePathSegment(params.label);
-    return Core.buildUrlWithQuery(`${PREFIX}/taggers/${label}`, params, Core.TAGS_PATH_PARAMS);
+    return Core.buildUrlWithQuery({
+      baseRoute: `${PREFIX}/taggers/${label}`,
+      params,
+      excludeKeys: Core.TAGS_PATH_PARAMS,
+    });
   },
 };
 

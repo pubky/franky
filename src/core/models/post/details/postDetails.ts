@@ -24,8 +24,26 @@ export class PostDetailsModel
     this.attachments = postDetails.attachments;
   }
 
-  // Query methods
-  static async fetchPaginated(limit: number = 30, offset: number = 0) {
-    return this.table.orderBy('indexed_at').reverse().offset(offset).limit(limit).toArray();
+  /**
+   * Filter out deleted posts from a list of post IDs.
+   * Posts without details in cache are kept (fail-open).
+   */
+  static async filterDeleted(postIds: string[]): Promise<string[]> {
+    if (postIds.length === 0) return [];
+
+    const results = await Promise.all(
+      postIds.map(async (postId) => {
+        try {
+          const details = await PostDetailsModel.findById(postId);
+          // Keep posts that don't have details (fail-open) or aren't deleted
+          return { postId, isValid: !details || details.content !== Core.DELETED };
+        } catch {
+          // Fail-open: keep posts we can't read
+          return { postId, isValid: true };
+        }
+      }),
+    );
+
+    return results.filter((r) => r.isValid).map((r) => r.postId);
   }
 }

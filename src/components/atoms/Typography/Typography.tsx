@@ -25,7 +25,7 @@ interface TypographyProps {
   htmlFor?: string;
   children: ReactNode;
   className?: React.HTMLAttributes<HTMLElement>['className'];
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   overrideDefaults?: boolean;
   'data-testid'?: string;
 }
@@ -45,6 +45,7 @@ export function Typography({
     md: 'text-xl font-semibold',
     lg: 'text-2xl font-bold',
     xl: 'text-4xl font-bold',
+    '2xl': 'text-6xl font-bold',
   };
 
   const typographyClassName = overrideDefaults ? className : cn(sizeClasses[size], 'text-foreground', className);

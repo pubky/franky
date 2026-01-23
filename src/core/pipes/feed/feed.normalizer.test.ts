@@ -8,7 +8,7 @@ import {
   PubkySpecsBuilder,
 } from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 
 describe('FeedNormalizer', () => {
   const testData = {
@@ -50,7 +50,6 @@ describe('FeedNormalizer', () => {
     vi.clearAllMocks();
     mockBuilder = createMockBuilder();
     vi.spyOn(Core.PubkySpecsSingleton, 'get').mockReturnValue(mockBuilder as unknown as PubkySpecsBuilder);
-    vi.spyOn(Libs.Logger, 'debug').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -81,7 +80,6 @@ describe('FeedNormalizer', () => {
         testData.feedName,
       );
       expect(result).toBeTruthy();
-      expect(Libs.Logger.debug).toHaveBeenCalledWith('Feed normalized', { result });
     });
 
     it('should normalize tags to lowercase', () => {
@@ -272,15 +270,26 @@ describe('FeedNormalizer', () => {
       });
     });
 
-    it('should propagate builder errors', () => {
+    it('should throw AppError with correct properties when builder fails', () => {
       const params = createValidParams();
+      const errorMessage = 'Invalid feed configuration';
       mockBuilder.createFeed.mockImplementation(() => {
-        throw new Error('Invalid feed configuration');
+        throw errorMessage;
       });
 
-      expect(() => Core.FeedNormalizer.to({ params, userId: testData.userPubky })).toThrow(
-        'Invalid feed configuration',
-      );
+      try {
+        Core.FeedNormalizer.to({ params, userId: testData.userPubky });
+        expect.fail('Should have thrown');
+      } catch (error) {
+        expect(error).toBeInstanceOf(AppError);
+        const appError = error as AppError;
+        expect(appError.category).toBe(ErrorCategory.Validation);
+        expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+        expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+        expect(appError.operation).toBe('createFeed');
+        expect(appError.context).toEqual({ params, userId: testData.userPubky });
+        expect(appError.message).toBe(errorMessage);
+      }
     });
   });
 });

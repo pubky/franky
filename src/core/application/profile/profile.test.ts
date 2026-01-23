@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Pubky } from '@/core';
+import { HttpMethod } from '@/libs';
 import type { PubkyAppUser, UserResult } from 'pubky-app-specs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
@@ -7,17 +8,11 @@ vi.mock('pubky-app-specs', () => ({
   getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
-// Mock HomeserverService methods and provide enum-like HomeserverAction
+// Mock HomeserverService methods
 vi.mock('@/core/services/homeserver', () => ({
   HomeserverService: {
     putBlob: vi.fn(),
     request: vi.fn(),
-  },
-  HomeserverAction: {
-    GET: 'GET',
-    POST: 'POST',
-    PUT: 'PUT',
-    DELETE: 'DELETE',
   },
 }));
 
@@ -67,7 +62,7 @@ describe('ProfileApplication', () => {
       await ProfileApplication.commitCreate({ profile, url, pubky });
 
       expect(profile.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, url, profileJson);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.PUT, url, bodyJson: profileJson });
       expect(mockAuthState.setCurrentUserPubky).toHaveBeenCalledWith(pubky);
       expect(mockAuthState.setHasProfile).toHaveBeenCalledWith(true);
     });
@@ -144,11 +139,11 @@ describe('ProfileApplication', () => {
       );
 
       // Verify homeserver PUT request
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        `pubky://${testPubky}/pub/pubky.app/profile.json`,
-        mockUserResult.user.toJson(),
-      );
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: `pubky://${testPubky}/pub/pubky.app/profile.json`,
+        bodyJson: mockUserResult.user.toJson(),
+      });
 
       // Verify local database update
       const updatedUser = await Core.UserDetailsModel.findById(testPubky);

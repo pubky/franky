@@ -16,8 +16,13 @@ import { ProfileStats, UseProfileStatsResult } from './useProfileStats.types';
 export function useProfileStats(userId: string): UseProfileStatsResult {
   // Fetch user counts from local database using live query
   const userCounts = useLiveQuery(async () => {
-    if (!userId) return null;
-    return await Core.UserController.getCounts({ userId });
+    try {
+      if (!userId) return null;
+      return await Core.UserController.getCounts({ userId });
+    } catch (error) {
+      Libs.Logger.error('[useProfileStats] Failed to query user counts', { userId, error });
+      return null;
+    }
   }, [userId]);
 
   // Fetch counts from Nexus if not in local cache

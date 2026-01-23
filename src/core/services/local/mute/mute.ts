@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
 
 type MuteAction = 'mute' | 'unmute';
 
@@ -29,24 +29,6 @@ export class LocalMuteService {
    */
   private static async updateMuteStatus({ muter, mutee }: Core.TMuteParams, action: MuteAction): Promise<void> {
     const isMuting = action === 'mute';
-    const config = {
-      mute: {
-        targetStatus: true,
-        successMessage: 'Mute created successfully',
-        errorMessage: 'Failed to mute a user',
-        databaseErrorMessage: 'Failed to create mute relationship',
-        errorType: DatabaseErrorType.SAVE_FAILED,
-      },
-      unmute: {
-        targetStatus: false,
-        successMessage: 'Unmute completed successfully',
-        errorMessage: 'Failed to unmute a user',
-        databaseErrorMessage: 'Failed to delete mute relationship',
-        errorType: DatabaseErrorType.DELETE_FAILED,
-      },
-    };
-
-    const { targetStatus, successMessage, errorMessage, databaseErrorMessage, errorType } = config[action];
 
     try {
       let statusChanged = false;
@@ -56,12 +38,12 @@ export class LocalMuteService {
 
         if (existingRelationship) {
           // If the relationship already has the desired mute status, no action needed
-          if (existingRelationship.muted === targetStatus) {
+          if (existingRelationship.muted === isMuting) {
             return;
           }
 
           // Update the existing relationship
-          await Core.UserRelationshipsModel.update(mutee, { muted: targetStatus });
+          await Core.UserRelationshipsModel.update(mutee, { muted: isMuting });
           statusChanged = true;
           return;
         }
@@ -70,7 +52,7 @@ export class LocalMuteService {
         await Core.UserRelationshipsModel.create({
           id: mutee,
           ...this.DEFAULT_RELATIONSHIP,
-          muted: targetStatus,
+          muted: isMuting,
         });
         statusChanged = true;
       });
@@ -80,10 +62,16 @@ export class LocalMuteService {
         await this.updateUserStreams(mutee, isMuting);
       }
 
-      Logger.debug(successMessage, { muter, mutee });
+      Logger.debug(isMuting ? 'Mute created successfully' : 'Unmute completed successfully', { muter, mutee });
     } catch (error) {
-      Logger.error(errorMessage, { muter, mutee, error });
-      throw createDatabaseError(errorType, databaseErrorMessage, 500, { error });
+      const operation = isMuting ? 'mute' : 'unmute';
+      const errorType = isMuting ? DatabaseErrorCode.WRITE_FAILED : DatabaseErrorCode.DELETE_FAILED;
+      throw Err.database(errorType, `Failed to ${operation} mute relationship`, {
+        service: ErrorService.Local,
+        operation,
+        context: { muter, mutee },
+        cause: error,
+      });
     }
   }
 

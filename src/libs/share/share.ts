@@ -88,21 +88,3 @@ export const shareWithFallback = async (data: ShareData, options: ShareOptions =
     throw error;
   }
 };
-
-/**
- * Check if the Web Share API is supported in the current environment
- *
- * @returns boolean - True if Web Share API is available
- */
-export const isWebShareSupported = (): boolean => {
-  return typeof navigator !== 'undefined' && 'share' in navigator;
-};
-
-/**
- * Get the appropriate share method for the current environment
- *
- * @returns 'native' | 'fallback' - The recommended share method
- */
-export const getShareMethod = (): 'native' | 'fallback' => {
-  return isWebShareSupported() ? 'native' : 'fallback';
-};

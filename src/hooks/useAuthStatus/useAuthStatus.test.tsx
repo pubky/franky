@@ -15,7 +15,7 @@ const mockAuthStore = {
   session: null,
   sessionExport: null,
   isRestoringSession: false,
-  hasProfile: false,
+  hasProfile: null as boolean | null,
   hasHydrated: true,
   selectIsAuthenticated: vi.fn(() => false),
   reset: vi.fn(),
@@ -39,7 +39,7 @@ describe('useAuthStatus', () => {
     mockAuthStore.session = null;
     mockAuthStore.sessionExport = null;
     mockAuthStore.isRestoringSession = false;
-    mockAuthStore.hasProfile = false;
+    mockAuthStore.hasProfile = null;
     mockAuthStore.hasHydrated = true;
     mockAuthStore.selectIsAuthenticated = vi.fn(() => false);
   });
@@ -95,17 +95,32 @@ describe('useAuthStatus', () => {
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('should return UNAUTHENTICATED status when no session and no profile', () => {
+  it('should return UNAUTHENTICATED status when no session and hasProfile is null', () => {
     mockOnboardingStore.hasHydrated = true;
     mockAuthStore.session = null;
-    mockAuthStore.hasProfile = false;
+    mockAuthStore.hasProfile = null;
 
     const { result } = renderHook(() => useAuthStatus());
 
     expect(result.current.status).toBe('UNAUTHENTICATED');
     expect(result.current.isFullyAuthenticated).toBe(false);
     expect(result.current.hasKeypair).toBe(false);
-    expect(result.current.hasProfile).toBe(false);
+    expect(result.current.hasProfile).toBe(null);
+  });
+
+  it('should return UNAUTHENTICATED status when has session but hasProfile is null (determining)', () => {
+    mockOnboardingStore.hasHydrated = true;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockAuthStore.session = { token: 'test-token' } as any;
+    mockAuthStore.hasProfile = null; // Still determining profile status
+
+    const { result } = renderHook(() => useAuthStatus());
+
+    // User stays UNAUTHENTICATED while hasProfile is null (allows sign-in progress UI)
+    expect(result.current.status).toBe('UNAUTHENTICATED');
+    expect(result.current.isFullyAuthenticated).toBe(false);
+    expect(result.current.hasKeypair).toBe(true);
+    expect(result.current.hasProfile).toBe(null);
   });
 
   it('should return NEEDS_PROFILE_CREATION status when has session but no profile', () => {

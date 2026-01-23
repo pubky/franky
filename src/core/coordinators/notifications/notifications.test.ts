@@ -789,6 +789,71 @@ describe('NotificationCoordinator', () => {
     });
   });
 
+  describe('PWA Background Load (Initial Visibility State)', () => {
+    it('syncs isPageVisible with actual DOM visibility state on initialization', () => {
+      // Simulate PWA loading in background (document is hidden)
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'hidden',
+      });
+
+      // Reset instance so we get a fresh coordinator that reads the hidden state
+      Core.NotificationCoordinator.resetInstance();
+      const coordinator = Core.NotificationCoordinator.getInstance();
+
+      // The coordinator should have synced isPageVisible to false from document.visibilityState
+      const state = (coordinator as unknown as { state: { isPageVisible: boolean } }).state;
+      expect(state.isPageVisible).toBe(false);
+
+      // Restore visibility state for other tests
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      });
+    });
+
+    it('does not start polling when loaded in background with respectPageVisibility enabled', async () => {
+      // Simulate PWA loading in background (document is hidden)
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'hidden',
+      });
+
+      // Reset instance so we get a fresh coordinator that reads the hidden state
+      Core.NotificationCoordinator.resetInstance();
+
+      const spy = vi
+        .spyOn(Core.NotificationController, 'fetchNotifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().init({
+        session: {} as any,
+        currentUserPubky: 'user123' as unknown as Core.Pubky,
+        hasProfile: true,
+      });
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        respectPageVisibility: true,
+      } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute('/home');
+      coordinator.start();
+      await flushPromises();
+
+      // Should NOT poll because page is hidden and respectPageVisibility is true
+      vi.advanceTimersByTime(5_000);
+      expect(spy).not.toHaveBeenCalled();
+
+      // Restore visibility state for other tests
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      });
+    });
+  });
+
   describe('Route Edge Cases', () => {
     it('handles empty route string', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();

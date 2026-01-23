@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 
@@ -32,6 +32,19 @@ describe('FeedModel', () => {
       expect(saved!.id).toBe(feed.id);
       expect(saved!.name).toBe(feed.name);
       expect(saved!.tags).toEqual(feed.tags);
+    });
+
+    it('should create and return feed with auto-generated ID via createAndGet', async () => {
+      const feed = createFeedSchema();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id, ...feedWithoutId } = feed; // Omit id to trigger Dexie auto-increment
+
+      const created = await Core.FeedModel.createAndGet(feedWithoutId as Core.FeedModelSchema);
+
+      expect(created).toBeTruthy();
+      expect(created.id).toBeGreaterThan(0); // Auto-generated ID
+      expect(created.name).toBe(feed.name);
+      expect(created.tags).toEqual(feed.tags);
     });
 
     it('should update an existing feed', async () => {
@@ -72,25 +85,24 @@ describe('FeedModel', () => {
     });
   });
 
-  describe('findAll', () => {
-    it('should return all feeds', async () => {
-      const feed1 = createFeedSchema({ id: 1, name: 'Feed 1' });
-      const feed2 = createFeedSchema({ id: 2, name: 'Feed 2' });
-      const feed3 = createFeedSchema({ id: 3, name: 'Feed 3' });
+  describe('findByIdOrThrow', () => {
+    it('should return feed when found', async () => {
+      const feed = createFeedSchema();
+      await Core.FeedModel.upsert(feed);
 
-      await Core.FeedModel.upsert(feed1);
-      await Core.FeedModel.upsert(feed2);
-      await Core.FeedModel.upsert(feed3);
+      const found = await Core.FeedModel.findByIdOrThrow(feed.id);
 
-      const feeds = await Core.FeedModel.findAll();
-
-      expect(feeds).toHaveLength(3);
+      expect(found).toBeTruthy();
+      expect(found.id).toBe(feed.id);
+      expect(found.name).toBe(feed.name);
     });
 
-    it('should return empty array when no feeds exist', async () => {
-      const feeds = await Core.FeedModel.findAll();
-
-      expect(feeds).toEqual([]);
+    it('should throw RECORD_NOT_FOUND when feed does not exist', async () => {
+      await expect(Core.FeedModel.findByIdOrThrow(99999)).rejects.toMatchObject({
+        name: 'AppError',
+        code: 'RECORD_NOT_FOUND',
+        category: 'database',
+      });
     });
   });
 
@@ -112,6 +124,20 @@ describe('FeedModel', () => {
       expect(feeds[0].name).toBe('Newest');
       expect(feeds[1].name).toBe('Middle');
       expect(feeds[2].name).toBe('Oldest');
+    });
+
+    it('should throw QUERY_FAILED on database error', async () => {
+      const spy = vi.spyOn(Core.FeedModel.table, 'orderBy').mockImplementationOnce(() => {
+        throw new Error('db-fail');
+      });
+
+      await expect(Core.FeedModel.findAllSorted()).rejects.toMatchObject({
+        name: 'AppError',
+        code: 'QUERY_FAILED',
+        category: 'database',
+      });
+
+      spy.mockRestore();
     });
   });
 

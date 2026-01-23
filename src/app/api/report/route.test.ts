@@ -54,7 +54,11 @@ describe('API Route: /api/report', () => {
     });
 
     it('should handle AppError from application layer with correct status code', async () => {
-      const appError = new Libs.AppError('INVALID_INPUT', 'Validation failed', 400);
+      const appError = Libs.Err.validation(Libs.ValidationErrorCode.INVALID_INPUT, 'Validation failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'submit',
+        context: { statusCode: 400 },
+      });
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest({
@@ -73,7 +77,11 @@ describe('API Route: /api/report', () => {
     });
 
     it('should handle AppError with different status codes', async () => {
-      const appError = new Libs.AppError('INTERNAL_ERROR', 'Server error', 500);
+      const appError = Libs.Err.server(Libs.ServerErrorCode.INTERNAL_ERROR, 'Server error', {
+        service: Libs.ErrorService.Local,
+        operation: 'submit',
+        context: { statusCode: 500 },
+      });
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const request = createPostRequest({
@@ -136,7 +144,11 @@ describe('API Route: /api/report', () => {
         name: testData.userName,
       });
 
-      const appError = new Libs.AppError('INVALID_INPUT', 'Pubky is required and must be a non-empty string', 400);
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
+        'Pubky is required and must be a non-empty string',
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
+      );
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -154,7 +166,11 @@ describe('API Route: /api/report', () => {
         name: testData.userName,
       });
 
-      const appError = new Libs.AppError('INVALID_INPUT', 'Post URL is required and must be a non-empty string', 400);
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
+        'Post URL is required and must be a non-empty string',
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
+      );
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -172,7 +188,11 @@ describe('API Route: /api/report', () => {
         name: testData.userName,
       });
 
-      const appError = new Libs.AppError('INVALID_INPUT', 'Issue type is required and must be a non-empty string', 400);
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
+        'Issue type is required and must be a non-empty string',
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
+      );
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -191,7 +211,11 @@ describe('API Route: /api/report', () => {
         name: testData.userName,
       });
 
-      const appError = new Libs.AppError('INVALID_INPUT', 'Invalid issue type: invalid-type', 400);
+      const appError = Libs.Err.validation(Libs.ValidationErrorCode.INVALID_INPUT, 'Invalid issue type: invalid-type', {
+        service: Libs.ErrorService.Local,
+        operation: 'submit',
+        context: { statusCode: 400 },
+      });
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -209,7 +233,11 @@ describe('API Route: /api/report', () => {
         name: testData.userName,
       });
 
-      const appError = new Libs.AppError('INVALID_INPUT', 'Reason is required and must be a non-empty string', 400);
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
+        'Reason is required and must be a non-empty string',
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
+      );
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -227,7 +255,11 @@ describe('API Route: /api/report', () => {
         reason: testData.reason,
       });
 
-      const appError = new Libs.AppError('INVALID_INPUT', 'Name is required and must be a non-empty string', 400);
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
+        'Name is required and must be a non-empty string',
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
+      );
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 
       const response = await POST(request);
@@ -247,10 +279,10 @@ describe('API Route: /api/report', () => {
         name: testData.userName,
       });
 
-      const appError = new Libs.AppError(
-        'INVALID_INPUT',
+      const appError = Libs.Err.validation(
+        Libs.ValidationErrorCode.INVALID_INPUT,
         `Reason must be no more than ${REPORT_REASON_MAX_LENGTH} characters`,
-        400,
+        { service: Libs.ErrorService.Local, operation: 'submit', context: { statusCode: 400 } },
       );
       vi.spyOn(Core.ReportController, 'submit').mockRejectedValue(appError);
 

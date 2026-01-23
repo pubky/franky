@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger } from '@/libs';
 
 export class UserController {
   private constructor() {} // Prevent instantiation
@@ -119,7 +119,7 @@ export class UserController {
    * @param follower - The follower user ID
    * @param followee - The followee user ID
    */
-  static async commitFollow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
+  static async commitFollow(eventType: HttpMethod, { follower, followee }: Core.TFollowParams) {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
 
     // Get active stream ID from store (controller layer responsibility)
@@ -141,7 +141,7 @@ export class UserController {
    * @param muter - The muter user ID
    * @param mutee - The mutee user ID
    */
-  static async commitMute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams) {
+  static async commitMute(eventType: HttpMethod, { muter, mutee }: Core.TMuteParams) {
     const { meta, mute } = Core.MuteNormalizer.to({ muter, mutee });
     await Core.UserApplication.commitMute({
       eventType,
@@ -167,7 +167,7 @@ export class UserController {
       const homeState = Core.useHomeStore.getState();
       return Core.getStreamId(homeState.sort, homeState.reach, homeState.content);
     } catch (error) {
-      Libs.Logger.warn('Failed to get active stream ID', { error });
+      Logger.warn('Failed to get active stream ID', { error });
       return null;
     }
   }

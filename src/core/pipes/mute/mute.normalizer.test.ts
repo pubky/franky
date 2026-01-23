@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { AppError, ErrorCategory, ValidationErrorCode, ErrorService } from '@/libs';
 import { MuteResult } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -37,12 +37,11 @@ describe('MuteNormalizer', () => {
     afterEach(restoreMocks);
 
     describe('to - successful creation', () => {
-      it('should create mute and log debug message', () => {
+      it('should create mute with mute and meta properties', () => {
         const result = Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 });
 
         expect(result).toHaveProperty('mute');
         expect(result).toHaveProperty('meta');
-        expect(Libs.Logger.debug).toHaveBeenCalledWith('Mute validated', { result });
       });
 
       it('should call PubkySpecsSingleton.get with muter and createMute with mutee', () => {
@@ -79,33 +78,33 @@ describe('MuteNormalizer', () => {
     });
 
     describe('to - error handling', () => {
-      it.each([
-        [
-          'createMute',
-          () =>
-            mockBuilder.createMute.mockImplementation(() => {
-              throw new Error('Builder error');
-            }),
-        ],
-        [
-          'PubkySpecsSingleton.get',
-          () =>
-            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
-              throw new Error('Singleton error');
-            }),
-        ],
-      ])('should propagate errors from %s', (_, setupError) => {
-        setupError();
-        expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 })).toThrow();
-      });
-
-      it('should not call logger when error occurs', () => {
+      it('should throw AppError with correct properties when createMute fails', () => {
+        const errorMessage = 'Invalid mutee';
         mockBuilder.createMute.mockImplementation(() => {
-          throw new Error('Error');
+          throw errorMessage;
         });
 
-        expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 })).toThrow();
-        expect(Libs.Logger.debug).not.toHaveBeenCalled();
+        try {
+          Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createMute');
+          expect(appError.context).toEqual({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 });
+          expect(appError.message).toBe(errorMessage);
+        }
+      });
+
+      it('should throw AppError when PubkySpecsSingleton.get fails', () => {
+        vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+          throw 'Singleton error';
+        });
+
+        expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 })).toThrow(AppError);
       });
     });
 
@@ -168,8 +167,18 @@ describe('MuteNormalizer', () => {
         ['null', INVALID_INPUTS.NULL],
         ['undefined', INVALID_INPUTS.UNDEFINED],
         ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
-      ])('should throw error for %s mutee', (_, invalidMutee) => {
-        expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: invalidMutee })).toThrow();
+      ])('should throw AppError for %s mutee', (_, invalidMutee) => {
+        try {
+          Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: invalidMutee });
+          expect.fail('Should have thrown');
+        } catch (error) {
+          expect(error).toBeInstanceOf(AppError);
+          const appError = error as AppError;
+          expect(appError.category).toBe(ErrorCategory.Validation);
+          expect(appError.code).toBe(ValidationErrorCode.INVALID_INPUT);
+          expect(appError.service).toBe(ErrorService.PubkyAppSpecs);
+          expect(appError.operation).toBe('createMute');
+        }
       });
     });
   });

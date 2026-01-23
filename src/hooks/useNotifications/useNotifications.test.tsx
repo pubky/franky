@@ -3,6 +3,7 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useNotifications } from './useNotifications';
 import { NotificationType } from '@/core';
 import * as Core from '@/core';
+import { useMutedUsers } from '@/hooks/useMutedUsers';
 
 // Hoist mock data
 const { mockCurrentUserPubky, setMockCurrentUserPubky, mockUnreadCount, setMockUnreadCount } = vi.hoisted(() => {
@@ -59,8 +60,21 @@ vi.mock('@/core', async (importOriginal) => {
 });
 
 // Mock config
-vi.mock('@/config', () => ({
-  NEXUS_NOTIFICATIONS_LIMIT: 30,
+vi.mock('@/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config')>();
+  return {
+    ...actual,
+    NEXUS_NOTIFICATIONS_LIMIT: 30,
+  };
+});
+
+vi.mock('@/hooks/useMutedUsers', () => ({
+  useMutedUsers: vi.fn(() => ({
+    mutedUserIds: [],
+    mutedUserIdSet: new Set(),
+    isMuted: vi.fn(() => false),
+    isLoading: false,
+  })),
 }));
 
 describe('useNotifications', () => {
@@ -68,6 +82,12 @@ describe('useNotifications', () => {
     vi.clearAllMocks();
     setMockCurrentUserPubky('test-user-pubky');
     setMockUnreadCount(0);
+    vi.mocked(useMutedUsers).mockReturnValue({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: vi.fn(() => false),
+      isLoading: false,
+    });
   });
 
   it('should return empty notifications array when no data', async () => {
@@ -182,6 +202,34 @@ describe('useNotifications', () => {
     });
 
     expect(result.current.notifications).toEqual(mockNotifications);
+    expect(result.current.count).toBe(1);
+  });
+
+  it('filters notifications from muted users', async () => {
+    const mockNotifications = [
+      { id: 'test-1', type: NotificationType.Follow, timestamp: 1000, followed_by: 'muted-user' },
+      { id: 'test-2', type: NotificationType.Follow, timestamp: 1001, followed_by: 'active-user' },
+    ] as Core.FlatNotification[];
+
+    vi.mocked(useMutedUsers).mockReturnValue({
+      mutedUserIds: ['muted-user'],
+      mutedUserIdSet: new Set(['muted-user']),
+      isMuted: vi.fn((id) => id === 'muted-user'),
+      isLoading: false,
+    });
+
+    vi.mocked(Core.NotificationController.getOrFetchNotifications).mockResolvedValueOnce({
+      flatNotifications: mockNotifications,
+      olderThan: 999,
+    });
+
+    const { result } = renderHook(() => useNotifications());
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.notifications).toEqual([mockNotifications[1]]);
     expect(result.current.count).toBe(1);
   });
 

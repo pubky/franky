@@ -25,18 +25,21 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-// Mock organisms
-vi.mock('@/organisms', () => ({
-  DialogTerms: () => <button data-testid="dialog-terms">Terms of Service</button>,
-  DialogPrivacy: () => <button data-testid="dialog-privacy">Privacy Policy</button>,
-  DialogAge: () => <button data-testid="dialog-age">over 18 years old.</button>,
-}));
-
 // Mock atoms
 vi.mock('@/atoms', () => ({
   FooterLinks: ({ children }: { children: React.ReactNode }) => <div data-testid="footer-links">{children}</div>,
-  Link: ({ children, href, target }: { children: React.ReactNode; href: string; target?: string }) => (
-    <a data-testid="link" href={href} target={target}>
+  Link: ({
+    children,
+    href,
+    target,
+    className,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    target?: string;
+    className?: string;
+  }) => (
+    <a data-testid="link" href={href} target={target} className={className}>
       {children}
     </a>
   ),
@@ -45,10 +48,26 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <p data-testid="typography" data-size={size} className={className}>
-      {children}
-    </p>
+  Typography: ({
+    children,
+    as,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: string;
+    size?: string;
+    className?: string;
+  }) => {
+    const Tag = as || 'p';
+    return (
+      <Tag data-testid="typography" data-size={size} className={className}>
+        {children}
+      </Tag>
+    );
+  },
+  Image: ({ src, alt, width, height }: { src: string; alt: string; width?: number; height?: number }) => (
+    <img data-testid="image" src={src} alt={alt} width={width} height={height} />
   ),
   Heading: ({ children, level, size }: { children: React.ReactNode; level: number; size?: string }) => (
     <div data-testid={`heading-${level}`} data-size={size}>
@@ -90,23 +109,26 @@ describe('HomeActions', () => {
 });
 
 describe('HomeFooter', () => {
-  it('renders footer with all components', () => {
+  it('renders footer with Synonym and Tether branding images', () => {
     render(<HomeFooter />);
 
-    expect(screen.getByTestId('footer-links')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-terms')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-privacy')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-age')).toBeInTheDocument();
-    expect(screen.getByTestId('link')).toBeInTheDocument();
+    expect(screen.getByAltText('Synonym')).toBeInTheDocument();
+    expect(screen.getByAltText('Tether')).toBeInTheDocument();
   });
 
-  it('renders dialog components with correct link text', () => {
+  it('renders branding text and copyright', () => {
     render(<HomeFooter />);
 
-    expect(screen.getByText('Terms of Service')).toBeInTheDocument();
-    expect(screen.getByText('Privacy Policy')).toBeInTheDocument();
-    expect(screen.getByText('over 18 years old.')).toBeInTheDocument();
-    expect(screen.getByText(/Synonym Software Ltd. ©2025/)).toBeInTheDocument();
+    expect(screen.getByText('a')).toBeInTheDocument();
+    expect(screen.getByText('company')).toBeInTheDocument();
+    expect(screen.getByText(/Synonym Software, S\.A\. DE C\.V\. ©2026/)).toBeInTheDocument();
+  });
+
+  it('renders Synonym logo as a link', () => {
+    render(<HomeFooter />);
+
+    const synonymLink = screen.getByAltText('Synonym').closest('a');
+    expect(synonymLink).toHaveAttribute('href', 'https://synonym.to');
   });
 });
 

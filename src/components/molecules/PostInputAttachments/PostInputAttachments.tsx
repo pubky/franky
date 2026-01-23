@@ -4,13 +4,15 @@ import { ChangeEvent, Dispatch, SetStateAction, forwardRef, useEffect, useMemo }
 import * as Atoms from '@/atoms';
 import * as Icons from '@/libs/icons';
 import * as Utils from '@/libs/utils';
-import { ATTACHMENT_ACCEPT_STRING } from '@/config';
+import { ARTICLE_ATTACHMENT_ACCEPT_STRING, POST_ATTACHMENT_ACCEPT_STRING } from '@/config';
 
 type PostInputAttachmentsProps = {
   attachments: File[];
   setAttachments: Dispatch<SetStateAction<File[]>>;
   handleFilesAdded: (files: File[]) => void;
   isSubmitting: boolean;
+  isArticle?: boolean;
+  handleFileClick?: () => void;
 };
 
 type AttachmentType = 'image' | 'video' | 'audio' | 'pdf';
@@ -29,7 +31,7 @@ const getAttachmentType = (file: File) => {
 };
 
 export const PostInputAttachments = forwardRef<HTMLInputElement, PostInputAttachmentsProps>(
-  ({ attachments, setAttachments, handleFilesAdded, isSubmitting }, ref) => {
+  ({ attachments, setAttachments, handleFilesAdded, isSubmitting, isArticle, handleFileClick }, ref) => {
     const attachmentsWithPreviews: AttachmentWithPreview[] = useMemo(
       () =>
         attachments.map((file) => {
@@ -66,11 +68,28 @@ export const PostInputAttachments = forwardRef<HTMLInputElement, PostInputAttach
         <Atoms.Input
           ref={ref}
           type="file"
-          accept={ATTACHMENT_ACCEPT_STRING}
-          multiple
+          accept={isArticle ? ARTICLE_ATTACHMENT_ACCEPT_STRING : POST_ATTACHMENT_ACCEPT_STRING}
+          multiple={!isArticle}
           onChange={handleFileChange}
           className="hidden"
         />
+
+        {isArticle && !attachmentsWithPreviews.length ? (
+          <Atoms.Card className="h-39 w-full cursor-auto items-center justify-center rounded-md">
+            <Atoms.CardContent className="flex flex-col items-center justify-center gap-3">
+              <Atoms.Container
+                overrideDefaults
+                className="flex size-16 items-center justify-center rounded-full bg-brand/15"
+              >
+                <Icons.ImagePlus className="size-8 text-brand" />
+              </Atoms.Container>
+
+              <Atoms.Button variant="secondary" size="sm" onClick={handleFileClick} disabled={isSubmitting}>
+                <Icons.Plus className="size-4" /> Add image
+              </Atoms.Button>
+            </Atoms.CardContent>
+          </Atoms.Card>
+        ) : null}
 
         {attachmentsWithPreviews.length ? (
           <Atoms.Container className="gap-4">

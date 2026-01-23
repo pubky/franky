@@ -3,3 +3,8 @@ export interface MutedUser {
   name?: string;
   avatar?: string;
 }
+
+export interface UserMapEntry {
+  name?: string;
+  avatarUrl?: string | null;
+}

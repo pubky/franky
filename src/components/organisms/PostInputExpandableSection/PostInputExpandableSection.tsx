@@ -2,16 +2,19 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Icons from '@/libs/icons';
 import { PostInputActionBar } from '../PostInputActionBar';
 import { PostInputTags } from '../PostInputTags';
 import { getButtonLabel } from './PostInputExpandableSection.utils';
 import type { PostInputExpandableSectionProps } from './PostInputExpandableSection.types';
+import { POST_INPUT_VARIANT } from '../PostInput/PostInput.constants';
 
 export function PostInputExpandableSection({
   isExpanded,
   content,
   tags,
   isSubmitting,
+  isArticle,
   isDisabled = false,
   isPostDisabled: isPostDisabledProp,
   submitMode,
@@ -22,6 +25,7 @@ export function PostInputExpandableSection({
   onEmojiSelect,
   onFileClick,
   onImageClick,
+  onArticleClick,
   className,
 }: PostInputExpandableSectionProps) {
   const hasContent = content.trim().length > 0;
@@ -29,8 +33,10 @@ export function PostInputExpandableSection({
   // Use provided isPostDisabled or default to requiring content
   const isPostDisabled = isPostDisabledProp ?? (!hasContent || isUiDisabled);
 
-  const postButtonLabel = getButtonLabel(submitMode);
+  const postButtonLabel = getButtonLabel(submitMode, isArticle);
   const postButtonAriaLabel = postButtonLabel;
+
+  const isEdit = submitMode === POST_INPUT_VARIANT.EDIT;
 
   return (
     <>
@@ -42,7 +48,7 @@ export function PostInputExpandableSection({
       >
         <Atoms.Container className="overflow-hidden" overrideDefaults>
           <Atoms.Container className="gap-6">
-            {hasContent && <Molecules.PostLinkEmbeds content={content} />}
+            {hasContent && !isArticle && <Molecules.PostLinkEmbeds content={content} />}
 
             {tags.length > 0 && (
               <Atoms.Container className="flex flex-wrap items-center gap-2" overrideDefaults>
@@ -60,16 +66,22 @@ export function PostInputExpandableSection({
             )}
 
             <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-              <PostInputTags tags={tags} onTagsChange={setTags} disabled={isUiDisabled} />
+              <PostInputTags tags={tags} onTagsChange={setTags} disabled={isUiDisabled || isEdit} />
+
               <PostInputActionBar
                 onPostClick={onSubmit}
                 onEmojiClick={() => setShowEmojiPicker(true)}
                 onFileClick={onFileClick}
                 onImageClick={onImageClick}
+                onArticleClick={onArticleClick}
                 isPostDisabled={isPostDisabled}
                 isSubmitting={isSubmitting}
                 postButtonLabel={postButtonLabel}
                 postButtonAriaLabel={postButtonAriaLabel}
+                hideArticleButton={submitMode !== POST_INPUT_VARIANT.POST || !!isArticle}
+                isArticle={isArticle}
+                isEdit={isEdit}
+                postButtonIcon={isEdit ? Icons.Edit : undefined}
               />
             </Atoms.Container>
           </Atoms.Container>

@@ -19,11 +19,23 @@ vi.mock('@/hooks', () => ({
   })),
 }));
 
-// Mock DialogReportPost
+// Mock DialogReportPost and DialogEditPost
 vi.mock('@/organisms', () => ({
   DialogReportPost: ({ open, postId }: { open: boolean; onOpenChange: (open: boolean) => void; postId: string }) => (
     <div data-testid="dialog-report-post" data-open={open.toString()} data-post-id={postId}>
       DialogReportPost
+    </div>
+  ),
+  DialogEditPost: ({
+    open,
+    postId,
+  }: {
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+    postId: string;
+  }) => (
+    <div data-testid="dialog-edit-post" data-open={open.toString()} data-post-id={postId}>
+      DialogEditPost
     </div>
   ),
 }));
@@ -41,16 +53,21 @@ vi.mock('./PostMenuActionsContent', () => ({
     variant,
     onActionComplete,
     onReportClick,
+    onEditClick,
   }: {
     postId: string;
     variant: string;
     onActionComplete?: () => void;
     onReportClick?: () => void;
+    onEditClick?: () => void;
   }) => (
     <div data-testid="post-menu-actions-content" data-post-id={postId} data-variant={variant}>
       <button onClick={onActionComplete}>Close</button>
       <button onClick={onReportClick} data-testid="report-button">
         Report
+      </button>
+      <button onClick={onEditClick} data-testid="edit-button">
+        Edit
       </button>
     </div>
   ),
@@ -190,6 +207,31 @@ describe('PostMenuActions', () => {
 
     const closeButton = screen.getByText('Close');
     await user.click(closeButton);
+
+    const dropdown = screen.getByTestId('dropdown-menu');
+    expect(dropdown).toHaveAttribute('data-open', 'false');
+  });
+
+  it('opens edit dialog when edit button is clicked', async () => {
+    const user = userEvent.setup();
+    const trigger = <button>Menu</button>;
+    render(<PostMenuActions postId="pk:test123:post456" trigger={trigger} />);
+
+    const editButton = screen.getByTestId('edit-button');
+    await user.click(editButton);
+
+    const editDialog = screen.getByTestId('dialog-edit-post');
+    expect(editDialog).toHaveAttribute('data-open', 'true');
+    expect(editDialog).toHaveAttribute('data-post-id', 'pk:test123:post456');
+  });
+
+  it('closes menu when edit button is clicked', async () => {
+    const user = userEvent.setup();
+    const trigger = <button>Menu</button>;
+    render(<PostMenuActions postId="pk:test123:post456" trigger={trigger} />);
+
+    const editButton = screen.getByTestId('edit-button');
+    await user.click(editButton);
 
     const dropdown = screen.getByTestId('dropdown-menu');
     expect(dropdown).toHaveAttribute('data-open', 'false');

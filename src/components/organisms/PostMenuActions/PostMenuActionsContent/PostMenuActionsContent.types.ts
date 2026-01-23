@@ -7,4 +7,6 @@ export interface PostMenuActionsContentProps {
   onActionComplete: () => void;
   /** Callback when report action is clicked */
   onReportClick: () => void;
+  /** Callback when edit action is clicked */
+  onEditClick: () => void;
 }

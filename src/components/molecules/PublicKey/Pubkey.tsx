@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
@@ -19,12 +20,14 @@ export const PublicKeyHeader = () => {
 
 export const PublicKeyNavigation = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const onHandleBackButton = () => {
     router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
   const onHandleContinueButton = () => {
+    setLoading(true);
     router.push(App.ONBOARDING_ROUTES.BACKUP);
   };
 
@@ -34,6 +37,7 @@ export const PublicKeyNavigation = () => {
       className="py-4 pt-6"
       onHandleBackButton={onHandleBackButton}
       onHandleContinueButton={onHandleContinueButton}
+      loadingContinueButton={loading}
     />
   );
 };

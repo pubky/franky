@@ -28,6 +28,7 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with bottom side 
     data-aria-hidden="true"
     data-state="open"
     style="pointer-events: auto;"
+    type="button"
   />
   <div
     aria-describedby="radix-normalized"
@@ -105,6 +106,7 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with default side
     data-aria-hidden="true"
     data-state="open"
     style="pointer-events: auto;"
+    type="button"
   />
   <div
     aria-describedby="radix-normalized"
@@ -182,6 +184,7 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with left side 1`
     data-aria-hidden="true"
     data-state="open"
     style="pointer-events: auto;"
+    type="button"
   />
   <div
     aria-describedby="radix-normalized"
@@ -259,6 +262,7 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with right side 1
     data-aria-hidden="true"
     data-state="open"
     style="pointer-events: auto;"
+    type="button"
   />
   <div
     aria-describedby="radix-normalized"
@@ -336,6 +340,7 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with top side 1`]
     data-aria-hidden="true"
     data-state="open"
     style="pointer-events: auto;"
+    type="button"
   />
   <div
     aria-describedby="radix-normalized"

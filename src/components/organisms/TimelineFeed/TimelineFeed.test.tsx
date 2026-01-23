@@ -21,6 +21,12 @@ vi.mock('@/hooks', async (importOriginal) => {
     useStreamIdFromFilters: vi.fn(),
     useBookmarksStreamId: vi.fn(),
     useStreamPagination: vi.fn(),
+    useMutedUsers: vi.fn(() => ({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: vi.fn(() => false),
+      isLoading: false,
+    })),
   };
 });
 

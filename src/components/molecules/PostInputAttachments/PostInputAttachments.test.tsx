@@ -134,6 +134,32 @@ vi.mock('@/atoms', () => ({
       {children}
     </span>
   ),
+  Card: ({
+    children,
+    className,
+    'data-testid': dataTestId,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+  }) => (
+    <div data-testid={dataTestId || 'card'} className={className}>
+      {children}
+    </div>
+  ),
+  CardContent: ({
+    children,
+    className,
+    'data-testid': dataTestId,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+  }) => (
+    <div data-testid={dataTestId || 'card-content'} className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 // Mock @/libs/icons
@@ -143,6 +169,12 @@ vi.mock('@/libs/icons', () => ({
   ),
   FileText: ({ className, 'data-testid': dataTestId }: { className?: string; 'data-testid'?: string }) => (
     <svg data-testid={dataTestId || 'file-text-icon'} className={className} />
+  ),
+  ImagePlus: ({ className, 'data-testid': dataTestId }: { className?: string; 'data-testid'?: string }) => (
+    <svg data-testid={dataTestId || 'image-plus-icon'} className={className} />
+  ),
+  Plus: ({ className, 'data-testid': dataTestId }: { className?: string; 'data-testid'?: string }) => (
+    <svg data-testid={dataTestId || 'plus-icon'} className={className} />
   ),
 }));
 
@@ -194,18 +226,32 @@ describe('PostInputAttachments', () => {
       expect(fileInput).toHaveClass('hidden');
     });
 
-    it('renders file input with correct accept attribute', () => {
+    it('renders file input with correct accept attribute for posts', () => {
       render(<PostInputAttachments {...defaultProps} />);
 
       const fileInput = screen.getByTestId('file-input');
       expect(fileInput).toHaveAttribute('accept', ATTACHMENT_ACCEPT_STRING);
     });
 
-    it('renders file input with multiple attribute', () => {
+    it('renders file input with correct accept attribute for articles', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+
+      const fileInput = screen.getByTestId('file-input');
+      expect(fileInput).toHaveAttribute('accept', 'image/gif,image/jpeg,image/png,image/svg+xml,image/webp');
+    });
+
+    it('renders file input with multiple attribute for posts', () => {
       render(<PostInputAttachments {...defaultProps} />);
 
       const fileInput = screen.getByTestId('file-input');
       expect(fileInput).toHaveAttribute('multiple');
+    });
+
+    it('renders file input without multiple attribute for articles', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+
+      const fileInput = screen.getByTestId('file-input');
+      expect(fileInput).not.toHaveAttribute('multiple');
     });
 
     it('does not render attachment container when no attachments', () => {
@@ -213,6 +259,76 @@ describe('PostInputAttachments', () => {
 
       const containers = screen.queryAllByTestId('container');
       expect(containers).toHaveLength(0);
+    });
+
+    it('does not render article placeholder when not in article mode', () => {
+      render(<PostInputAttachments {...defaultProps} />);
+
+      expect(screen.queryByTestId('card')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Article mode placeholder', () => {
+    it('renders placeholder card when isArticle is true and no attachments', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+
+      expect(screen.getByTestId('card')).toBeInTheDocument();
+      expect(screen.getByTestId('card-content')).toBeInTheDocument();
+    });
+
+    it('renders ImagePlus icon in placeholder', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+
+      expect(screen.getByTestId('image-plus-icon')).toBeInTheDocument();
+    });
+
+    it('renders Add image button in placeholder', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+
+      const buttons = screen.getAllByTestId('button');
+      const addImageButton = buttons.find((btn) => btn.textContent?.includes('Add image'));
+      expect(addImageButton).toBeInTheDocument();
+    });
+
+    it('Add image button has secondary variant and sm size', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+
+      const buttons = screen.getAllByTestId('button');
+      const addImageButton = buttons.find((btn) => btn.textContent?.includes('Add image'));
+      expect(addImageButton).toHaveAttribute('data-variant', 'secondary');
+      expect(addImageButton).toHaveAttribute('data-size', 'sm');
+    });
+
+    it('calls handleFileClick when Add image button is clicked', () => {
+      const mockHandleFileClick = vi.fn();
+      render(<PostInputAttachments {...defaultProps} isArticle={true} handleFileClick={mockHandleFileClick} />);
+
+      const buttons = screen.getAllByTestId('button');
+      const addImageButton = buttons.find((btn) => btn.textContent?.includes('Add image'));
+      fireEvent.click(addImageButton!);
+
+      expect(mockHandleFileClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('disables Add image button when isSubmitting is true', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={true} isSubmitting={true} />);
+
+      const buttons = screen.getAllByTestId('button');
+      const addImageButton = buttons.find((btn) => btn.textContent?.includes('Add image'));
+      expect(addImageButton).toBeDisabled();
+    });
+
+    it('does not render placeholder when isArticle is true but has attachments', () => {
+      const attachments = [createMockImageFile()];
+      render(<PostInputAttachments {...defaultProps} isArticle={true} attachments={attachments} />);
+
+      expect(screen.queryByTestId('card')).not.toBeInTheDocument();
+    });
+
+    it('does not render placeholder when isArticle is false', () => {
+      render(<PostInputAttachments {...defaultProps} isArticle={false} />);
+
+      expect(screen.queryByTestId('card')).not.toBeInTheDocument();
     });
   });
 
@@ -557,6 +673,26 @@ describe('PostInputAttachments', () => {
       expect(PostInputAttachments.displayName).toBe('PostInputAttachments');
     });
   });
+
+  describe('Article mode with attachments', () => {
+    it('renders image preview in article mode', () => {
+      const attachments = [createMockImageFile()];
+      render(<PostInputAttachments {...defaultProps} isArticle={true} attachments={attachments} />);
+
+      expect(screen.getByTestId('image')).toBeInTheDocument();
+    });
+
+    it('does not show video/audio/pdf previews in article mode (only images supported)', () => {
+      // Note: The component will still try to render other types if passed,
+      // but the accept attribute restricts file selection to images only
+      const attachments = [createMockImageFile()];
+      render(<PostInputAttachments {...defaultProps} isArticle={true} attachments={attachments} />);
+
+      expect(screen.queryByTestId('video')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('audio')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('file-text-icon')).not.toBeInTheDocument();
+    });
+  });
 });
 
 describe('PostInputAttachments - Snapshots', () => {
@@ -621,6 +757,22 @@ describe('PostInputAttachments - Snapshots', () => {
   it('matches snapshot with maximum attachments (4)', () => {
     const attachments = Array.from({ length: 4 }, (_, i) => createMockImageFile(`image${i}.jpg`));
     const { container } = render(<PostInputAttachments {...defaultProps} attachments={attachments} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot in article mode with no attachments (placeholder)', () => {
+    const { container } = render(<PostInputAttachments {...defaultProps} isArticle={true} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot in article mode with image attachment', () => {
+    const attachments = [createMockImageFile('article-image.jpg')];
+    const { container } = render(<PostInputAttachments {...defaultProps} isArticle={true} attachments={attachments} />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot in article mode when submitting', () => {
+    const { container } = render(<PostInputAttachments {...defaultProps} isArticle={true} isSubmitting={true} />);
     expect(container).toMatchSnapshot();
   });
 });

@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 import { CHATWOOT_INBOX_IDS, extractSourceId } from '@/core/services/chatwoot';
 import * as Types from './copyright.types';
 
@@ -25,9 +24,6 @@ export class CopyrightApplication {
 
   /**
    * Format form data as JSON string for message body
-   *
-   * @param formData - Copyright form data
-   * @returns JSON string representation of form data
    */
   private static formatFormData(formData: Types.TCopyrightSubmitInput): string {
     return JSON.stringify(formData, null, 2);
@@ -35,9 +31,6 @@ export class CopyrightApplication {
 
   /**
    * Format the full message content with source label prefix
-   *
-   * @param formDataJson - Form data as JSON string
-   * @returns Full formatted message content
    */
   private static formatMessageContent(formDataJson: string): string {
     return `${this.COPYRIGHT_SOURCE_LABEL}\n\n${formDataJson}`;
@@ -46,55 +39,20 @@ export class CopyrightApplication {
   /**
    * Submit a copyright/DMCA takedown request to Chatwoot
    *
-   * Orchestrates the copyright submission by:
-   * 1. Using email from form data
-   * 2. Building source label and formatting form data as JSON
-   * 3. Creating or finding contact in Chatwoot
-   * 4. Creating conversation with formatted message
-   *
    * @param params - Parameters object with all copyright form fields
    * @throws AppError if submission fails
    */
   static async submit(params: Types.TCopyrightSubmitInput): Promise<void> {
-    try {
-      // Use email from form data
-      const email = params.email;
+    const email = params.email;
+    const inboxId = CHATWOOT_INBOX_IDS.COPYRIGHT;
+    const name = `${params.firstName} ${params.lastName}`.trim();
 
-      // Get inbox ID for copyright submissions
-      const inboxId = CHATWOOT_INBOX_IDS.COPYRIGHT;
+    const formDataJson = this.formatFormData(params);
+    const content = this.formatMessageContent(formDataJson);
 
-      // Build name from first and last name
-      const name = `${params.firstName} ${params.lastName}`.trim();
+    const contact = await Core.ChatwootService.createOrFindContact(email, name, inboxId);
+    const sourceId = extractSourceId(contact, email);
 
-      // Format form data as JSON
-      const formDataJson = this.formatFormData(params);
-      const content = this.formatMessageContent(formDataJson);
-
-      // Create or find contact in Chatwoot
-      const contact = await Core.ChatwootService.createOrFindContact(email, name, inboxId);
-
-      // Extract source ID (validates inbox associations)
-      const sourceId = extractSourceId(contact, email);
-
-      // Create conversation with formatted message
-      await Core.ChatwootService.createConversation(sourceId, contact.id, inboxId, content);
-    } catch (error) {
-      // Log error for observability
-      if (error instanceof Libs.AppError) {
-        Libs.Logger.error('Copyright submission failed', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
-        });
-        // Re-throw AppError to preserve error context
-        throw error;
-      }
-
-      // Wrap unexpected errors
-      Libs.Logger.error('Unexpected error during copyright submission', { error });
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to submit copyright request', 500, {
-        error,
-      });
-    }
+    await Core.ChatwootService.createConversation(sourceId, contact.id, inboxId, content);
   }
 }

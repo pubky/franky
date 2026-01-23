@@ -34,19 +34,26 @@ vi.mock('@/molecules', () => ({
   PostLinkEmbeds: vi.fn(() => null),
 }));
 
-// Mock organisms - PostAttachments, PostContentBlurred
+// Mock organisms - PostAttachments, PostContentBlurred, PostArticle
 vi.mock('@/organisms', () => ({
   PostAttachments: vi.fn(() => <div data-testid="post-attachments" />),
   PostContentBlurred: vi.fn(() => <div data-testid="post-content-blurred" />),
+  PostArticle: vi.fn(() => <div data-testid="post-article" />),
 }));
 
 const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
 const mockPostAttachments = vi.mocked(Organisms.PostAttachments);
 const mockPostContentBlurred = vi.mocked(Organisms.PostContentBlurred);
+const mockPostArticle = vi.mocked(Organisms.PostArticle);
 
 // Helper to create complete PostDetails mock
 const createMockPostDetails = (
-  overrides: Partial<{ content: string; attachments: string[] | null; is_blurred: boolean }> = {},
+  overrides: Partial<{
+    content: string;
+    attachments: string[] | null;
+    is_blurred: boolean;
+    kind: 'short' | 'long';
+  }> = {},
 ) => ({
   id: 'test-author:test-post',
   indexed_at: Date.now(),
@@ -131,6 +138,62 @@ describe('PostContentBase', () => {
     expect(screen.queryByTestId('post-content-blurred')).not.toBeInTheDocument();
     expect(screen.getByTestId('container')).toBeInTheDocument();
   });
+
+  it('renders PostArticle when kind is long', () => {
+    const mockAttachments = ['file-id-1'];
+    mockUsePostDetails.mockReturnValue({
+      postDetails: createMockPostDetails({
+        content: '{"title":"Article Title","body":"Article body content"}',
+        attachments: mockAttachments,
+        kind: 'long',
+      }),
+      isLoading: false,
+    });
+
+    render(<PostContentBase postId="post-123" className="custom-class" />);
+
+    expect(screen.getByTestId('post-article')).toBeInTheDocument();
+    expect(mockPostArticle).toHaveBeenCalledWith(
+      {
+        content: '{"title":"Article Title","body":"Article body content"}',
+        attachments: mockAttachments,
+        className: 'custom-class',
+      },
+      undefined,
+    );
+    expect(mockPostAttachments).not.toHaveBeenCalled();
+  });
+
+  it('renders PostArticle instead of normal content for long posts', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: createMockPostDetails({
+        content: '{"title":"Test","body":"Body"}',
+        kind: 'long',
+      }),
+      isLoading: false,
+    });
+
+    render(<PostContentBase postId="post-123" />);
+
+    expect(screen.getByTestId('post-article')).toBeInTheDocument();
+    expect(screen.queryByTestId('container')).not.toBeInTheDocument();
+  });
+
+  it('prioritizes is_blurred over kind for blurred articles', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: createMockPostDetails({
+        content: '{"title":"Test","body":"Body"}',
+        kind: 'long',
+        is_blurred: true,
+      }),
+      isLoading: false,
+    });
+
+    render(<PostContentBase postId="post-123" />);
+
+    expect(screen.getByTestId('post-content-blurred')).toBeInTheDocument();
+    expect(screen.queryByTestId('post-article')).not.toBeInTheDocument();
+  });
 });
 
 describe('PostContentBase - Snapshots', () => {
@@ -140,7 +203,10 @@ describe('PostContentBase - Snapshots', () => {
     vi.clearAllMocks();
     const actualMolecules = await vi.importActual<typeof import('@/molecules')>('@/molecules');
     // Replace the mock implementations with real ones for snapshots
-    vi.mocked(Molecules.PostText).mockImplementation(actualMolecules.PostText);
+    // PostText is wrapped with React.memo(), so we need to access the underlying function via .type
+    const PostTextComponent = (actualMolecules.PostText as React.MemoExoticComponent<React.FC>)
+      .type as typeof Molecules.PostText;
+    vi.mocked(Molecules.PostText).mockImplementation(PostTextComponent);
     vi.mocked(Molecules.PostLinkEmbeds).mockImplementation(actualMolecules.PostLinkEmbeds);
     // PostAttachments stays mocked - it has its own test file
   }, 30000); // Increase timeout to 30 seconds

@@ -1,6 +1,6 @@
 import { Table } from 'dexie';
 
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService } from '@/libs';
 import { NexusModelTuple } from './baseTuple.type';
 import { ModelBase } from '@/core/models/shared/base/baseModel';
 
@@ -19,15 +19,12 @@ export abstract class TupleModelBase<Id, Schema extends { id: Id }> extends Mode
       const toSave = records.map((tuple) => this.toSchema(tuple));
       return await this.table.bulkPut(toSave);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
-        `Failed to bulk save records in ${this.table.name}`,
-        500,
-        {
-          error,
-          tuplesCount: records.length,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to bulk save records in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'bulkSave',
+        context: { table: this.table.name, count: records.length },
+        cause: error,
+      });
     }
   }
 }

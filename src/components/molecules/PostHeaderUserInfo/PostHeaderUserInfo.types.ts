@@ -7,4 +7,6 @@ export interface PostHeaderUserInfoProps {
     max: number;
   };
   showPopover?: boolean;
+  size?: 'normal' | 'large';
+  timeAgo?: string | null;
 }

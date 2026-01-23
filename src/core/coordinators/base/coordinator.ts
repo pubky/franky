@@ -170,6 +170,10 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
 
     // Listen to page visibility changes (browser tab active/inactive)
     if (this.config.respectPageVisibility && typeof document !== 'undefined') {
+      // Sync initial visibility state with actual DOM state
+      // This is critical for PWA mode where the app may load in the background
+      this.state.isPageVisible = document.visibilityState === 'visible';
+
       this.visibilityChangeHandler = this.handleVisibilityChange.bind(this);
       document.addEventListener('visibilitychange', this.visibilityChangeHandler);
     }

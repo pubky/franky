@@ -18,4 +18,4 @@ export const AUTOCOMPLETE_USER_LIMIT = 10;
 export const MIN_USER_ID_SEARCH_LENGTH = 3;
 
 /** Prefix for user ID searches */
-export const USER_ID_PREFIXES = ['pubky', 'pk:'] as const;
+export const USER_ID_PREFIXES = ['pubky:', 'pk:'] as const;

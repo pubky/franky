@@ -2,6 +2,7 @@ export * from './deeplink';
 export * from './env';
 export * from './error';
 export * from './html';
+export * from './http';
 export * from './icons';
 export * from './identity';
 export * from './image';

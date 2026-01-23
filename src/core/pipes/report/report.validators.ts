@@ -1,4 +1,4 @@
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 import { REPORT_ISSUE_TYPE_VALUES, REPORT_REASON_MAX_LENGTH } from './report.constants';
 import type { ReportIssueType } from './report.types';
 
@@ -20,11 +20,11 @@ export class ReportValidators {
    */
   static validatePostUrl(postUrl: string | undefined | null): string {
     if (!postUrl || postUrl.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Post URL is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Post URL is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validatePostUrl',
+        context: { field: 'postUrl' },
+      });
     }
 
     const trimmedUrl = postUrl.trim();
@@ -32,7 +32,11 @@ export class ReportValidators {
     try {
       new URL(trimmedUrl);
     } catch {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Post URL must be a valid URL', 400);
+      throw Err.validation(ValidationErrorCode.FORMAT_ERROR, 'Post URL must be a valid URL', {
+        service: ErrorService.Local,
+        operation: 'validatePostUrl',
+        context: { field: 'postUrl', value: trimmedUrl },
+      });
     }
 
     return trimmedUrl;
@@ -47,20 +51,24 @@ export class ReportValidators {
    */
   static validateIssueType(issueType: string | undefined | null): ReportIssueType {
     if (!issueType || issueType.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Issue type is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Issue type is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validateIssueType',
+        context: { field: 'issueType' },
+      });
     }
 
     const trimmedIssueType = issueType.trim();
 
     if (!REPORT_ISSUE_TYPE_VALUES.includes(trimmedIssueType as ReportIssueType)) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         `Invalid issue type. Must be one of: ${REPORT_ISSUE_TYPE_VALUES.join(', ')}`,
-        400,
+        {
+          service: ErrorService.Local,
+          operation: 'validateIssueType',
+          context: { field: 'issueType', value: trimmedIssueType, allowedValues: REPORT_ISSUE_TYPE_VALUES },
+        },
       );
     }
 
@@ -76,20 +84,24 @@ export class ReportValidators {
    */
   static validateReason(reason: string | undefined | null): string {
     if (!reason || reason.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Reason is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Reason is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validateReason',
+        context: { field: 'reason' },
+      });
     }
 
     const trimmedReason = reason.trim();
 
     if (trimmedReason.length > REPORT_REASON_MAX_LENGTH) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
+      throw Err.validation(
+        ValidationErrorCode.INVALID_INPUT,
         `Reason must be no more than ${REPORT_REASON_MAX_LENGTH} characters`,
-        400,
+        {
+          service: ErrorService.Local,
+          operation: 'validateReason',
+          context: { field: 'reason', maxLength: REPORT_REASON_MAX_LENGTH, actualLength: trimmedReason.length },
+        },
       );
     }
 
@@ -105,11 +117,11 @@ export class ReportValidators {
    */
   static validatePubky(pubky: string | undefined | null): string {
     if (!pubky || pubky.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Pubky is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Pubky is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validatePubky',
+        context: { field: 'pubky' },
+      });
     }
     return pubky.trim();
   }
@@ -123,11 +135,11 @@ export class ReportValidators {
    */
   static validateName(name: string | undefined | null): string {
     if (!name || name.trim() === '') {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Name is required and must be a non-empty string',
-        400,
-      );
+      throw Err.validation(ValidationErrorCode.MISSING_FIELD, 'Name is required and must be a non-empty string', {
+        service: ErrorService.Local,
+        operation: 'validateName',
+        context: { field: 'name' },
+      });
     }
     return name.trim();
   }

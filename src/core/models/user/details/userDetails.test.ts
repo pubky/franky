@@ -48,7 +48,7 @@ describe('UserDetailsModel', () => {
       };
 
       const result = await Core.UserDetailsModel.create(mockUserDetailsData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockUserDetailsData.id);
     });
 
     it('should find user details by id', async () => {
@@ -152,7 +152,7 @@ describe('UserDetailsModel', () => {
       };
 
       const result = await Core.UserDetailsModel.create(mockUserDetailsWithNulls);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockUserDetailsWithNulls.id);
 
       const foundUser = await Core.UserDetailsModel.findById(testUserId1);
       expect(foundUser).not.toBeNull();

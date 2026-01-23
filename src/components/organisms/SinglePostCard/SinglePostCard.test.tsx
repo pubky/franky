@@ -25,7 +25,11 @@ vi.mock('@/organisms', () => ({
       Actions: {postId}
     </div>
   ),
-  PostTagsPanel: ({ postId }: { postId: string }) => <div data-testid="post-tags-panel">Tags: {postId}</div>,
+  PostTagsPanel: ({ postId, className }: { postId: string; className?: string }) => (
+    <div data-testid="post-tags-panel" data-class-name={className}>
+      Tags: {postId}
+    </div>
+  ),
   DialogReply: ({ postId, open }: { postId: string; open: boolean }) => (
     <div data-testid="dialog-reply" data-open={open}>
       Reply Dialog: {postId}
@@ -86,7 +90,7 @@ describe('SinglePostCard', () => {
       expect(screen.getByTestId('post-header')).toBeInTheDocument();
       expect(screen.getByTestId('post-content')).toBeInTheDocument();
       expect(screen.getByTestId('post-actions-bar')).toBeInTheDocument();
-      // Two PostTagsPanel instances - one for mobile and one for desktop
+      // Both mobile and desktop PostTagsPanel are visible by default on single post page
       expect(screen.getAllByTestId('post-tags-panel')).toHaveLength(2);
     });
 
@@ -138,9 +142,23 @@ describe('SinglePostCard', () => {
       expect(screen.getByText(`Header: ${mockPostId}`)).toBeInTheDocument();
       expect(screen.getByText(`Content: ${mockPostId}`)).toBeInTheDocument();
       expect(screen.getByText(`Actions: ${mockPostId}`)).toBeInTheDocument();
+      // Both mobile and desktop PostTagsPanel are visible by default
       expect(screen.getAllByText(`Tags: ${mockPostId}`)).toHaveLength(2);
       expect(screen.getByText(`Reply Dialog: ${mockPostId}`)).toBeInTheDocument();
       expect(screen.getByText(`Repost Dialog: ${mockPostId}`)).toBeInTheDocument();
+    });
+  });
+
+  describe('tags visibility', () => {
+    it('should always show both mobile and desktop tags panels (no toggle)', () => {
+      render(<SinglePostCard postId={mockPostId} />);
+
+      const tagPanels = screen.getAllByTestId('post-tags-panel');
+      expect(tagPanels).toHaveLength(2);
+      // Mobile tags panel
+      expect(tagPanels[0]).toHaveAttribute('data-class-name', 'lg:hidden');
+      // Desktop tags panel
+      expect(tagPanels[1]).toHaveAttribute('data-class-name', 'hidden lg:flex');
     });
   });
 });

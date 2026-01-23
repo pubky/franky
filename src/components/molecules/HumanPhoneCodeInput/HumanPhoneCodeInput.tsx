@@ -52,7 +52,9 @@ export const HumanPhoneCodeInput = ({ value, onChange, onEnter = () => {} }: Hum
     (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
       // Handle backspace - move focus to previous input when current is empty
       if (e.key === 'Backspace' && !value[index] && index > 0) {
-        inputRefs.current[index - 1]?.focus();
+        const prevInput = inputRefs.current[index - 1];
+        prevInput?.focus();
+        prevInput?.select();
       }
 
       // Handle paste (Ctrl/Cmd + V)

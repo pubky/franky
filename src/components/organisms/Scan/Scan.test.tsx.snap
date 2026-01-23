@@ -30,11 +30,11 @@ exports[`Scan Components - Snapshots > ScanContent - Snapshots > matches snapsho
     data-testid="content-card"
   >
     <div
-      class="items-center justify-center"
+      class="items-center justify-center gap-4"
       data-testid="container"
     >
       <div
-        class="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4"
+        class="relative flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4"
       >
         <img
           alt="Pubky Ring"
@@ -43,7 +43,20 @@ exports[`Scan Components - Snapshots > ScanContent - Snapshots > matches snapsho
           src="/images/pubky-ring-qr-example.png"
           width="220"
         />
+        <img
+          alt="Pubky Ring"
+          data-testid="next-image"
+          height="48"
+          src="/images/ring-logo.svg"
+          width="48"
+        />
       </div>
+      <p
+        class="text-lg font-semibold tracking-widest text-brand"
+        data-testid="typography"
+      >
+        A9KM-7MJP-ERM9
+      </p>
     </div>
   </div>
 </div>

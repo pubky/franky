@@ -1,14 +1,20 @@
 import { LastReadResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 
 export class LastReadNormalizer {
   private constructor() {}
 
   static to(pubky: Core.Pubky): LastReadResult {
-    const builder = Core.PubkySpecsSingleton.get(pubky);
-    const result = builder.createLastRead();
-    Libs.Logger.debug('Last read validated', { result });
-    return result;
+    try {
+      const builder = Core.PubkySpecsSingleton.get(pubky);
+      return builder.createLastRead();
+    } catch (error) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'createLastRead',
+        context: { pubky },
+      });
+    }
   }
 }

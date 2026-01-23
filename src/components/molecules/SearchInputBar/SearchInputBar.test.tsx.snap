@@ -2,14 +2,15 @@
 
 exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - default state 1`] = `
 <div
-  class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
+  class="relative flex h-12 items-center gap-3 border border-border px-6 py-3 rounded-full"
   data-testid="search-input-bar"
+  style="background: linear-gradient(180deg, rgb(7, 4, 10) 0%, rgb(27, 24, 32) 100%);"
 >
   <input
     aria-autocomplete="list"
     aria-expanded="false"
     aria-label="Search input"
-    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+    class="h-auto min-w-20 flex-1 border-none bg-transparent pr-0 text-base font-medium text-foreground md:text-base pl-0"
     data-cy="header-search-input"
     placeholder="Search"
     type="text"
@@ -42,15 +43,15 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - defaul
 
 exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - focused state 1`] = `
 <div
-  class="relative flex min-h-12 items-center border border-border px-5 rounded-t-2xl border-b-transparent"
+  class="relative flex h-12 items-center gap-3 border border-border px-6 py-3 rounded-t-2xl rounded-b-none border-b-transparent"
   data-testid="search-input-bar"
-  style="background: linear-gradient(180deg, rgb(5, 5, 10) 0%, rgba(5, 5, 10, 0.5) 100%);"
+  style="background: linear-gradient(180deg, var(--background) 0%, var(--background) 100%);"
 >
   <input
     aria-autocomplete="list"
     aria-expanded="false"
     aria-label="Search input"
-    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+    class="h-auto min-w-20 flex-1 border-none bg-transparent pr-0 text-base font-medium text-foreground md:text-base pl-0"
     data-cy="header-search-input"
     placeholder="Search"
     type="text"
@@ -83,8 +84,9 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - focuse
 
 exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with active tags 1`] = `
 <div
-  class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
+  class="relative flex h-12 items-center gap-3 border border-border px-6 py-3 rounded-full"
   data-testid="search-input-bar"
+  style="background: linear-gradient(180deg, rgb(7, 4, 10) 0%, rgb(27, 24, 32) 100%);"
 >
   <div
     aria-label="Active search tags"
@@ -116,7 +118,7 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with a
     aria-autocomplete="list"
     aria-expanded="false"
     aria-label="Search input"
-    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-2.5"
+    class="h-auto min-w-20 flex-1 border-none bg-transparent pr-0 text-base font-medium text-foreground md:text-base pl-2.5"
     data-cy="header-search-input"
     placeholder=""
     type="text"
@@ -149,14 +151,15 @@ exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with a
 
 exports[`SearchInputBar > SearchInputBar - Snapshots > matches snapshot - with input value 1`] = `
 <div
-  class="relative flex min-h-12 items-center border border-border px-5 rounded-full"
+  class="relative flex h-12 items-center gap-3 border border-border px-6 py-3 rounded-full"
   data-testid="search-input-bar"
+  style="background: linear-gradient(180deg, rgb(7, 4, 10) 0%, rgb(27, 24, 32) 100%);"
 >
   <input
     aria-autocomplete="list"
     aria-expanded="false"
     aria-label="Search input"
-    class="min-w-20 flex-1 border-none py-3 pr-10 font-medium text-foreground pl-0"
+    class="h-auto min-w-20 flex-1 border-none bg-transparent pr-0 text-base font-medium text-foreground md:text-base pl-0"
     data-cy="header-search-input"
     placeholder="Search"
     type="text"

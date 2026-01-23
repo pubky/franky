@@ -61,6 +61,58 @@ describe('TagInput', () => {
   });
 });
 
+describe('TagInput - Banned Character Sanitization', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('strips colons from typed input', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'hello:world' } });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(input.value).toBe('helloworld');
+  });
+
+  it('strips commas from typed input', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'hello,world' } });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(input.value).toBe('helloworld');
+  });
+
+  it('strips spaces from typed input', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'hello world' } });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(input.value).toBe('helloworld');
+  });
+
+  it('strips multiple banned characters from typed input', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'hello: world, test' } });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(input.value).toBe('helloworldtest');
+  });
+
+  it('submits sanitized tag without banned characters', async () => {
+    render(<TagInput onTagAdd={mockOnTagAdd} />);
+    const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'bit:coin' } });
+    fireEvent.keyDown(input, { key: 'Enter', shiftKey: false });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(mockOnTagAdd).toHaveBeenCalledWith('bitcoin');
+  });
+});
+
 describe('TagInput - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
