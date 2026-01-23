@@ -9,9 +9,7 @@ const { mockQueryResult, setMockQueryResult } = vi.hoisted(() => {
   };
   return {
     mockQueryResult: queryResultData,
-    setMockQueryResult: (
-      value: { ancestors: { postId: string; userId: string }[]; hasError: boolean } | undefined,
-    ) => {
+    setMockQueryResult: (value: { ancestors: { postId: string; userId: string }[]; hasError: boolean } | undefined) => {
       queryResultData.current = value;
     },
   };
