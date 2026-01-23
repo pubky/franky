@@ -11,11 +11,15 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
   const satUsdRate = useBtcRate()?.satUsd;
   const lnInfo = useLnVerificationInfo();
 
-  // Loading state - waiting for availability check
+  // Waiting for availability check
   const isLoading = lnInfo === null;
-  // Check if geo blocked (403 response)
-  const isGeoBlocked = lnInfo !== null && !lnInfo.available;
-  // Get price if available
+  // 403 response means geo blocked, not an error
+  const isGeoBlocked = lnInfo !== null && !lnInfo.available && !lnInfo.error;
+  // Generic error from network failure, server error, etc.
+  const isError = lnInfo !== null && !lnInfo.available && lnInfo.error === true;
+  // Unavailable when either geo blocked or error
+  const isUnavailable = isGeoBlocked || isError;
+  // Price when available
   const priceSat = lnInfo?.available ? lnInfo.amountSat : undefined;
   const dataAvailable = priceSat !== undefined && satUsdRate !== undefined;
 
@@ -27,7 +31,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
     <Atoms.Container className="relative flex-1">
       <Atoms.Card
         data-testid="bitcoin-payment-card"
-        className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isGeoBlocked && 'pointer-events-none opacity-60 blur-[5px]')}
+        className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isUnavailable && 'pointer-events-none opacity-60 blur-[5px]')}
       >
         <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-start lg:gap-12">
           <Atoms.Container className="hidden w-full flex-1 flex-col items-center gap-3 lg:flex lg:w-auto">
@@ -54,14 +58,14 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
                     as="p"
                     className="text-5xl leading-none font-semibold whitespace-nowrap text-brand lg:text-6xl"
                   >
-                    ₿ {priceSat.toLocaleString()}
+                    ₿ {priceSat.toLocaleString('en-US')}
                   </Atoms.Typography>
 
                   <Atoms.Typography
                     as="p"
                     className="text-xs font-medium tracking-widest text-muted-foreground uppercase"
                   >
-                    ₿{priceSat.toLocaleString()} = ${Math.round(satUsdRate * priceSat * 100) / 100}
+                    ₿{priceSat.toLocaleString('en-US')} = ${Math.round(satUsdRate * priceSat * 100) / 100}
                   </Atoms.Typography>
                 </>
               ) : (
@@ -82,7 +86,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
               variant={Atoms.ButtonVariant.DEFAULT}
               className="h-10 rounded-full px-4 text-sm font-semibold"
               onClick={onClick}
-              disabled={!dataAvailable || isGeoBlocked}
+              disabled={!dataAvailable || isUnavailable}
             >
               <Libs.Wallet className="mr-2 size-4" />
               Pay Once
@@ -106,6 +110,25 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
             className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
           >
             Currently not available in your country
+          </Atoms.Typography>
+        </Atoms.Container>
+      )}
+
+      {/* Generic error overlay badge */}
+      {isError && (
+        <Atoms.Container
+          overrideDefaults
+          data-testid="service-error-alert"
+          className="absolute top-1/2 left-1/2 flex h-11 -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-md bg-destructive/60 px-6 py-3 shadow-xl"
+        >
+          <Atoms.Container overrideDefaults className="pt-0.5">
+            <Libs.TriangleAlert className="text-destructive-foreground size-4" />
+          </Atoms.Container>
+          <Atoms.Typography
+            overrideDefaults
+            className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
+          >
+            Service temporarily unavailable
           </Atoms.Typography>
         </Atoms.Container>
       )}

@@ -1,35 +1,57 @@
+/**
+ * Nexus API Types
+ *
+ * This file contains type definitions for the Nexus API contract:
+ * - Request parameter types (pagination, filtering, sorting)
+ * - Response types (users, posts, tags, files, notifications)
+ *
+ * For internal utility types (URL building, fetch options), see `nexus.utils.types.ts`
+ */
+
 import { type Pubky, type Timestamp, type TagModel } from '@/core';
 
+// =============================================================================
+// Request Parameter Types & Enums
+// =============================================================================
+
+/** Sorting options for stream endpoints */
 export enum StreamSorting {
   TIMELINE = 'timeline',
   ENGAGEMENT = 'total_engagement',
 }
 
+/** User identifier parameter */
 export type TUserId = {
   user_id: Pubky;
 };
 
+/** Standard pagination with skip/limit */
 export type TPaginationParams = {
   skip?: number;
   limit?: number;
 };
 
+/** Range-based pagination with start/end indices */
 export type TPaginationRangeParams = {
   start?: number;
   end?: number;
 };
 
+/** Parameter to skip tags in responses */
 export type TSkipTagsParams = {
   skip_tags?: number;
 };
 
+/** Pagination parameters specific to tag-related endpoints */
 export type TTagsPaginationParams = {
   limit_tags?: number;
   limit_taggers?: number;
 };
 
-// The target reach of the source. Supported just for 'influencers' source
-// e.g. "source=influencers&reach=followers" will return influencers with followers reach
+/**
+ * The target reach of the source. Supported just for 'influencers' source
+ * @example "source=influencers&reach=followers" will return influencers with followers reach
+ */
 export enum UserStreamReach {
   FOLLOWERS = 'followers',
   FOLLOWING = 'following',
@@ -37,32 +59,46 @@ export enum UserStreamReach {
   WOT = 'wot',
 }
 
-// Defining this type for usage in userId:reach id format. Not sure whether WOT needs
-// to be supported here, so I'm excluding it for now.
+/**
+ * Composite reach type for userId:reach format.
+ * Excludes WOT as it's not supported in this context.
+ */
 export type UserStreamCompositeReach = Exclude<UserStreamReach, UserStreamReach.WOT>;
 
+/** Timeframe filter for user stream endpoints */
 export enum UserStreamTimeframe {
   TODAY = 'today',
   THIS_MONTH = 'this_month',
   ALL_TIME = 'all_time',
 }
 
+/** Combined reach and timeframe parameters for user streams */
 export type TUserStreamReachParams = {
   reach?: UserStreamReach;
   timeframe?: UserStreamTimeframe;
 };
 
+// =============================================================================
+// Response Types - Common
+// =============================================================================
+
+/** Bookmark metadata from Nexus API */
 export type NexusBookmark = {
   created_at: number;
   updated_at: number;
 };
 
+// =============================================================================
+// Response Types - User
+// =============================================================================
+
+/** External link associated with a user profile */
 export type NexusUserLink = {
   title: string;
   url: string;
 };
 
-// User types
+/** Core user profile details from Nexus API */
 export type NexusUserDetails = {
   name: string;
   bio: string;
@@ -73,10 +109,14 @@ export type NexusUserDetails = {
   indexed_at: Timestamp;
 };
 
+/** Aggregate counts for a user's activity and social connections */
 export type NexusUserCounts = {
-  tagged: number; // the number of tags assign by this user to other entities ('users' or 'posts')
-  tags: number; // the number of tags received by this user from other users
-  unique_tags: number; // the number of unique tags received by this user from other users (distinct)
+  /** Number of tags assigned by this user to other entities (users or posts) */
+  tagged: number;
+  /** Number of tags received by this user from other users */
+  tags: number;
+  /** Number of unique/distinct tags received by this user */
+  unique_tags: number;
   posts: number;
   replies: number;
   following: number;
@@ -85,24 +125,33 @@ export type NexusUserCounts = {
   bookmarks: number;
 };
 
+/** Relationship status between the viewer and a user */
 export type NexusUserRelationship = {
   following: boolean;
   followed_by: boolean;
   muted: boolean;
 };
 
+// =============================================================================
+// Response Types - Tags
+// =============================================================================
+
+/** Tag with associated taggers information */
 export type NexusTag = {
   label: string;
   taggers: Pubky[];
   taggers_count: number;
+  /** Whether the viewer has a relationship with any tagger */
   relationship: boolean;
 };
 
+/** List of users who applied a specific tag */
 export type NexusTaggers = {
   relationship: boolean;
   users: Pubky[];
 };
 
+/** Trending/hot tag with engagement metrics */
 export type NexusHotTag = {
   label: string;
   taggers_id: Pubky[];
@@ -110,6 +159,11 @@ export type NexusHotTag = {
   taggers_count: number;
 };
 
+// =============================================================================
+// Response Types - User (Composite)
+// =============================================================================
+
+/** Complete user object from Nexus API */
 export type NexusUser = {
   details: NexusUserDetails;
   counts: NexusUserCounts;
@@ -117,23 +171,30 @@ export type NexusUser = {
   relationship: NexusUserRelationship;
 };
 
-// User ID stream response containing only user identifiers
+/** Stream response containing only user identifiers */
 export type NexusUserIdsStream = Pubky[];
 
-// Post types
+// =============================================================================
+// Response Types - Post
+// =============================================================================
+
+/** Core post details from Nexus API */
 export type NexusPostDetails = {
   id: string;
   content: string;
   indexed_at: number;
   author: Pubky;
-  // If we type this as PubkyAppPostKind, we need to map it to the correct string value
-  // if not we get a index from the enum and in indexdb is written as a number
-  // TODO: https://github.com/pubky/pubky-app-specs/issues/74
+  /**
+   * Post kind/type as a string.
+   * Note: Using string instead of PubkyAppPostKind enum to avoid indexing issues.
+   * @see https://github.com/pubky/pubky-app-specs/issues/74
+   */
   kind: string;
   uri: string;
   attachments: string[] | null;
 };
 
+/** Aggregate counts for post engagement */
 export type NexusPostCounts = {
   tags: number;
   unique_tags: number;
@@ -141,12 +202,17 @@ export type NexusPostCounts = {
   reposts: number;
 };
 
+/** Post relationship data (replies, reposts, mentions) */
 export type NexusPostRelationships = {
+  /** URI of the post this is replying to, if any */
   replied: string | null;
+  /** URI of the post this is reposting, if any */
   reposted: string | null;
+  /** Users mentioned in this post */
   mentioned: Pubky[];
 };
 
+/** Complete post object from Nexus API */
 export type NexusPost = {
   details: NexusPostDetails;
   counts: NexusPostCounts;
@@ -155,23 +221,36 @@ export type NexusPost = {
   bookmark: NexusBookmark | null;
 };
 
+/** Paginated post stream response with cursor for pagination */
 export type NexusPostsKeyStream = {
   post_keys: string[];
+  /** Score of the last post, used as cursor for next page */
   last_post_score: number;
 };
 
+// =============================================================================
+// Response Types - Notification
+// =============================================================================
+
+/** Notification from Nexus API */
 export type NexusNotification = {
   timestamp: number;
-  body: Record<string, unknown>; // Generic object to handle all notification types
+  /** Generic body object - structure varies by notification type */
+  body: Record<string, unknown>;
 };
 
-// File types
+// =============================================================================
+// Response Types - File
+// =============================================================================
+
+/** File metadata from Nexus API */
 export type NexusFileDetails = {
   id: string;
   name: string;
   src: string;
-  // TODO: Do we have some enum for that
+  /** MIME type of the file (e.g., 'image/png') */
   content_type: string;
+  /** File size in bytes */
   size: number;
   created_at: Timestamp;
   indexed_at: Timestamp;
@@ -181,8 +260,12 @@ export type NexusFileDetails = {
   urls: NexusFileUrls;
 };
 
+/** CDN URLs for different file sizes/formats */
 export type NexusFileUrls = {
+  /** URL for feed-optimized version */
   feed: string;
+  /** URL for full-size version */
   main: string;
+  /** URL for thumbnail/small version */
   small: string;
 };

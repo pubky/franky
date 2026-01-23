@@ -1,37 +1,45 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import * as Config from '@/config';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
-import * as Core from '@/core';
+
+import { formatInviteCode } from './HumanInviteCode.utils';
 import type { HumanInviteCodeProps } from './HumanInviteCode.types';
 
 /**
- * Dev component only, might be removed later.
- * It allows to enter an invite code to continue the onboarding process.
+ * Component for entering an invite code for homeserver during onboarding.
  * @param onBack - Function to call when the user clicks the back button.
  * @param onSuccess - Function to call when the user successfully enters the invite code.
  */
 export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => {
   const [inviteCode, setInviteCode] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const trimmedInviteCode = inviteCode.trim();
   const isInviteCodeEntered = trimmedInviteCode.length === 14;
 
   function handleSubmit() {
-    if (!isInviteCodeEntered) {
+    if (!isInviteCodeEntered || isSubmitting) {
       return;
     }
 
+    setIsSubmitting(true);
     onSuccess(trimmedInviteCode);
   }
 
   // generate an invite code and put it in console log if you are in development mode
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      Core.AuthController.generateSignupToken().then((token) => {
-        Libs.Logger.info(token, token);
-      });
+      Core.AuthController.generateSignupToken()
+        .then((token) => {
+          Libs.Logger.info(token, token);
+        })
+        .catch((error) => {
+          Libs.Logger.error('[HumanInviteCode] Failed to generate signup token', { error });
+        });
     }
   }, []);
 
@@ -39,49 +47,97 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Enter an <span className="text-brand">Invite Code.</span>
+          Prove you&apos;re <span className="text-brand">not a Robot.</span>
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>Enter the invite code you received to continue.</Atoms.PageSubtitle>
+        <Atoms.Container className="flex-row items-center gap-3">
+          <Atoms.PageSubtitle>SMS or payment verification not available. Ask us for an invite code.</Atoms.PageSubtitle>
+          <Atoms.Link href={Config.TWITTER_URL} target="_blank" className="text-muted-foreground hover:text-brand">
+            <Libs.XTwitter className="h-6 w-6" />
+          </Atoms.Link>
+          <Atoms.Link href={Config.TELEGRAM_URL} target="_blank" className="text-muted-foreground hover:text-brand">
+            <Libs.Telegram className="h-6 w-6" />
+          </Atoms.Link>
+        </Atoms.Container>
       </Atoms.PageHeader>
 
-      <Atoms.Card data-testid="human-invite-code-card" className="gap-0 p-6 lg:p-12">
-        <Atoms.Container className="flex-col gap-8 lg:flex-row lg:items-center">
-          {/* Content */}
-          <Atoms.Container className="mr-6 w-full flex-3 gap-6">
-            <Atoms.Container className="gap-3">
-              <Atoms.Typography
-                as="h3"
-                className="text-2xl leading-[32px] font-semibold text-foreground sm:text-[28px]"
-              >
-                Invite code
-              </Atoms.Typography>
+      <Atoms.Card data-testid="human-invite-code-card" className="flex-row items-start gap-12 overflow-hidden p-12">
+        {/* Gift Image */}
+        <Atoms.Container className="hidden shrink-0 lg:flex lg:h-48 lg:w-48">
+          <Atoms.Image
+            src="/images/gift.png"
+            alt="Gift"
+            width={192}
+            height={192}
+            className="h-full w-full object-cover"
+          />
+        </Atoms.Container>
 
-              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-                Paste or type your invite code to continue.
+        {/* Content */}
+        <Atoms.Container className="flex max-w-xl min-w-0 flex-1 flex-col gap-6">
+          {/* Header */}
+          <Atoms.Container className="gap-3">
+            <Atoms.Container className="flex-row items-center gap-1">
+              <Atoms.Typography as="h3" className="text-2xl leading-8 font-bold text-foreground">
+                Invite code for homeserver
               </Atoms.Typography>
+              <Molecules.PopoverInviteHomeserver className="h-6 w-6 opacity-80" />
+            </Atoms.Container>
+            <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
+              You get 1GB of storage, used for your posts, photos, videos, and your profile.
+            </Atoms.Typography>
+          </Atoms.Container>
+
+          {/* Form */}
+          <Atoms.Container className="gap-6">
+            {/* Input */}
+            <Atoms.Container
+              className={Libs.cn(
+                'flex-row items-center gap-3 rounded-md border border-dashed bg-background/10 px-5 py-4 shadow-xs',
+                isInviteCodeEntered ? 'border-brand' : 'border-input',
+              )}
+            >
+              <Atoms.Input
+                data-testid="human-invite-code-input"
+                data-cy="human-invite-code-input"
+                type="text"
+                autoFocus
+                value={inviteCode}
+                onChange={(e) => setInviteCode(formatInviteCode(e.target.value))}
+                placeholder="XXXX-XXXX-XXXX"
+                maxLength={14}
+                className={Libs.cn(
+                  'h-auto flex-1 border-none bg-transparent p-0 text-base font-medium placeholder:text-muted-foreground focus:ring-0 focus:outline-none',
+                  isInviteCodeEntered ? 'font-bold text-brand' : 'text-foreground',
+                )}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && isInviteCodeEntered) {
+                    handleSubmit();
+                  }
+                }}
+              />
+              {isInviteCodeEntered && <Libs.CircleCheck className="h-6 w-6 shrink-0 text-brand" />}
             </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Container className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand px-5 py-2 shadow-xs-dark">
-                <Atoms.Input
-                  data-cy="human-invite-code-input"
-                  type="text"
-                  autoFocus
-                  value={inviteCode}
-                  onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                  placeholder="Enter your invite code"
-                  className="border-none bg-transparent text-base font-medium text-brand placeholder:text-brand/50 focus:ring-0 focus:outline-none"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && isInviteCodeEntered) {
-                      handleSubmit();
-                    }
-                  }}
-                />
-              </Atoms.Container>
+            {/* Custom homeserver row */}
+            <Atoms.Container className="flex-row items-center gap-4">
+              <Atoms.Button
+                variant="secondary"
+                className="shrink-0 rounded-full opacity-40"
+                disabled
+                aria-label="Custom homeserver"
+              >
+                <Libs.Server className="mr-2 h-4 w-4" />
+                Custom homeserver
+              </Atoms.Button>
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground">
+                Using a different homeserver will be possible soon.
+              </Atoms.Typography>
             </Atoms.Container>
           </Atoms.Container>
         </Atoms.Container>
       </Atoms.Card>
+
+      <Molecules.HumanFooter />
 
       {/* Buttons container */}
       <Atoms.Container className={Libs.cn('mt-6 flex-row justify-between gap-3 lg:gap-6')}>
@@ -101,10 +157,14 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
-          disabled={!isInviteCodeEntered}
+          disabled={!isInviteCodeEntered || isSubmitting}
           onClick={handleSubmit}
         >
-          <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          {isSubmitting ? (
+            <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          )}
           Continue
         </Atoms.Button>
       </Atoms.Container>

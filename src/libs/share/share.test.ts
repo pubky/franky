@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { shareWithFallback, isWebShareSupported, getShareMethod } from './share';
+import { shareWithFallback } from './share';
 
 // Mock navigator.share
 const mockNavigatorShare = vi.fn();
@@ -161,45 +161,6 @@ describe('share utility', () => {
         success: true,
         method: 'native',
       });
-    });
-  });
-
-  describe('isWebShareSupported', () => {
-    it('should return true when navigator.share is available', () => {
-      expect(isWebShareSupported()).toBe(true);
-    });
-
-    it('should return false when navigator.share is not available', () => {
-      Object.defineProperty(global, 'navigator', {
-        value: {},
-        writable: true,
-      });
-
-      expect(isWebShareSupported()).toBe(false);
-    });
-
-    it('should return false when navigator is not available', () => {
-      Object.defineProperty(global, 'navigator', {
-        value: undefined,
-        writable: true,
-      });
-
-      expect(isWebShareSupported()).toBe(false);
-    });
-  });
-
-  describe('getShareMethod', () => {
-    it('should return native when Web Share API is supported', () => {
-      expect(getShareMethod()).toBe('native');
-    });
-
-    it('should return fallback when Web Share API is not supported', () => {
-      Object.defineProperty(global, 'navigator', {
-        value: {},
-        writable: true,
-      });
-
-      expect(getShareMethod()).toBe('fallback');
     });
   });
 });

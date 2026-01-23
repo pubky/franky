@@ -1,5 +1,5 @@
 import { Table } from 'dexie';
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService } from '@/libs';
 import { ModelBase } from '@/core/models/shared/base/baseModel';
 
 /**
@@ -14,15 +14,12 @@ export abstract class RecordModelBase<Id, Schema extends { id: Id }> extends Mod
     try {
       return await this.table.bulkPut(records);
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
-        `Failed to bulk save records in ${this.table.name}`,
-        500,
-        {
-          error,
-          rowsCount: records.length,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, `Failed to bulk save records in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'bulkSave',
+        context: { table: this.table.name, count: records.length },
+        cause: error,
+      });
     }
   }
 }

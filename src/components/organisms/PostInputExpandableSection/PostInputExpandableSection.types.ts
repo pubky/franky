@@ -5,6 +5,7 @@ export interface PostInputExpandableSectionProps {
   content: string;
   tags: string[];
   isSubmitting: boolean;
+  isArticle?: boolean;
   isDisabled?: boolean;
   /**
    * Whether the post button should be disabled.
@@ -20,5 +21,6 @@ export interface PostInputExpandableSectionProps {
   onEmojiSelect: (emoji: { native: string }) => void;
   onFileClick?: () => void;
   onImageClick?: () => void;
+  onArticleClick?: () => void;
   className?: string;
 }

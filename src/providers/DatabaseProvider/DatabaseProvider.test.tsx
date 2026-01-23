@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
 import { DatabaseProvider, DatabaseContext, type DatabaseContextType } from '@/providers';
 import { db } from '@/core';
-import { DatabaseErrorType, createDatabaseError } from '@/libs';
+import { Err, ErrorService, ErrorCategory, DatabaseErrorCode } from '@/libs';
 
 // Mock the database
 vi.mock('@/database', () => ({
@@ -39,8 +39,10 @@ describe('DatabaseProvider', () => {
   });
 
   it('should handle database initialization error', async () => {
-    const error = createDatabaseError(DatabaseErrorType.DB_INIT_FAILED, 'Failed to initialize database', 500, {
-      reason: 'test error',
+    const error = Err.database(DatabaseErrorCode.INIT_FAILED, 'Failed to initialize database', {
+      service: ErrorService.Local,
+      operation: 'initialize',
+      context: { reason: 'test error' },
     });
 
     vi.spyOn(db, 'initialize').mockRejectedValueOnce(error);
@@ -65,13 +67,16 @@ describe('DatabaseProvider', () => {
     expect(context).not.toBeNull();
     expect(context?.error).toBeDefined();
     expect(context?.isReady).toBe(false);
-    expect(context?.error?.type).toBe(DatabaseErrorType.DB_INIT_FAILED);
-    expect(context?.error?.statusCode).toBe(500);
-    expect(context?.error?.details).toEqual({ reason: 'test error' });
+    expect(context?.error?.category).toBe(ErrorCategory.Database);
+    expect(context?.error?.code).toBe(DatabaseErrorCode.INIT_FAILED);
+    expect(context?.error?.context).toEqual({ reason: 'test error' });
   });
 
   it('should handle retry initialization', async () => {
-    const error = createDatabaseError(DatabaseErrorType.DB_INIT_FAILED, 'Failed to initialize database', 500);
+    const error = Err.database(DatabaseErrorCode.INIT_FAILED, 'Failed to initialize database', {
+      service: ErrorService.Local,
+      operation: 'initialize',
+    });
 
     // Mock db.initialize to fail once then succeed
     const initializeMock = vi.spyOn(db, 'initialize');
@@ -142,8 +147,9 @@ describe('DatabaseProvider', () => {
     expect(context).not.toBeNull();
     expect(context?.error).toBeDefined();
     expect(context?.isReady).toBe(false);
-    expect(context?.error?.type).toBe(DatabaseErrorType.DB_INIT_FAILED);
-    expect(context?.error?.statusCode).toBe(500);
-    expect(context?.error?.details).toEqual({ originalError: unexpectedError });
+    expect(context?.error?.category).toBe(ErrorCategory.Database);
+    expect(context?.error?.code).toBe(DatabaseErrorCode.INIT_FAILED);
+    // The cause is stored, not details with originalError
+    expect(context?.error?.cause).toBe(unexpectedError);
   });
 });

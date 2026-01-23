@@ -210,9 +210,11 @@ function CompactVariant({
   dataTestId,
   onUserClick,
   onFollowClick,
+  ttlRef,
 }: VariantProps) {
   return (
     <Atoms.Container
+      ref={ttlRef}
       overrideDefaults
       className={Libs.cn('flex w-full items-center gap-3', className)}
       data-testid={dataTestId || `user-list-item-${user.id}`}
@@ -274,9 +276,11 @@ function FullVariant({
   className,
   dataTestId,
   onFollowClick,
+  ttlRef,
 }: VariantProps) {
   return (
     <Atoms.Container
+      ref={ttlRef}
       className={Libs.cn('gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0', className)}
       data-testid={dataTestId || `user-list-item-${user.id}`}
     >
@@ -349,6 +353,10 @@ function FullVariant({
  * Supports two variants:
  * - `compact`: For sidebars (WhoToFollow, ActiveUsers) - avatar, name, subtitle, icon button
  * - `full`: For profile pages (Followers, Following) - avatar, name, pubky, tags, stats, text button
+ *
+ * **TTL Tracking:**
+ * Subscribes the user to TTL tracking when visible in the viewport.
+ * This ensures user data gets refreshed when stale.
  */
 export function UserListItem({
   user,
@@ -365,6 +373,12 @@ export function UserListItem({
 }: UserListItemProps) {
   // Auth requirement for follow action
   const { requireAuth } = Hooks.useRequireAuth();
+
+  // Subscribe to TTL coordinator based on viewport visibility
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'user',
+    id: user.id,
+  });
 
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
@@ -401,6 +415,7 @@ export function UserListItem({
     dataTestId,
     onUserClick: handleUserClick,
     onFollowClick: handleFollowClick,
+    ttlRef,
   };
 
   if (variant === 'compact') {

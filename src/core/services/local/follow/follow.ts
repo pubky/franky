@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
 import { FOLLOWING_TIMELINE_STREAMS, FRIENDS_TIMELINE_STREAMS } from './follow.constants';
 import type {
   CreateFollowParams,
@@ -73,12 +73,12 @@ export class LocalFollowService {
         friendshipChanged: becomingFriends,
         activeStreamId,
       });
-
-      Libs.Logger.debug('Follow created successfully', { follower, followee });
     } catch (error) {
-      Libs.Logger.error('Failed to follow a user', { follower, followee, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to create follow relationship', 500, {
-        error,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to create follow relationship', {
+        service: ErrorService.Local,
+        operation: 'createFollow',
+        context: { follower, followee },
+        cause: error,
       });
     }
   }
@@ -146,18 +146,13 @@ export class LocalFollowService {
         friendshipChanged: breakingFriendship,
         activeStreamId,
       });
-
-      Libs.Logger.debug('Unfollow completed successfully', { follower, followee });
     } catch (error) {
-      Libs.Logger.error('Failed to unfollow a user', { follower, followee, error });
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        'Failed to delete follow relationship',
-        500,
-        {
-          error,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to delete follow relationship', {
+        service: ErrorService.Local,
+        operation: 'deleteFollow',
+        context: { follower, followee },
+        cause: error,
+      });
     }
   }
 
@@ -186,12 +181,12 @@ export class LocalFollowService {
 
     if (streamsToInvalidate.length > 0) {
       await Promise.all(streamsToInvalidate.map((streamId) => Core.LocalStreamPostsService.deleteById({ streamId })));
-      Libs.Logger.debug('Invalidated timeline streams', {
+      Logger.debug('Invalidated timeline streams', {
         invalidated: streamsToInvalidate.length,
         preserved: activeStreamId,
       });
     } else {
-      Libs.Logger.debug('No timeline streams to invalidate (all preserved)', { activeStreamId });
+      Logger.debug('No timeline streams to invalidate (all preserved)', { activeStreamId });
     }
   }
 

@@ -1,11 +1,12 @@
 'use client';
 
-import { createContext, useContext, useCallback, useMemo } from 'react';
+import { createContext, useContext, useCallback, useEffect, useMemo } from 'react';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import type { TimelineFeedProps, TimelineFeedContextValue } from './TimelineFeed.types';
+import { TIMELINE_FEED_VARIANT } from './TimelineFeed.types';
 import { useTimelineFeedStreamId } from './useTimelineFeedStreamId';
 
 /**
@@ -75,6 +76,7 @@ export function TimelineFeed({ variant, children }: TimelineFeedProps) {
  */
 function TimelineFeedContent({
   streamId,
+  variant,
   children,
 }: {
   streamId: Core.PostStreamId;
@@ -99,6 +101,7 @@ function TimelineFeedContent({
 
   // Watch for unread posts from StreamCoordinator polling
   const { unreadPostIds } = Hooks.useUnreadPosts({ streamId });
+  const { mutedUserIdSet } = Hooks.useMutedUsers();
 
   // Track scroll position to show/hide new posts button
   const isScrolled = Hooks.useIsScrolledFromTop();
@@ -107,8 +110,25 @@ function TimelineFeedContent({
   // This prevents showing "See new posts" for posts the user just created
   const actualNewPostIds = useMemo(() => {
     const displayedPostIds = new Set(postIds);
-    return unreadPostIds.filter((id) => !displayedPostIds.has(id));
-  }, [unreadPostIds, postIds]);
+    // First filter out already-displayed posts, then apply mute filter
+    const notDisplayed = unreadPostIds.filter((id) => !displayedPostIds.has(id));
+    return Core.MuteFilter.filterPostsSafe(notDisplayed, mutedUserIdSet);
+  }, [unreadPostIds, postIds, mutedUserIdSet]);
+
+  /**
+   * Reactively prune muted users' posts from the timeline when mute state changes.
+   * Skip for profile variant - users should always see posts on their own profile.
+   */
+  useEffect(() => {
+    if (variant === TIMELINE_FEED_VARIANT.PROFILE) return;
+    if (mutedUserIdSet.size === 0) return;
+
+    const postIdsToRemove = rawPostIds.filter((id) => Core.MuteFilter.isPostMuted(id, mutedUserIdSet));
+
+    if (postIdsToRemove.length > 0) {
+      removePosts(postIdsToRemove);
+    }
+  }, [mutedUserIdSet, rawPostIds, removePosts, variant]);
 
   const actualNewCount = actualNewPostIds.length;
 
