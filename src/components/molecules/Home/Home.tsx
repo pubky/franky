@@ -3,10 +3,8 @@
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
-import * as Organisms from '@/organisms';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import * as Config from '@/config';
 import * as App from '@/app';
 
 export const HomeActions = () => {
@@ -25,14 +23,28 @@ export const HomeActions = () => {
 
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Atoms.FooterLinks className={Libs.cn('flex-row content-end justify-end sm:pr-16', props.className)} {...props}>
-      By creating a Pubky account, you agree to the <Organisms.DialogTerms />, <Organisms.DialogPrivacy />, and confirm
-      you are <Organisms.DialogAge /> Pubky is powered by{' '}
-      <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
-        Pubky Core
-      </Atoms.Link>{' '}
-      and was built with love and dedication by Synonym Software Ltd. ©2025.
-    </Atoms.FooterLinks>
+    <Atoms.Container
+      className={Libs.cn('flex-1 flex-col items-start justify-end gap-1 pt-3 sm:pr-12', props.className)}
+      {...props}
+    >
+      <Atoms.Container className="flex-row items-center gap-1">
+        <Atoms.Link href="https://synonym.to" target="_blank" className="block">
+          <Atoms.Image src="/images/synonym-grey-logo.svg" alt="Synonym" width={95} height={24} />
+        </Atoms.Link>
+        <Atoms.Container className="flex-row items-center gap-1">
+          <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
+            a
+          </Atoms.Typography>
+          <Atoms.Image src="/images/tether-text.svg" alt="Tether" width={40} height={9} />
+          <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
+            company
+          </Atoms.Typography>
+        </Atoms.Container>
+      </Atoms.Container>
+      <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
+        Synonym Software, S.A. DE C.V. ©2026. All rights reserved.
+      </Atoms.Typography>
+    </Atoms.Container>
   );
 };
 
