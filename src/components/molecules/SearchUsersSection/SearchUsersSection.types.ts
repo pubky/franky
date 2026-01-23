@@ -1,5 +1,5 @@
 import type { Pubky } from '@/core';
-import type { AutocompleteUserData } from '@/hooks/useSearchAutocomplete/useSearchAutocomplete.types';
+import type { AutocompleteUserData } from '@/hooks/useUserDetailsFromIds';
 
 export interface SearchUsersSectionProps {
   title: string;

@@ -58,10 +58,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           errorMessage.includes('cipher')
         ) {
           setError('Invalid password or corrupted file. Please check your password and try again.');
-        } else if (
-          error instanceof Libs.AppError &&
-          Object.values(Libs.NexusErrorType).includes(error.type as Libs.NexusErrorType)
-        ) {
+        } else if (error instanceof Libs.AppError && error.service === Libs.ErrorService.Nexus) {
           setError('Something went wrong with nexus. Please try again.');
         } else {
           setError('Failed to restore from file. Please check your file and try again.');

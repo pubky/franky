@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -20,7 +20,24 @@ import * as Organisms from '@/organisms';
 import { usePathname } from 'next/navigation';
 import { POST_ROUTES } from '@/app/routes';
 
-export const PostText = ({ content }: PostTextProps) => {
+/**
+ * Renders formatted text content with markdown, hashtags, mentions, and links.
+ *
+ * Used for:
+ * - Post content in feeds and post pages
+ * - User bio in profile popovers
+ *
+ * Features:
+ * - Markdown formatting (bold, italic, code, lists, etc.)
+ * - Hashtag parsing (#tag → clickable search link)
+ * - Mention parsing (pk:... or pubky... → clickable profile link)
+ * - URL detection and linking
+ * - Content truncation with "Show more" on non-post pages (500 char limit)
+ *
+ * Memoization prevents unnecessary re-renders when TTL refreshes update IndexedDB records
+ * without changes to the actual post content.
+ */
+export const PostText = memo(function PostText({ content, isArticle, className }: PostTextProps) {
   const pathname = usePathname();
 
   const contentTruncated =
@@ -36,19 +53,43 @@ export const PostText = ({ content }: PostTextProps) => {
       remarkPlaintextCodeblock,
       remarkHashtags,
       remarkMentions,
-      ...(contentTruncated ? [remarkShowMoreButton] : []),
+      ...(contentTruncated && !isArticle ? [remarkShowMoreButton] : []),
     ],
-    [contentTruncated],
+    [isArticle, contentTruncated],
+  );
+
+  // Memoize allowed elements array to avoid recreation on every render
+  const allowedElements = useMemo(
+    () => [
+      'em',
+      'strong',
+      'code',
+      'pre',
+      'a',
+      'p',
+      'br',
+      'ul',
+      'ol',
+      'li',
+      'del',
+      'blockquote',
+      'hr',
+      ...(isArticle ? ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] : []),
+    ],
+    [isArticle],
   );
 
   return (
     <Atoms.Container
       data-cy="post-text"
       overrideDefaults
-      className="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+      className={Libs.cn(
+        'text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground',
+        className,
+      )}
     >
       <Markdown
-        allowedElements={['em', 'strong', 'code', 'pre', 'a', 'p', 'br', 'ul', 'ol', 'li', 'del', 'blockquote', 'hr']}
+        allowedElements={allowedElements}
         unwrapDisallowed
         remarkPlugins={remarkPlugins}
         components={{
@@ -123,10 +164,64 @@ export const PostText = ({ content }: PostTextProps) => {
           code(props) {
             return <Molecules.PostCodeBlock {...props} />;
           },
+          h1(props) {
+            const { children, className, node: _node, ref: _ref, ...rest } = props;
+
+            return (
+              <h1 {...rest} className={Libs.cn(className, 'text-2xl leading-8 font-light text-muted-foreground')}>
+                {children}
+              </h1>
+            );
+          },
+          h2(props) {
+            const { children, className, node: _node, ref: _ref, ...rest } = props;
+
+            return (
+              <h2 {...rest} className={Libs.cn(className, 'text-xl leading-7 font-light text-muted-foreground')}>
+                {children}
+              </h2>
+            );
+          },
+          h3(props) {
+            const { children, className, node: _node, ref: _ref, ...rest } = props;
+
+            return (
+              <h3 {...rest} className={Libs.cn(className, 'text-lg leading-7 font-light text-muted-foreground')}>
+                {children}
+              </h3>
+            );
+          },
+          h4(props) {
+            const { children, className, node: _node, ref: _ref, ...rest } = props;
+
+            return (
+              <h4 {...rest} className={Libs.cn(className, 'text-[17px] leading-6 font-light text-muted-foreground')}>
+                {children}
+              </h4>
+            );
+          },
+          h5(props) {
+            const { children, className, node: _node, ref: _ref, ...rest } = props;
+
+            return (
+              <h5 {...rest} className={Libs.cn(className, 'text-[16.5px] leading-6 font-light text-muted-foreground')}>
+                {children}
+              </h5>
+            );
+          },
+          h6(props) {
+            const { children, className, node: _node, ref: _ref, ...rest } = props;
+
+            return (
+              <h6 {...rest} className={Libs.cn(className, 'text-[16.25px] leading-6 font-light text-muted-foreground')}>
+                {children}
+              </h6>
+            );
+          },
         }}
       >
         {contentTruncated || content}
       </Markdown>
     </Atoms.Container>
   );
-};
+});

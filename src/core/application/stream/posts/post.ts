@@ -115,9 +115,10 @@ export class PostStreamApplication {
       return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
     }
 
-    // Fetch muted user IDs from Service layer at Application layer entry point
-    const mutedStream = await Core.LocalStreamUsersService.findById(Core.UserStreamTypes.MUTED);
-    const mutedUserIds = new Set(mutedStream?.stream ?? []);
+    const shouldFilterMuted = !streamId.startsWith(`${Core.StreamSource.AUTHOR}:`);
+    const mutedUserIds = shouldFilterMuted
+      ? new Set((await Core.LocalStreamUsersService.findById(Core.UserStreamTypes.MUTED))?.stream ?? [])
+      : new Set<Core.Pubky>();
 
     let isFirstFetch = true;
     const { posts, cacheMissIds, timestamp, reachedEnd } = await postStreamQueue.collect(streamId, {
@@ -362,11 +363,10 @@ export class PostStreamApplication {
   private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
     if (cacheMissUserIds.length > 0) {
-      const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+      const userBatch = await Core.NexusUserStreamService.fetchByIds({
         user_ids: cacheMissUserIds,
         viewer_id: viewerId ?? undefined,
       });
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }

@@ -5,21 +5,34 @@ exports[`PostHeaderUserInfoPopoverHeader - Snapshots > matches snapshot 1`] = `
   class="flex min-w-0 items-center gap-2"
   data-testid="container"
 >
-  <div
-    data-testid="avatar"
+  <a
+    class="shrink-0"
+    data-override-defaults="true"
+    data-testid="profile-link"
+    href="/profile/snapshotUser"
   >
-    Snapshot User
-  </div>
+    <div
+      data-testid="avatar"
+    >
+      Snapshot User
+    </div>
+  </a>
   <div
     class="mx-auto w-full flex-col flex min-w-0 flex-1 items-start overflow-hidden"
     data-testid="container"
   >
-    <p
-      class="max-w-full truncate text-sm leading-5 font-bold"
-      data-testid="typography"
+    <a
+      data-override-defaults="true"
+      data-testid="profile-link"
+      href="/profile/snapshotUser"
     >
-      Snapshot User
-    </p>
+      <p
+        class="max-w-full cursor-pointer truncate text-sm leading-5 font-bold text-foreground hover:underline"
+        data-testid="typography"
+      >
+        Snapshot User
+      </p>
+    </a>
     <p
       class="text-xs leading-4 font-medium tracking-[1.2px] text-muted-foreground uppercase"
       data-testid="typography"
