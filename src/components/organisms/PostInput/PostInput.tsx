@@ -130,7 +130,7 @@ export function PostInput({
       data-cy={dataCy}
       ref={containerRef}
       className={Libs.cn(
-        'relative cursor-pointer rounded-md border border-dashed p-6 transition-colors duration-200',
+        'relative cursor-pointer rounded-md border border-dashed p-4 transition-colors duration-200',
         isDragging ? 'border-brand' : 'border-input',
       )}
       onClick={handleExpand}
