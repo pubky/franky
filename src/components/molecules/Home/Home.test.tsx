@@ -25,12 +25,21 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-
 // Mock atoms
 vi.mock('@/atoms', () => ({
   FooterLinks: ({ children }: { children: React.ReactNode }) => <div data-testid="footer-links">{children}</div>,
-  Link: ({ children, href, target }: { children: React.ReactNode; href: string; target?: string }) => (
-    <a data-testid="link" href={href} target={target}>
+  Link: ({
+    children,
+    href,
+    target,
+    className,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    target?: string;
+    className?: string;
+  }) => (
+    <a data-testid="link" href={href} target={target} className={className}>
       {children}
     </a>
   ),
@@ -39,10 +48,26 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <p data-testid="typography" data-size={size} className={className}>
-      {children}
-    </p>
+  Typography: ({
+    children,
+    as,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: string;
+    size?: string;
+    className?: string;
+  }) => {
+    const Tag = as || 'p';
+    return (
+      <Tag data-testid="typography" data-size={size} className={className}>
+        {children}
+      </Tag>
+    );
+  },
+  Image: ({ src, alt, width, height }: { src: string; alt: string; width?: number; height?: number }) => (
+    <img data-testid="image" src={src} alt={alt} width={width} height={height} />
   ),
   Heading: ({ children, level, size }: { children: React.ReactNode; level: number; size?: string }) => (
     <div data-testid={`heading-${level}`} data-size={size}>
@@ -96,7 +121,7 @@ describe('HomeFooter', () => {
 
     expect(screen.getByText('a')).toBeInTheDocument();
     expect(screen.getByText('company')).toBeInTheDocument();
-    expect(screen.getByText(/Synonym Software, S\.A\. DE C\.V\./)).toBeInTheDocument();
+    expect(screen.getByText(/Synonym Software, S\.A\. DE C\.V\. ©2026/)).toBeInTheDocument();
   });
 
   it('renders Synonym logo as a link', () => {

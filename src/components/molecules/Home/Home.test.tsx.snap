@@ -27,12 +27,14 @@ exports[`Home - Snapshots > matches snapshot for HomeFooter with default props 1
     data-testid="container"
   >
     <a
+      class="block"
       data-testid="link"
       href="https://synonym.to"
       target="_blank"
     >
       <img
         alt="Synonym"
+        data-testid="image"
         height="24"
         src="/images/synonym-grey-logo.svg"
         width="95"
@@ -43,27 +45,34 @@ exports[`Home - Snapshots > matches snapshot for HomeFooter with default props 1
       data-testid="container"
     >
       <span
-        class="text-sm text-[#89898F]"
+        class="font-normal text-muted-foreground"
+        data-size="sm"
+        data-testid="typography"
       >
         a
       </span>
       <img
         alt="Tether"
+        data-testid="image"
         height="9"
         src="/images/tether-text.svg"
         width="40"
       />
       <span
-        class="text-sm text-[#89898F]"
+        class="font-normal text-muted-foreground"
+        data-size="sm"
+        data-testid="typography"
       >
         company
       </span>
     </div>
   </div>
   <span
-    class="text-sm text-[#89898F]"
+    class="font-normal text-muted-foreground"
+    data-size="sm"
+    data-testid="typography"
   >
-    Synonym Software, S.A. DE C.V. ©2025. All rights reserved.
+    Synonym Software, S.A. DE C.V. ©2026. All rights reserved.
   </span>
 </div>
 `;

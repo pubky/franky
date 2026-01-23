@@ -29,17 +29,21 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
     >
       <Atoms.Container className="flex-row items-center gap-1">
         <Atoms.Link href="https://synonym.to" target="_blank" className="block">
-          <img src="/images/synonym-grey-logo.svg" alt="Synonym" width={95} height={24} />
+          <Atoms.Image src="/images/synonym-grey-logo.svg" alt="Synonym" width={95} height={24} />
         </Atoms.Link>
         <Atoms.Container className="flex-row items-center gap-1">
-          <span className="text-sm text-[#89898F]">a</span>
-          <img src="/images/tether-text.svg" alt="Tether" width={40} height={9} />
-          <span className="text-sm text-[#89898F]">company</span>
+          <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
+            a
+          </Atoms.Typography>
+          <Atoms.Image src="/images/tether-text.svg" alt="Tether" width={40} height={9} />
+          <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
+            company
+          </Atoms.Typography>
         </Atoms.Container>
       </Atoms.Container>
-      <span className="text-sm text-[#89898F]">
-        Synonym Software, S.A. DE C.V. ©2025. All rights reserved.
-      </span>
+      <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
+        Synonym Software, S.A. DE C.V. ©2026. All rights reserved.
+      </Atoms.Typography>
     </Atoms.Container>
   );
 };
