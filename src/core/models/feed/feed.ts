@@ -2,6 +2,7 @@ import { Table } from 'dexie';
 import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 import { RecordModelBase } from '@/core/models/shared/base/record/baseRecord';
+import { DatabaseErrorCode, Err, ErrorService } from '@/libs';
 
 export class FeedModel extends RecordModelBase<number, Core.FeedModelSchema> implements Core.FeedModelSchema {
   static table: Table<Core.FeedModelSchema, number> = Core.db.table('feeds');
@@ -27,21 +28,63 @@ export class FeedModel extends RecordModelBase<number, Core.FeedModelSchema> imp
     this.updated_at = feed.updated_at;
   }
 
-  static async createAndGet(feed: Core.FeedModelSchema): Promise<Core.FeedModelSchema | null> {
-    const newId = await this.table.add(feed);
-    return this.findById(newId);
+  static async createAndGet(feed: Core.FeedModelSchema): Promise<Core.FeedModelSchema> {
+    const newId = await this.create(feed);
+    const created = await this.findById(newId);
+    if (!created) {
+      throw Err.database(
+        DatabaseErrorCode.INTEGRITY_ERROR,
+        'Record not found after creation - data integrity violation',
+        {
+          service: ErrorService.Local,
+          operation: 'createAndGet',
+          context: { table: this.table.name, id: newId },
+        },
+      );
+    }
+    return created;
   }
 
-  static async findAll(): Promise<Core.FeedModelSchema[]> {
-    return this.table.toArray();
+  /**
+   * Find a feed by ID or throw RECORD_NOT_FOUND if it doesn't exist.
+   * Use this when the record MUST exist (e.g., read operations).
+   */
+  static async findByIdOrThrow(id: number): Promise<Core.FeedModelSchema> {
+    const record = await this.findById(id);
+    if (!record) {
+      throw Err.database(DatabaseErrorCode.RECORD_NOT_FOUND, 'Feed not found', {
+        service: ErrorService.Local,
+        operation: 'findByIdOrThrow',
+        context: { table: this.table.name, id },
+      });
+    }
+    return record;
   }
 
   static async findAllSorted(): Promise<Core.FeedModelSchema[]> {
-    return this.table.orderBy('created_at').reverse().toArray();
+    try {
+      return await this.table.orderBy('created_at').reverse().toArray();
+    } catch (error) {
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to read sorted records from ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'findAllSorted',
+        context: { table: this.table.name },
+        cause: error,
+      });
+    }
   }
 
   static async findByName(name: string): Promise<Core.FeedModelSchema | undefined> {
-    const lowerName = name.toLowerCase();
-    return this.table.filter((f) => f.name.toLowerCase() === lowerName).first();
+    try {
+      const lowerName = name.toLowerCase();
+      return await this.table.filter((f) => f.name.toLowerCase() === lowerName).first();
+    } catch (error) {
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, `Failed to find record by name in ${this.table.name}`, {
+        service: ErrorService.Local,
+        operation: 'findByName',
+        context: { table: this.table.name, name },
+        cause: error,
+      });
+    }
   }
 }

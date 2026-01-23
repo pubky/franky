@@ -1,14 +1,52 @@
 /**
  * Result of checking SMS verification availability.
- * Returns available: true if service is accessible, false if geoblocked (403).
+ * Returns available true when service is accessible.
+ * Returns available false when geoblocked (403).
+ * Returns available false with error true for generic errors (network failure, server error, etc.)
  */
-export type TSmsInfoResult = { available: true } | { available: false };
+export type TSmsInfoResult = { available: boolean; error?: boolean };
 
 /**
  * Result of checking LN verification availability and price.
- * Returns available: true with amountSat if service is accessible, false if geoblocked (403).
+ * Returns available true with amountSat when service is accessible.
+ * Returns available false when geoblocked (403).
+ * Returns available false with error true for generic errors (network failure, server error, etc.)
  */
-export type TLnInfoResult = { available: true; amountSat: number } | { available: false };
+export type TLnInfoResult = { available: true; amountSat: number } | { available: false; error?: boolean };
+
+/**
+ * Represents a raw/unvalidated JSON object from API responses.
+ * Used as intermediate type before parsing into domain types.
+ */
+export type TRawApiResponse = Record<string, unknown>;
+
+/**
+ * Parameters for validating a verification ID.
+ */
+export type TAssertValidVerificationIdParams = {
+  /**
+   * The verification ID to validate (UUID format).
+   */
+  verificationId: string;
+  /**
+   * The operation name for error context.
+   */
+  operation: string;
+};
+
+/**
+ * Parameters for verifying a SMS code.
+ */
+export type TVerifySmsCodeParams = {
+  /**
+   * The phone number to validate the SMS code for.
+   */
+  phoneNumber: string;
+  /**
+   * The verification code received via SMS.
+   */
+  code: string;
+};
 
 export type TVerifySmsCodeResult = {
   /**
@@ -30,7 +68,7 @@ export type TVerifySmsCodeResult = {
  */
 export type TCreateLnVerificationResult = {
   /**
-   * The payment hash identifier for this verification.
+   * The verification ID for this verification request.
    */
   id: string;
   /**
@@ -52,7 +90,7 @@ export type TCreateLnVerificationResult = {
  */
 export type TLnVerificationStatus = {
   /**
-   * The payment hash identifier.
+   * The verification ID.
    */
   id: string;
   /**
@@ -94,9 +132,11 @@ export type TAwaitLnVerificationResult =
  * @property success - True if the request was successful, false otherwise.
  * @property retryAfter - The number of seconds to wait before retrying the request. Only set if the request was not successful.
  * @property errorType - The type of error that occurred. Only set if the request was not successful.
+ * @property statusCode - The HTTP status code. Only set for 'unknown' errors to aid debugging.
  */
-export interface ISendSmsCodeResult {
+export type TSendSmsCodeResult = {
   success: boolean;
   retryAfter?: number;
   errorType?: 'blocked' | 'rate_limited' | 'unknown';
-}
+  statusCode?: number;
+};

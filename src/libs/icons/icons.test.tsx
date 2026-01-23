@@ -79,7 +79,7 @@ describe('Custom Icons', () => {
       expect(svg).toBeInTheDocument();
       expect(svg).toHaveAttribute('width', '24');
       expect(svg).toHaveAttribute('height', '24');
-      expect(svg).toHaveAttribute('viewBox', '4 4 16 16');
+      expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
       expect(svg).toHaveAttribute('fill', 'none');
     });
 
@@ -110,7 +110,10 @@ describe('Custom Icons', () => {
       const path = container.querySelector('path');
 
       expect(path).toBeInTheDocument();
-      expect(path).toHaveAttribute('fill', 'currentColor');
+      expect(path).toHaveAttribute('stroke', 'currentColor');
+      expect(path).toHaveAttribute('stroke-width', '1.5');
+      expect(path).toHaveAttribute('stroke-linecap', 'round');
+      expect(path).toHaveAttribute('stroke-linejoin', 'round');
     });
   });
 

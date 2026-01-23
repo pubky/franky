@@ -53,8 +53,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Subscribe to stream changes for reactive updates (follow/unfollow)
   const cachedStream = useLiveQuery(
     async () => {
-      if (!streamId) return null;
-      return (await Core.LocalStreamUsersService.findById(streamId))?.stream ?? null;
+      try {
+        if (!streamId) return null;
+        return (await Core.LocalStreamUsersService.findById(streamId))?.stream ?? null;
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query cached stream', { streamId, error });
+        return null;
+      }
     },
     [streamId],
     null,
@@ -63,20 +68,30 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Sync userIds when stream changes in cache (e.g., after follow/unfollow)
   useEffect(() => {
     if (cachedStream !== null && !isLoading) {
-      // Only sync if we haven't paginated (user is still on first page)
       const hasPaginated = skip > Config.NEXUS_USERS_PER_PAGE;
-      if (!hasPaginated) {
-        userIdsRef.current = cachedStream;
-        setUserIds(cachedStream);
-      }
+      if (hasPaginated) return;
+
+      // For own following list: only sync when cache has MORE users (new follows)
+      // Block sync when cache has fewer users (unfollows) to preserve UI state
+      // This allows new follows to appear reactively while keeping unfollowed users visible
+      const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
+      if (isOwnFollowing && cachedStream.length <= userIdsRef.current.length) return;
+
+      userIdsRef.current = cachedStream;
+      setUserIds(cachedStream);
     }
-  }, [cachedStream, isLoading, skip]);
+  }, [cachedStream, isLoading, skip, targetUserId, currentUserPubky, type]);
 
   // Subscribe to user details from local database (reactive via Controller)
   const userDetailsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.getManyDetails({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
+        return await Core.UserController.getManyDetails({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query user details', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserDetails>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),
@@ -85,8 +100,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // Subscribe to user counts from local database (reactive via Controller)
   const userCountsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
-      return await Core.UserController.getManyCounts({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
+        return await Core.UserController.getManyCounts({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query user counts', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserCounts>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserCounts>(),
@@ -96,8 +116,13 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
   // This tracks whether the current user is following each connection
   const userRelationshipsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      return await Core.UserController.getManyRelationships({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+        return await Core.UserController.getManyRelationships({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useProfileConnections] Failed to query user relationships', { userIds, error });
+        return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
@@ -190,14 +215,40 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       try {
         const currentSkip = isInitialLoad ? 0 : skip;
 
+        // For own following list, snapshot the cache BEFORE fetch
+        // The fetch may pollute the cache with stale API data
+        const isOwnFollowing = targetUserId === currentUserPubky && type === 'following';
+        const preFetchCache = isOwnFollowing ? await Core.LocalStreamUsersService.findById(streamId) : null;
+
         const result = await Core.StreamUserController.getOrFetchStreamSlice({
           streamId,
           skip: currentSkip,
           limit: Config.NEXUS_USERS_PER_PAGE,
         });
 
+        let pageIds = result.nextPageIds;
+
+        // Filter API results against pre-fetch cache snapshot
+        // This handles eventual consistency where API returns unfollowed users
+        if (preFetchCache) {
+          const cachedSet = new Set(preFetchCache.stream);
+          pageIds = pageIds.filter((id) => cachedSet.has(id));
+
+          // Get current cache after fetch (may contain new follows added during session)
+          const postFetchCache = await Core.LocalStreamUsersService.findById(streamId);
+
+          // Merge: start with pre-fetch snapshot, then add any NEW follows from post-fetch
+          // that weren't in the pre-fetch (these are new follows made during the session)
+          const preFetchSet = new Set(preFetchCache.stream);
+          const newFollows = postFetchCache?.stream.filter((id) => !preFetchSet.has(id)) ?? [];
+          const mergedStream = [...preFetchCache.stream, ...newFollows];
+
+          // Reset cache to merged state (preserves new follows while undoing API pollution)
+          await Core.LocalStreamUsersService.upsert({ streamId, stream: mergedStream });
+        }
+
         // Handle empty results
-        if (result.nextPageIds.length === 0) {
+        if (pageIds.length === 0) {
           Libs.Logger.debug('[useProfileConnections] Empty result, no more connections');
           setHasMore(false);
           return;
@@ -205,18 +256,18 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
 
         // Deduplicate user IDs
         const existingIds = new Set(userIdsRef.current);
-        const newUniqueIds = result.nextPageIds.filter((id) => !existingIds.has(id));
+        const newUniqueIds = pageIds.filter((id) => !existingIds.has(id));
 
         // Update skip cursor for next pagination
-        const nextSkip = result.skip ?? currentSkip + result.nextPageIds.length;
+        const nextSkip = result.skip ?? currentSkip + pageIds.length;
         setSkip(nextSkip);
 
         // Check hasMore based on response length
-        const hasMoreConnections = result.nextPageIds.length >= Config.NEXUS_USERS_PER_PAGE;
+        const hasMoreConnections = pageIds.length >= Config.NEXUS_USERS_PER_PAGE;
         setHasMore(hasMoreConnections);
 
         // Update state with all IDs (including duplicates for cursor tracking)
-        const updatedIds = isInitialLoad ? result.nextPageIds : [...userIdsRef.current, ...newUniqueIds];
+        const updatedIds = isInitialLoad ? pageIds : [...userIdsRef.current, ...newUniqueIds];
         userIdsRef.current = updatedIds;
         setUserIds(updatedIds);
       } catch (err) {
@@ -232,7 +283,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
         }
       }
     },
-    [streamId, skip],
+    [streamId, skip, targetUserId, currentUserPubky, type],
   );
 
   /**

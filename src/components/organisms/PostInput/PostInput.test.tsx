@@ -149,6 +149,17 @@ vi.mock('@/molecules', () => ({
       Original Post: {postId}
     </div>
   )),
+  MarkdownEditor: vi.fn(({ markdown, onChange, readOnly, ref }) => (
+    <div
+      data-testid="markdown-editor"
+      data-readonly={readOnly}
+      ref={ref}
+      contentEditable={!readOnly}
+      onInput={(e) => onChange?.((e.target as HTMLDivElement).textContent || '')}
+    >
+      {markdown}
+    </div>
+  )),
   PostLinkEmbeds: vi.fn(({ content }: { content: string }) => {
     // Only render if content contains a URL-like pattern
     if (content.includes('http') || content.includes('youtube') || content.includes('youtu.be')) {
@@ -160,14 +171,17 @@ vi.mock('@/molecules', () => ({
     ({
       attachments,
       isSubmitting,
+      isArticle,
     }: {
       ref: React.RefObject<HTMLInputElement>;
       attachments: File[];
       setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
       handleFilesAdded: (files: FileList | File[]) => void;
       isSubmitting: boolean;
+      isArticle?: boolean;
+      handleFileClick?: () => void;
     }) => (
-      <div data-testid="post-input-attachments" data-submitting={isSubmitting}>
+      <div data-testid="post-input-attachments" data-submitting={isSubmitting} data-is-article={isArticle}>
         {attachments.map((file: File, index: number) => (
           <div key={index} data-testid={`attachment-${file.name}`}>
             {file.name}
@@ -206,14 +220,17 @@ vi.mock('@/molecules/PostInputAttachments/PostInputAttachments', () => ({
     ({
       attachments,
       isSubmitting,
+      isArticle,
     }: {
       ref: React.RefObject<HTMLInputElement>;
       attachments: File[];
       setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
       handleFilesAdded: (files: FileList | File[]) => void;
       isSubmitting: boolean;
+      isArticle?: boolean;
+      handleFileClick?: () => void;
     }) => (
-      <div data-testid="post-input-attachments" data-submitting={isSubmitting}>
+      <div data-testid="post-input-attachments" data-submitting={isSubmitting} data-is-article={isArticle}>
         {attachments.map((file: File, index: number) => (
           <div key={index} data-testid={`attachment-${file.name}`}>
             {file.name}
@@ -236,6 +253,8 @@ const mockUsePostReturn = {
   reply: vi.fn(),
   post: vi.fn(),
   isSubmitting: false,
+  isArticle: false,
+  articleTitle: '',
 };
 
 vi.mock('@/hooks', () => ({
@@ -247,13 +266,22 @@ vi.mock('@/hooks', () => ({
   useEnterSubmit: vi.fn(() => vi.fn()),
   usePostInput: vi.fn((options: { variant: string; placeholder?: string }) => ({
     textareaRef: { current: null },
+    markdownEditorRef: { current: null },
     containerRef: { current: null },
     fileInputRef: { current: null },
     content: mockUsePostReturn.content,
+    setContent: mockUsePostReturn.setContent,
     tags: mockUsePostReturn.tags,
     setTags: mockUsePostReturn.setTags,
     attachments: mockUsePostReturn.attachments,
     setAttachments: mockUsePostReturn.setAttachments,
+    isArticle: mockUsePostReturn.isArticle,
+    setIsArticle: vi.fn(),
+    handleArticleClick: vi.fn(),
+    articleTitle: mockUsePostReturn.articleTitle,
+    setArticleTitle: vi.fn(),
+    handleArticleTitleChange: vi.fn(),
+    handleArticleBodyChange: vi.fn(),
     isDragging: mockUsePostReturn.isDragging,
     isExpanded: true,
     isSubmitting: mockUsePostReturn.isSubmitting,
@@ -266,7 +294,9 @@ vi.mock('@/hooks', () => ({
         ? 'Write a reply...'
         : options.variant === 'repost'
           ? 'Optional comment'
-          : "What's on your mind?"),
+          : options.variant === 'edit'
+            ? 'Edit post'
+            : "What's on your mind?"),
     currentUserPubky: 'test-user-id:pubkey',
     handleExpand: vi.fn(),
     handleSubmit: vi.fn(async () => {
@@ -281,6 +311,7 @@ vi.mock('@/hooks', () => ({
     }),
     handleEmojiSelect: vi.fn(),
     handleFilesAdded: vi.fn(),
+    handleFileClick: vi.fn(),
     handleDragEnter: vi.fn(),
     handleDragLeave: vi.fn(),
     handleDragOver: vi.fn(),
@@ -307,6 +338,8 @@ describe('PostInput', () => {
     mockUsePostReturn.attachments = [];
     mockUsePostReturn.isDragging = false;
     mockUsePostReturn.isSubmitting = false;
+    mockUsePostReturn.isArticle = false;
+    mockUsePostReturn.articleTitle = '';
     mockUsePostReturn.setContent = mockSetContent;
     mockUsePostReturn.setTags = mockSetTags;
     mockUsePostReturn.setAttachments = mockSetAttachments;
@@ -456,6 +489,38 @@ describe('PostInput', () => {
 
     expect(screen.queryByText('Drop files here')).not.toBeInTheDocument();
   });
+
+  it('renders with edit variant', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.EDIT} editPostId="test-post-123" editContent="Edit this content" />);
+
+    expect(screen.getByTestId('post-header')).toBeInTheDocument();
+    expect(screen.getByTestId('textarea')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Edit post')).toBeInTheDocument();
+  });
+
+  it('does not show PostInputAttachments for edit variant', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.EDIT} editPostId="test-post-123" editContent="Edit content" />);
+
+    expect(screen.queryByTestId('post-input-attachments')).not.toBeInTheDocument();
+  });
+
+  it('shows PostInputAttachments for non-edit variants', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+
+    expect(screen.getByTestId('post-input-attachments')).toBeInTheDocument();
+  });
+
+  it('does not trigger drag handlers in edit mode', () => {
+    render(<PostInput variant={POST_INPUT_VARIANT.EDIT} editPostId="test-post-123" editContent="Edit content" />);
+
+    const container = screen.getAllByTestId('container')[0];
+
+    // Simulate drag events - they should not trigger isDragging state change in edit mode
+    fireEvent.dragEnter(container, { dataTransfer: { files: [] } });
+
+    // Drag overlay should not appear since drag handlers are disabled in edit mode
+    expect(screen.queryByText('Drop files here')).not.toBeInTheDocument();
+  });
 });
 
 describe('PostInput - Snapshots', () => {
@@ -466,6 +531,8 @@ describe('PostInput - Snapshots', () => {
     mockUsePostReturn.attachments = [];
     mockUsePostReturn.isDragging = false;
     mockUsePostReturn.isSubmitting = false;
+    mockUsePostReturn.isArticle = false;
+    mockUsePostReturn.articleTitle = '';
   });
 
   it('matches snapshot for post variant without content or attachments', () => {
@@ -520,6 +587,40 @@ describe('PostInput - Snapshots', () => {
     mockUsePostReturn.isSubmitting = true;
 
     const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for article mode', () => {
+    mockUsePostReturn.isArticle = true;
+    mockUsePostReturn.articleTitle = 'Test Article Title';
+    mockUsePostReturn.content = 'Article body content';
+
+    const { container } = render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for edit variant', () => {
+    mockUsePostReturn.content = 'Existing post content';
+
+    const { container } = render(
+      <PostInput variant={POST_INPUT_VARIANT.EDIT} editPostId="test-post-123" editContent="Existing post content" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for edit variant with article mode', () => {
+    mockUsePostReturn.isArticle = true;
+    mockUsePostReturn.articleTitle = 'Existing Article Title';
+    mockUsePostReturn.content = 'Existing article body';
+
+    const { container } = render(
+      <PostInput
+        variant={POST_INPUT_VARIANT.EDIT}
+        editPostId="test-post-123"
+        editContent='{"title":"Existing Article Title","body":"Existing article body"}'
+        editIsArticle={true}
+      />,
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 });

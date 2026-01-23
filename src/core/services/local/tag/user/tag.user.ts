@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService } from '@/libs';
 
 export class LocalUserTagService {
   private static readonly TAG_TABLES = [Core.UserTagsModel.table, Core.UserCountsModel.table] as const;
@@ -10,9 +10,8 @@ export class LocalUserTagService {
         const userTagsModel = await Core.UserTagsModel.getOrCreate<Core.Pubky, Core.UserTagsModelSchema>(taggedId);
         const tagExists = userTagsModel.addTagger(label, taggerId);
 
-        // Cancel the operation
+        // Idempotent: user already tagged this user with this label
         if (tagExists === null) {
-          Libs.Logger.debug('User already tagged this user with this label', { taggedId, label, taggerId });
           return;
         }
         await Promise.all([
@@ -23,53 +22,57 @@ export class LocalUserTagService {
             countChanges: { tags: 1, unique_tags: !tagExists ? 1 : undefined },
           }),
         ]);
-
-        Libs.Logger.debug('User tag created', { taggedId, label, taggerId });
       });
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to create user tag`, 500, {
-        error,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to create user tag', {
+        service: ErrorService.Local,
+        operation: 'create',
+        context: { taggedId, label, taggerId },
+        cause: error,
       });
     }
-    // Update tagger user counts, tagged. DONE
-    // update tagged user_tags. From there we will get the unique_tags count. DONE
-    // Update tagged user counts, tags
-    // Update tagged user_counts, unique_tags. For that we need to check user tags
   }
 
-  static async delete({ taggerId, taggedId, label }: Core.TLocalTagParams) {
+  /**
+   * Removes a tag from a user and updates all related counts.
+   *
+   * @param params.taggerId - Unique identifier of the user removing the tag
+   * @param params.taggedId - Unique identifier of the user being untagged
+   * @param params.label - Tag label to remove
+   *
+   * @returns {boolean} true if tag was deleted, false if nothing to delete (idempotent)
+   * @throws {AppError} When database operations fail
+   */
+  static async delete({ taggerId, taggedId, label }: Core.TLocalTagParams): Promise<boolean> {
+    // Check if user has tags before starting transaction
+    const userTagsModel = await Core.UserTagsModel.findById(taggedId);
+    if (!userTagsModel) {
+      return false; // Nothing to delete
+    }
+
+    const lastTaggerOnTag = userTagsModel.removeTagger(label, taggerId);
+    if (lastTaggerOnTag === null) {
+      return false; // User hasn't tagged this user with this label
+    }
+
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
-        const userTagsModel = await Core.UserTagsModel.findById(taggedId);
-        if (!userTagsModel) {
-          throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, `User has no tags`, 404, { taggedId });
-        }
-        const lastTaggerOnTag = userTagsModel.removeTagger(label, taggerId);
-        if (typeof lastTaggerOnTag === 'boolean') {
-          await Promise.all([
-            this.saveUserTagsModel(taggedId, userTagsModel),
-            Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: -1 } }),
-            Core.UserCountsModel.updateCounts({
-              userId: taggedId,
-              countChanges: { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined },
-            }),
-          ]);
-          Libs.Logger.debug('User tag deleted', { taggedId, label, taggerId });
-        } else {
-          throw Libs.createDatabaseError(
-            Libs.DatabaseErrorType.QUERY_FAILED,
-            `User has not tagged this user with this label`,
-            404,
-            { taggedId, label, taggerId },
-          );
-        }
+        await Promise.all([
+          this.saveUserTagsModel(taggedId, userTagsModel),
+          Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: -1 } }),
+          Core.UserCountsModel.updateCounts({
+            userId: taggedId,
+            countChanges: { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined },
+          }),
+        ]);
       });
+      return true;
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to delete user tag`, 500, {
-        error,
-        taggedId,
-        label,
-        taggerId,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to delete user tag', {
+        service: ErrorService.Local,
+        operation: 'delete',
+        context: { taggedId, label, taggerId },
+        cause: error,
       });
     }
   }

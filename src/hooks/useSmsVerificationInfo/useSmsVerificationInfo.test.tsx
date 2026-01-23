@@ -62,14 +62,28 @@ describe('useSmsVerificationInfo', () => {
     });
   });
 
-  it('returns available: false when API call fails', async () => {
+  it('returns available: false with error: true when API call fails (non-403)', async () => {
+    // Issue #919: Generic errors should be distinguishable from geoblocking
     mockGetSmsVerificationInfo.mockRejectedValue(new Error('Network error'));
 
     const { result } = renderHook(() => useSmsVerificationInfo());
 
-    // Wait for the effect to complete and return unavailable
+    // Wait for the effect to complete and return error state
+    await waitFor(() => {
+      expect(result.current).toEqual({ available: false, error: true });
+    });
+  });
+
+  it('returns available: false without error flag when geoblocked (403)', async () => {
+    // Geoblocking returns { available: false } without error flag
+    mockGetSmsVerificationInfo.mockResolvedValue({ available: false });
+
+    const { result } = renderHook(() => useSmsVerificationInfo());
+
     await waitFor(() => {
       expect(result.current).toEqual({ available: false });
+      // Should NOT have error flag for geoblocking
+      expect(result.current?.error).toBeUndefined();
     });
   });
 

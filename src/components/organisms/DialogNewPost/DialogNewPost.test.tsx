@@ -32,11 +32,13 @@ vi.mock('@/organisms', () => ({
       onSuccess,
       expanded,
       onContentChange,
+      onArticleModeChange,
     }: {
       variant: string;
       onSuccess?: () => void;
       expanded?: boolean;
       onContentChange?: (content: string, tags: string[]) => void;
+      onArticleModeChange?: (isArticle: boolean) => void;
     }) => (
       <div data-testid="post-input" data-variant={variant} data-expanded={expanded}>
         <button data-testid="mock-success-btn" onClick={onSuccess}>
@@ -44,6 +46,12 @@ vi.mock('@/organisms', () => ({
         </button>
         <button data-testid="mock-content-change-btn" onClick={() => onContentChange?.('test content', ['tag1'])}>
           Change Content
+        </button>
+        <button data-testid="mock-article-mode-btn" onClick={() => onArticleModeChange?.(true)}>
+          Enable Article Mode
+        </button>
+        <button data-testid="mock-article-mode-off-btn" onClick={() => onArticleModeChange?.(false)}>
+          Disable Article Mode
         </button>
       </div>
     ),
@@ -151,6 +159,47 @@ describe('DialogNewPost', () => {
     rerender(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
     dialog = screen.getByTestId('dialog');
     expect(dialog).toHaveAttribute('data-open', 'true');
+  });
+
+  it('displays "New Post" title by default', () => {
+    const onOpenChangeAction = vi.fn();
+    render(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
+
+    expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Post');
+    expect(screen.getByTestId('dialog-description')).toHaveTextContent('New Post dialog');
+  });
+
+  it('changes title to "New Article" when article mode is enabled', async () => {
+    const onOpenChangeAction = vi.fn();
+    render(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
+
+    expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Post');
+
+    const articleModeButton = screen.getByTestId('mock-article-mode-btn');
+    fireEvent.click(articleModeButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Article');
+      expect(screen.getByTestId('dialog-description')).toHaveTextContent('New Article dialog');
+    });
+  });
+
+  it('changes title back to "New Post" when article mode is disabled', async () => {
+    const onOpenChangeAction = vi.fn();
+    render(<DialogNewPost open={true} onOpenChangeAction={onOpenChangeAction} />);
+
+    // Enable article mode first
+    fireEvent.click(screen.getByTestId('mock-article-mode-btn'));
+    await waitFor(() => {
+      expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Article');
+    });
+
+    // Disable article mode
+    fireEvent.click(screen.getByTestId('mock-article-mode-off-btn'));
+    await waitFor(() => {
+      expect(screen.getByTestId('dialog-title')).toHaveTextContent('New Post');
+      expect(screen.getByTestId('dialog-description')).toHaveTextContent('New Post dialog');
+    });
   });
 });
 
