@@ -33,8 +33,9 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
   } = actions;
 
   // Subscribe to TTL coordinator based on viewport visibility
-  const { ref: ttlRef } = Hooks.useTtlUserViewportSubscription({
-    pubky: publicKey,
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'user',
+    id: publicKey,
   });
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
