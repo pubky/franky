@@ -29,12 +29,20 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
   const loadedCountRef = useRef(0);
   const prevPostIdRef = useRef<string | null | undefined>(null);
 
+  // Track zero-tagger tags with their original index for order preservation
+  const [zeroTaggerTags, setZeroTaggerTags] = useState<Map<string, { tag: Core.NexusTag; index: number }>>(new Map());
+
+  // Track the order of tags as they were originally loaded
+  const [tagOrder, setTagOrder] = useState<Map<string, number>>(new Map());
+
   // Reset state when postId changes
   useEffect(() => {
     if (prevPostIdRef.current !== postId) {
       setHasMore(true);
       loadedCountRef.current = 0;
       prevPostIdRef.current = postId;
+      setZeroTaggerTags(new Map());
+      setTagOrder(new Map());
     }
   }, [postId]);
 
@@ -51,20 +59,72 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
   const isLoading = tagsCollection === undefined;
 
   // Extract NexusTag[] from the collection (first item contains the tags array)
-  const tags = useMemo(() => {
+  const localTags = useMemo(() => {
     if (!tagsCollection || tagsCollection.length === 0) return [];
     return tagsCollection[0]?.tags ?? [];
   }, [tagsCollection]);
 
+  // Update tag order map when localTags change (only for new tags)
+  useEffect(() => {
+    if (localTags.length === 0) return;
+
+    setTagOrder((prevOrder) => {
+      let hasChanges = false;
+      const newOrder = new Map(prevOrder);
+
+      localTags.forEach((tag) => {
+        const labelLower = tag.label.toLowerCase();
+        if (!newOrder.has(labelLower)) {
+          newOrder.set(labelLower, newOrder.size);
+          hasChanges = true;
+        }
+      });
+
+      return hasChanges ? newOrder : prevOrder;
+    });
+  }, [localTags]);
+
+  // Combine local tags with zero-tagger tags, preserving order
+  const allTags = useMemo(() => {
+    const baseTags = localTags;
+    const baseTagLabels = new Set(baseTags.map((t) => t.label.toLowerCase()));
+
+    // Get zero-tagger tags that aren't in baseTags
+    const zeroTagsToAdd: Array<{ tag: Core.NexusTag; index: number }> = [];
+    zeroTaggerTags.forEach((value, label) => {
+      if (!baseTagLabels.has(label)) {
+        zeroTagsToAdd.push(value);
+      }
+    });
+
+    if (zeroTagsToAdd.length === 0) {
+      return baseTags;
+    }
+
+    // Merge and sort by original index
+    const allTagsWithIndex = [
+      ...baseTags.map((tag) => ({
+        tag,
+        index: tagOrder.get(tag.label.toLowerCase()) ?? Infinity,
+      })),
+      ...zeroTagsToAdd,
+    ];
+
+    // Sort by original index to preserve order
+    allTagsWithIndex.sort((a, b) => a.index - b.index);
+
+    return allTagsWithIndex.map((item) => item.tag);
+  }, [localTags, zeroTaggerTags, tagOrder]);
+
   // Update loaded count when tags change
   useEffect(() => {
-    if (tags.length > loadedCountRef.current) {
-      loadedCountRef.current = tags.length;
+    if (allTags.length > loadedCountRef.current) {
+      loadedCountRef.current = allTags.length;
     }
-  }, [tags.length]);
+  }, [allTags.length]);
 
   // Transform tags with avatar data and relationship status
-  const tagsWithAvatars = useMemo(() => transformTagsForViewer(tags, viewerId), [tags, viewerId]);
+  const tagsWithAvatars = useMemo(() => transformTagsForViewer(allTags, viewerId), [allTags, viewerId]);
 
   // Load more tags from Nexus
   const loadMore = useCallback(async () => {
@@ -103,7 +163,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
       if (!viewerId) return { success: false, error: 'You must be logged in to add tags' };
 
       // Check if user already tagged
-      const existingTag = tags.find((t) => t.label.toLowerCase() === label.toLowerCase());
+      const existingTag = allTags.find((t) => t.label.toLowerCase() === label.toLowerCase());
       if (existingTag?.taggers?.includes(viewerId)) {
         return { success: false, error: 'You have already added this tag' };
       }
@@ -116,6 +176,14 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
           taggedKind: Core.TagKind.POST,
         });
 
+        // Remove from zero-tagger list if it was there
+        const labelLower = label.toLowerCase();
+        setZeroTaggerTags((prev) => {
+          const next = new Map(prev);
+          next.delete(labelLower);
+          return next;
+        });
+
         return { success: true };
       } catch {
         toast({
@@ -125,7 +193,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
         return { success: false, error: 'Failed to add tag' };
       }
     },
-    [postId, viewerId, tags],
+    [postId, viewerId, allTags],
   );
 
   const handleTagToggle = useCallback(
@@ -134,12 +202,30 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
 
       // Use the relationship from the tag (which comes from transformTagsForViewer)
       // This is more reliable than checking the taggers array which may be truncated
-      const currentTag = tags.find((t) => t.label === tag.label);
+      const currentTagIndex = allTags.findIndex((t) => t.label === tag.label);
+      const currentTag = currentTagIndex >= 0 ? allTags[currentTagIndex] : undefined;
       const userIsTagger =
         tag.relationship ?? currentTag?.relationship ?? currentTag?.taggers?.includes(viewerId) ?? false;
+      const labelLower = tag.label.toLowerCase();
 
       try {
         if (userIsTagger) {
+          // Track zero-tagger tag BEFORE delete to preserve order
+          if (currentTag && (currentTag.taggers_count ?? 0) <= 1) {
+            const originalIndex = tagOrder.get(labelLower) ?? currentTagIndex;
+            const zeroTag: Core.NexusTag = {
+              ...currentTag,
+              taggers: [],
+              taggers_count: 0,
+              relationship: false,
+            };
+            setZeroTaggerTags((prev) => {
+              const next = new Map(prev);
+              next.set(labelLower, { tag: zeroTag, index: originalIndex });
+              return next;
+            });
+          }
+
           await Core.TagController.commitDelete({
             taggedId: postId,
             label: tag.label,
@@ -153,20 +239,35 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
             taggerId: viewerId,
             taggedKind: Core.TagKind.POST,
           });
+
+          // Remove from zero-tagger list
+          setZeroTaggerTags((prev) => {
+            const next = new Map(prev);
+            next.delete(labelLower);
+            return next;
+          });
         }
       } catch {
+        // Rollback zero-tagger state on error
+        if (userIsTagger) {
+          setZeroTaggerTags((prev) => {
+            const next = new Map(prev);
+            next.delete(labelLower);
+            return next;
+          });
+        }
         toast({
           title: userIsTagger ? 'Failed to remove tag' : 'Failed to add tag',
           description: `Could not ${userIsTagger ? 'remove' : 'add'} "${tag.label}". Please try again.`,
         });
       }
     },
-    [postId, viewerId, tags],
+    [postId, viewerId, allTags, tagOrder],
   );
 
   return {
     tags: tagsWithAvatars,
-    count: tags.length,
+    count: allTags.length,
     isLoading,
     isLoadingMore,
     hasMore,
