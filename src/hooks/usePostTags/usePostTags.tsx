@@ -211,7 +211,7 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
       try {
         if (userIsTagger) {
           // Track zero-tagger tag BEFORE delete to preserve order
-          if (currentTag && (currentTag.taggers_count ?? 0) <= 1) {
+          if (currentTag && (currentTag.taggers_count ?? 0) === 1) {
             const originalIndex = tagOrder.get(labelLower) ?? currentTagIndex;
             const zeroTag: Core.NexusTag = {
               ...currentTag,
