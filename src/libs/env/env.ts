@@ -285,7 +285,10 @@ function parseEnv(): z.infer<typeof envSchema> {
 
 function parsePkarrRelays(val: string): string {
   try {
-    const relays = val.split(',').map((r) => r.trim()).filter((r) => r.length > 0);
+    const relays = val
+      .split(',')
+      .map((r) => r.trim())
+      .filter((r) => r.length > 0);
     for (const relay of relays) {
       new URL(relay);
     }
