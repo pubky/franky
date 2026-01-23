@@ -317,7 +317,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-trash2 lucide-trash-2"
+          class="lucide lucide-user-round-x"
           fill="none"
           height="16"
           stroke="currentColor"
@@ -329,19 +329,18 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M10 11v6"
+            d="M2 21a8 8 0 0 1 11.873-7"
+          />
+          <circle
+            cx="10"
+            cy="8"
+            r="5"
           />
           <path
-            d="M14 11v6"
+            d="m17 17 5 5"
           />
           <path
-            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
-          />
-          <path
-            d="M3 6h18"
-          />
-          <path
-            d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            d="m22 17-5 5"
           />
         </svg>
         Delete Account
