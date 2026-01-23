@@ -19,37 +19,52 @@ exports[`Home - Snapshots > matches snapshot for HomeActions with default props 
 
 exports[`Home - Snapshots > matches snapshot for HomeFooter with default props 1`] = `
 <div
-  data-testid="footer-links"
+  class="flex-1 flex-col items-start justify-end gap-1 pt-3 sm:pr-12"
+  data-testid="container"
 >
-  By creating a Pubky account, you agree to the 
-  <button
-    data-testid="dialog-terms"
+  <div
+    class="flex-row items-center gap-1"
+    data-testid="container"
   >
-    Terms of Service
-  </button>
-  , 
-  <button
-    data-testid="dialog-privacy"
+    <a
+      data-testid="link"
+      href="https://synonym.to"
+      target="_blank"
+    >
+      <img
+        alt="Synonym"
+        height="24"
+        src="/images/synonym-grey-logo.svg"
+        width="95"
+      />
+    </a>
+    <div
+      class="flex-row items-center gap-1"
+      data-testid="container"
+    >
+      <span
+        class="text-sm text-[#89898F]"
+      >
+        a
+      </span>
+      <img
+        alt="Tether"
+        height="9"
+        src="/images/tether-text.svg"
+        width="40"
+      />
+      <span
+        class="text-sm text-[#89898F]"
+      >
+        company
+      </span>
+    </div>
+  </div>
+  <span
+    class="text-sm text-[#89898F]"
   >
-    Privacy Policy
-  </button>
-  , and confirm you are 
-  <button
-    data-testid="dialog-age"
-  >
-    over 18 years old.
-  </button>
-   Pubky is powered by
-   
-  <a
-    data-testid="link"
-    href="https://pubky.org"
-    target="_blank"
-  >
-    Pubky Core
-  </a>
-   
-  and was built with love and dedication by Synonym Software Ltd. ©2025.
+    Synonym Software, S.A. DE C.V. ©2025. All rights reserved.
+  </span>
 </div>
 `;
 

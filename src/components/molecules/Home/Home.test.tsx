@@ -25,12 +25,6 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
-// Mock organisms
-vi.mock('@/organisms', () => ({
-  DialogTerms: () => <button data-testid="dialog-terms">Terms of Service</button>,
-  DialogPrivacy: () => <button data-testid="dialog-privacy">Privacy Policy</button>,
-  DialogAge: () => <button data-testid="dialog-age">over 18 years old.</button>,
-}));
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -90,23 +84,26 @@ describe('HomeActions', () => {
 });
 
 describe('HomeFooter', () => {
-  it('renders footer with all components', () => {
+  it('renders footer with Synonym and Tether branding images', () => {
     render(<HomeFooter />);
 
-    expect(screen.getByTestId('footer-links')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-terms')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-privacy')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-age')).toBeInTheDocument();
-    expect(screen.getByTestId('link')).toBeInTheDocument();
+    expect(screen.getByAltText('Synonym')).toBeInTheDocument();
+    expect(screen.getByAltText('Tether')).toBeInTheDocument();
   });
 
-  it('renders dialog components with correct link text', () => {
+  it('renders branding text and copyright', () => {
     render(<HomeFooter />);
 
-    expect(screen.getByText('Terms of Service')).toBeInTheDocument();
-    expect(screen.getByText('Privacy Policy')).toBeInTheDocument();
-    expect(screen.getByText('over 18 years old.')).toBeInTheDocument();
-    expect(screen.getByText(/Synonym Software Ltd. ©2025/)).toBeInTheDocument();
+    expect(screen.getByText('a')).toBeInTheDocument();
+    expect(screen.getByText('company')).toBeInTheDocument();
+    expect(screen.getByText(/Synonym Software, S\.A\. DE C\.V\./)).toBeInTheDocument();
+  });
+
+  it('renders Synonym logo as a link', () => {
+    render(<HomeFooter />);
+
+    const synonymLink = screen.getByAltText('Synonym').closest('a');
+    expect(synonymLink).toHaveAttribute('href', 'https://synonym.to');
   });
 });
 
