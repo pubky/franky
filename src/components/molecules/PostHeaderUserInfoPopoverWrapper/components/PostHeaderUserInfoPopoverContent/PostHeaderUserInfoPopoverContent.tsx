@@ -59,6 +59,7 @@ export function PostHeaderUserInfoPopoverContent({
   return (
     <Atoms.Container className="gap-3">
       <PostHeaderUserInfoPopoverHeader
+        userId={userId}
         userName={userName}
         formattedPublicKey={formattedPublicKey}
         avatarUrl={profileAvatarUrl || avatarUrl}
