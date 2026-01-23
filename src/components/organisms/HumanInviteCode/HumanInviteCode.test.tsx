@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
+import { normaliseRadixIds } from '@/libs/utils/utils';
 import { HumanInviteCode } from './HumanInviteCode';
 
 vi.mock('@/molecules', async () => {
@@ -187,13 +188,15 @@ describe('HumanInviteCode', () => {
 describe('HumanInviteCode - Snapshots', () => {
   it('matches snapshot for empty state', () => {
     const { container } = render(<HumanInviteCode onBack={() => {}} onSuccess={() => {}} />);
-    expect(container).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for complete code state', () => {
     const { container } = render(<HumanInviteCode onBack={() => {}} onSuccess={() => {}} />);
     const input = screen.getByPlaceholderText('XXXX-XXXX-XXXX');
     fireEvent.change(input, { target: { value: 'N76QG32NC0RG' } });
-    expect(container).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 });

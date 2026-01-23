@@ -34,7 +34,7 @@ exports[`MutedUsersList - Snapshots > matches snapshot - with muted users 1`] = 
           class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
         >
           <span
-            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+            class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
           >
             U
           </span>
@@ -116,7 +116,7 @@ exports[`MutedUsersList - Snapshots > matches snapshot - with muted users 1`] = 
           class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
         >
           <span
-            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+            class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
           >
             U
           </span>
@@ -198,7 +198,7 @@ exports[`MutedUsersList - Snapshots > matches snapshot - with muted users 1`] = 
           class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
         >
           <span
-            class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+            class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
           >
             U
           </span>
