@@ -37,4 +37,30 @@ describe('HumanPhoneCodeInput', () => {
     const { container } = render(<HumanPhoneCodeInput value={['', '', '', '', '', '']} onChange={() => {}} />);
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it('auto-selects content when backspace moves focus to previous input with existing digit', () => {
+    const Wrapper = () => {
+      const [code, setCode] = useState(['1', '2', '', '', '', '']);
+      return <HumanPhoneCodeInput value={code} onChange={setCode} />;
+    };
+
+    const { container } = render(<Wrapper />);
+
+    const input2 = container.querySelector('#human-phone-code-input-2-input') as HTMLInputElement;
+    const input1 = container.querySelector('#human-phone-code-input-1-input') as HTMLInputElement;
+
+    // Focus on empty input at index 2
+    input2.focus();
+    expect(document.activeElement).toBe(input2);
+
+    // Press backspace on empty input - should move focus to index 1 and select its content
+    fireEvent.keyDown(input2, { key: 'Backspace' });
+
+    // Focus should move to previous input
+    expect(document.activeElement).toBe(input1);
+
+    // Content should be selected (selectionStart=0, selectionEnd=1 means "2" is selected)
+    expect(input1.selectionStart).toBe(0);
+    expect(input1.selectionEnd).toBe(1);
+  });
 });
