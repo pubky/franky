@@ -9,6 +9,7 @@ import { SinglePostCard } from '../SinglePostCard';
 import { SinglePostParticipants } from '../SinglePostParticipants';
 import { QuickReply } from '../QuickReply';
 import { PostMain } from '../PostMain';
+import { PostPageHeader } from '../PostPageHeader';
 import type { SinglePostContentProps } from './SinglePostContent.types';
 
 /**
@@ -56,6 +57,9 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
 
   return (
     <>
+      {/* Page header with breadcrumb navigation */}
+      <PostPageHeader postId={postId} />
+
       {/* Main post - FULL WIDTH - always visible */}
       {isArticle ? (
         <SinglePostArticle

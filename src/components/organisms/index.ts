@@ -76,6 +76,7 @@ export * from './SinglePostArticle';
 export * from './SinglePostCard';
 export * from './SinglePostContent';
 export * from './SinglePostParticipants';
+export * from './PostPageHeader';
 export * from './PostTagsPanel';
 export * from './RightSidebar';
 export * from './Scan';
