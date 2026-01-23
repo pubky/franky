@@ -15,6 +15,11 @@ interface SinglePostArticleProps {
   isBlurred: boolean;
 }
 
+/**
+ * SinglePostArticle Organism
+ *
+ * Displays a single article post with tags always visible on both mobile and desktop (no toggle).
+ */
 export const SinglePostArticle = ({ postId, content, attachments, isBlurred }: SinglePostArticleProps) => {
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
   const [repostDialogOpen, setRepostDialogOpen] = useState(false);
@@ -44,11 +49,14 @@ export const SinglePostArticle = ({ postId, content, attachments, isBlurred }: S
 
           <Organisms.PostHeader postId={postId} size="large" timeAgoPlacement="bottom-left" />
 
+          {/* Tags on mobile - always visible */}
+          <Organisms.PostTagsPanel postId={postId} className="mt-3 mb-6 lg:hidden" />
+
           <Organisms.PostActionsBar
             postId={postId}
             onReplyClick={handleReplyClick}
             onRepostClick={handleRepostClick}
-            className="mt-3 mb-6"
+            className="mb-6"
           />
 
           {isBlurred ? (
@@ -62,9 +70,6 @@ export const SinglePostArticle = ({ postId, content, attachments, isBlurred }: S
               <Molecules.PostText content={body} isArticle />
             </>
           )}
-
-          {/* Tags on mobile */}
-          <Organisms.PostTagsPanel postId={postId} className="mt-6 flex lg:hidden" />
         </Atoms.Container>
 
         {/* Right column - Tags (desktop only) */}
