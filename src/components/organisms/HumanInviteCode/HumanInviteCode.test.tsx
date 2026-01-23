@@ -185,6 +185,9 @@ describe('HumanInviteCode', () => {
   });
 });
 
+// Note: Radix UI generates incremental IDs (radix-«r0», radix-«r1», etc.) for aria-controls attributes.
+// These IDs are deterministic within an identical test suite run but may change when a subset of tests are run or are run in a different order.
+// Use normaliseRadixIds to ensure the snapshots are consistent.
 describe('HumanInviteCode - Snapshots', () => {
   it('matches snapshot for empty state', () => {
     const { container } = render(<HumanInviteCode onBack={() => {}} onSuccess={() => {}} />);

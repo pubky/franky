@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { Err, ErrorService, ValidationErrorCode } from '@/libs';
 
+const DEFAULT_PKARR_RELAYS = 'https://pkarr.pubky.app,https://pkarr.pubky.org';
+
 /**
  * Environment Variables Schema with Zod validation
  *
@@ -134,7 +136,7 @@ const envSchema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
-  NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app,https://pkarr.pubky.org'),
+  NEXT_PUBLIC_PKARR_RELAYS: z.string().default(DEFAULT_PKARR_RELAYS).transform(parsePkarrRelays),
 
   NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
@@ -278,6 +280,24 @@ function parseEnv(): z.infer<typeof envSchema> {
       operation: 'parseEnv',
       cause: error,
     });
+  }
+}
+
+function parsePkarrRelays(val: string): string {
+  try {
+    const relays = val
+      .split(',')
+      .map((r) => r.trim())
+      .filter((r) => r.length > 0);
+    for (const relay of relays) {
+      new URL(relay);
+    }
+    return relays.join(',');
+  } catch {
+    // Using console.warn here instead of Logger.warn due to circular dependency:
+    // env.ts must load before Logger is available (env -> libs -> logger)
+    console.warn(`Invalid NEXT_PUBLIC_PKARR_RELAYS value: "${val}", using defaults`);
+    return DEFAULT_PKARR_RELAYS;
   }
 }
 
