@@ -1,5 +1,52 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostContentBase - Snapshots > matches snapshot with article content (kind=long) 1`] = `
+<div
+  class="gap-3"
+  data-testid="container"
+>
+  <div
+    class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+    data-testid="container"
+  >
+    <h1
+      class="text-3xl font-bold text-foreground mt-6 mb-4 first:mt-0 whitespace-normal"
+    >
+      Article Title
+    </h1>
+    
+
+    <p>
+      This is an article with a 
+      <a
+        class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+        href="https://example.com"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        link
+      </a>
+      .
+    </p>
+    
+
+    <h2
+      class="text-2xl font-bold text-foreground mt-5 mb-3 first:mt-0 whitespace-normal"
+    >
+      Section One
+    </h2>
+    
+
+    <p>
+      More content here.
+    </p>
+  </div>
+  <div
+    data-testid="post-attachments"
+  />
+</div>
+`;
+
 exports[`PostContentBase - Snapshots > matches snapshot with empty content 1`] = `
 <div
   class="gap-3"

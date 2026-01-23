@@ -318,7 +318,7 @@ describe('PostText', () => {
   });
 
   describe('Unwrapped disallowed elements', () => {
-    it('unwraps headings but keeps content', () => {
+    it('unwraps headings but keeps content in regular posts', () => {
       render(<PostText content="# Heading text" />);
 
       // Heading should be unwrapped but text preserved
@@ -339,6 +339,164 @@ describe('PostText', () => {
 
       // Table should be unwrapped but content preserved
       expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Article mode (isArticle=true)', () => {
+    describe('Headings', () => {
+      it('renders h1 heading in article mode', () => {
+        render(<PostText content="# Main Title" isArticle={true} />);
+
+        const heading = screen.getByRole('heading', { level: 1 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('Main Title');
+        expect(heading).toHaveClass('text-3xl', 'font-bold', 'text-foreground');
+      });
+
+      it('renders h2 heading in article mode', () => {
+        render(<PostText content="## Section Title" isArticle={true} />);
+
+        const heading = screen.getByRole('heading', { level: 2 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('Section Title');
+        expect(heading).toHaveClass('text-2xl', 'font-bold', 'text-foreground');
+      });
+
+      it('renders h3 heading in article mode', () => {
+        render(<PostText content="### Subsection Title" isArticle={true} />);
+
+        const heading = screen.getByRole('heading', { level: 3 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('Subsection Title');
+        expect(heading).toHaveClass('text-xl', 'font-semibold', 'text-foreground');
+      });
+
+      it('renders h4 heading in article mode', () => {
+        render(<PostText content="#### Minor Title" isArticle={true} />);
+
+        const heading = screen.getByRole('heading', { level: 4 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('Minor Title');
+        expect(heading).toHaveClass('text-lg', 'font-semibold', 'text-foreground');
+      });
+
+      it('renders h5 heading in article mode', () => {
+        render(<PostText content="##### Small Title" isArticle={true} />);
+
+        const heading = screen.getByRole('heading', { level: 5 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('Small Title');
+        expect(heading).toHaveClass('text-base', 'font-semibold', 'text-foreground');
+      });
+
+      it('renders h6 heading in article mode', () => {
+        render(<PostText content="###### Tiny Title" isArticle={true} />);
+
+        const heading = screen.getByRole('heading', { level: 6 });
+        expect(heading).toBeInTheDocument();
+        expect(heading).toHaveTextContent('Tiny Title');
+        expect(heading).toHaveClass('text-sm', 'font-semibold', 'text-foreground');
+      });
+
+      it('renders multiple headings in article mode', () => {
+        render(
+          <PostText content={`# Main Title\n\n## Section One\n\n### Subsection\n\n## Section Two`} isArticle={true} />,
+        );
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Main Title');
+        expect(screen.getAllByRole('heading', { level: 2 })).toHaveLength(2);
+        expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('Subsection');
+      });
+    });
+
+    describe('Embedded links', () => {
+      it('renders markdown link as clickable link in article mode', () => {
+        render(<PostText content="Check out [Example](https://example.com)" isArticle={true} />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'https://example.com');
+        expect(link).toHaveTextContent('Example');
+      });
+
+      it('renders markdown link with title in article mode', () => {
+        render(<PostText content='Visit [our site](https://example.com "Our Website")' isArticle={true} />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'https://example.com');
+        expect(link).toHaveTextContent('our site');
+      });
+
+      it('renders multiple markdown links in article mode', () => {
+        render(
+          <PostText content="Check [link one](https://one.com) and [link two](https://two.com)" isArticle={true} />,
+        );
+
+        const links = screen.getAllByRole('link');
+        expect(links).toHaveLength(2);
+        expect(links[0]).toHaveAttribute('href', 'https://one.com');
+        expect(links[1]).toHaveAttribute('href', 'https://two.com');
+      });
+
+      it('renders nested formatting in link text in article mode', () => {
+        render(<PostText content="[**bold link**](https://example.com)" isArticle={true} />);
+
+        const link = screen.getByRole('link');
+        expect(link).toHaveAttribute('href', 'https://example.com');
+        expect(link.querySelector('strong')).toHaveTextContent('bold link');
+      });
+    });
+
+    describe('Combined article features', () => {
+      it('renders article with headings and embedded links', () => {
+        render(
+          <PostText
+            content={`# Article Title\n\nThis is an intro with a [link](https://example.com).\n\n## Section One\n\nMore content here.`}
+            isArticle={true}
+          />,
+        );
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Article Title');
+        expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Section One');
+        expect(screen.getByRole('link')).toHaveAttribute('href', 'https://example.com');
+      });
+
+      it('renders article with all markdown features', () => {
+        render(
+          <PostText
+            content={`# Title\n\nThis is **bold** and *italic*.\n\n## Links\n\n- [Link one](https://one.com)\n- [Link two](https://two.com)\n\n> A quote\n\n\`\`\`js\nconst x = 1;\n\`\`\``}
+            isArticle={true}
+          />,
+        );
+
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
+        expect(screen.getAllByRole('link')).toHaveLength(2);
+        expect(screen.getByText('bold').tagName).toBe('STRONG');
+        expect(screen.getByText('italic').tagName).toBe('EM');
+      });
+    });
+
+    describe('Default behavior (isArticle=false)', () => {
+      it('still unwraps headings when isArticle is false', () => {
+        render(<PostText content="# Heading text" isArticle={false} />);
+
+        expect(screen.getByText('Heading text')).toBeInTheDocument();
+        expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+      });
+
+      it('still converts markdown links to plaintext when isArticle is false', () => {
+        render(<PostText content="Check out [example](https://example.com)" isArticle={false} />);
+
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+        expect(screen.getByText(/\[example\]\(https:\/\/example\.com\)/)).toBeInTheDocument();
+      });
+
+      it('still unwraps headings when isArticle is undefined (default)', () => {
+        render(<PostText content="# Heading text" />);
+
+        expect(screen.getByText('Heading text')).toBeInTheDocument();
+        expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -902,5 +1060,49 @@ Third line`}
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Extra text to make this longer than 500 characters for truncation testing purposes.';
     const { container } = render(<PostText content={longContent} />);
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  describe('Article mode snapshots', () => {
+    it('matches snapshot for article with h1 heading', () => {
+      const { container } = render(<PostText content="# Main Title" isArticle={true} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for article with all heading levels', () => {
+      const { container } = render(
+        <PostText
+          content={`# H1 Title\n\n## H2 Title\n\n### H3 Title\n\n#### H4 Title\n\n##### H5 Title\n\n###### H6 Title`}
+          isArticle={true}
+        />,
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for article with embedded link', () => {
+      const { container } = render(
+        <PostText content="Check out [Example](https://example.com) for more" isArticle={true} />,
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for article with headings and embedded links', () => {
+      const { container } = render(
+        <PostText
+          content={`# Article Title\n\nThis is an intro with a [link](https://example.com).\n\n## Section One\n\nMore content with [another link](https://another.com).`}
+          isArticle={true}
+        />,
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for full article with all markdown features', () => {
+      const { container } = render(
+        <PostText
+          content={`# Welcome to the Article\n\nThis is **bold** and *italic* text.\n\n## Getting Started\n\nVisit [our docs](https://docs.example.com) to learn more.\n\n### Key Features\n\n- Feature one\n- Feature two\n- Feature three\n\n> An important quote\n\n\`\`\`javascript\nconst hello = "world";\n\`\`\`\n\n## Conclusion\n\nFollow us at #article and check https://example.com`}
+          isArticle={true}
+        />,
+      );
+      expect(container.firstChild).toMatchSnapshot();
+    });
   });
 });

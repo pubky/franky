@@ -1,5 +1,267 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostText - Snapshots > Article mode snapshots > matches snapshot for article with all heading levels 1`] = `
+<div
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <h1
+    class="text-3xl font-bold text-foreground mt-6 mb-4 first:mt-0 whitespace-normal"
+  >
+    H1 Title
+  </h1>
+  
+
+  <h2
+    class="text-2xl font-bold text-foreground mt-5 mb-3 first:mt-0 whitespace-normal"
+  >
+    H2 Title
+  </h2>
+  
+
+  <h3
+    class="text-xl font-semibold text-foreground mt-4 mb-2 first:mt-0 whitespace-normal"
+  >
+    H3 Title
+  </h3>
+  
+
+  <h4
+    class="text-lg font-semibold text-foreground mt-3 mb-2 first:mt-0 whitespace-normal"
+  >
+    H4 Title
+  </h4>
+  
+
+  <h5
+    class="text-base font-semibold text-foreground mt-3 mb-1 first:mt-0 whitespace-normal"
+  >
+    H5 Title
+  </h5>
+  
+
+  <h6
+    class="text-sm font-semibold text-foreground mt-2 mb-1 first:mt-0 whitespace-normal"
+  >
+    H6 Title
+  </h6>
+</div>
+`;
+
+exports[`PostText - Snapshots > Article mode snapshots > matches snapshot for article with embedded link 1`] = `
+<div
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Example
+    </a>
+     for more
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > Article mode snapshots > matches snapshot for article with h1 heading 1`] = `
+<div
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <h1
+    class="text-3xl font-bold text-foreground mt-6 mb-4 first:mt-0 whitespace-normal"
+  >
+    Main Title
+  </h1>
+</div>
+`;
+
+exports[`PostText - Snapshots > Article mode snapshots > matches snapshot for article with headings and embedded links 1`] = `
+<div
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <h1
+    class="text-3xl font-bold text-foreground mt-6 mb-4 first:mt-0 whitespace-normal"
+  >
+    Article Title
+  </h1>
+  
+
+  <p>
+    This is an intro with a 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      link
+    </a>
+    .
+  </p>
+  
+
+  <h2
+    class="text-2xl font-bold text-foreground mt-5 mb-3 first:mt-0 whitespace-normal"
+  >
+    Section One
+  </h2>
+  
+
+  <p>
+    More content with 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://another.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      another link
+    </a>
+    .
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > Article mode snapshots > matches snapshot for full article with all markdown features 1`] = `
+<div
+  class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <h1
+    class="text-3xl font-bold text-foreground mt-6 mb-4 first:mt-0 whitespace-normal"
+  >
+    Welcome to the Article
+  </h1>
+  
+
+  <p>
+    This is 
+    <strong>
+      bold
+    </strong>
+     and 
+    <em>
+      italic
+    </em>
+     text.
+  </p>
+  
+
+  <h2
+    class="text-2xl font-bold text-foreground mt-5 mb-3 first:mt-0 whitespace-normal"
+  >
+    Getting Started
+  </h2>
+  
+
+  <p>
+    Visit 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://docs.example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      our docs
+    </a>
+     to learn more.
+  </p>
+  
+
+  <h3
+    class="text-xl font-semibold text-foreground mt-4 mb-2 first:mt-0 whitespace-normal"
+  >
+    Key Features
+  </h3>
+  
+
+  <ul
+    class="list-inside list-disc whitespace-normal"
+  >
+    
+
+    <li>
+      Feature one
+    </li>
+    
+
+    <li>
+      Feature two
+    </li>
+    
+
+    <li>
+      Feature three
+    </li>
+    
+
+  </ul>
+  
+
+  <blockquote
+    class="border-l-4 border-foreground pl-4 whitespace-normal"
+  >
+    
+
+    <p>
+      An important quote
+    </p>
+    
+
+  </blockquote>
+  
+
+  <pre>
+    <code
+      class="language-javascript"
+      data-testid="post-code-block"
+    >
+      const hello = "world";
+
+    </code>
+  </pre>
+  
+
+  <h2
+    class="text-2xl font-bold text-foreground mt-5 mb-3 first:mt-0 whitespace-normal"
+  >
+    Conclusion
+  </h2>
+  
+
+  <p>
+    Follow us at 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=article"
+    >
+      #article
+    </a>
+     and check 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      https://example.com
+    </a>
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for autolinked URL 1`] = `
 <div
   class="text-base leading-6 font-medium wrap-anywhere hyphens-auto whitespace-pre-line text-secondary-foreground"

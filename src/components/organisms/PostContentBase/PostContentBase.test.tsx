@@ -46,17 +46,20 @@ const mockPostContentBlurred = vi.mocked(Organisms.PostContentBlurred);
 
 // Helper to create complete PostDetails mock
 const createMockPostDetails = (
-  overrides: Partial<{ content: string; attachments: string[] | null; is_blurred: boolean }> = {},
+  overrides: Partial<{ content: string; attachments: string[] | null; is_blurred: boolean; kind: string }> = {},
 ) => ({
   id: 'test-author:test-post',
   indexed_at: Date.now(),
-  kind: 'short' as const,
+  kind: 'short' as string,
   uri: 'pubky://test-author/pub/pubky.app/posts/test-post',
   content: 'Mock content',
   attachments: null as string[] | null,
   is_blurred: false,
+  is_moderated: false,
   ...overrides,
 });
+
+const mockPostText = vi.mocked(Molecules.PostText);
 
 describe('PostContentBase', () => {
   beforeEach(() => {
@@ -131,6 +134,71 @@ describe('PostContentBase', () => {
     expect(screen.queryByTestId('post-content-blurred')).not.toBeInTheDocument();
     expect(screen.getByTestId('container')).toBeInTheDocument();
   });
+
+  describe('Article mode (long posts)', () => {
+    it('passes isArticle=true to PostText when post kind is "long"', () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: createMockPostDetails({ content: 'Article content', kind: 'long' }),
+        isLoading: false,
+      });
+
+      render(<PostContentBase postId="article-123" />);
+
+      expect(mockPostText).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: 'Article content',
+          isArticle: true,
+        }),
+        undefined,
+      );
+    });
+
+    it('passes isArticle=false to PostText when post kind is "short"', () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: createMockPostDetails({ content: 'Short content', kind: 'short' }),
+        isLoading: false,
+      });
+
+      render(<PostContentBase postId="short-123" />);
+
+      expect(mockPostText).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: 'Short content',
+          isArticle: false,
+        }),
+        undefined,
+      );
+    });
+
+    it('passes isArticle=false to PostText when post kind is "image"', () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: createMockPostDetails({ content: 'Image caption', kind: 'image' }),
+        isLoading: false,
+      });
+
+      render(<PostContentBase postId="image-123" />);
+
+      expect(mockPostText).toHaveBeenCalledWith(
+        expect.objectContaining({
+          content: 'Image caption',
+          isArticle: false,
+        }),
+        undefined,
+      );
+    });
+
+    it('does not pass isArticle to PostText when content is empty', () => {
+      mockUsePostDetails.mockReturnValue({
+        postDetails: createMockPostDetails({ content: '', kind: 'long' }),
+        isLoading: false,
+      });
+
+      render(<PostContentBase postId="empty-123" />);
+
+      // PostText should not be called when content is empty
+      expect(mockPostText).not.toHaveBeenCalled();
+    });
+  });
 });
 
 describe('PostContentBase - Snapshots', () => {
@@ -203,6 +271,20 @@ describe('PostContentBase - Snapshots', () => {
     });
 
     const { container } = render(<PostContentBase postId="post-6" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with article content (kind=long)', () => {
+    mockUsePostDetails.mockReturnValue({
+      postDetails: createMockPostDetails({
+        content:
+          '# Article Title\n\nThis is an article with a [link](https://example.com).\n\n## Section One\n\nMore content here.',
+        kind: 'long',
+      }),
+      isLoading: false,
+    });
+
+    const { container } = render(<PostContentBase postId="article-1" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -23,13 +23,15 @@ export function PostContentBase({ postId, className }: PostContentBaseProps) {
 
   const hasContent = postDetails.content.trim().length > 0;
   const isBlurred = postDetails.is_blurred;
+  // Articles (long-form posts) get enhanced markdown rendering with headings and embedded links
+  const isArticle = postDetails.kind === 'long';
 
   if (isBlurred) return <Organisms.PostContentBlurred postId={postId} className={className} />;
 
   return (
     <Atoms.Container className={Libs.cn('gap-3', className)}>
       {/* Post text */}
-      {hasContent && <Molecules.PostText content={postDetails.content} />}
+      {hasContent && <Molecules.PostText content={postDetails.content} isArticle={isArticle} />}
 
       {/* Link previews from text */}
       {hasContent && <Molecules.PostLinkEmbeds content={postDetails.content} />}
