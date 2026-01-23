@@ -7,7 +7,7 @@ import * as Libs from '@/libs';
 export function MutedUsers() {
   return (
     <Molecules.SettingsSectionCard
-      icon={Libs.MegaphoneOff}
+      icon={Libs.VolumeX}
       title="Muted users"
       description="Here is an overview of all users you muted. You can choose to unmute users if you want."
     >
