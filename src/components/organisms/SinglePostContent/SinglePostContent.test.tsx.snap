@@ -4,6 +4,12 @@ exports[`SinglePostContent - Snapshots > matches snapshot with deleted parent po
 <div>
   <div
     data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
+  <div
+    data-post-id="author:post123"
     data-testid="single-post-card"
   >
     SinglePostCard
@@ -35,6 +41,12 @@ exports[`SinglePostContent - Snapshots > matches snapshot with deleted parent po
 
 exports[`SinglePostContent - Snapshots > matches snapshot with error state 1`] = `
 <div>
+  <div
+    data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
   <div
     data-post-id="author:post123"
     data-testid="single-post-card"
@@ -90,6 +102,12 @@ exports[`SinglePostContent - Snapshots > matches snapshot with error state 1`] =
 
 exports[`SinglePostContent - Snapshots > matches snapshot with loading more state 1`] = `
 <div>
+  <div
+    data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
   <div
     data-post-id="author:post123"
     data-testid="single-post-card"
@@ -173,6 +191,12 @@ exports[`SinglePostContent - Snapshots > matches snapshot with loading replies s
 <div>
   <div
     data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
+  <div
+    data-post-id="author:post123"
     data-testid="single-post-card"
   >
     SinglePostCard
@@ -240,6 +264,12 @@ exports[`SinglePostContent - Snapshots > matches snapshot with loading replies s
 exports[`SinglePostContent - Snapshots > matches snapshot with long post (article) 1`] = `
 <div>
   <div
+    data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
+  <div
     data-content="# Article Title
 
 Article content"
@@ -293,6 +323,12 @@ Article content"
 
 exports[`SinglePostContent - Snapshots > matches snapshot with replies 1`] = `
 <div>
+  <div
+    data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
   <div
     data-post-id="author:post123"
     data-testid="single-post-card"
@@ -391,6 +427,12 @@ exports[`SinglePostContent - Snapshots > matches snapshot with replies 1`] = `
 
 exports[`SinglePostContent - Snapshots > matches snapshot with short post and no replies 1`] = `
 <div>
+  <div
+    data-post-id="author:post123"
+    data-testid="post-page-header"
+  >
+    PostPageHeader
+  </div>
   <div
     data-post-id="author:post123"
     data-testid="single-post-card"
