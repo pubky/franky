@@ -13,20 +13,43 @@ export function PostHeaderUserInfo({
   avatarUrl,
   characterLimit,
   showPopover = true,
+  size = 'normal',
+  timeAgo,
 }: PostHeaderUserInfoProps) {
   const formattedPublicKey = Libs.formatPublicKey({ key: userId, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
 
+  const profileUrl = `/profile/${userId}`;
+
+  // Prevent click from bubbling to parent post card (which navigates to post)
+  const handleLinkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   const content = (
-    <Atoms.Container overrideDefaults className="flex min-w-0 items-center gap-3">
-      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" className="shrink-0" />
+    <Atoms.Container
+      overrideDefaults
+      className={Libs.cn('flex min-w-0 items-center', size === 'large' ? 'gap-5' : 'gap-3')}
+    >
+      <Atoms.Link href={profileUrl} onClick={handleLinkClick} className="shrink-0">
+        <Organisms.AvatarWithFallback
+          avatarUrl={avatarUrl}
+          name={userName}
+          size={size === 'large' ? 'xl' : 'default'}
+        />
+      </Atoms.Link>
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
-        <Atoms.Typography
-          className="block max-w-full cursor-pointer truncate text-base leading-6 font-bold text-foreground hover:underline"
-          overrideDefaults
-        >
-          {userName}
-        </Atoms.Typography>
-        <Atoms.Container overrideDefaults className="flex min-w-0 items-center gap-2">
+        <Atoms.Link href={profileUrl} onClick={handleLinkClick}>
+          <Atoms.Typography
+            className={Libs.cn(
+              'block max-w-full cursor-pointer truncate leading-6 font-bold text-foreground hover:underline',
+              size === 'large' ? 'text-2xl' : 'text-base',
+            )}
+            overrideDefaults
+          >
+            {userName}
+          </Atoms.Typography>
+        </Atoms.Link>
+        <Atoms.Container overrideDefaults className="flex min-w-0 flex-wrap items-center gap-2">
           <Atoms.Typography
             className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
             overrideDefaults
@@ -42,6 +65,7 @@ export function PostHeaderUserInfo({
               {characterLimit.count}/{characterLimit.max}
             </Atoms.Typography>
           )}
+          {timeAgo && <Molecules.PostHeaderTimestamp timeAgo={timeAgo} />}
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>

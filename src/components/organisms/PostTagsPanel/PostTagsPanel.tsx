@@ -56,7 +56,7 @@ export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
   }
 
   return (
-    <Atoms.Container className={Libs.cn('gap-2', className)}>
+    <Atoms.Container data-cy="post-tags-panel" className={Libs.cn('gap-2', className)}>
       {/* TagInput visible for all users - clicking opens sign-in for unauthenticated */}
       <Molecules.TagInput
         onTagAdd={handleTagAddWithAuth}

@@ -3,6 +3,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { ProfilePageHeader } from './ProfilePageHeader';
 import { ProfilePageHeaderProps } from './ProfilePageHeader.types';
 
+// Mock Molecules components
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    PostText: ({ content }: { content: string }) => <div data-testid="post-text">{content}</div>,
+  };
+});
+
 // Mock Organisms components
 vi.mock('@/organisms', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/organisms')>();
@@ -65,17 +74,9 @@ vi.mock('@/organisms', async (importOriginal) => {
   };
 });
 
-// Mock hooks - useRequireAuth needs to return isAuthenticated: true for Follow button tests
-vi.mock('@/hooks', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/hooks')>();
-  return {
-    ...actual,
-    useRequireAuth: vi.fn(() => ({
-      isAuthenticated: true,
-      requireAuth: vi.fn((action: () => void) => action()),
-    })),
-  };
-});
+// Note: ProfilePageHeader no longer has auth logic - it was moved to parent components
+// (ProfileProfile, ProfilePageContainer). The Follow button is always shown when
+// onFollowToggle is provided, and auth is handled on click in the parent.
 
 const mockProps: ProfilePageHeaderProps = {
   profile: {
@@ -297,16 +298,12 @@ describe('ProfilePageHeader - Other User Profile', () => {
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
 
-  it('hides Follow button when user is not authenticated', async () => {
-    const Hooks = await import('@/hooks');
-    vi.mocked(Hooks.useRequireAuth).mockReturnValue({
-      isAuthenticated: false,
-      requireAuth: vi.fn(),
-    });
-
+  it('always shows Follow button when onFollowToggle is provided (auth handled by parent)', () => {
+    // Note: Auth check was moved to parent components (ProfileProfile, ProfilePageContainer).
+    // The ProfilePageHeader always shows the Follow button when onFollowToggle is provided.
+    // Auth is triggered on click, not on render.
     render(<ProfilePageHeader {...mockOtherUserProps} />);
 
-    expect(screen.queryByText('Follow')).not.toBeInTheDocument();
-    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+    expect(screen.getByText('Follow')).toBeInTheDocument();
   });
 });

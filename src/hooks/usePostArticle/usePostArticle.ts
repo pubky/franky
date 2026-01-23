@@ -1,0 +1,107 @@
+'use client';
+
+import type { PostDetailsModel } from '@/core';
+import { useEffect, useState } from 'react';
+import * as Core from '@/core';
+import * as Molecules from '@/molecules';
+import type { ArticleJSON } from './usePostArticle.types';
+
+interface CoverImage {
+  src: string;
+  alt: string;
+}
+
+interface UsePostArticleParams {
+  content: string;
+  attachments: PostDetailsModel['attachments'];
+  coverImageVariant: Core.FileVariant;
+}
+
+interface UsePostArticleResult {
+  title: string;
+  body: string;
+  coverImage: CoverImage | null;
+}
+
+/**
+ * Custom hook to extract article data from post content and attachments
+ *
+ * @param params.content - The JSON stringified article content containing title and body
+ * @param params.attachments - The file attachment URIs for the post
+ * @param params.coverImageVariant - The variant to use when generating the cover image URL
+ * @returns Object containing title, body, and coverImage
+ *
+ * @example
+ * ```tsx
+ * const { title, body, coverImage } = usePostArticle({
+ *   content: '{"title":"My Article","body":"Article content..."}',
+ *   attachments: ['pubky://user/pub/pubky.app/files/file-123'],
+ *   coverImageVariant: Core.FileVariant.FEED,
+ * });
+ * ```
+ */
+export function usePostArticle({
+  content,
+  attachments,
+  coverImageVariant,
+}: UsePostArticleParams): UsePostArticleResult {
+  const { toast } = Molecules.useToast();
+
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [coverImage, setCoverImage] = useState<CoverImage | null>(null);
+
+  useEffect(() => {
+    try {
+      const parsed = JSON.parse(content) as ArticleJSON;
+      setTitle(parsed.title || '');
+      setBody(parsed.body || '');
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Failed to parse article content',
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
+  }, [content]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const extractCoverImage = async () => {
+      if (!attachments?.length) return;
+
+      try {
+        const attachment = (await Core.FileController.getMetadata({ fileAttachments: attachments }))[0];
+
+        if (cancelled) return;
+
+        if (attachment && attachment.content_type.startsWith('image')) {
+          const src = Core.FileController.getFileUrl({ fileId: attachment.id, variant: coverImageVariant });
+          const coverImage = { src, alt: attachment.name };
+          setCoverImage(coverImage);
+        }
+      } catch {
+        if (cancelled) return;
+
+        toast({
+          title: 'Error',
+          description: 'Failed to load article cover image',
+        });
+      }
+    };
+
+    extractCoverImage();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
+  }, [attachments, coverImageVariant]);
+
+  return {
+    title,
+    body,
+    coverImage,
+  };
+}

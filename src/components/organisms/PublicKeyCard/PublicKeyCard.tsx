@@ -14,7 +14,6 @@ export function PublicKeyCard() {
   const displayPubky = pubky ? Libs.withPubkyPrefix(pubky) : '';
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const { toast } = Molecules.useToast();
-  const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
     if (!secretKey) {
@@ -77,18 +76,17 @@ export function PublicKeyCard() {
       variant: 'secondary' as const,
       disabled: !displayPubky,
     },
-    ...(canUseWebShare
-      ? [
-          {
-            label: 'Share',
-            icon: <Libs.Share className="mr-2 h-4 w-4" />,
-            onClick: handleShare,
-            variant: 'secondary' as const,
-            disabled: !displayPubky,
-            className: 'md:hidden',
-          },
-        ]
-      : []),
+    // Share button is always rendered on mobile (hidden on md+ screens via CSS).
+    // When Web Share API is unavailable, it falls back to clipboard copy.
+    // See issue #265: visibility based on screen size, not Web Share API support.
+    {
+      label: 'Share',
+      icon: <Libs.Share className="mr-2 h-4 w-4" />,
+      onClick: handleShare,
+      variant: 'secondary' as const,
+      disabled: !displayPubky,
+      className: 'md:hidden',
+    },
   ];
 
   return (

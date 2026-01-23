@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostHeaderUserInfo } from './PostHeaderUserInfo';
 import * as Libs from '@/libs';
@@ -86,6 +86,21 @@ vi.mock('@/atoms', async (importOriginal) => {
         {children}
       </p>
     ),
+    Link: ({
+      children,
+      href,
+      onClick,
+      className,
+    }: {
+      children: React.ReactNode;
+      href: string;
+      onClick?: (e: React.MouseEvent) => void;
+      className?: string;
+    }) => (
+      <a data-testid="profile-link" href={href} onClick={onClick} className={className}>
+        {children}
+      </a>
+    ),
     Button: ({
       children,
       variant,
@@ -162,6 +177,9 @@ vi.mock('@/molecules', async (importOriginal) => {
           </div>
         </div>
       </div>
+    ),
+    PostHeaderTimestamp: ({ timeAgo }: { timeAgo: string }) => (
+      <span data-testid="post-header-timestamp">{timeAgo}</span>
     ),
   };
 });
@@ -304,6 +322,117 @@ describe('PostHeaderUserInfo', () => {
     expect(screen.getByTestId('popover-trigger')).toBeInTheDocument();
     expect(screen.getByTestId('popover-content')).toBeInTheDocument();
   });
+
+  it('renders with normal size by default', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
+
+    const avatar = screen.getAllByTestId('avatar')[0];
+    expect(avatar).toHaveAttribute('data-size', 'default');
+  });
+
+  it('renders with large size when size prop is "large"', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" size="large" />);
+
+    const avatar = screen.getAllByTestId('avatar')[0];
+    expect(avatar).toHaveAttribute('data-size', 'xl');
+  });
+
+  it('renders timeAgo when provided', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" timeAgo="2h ago" />);
+
+    expect(screen.getByTestId('post-header-timestamp')).toBeInTheDocument();
+    expect(screen.getByText('2h ago')).toBeInTheDocument();
+  });
+
+  it('does not render timeAgo when not provided', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" />);
+
+    expect(screen.queryByTestId('post-header-timestamp')).not.toBeInTheDocument();
+  });
+
+  it('does not render timeAgo when null', () => {
+    render(<PostHeaderUserInfo userId="user123" userName="Test User" timeAgo={null} />);
+
+    expect(screen.queryByTestId('post-header-timestamp')).not.toBeInTheDocument();
+  });
+});
+
+describe('PostHeaderUserInfo - Navigation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseAuthStore.mockReturnValue({ currentUserPubky: 'currentUser123' });
+    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: 'currentUser123' });
+    mockUseUserProfile.mockReturnValue({
+      profile: { name: 'Test User', bio: '', avatarUrl: undefined, publicKey: 'pk:user123' },
+      isLoading: false,
+    });
+    mockUseIsFollowing.mockReturnValue({ isFollowing: false, isLoading: false });
+    mockUseFollowUser.mockReturnValue({ toggleFollow: vi.fn(), isUserLoading: vi.fn(() => false) });
+    mockUseProfileStats.mockReturnValue({
+      stats: { followers: 0, following: 0, posts: 0, replies: 0, friends: 0, uniqueTags: 0, notifications: 0 },
+      isLoading: false,
+    });
+    mockUseProfileConnections.mockReturnValue({
+      connections: [],
+      count: 0,
+      isLoading: false,
+      isLoadingMore: false,
+      error: null,
+      hasMore: false,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
+  });
+
+  it('renders profile links for avatar and username', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    expect(profileLinks.length).toBe(2); // One for avatar, one for username
+
+    // Both should link to the same profile
+    profileLinks.forEach((link) => {
+      expect(link).toHaveAttribute('href', '/profile/testuser123');
+    });
+  });
+
+  it('stops propagation when clicking on avatar link', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    const avatarLink = profileLinks[0];
+
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
+
+    fireEvent(avatarLink, clickEvent);
+
+    expect(stopPropagationSpy).toHaveBeenCalled();
+  });
+
+  it('stops propagation when clicking on username link', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    const usernameLink = profileLinks[1];
+
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    const stopPropagationSpy = vi.spyOn(clickEvent, 'stopPropagation');
+
+    fireEvent(usernameLink, clickEvent);
+
+    expect(stopPropagationSpy).toHaveBeenCalled();
+  });
+
+  it('renders profile links when showPopover is false', () => {
+    render(<PostHeaderUserInfo userId="testuser123" userName="Test User" showPopover={false} />);
+
+    const profileLinks = screen.getAllByTestId('profile-link');
+    expect(profileLinks.length).toBe(2);
+    profileLinks.forEach((link) => {
+      expect(link).toHaveAttribute('href', '/profile/testuser123');
+    });
+  });
 });
 
 describe('PostHeaderUserInfo - Snapshots', () => {
@@ -416,6 +545,31 @@ describe('PostHeaderUserInfo - Snapshots', () => {
     });
 
     const { container } = render(<PostHeaderUserInfo userId="otherUser123" userName="Other User" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with large size', () => {
+    const { container } = render(<PostHeaderUserInfo userId="snapshotUserKey" userName="Snapshot User" size="large" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with timeAgo', () => {
+    const { container } = render(
+      <PostHeaderUserInfo userId="snapshotUserKey" userName="Snapshot User" timeAgo="5m ago" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with all new props', () => {
+    const { container } = render(
+      <PostHeaderUserInfo
+        userId="snapshotUserKey"
+        userName="Snapshot User"
+        avatarUrl="https://example.com/avatar.png"
+        size="large"
+        timeAgo="1h ago"
+      />,
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 });
