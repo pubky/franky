@@ -5,8 +5,18 @@ import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import * as Types from './ProfilePageHeader.types';
 
+/**
+ * ProfilePageHeader
+ *
+ * Displays the user's profile header with avatar, name, bio, and action buttons.
+ *
+ * **TTL Tracking:**
+ * Subscribes the profile user to TTL tracking when visible in the viewport.
+ * This ensures profile data gets refreshed when stale.
+ */
 export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const {
@@ -22,11 +32,20 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     isFollowing,
   } = actions;
 
+  // Check if user is authenticated for conditional rendering
+  const { isAuthenticated } = Hooks.useRequireAuth();
+
+  // Subscribe to TTL coordinator based on viewport visibility
+  const { ref: ttlRef } = Hooks.useTtlUserViewportSubscription({
+    pubky: publicKey,
+  });
+
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (
     <Atoms.Container
+      ref={ttlRef}
       overrideDefaults={true}
       className="flex min-w-0 flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
       data-testid="profile-page-header"
