@@ -2208,6 +2208,160 @@ describe('PostStreamApplication', () => {
     });
   });
 
+  describe('getOrFetchStreamSlice with deleted post filtering', () => {
+    const viewerId = 'viewer-user' as Core.Pubky;
+
+    it('should filter out deleted posts and fetch more to fill the limit', async () => {
+      // Setup: Request 3 posts, but first batch has 2 deleted posts
+      // Queue should fetch again to fill the limit
+
+      // First batch: 5 posts, 2 are deleted -> only 3 valid
+      const batch1Posts = [
+        'author-1:post-1', // normal
+        'author-2:post-2', // DELETED
+        'author-3:post-3', // normal
+        'author-4:post-4', // DELETED
+        'author-5:post-5', // normal
+      ];
+
+      // Create post details
+      await Core.PostDetailsModel.create({
+        id: 'author-1:post-1',
+        content: 'Normal post 1',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: 'https://pubky.app/author-1/pub/pubky.app/posts/post-1',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-2:post-2',
+        content: Core.DELETED, // DELETED
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 1,
+        uri: 'https://pubky.app/author-2/pub/pubky.app/posts/post-2',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-3:post-3',
+        content: 'Normal post 3',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 2,
+        uri: 'https://pubky.app/author-3/pub/pubky.app/posts/post-3',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-4:post-4',
+        content: Core.DELETED, // DELETED
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 3,
+        uri: 'https://pubky.app/author-4/pub/pubky.app/posts/post-4',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-5:post-5',
+        content: 'Normal post 5',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 4,
+        uri: 'https://pubky.app/author-5/pub/pubky.app/posts/post-5',
+        attachments: null,
+      });
+
+      // Cache has all 5 posts
+      await createStreamWithPosts(batch1Posts);
+
+      // Mock Nexus to return empty (end of stream)
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: [],
+        last_post_score: 0,
+      });
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 3,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should return exactly 3 non-deleted posts
+      expect(result.nextPageIds).toHaveLength(3);
+      expect(result.nextPageIds).toEqual(['author-1:post-1', 'author-3:post-3', 'author-5:post-5']);
+      expect(result.nextPageIds).not.toContain('author-2:post-2');
+      expect(result.nextPageIds).not.toContain('author-4:post-4');
+    });
+
+    it('should fetch more from Nexus when cache posts are mostly deleted', async () => {
+      // Cache has 3 posts but 2 are deleted -> only 1 valid
+      // Should fetch from Nexus to fill the limit
+      const cachePostIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
+      await createStreamWithPosts(cachePostIds);
+
+      await Core.PostDetailsModel.create({
+        id: 'author-1:post-1',
+        content: Core.DELETED, // DELETED
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: 'https://pubky.app/author-1/pub/pubky.app/posts/post-1',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-2:post-2',
+        content: 'Normal post 2',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 1,
+        uri: 'https://pubky.app/author-2/pub/pubky.app/posts/post-2',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-3:post-3',
+        content: Core.DELETED, // DELETED
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 2,
+        uri: 'https://pubky.app/author-3/pub/pubky.app/posts/post-3',
+        attachments: null,
+      });
+
+      // Nexus returns 2 more normal posts
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue({
+        post_keys: ['author-4:post-4', 'author-5:post-5'],
+        last_post_score: BASE_TIMESTAMP + 4,
+      });
+
+      // Also create details for Nexus posts
+      await Core.PostDetailsModel.create({
+        id: 'author-4:post-4',
+        content: 'Normal post 4',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 3,
+        uri: 'https://pubky.app/author-4/pub/pubky.app/posts/post-4',
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: 'author-5:post-5',
+        content: 'Normal post 5',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 4,
+        uri: 'https://pubky.app/author-5/pub/pubky.app/posts/post-5',
+        attachments: null,
+      });
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 3,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should have fetched from Nexus
+      expect(nexusFetchSpy).toHaveBeenCalled();
+      // Should return 3 non-deleted posts
+      expect(result.nextPageIds).toHaveLength(3);
+      expect(result.nextPageIds).not.toContain('author-1:post-1');
+      expect(result.nextPageIds).not.toContain('author-3:post-3');
+    });
+  });
+
   // Regression test for reply count double-counting bug.
   // When a reply is created locally, it's already counted. When that same reply arrives
   // via the unread stream (from Nexus polling), it should NOT be counted again.

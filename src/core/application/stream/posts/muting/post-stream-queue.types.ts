@@ -2,7 +2,7 @@ import { TPostStreamChunkResponse } from '../post.types';
 
 export type FetchResult = TPostStreamChunkResponse;
 export type FetchFn = (cursor: number) => Promise<FetchResult>;
-export type FilterFn = (posts: string[]) => string[];
+export type FilterFn = (posts: string[]) => string[] | Promise<string[]>;
 
 export interface CollectParams {
   limit: number;

@@ -30,11 +30,32 @@ interface TQueueEntry {
   cursor: number;     // Pagination cursor (timestamp)
 }
 
+// FilterFn supports both sync and async filters
+type FilterFn = (posts: string[]) => string[] | Promise<string[]>;
+
 class PostStreamQueue {
   collect(streamId, { limit, cursor, filter, fetch }): Promise<CollectResult>
   get(streamId): TQueueEntry | undefined
   remove(streamId): void
   clear(): void
+}
+```
+
+### Async Filter Support
+
+The `FilterFn` type supports both synchronous and asynchronous filters. This enables:
+
+1. **Sync filters**: Fast in-memory checks (e.g., muted user IDs in a Set)
+2. **Async filters**: Database lookups (e.g., checking if posts are deleted via IndexedDB)
+
+The queue awaits the filter result, allowing filters to chain multiple operations:
+
+```typescript
+filter: async (posts) => {
+  // Sync: filter muted users (O(1) Set lookup)
+  const afterMuteFilter = MuteFilter.filterPosts(posts, mutedUserIds);
+  // Async: filter deleted posts (requires DB read)
+  return PostDetailsModel.filterDeleted(afterMuteFilter);
 }
 ```
 
@@ -53,6 +74,19 @@ Request: Need 20 posts
 ├─ Split results: first `limit` → return, remainder → queue
 └─ Return { posts, cacheMissIds, cursor, timestamp }
 ```
+
+### Cache Continuation
+
+When filtering removes posts, the queue may need multiple fetch iterations. To avoid skipping cached posts:
+
+1. **Track `lastReturnedPostId`**: After each fetch, record the last post ID returned
+2. **Continue from cache**: Subsequent fetches use this ID to continue reading from cache
+3. **Exhaust cache first**: Only fetch from Nexus when local cache is exhausted
+
+This ensures that if cache has posts [A, B(deleted), C, D(deleted), E] and we need 3 posts:
+- First fetch returns [A, B, C], filters to [A, C] (2 posts)
+- Second fetch continues from C, returns [D, E], filters to [E] (1 post)
+- Total: [A, C, E] = 3 posts from cache, no unnecessary Nexus call
 
 ### Safety Limits
 
