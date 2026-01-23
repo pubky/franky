@@ -50,6 +50,7 @@ const mockActions = {
 };
 
 const mockNavigateToPage = vi.fn();
+let mockUserNotFound = false;
 
 vi.mock('@/hooks', () => ({
   useProfileHeader: vi.fn(() => ({
@@ -57,6 +58,7 @@ vi.mock('@/hooks', () => ({
     stats: mockStats,
     actions: mockActions,
     isLoading: false,
+    userNotFound: mockUserNotFound,
   })),
   useProfileNavigation: vi.fn(() => ({
     activePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
@@ -72,6 +74,18 @@ vi.mock('@/hooks', () => ({
     isFollowing: false,
     isLoading: false,
   })),
+}));
+
+// Mock Molecules for ProfileNotFound
+vi.mock('@/molecules', () => ({
+  MobileHeader: ({ showLeftButton, showRightButton }: { showLeftButton: boolean; showRightButton: boolean }) => (
+    <div data-testid="mobile-header" data-left={showLeftButton} data-right={showRightButton} />
+  ),
+  ProfilePageLayoutWrapper: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="profile-page-layout-wrapper">{children}</div>
+  ),
+  ProfileNotFound: () => <div data-testid="profile-not-found">User not found</div>,
+  MobileFooter: () => <div data-testid="mobile-footer" />,
 }));
 
 // Mock Organisms - ProfilePageLayout
@@ -111,6 +125,7 @@ vi.mock('@/organisms', () => ({
 describe('ProfilePageContainer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUserNotFound = false;
   });
 
   it('renders without errors', () => {
@@ -231,5 +246,75 @@ describe('ProfilePageContainer - Props passed to layout', () => {
     expect(layout).toHaveAttribute('data-active-page');
     expect(layout).toHaveAttribute('data-filter-bar-page');
     expect(layout).toHaveAttribute('data-is-loading');
+  });
+});
+
+describe('ProfilePageContainer - User not found', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders ProfileNotFound when user does not exist', async () => {
+    // Mock the hooks module to return userNotFound: true
+    const { useProfileHeader } = await import('@/hooks');
+    vi.mocked(useProfileHeader).mockReturnValue({
+      profile: {
+        name: '',
+        bio: '',
+        publicKey: '',
+        emoji: '🌴',
+        status: '',
+        avatarUrl: undefined,
+        link: '',
+      },
+      stats: {
+        notifications: 0,
+        posts: 0,
+        replies: 0,
+        followers: 0,
+        following: 0,
+        friends: 0,
+        uniqueTags: 0,
+      },
+      actions: {
+        onEdit: vi.fn(),
+        onCopyPublicKey: vi.fn(),
+        onCopyLink: vi.fn(),
+        onSignOut: vi.fn(),
+        onStatusChange: vi.fn(),
+        isLoggingOut: false,
+      },
+      isLoading: false,
+      userNotFound: true,
+    });
+
+    render(
+      <ProfilePageContainer>
+        <div>Test Content</div>
+      </ProfilePageContainer>,
+    );
+
+    expect(screen.getByTestId('profile-not-found')).toBeInTheDocument();
+    expect(screen.queryByTestId('profile-page-layout')).not.toBeInTheDocument();
+  });
+
+  it('does not render ProfileNotFound when user exists', async () => {
+    const { useProfileHeader } = await import('@/hooks');
+    vi.mocked(useProfileHeader).mockReturnValue({
+      profile: mockProfile,
+      stats: mockStats,
+      actions: mockActions,
+      isLoading: false,
+      userNotFound: false,
+    });
+
+    render(
+      <ProfilePageContainer>
+        <div>Test Content</div>
+      </ProfilePageContainer>,
+    );
+
+    expect(screen.queryByTestId('profile-not-found')).not.toBeInTheDocument();
+    expect(screen.getByTestId('profile-page-layout')).toBeInTheDocument();
   });
 });

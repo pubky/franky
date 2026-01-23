@@ -33,7 +33,7 @@ const DEFAULT_PROFILE: UserProfile = {
  * during loading state. Consumers should check `isLoading` to determine data readiness.
  *
  * @param userId - The user ID to fetch profile data for
- * @returns Combined profile data (never null), stats, actions, and loading state
+ * @returns Combined profile data (never null), stats, actions, loading state, and userNotFound flag
  */
 export function useProfileHeader(userId: string) {
   // Fetch user profile data
@@ -41,6 +41,12 @@ export function useProfileHeader(userId: string) {
 
   // Fetch profile statistics
   const { stats, isLoading: isStatsLoading } = useProfileStats(userId);
+
+  // Combined loading state
+  const isLoading = isProfileLoading || isStatsLoading;
+
+  // User not found: loading is complete but profile is null
+  const userNotFound = !isLoading && profile === null;
 
   // Provide default profile values when profile is null (loading state)
   // This centralizes the fallback logic and ensures type consistency
@@ -56,6 +62,7 @@ export function useProfileHeader(userId: string) {
     profile: profileData,
     stats,
     actions,
-    isLoading: isProfileLoading || isStatsLoading,
+    isLoading,
+    userNotFound,
   };
 }

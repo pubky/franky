@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as Hooks from '@/hooks';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Providers from '@/providers';
 
@@ -46,7 +47,7 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
 
   // Business logic: Fetch profile data and stats
   // Note: useProfileHeader guarantees a non-null profile with default values during loading
-  const { profile, stats, actions, isLoading } = Hooks.useProfileHeader(pubky ?? '');
+  const { profile, stats, actions, isLoading, userNotFound } = Hooks.useProfileHeader(pubky ?? '');
 
   // Business logic: Handle navigation state
   const { activePage, filterBarActivePage, navigateToPage } = Hooks.useProfileNavigation();
@@ -71,6 +72,19 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
     }),
     [actions, handleFollowToggle, isFollowLoading, isFollowing],
   );
+
+  // Show "User not found" state when the user doesn't exist
+  if (userNotFound) {
+    return (
+      <>
+        <Molecules.MobileHeader showLeftButton={false} showRightButton={false} />
+        <Molecules.ProfilePageLayoutWrapper>
+          <Molecules.ProfileNotFound />
+        </Molecules.ProfilePageLayoutWrapper>
+        <Molecules.MobileFooter />
+      </>
+    );
+  }
 
   // Delegate presentation to layout organism
   return (

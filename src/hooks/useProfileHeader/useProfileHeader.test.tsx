@@ -340,6 +340,60 @@ describe('useProfileHeader', () => {
     });
   });
 
+  describe('User not found', () => {
+    it('userNotFound is true when profile is null and loading is complete', () => {
+      mockProfile = null;
+      mockProfileLoading = false;
+      mockStatsLoading = false;
+
+      const { result } = renderHook(() => useProfileHeader('non-existent-user'));
+
+      expect(result.current.userNotFound).toBe(true);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    it('userNotFound is false when profile is still loading', () => {
+      mockProfile = null;
+      mockProfileLoading = true;
+      mockStatsLoading = false;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.userNotFound).toBe(false);
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('userNotFound is false when stats are still loading', () => {
+      mockProfile = null;
+      mockProfileLoading = false;
+      mockStatsLoading = true;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.userNotFound).toBe(false);
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('userNotFound is false when profile exists', () => {
+      mockProfile = {
+        name: 'Test User',
+        bio: 'Test bio',
+        publicKey: 'pubkytest-user-id',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: undefined,
+        link: 'https://example.com/profile/test-user-id',
+      };
+      mockProfileLoading = false;
+      mockStatsLoading = false;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.userNotFound).toBe(false);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
   describe('Type exports', () => {
     it('exports ProfileStats type', () => {
       // This test ensures the type export is working
