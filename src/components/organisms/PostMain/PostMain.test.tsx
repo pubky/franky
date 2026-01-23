@@ -68,18 +68,30 @@ vi.mock('@/organisms', () => ({
   PostActionsBar: ({
     postId,
     className,
+    onTagClick,
     onReplyClick,
     onRepostClick,
   }: {
     postId: string;
     className?: string;
+    onTagClick?: () => void;
     onReplyClick?: () => void;
     onRepostClick?: () => void;
   }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
+      {onTagClick && (
+        <button data-testid="tag-button" onClick={onTagClick}>
+          Tag
+        </button>
+      )}
       {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
       {onRepostClick && <button onClick={onRepostClick}>Repost</button>}
+    </div>
+  ),
+  PostTagsPanel: ({ postId, className }: { postId: string; className?: string }) => (
+    <div data-testid="post-tags-panel" data-post-id={postId} data-class-name={className}>
+      PostTagsPanel {postId}
     </div>
   ),
   DialogReply: ({
@@ -367,6 +379,60 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('repost-header')).toBeInTheDocument();
     expect(screen.getByTestId('post-content')).toBeInTheDocument();
+  });
+});
+
+describe('PostMain - Tag Expansion', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsPostDeleted.mockReturnValue(false);
+  });
+
+  it('does not show PostTagsPanel by default', () => {
+    render(<PostMain postId="post-123" />);
+
+    expect(screen.queryByTestId('post-tags-panel')).not.toBeInTheDocument();
+    expect(screen.getByTestId('clickable-tags-list')).toBeInTheDocument();
+  });
+
+  it('shows PostTagsPanel when tag button is clicked', () => {
+    render(<PostMain postId="post-123" />);
+
+    const tagButton = screen.getByTestId('tag-button');
+    fireEvent.click(tagButton);
+
+    expect(screen.getByTestId('post-tags-panel')).toBeInTheDocument();
+    expect(screen.getByTestId('post-tags-panel')).toHaveAttribute('data-post-id', 'post-123');
+  });
+
+  it('hides ClickableTagsList when tags are expanded', () => {
+    render(<PostMain postId="post-123" />);
+
+    // Initially visible
+    expect(screen.getByTestId('clickable-tags-list')).toBeInTheDocument();
+
+    // Click to expand
+    const tagButton = screen.getByTestId('tag-button');
+    fireEvent.click(tagButton);
+
+    // Should be hidden
+    expect(screen.queryByTestId('clickable-tags-list')).not.toBeInTheDocument();
+  });
+
+  it('toggles back to ClickableTagsList when tag button is clicked again', () => {
+    render(<PostMain postId="post-123" />);
+
+    const tagButton = screen.getByTestId('tag-button');
+
+    // Expand
+    fireEvent.click(tagButton);
+    expect(screen.getByTestId('post-tags-panel')).toBeInTheDocument();
+    expect(screen.queryByTestId('clickable-tags-list')).not.toBeInTheDocument();
+
+    // Collapse
+    fireEvent.click(tagButton);
+    expect(screen.queryByTestId('post-tags-panel')).not.toBeInTheDocument();
+    expect(screen.getByTestId('clickable-tags-list')).toBeInTheDocument();
   });
 });
 

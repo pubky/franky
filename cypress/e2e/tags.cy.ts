@@ -13,6 +13,9 @@ import {
   assertTagIsNotSelected,
   toggleTag,
   findPostByContent,
+  clickTagToggleButton,
+  assertTagsPanelExpanded,
+  assertTagsPanelCollapsed,
 } from '../support/tags';
 
 const userA = 'TaggerA';
@@ -160,6 +163,119 @@ describe('tags', () => {
       addTagToPost('toggletag');
       assertTagHasCount('toggletag', 1);
       assertTagIsSelected('toggletag');
+    });
+  });
+
+  describe('tag panel toggle in feed', () => {
+    it('can expand tags panel by clicking tag button in feed', () => {
+      cy.signInWithEncryptedFile(backupDownloadFilePath(userA));
+      waitForFeedToLoad();
+
+      // Create a post with a tag
+      const postContent = `Testing tag panel toggle ${Date.now()}`;
+      createQuickPost(postContent);
+      latestPostInFeedContentEq(postContent);
+      cy.wait(1000);
+
+      findPostByContent(postContent).within(() => {
+        // Add a tag first
+        clickAddTagButton();
+        addTagToPost('testtag');
+        assertTagHasCount('testtag', 1);
+
+        // Initially, ClickableTagsList should be visible (compact view)
+        cy.get('[data-cy="clickable-tags-list"]').should('be.visible');
+
+        // Click the tag button in action bar to expand
+        clickTagToggleButton();
+
+        // PostTagsPanel should now be visible (expanded view)
+        assertTagsPanelExpanded();
+
+        // ClickableTagsList should be hidden
+        cy.get('[data-cy="clickable-tags-list"]').should('not.exist');
+      });
+    });
+
+    it('can collapse tags panel by clicking tag button again', () => {
+      cy.signInWithEncryptedFile(backupDownloadFilePath(userA));
+      waitForFeedToLoad();
+
+      const postContent = `Testing tag panel collapse ${Date.now()}`;
+      createQuickPost(postContent);
+      latestPostInFeedContentEq(postContent);
+      cy.wait(1000);
+
+      findPostByContent(postContent).within(() => {
+        clickAddTagButton();
+        addTagToPost('collapsetag');
+
+        // Expand
+        clickTagToggleButton();
+        assertTagsPanelExpanded();
+
+        // Collapse
+        clickTagToggleButton();
+        assertTagsPanelCollapsed();
+      });
+    });
+  });
+
+  describe('tags on single post page', () => {
+    it('shows tags panel always visible on single post page', () => {
+      cy.signInWithEncryptedFile(backupDownloadFilePath(userA));
+      waitForFeedToLoad();
+
+      const postContent = `Testing single post tags ${Date.now()}`;
+      createQuickPost(postContent);
+      latestPostInFeedContentEq(postContent);
+      cy.wait(1000);
+
+      // Add a tag to the post
+      findPostByContent(postContent).within(() => {
+        clickAddTagButton();
+        addTagToPost('singleposttag');
+      });
+
+      cy.wait(1000);
+
+      // Navigate to single post page by clicking on the post
+      findPostByContent(postContent).click();
+
+      // On single post page, tags panel should be visible
+      cy.get('[data-cy="post-tags-panel"]').should('be.visible');
+
+      // Verify the tag exists
+      getTag('singleposttag').should('exist');
+    });
+
+    it('tags panel is not toggleable on single post page', () => {
+      cy.signInWithEncryptedFile(backupDownloadFilePath(userA));
+      waitForFeedToLoad();
+
+      const postContent = `Testing no toggle on single post ${Date.now()}`;
+      createQuickPost(postContent);
+      latestPostInFeedContentEq(postContent);
+      cy.wait(1000);
+
+      findPostByContent(postContent).within(() => {
+        clickAddTagButton();
+        addTagToPost('notoggle');
+      });
+
+      cy.wait(1000);
+
+      // Navigate to single post page
+      findPostByContent(postContent).click();
+
+      // Tags panel should be visible
+      cy.get('[data-cy="post-tags-panel"]').should('be.visible');
+
+      // Click tag button - should NOT hide tags panel
+      cy.get('[data-cy="post-tag-btn"]').click();
+
+      // Tags panel should STILL be visible (no toggle on single post page)
+      cy.get('[data-cy="post-tags-panel"]').should('be.visible');
     });
   });
 });

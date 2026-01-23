@@ -9,10 +9,14 @@ import type { HumanSmsCardProps } from './HumanSmsCard.types';
 export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
   const smsInfo = useSmsVerificationInfo();
 
-  // Loading state - waiting for availability check
+  // Waiting for availability check
   const isLoading = smsInfo === null;
-  // Check if geoblocked (403 response)
-  const isGeoblocked = smsInfo !== null && !smsInfo.available;
+  // 403 response means geoblocked, not an error
+  const isGeoblocked = smsInfo !== null && !smsInfo.available && !smsInfo.error;
+  // Generic error from network failure, server error, etc.
+  const isError = smsInfo !== null && !smsInfo.available && smsInfo.error === true;
+  // Unavailable when either geoblocked or error
+  const isUnavailable = isGeoblocked || isError;
 
   if (isLoading) {
     return <HumanSmsCardSkeleton />;
@@ -22,7 +26,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
     <Atoms.Container className="relative flex-1">
       <Atoms.Card
         data-testid="sms-verification-card"
-        className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isGeoblocked && 'pointer-events-none opacity-60 blur-[5px]')}
+        className={Libs.cn('flex-1 gap-0 p-6 md:p-12', isUnavailable && 'pointer-events-none opacity-60 blur-[5px]')}
       >
         <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-center lg:gap-12">
           <Atoms.Container className="hidden h-full w-full flex-1 items-center lg:block lg:w-auto">
@@ -63,7 +67,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
               variant={Atoms.ButtonVariant.SECONDARY}
               className="h-10 rounded-full px-4 text-sm font-semibold shadow-xs-dark"
               onClick={onClick}
-              disabled={isGeoblocked}
+              disabled={isUnavailable}
             >
               <Libs.Smartphone className="mr-2 size-4" />
               Receive SMS
@@ -87,6 +91,25 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
             className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
           >
             Currently not available in your country
+          </Atoms.Typography>
+        </Atoms.Container>
+      )}
+
+      {/* Generic error overlay badge */}
+      {isError && (
+        <Atoms.Container
+          overrideDefaults
+          data-testid="service-error-alert"
+          className="absolute top-1/2 left-1/2 flex h-11 -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-md bg-destructive/60 px-6 py-3 shadow-xl"
+        >
+          <Atoms.Container overrideDefaults className="pt-0.5">
+            <Libs.TriangleAlert className="text-destructive-foreground size-4" />
+          </Atoms.Container>
+          <Atoms.Typography
+            overrideDefaults
+            className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
+          >
+            Service temporarily unavailable
           </Atoms.Typography>
         </Atoms.Container>
       )}

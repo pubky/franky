@@ -65,6 +65,7 @@ export function PostInput({
     handleDragLeave,
     handleDragOver,
     handleDrop,
+    handlePaste,
     // Mention autocomplete
     mentionUsers,
     mentionIsOpen,
@@ -182,6 +183,7 @@ export function PostInput({
               onChange={handleChange}
               onFocus={handleExpand}
               onKeyDown={handleKeyDown}
+              onPaste={handlePaste}
               maxLength={POST_MAX_CHARACTER_LENGTH}
               rows={1}
               disabled={isSubmitting}

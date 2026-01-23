@@ -105,4 +105,25 @@ describe('BitcoinPaymentCard', () => {
     const { container } = render(<HumanBitcoinCard />);
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it('renders generic error overlay when service fails (not geo-blocked)', () => {
+    // Issue #919: Generic errors should NOT show "Country not available" message
+    mockUseLnVerificationInfo.mockReturnValue({ available: false, error: true });
+    render(<HumanBitcoinCard />);
+
+    // Should show generic error alert, NOT geo-blocking alert
+    expect(screen.getByTestId('service-error-alert')).toBeInTheDocument();
+    expect(screen.getByText(/Service temporarily unavailable/i)).toBeInTheDocument();
+
+    // Should NOT show geo-blocking message
+    expect(screen.queryByTestId('geo-block-alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Currently not available in your country/i)).not.toBeInTheDocument();
+
+    // Card should still have blur class (service unavailable)
+    const card = screen.getByTestId('bitcoin-payment-card');
+    expect(card).toHaveClass('blur-[5px]');
+
+    // Button should be disabled
+    expect(screen.getByRole('button', { name: /Pay Once/i })).toBeDisabled();
+  });
 });

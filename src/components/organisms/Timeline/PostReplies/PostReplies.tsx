@@ -22,6 +22,7 @@ import * as Types from './PostReplies.types';
 export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostRepliesProps) {
   const { isAuthenticated } = Hooks.useRequireAuth();
   const [replyIds, setReplyIds] = useState<string[]>([]);
+  const { mutedUserIdSet } = Hooks.useMutedUsers();
 
   // Watch for changes in post_counts to trigger refetch when replies count changes
   const postCounts = useLiveQuery(async () => {
@@ -46,16 +47,19 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
           lastPostId: undefined,
           limit: repliesCount > 3 ? 3 : repliesCount,
         });
-        setReplyIds(response.nextPageIds);
+        // Apply mute filter so inline reply preview matches timeline mute behavior.
+        const filtered = Core.MuteFilter.filterPostsSafe(response.nextPageIds, mutedUserIdSet);
+        setReplyIds(filtered);
       } catch (error) {
         // Silently handle errors - don't show replies if there's an issue
         Libs.Logger.error('Failed to fetch post replies:', error);
         setReplyIds([]);
       }
     },
-    [postId],
+    [postId, mutedUserIdSet],
   );
 
+  // Prune muted replies when mute state changes without re-fetching.
   useEffect(() => {
     if (!postCounts?.replies || postCounts.replies < 1) {
       setReplyIds([]);
@@ -64,6 +68,24 @@ export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostR
 
     fetchReplies(postCounts.replies);
   }, [postId, postCounts?.replies, fetchReplies]);
+
+  /**
+   * Reactively prune replies when mute state changes.
+   * This handles the case where a user mutes someone while viewing inline replies.
+   * Note: We only depend on mutedUserIdSet to avoid infinite loops since setReplyIds
+   * is called within this effect. The functional update ensures we always filter
+   * the latest replyIds state.
+   */
+  useEffect(() => {
+    if (mutedUserIdSet.size === 0) return;
+
+    setReplyIds((prevReplyIds) => {
+      if (prevReplyIds.length === 0) return prevReplyIds;
+      const filtered = Core.MuteFilter.filterPostsSafe(prevReplyIds, mutedUserIdSet);
+      // Only update if content actually changed to prevent unnecessary re-renders
+      return filtered.length !== prevReplyIds.length ? filtered : prevReplyIds;
+    });
+  }, [mutedUserIdSet]);
 
   const hasReplies = replyIds && replyIds.length > 0;
 
