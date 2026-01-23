@@ -194,9 +194,8 @@ vi.mock('@/hooks', () => ({
     showRepostHeader: false,
     shouldShowPostHeader: true,
   })),
-  useTtlViewportSubscription: vi.fn(() => ({
+  useTtlSubscription: vi.fn(() => ({
     ref: vi.fn(),
-    isVisible: false,
   })),
 }));
 
