@@ -34,7 +34,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="text-2xl font-bold text-foreground leading-8"
         data-testid="heading-2"
       >
-        Privacy and Safety
+        Privacy & Safety
       </h2>
     </div>
     <p
@@ -45,7 +45,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
     </p>
   </div>
   <div
-    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    class="flex w-full flex-col items-start gap-8 rounded-md border border-border bg-card p-6 shadow-lg md:gap-6"
     data-testid="container"
   >
     <div

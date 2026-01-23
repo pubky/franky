@@ -8,7 +8,7 @@ export function Privacy() {
   return (
     <Molecules.SettingsSectionCard
       icon={Libs.Shield}
-      title="Privacy and Safety"
+      title="Privacy & Safety"
       description="Privacy is not a crime. Manage your visibility and safety on Pubky."
     >
       <Organisms.PrivacySettings />

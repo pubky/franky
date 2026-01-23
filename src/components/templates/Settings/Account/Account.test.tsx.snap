@@ -44,24 +44,19 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
   </div>
   <div
-    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    class="flex w-full flex-col items-start gap-8 rounded-md border border-border bg-card p-6 shadow-lg md:gap-6"
     data-testid="container"
   >
     <div
       class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
-      <div
-        class="inline-flex items-center justify-start"
-        data-testid="container"
+      <h4
+        class="font-semibold text-foreground text-xl leading-7"
+        data-testid="heading-4"
       >
-        <h2
-          class="text-2xl font-bold text-foreground"
-          data-testid="heading-2"
-        >
-          Sign out from Pubky
-        </h2>
-      </div>
+        Sign out from Pubky
+      </h4>
       <p
         class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
@@ -103,24 +98,19 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="h-px w-full bg-white/10"
+      class="h-px w-full bg-border"
       data-testid="container"
     />
     <div
       class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
-      <div
-        class="inline-flex items-center justify-start"
-        data-testid="container"
+      <h4
+        class="font-semibold text-foreground text-xl leading-7"
+        data-testid="heading-4"
       >
-        <h2
-          class="text-2xl font-bold text-foreground"
-          data-testid="heading-2"
-        >
-          Edit your profile
-        </h2>
-      </div>
+        Edit your profile
+      </h4>
       <p
         class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
@@ -159,24 +149,19 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="h-px w-full bg-white/10"
+      class="h-px w-full bg-border"
       data-testid="container"
     />
     <div
       class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
-      <div
-        class="inline-flex items-center justify-start"
-        data-testid="container"
+      <h4
+        class="font-semibold text-foreground text-xl leading-7"
+        data-testid="heading-4"
       >
-        <h2
-          class="text-2xl font-bold text-foreground"
-          data-testid="heading-2"
-        >
-          Backup your account
-        </h2>
-      </div>
+        Backup your account
+      </h4>
       <p
         class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
@@ -225,83 +210,19 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="h-px w-full bg-white/10"
+      class="h-px w-full bg-border"
       data-testid="container"
     />
     <div
       class="flex flex-col items-start justify-start gap-3"
       data-testid="container"
     >
-      <div
-        class="inline-flex items-center justify-start"
-        data-testid="container"
+      <h4
+        class="font-semibold text-foreground text-xl leading-7"
+        data-testid="heading-4"
       >
-        <h2
-          class="text-2xl font-bold text-foreground"
-          data-testid="heading-2"
-        >
-          Download your data
-        </h2>
-      </div>
-      <p
-        class="text-base leading-6 font-medium text-secondary-foreground"
-        data-testid="typography"
-      >
-        Your data on Pubky is yours. Export your account data to use it elsewhere.
-      </p>
-      <button
-        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
-        data-size="default"
-        data-slot="button"
-        data-variant="secondary"
-        id="download-data-btn"
-      >
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-download"
-          fill="none"
-          height="16"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M12 15V3"
-          />
-          <path
-            d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-          />
-          <path
-            d="m7 10 5 5 5-5"
-          />
-        </svg>
-        Download data
-      </button>
-    </div>
-    <div
-      aria-hidden="true"
-      class="h-px w-full bg-white/10"
-      data-testid="container"
-    />
-    <div
-      class="flex flex-col items-start justify-start gap-3"
-      data-testid="container"
-    >
-      <div
-        class="inline-flex items-center justify-start"
-        data-testid="container"
-      >
-        <h2
-          class="text-2xl font-bold text-destructive"
-          data-testid="heading-2"
-        >
-          Delete your account
-        </h2>
-      </div>
+        Delete your account
+      </h4>
       <p
         class="text-base leading-6 font-medium text-secondary-foreground"
         data-testid="typography"
@@ -309,10 +230,10 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences.
       </p>
       <button
-        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-destructive/60 text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/40 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
         data-size="default"
         data-slot="button"
-        data-variant="secondary"
+        data-variant="destructive"
         id="delete-account-btn"
       >
         <svg

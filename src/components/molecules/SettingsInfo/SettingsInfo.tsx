@@ -70,7 +70,7 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
                 </Atoms.Container>
               </Link>
             ))}
-            <Link href={App.SETTINGS_ROUTES.HELP}>
+            <Link href={App.SETTINGS_ROUTES.HELP} className="w-full">
               <Atoms.SidebarButton icon={Libs.MessageCircleQuestion}>More FAQ</Atoms.SidebarButton>
             </Link>
           </Atoms.FilterList>

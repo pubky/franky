@@ -1,68 +1,40 @@
 'use client';
 
-import * as React from 'react';
 import { usePathname } from 'next/navigation';
 import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as App from '@/app';
+import type { SettingsProps } from './Settings.types';
 
-export interface SettingsProps {
-  children: React.ReactNode;
-}
-
+/**
+ * Settings page layout component.
+ * Handles the overall structure including mobile menu, sidebars, and content area.
+ * Uses ContentLayout for responsive sidebar/drawer behavior.
+ */
 export function Settings({ children }: SettingsProps) {
-  // Reset to column layout on mount (this page doesn't support wide)
+  const pathname = usePathname();
+  const isOnHelpPage = pathname === App.SETTINGS_ROUTES.HELP;
+
+  // Reset to column layout on mount (settings doesn't support wide layout)
   Hooks.useLayoutReset();
 
   return (
     <>
-      {/* Mobile menu - visible only on mobile, full width */}
-      <div className="lg:hidden">
-        <Molecules.SettingsMobileMenu />
-      </div>
+      {/* Mobile tab navigation - visible only on mobile (< lg) */}
+      <Molecules.SettingsMobileMenu className="lg:hidden" />
 
       <Organisms.ContentLayout
         showLeftMobileButton={false}
         showRightMobileButton={false}
-        leftSidebarContent={<SettingsLeftSidebar />}
-        rightSidebarContent={<SettingsRightSidebar />}
-        leftDrawerContent={<SettingsLeftDrawer />}
-        rightDrawerContent={<SettingsRightDrawer />}
-        className="pt-[118px] lg:pt-0"
+        leftSidebarContent={<Molecules.SettingsMenu />}
+        rightSidebarContent={<Molecules.SettingsInfo hideFAQ={isOnHelpPage} />}
+        leftDrawerContent={<Molecules.SettingsMenu />}
+        rightDrawerContent={<Molecules.SettingsInfo hideFAQ={isOnHelpPage} />}
+        className="pt-18 lg:pt-0"
       >
         {children}
       </Organisms.ContentLayout>
     </>
   );
-}
-
-export function SettingsLeftSidebar() {
-  return (
-    <div className="sticky top-[100px] w-full self-start">
-      <Molecules.SettingsMenu />
-    </div>
-  );
-}
-
-export function SettingsRightSidebar() {
-  const pathname = usePathname();
-  const isOnFAQPage = pathname === App.SETTINGS_ROUTES.HELP;
-
-  return (
-    <div className="sticky top-[100px] self-start">
-      <Molecules.SettingsInfo hideFAQ={isOnFAQPage} />
-    </div>
-  );
-}
-
-export function SettingsLeftDrawer() {
-  return <Molecules.SettingsMenu />;
-}
-
-export function SettingsRightDrawer() {
-  const pathname = usePathname();
-  const isOnFAQPage = pathname === App.SETTINGS_ROUTES.HELP;
-
-  return <Molecules.SettingsInfo hideFAQ={isOnFAQPage} />;
 }

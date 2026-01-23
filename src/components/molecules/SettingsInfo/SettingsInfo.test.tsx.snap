@@ -38,16 +38,18 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           aria-controls="radix-normalized"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border bg-white/5 px-4 py-2 transition-colors hover:bg-white/10"
+          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs hover:text-white hover:bg-neutral-800 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 w-full border-border bg-white/5 text-xs font-bold"
           data-as-child="true"
+          data-size="sm"
           data-slot="dialog-trigger"
           data-state="closed"
           data-testid="dialog-trigger"
+          data-variant="dark-outline"
           type="button"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-file-text h-4 w-4"
+            class="lucide lucide-file-text size-4"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -74,26 +76,24 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
               d="M16 17H8"
             />
           </svg>
-          <span
-            class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
-          >
-            Terms of service
-          </span>
+          Terms of service
         </button>
         <button
           aria-controls="radix-normalized"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border bg-white/5 px-4 py-2 transition-colors hover:bg-white/10"
+          class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs hover:text-white hover:bg-neutral-800 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 w-full border-border bg-white/5 text-xs font-bold"
           data-as-child="true"
+          data-size="sm"
           data-slot="dialog-trigger"
           data-state="closed"
           data-testid="dialog-trigger"
+          data-variant="dark-outline"
           type="button"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-lock-keyhole h-4 w-4"
+            class="lucide lucide-lock-keyhole size-4"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -120,11 +120,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
               d="M7 10V7a5 5 0 0 1 10 0v3"
             />
           </svg>
-          <span
-            class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
-          >
-            Privacy policy
-          </span>
+          Privacy policy
         </button>
       </div>
     </div>
@@ -299,14 +295,18 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           </div>
         </a>
         <a
+          class="w-full"
           href="/settings/help"
         >
           <button
-            class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border bg-white/5 px-4 py-2 transition-colors hover:bg-white/10"
+            class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs hover:text-white hover:bg-neutral-800 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 w-full border-border bg-white/5 text-xs font-bold"
+            data-size="sm"
+            data-slot="button"
+            data-variant="dark-outline"
           >
             <svg
               aria-hidden="true"
-              class="lucide lucide-message-circle-question-mark h-4 w-4"
+              class="lucide lucide-message-circle-question-mark size-4"
               fill="none"
               height="24"
               stroke="currentColor"
@@ -327,11 +327,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
                 d="M12 17h.01"
               />
             </svg>
-            <span
-              class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
-            >
-              More FAQ
-            </span>
+            More FAQ
           </button>
         </a>
       </div>
