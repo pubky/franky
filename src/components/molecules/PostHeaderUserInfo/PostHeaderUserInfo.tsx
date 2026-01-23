@@ -21,7 +21,7 @@ export function PostHeaderUserInfo({
       <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="default" className="shrink-0" />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1">
         <Atoms.Typography
-          className="block max-w-full cursor-pointer truncate text-base leading-6 font-bold text-foreground hover:underline"
+          className="block max-w-full cursor-pointer truncate text-base leading-5 font-bold text-foreground hover:underline"
           overrideDefaults
         >
           {userName}
