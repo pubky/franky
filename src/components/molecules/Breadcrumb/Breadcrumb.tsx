@@ -8,7 +8,7 @@ import * as Libs from '@/libs';
 import * as Types from './Breadcrumb.types';
 
 // Shadcn-based Breadcrumb with custom variants
-const breadcrumbVariants = cva('flex items-center flex-wrap', {
+const breadcrumbVariants = cva('flex flex-wrap items-center', {
   variants: {
     size: {
       sm: 'gap-1.5',
@@ -34,10 +34,11 @@ const breadcrumbItemVariants = cva('flex items-center justify-center gap-2.5', {
   },
 });
 
+// Separator size differs between sm (15px) and md (16px) per Figma specs
 const breadcrumbSeparatorVariants = cva('text-muted-foreground shrink-0', {
   variants: {
     size: {
-      sm: 'w-4 h-4',
+      sm: 'w-[15px] h-[15px]',
       md: 'w-4 h-4',
     },
   },
@@ -49,8 +50,8 @@ const breadcrumbSeparatorVariants = cva('text-muted-foreground shrink-0', {
 // Main Breadcrumb container - based on Shadcn
 export const Breadcrumb = React.forwardRef<HTMLElement, Types.BreadcrumbProps>(
   ({ className, size, children, ...props }, ref) => (
-    <nav ref={ref} aria-label="breadcrumb" className={Libs.cn(breadcrumbVariants({ size }), className)} {...props}>
-      <ol className="gap-inherit flex flex-wrap items-center">{children}</ol>
+    <nav ref={ref} aria-label="breadcrumb" className={Libs.cn('inline-flex', className)} {...props}>
+      <ol className={breadcrumbVariants({ size })}>{children}</ol>
     </nav>
   ),
 );
