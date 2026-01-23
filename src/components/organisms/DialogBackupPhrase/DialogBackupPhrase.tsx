@@ -92,15 +92,18 @@ function RecoveryStep1({
       <Atoms.Container className={Libs.cn(isHidden && 'blur-md')}>
         <Atoms.Container display="grid" className="grid-cols-2 gap-1.5 md:grid-cols-3 md:gap-3">
           {recoveryWords.map((word, index) => (
-            <Atoms.Container key={index} className="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4">
+            <Atoms.Container
+              key={index}
+              className="flex-row items-center gap-2 rounded-md bg-secondary px-3 py-3 sm:gap-3 sm:px-5 sm:py-4"
+            >
               <Atoms.Badge
                 id={`backup-recovery-phrase-word-${index + 1}`}
                 variant="outline"
-                className="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+                className="h-5 min-w-[20px] flex-shrink-0 rounded-full px-1 font-semibold"
               >
                 {index + 1}
               </Atoms.Badge>
-              <span className="text-base font-medium">{word}</span>
+              <span className="truncate text-sm font-medium sm:text-base">{word}</span>
             </Atoms.Container>
           ))}
         </Atoms.Container>

@@ -53,7 +53,7 @@ export const WordSlot = (props: Types.WordSlotProps) => {
   const canClear = word !== '';
 
   const containerClasses = Libs.cn(
-    'flex-row px-5 py-4 rounded-md border border-dashed overflow-hidden relative',
+    'flex-row px-3 sm:px-5 py-3 sm:py-4 rounded-md border border-dashed overflow-hidden relative',
     'inline-flex w-full items-center transition-colors',
     'bg-background/10',
     canClear && 'cursor-pointer',
@@ -63,14 +63,14 @@ export const WordSlot = (props: Types.WordSlotProps) => {
   );
 
   const badgeClasses = Libs.cn(
-    'z-10 h-5 min-w-5 rounded-full flex-shrink-0 absolute left-5 top-1/2 -translate-y-1/2 px-1',
+    'z-10 h-5 min-w-5 rounded-full flex-shrink-0 absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 px-1',
     !isCorrect && !isError && 'bg-secondary text-secondary-foreground border border-transparent',
     isCorrect && 'bg-brand text-primary-foreground border border-transparent',
     isError && 'bg-destructive text-destructive-foreground border border-transparent',
   );
 
   const inputColor = Libs.cn(
-    '!border-none !bg-transparent !px-0 !pl-[52px] !pr-5 flex-row flex-1 min-w-0 text-base font-medium leading-[24px]',
+    '!border-none !bg-transparent !px-0 !pl-9 sm:!pl-[52px] !pr-2 sm:!pr-5 flex-row flex-1 min-w-0 text-base font-medium leading-[24px]',
     !isCorrect && !isError && word === '' && 'text-muted-foreground',
     isCorrect && '!text-brand',
     isError && '!text-destructive',

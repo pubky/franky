@@ -64,205 +64,205 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
         data-testid="container"
       >
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             1
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             tube
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             2
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             tube
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             3
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             resource
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             4
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             mass
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             5
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             door
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             6
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             firm
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             7
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             genius
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             8
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             parrot
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             9
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             girl
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             10
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             orphan
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             11
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             window
           </span>
         </div>
         <div
-          class="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4"
+          class="flex-row items-center gap-2 sm:gap-3 rounded-md bg-secondary px-3 sm:px-5 py-3 sm:py-4"
           data-testid="container"
         >
           <span
-            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold flex-shrink-0"
             data-testid="badge"
             data-variant="outline"
           >
             12
           </span>
           <span
-            class="text-base font-medium"
+            class="text-sm sm:text-base font-medium truncate"
           >
             world
           </span>
