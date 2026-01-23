@@ -375,8 +375,9 @@ export function UserListItem({
   const { requireAuth } = Hooks.useRequireAuth();
 
   // Subscribe to TTL coordinator based on viewport visibility
-  const { ref: ttlRef } = Hooks.useTtlUserViewportSubscription({
-    pubky: user.id,
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'user',
+    id: user.id,
   });
 
   // Normalize user data
