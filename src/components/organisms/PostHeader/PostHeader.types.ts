@@ -6,4 +6,6 @@ export interface PostHeaderProps {
     max: number;
   };
   showPopover?: boolean;
+  size?: 'normal' | 'large';
+  timeAgoPlacement?: 'top-right' | 'bottom-left';
 }

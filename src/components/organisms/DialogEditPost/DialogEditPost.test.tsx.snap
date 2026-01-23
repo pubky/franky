@@ -1,0 +1,57 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogEditPost - Snapshots > matches snapshot for long post (Edit Article) 1`] = `
+<div
+  data-open="false"
+  data-testid="dialog-confirm-discard"
+>
+  <button
+    data-testid="mock-confirm-btn"
+  >
+    Confirm
+  </button>
+  <button
+    data-testid="mock-cancel-btn"
+  >
+    Cancel
+  </button>
+</div>
+`;
+
+exports[`DialogEditPost - Snapshots > matches snapshot for short post (Edit Post) 1`] = `
+<div
+  data-open="false"
+  data-testid="dialog-confirm-discard"
+>
+  <button
+    data-testid="mock-confirm-btn"
+  >
+    Confirm
+  </button>
+  <button
+    data-testid="mock-cancel-btn"
+  >
+    Cancel
+  </button>
+</div>
+`;
+
+exports[`DialogEditPost - Snapshots > matches snapshot when dialog is closed 1`] = `
+<div
+  data-open="false"
+  data-testid="dialog-confirm-discard"
+>
+  <button
+    data-testid="mock-confirm-btn"
+  >
+    Confirm
+  </button>
+  <button
+    data-testid="mock-cancel-btn"
+  >
+    Cancel
+  </button>
+</div>
+`;
+
+exports[`DialogEditPost - Snapshots > matches snapshot when postDetails is null 1`] = `null`;

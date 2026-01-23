@@ -118,5 +118,46 @@ describe('usePostTags', () => {
 
       await expect(result.current.handleTagToggle({ label: 'test' })).resolves.not.toThrow();
     });
+
+    it('should preserve tag with zero count when last tagger removes their tag', async () => {
+      // Setup: Mock a tag with count=1 where the viewer is the tagger
+      const dexieHooks = await import('dexie-react-hooks');
+      const Core = await import('@/core');
+
+      const mockViewerId = 'viewer-123';
+      vi.mocked(Core.useAuthStore).mockImplementation(() => mockViewerId);
+
+      // Tag with count=1 where viewer is the tagger
+      const tagWithOneCount = {
+        label: 'solo-tag',
+        taggers_count: 1,
+        taggers: [mockViewerId],
+        relationship: true,
+      };
+
+      // Return the tag in useLiveQuery
+      vi.mocked(dexieHooks.useLiveQuery).mockReturnValue([{ tags: [tagWithOneCount] }]);
+
+      const { result, rerender } = renderHook(() => usePostTags('author:post123'));
+
+      // Verify initial state - tag should be present
+      expect(result.current.tags).toHaveLength(1);
+      expect(result.current.tags[0].label).toBe('solo-tag');
+      expect(result.current.tags[0].taggers_count).toBe(1);
+
+      // Toggle (remove) the tag
+      await result.current.handleTagToggle({ label: 'solo-tag', relationship: true });
+
+      // After delete, simulate IndexedDB returning empty (tag removed from DB)
+      vi.mocked(dexieHooks.useLiveQuery).mockReturnValue([{ tags: [] }]);
+      rerender();
+
+      // BUG: Currently the tag disappears.
+      // EXPECTED: Tag should remain visible with taggers_count: 0
+      expect(result.current.tags).toHaveLength(1);
+      expect(result.current.tags[0].label).toBe('solo-tag');
+      expect(result.current.tags[0].taggers_count).toBe(0);
+      expect(result.current.tags[0].relationship).toBe(false);
+    });
   });
 });

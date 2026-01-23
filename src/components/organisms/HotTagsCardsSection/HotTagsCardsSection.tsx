@@ -8,13 +8,9 @@ import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { APP_ROUTES } from '@/app/routes';
+import { HOT_TAGS_FEATURED_COUNT } from '@/config';
 import type { HotTagsCardsSectionProps } from './HotTagsCardsSection.types';
-import {
-  TOP_TAGS_DISPLAY,
-  MAX_AVATARS_MOBILE,
-  MAX_AVATARS_DEFAULT,
-  MAX_AVATARS_XL,
-} from './HotTagsCardsSection.constants';
+import { MAX_AVATARS_MOBILE, MAX_AVATARS_DEFAULT, MAX_AVATARS_XL } from './HotTagsCardsSection.constants';
 
 /**
  * HotTagsCardsSection
@@ -33,7 +29,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
   });
 
   // Display only the top tags as featured cards
-  const featuredTags = useMemo(() => rawTags.slice(0, TOP_TAGS_DISPLAY), [rawTags]);
+  const featuredTags = useMemo(() => rawTags.slice(0, HOT_TAGS_FEATURED_COUNT), [rawTags]);
 
   // Responsive avatar count based on screen size
   const isMobile = Hooks.useIsMobile({ breakpoint: 'sm' }); // < 640px
@@ -64,7 +60,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
     return (
       <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-2', className)}>
         <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-          Trending
+          Hot tags
         </Atoms.Heading>
         <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
       </Atoms.Container>
@@ -82,7 +78,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
       data-testid="hot-tags-cards-section"
     >
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-        Trending
+        Hot tags
       </Atoms.Heading>
       <Atoms.Container overrideDefaults className="flex flex-col gap-3 sm:flex-row">
         {featuredTags.map((tag, index) => (

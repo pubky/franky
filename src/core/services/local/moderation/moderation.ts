@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ErrorService, DatabaseErrorCode } from '@/libs';
 
 export class LocalModerationService {
   private constructor() {}
@@ -15,9 +15,11 @@ export class LocalModerationService {
       }
       await Core.ModerationModel.update(id, { is_blurred: false });
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, 'Failed to unblur item', 500, {
-        error,
-        id,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to unblur item', {
+        service: ErrorService.Local,
+        operation: 'setUnBlur',
+        context: { id },
+        cause: error,
       });
     }
   }
@@ -34,10 +36,11 @@ export class LocalModerationService {
       if (type && record.type !== type) return null;
       return record;
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get moderation record', 500, {
-        error,
-        id,
-        type,
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, 'Failed to get moderation record', {
+        service: ErrorService.Local,
+        operation: 'getModerationRecord',
+        context: { id, type },
+        cause: error,
       });
     }
   }
@@ -54,10 +57,11 @@ export class LocalModerationService {
       }
       return records;
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get moderation records', 500, {
-        error,
-        ids,
-        type,
+      throw Err.database(DatabaseErrorCode.QUERY_FAILED, 'Failed to get moderation records', {
+        service: ErrorService.Local,
+        operation: 'getModerationRecords',
+        context: { ids, type },
+        cause: error,
       });
     }
   }

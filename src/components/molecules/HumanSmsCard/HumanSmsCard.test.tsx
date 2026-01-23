@@ -107,4 +107,25 @@ describe('SmsVerificationCard', () => {
     const { container } = render(<HumanSmsCard />);
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it('renders generic error overlay when service fails (not geoblocked)', () => {
+    // Issue #919: Generic errors should NOT show "Country not available" message
+    mockUseSmsVerificationInfo.mockReturnValue({ available: false, error: true });
+    render(<HumanSmsCard />);
+
+    // Should show generic error alert, NOT geoblocking alert
+    expect(screen.getByTestId('service-error-alert')).toBeInTheDocument();
+    expect(screen.getByText(/Service temporarily unavailable/i)).toBeInTheDocument();
+
+    // Should NOT show geoblocking message
+    expect(screen.queryByTestId('geoblock-alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Currently not available in your country/i)).not.toBeInTheDocument();
+
+    // Card should still have blur class (service unavailable)
+    const card = screen.getByTestId('sms-verification-card');
+    expect(card).toHaveClass('blur-[5px]');
+
+    // Button should be disabled
+    expect(screen.getByTestId('human-sms-card-receive-sms-btn')).toBeDisabled();
+  });
 });

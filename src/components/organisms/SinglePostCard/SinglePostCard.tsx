@@ -14,8 +14,7 @@ import type { SinglePostCardProps } from './SinglePostCard.types';
  * - Right column: PostTagsPanel (tags with avatars and search)
  *
  * This component is used on the single post page for the main post display.
- * It differs from PostMain by having the tags panel in a separate column
- * rather than inline with the action bar.
+ * Tags are always visible on both mobile and desktop (no toggle).
  */
 export function SinglePostCard({ postId, className }: SinglePostCardProps) {
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
@@ -43,8 +42,8 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
               {/* Spacer to push actions bar to bottom */}
               <Atoms.Container overrideDefaults className="flex-1" />
 
-              {/* Tags on mobile - between content and buttons */}
-              <Organisms.PostTagsPanel postId={postId} className="flex lg:hidden" />
+              {/* Tags on mobile - always visible */}
+              <Organisms.PostTagsPanel postId={postId} className="lg:hidden" />
 
               <Organisms.PostActionsBar
                 postId={postId}

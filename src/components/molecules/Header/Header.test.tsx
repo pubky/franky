@@ -224,10 +224,10 @@ describe('Header Components', () => {
         'z-(--z-sticky-header)',
         'w-full',
         'bg-linear-to-b',
-        'from-(--background)/95',
-        'to-(--transparent)',
+        'from-(--background)',
+        'from-50%',
+        'to-transparent',
         'py-6',
-        'backdrop-blur-sm',
       );
 
       const innerContainer = container.querySelector('[data-testid="container"]') as HTMLElement | null;

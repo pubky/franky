@@ -10,31 +10,26 @@ import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
 // ============================================================================
 
 /**
- * Get notification text based on type
+ * Human-readable action text for each notification type
+ * TODO: Replace with translation keys when i18n is implemented
  */
-export function getNotificationText(notification: FlatNotification, userName: string = 'User'): string {
-  switch (notification.type) {
-    case NotificationType.Follow:
-      return `${userName} followed you`;
-    case NotificationType.NewFriend:
-      return `${userName} is now your friend`;
-    case NotificationType.TagPost:
-      return `${userName} tagged your post`;
-    case NotificationType.TagProfile:
-      return `${userName} tagged your profile`;
-    case NotificationType.Reply:
-      return `${userName} replied to your post`;
-    case NotificationType.Repost:
-      return `${userName} reposted your post`;
-    case NotificationType.Mention:
-      return `${userName} mentioned you in post`;
-    case NotificationType.PostDeleted:
-      return `${userName} deleted a post`;
-    case NotificationType.PostEdited:
-      return `${userName} edited a post`;
-    default:
-      return 'New notification';
-  }
+const NOTIFICATION_ACTION_TEXT: Record<NotificationType, string> = {
+  [NotificationType.Follow]: 'followed you',
+  [NotificationType.NewFriend]: 'is now your friend',
+  [NotificationType.TagPost]: 'tagged your post',
+  [NotificationType.TagProfile]: 'tagged your profile',
+  [NotificationType.Reply]: 'replied to your post',
+  [NotificationType.Repost]: 'reposted your post',
+  [NotificationType.Mention]: 'mentioned you in post',
+  [NotificationType.PostDeleted]: 'deleted a post',
+  [NotificationType.PostEdited]: 'edited a post',
+};
+
+/**
+ * Get notification action text (without the username) based on type
+ */
+export function getNotificationActionText(notification: FlatNotification): string {
+  return NOTIFICATION_ACTION_TEXT[notification.type] ?? 'New notification';
 }
 
 /**

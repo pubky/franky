@@ -24,8 +24,9 @@ export function useLnVerificationInfo(): THomegateLnInfoResult | null {
         if (!cancelled) setInfo(result);
       })
       .catch(() => {
-        // Treat errors as unavailable to provide clear feedback
-        if (!cancelled) setInfo({ available: false });
+        // Mark as error to distinguish from geoblocking (403).
+        // Allows the UI to show a generic error message instead of "Country not available".
+        if (!cancelled) setInfo({ available: false, error: true });
       });
 
     return () => {

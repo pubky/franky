@@ -15,8 +15,7 @@ export class NexusHotService {
    * @returns Array of hot tags with metadata
    */
   static async fetch(params: Core.TTagHotParams): Promise<Core.NexusHotTag[]> {
-    // TODO: Handle the error in application layer
     const url = Core.tagApi.hot(params);
-    return await Core.queryNexus<Core.NexusHotTag[]>(url);
+    return await Core.queryNexus<Core.NexusHotTag[]>({ url });
   }
 }

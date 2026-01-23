@@ -1,9 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { NotificationItem } from './NotificationItem';
 import { NotificationType } from '@/core/models/notification/notification.types';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+
+// Mock next/navigation
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
 
 // Mock hooks
 vi.mock('@/hooks', async (importOriginal) => {
@@ -81,7 +89,11 @@ vi.mock('@/organisms', () => ({
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
-  PostTag: ({ label }: { label: string }) => <span data-testid="post-tag">{label}</span>,
+  PostTag: ({ label, onClick }: { label: string; onClick?: (e: React.MouseEvent) => void }) => (
+    <span data-testid="post-tag" onClick={onClick}>
+      {label}
+    </span>
+  ),
   NotificationIcon: ({ type, showBadge }: { type: NotificationType; showBadge?: boolean }) => (
     <div data-testid="notification-icon" data-type={type} data-badge={showBadge ? 'true' : 'false'}>
       Icon
@@ -125,7 +137,9 @@ describe('NotificationItem', () => {
 
   it('renders notification text correctly', () => {
     render(<NotificationItem notification={baseNotification} isUnread={false} />);
-    expect(screen.getByText(/User followed you/i)).toBeInTheDocument();
+    // Username and action text are now separate links
+    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(screen.getByText('followed you')).toBeInTheDocument();
   });
 
   it('renders avatar with user data', () => {
@@ -191,8 +205,9 @@ describe('NotificationItem', () => {
       post_uri: 'user1:post123',
     } as Core.FlatNotification;
     render(<NotificationItem notification={mentionNotification} isUnread={false} />);
-    // Should render the notification text
-    expect(screen.getByText(/User mentioned you in post/i)).toBeInTheDocument();
+    // Username and action text are now separate links
+    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(screen.getByText('mentioned you in post')).toBeInTheDocument();
     // Preview text is not rendered since post data is not loaded in this test
   });
 
@@ -202,7 +217,60 @@ describe('NotificationItem', () => {
       followed_by: 'unknown-user',
     };
     render(<NotificationItem notification={notificationWithUnknownUser} isUnread={false} />);
-    expect(screen.getByText(/User followed you/i)).toBeInTheDocument();
+    // Username and action text are now separate links
+    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(screen.getByText('followed you')).toBeInTheDocument();
+  });
+
+  it('navigates to search when tag is clicked in TagPost notification', () => {
+    const tagNotification = {
+      id: 'tagpost:123:user1',
+      type: NotificationType.TagPost,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      tagged_by: 'user1',
+      tag_label: 'bitcoin',
+      post_uri: 'user1:post123',
+    } as Core.FlatNotification;
+    render(<NotificationItem notification={tagNotification} isUnread={false} />);
+
+    const tag = screen.getByTestId('post-tag');
+    fireEvent.click(tag);
+
+    expect(mockPush).toHaveBeenCalledWith('/search?tags=bitcoin');
+  });
+
+  it('navigates to search when tag is clicked in TagProfile notification', () => {
+    const tagNotification = {
+      id: 'tagprofile:123:user1',
+      type: NotificationType.TagProfile,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      tagged_by: 'user1',
+      tag_label: 'developer',
+      profile_uri: 'user1',
+    } as Core.FlatNotification;
+    render(<NotificationItem notification={tagNotification} isUnread={false} />);
+
+    const tag = screen.getByTestId('post-tag');
+    fireEvent.click(tag);
+
+    expect(mockPush).toHaveBeenCalledWith('/search?tags=developer');
+  });
+
+  it('encodes special characters in tag when navigating to search', () => {
+    const tagNotification = {
+      id: 'tagpost:123:user1',
+      type: NotificationType.TagPost,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      tagged_by: 'user1',
+      tag_label: 'c++',
+      post_uri: 'user1:post123',
+    } as Core.FlatNotification;
+    render(<NotificationItem notification={tagNotification} isUnread={false} />);
+
+    const tag = screen.getByTestId('post-tag');
+    fireEvent.click(tag);
+
+    expect(mockPush).toHaveBeenCalledWith('/search?tags=c%2B%2B');
   });
 });
 

@@ -5,7 +5,9 @@ import { HomegateController, THomegateCreateLnVerificationResult } from '@/core'
  */
 export class VerificationHandler {
   public aborted = false;
+  private paymentConfirmed = false;
   private paymentExpiredTimeout: NodeJS.Timeout | null = null;
+  private visibilityHandler: (() => void) | null = null;
   private constructor(
     public data: THomegateCreateLnVerificationResult,
     public onPaymentConfirmed: (signupCode: string, homeserverPubky: string) => void,
@@ -26,6 +28,7 @@ export class VerificationHandler {
     const client = new VerificationHandler(result, onPaymentConfirmed, onPaymentExpired);
     client.listenPaymentConfirmed(); // Fire and forget
     client.listenPaymentExpired(); // Fire and forget
+    client.listenVisibilityChange(); // Re-check payment when tab becomes visible
     return client;
   }
 
@@ -44,6 +47,21 @@ export class VerificationHandler {
     if (this.paymentExpiredTimeout) {
       clearTimeout(this.paymentExpiredTimeout);
     }
+    if (this.visibilityHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityHandler);
+      this.visibilityHandler = null;
+    }
+  }
+
+  /**
+   * Confirm the payment and invoke the callback.
+   * Returns true if this call confirmed the payment, false if already confirmed.
+   */
+  private confirmPayment(signupCode: string, homeserverPubky: string): boolean {
+    if (this.paymentConfirmed || this.aborted) return false;
+    this.paymentConfirmed = true;
+    this.onPaymentConfirmed?.(signupCode, homeserverPubky);
+    return true;
   }
 
   /**
@@ -70,9 +88,10 @@ export class VerificationHandler {
         return undefined;
       }
       const result = await HomegateController.awaitLnVerification(this.data.id);
-      if (result.success && result.data.isPaid && result.data.signupCode && !this.aborted) {
-        this.onPaymentConfirmed?.(result.data.signupCode, result.data.homeserverPubky);
-        return;
+      if (result.success && result.data.isPaid && result.data.signupCode) {
+        if (this.confirmPayment(result.data.signupCode, result.data.homeserverPubky)) {
+          return;
+        }
       }
       if ('timeout' in result && result.timeout) {
         // Try again
@@ -84,5 +103,34 @@ export class VerificationHandler {
       }
     }
     return undefined;
+  }
+
+  /**
+   * Listen for visibility changes to handle mobile browser background/foreground transitions.
+   * When the user switches to a wallet app to pay and returns, re-check payment status immediately.
+   */
+  private listenVisibilityChange() {
+    if (typeof document === 'undefined') return;
+
+    this.visibilityHandler = () => {
+      if (document.visibilityState === 'visible' && !this.aborted && !this.isExpired) {
+        this.checkPaymentStatus();
+      }
+    };
+
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+  }
+
+  /**
+   * Immediately check the payment status without long-polling.
+   * Used when the tab becomes visible again after being in the background.
+   */
+  private async checkPaymentStatus() {
+    if (this.aborted || this.isExpired || this.paymentConfirmed) return;
+
+    const result = await HomegateController.awaitLnVerification(this.data.id);
+    if (result.success && result.data.isPaid && result.data.signupCode) {
+      this.confirmPayment(result.data.signupCode, result.data.homeserverPubky);
+    }
   }
 }

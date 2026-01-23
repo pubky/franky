@@ -159,7 +159,12 @@ describe('ProfileApplication.downloadData', () => {
 
     await ProfileApplication.downloadData({ pubky });
 
-    expect(listSpy).toHaveBeenCalledWith(`pubky://${pubky}/pub/pubky.app/`, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({
+      baseDirectory: `pubky://${pubky}/pub/pubky.app/`,
+      cursor: undefined,
+      reverse: false,
+      limit: Infinity,
+    });
   });
 
   it('should propagate error when list fails', async () => {

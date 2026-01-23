@@ -15,6 +15,11 @@ export interface TDeletePostParams {
   compositePostId: string;
 }
 
+export interface TEditPostParams {
+  compositePostId: string;
+  content: string;
+}
+
 export interface TFileAttachmentsParams {
   attachments: File[];
   pubky: Core.Pubky;

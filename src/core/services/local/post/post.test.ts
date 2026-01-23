@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 import { PubkyAppPostKind, PubkyAppPost, PubkyAppPostEmbed } from 'pubky-app-specs';
 
 // Test data
@@ -236,18 +235,16 @@ describe('LocalPostService', () => {
       }
     });
 
-    it('should log an error on failure with minimal context', async () => {
-      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
-
+    it('should throw WRITE_FAILED error on failure', async () => {
       // Force a failure early
       const originalCreate = Core.PostDetailsModel.create;
       vi.spyOn(Core.PostDetailsModel, 'create').mockRejectedValueOnce(new Error('boom'));
 
       const params = createSaveParams('Will fail');
-      await expect(Core.LocalPostService.create(params)).rejects.toThrow('Failed to save post');
-
-      expect(loggerSpy).toHaveBeenCalledWith('Failed to save post', {
-        compositePostId: params.compositePostId,
+      await expect(Core.LocalPostService.create(params)).rejects.toMatchObject({
+        name: 'AppError',
+        code: 'WRITE_FAILED',
+        message: 'Failed to save post',
       });
 
       // Restore
@@ -609,14 +606,12 @@ describe('LocalPostService', () => {
       expect(postDetails).toBeUndefined();
     });
 
-    it('should throw error when trying to delete non-existent post', async () => {
+    it('should handle deleting non-existent post gracefully (idempotent)', async () => {
       const nonExistentPostId = 'nonexistent:post123';
 
-      await expect(Core.LocalPostService.delete({ compositePostId: nonExistentPostId })).rejects.toMatchObject({
-        type: 'RECORD_NOT_FOUND',
-        message: 'Post counts not found',
-        statusCode: 404,
-      });
+      // Should not throw - delete is idempotent, returns false for hard delete path
+      const result = await Core.LocalPostService.delete({ compositePostId: nonExistentPostId });
+      expect(result).toBe(false);
     });
   });
 
@@ -656,40 +651,18 @@ describe('LocalPostService', () => {
       expect(counts.reposts).toBe(0);
     });
 
-    it('should throw DatabaseError on database failure', async () => {
+    it('should propagate model errors on database failure', async () => {
       const postId = testData.fullPostId1;
 
-      // Mock findById to throw an error
+      // Mock findById to throw an error - model layer handles error wrapping
       const spy = vi
         .spyOn(Core.PostCountsModel, 'findById')
         .mockRejectedValueOnce(new Error('Database connection lost'));
 
-      await expect(Core.LocalPostService.readCounts(postId)).rejects.toMatchObject({
-        type: 'QUERY_FAILED',
-        message: 'Failed to read post counts',
-        statusCode: 500,
-      });
+      // Service is pass-through, error bubbles up from model
+      await expect(Core.LocalPostService.readCounts(postId)).rejects.toThrow('Database connection lost');
 
       spy.mockRestore();
-    });
-
-    it('should log error on failure', async () => {
-      const postId = testData.fullPostId1;
-      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
-
-      const spy = vi.spyOn(Core.PostCountsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
-
-      await expect(Core.LocalPostService.readCounts(postId)).rejects.toThrow();
-
-      expect(loggerSpy).toHaveBeenCalledWith(
-        'Failed to read post counts',
-        expect.objectContaining({
-          postId,
-        }),
-      );
-
-      spy.mockRestore();
-      loggerSpy.mockRestore();
     });
   });
 
@@ -930,15 +903,14 @@ describe('LocalPostService', () => {
       expect(relationships).toBeNull();
     });
 
-    it('should handle database errors gracefully', async () => {
+    it('should propagate model errors on database failure', async () => {
       const postId = testData.fullPostId1;
 
-      // Mock findById to throw an error
+      // Mock findById to throw an error - service is pass-through
       const findByIdSpy = vi.spyOn(Core.PostRelationshipsModel, 'findById').mockRejectedValue(new Error('DB error'));
 
-      await expect(Core.LocalPostService.readRelationships(postId)).rejects.toThrow(
-        'Failed to read post relationships',
-      );
+      // Error bubbles up from model layer
+      await expect(Core.LocalPostService.readRelationships(postId)).rejects.toThrow('DB error');
 
       findByIdSpy.mockRestore();
     });

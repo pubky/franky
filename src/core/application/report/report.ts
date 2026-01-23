@@ -103,9 +103,11 @@ export class ReportApplication {
       // Log error for observability
       if (error instanceof Libs.AppError) {
         Libs.Logger.error('Report submission failed', {
-          type: error.type,
-          statusCode: error.statusCode,
-          details: error.details,
+          category: error.category,
+          code: error.code,
+          service: error.service,
+          operation: error.operation,
+          context: error.context,
         });
         // Re-throw AppError to preserve error context
         throw error;
@@ -113,7 +115,11 @@ export class ReportApplication {
 
       // Wrap unexpected errors
       Libs.Logger.error('Unexpected error during report submission', { error });
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to submit report', 500, { error });
+      throw Libs.Err.server(Libs.ServerErrorCode.UNKNOWN_ERROR, 'Failed to submit report', {
+        service: Libs.ErrorService.Chatwoot,
+        operation: 'submit',
+        cause: error,
+      });
     }
   }
 }

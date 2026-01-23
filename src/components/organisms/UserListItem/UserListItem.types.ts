@@ -93,4 +93,6 @@ export interface VariantProps {
   dataTestId?: string;
   onUserClick: () => void;
   onFollowClick: (e: React.MouseEvent) => void;
+  /** TTL viewport subscription ref for freshness tracking */
+  ttlRef: (node: HTMLElement | null) => void;
 }

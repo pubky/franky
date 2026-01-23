@@ -9,9 +9,8 @@ vi.mock('@/hooks', () => ({
   usePostNavigation: () => ({
     navigateToPost: mockNavigateToPost,
   }),
-  useTtlViewportSubscription: () => ({
+  useTtlSubscription: () => ({
     ref: mockTtlRef,
-    isVisible: false,
   }),
 }));
 

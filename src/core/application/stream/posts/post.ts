@@ -115,36 +115,41 @@ export class PostStreamApplication {
       return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId, order });
     }
 
-    // Fetch muted user IDs from Service layer at Application layer entry point
-    const mutedStream = await Core.LocalStreamUsersService.findById(Core.UserStreamTypes.MUTED);
-    const mutedUserIds = new Set(mutedStream?.stream ?? []);
+    const shouldFilterMuted = !streamId.startsWith(`${Core.StreamSource.AUTHOR}:`);
+    const mutedUserIds = shouldFilterMuted
+      ? new Set((await Core.LocalStreamUsersService.findById(Core.UserStreamTypes.MUTED))?.stream ?? [])
+      : new Set<Core.Pubky>();
 
     let isFirstFetch = true;
+    let lastReturnedPostId: string | undefined = lastPostId;
+
     const { posts, cacheMissIds, timestamp, reachedEnd } = await postStreamQueue.collect(streamId, {
       limit,
       cursor: streamTail,
-      filter: (posts) => MuteFilter.filterPosts(posts, mutedUserIds),
+      filter: async (posts) => {
+        // First filter muted users (sync), then filter deleted posts (async)
+        const afterMuteFilter = MuteFilter.filterPosts(posts, mutedUserIds);
+        return Core.PostDetailsModel.filterDeleted(afterMuteFilter);
+      },
       fetch: async (cursor) => {
-        // First fetch checks cache because we might be able to reuse leftover posts from previous fetch, subsequent fetches go directly to Nexus
-        const result = isFirstFetch
-          ? await this.fetchStreamSliceInternal({
-              streamId,
-              streamHead,
-              streamTail: cursor,
-              lastPostId,
-              limit,
-              viewerId,
-              order,
-            })
-          : await this.fetchStreamFromNexus({
-              streamId,
-              limit,
-              streamTail: cursor,
-              streamHead: Core.SKIP_FETCH_NEW_POSTS,
-              viewerId,
-              order,
-            });
+        // Continue reading from cache using lastReturnedPostId to track position
+        // This ensures we exhaust cache before going to Nexus
+        const result = await this.fetchStreamSliceInternal({
+          streamId,
+          streamHead: isFirstFetch ? streamHead : Core.SKIP_FETCH_NEW_POSTS,
+          streamTail: cursor,
+          lastPostId: lastReturnedPostId,
+          limit,
+          viewerId,
+          order,
+        });
         isFirstFetch = false;
+
+        // Track last returned post for cache continuation
+        if (result.nextPageIds.length > 0) {
+          lastReturnedPostId = result.nextPageIds[result.nextPageIds.length - 1];
+        }
+
         return result;
       },
     });
@@ -362,11 +367,10 @@ export class PostStreamApplication {
   private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
     if (cacheMissUserIds.length > 0) {
-      const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+      const userBatch = await Core.NexusUserStreamService.fetchByIds({
         user_ids: cacheMissUserIds,
         viewer_id: viewerId ?? undefined,
       });
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }

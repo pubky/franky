@@ -89,4 +89,54 @@ describe('InstallNavigation', () => {
 
     expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.SCAN);
   });
+
+  it('shows loading state and disables both buttons when create button is clicked', () => {
+    render(<InstallNavigation />);
+
+    const createButton = screen.getByRole('button', { name: /Create keys in browser/i });
+    const continueButton = screen.getByRole('button', { name: /Continue with Pubky Ring/i });
+
+    expect(createButton).not.toBeDisabled();
+    expect(continueButton).not.toBeDisabled();
+
+    fireEvent.click(createButton);
+
+    expect(createButton).toBeDisabled();
+    expect(continueButton).toBeDisabled();
+  });
+
+  it('shows loading state and disables both buttons when continue button is clicked', () => {
+    render(<InstallNavigation />);
+
+    const createButton = screen.getByRole('button', { name: /Create keys in browser/i });
+    const continueButton = screen.getByRole('button', { name: /Continue with Pubky Ring/i });
+
+    expect(createButton).not.toBeDisabled();
+    expect(continueButton).not.toBeDisabled();
+
+    fireEvent.click(continueButton);
+
+    expect(createButton).toBeDisabled();
+    expect(continueButton).toBeDisabled();
+  });
+
+  it('matches snapshot when create button is loading', () => {
+    const { container } = render(<InstallNavigation />);
+
+    const createButton = screen.getByRole('button', { name: /Create keys in browser/i });
+    fireEvent.click(createButton);
+
+    const normalizedHtml = normalizeRadixIds(container.innerHTML);
+    expect(normalizedHtml).toMatchSnapshot();
+  });
+
+  it('matches snapshot when continue button is loading', () => {
+    const { container } = render(<InstallNavigation />);
+
+    const continueButton = screen.getByRole('button', { name: /Continue with Pubky Ring/i });
+    fireEvent.click(continueButton);
+
+    const normalizedHtml = normalizeRadixIds(container.innerHTML);
+    expect(normalizedHtml).toMatchSnapshot();
+  });
 });

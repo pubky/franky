@@ -43,7 +43,7 @@ describe('useConfirmableDialog', () => {
     );
 
     act(() => {
-      result.current.handleContentChange('Some content', [], []);
+      result.current.handleContentChange('Some content', [], [], '');
     });
 
     act(() => {
@@ -62,7 +62,7 @@ describe('useConfirmableDialog', () => {
     );
 
     act(() => {
-      result.current.handleContentChange('', ['tag1', 'tag2'], []);
+      result.current.handleContentChange('', ['tag1', 'tag2'], [], '');
     });
 
     act(() => {
@@ -81,7 +81,7 @@ describe('useConfirmableDialog', () => {
     );
 
     act(() => {
-      result.current.handleContentChange('   ', [], []);
+      result.current.handleContentChange('   ', [], [], '');
     });
 
     act(() => {
@@ -102,7 +102,7 @@ describe('useConfirmableDialog', () => {
     const mockFile = new File(['test'], 'test.txt', { type: 'text/plain' });
 
     act(() => {
-      result.current.handleContentChange('', [], [mockFile]);
+      result.current.handleContentChange('', [], [mockFile], '');
     });
 
     act(() => {
@@ -111,6 +111,44 @@ describe('useConfirmableDialog', () => {
 
     expect(mockOnClose).not.toHaveBeenCalled();
     expect(result.current.showConfirmDialog).toBe(true);
+  });
+
+  it('shows confirm dialog when closing with article title only', () => {
+    const { result } = renderHook(() =>
+      useConfirmableDialog({
+        onClose: mockOnClose,
+      }),
+    );
+
+    act(() => {
+      result.current.handleContentChange('', [], [], 'My Article Title');
+    });
+
+    act(() => {
+      result.current.handleOpenChange(false);
+    });
+
+    expect(mockOnClose).not.toHaveBeenCalled();
+    expect(result.current.showConfirmDialog).toBe(true);
+  });
+
+  it('does not show confirm dialog for whitespace-only article title', () => {
+    const { result } = renderHook(() =>
+      useConfirmableDialog({
+        onClose: mockOnClose,
+      }),
+    );
+
+    act(() => {
+      result.current.handleContentChange('', [], [], '   ');
+    });
+
+    act(() => {
+      result.current.handleOpenChange(false);
+    });
+
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(result.current.showConfirmDialog).toBe(false);
   });
 
   it('resets content state when dialog opens', () => {
@@ -122,7 +160,7 @@ describe('useConfirmableDialog', () => {
 
     // Add content
     act(() => {
-      result.current.handleContentChange('Some content', ['tag'], []);
+      result.current.handleContentChange('Some content', ['tag'], [], '');
     });
 
     // Open dialog (simulates re-opening)
@@ -148,7 +186,7 @@ describe('useConfirmableDialog', () => {
 
     // Set up state as if confirm dialog is showing
     act(() => {
-      result.current.handleContentChange('Content', [], []);
+      result.current.handleContentChange('Content', [], [], '');
     });
     act(() => {
       result.current.handleOpenChange(false);
@@ -197,7 +235,7 @@ describe('useConfirmableDialog', () => {
 
     // Add content and trigger confirm dialog
     act(() => {
-      result.current.handleContentChange('Content', [], []);
+      result.current.handleContentChange('Content', [], [], '');
     });
     act(() => {
       result.current.handleOpenChange(false);

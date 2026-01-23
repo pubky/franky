@@ -1,34 +1,50 @@
 import { BlobResult, FileResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 
 export class FileNormalizer {
   private constructor() {}
 
   static async toFileAttachment({ file, pubky }: Core.TUploadFileParams): Promise<Core.TFileAttachmentResult> {
-    const blobResult = await this.toBlob({ file, pubky });
-    const fileResult = this.toFile({ file, url: blobResult.meta.url, pubky });
-    return { blobResult, fileResult };
+    try {
+      const blobResult = await this.toBlob({ file, pubky });
+      const fileResult = this.toFile({ file, url: blobResult.meta.url, pubky });
+      return { blobResult, fileResult };
+    } catch (error) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'toFileAttachment',
+        context: { file, pubky },
+      });
+    }
   }
 
   private static async toBlob({ file, pubky }: Core.TUploadFileParams): Promise<BlobResult> {
-    const fileContent = await file.arrayBuffer();
-    const blobData = new Uint8Array(fileContent);
+    try {
+      const fileContent = await file.arrayBuffer();
+      const blobData = new Uint8Array(fileContent);
 
-    const builder = Core.PubkySpecsSingleton.get(pubky);
-    const result = builder.createBlob(blobData);
-
-    Libs.Logger.debug('Blob validated', { result });
-
-    return result;
+      const builder = Core.PubkySpecsSingleton.get(pubky);
+      return builder.createBlob(blobData);
+    } catch (error) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'createBlob',
+        context: { file, pubky },
+      });
+    }
   }
 
   private static toFile({ file, url, pubky }: Core.TToFileParams): FileResult {
-    const builder = Core.PubkySpecsSingleton.get(pubky);
-    const result = builder.createFile(file.name, url, file.type, file.size);
-
-    Libs.Logger.debug('File validated', { result });
-
-    return result;
+    try {
+      const builder = Core.PubkySpecsSingleton.get(pubky);
+      return builder.createFile(file.name, url, file.type, file.size);
+    } catch (error) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'createFile',
+        context: { file, url, pubky },
+      });
+    }
   }
 }

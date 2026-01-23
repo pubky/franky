@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, Logger, AppError, HttpStatusCode } from '@/libs';
 
 /**
  * Settings application service.
@@ -19,15 +19,15 @@ export class SettingsApplication {
   static async commitUpdate(settings: Core.SettingsState, pubky: Core.Pubky): Promise<void> {
     const { settings: settingsJson, meta } = Core.SettingsNormalizer.to(settings, pubky);
 
-    Libs.Logger.info('[Settings] Pushing to homeserver', { url: meta.url, settings: settingsJson });
+    Logger.info('[Settings] Pushing to homeserver', { url: meta.url, settings: settingsJson });
 
-    await Core.HomeserverService.request(
-      Core.HomeserverAction.PUT,
-      meta.url,
-      settingsJson as unknown as Record<string, unknown>,
-    );
+    await Core.HomeserverService.request({
+      method: HttpMethod.PUT,
+      url: meta.url,
+      bodyJson: settingsJson as unknown as Record<string, unknown>,
+    });
 
-    Libs.Logger.info('[Settings] Push complete');
+    Logger.info('[Settings] Push complete');
   }
 
   /**
@@ -40,23 +40,23 @@ export class SettingsApplication {
   static async fetchFromHomeserver(pubky: Core.Pubky): Promise<Core.SettingsState | null> {
     const url = Core.SettingsNormalizer.buildUrl(pubky);
 
-    Libs.Logger.info('[Settings] Pulling from homeserver', { url });
+    Logger.info('[Settings] Pulling from homeserver', { url });
 
     try {
-      const settingsJson = await Core.HomeserverService.request<Core.SettingsJson>(Core.HomeserverAction.GET, url);
+      const settingsJson = await Core.HomeserverService.request<Core.SettingsJson>({ method: HttpMethod.GET, url });
 
       if (!settingsJson) {
-        Libs.Logger.info('[Settings] Pull complete, no settings found');
+        Logger.info('[Settings] Pull complete, no settings found');
         return null;
       }
 
       const settings = Core.SettingsNormalizer.from(settingsJson);
-      Libs.Logger.info('[Settings] Pull complete', { settings });
+      Logger.info('[Settings] Pull complete', { settings });
       return settings;
     } catch (error) {
       // Handle 404, settings don't exist yet
-      if (error instanceof Libs.AppError && error.statusCode === 404) {
-        Libs.Logger.info('[Settings] Pull complete, settings file not found (404)');
+      if (error instanceof AppError && error.context?.statusCode === HttpStatusCode.NOT_FOUND) {
+        Logger.info('[Settings] Pull complete, settings file not found (404)');
         return null;
       }
       throw error;
@@ -73,13 +73,13 @@ export class SettingsApplication {
    * @throws If fetch or sync operations fail, caller should handle errors
    */
   static async initializeSettings(pubky: Core.Pubky): Promise<Core.SettingsState | null> {
-    Libs.Logger.info('[Settings] Initializing settings sync');
+    Logger.info('[Settings] Initializing settings sync');
 
     const localSettings = Core.SettingsNormalizer.extractState(Core.useSettingsStore.getState());
     const remoteSettings = await this.fetchFromHomeserver(pubky);
 
     if (!remoteSettings) {
-      Libs.Logger.info('[Settings] No remote settings, pushing local to homeserver');
+      Logger.info('[Settings] No remote settings, pushing local to homeserver');
       await this.commitUpdate(localSettings, pubky);
       return null;
     }
@@ -89,18 +89,18 @@ export class SettingsApplication {
       remoteSettings.version > localSettings.version ||
       (remoteSettings.version === localSettings.version && remoteSettings.updatedAt > localSettings.updatedAt);
 
-    Libs.Logger.info('[Settings] Comparing versions', {
+    Logger.info('[Settings] Comparing versions', {
       local: { version: localSettings.version, updatedAt: localSettings.updatedAt },
       remote: { version: remoteSettings.version, updatedAt: remoteSettings.updatedAt },
       isRemoteNewer,
     });
 
     if (isRemoteNewer) {
-      Libs.Logger.info('[Settings] Using remote settings (newer)');
+      Logger.info('[Settings] Using remote settings (newer)');
       return remoteSettings;
     }
 
-    Libs.Logger.info('[Settings] Local settings newer, pushing to homeserver');
+    Logger.info('[Settings] Local settings newer, pushing to homeserver');
     await this.commitUpdate(localSettings, pubky);
     return null;
   }

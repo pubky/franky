@@ -1,9 +1,10 @@
-import type { Session } from '@synonymdev/pubky';
+import type { Capabilities, Session } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 export type FetchOptions = {
-  method?: HomeserverAction;
+  method?: HttpMethod;
   body?: string | Uint8Array;
 };
 
@@ -20,12 +21,6 @@ export type TGenerateAuthUrlResult = {
   awaitApproval: Promise<Session>;
   cancelAuthFlow: () => void;
 };
-
-export enum HomeserverAction {
-  GET = 'GET',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-}
 
 export type THomeserverRestoreSessionParams = {
   sessionExport: string;
@@ -47,3 +42,97 @@ export type CancelableAuthApproval = {
  * ```
  */
 export type PubPath<T extends string = string> = `/pub/${T}`;
+
+export type TGenerateSignupAuthUrlParams = {
+  inviteCode: string;
+  caps?: Capabilities;
+};
+
+export type THomeserverFetchParams = {
+  url: string;
+  options?: FetchOptions;
+};
+
+export type THomeserverRequestParams = {
+  method: HttpMethod;
+  url: string;
+  bodyJson?: Record<string, unknown>;
+};
+
+export type TPutBlobParams = {
+  url: string;
+  blob: Uint8Array;
+};
+
+export type THomeserverListParams = {
+  baseDirectory: string;
+  cursor?: string;
+  reverse?: boolean;
+  limit?: number;
+};
+
+// Utility function parameter types
+export type TParseResponseOrUndefinedParams = {
+  response: Response;
+  operation?: string;
+  url?: string;
+};
+
+export type TResolveOwnedSessionPathParams = {
+  url: string;
+  session: Session | null;
+  pubPathPrefix: string;
+};
+
+export type TOwnedSessionPath = {
+  session: Session;
+  path: PubPath<string>;
+};
+
+export type TCheckSessionExpirationParams = {
+  response: Response;
+  url: string;
+};
+
+export type TAssertOkParams = {
+  response: Response;
+  url: string;
+  operation: string;
+};
+
+export type TGetOwnedResponseParams = {
+  session: Session;
+  path: PubPath<string>;
+  url: string;
+};
+
+// Error utility function parameter types
+export type TThrowSessionExpiredErrorParams = {
+  errorMessage: string;
+  additionalContext: Record<string, unknown>;
+};
+
+export type TThrowInvalidInputErrorParams = {
+  errorMessage: string;
+  additionalContext: Record<string, unknown>;
+};
+
+export type TThrowHomeserverErrorParams = {
+  statusCode: number;
+  errorMessage: string;
+  additionalContext: Record<string, unknown>;
+};
+
+export type THandleTypedErrorParams = {
+  errorMessage: string;
+  errorName: string | undefined;
+  statusCode: number;
+  additionalContext: Record<string, unknown>;
+};
+
+export type THandleErrorParams = {
+  error: unknown;
+  additionalContext?: Record<string, unknown>;
+  statusCode?: number;
+  alwaysUseHomeserverError?: boolean;
+};

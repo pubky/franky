@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, DatabaseErrorCode, ErrorService, HttpMethod } from '@/libs';
 import { PubkyAppPost, PubkyAppPostKind } from 'pubky-app-specs';
 import type { BlobResult, FileResult } from 'pubky-app-specs';
 
@@ -116,14 +116,14 @@ describe('Post Application', () => {
         compositePostId: mockData.compositePostId,
         post: mockData.post,
       });
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        mockData.postUrl,
-        expect.objectContaining({
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: mockData.postUrl,
+        bodyJson: expect.objectContaining({
           content: 'Hello, world!',
           kind: 'short',
         }),
-      );
+      });
     });
 
     it('should propagate error when local save fails', async () => {
@@ -161,14 +161,14 @@ describe('Post Application', () => {
         compositePostId: mockData.compositePostId,
         post: longPost,
       });
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        mockData.postUrl,
-        expect.objectContaining({
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: mockData.postUrl,
+        bodyJson: expect.objectContaining({
           content: 'Long post content',
           kind: 'long',
         }),
-      );
+      });
     });
 
     it('should handle posts with parent URI (reply)', async () => {
@@ -192,14 +192,14 @@ describe('Post Application', () => {
         compositePostId: mockData.compositePostId,
         post: replyPost,
       });
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        mockData.postUrl,
-        expect.objectContaining({
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: mockData.postUrl,
+        bodyJson: expect.objectContaining({
           content: 'Reply content',
           kind: 'short',
         }),
-      );
+      });
     });
 
     // --- File Attachments ---
@@ -225,14 +225,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with image',
             kind: 'short',
           }),
-        );
+        });
       });
 
       it('should fail fast on file upload error', async () => {
@@ -280,14 +280,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with tags',
             kind: 'short',
           }),
-        );
+        });
       });
 
       it('should propagate tag creation error after post sync', async () => {
@@ -318,14 +318,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with failing tags',
             kind: 'short',
           }),
-        );
+        });
         expect(tagCreateSpy).toHaveBeenCalledWith({ tagList: mockTags });
       });
     });
@@ -360,14 +360,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with files and tags',
             kind: 'short',
           }),
-        );
+        });
         expect(tagCreateSpy).toHaveBeenCalledWith({ tagList: mockTags });
         expect(commitCreateSpy).toHaveBeenCalledBefore(saveSpy);
         expect(saveSpy).toHaveBeenCalledBefore(requestSpy);
@@ -405,14 +405,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with homeserver failure',
             kind: 'short',
           }),
-        );
+        });
         expect(tagCreateSpy).not.toHaveBeenCalled();
       });
     });
@@ -453,7 +453,7 @@ describe('Post Application', () => {
       expect(deleteSpy).toHaveBeenCalledWith({
         compositePostId: mockData.compositePostId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockPostDetails.uri);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: mockPostDetails.uri });
     });
 
     it('should throw error when post not found', async () => {
@@ -492,17 +492,16 @@ describe('Post Application', () => {
 
       expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
       expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockPostDetails.uri);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: mockPostDetails.uri });
     });
 
     it('should propagate database error when findById throws', async () => {
       const mockData = createMockDeleteData();
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database connection failed',
-        500,
-        { compositePostId: mockData.compositePostId },
-      );
+      const databaseError = Err.database(DatabaseErrorCode.QUERY_FAILED, 'Database connection failed', {
+        service: ErrorService.Local,
+        operation: 'findById',
+        context: { compositePostId: mockData.compositePostId },
+      });
       const { findByIdSpy, deleteSpy, requestSpy } = setupDeleteSpies();
       findByIdSpy.mockRejectedValue(databaseError);
 
@@ -528,7 +527,7 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
         });
         // Homeserver DELETE is always called, even for soft deletes
-        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockPostDetailsWithAttachments.uri);
+        expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: mockPostDetailsWithAttachments.uri });
         // File cleanup is skipped when post has connections
         expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
@@ -553,7 +552,7 @@ describe('Post Application', () => {
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
         // Always sync deletion to homeserver (Nexus determines definitive state)
-        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithAttachments.uri);
+        expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: postWithAttachments.uri });
         // Files are preserved when post has connections (soft delete)
         expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
@@ -580,7 +579,7 @@ describe('Post Application', () => {
 
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
-        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithFiles.uri);
+        expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: postWithFiles.uri });
         expect(fileCommitDeleteSpy).toHaveBeenCalledWith(postWithFiles.attachments);
         expect(requestSpy).toHaveBeenCalledBefore(fileCommitDeleteSpy);
       });
@@ -604,7 +603,7 @@ describe('Post Application', () => {
 
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
-        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithoutFiles.uri);
+        expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: postWithoutFiles.uri });
         expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
 
@@ -630,7 +629,7 @@ describe('Post Application', () => {
 
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
-        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithFiles.uri);
+        expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: postWithFiles.uri });
         expect(fileCommitDeleteSpy).toHaveBeenCalledWith(postWithFiles.attachments);
       });
     });
@@ -660,14 +659,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with empty tags',
             kind: 'short',
           }),
-        );
+        });
         expect(tagCreateSpy).not.toHaveBeenCalled();
       });
 
@@ -695,14 +694,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with empty files',
             kind: 'short',
           }),
-        );
+        });
       });
 
       it('should handle empty files and tags', async () => {
@@ -731,14 +730,14 @@ describe('Post Application', () => {
           compositePostId: mockData.compositePostId,
           post: mockData.post,
         });
-        expect(requestSpy).toHaveBeenCalledWith(
-          Core.HomeserverAction.PUT,
-          mockData.postUrl,
-          expect.objectContaining({
+        expect(requestSpy).toHaveBeenCalledWith({
+          method: HttpMethod.PUT,
+          url: mockData.postUrl,
+          bodyJson: expect.objectContaining({
             content: 'Post with all empty arrays',
             kind: 'short',
           }),
-        );
+        });
       });
 
       it('should skip cleanup with empty attachments', async () => {
@@ -760,7 +759,7 @@ describe('Post Application', () => {
 
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
-        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithEmptyAttachments.uri);
+        expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: postWithEmptyAttachments.uri });
         expect(fileCommitDeleteSpy).not.toHaveBeenCalled();
       });
     });

@@ -44,15 +44,20 @@ export function useUserProfile(userId: string): UseUserProfileResult {
     // Always fetch fresh details from Nexus API to ensure status is up-to-date
     // This is especially important when viewing another user's profile
     Core.UserController.refreshDetails({ userId }).catch((error) => {
-      console.error('Failed to fetch user profile:', error);
+      Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
     });
   }, [userId]);
 
   // Separate concern: Read current data from local database
   // This will reactively update when the database changes
   const userDetails = useLiveQuery(async () => {
-    if (!userId) return null;
-    return await Core.UserController.getDetails({ userId });
+    try {
+      if (!userId) return null;
+      return await Core.UserController.getDetails({ userId });
+    } catch (error) {
+      Libs.Logger.error('[useUserProfile] Failed to query user details', { userId, error });
+      return null;
+    }
   }, [userId]);
 
   // Distinguish between:

@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
 
 export class LocalPostTagService {
   private static readonly TAG_TABLES = [
@@ -26,9 +26,8 @@ export class LocalPostTagService {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const postTagsModel = await Core.PostTagsModel.getOrCreate<string, Core.PostTagsModelSchema>(postId);
         const status = postTagsModel.addTagger(label, taggerId);
-        // Ignore all the operations
+        // Idempotent: user already tagged this post with this label
         if (status === null) {
-          Libs.Logger.debug('User already tagged this post with this label', { postId, label, taggerId });
           return;
         }
         await Promise.all([
@@ -36,15 +35,13 @@ export class LocalPostTagService {
           this.updatePostCounts(postId, postTagsModel),
           Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: 1 } }),
         ]);
-
-        Libs.Logger.debug('Post tag created', { postId, label, taggerId });
       });
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to create post tag`, 500, {
-        error,
-        postId,
-        label,
-        taggerId,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to create post tag', {
+        service: ErrorService.Local,
+        operation: 'create',
+        context: { postId, label, taggerId },
+        cause: error,
       });
     }
   }
@@ -57,46 +54,40 @@ export class LocalPostTagService {
    * - Decrements the tagger's tagged count
    * - Removes the tag entirely if no taggers remain
    *
-   * @param params.postId - Unique identifier of the post to remove tag from
+   * @param params.taggedId - Unique identifier of the post to remove tag from
    * @param params.label - Tag label to remove
    * @param params.taggerId - Unique identifier of the user removing the tag
    *
+   * @returns {boolean} true if tag was deleted, false if nothing to delete (idempotent)
    * @throws {AppError} When post has no tags or user hasn't tagged with this label
    * @throws {DatabaseError} When database operations fail
    */
-  static async delete({ taggedId: postId, label, taggerId }: Core.TLocalTagParams) {
+  static async delete({ taggedId: postId, label, taggerId }: Core.TLocalTagParams): Promise<boolean> {
+    // Check if post has tags before starting transaction
+    const tagsData = await Core.PostTagsModel.findById(postId);
+    if (!tagsData) {
+      return false; // Nothing to delete
+    }
+
+    const postTagsModel = new Core.PostTagsModel(tagsData);
+    const status = postTagsModel.removeTagger(label, taggerId);
+    if (status === null) {
+      return false; // User hasn't tagged this post with this label
+    }
+
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
-        const tagsData = await Core.PostTagsModel.findById(postId);
-
-        if (!tagsData) {
-          throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, `Post has no tags`, 404, { postId });
-        }
-
-        const postTagsModel = new Core.PostTagsModel(tagsData);
-
-        const status = postTagsModel.removeTagger(label, taggerId);
-        if (status === null) {
-          throw Libs.createDatabaseError(
-            Libs.DatabaseErrorType.QUERY_FAILED,
-            `User has not created tag post with this label`,
-            404,
-            { postId, label, taggerId },
-          );
-        }
-
         await this.savePostTagsModel(postId, postTagsModel);
         await this.updatePostCounts(postId, postTagsModel);
         await Core.UserCountsModel.updateCounts({ userId: taggerId, countChanges: { tagged: -1 } });
-
-        Libs.Logger.debug('Tag removed', { postId, label, taggerId });
       });
+      return true;
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to delete post tag`, 500, {
-        error,
-        postId,
-        label,
-        taggerId,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to delete post tag', {
+        service: ErrorService.Local,
+        operation: 'delete',
+        context: { postId, label, taggerId },
+        cause: error,
       });
     }
   }
@@ -137,7 +128,7 @@ export class LocalPostTagService {
       });
     } else {
       // TODO: Maybe fetch counts from Nexus and reconcile local tag counts.
-      Libs.Logger.warn('Post counts not found, skipping update', { postId });
+      Logger.warn('Post counts not found, skipping update', { postId });
     }
   }
 
@@ -186,13 +177,13 @@ export class LocalPostTagService {
           id: postId,
           tags: mergedTags,
         });
-
-        Libs.Logger.debug('Merged post tags', { postId, newTagsCount: tags.length, totalTags: mergedTags.length });
       });
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to merge post tags`, 500, {
-        error,
-        postId,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to merge post tags', {
+        service: ErrorService.Local,
+        operation: 'mergeTags',
+        context: { postId },
+        cause: error,
       });
     }
   }

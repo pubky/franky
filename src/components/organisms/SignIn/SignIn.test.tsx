@@ -27,6 +27,27 @@ vi.mock('qrcode.react', () => ({
   ),
 }));
 
+// Mock signIn store state - mutable for per-test customization
+let mockSignInState = {
+  authUrlResolved: false,
+  profileChecked: false,
+  bootstrapFetched: false,
+  dataPersisted: false,
+  homeserverSynced: false,
+  error: null,
+};
+
+const resetMockSignInState = () => {
+  mockSignInState = {
+    authUrlResolved: false,
+    profileChecked: false,
+    bootstrapFetched: false,
+    dataPersisted: false,
+    homeserverSynced: false,
+    error: null,
+  };
+};
+
 // Mock Core modules
 vi.mock('@/core', () => ({
   AuthController: {
@@ -50,6 +71,12 @@ vi.mock('@/core', () => ({
       reset: vi.fn(),
     }),
   },
+  useSignInStore: vi.fn((selector) => {
+    if (typeof selector === 'function') {
+      return selector(mockSignInState);
+    }
+    return mockSignInState;
+  }),
 }));
 
 // Mock useAuthUrl hook
@@ -85,11 +112,17 @@ vi.mock('@/molecules', () => ({
   toast: vi.fn(),
 }));
 
+// Mock copyToClipboard function - use vi.hoisted to ensure it's available before vi.mock runs
+const { mockCopyToClipboard } = vi.hoisted(() => ({
+  mockCopyToClipboard: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
   return {
     ...actual,
+    copyToClipboard: mockCopyToClipboard,
     Logger: {
       error: vi.fn(),
     },
@@ -175,6 +208,8 @@ describe('SignInContent', () => {
     vi.clearAllMocks();
     window.location.href = '';
     clipboardMock.writeText.mockClear();
+    mockCopyToClipboard.mockClear();
+    resetMockSignInState();
   });
 
   afterAll(() => {
@@ -264,7 +299,7 @@ describe('SignInContent', () => {
       fireEvent.click(authorizeButton);
     });
 
-    expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
+    expect(mockCopyToClipboard).toHaveBeenCalledWith({ text: 'mock-auth-url' });
     expect(window.open).toHaveBeenCalledWith('mock-auth-url', '_blank');
   });
 
@@ -302,6 +337,112 @@ describe('SignInContent', () => {
   });
 
   // Note: Loading state tests removed due to complexity with async mocking
+
+  it('copies auth URL to clipboard when QR code is clicked', async () => {
+    // Ensure hooks mock returns the URL (reset from any previous test modifications)
+    const Hooks = await import('@/hooks');
+    vi.mocked(Hooks.useAuthUrl).mockReturnValue({
+      url: 'mock-auth-url',
+      isLoading: false,
+      fetchUrl: mockFetchUrl,
+    });
+
+    const Molecules = await import('@/molecules');
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    // Find the QR button by aria-label
+    const qrButton = screen.getByLabelText('Copy authentication link');
+    await act(async () => {
+      fireEvent.click(qrButton);
+    });
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith({ text: 'mock-auth-url' });
+    expect(Molecules.toast).toHaveBeenCalledWith({
+      title: 'Link copied',
+      description: 'Authentication link copied to clipboard.',
+    });
+  });
+});
+
+describe('SignInContent - Progress View', () => {
+  const clipboardMock = { writeText: vi.fn().mockResolvedValue(undefined) };
+
+  beforeAll(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: clipboardMock,
+    });
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetMockSignInState();
+  });
+
+  it('renders progress view when authUrlResolved is true', async () => {
+    mockSignInState.authUrlResolved = true;
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    // Should show all 4 step labels
+    expect(screen.getByText('Verifying account')).toBeInTheDocument();
+    expect(screen.getByText('Loading your data')).toBeInTheDocument();
+    expect(screen.getByText('Building your feed')).toBeInTheDocument();
+    expect(screen.getByText('Syncing settings')).toBeInTheDocument();
+  });
+
+  it('shows correct step states - first step running when none completed', async () => {
+    mockSignInState.authUrlResolved = true;
+    // All other steps are false, so first step should be "running"
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    // Verify step labels are present
+    const steps = screen.getAllByTestId('typography');
+    expect(steps.length).toBeGreaterThan(0);
+  });
+
+  it('shows completed state for finished steps', async () => {
+    mockSignInState.authUrlResolved = true;
+    mockSignInState.profileChecked = true;
+    mockSignInState.bootstrapFetched = true;
+    // dataPersisted and homeserverSynced are still false
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    // All 4 step labels should be visible
+    expect(screen.getByText('Verifying account')).toBeInTheDocument();
+    expect(screen.getByText('Loading your data')).toBeInTheDocument();
+    expect(screen.getByText('Building your feed')).toBeInTheDocument();
+    expect(screen.getByText('Syncing settings')).toBeInTheDocument();
+  });
+
+  it('does not render QR code or mobile button when showing progress', async () => {
+    mockSignInState.authUrlResolved = true;
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    // Should not have the authorize button
+    expect(screen.queryByText('Authorize with Pubky Ring')).not.toBeInTheDocument();
+
+    // Should not have the desktop/mobile specific containers
+    const containers = screen.getAllByTestId('container');
+    const desktopContainer = containers.find((c) => c.className.includes('hidden md:flex'));
+    const mobileContainer = containers.find((c) => c.className.includes('md:hidden'));
+    expect(desktopContainer).toBeUndefined();
+    expect(mobileContainer).toBeUndefined();
+  });
 });
 
 describe('SignInFooter', () => {

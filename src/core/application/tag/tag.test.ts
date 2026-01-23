@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TagApplication } from './tag';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 
 // Mock the Local.Tag service
@@ -63,7 +64,11 @@ describe('Tag Application', () => {
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.tagUrl, mockData.tagJson);
+      expect(requestSpy).toHaveBeenCalledWith({
+        method: HttpMethod.PUT,
+        url: mockData.tagUrl,
+        bodyJson: mockData.tagJson,
+      });
     });
 
     it('should throw when local save fails', async () => {
@@ -97,7 +102,7 @@ describe('Tag Application', () => {
       const mockData = createMockDeleteData();
       const { removeSpy, requestSpy } = setupMocks();
 
-      removeSpy.mockResolvedValue(undefined);
+      removeSpy.mockResolvedValue(true);
       requestSpy.mockResolvedValue(undefined);
 
       await TagApplication.commitDelete(mockData);
@@ -107,7 +112,7 @@ describe('Tag Application', () => {
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.tagUrl);
+      expect(requestSpy).toHaveBeenCalledWith({ method: HttpMethod.DELETE, url: mockData.tagUrl });
     });
 
     it('should throw when local remove fails', async () => {
@@ -127,12 +132,24 @@ describe('Tag Application', () => {
       const mockData = createMockDeleteData();
       const { removeSpy, requestSpy } = setupMocks();
 
-      removeSpy.mockResolvedValue(undefined);
+      removeSpy.mockResolvedValue(true);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
       await expect(TagApplication.commitDelete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 404');
       expect(removeSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should not call homeserver when nothing was deleted locally (idempotent)', async () => {
+      const mockData = createMockDeleteData();
+      const { removeSpy, requestSpy } = setupMocks();
+
+      removeSpy.mockResolvedValue(false); // Nothing to delete
+
+      await TagApplication.commitDelete(mockData);
+
+      expect(removeSpy).toHaveBeenCalledOnce();
+      expect(requestSpy).not.toHaveBeenCalled();
     });
   });
 });

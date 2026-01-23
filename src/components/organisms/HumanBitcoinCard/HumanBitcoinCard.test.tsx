@@ -21,21 +21,31 @@ vi.mock('@/hooks/useLnVerificationInfo', () => ({
   useLnVerificationInfo: () => mockUseLnVerificationInfo(),
 }));
 
+// Mock toLocaleString to ensure consistent formatting across locales
+const originalToLocaleString = Number.prototype.toLocaleString;
+
 describe('BitcoinPaymentCard', () => {
   beforeEach(() => {
     mockUseBtcRate.mockReturnValue({ satUsd: 0.0005 });
     mockUseLnVerificationInfo.mockReturnValue({ available: true, amountSat: 1000 });
+    // Force US locale for consistent snapshots
+    Number.prototype.toLocaleString = function () {
+      return originalToLocaleString.call(this, 'en-US');
+    };
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    // Restore original toLocaleString
+    Number.prototype.toLocaleString = originalToLocaleString;
   });
 
   it('renders bitcoin payment details and action', () => {
     render(<HumanBitcoinCard />);
 
     expect(screen.getByText(/Bitcoin Payment/i)).toBeInTheDocument();
-    expect(screen.getByText(/₿ 1,000/i)).toBeInTheDocument();
+    // Use regex to match formatted number (handles different locale separators)
+    expect(screen.getByText(/₿ 1[,.]000/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pay Once/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Pay Once/i })).not.toBeDisabled();
   });
@@ -94,5 +104,26 @@ describe('BitcoinPaymentCard', () => {
     mockUseLnVerificationInfo.mockReturnValue({ available: false });
     const { container } = render(<HumanBitcoinCard />);
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('renders generic error overlay when service fails (not geo-blocked)', () => {
+    // Issue #919: Generic errors should NOT show "Country not available" message
+    mockUseLnVerificationInfo.mockReturnValue({ available: false, error: true });
+    render(<HumanBitcoinCard />);
+
+    // Should show generic error alert, NOT geo-blocking alert
+    expect(screen.getByTestId('service-error-alert')).toBeInTheDocument();
+    expect(screen.getByText(/Service temporarily unavailable/i)).toBeInTheDocument();
+
+    // Should NOT show geo-blocking message
+    expect(screen.queryByTestId('geo-block-alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Currently not available in your country/i)).not.toBeInTheDocument();
+
+    // Card should still have blur class (service unavailable)
+    const card = screen.getByTestId('bitcoin-payment-card');
+    expect(card).toHaveClass('blur-[5px]');
+
+    // Button should be disabled
+    expect(screen.getByRole('button', { name: /Pay Once/i })).toBeDisabled();
   });
 });

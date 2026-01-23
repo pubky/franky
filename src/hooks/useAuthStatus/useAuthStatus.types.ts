@@ -8,7 +8,7 @@ export interface AuthStatusResult {
   status: AuthStatus;
   isLoading: boolean;
   hasKeypair: boolean;
-  hasProfile: boolean;
+  hasProfile: boolean | null;
   isFullyAuthenticated: boolean;
 }
 

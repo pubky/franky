@@ -24,15 +24,24 @@ vi.mock('@/organisms', async () => {
 
 describe('HumanSelection', () => {
   it('renders both verification cards', () => {
-    render(<HumanSelection onClick={() => {}} onDevMode={() => {}} />);
+    render(<HumanSelection onClick={() => {}} onInviteCodeClick={() => {}} onDevMode={() => {}} />);
 
     expect(screen.getByTestId('mock-sms-card')).toBeInTheDocument();
     expect(screen.getByTestId('mock-bitcoin-card')).toBeInTheDocument();
     expect(screen.getByTestId('mock-human-footer')).toBeInTheDocument();
   });
 
+  it('renders invite code link in subtitle', () => {
+    render(<HumanSelection onClick={() => {}} onInviteCodeClick={() => {}} onDevMode={() => {}} />);
+
+    expect(screen.getByTestId('invite-code-link')).toBeInTheDocument();
+    expect(screen.getByText('invite code.')).toBeInTheDocument();
+  });
+
   it('matches snapshot', () => {
-    const { container } = render(<HumanSelection onClick={() => {}} onDevMode={() => {}} />);
+    const { container } = render(
+      <HumanSelection onClick={() => {}} onInviteCodeClick={() => {}} onDevMode={() => {}} />,
+    );
     expect(container).toMatchSnapshot();
   });
 });

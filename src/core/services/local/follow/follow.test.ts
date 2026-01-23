@@ -134,9 +134,9 @@ describe('LocalFollowService.create', () => {
       await Core.LocalFollowService.create({ follower: userA, followee: userB });
       expect.unreachable('should throw');
     } catch (err: unknown) {
-      const e = err as { message?: string; details?: { error?: { message?: string } } };
+      const e = err as { message?: string; cause?: { message?: string } };
       expect(e.message ?? '').toMatch('Failed to create follow relationship');
-      expect(e.details?.error?.message ?? '').toMatch('counts-fail');
+      expect(e.cause?.message ?? '').toMatch('counts-fail');
     }
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([

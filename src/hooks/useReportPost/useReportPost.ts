@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { ReportIssueType } from '@/core/pipes/report';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { HttpMethod, JSON_HEADERS, Logger } from '@/libs';
 import * as Molecules from '@/molecules';
 import { POST_ROUTES } from '@/app/routes';
 import * as Hooks from '@/hooks';
@@ -65,10 +65,8 @@ export function useReportPost(postId: string): UseReportPostReturn {
 
     try {
       const response = await fetch(REPORT_API_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: HttpMethod.POST,
+        headers: JSON_HEADERS,
         body: JSON.stringify({
           pubky: currentUserPubky,
           postUrl,
@@ -81,14 +79,14 @@ export function useReportPost(postId: string): UseReportPostReturn {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         const errorMessage = errorData.error || 'Failed to submit report';
-        Libs.Logger.error('Report submission failed:', errorMessage);
+        Logger.error('Report submission failed:', errorMessage);
         showErrorToast(errorMessage);
         return;
       }
 
       setIsSuccess(true);
     } catch (err) {
-      Libs.Logger.error('Error submitting report:', err);
+      Logger.error('Error submitting report:', err);
       showErrorToast('Failed to submit report. Please try again.');
     } finally {
       setIsSubmitting(false);

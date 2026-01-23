@@ -31,25 +31,29 @@ import type { UseConfirmableDialogOptions, UseConfirmableDialogReturn } from './
 export function useConfirmableDialog({ onClose }: UseConfirmableDialogOptions): UseConfirmableDialogReturn {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [resetKey, setResetKey] = useState(0);
-  const contentRef = useRef({ content: '', tags: [] as string[], attachments: [] as File[] });
+  const contentRef = useRef({ content: '', tags: [] as string[], attachments: [] as File[], articleTitle: '' });
 
   const hasContent = useCallback(() => {
     return (
       contentRef.current.content.trim().length > 0 ||
       contentRef.current.tags.length > 0 ||
-      contentRef.current.attachments.length > 0
+      contentRef.current.attachments.length > 0 ||
+      contentRef.current.articleTitle.trim().length > 0
     );
   }, []);
 
-  const handleContentChange = useCallback((content: string, tags: string[], attachments: File[]) => {
-    contentRef.current = { content, tags, attachments };
-  }, []);
+  const handleContentChange = useCallback(
+    (content: string, tags: string[], attachments: File[], articleTitle: string) => {
+      contentRef.current = { content, tags, attachments, articleTitle };
+    },
+    [],
+  );
 
   const handleOpenChange = useCallback(
     (newOpen: boolean) => {
       if (newOpen) {
         setShowConfirmDialog(false);
-        contentRef.current = { content: '', tags: [], attachments: [] };
+        contentRef.current = { content: '', tags: [], attachments: [], articleTitle: '' };
       } else {
         // The !showConfirmDialog guard is defensive: prevents redundant state updates
         // if this fires while confirm dialog is open. In practice unlikely since the

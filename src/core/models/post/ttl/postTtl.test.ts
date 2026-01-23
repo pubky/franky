@@ -39,7 +39,7 @@ describe('PostTtlModel', () => {
       };
 
       const result = await Core.PostTtlModel.create(mockData);
-      expect(result).toBeUndefined();
+      expect(result).toBe(mockData.id);
     });
 
     it('should find post ttl by id', async () => {

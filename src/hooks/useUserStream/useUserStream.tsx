@@ -43,8 +43,13 @@ export function useUserStream({
   // Reactive user details from local database
   const userDetailsMap = useLiveQuery(
     async () => {
-      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
-      return await Core.UserController.getManyDetails({ userIds });
+      try {
+        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
+        return await Core.UserController.getManyDetails({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useUserStream] Failed to query user details', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserDetails>();
+      }
     },
     [userIds],
     new Map<Core.Pubky, Core.NexusUserDetails>(),
@@ -53,8 +58,13 @@ export function useUserStream({
   // Reactive user counts from local database (only if includeCounts is true)
   const userCountsMap = useLiveQuery(
     async () => {
-      if (!includeCounts || userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
-      return await Core.UserController.getManyCounts({ userIds });
+      try {
+        if (!includeCounts || userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
+        return await Core.UserController.getManyCounts({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useUserStream] Failed to query user counts', { userIds, error });
+        return new Map<Core.Pubky, Core.NexusUserCounts>();
+      }
     },
     [userIds, includeCounts],
     new Map<Core.Pubky, Core.NexusUserCounts>(),
@@ -63,9 +73,14 @@ export function useUserStream({
   // Reactive user relationships from local database (only if includeRelationships is true)
   const userRelationshipsMap = useLiveQuery(
     async () => {
-      if (!includeRelationships || userIds.length === 0)
+      try {
+        if (!includeRelationships || userIds.length === 0)
+          return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+        return await Core.UserController.getManyRelationships({ userIds });
+      } catch (error) {
+        Libs.Logger.error('[useUserStream] Failed to query user relationships', { userIds, error });
         return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      return await Core.UserController.getManyRelationships({ userIds });
+      }
     },
     [userIds, includeRelationships],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),

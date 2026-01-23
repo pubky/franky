@@ -1,14 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`BackupNavigation - Snapshots > matches snapshot for default BackupNavigation 1`] = `
+exports[`BackupNavigation > matches snapshot for default BackupNavigation 1`] = `
 <div
   class="py-6"
   data-testid="buttons-navigation"
 >
-  <button>
+  <button
+    data-testid="back-button"
+  >
     Back
   </button>
-  <button>
+  <button
+    data-loading="false"
+    data-testid="continue-button"
+  >
     Continue
   </button>
 </div>

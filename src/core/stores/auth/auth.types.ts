@@ -4,7 +4,8 @@ import { Session } from '@synonymdev/pubky';
 export interface AuthInitParams {
   currentUserPubky: Core.Pubky | null;
   session: Session | null;
-  hasProfile: boolean;
+  /** null = unknown/undetermined, false = no profile, true = has profile */
+  hasProfile: boolean | null;
 }
 
 export interface AuthState extends AuthInitParams {
@@ -39,7 +40,7 @@ export const authInitialState: AuthState = {
   currentUserPubky: null,
   session: null,
   sessionExport: null,
-  hasProfile: false,
+  hasProfile: null,
   hasHydrated: false,
   isRestoringSession: false,
   showSignInDialog: false,

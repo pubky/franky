@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { isAppError } from '../error';
+import { HttpStatusCode } from '../http';
 import type { QueryClientConfig } from './query-client.types';
 
 /**
@@ -24,28 +25,29 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
       return failureCount < retry.limits.default;
     }
 
-    const { statusCode, type } = error;
+    const statusCode = error.context?.statusCode as number | undefined;
+    const errorCode = error.code;
 
     // Permanent failures - don't retry
-    if (retry.nonRetryable.includes(type)) {
+    if (errorCode && retry.nonRetryable.includes(errorCode)) {
       return false;
     }
 
     // Status code based retry logic
-    if (statusCode === 404) {
+    if (statusCode === HttpStatusCode.NOT_FOUND) {
       return failureCount < (retry.limits.notFound ?? retry.limits.default);
     }
 
-    if (statusCode === 429) {
+    if (statusCode === HttpStatusCode.TOO_MANY_REQUESTS) {
       return failureCount < (retry.limits.rateLimited ?? retry.limits.serverError ?? retry.limits.default);
     }
 
-    if (statusCode >= 500) {
+    if (statusCode !== undefined && statusCode >= HttpStatusCode.INTERNAL_SERVER_ERROR) {
       return failureCount < (retry.limits.serverError ?? retry.limits.default);
     }
 
     // Other 4xx: Client errors - don't retry
-    if (statusCode >= 400) {
+    if (statusCode !== undefined && statusCode >= HttpStatusCode.BAD_REQUEST) {
       return false;
     }
 
@@ -60,13 +62,15 @@ export function createQueryClient(config: QueryClientConfig): QueryClient {
     const delays = retry.delays;
 
     if (isAppError(error)) {
+      const statusCode = error.context?.statusCode as number | undefined;
+
       // 404: Use notFound delays if configured
-      if (error.statusCode === 404 && delays.notFound) {
+      if (statusCode === HttpStatusCode.NOT_FOUND && delays.notFound) {
         return Math.min(delays.notFound.initial * 2 ** attemptIndex, delays.notFound.max);
       }
 
       // 5xx: Use serverError delays if configured
-      if (error.statusCode >= 500 && delays.serverError) {
+      if (statusCode !== undefined && statusCode >= HttpStatusCode.INTERNAL_SERVER_ERROR && delays.serverError) {
         return Math.min(delays.serverError.initial * 2 ** attemptIndex, delays.serverError.max);
       }
     }

@@ -1,6 +1,12 @@
-import * as Libs from '@/libs';
+import { HttpMethod, HttpStatusCode, Logger, AppError, Env } from '@/libs';
 import * as Core from '@/core';
 import * as Config from '@/config';
+
+/**
+ * Callback type for reporting bootstrap progress to the Controller layer.
+ * This allows the Controller to update stores without violating architecture rules.
+ */
+export type BootstrapProgressCallback = (step: 'bootstrapFetched' | 'dataPersisted' | 'homeserverSynced') => void;
 
 export class BootstrapApplication {
   private constructor() {}
@@ -11,18 +17,24 @@ export class BootstrapApplication {
    * @param params, Bootstrap parameters
    * @param params.pubky, The user's public key identifier
    * @param params.lastReadUrl, URL to fetch user's last read timestamp from homeserver
+   * @param onProgress, Optional callback to report progress to the Controller layer
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
-  static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
+  static async initialize(
+    params: Core.TBootstrapParams,
+    onProgress?: BootstrapProgressCallback,
+  ): Promise<Core.TBootstrapResponse> {
     const data = await Core.NexusBootstrapService.fetch(params.pubky);
+    onProgress?.('bootstrapFetched'); // Step 3 complete (60%)
+
     if (!data.indexed) {
-      Libs.Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
+      Logger.warn('User is not indexed in Nexus. Scheduling TTL retry', {
         pubky: params.pubky,
-        retryDelayMs: Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
+        retryDelayMs: Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
       });
 
       // Write TTL record to become stale after configured retry delay
-      await Core.LocalUserService.upsertTtlWithDelay(params.pubky, Libs.Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS);
+      await Core.LocalUserService.upsertTtlWithDelay(params.pubky, Env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS);
 
       // Subscribe to TTL coordinator for periodic staleness checks
       Core.TtlCoordinator.getInstance().subscribeUser({ pubky: params.pubky });
@@ -51,6 +63,7 @@ export class BootstrapApplication {
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.ids.hot_tags),
       // Core.LocalNotificationService.persistAndGetUnreadCount({ flatNotifications, lastRead }),
     ]);
+    onProgress?.('dataPersisted'); // Step 4 complete (80%)
 
     const [_, notification] = await Promise.all([
       // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
@@ -59,6 +72,7 @@ export class BootstrapApplication {
       // Initialize settings from homeserver (non-blocking, errors are logged but don't fail bootstrap)
       this.initializeSettings(params.pubky),
     ]);
+    onProgress?.('homeserverSynced'); // Step 5 complete (100%)
 
     return { notification };
   }
@@ -79,11 +93,11 @@ export class BootstrapApplication {
       // If remote settings were returned and are newer, update the local store
       if (remoteSettings) {
         Core.useSettingsStore.getState().loadFromHomeserver(remoteSettings);
-        Libs.Logger.info('Settings loaded from homeserver', { pubky });
+        Logger.info('Settings loaded from homeserver', { pubky });
       }
     } catch (error) {
       // Log but don't throw, settings sync failure shouldn't block bootstrap
-      Libs.Logger.error('Failed to initialize settings during bootstrap', { error, pubky });
+      Logger.error('Failed to initialize settings during bootstrap', { error, pubky });
     }
   }
 
@@ -103,21 +117,25 @@ export class BootstrapApplication {
   }: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let userLastRead: number;
     try {
-      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
-        Core.HomeserverAction.GET,
-        lastReadUrl,
-      );
+      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>({
+        method: HttpMethod.GET,
+        url: lastReadUrl,
+      });
       userLastRead = timestamp;
     } catch (error) {
       // Only handle 404 errors (resource not found), rethrow everything else
-      if (error instanceof Libs.AppError && error.statusCode === 404) {
-        Libs.Logger.info('Last read file not found, creating new one', { pubky });
+      if (error instanceof AppError && error.context?.statusCode === HttpStatusCode.NOT_FOUND) {
+        Logger.info('Last read file not found, creating new one...', { pubky });
         const lastRead = Core.LastReadNormalizer.to(pubky);
-        void Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
+        void Core.HomeserverService.request({
+          method: HttpMethod.PUT,
+          url: lastRead.meta.url,
+          bodyJson: lastRead.last_read.toJson(),
+        });
         userLastRead = Number(lastRead.last_read.timestamp);
       } else {
         // Network errors, timeouts, server errors, etc. should bubble up
-        Libs.Logger.error('Failed to fetch last read timestamp', error);
+        Logger.error('Failed to fetch last read timestamp', error);
         // TODO: TO harsh, we should handle this error better
         throw error;
       }

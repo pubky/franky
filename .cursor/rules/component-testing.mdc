@@ -304,37 +304,100 @@ This document outlines the essential rules and patterns for creating unit tests 
    **Note**: Icon utility functions like `getIconFromUrl` return actual icon components. Always use real implementations to ensure snapshots capture the correct icons.
 
    ### Radix UI Components: Always Use Real Implementations
-   Radix UI components (e.g., `Dialog`, `Sheet`, `DropdownMenu`, `Popover`) should **never** be mocked in component tests. Always use real Radix UI implementations to ensure:
+   Radix UI components (e.g., `Dialog`, `Sheet`, `DropdownMenu`, `Popover`, `Tooltip`, `Accordion`) should **never** be mocked in component tests. Always use real Radix UI implementations to ensure:
    - Tests validate actual component behaviour and context requirements
    - Portal rendering works correctly
    - Accessibility attributes are properly applied
    - Context enforcement is validated (e.g., `DialogTrigger` must be within `Dialog`)
    
-   ✅ **Good: Use real Radix UI components**
-   ```typescript
-   import * as Atoms from '@/atoms';
-   import { render, screen } from '@testing-library/react';
-   import { Dialog } from './Dialog';
+   ### CRITICAL: Always Use `normaliseRadixIds` for Snapshot Tests with Radix UI
    
-   it('renders dialog with proper context', () => {
-     render(
-       <Atoms.Dialog open={true}>
-         <Atoms.DialogTrigger>Open</Atoms.DialogTrigger>
-         <Atoms.DialogContent>Content</Atoms.DialogContent>
-       </Atoms.Dialog>
-     );
-     expect(screen.getByRole('dialog')).toBeInTheDocument();
+   **Why**: Radix UI generates dynamic IDs (e.g., `radix-_r_0_`, `radix-_r_f_`) for `aria-controls`, `aria-labelledby`, and other attributes. These IDs change between test runs depending on:
+   - Test execution order
+   - Which subset of tests are run
+   - Other Radix components rendered before
+   
+   **This causes flaky snapshot tests that fail with differences like:**
+   ```diff
+   - aria-controls="radix-_r_0_"
+   + aria-controls="radix-_r_f_"
+   ```
+   
+   **Solution**: ALWAYS use `normaliseRadixIds` from `@/libs/utils/utils` before calling `toMatchSnapshot()`:
+   
+   ✅ **Good: Normalise Radix IDs before snapshot**
+   ```typescript
+   import { normaliseRadixIds } from '@/libs/utils/utils';
+   
+   // Note: Radix UI generates incremental IDs (radix-«r0», radix-«r1», etc.) for aria-controls attributes.
+   // These IDs are deterministic within an identical test suite run but may change when a subset of tests are run or are run in a different order.
+   // Use normaliseRadixIds to ensure the snapshots are consistent.
+   describe('MyComponent - Snapshots', () => {
+     it('matches snapshot for default state', () => {
+       const { container } = render(<MyRadixComponent />);
+       const normalizedContainer = normaliseRadixIds(container);
+       expect(normalizedContainer).toMatchSnapshot();
+     });
+   });
+   ```
+   
+   ❌ **Bad: Snapshot without normalisation (WILL cause flaky tests)**
+   ```typescript
+   describe('MyComponent - Snapshots', () => {
+     it('matches snapshot for default state', () => {
+       const { container } = render(<MyRadixComponent />);
+       // ❌ This WILL fail randomly due to dynamic Radix IDs
+       expect(container).toMatchSnapshot();
+     });
+   });
+   ```
+   
+   ### When to Use `normaliseRadixIds`
+   
+   Use `normaliseRadixIds` for snapshot tests involving ANY of these components:
+   - `Dialog`, `DialogTrigger`, `DialogContent`
+   - `Sheet`, `SheetTrigger`, `SheetContent`
+   - `Popover`, `PopoverTrigger`, `PopoverContent`
+   - `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`
+   - `Tooltip`, `TooltipTrigger`, `TooltipContent`
+   - `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`
+   - `Select`, `SelectTrigger`, `SelectContent`
+   - Any component from `@/atoms` that wraps Radix UI primitives
+   - Any custom component that uses the above internally
+   
+   ### Complete Example with Radix UI
+   
+   ```typescript
+   import { describe, it, expect } from 'vitest';
+   import { render, screen } from '@testing-library/react';
+   import { normaliseRadixIds } from '@/libs/utils/utils';
+   import { Dialog, DialogTrigger, DialogContent } from '@/atoms';
+   
+   describe('DialogExample', () => {
+     it('renders dialog with proper context', () => {
+       render(
+         <Dialog open={true}>
+           <DialogTrigger>Open</DialogTrigger>
+           <DialogContent>Content</DialogContent>
+         </Dialog>
+       );
+       expect(screen.getByRole('dialog')).toBeInTheDocument();
+     });
    });
    
-   it('matches snapshot with real Radix UI', () => {
-     const { container } = render(
-       <Atoms.Dialog open={true}>
-         <Atoms.DialogContent>Content</Atoms.DialogContent>
-       </Atoms.Dialog>
-     );
-     // Use normaliseRadixIds for snapshot tests to handle dynamic IDs
-     const dialog = document.querySelector('[role="dialog"]');
-     expect(normaliseRadixIds(dialog?.parentElement)).toMatchSnapshot();
+   // Note: Radix UI generates incremental IDs (radix-«r0», radix-«r1», etc.) for aria-controls attributes.
+   // Use normaliseRadixIds to ensure the snapshots are consistent.
+   describe('DialogExample - Snapshots', () => {
+     it('matches snapshot with normalised Radix IDs', () => {
+       const { container } = render(
+         <Dialog open={true}>
+           <DialogContent>Content</DialogContent>
+         </Dialog>
+       );
+       const dialog = document.querySelector('[role="dialog"]');
+       const normalizedContainer = normaliseRadixIds(dialog?.parentElement as HTMLElement);
+       expect(normalizedContainer).toMatchSnapshot();
+     });
    });
    ```
    
@@ -351,8 +414,9 @@ This document outlines the essential rules and patterns for creating unit tests 
    **Important Notes**:
    - When testing Radix UI components, ensure child components are wrapped within their required parent context (e.g., `DialogTrigger` within `Dialog`)
    - For Portal-rendered content (like `DialogContent`), set `open={true}` to ensure content is rendered in the DOM
-   - Use `normaliseRadixIds` utility from `@/libs/utils/utils` for snapshot tests to normalise dynamic Radix UI IDs
+   - **ALWAYS** use `normaliseRadixIds` utility from `@/libs/utils/utils` for snapshot tests - this is NOT optional
    - Components that use `@/atoms` wrappers (which themselves use Radix UI) should test with real atom implementations
+   - Add the comment block explaining why `normaliseRadixIds` is used for documentation purposes
 
 ## Testing Workflow
 

@@ -12,8 +12,9 @@ export function PostMenuActionsContent({
   variant,
   onActionComplete,
   onReportClick,
+  onEditClick,
 }: PostMenuActionsContentProps) {
-  const { menuItems, isLoading } = Hooks.usePostMenuActions(postId, { onReportClick });
+  const { menuItems, isLoading } = Hooks.usePostMenuActions(postId, { onReportClick, onEditClick });
 
   if (isLoading) {
     return (

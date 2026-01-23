@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService } from '@/libs';
 import { PubkyAppUser } from 'pubky-app-specs';
 
 export class LocalProfileService {
@@ -95,12 +95,11 @@ export class LocalProfileService {
           ]);
         },
       );
-
-      Logger.debug('Local user data cleared successfully');
     } catch (error) {
-      Logger.error('Failed to clear local user data', { error });
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to clear local user data', 500, {
-        error,
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, 'Failed to clear local user data', {
+        service: ErrorService.Local,
+        operation: 'deleteAll',
+        cause: error,
       });
     }
   }

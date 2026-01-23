@@ -31,8 +31,13 @@ export function AvatarWithFallback({
   const userId = useMemo(() => extractUserIdFromAvatarUrl(avatarUrl), [avatarUrl]);
 
   const moderationStatus = useLiveQuery(async () => {
-    if (!userId) return null;
-    return await Core.ModerationController.getModerationStatus(userId, Core.ModerationType.PROFILE);
+    try {
+      if (!userId) return null;
+      return await Core.ModerationController.getModerationStatus(userId, Core.ModerationType.PROFILE);
+    } catch (error) {
+      Libs.Logger.error('[AvatarWithFallback] Failed to query moderation status', { userId, error });
+      return null;
+    }
   }, [userId]);
 
   // Show image immediately, apply blur only when status confirms

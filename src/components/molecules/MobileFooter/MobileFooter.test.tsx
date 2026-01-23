@@ -37,30 +37,20 @@ vi.mock('@/libs', async () => {
 });
 
 // Mock the app routes
-vi.mock('@/app', () => ({
-  APP_ROUTES: {
-    HOME: '/home',
-    SEARCH: '/search',
-    HOT: '/hot',
-    BOOKMARKS: '/bookmarks',
-    SETTINGS: '/settings',
-    PROFILE: '/profile',
-  },
-  UNAUTHENTICATED_ROUTES: [],
-  AUTHENTICATED_ROUTES: [],
-}));
-
-// Mock Core
-vi.mock('@/core', async () => {
-  const actual = await vi.importActual('@/core');
+vi.mock('@/app', async () => {
+  const actual = await vi.importActual('@/app');
   return {
     ...actual,
-    FileController: {
-      getAvatarUrl: vi.fn((pubky: string) => `https://example.com/avatar/${pubky}`),
+    APP_ROUTES: {
+      HOME: '/home',
+      SEARCH: '/search',
+      HOT: '/hot',
+      BOOKMARKS: '/bookmarks',
+      SETTINGS: '/settings',
+      PROFILE: '/profile',
     },
-    useAuthStore: vi.fn((selector: (state: { currentUserPubky: string | null }) => unknown) =>
-      selector({ currentUserPubky: 'pk:test-user-pubky' }),
-    ),
+    UNAUTHENTICATED_ROUTES: [],
+    AUTHENTICATED_ROUTES: [],
   };
 });
 
@@ -75,9 +65,28 @@ vi.mock('@/hooks', () => ({
   })),
 }));
 
+// Track notification store mock for per-test overrides
+const mockSelectUnread = vi.fn(() => 0);
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
+  return {
+    ...actual,
+    FileController: {
+      getAvatarUrl: vi.fn((pubky: string) => `https://example.com/avatar/${pubky}`),
+    },
+    useAuthStore: vi.fn((selector: (state: { currentUserPubky: string | null }) => unknown) =>
+      selector({ currentUserPubky: 'pk:test-user-pubky' }),
+    ),
+    useNotificationStore: vi.fn((selector: (state: { selectUnread: () => number }) => unknown) =>
+      selector({ selectUnread: mockSelectUnread }),
+    ),
+  };
+});
+
 describe('MobileFooter', () => {
   beforeEach(() => {
     vi.mocked(usePathname).mockReturnValue('/home');
+    mockSelectUnread.mockReturnValue(0);
   });
 
   it('renders with default props', () => {
@@ -165,6 +174,30 @@ describe('MobileFooter', () => {
 
     const homeLink = document.querySelector('.lucide-house')?.closest('a');
     expect(homeLink).toHaveClass('bg-secondary/20', 'hover:bg-secondary/25');
+  });
+
+  it('displays notification counter badge when unread notifications > 0', () => {
+    mockSelectUnread.mockReturnValue(5);
+    render(<MobileFooter />);
+
+    const badge = screen.getByTestId('mobile-notification-counter');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent('5');
+  });
+
+  it('does not display notification counter badge when unread notifications is 0', () => {
+    mockSelectUnread.mockReturnValue(0);
+    render(<MobileFooter />);
+
+    expect(screen.queryByTestId('mobile-notification-counter')).not.toBeInTheDocument();
+  });
+
+  it('displays 21+ when unread notifications exceed 21', () => {
+    mockSelectUnread.mockReturnValue(25);
+    render(<MobileFooter />);
+
+    const badge = screen.getByTestId('mobile-notification-counter');
+    expect(badge).toHaveTextContent('21+');
   });
 
   it('renders with correct responsive behavior', () => {

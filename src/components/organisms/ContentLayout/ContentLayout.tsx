@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -55,6 +55,15 @@ export function ContentLayout({
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);
   const isMobile = Hooks.useIsMobile();
+
+  // Close drawers when switching from Wide to Columns mode on desktop
+  // This prevents the drawer from staying open when sidebars become visible inline
+  useEffect(() => {
+    if (!isMobile && layout !== Core.LAYOUT.WIDE) {
+      setDrawerFilterOpen(false);
+      setDrawerRightOpen(false);
+    }
+  }, [layout, isMobile]);
 
   return (
     <>

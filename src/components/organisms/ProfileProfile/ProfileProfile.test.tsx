@@ -50,6 +50,10 @@ vi.mock('@/hooks', async (importOriginal) => {
       },
       isLoading: false,
     })),
+    useRequireAuth: vi.fn(() => ({
+      isAuthenticated: true,
+      requireAuth: vi.fn((callback) => callback()),
+    })),
     useFollowUser: vi.fn(() => ({
       toggleFollow: vi.fn(),
       isLoading: false,

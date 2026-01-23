@@ -21,8 +21,8 @@ describe('LocalMuteService', () => {
   });
 
   describe.each([
-    ['create', 'mute', true, 'Failed to create mute relationship'],
-    ['delete', 'unmute', false, 'Failed to delete mute relationship'],
+    ['create', 'mute', true, 'Failed to mute mute relationship'],
+    ['delete', 'unmute', false, 'Failed to unmute mute relationship'],
   ])('%s operation', (operation, action, expectedStatus, expectedErrorMessage) => {
     const service = Core.LocalMuteService[
       operation as keyof typeof Core.LocalMuteService
@@ -95,9 +95,9 @@ describe('LocalMuteService', () => {
         await service({ muter, mutee });
         expect.unreachable('should throw');
       } catch (err: unknown) {
-        const e = err as { message?: string; details?: { error?: { message?: string } } };
+        const e = err as { message?: string; cause?: { message?: string } };
         expect(e.message ?? '').toMatch(expectedErrorMessage);
-        expect(e.details?.error?.message ?? '').toMatch('update-fail');
+        expect(e.cause?.message ?? '').toMatch('update-fail');
       }
 
       const rel = await Core.UserRelationshipsModel.table.get(mutee);
@@ -127,34 +127,18 @@ describe('LocalMuteService', () => {
 
       debugSpy.mockRestore();
     });
-
-    it('should log error messages correctly', async () => {
-      const errorSpy = vi.spyOn(Logger, 'error');
-      const spy = vi.spyOn(Core.UserRelationshipsModel, 'create').mockRejectedValueOnce(new Error('test-error'));
-
-      try {
-        await Core.LocalMuteService.create({ muter, mutee });
-      } catch {
-        // Expected to throw
-      }
-
-      expect(errorSpy).toHaveBeenCalledWith('Failed to mute a user', { muter, mutee, error: expect.any(Error) });
-
-      spy.mockRestore();
-      errorSpy.mockRestore();
-    });
   });
 
   describe('Error Types', () => {
-    it('should throw SAVE_FAILED for create operations', async () => {
+    it('should throw WRITE_FAILED for create operations', async () => {
       const spy = vi.spyOn(Core.UserRelationshipsModel, 'create').mockRejectedValueOnce(new Error('fail'));
 
       try {
         await Core.LocalMuteService.create({ muter, mutee });
         expect.unreachable('should throw');
       } catch (err: unknown) {
-        const e = err as { type?: string };
-        expect(e.type).toBe('SAVE_FAILED');
+        const e = err as { code?: string };
+        expect(e.code).toBe('WRITE_FAILED');
       }
 
       spy.mockRestore();
@@ -167,8 +151,8 @@ describe('LocalMuteService', () => {
         await Core.LocalMuteService.delete({ muter, mutee });
         expect.unreachable('should throw');
       } catch (err: unknown) {
-        const e = err as { type?: string };
-        expect(e.type).toBe('DELETE_FAILED');
+        const e = err as { code?: string };
+        expect(e.code).toBe('DELETE_FAILED');
       }
 
       spy.mockRestore();

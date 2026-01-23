@@ -1,5 +1,5 @@
-import * as Core from '@/core';
 import { PubkyAppPost } from 'pubky-app-specs';
+import { HttpMethod } from '@/libs';
 
 export interface TLocalSavePostParams {
   compositePostId: string;
@@ -11,5 +11,5 @@ export interface TLocalUpdatePostStreamParams {
   kind: string;
   parentUri?: string;
   ops: Promise<unknown>[];
-  action: Core.HomeserverAction.PUT | Core.HomeserverAction.DELETE;
+  action: HttpMethod.PUT | HttpMethod.DELETE;
 }

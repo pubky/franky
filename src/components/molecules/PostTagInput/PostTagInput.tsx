@@ -53,7 +53,9 @@ export const PostTagInput = React.forwardRef<HTMLInputElement, PostTagInputProps
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(e.target.value.toLowerCase());
+      // Sanitize input: remove banned characters (colons, commas, spaces)
+      const sanitized = Libs.sanitizeTagInput(e.target.value);
+      onChange?.(sanitized.toLowerCase());
     };
 
     return (

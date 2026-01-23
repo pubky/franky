@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Dexie, { Table } from 'dexie';
 import { indexedDB, IDBKeyRange } from 'fake-indexeddb';
 import { RecordModelBase } from './baseRecord';
+import { AppError, DatabaseErrorCode, ErrorCategory, ErrorService } from '@/libs';
 
 interface TestSchema {
   id: number;
@@ -53,5 +54,46 @@ describe('RecordModelBase', () => {
     expect(byId.get(40)).toEqual({ id: 40, name: 'first' });
     expect(byId.get(41)).toEqual({ id: 41, name: 'second-updated' });
     expect(byId.get(42)).toEqual({ id: 42, name: 'third' });
+  });
+});
+
+describe('RecordModelBase error handling', () => {
+  let db: Dexie;
+
+  beforeEach(async () => {
+    globalThis.indexedDB = indexedDB;
+    globalThis.IDBKeyRange = IDBKeyRange;
+
+    db = new Dexie('record-model-base-error-test');
+    db.version(1).stores({ test_records: 'id' });
+    await db.open();
+
+    TestModel.table = db.table<TestSchema>('test_records');
+    await TestModel.table.clear();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('bulkSave throws WRITE_FAILED with correct context on failure', async () => {
+    vi.spyOn(TestModel.table, 'bulkPut').mockRejectedValueOnce(new Error('DB bulk write error'));
+
+    try {
+      await TestModel.bulkSave([
+        { id: 1, name: 'a' },
+        { id: 2, name: 'b' },
+      ]);
+      expect.fail('Expected error to be thrown');
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      const appError = error as AppError;
+      expect(appError.category).toBe(ErrorCategory.Database);
+      expect(appError.code).toBe(DatabaseErrorCode.WRITE_FAILED);
+      expect(appError.service).toBe(ErrorService.Local);
+      expect(appError.operation).toBe('bulkSave');
+      expect(appError.context).toMatchObject({ table: 'test_records', count: 2 });
+      expect(appError.cause).toBeInstanceOf(Error);
+    }
   });
 });

@@ -45,3 +45,10 @@ export const CLICKABLE_TAGS_DEFAULT_MAX_TOTAL_CHARS = 20;
 
 /** Default maximum number of tags to display in clickable tags list */
 export const CLICKABLE_TAGS_DEFAULT_MAX_TAGS = 3;
+
+// =============================================================================
+// Hot Tags Page Display
+// =============================================================================
+
+/** Number of hot tags to display as featured cards on the Hot page */
+export const HOT_TAGS_FEATURED_COUNT = 3;

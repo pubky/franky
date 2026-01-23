@@ -31,11 +31,7 @@ describe('CopyrightController', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-
-    // Mock CopyrightApplication
     vi.spyOn(Core.CopyrightApplication, 'submit').mockResolvedValue(undefined);
-
-    // Import CopyrightController
     const copyrightModule = await import('./copyright');
     CopyrightController = copyrightModule.CopyrightController;
   });
@@ -67,129 +63,12 @@ describe('CopyrightController', () => {
       });
     });
 
-    it('should throw when nameOwner is missing', async () => {
+    it('should propagate validation errors from validators', async () => {
       const params = createCopyrightParams({ nameOwner: '' });
-
       await expect(CopyrightController.submit(params)).rejects.toThrow('Name of rights owner is required');
     });
 
-    it('should throw when originalContentUrls is missing', async () => {
-      const params = createCopyrightParams({ originalContentUrls: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Original content URLs is required');
-    });
-
-    it('should throw when briefDescription is missing', async () => {
-      const params = createCopyrightParams({ briefDescription: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Brief description is required');
-    });
-
-    it('should throw when infringingContentUrl is missing', async () => {
-      const params = createCopyrightParams({ infringingContentUrl: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Infringing content URL is required');
-    });
-
-    it('should throw when infringingContentUrl is not a valid URL', async () => {
-      const params = createCopyrightParams({ infringingContentUrl: 'not-a-valid-url' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Infringing content URL must be a valid URL');
-    });
-
-    it('should throw when firstName is missing', async () => {
-      const params = createCopyrightParams({ firstName: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('First name is required');
-    });
-
-    it('should throw when lastName is missing', async () => {
-      const params = createCopyrightParams({ lastName: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Last name is required');
-    });
-
-    it('should throw when email is missing', async () => {
-      const params = createCopyrightParams({ email: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Email is required');
-    });
-
-    it('should throw when email is invalid', async () => {
-      const params = createCopyrightParams({ email: 'invalid-email' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Please enter a valid email address');
-    });
-
-    it('should throw when phoneNumber is missing', async () => {
-      const params = createCopyrightParams({ phoneNumber: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Phone number is required');
-    });
-
-    it('should throw when streetAddress is missing', async () => {
-      const params = createCopyrightParams({ streetAddress: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Street address is required');
-    });
-
-    it('should throw when country is missing', async () => {
-      const params = createCopyrightParams({ country: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Country is required');
-    });
-
-    it('should throw when city is missing', async () => {
-      const params = createCopyrightParams({ city: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('City is required');
-    });
-
-    it('should throw when stateProvince is missing', async () => {
-      const params = createCopyrightParams({ stateProvince: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('State/Province is required');
-    });
-
-    it('should throw when zipCode is missing', async () => {
-      const params = createCopyrightParams({ zipCode: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Zip code is required');
-    });
-
-    it('should throw when signature is missing', async () => {
-      const params = createCopyrightParams({ signature: '' });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow('Signature is required');
-    });
-
-    it('should throw when neither role checkbox is selected', async () => {
-      const params = createCopyrightParams({ isRightsOwner: false, isReportingOnBehalf: false });
-
-      await expect(CopyrightController.submit(params)).rejects.toThrow(
-        'Please select if you are the rights owner or reporting on behalf',
-      );
-    });
-
-    it('should accept when isRightsOwner is true', async () => {
-      const params = createCopyrightParams({ isRightsOwner: true, isReportingOnBehalf: false });
-      const submitSpy = vi.spyOn(Core.CopyrightApplication, 'submit');
-
-      await CopyrightController.submit(params);
-
-      expect(submitSpy).toHaveBeenCalled();
-    });
-
-    it('should accept when isReportingOnBehalf is true', async () => {
-      const params = createCopyrightParams({ isRightsOwner: false, isReportingOnBehalf: true });
-      const submitSpy = vi.spyOn(Core.CopyrightApplication, 'submit');
-
-      await CopyrightController.submit(params);
-
-      expect(submitSpy).toHaveBeenCalled();
-    });
-
-    it('should trim whitespace from inputs', async () => {
+    it('should trim and normalize inputs before passing to application', async () => {
       const params = createCopyrightParams({
         nameOwner: '  John Doe  ',
         firstName: '  John  ',
@@ -210,9 +89,8 @@ describe('CopyrightController', () => {
       );
     });
 
-    it('should throw when application layer fails', async () => {
+    it('should propagate application layer errors', async () => {
       vi.spyOn(Core.CopyrightApplication, 'submit').mockRejectedValue(new Error('Application error'));
-
       const params = createCopyrightParams();
 
       await expect(CopyrightController.submit(params)).rejects.toThrow('Application error');

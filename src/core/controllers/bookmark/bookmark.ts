@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class BookmarkController {
@@ -24,7 +25,7 @@ export class BookmarkController {
     const postUri = postUriBuilder(authorId, rawPostId);
     const { bookmark, meta } = Core.BookmarkNormalizer.to(postUri, userId);
 
-    await Core.BookmarkApplication.persist(Core.HomeserverAction.PUT, {
+    await Core.BookmarkApplication.persist(HttpMethod.PUT, {
       postId,
       bookmarkUrl: meta.url,
       bookmarkJson: bookmark.toJson(),
@@ -42,7 +43,7 @@ export class BookmarkController {
     const postUri = postUriBuilder(authorId, rawPostId);
     const { meta } = Core.BookmarkNormalizer.to(postUri, userId);
 
-    await Core.BookmarkApplication.persist(Core.HomeserverAction.DELETE, {
+    await Core.BookmarkApplication.persist(HttpMethod.DELETE, {
       postId,
       bookmarkUrl: meta.url,
     });

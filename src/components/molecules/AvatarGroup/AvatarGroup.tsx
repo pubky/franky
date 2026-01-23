@@ -46,7 +46,7 @@ export function AvatarGroup({
         <Atoms.Container
           key={item.id}
           overrideDefaults
-          className="relative rounded-full shadow-sm"
+          className="relative rounded-full shadow-xs-dark"
           style={{ marginLeft: index === 0 ? 0 : '-8px', zIndex: visibleItems.length - index }}
         >
           <Organisms.AvatarWithFallback avatarUrl={item.avatarUrl} name={item.name || 'User'} size="md" />
@@ -55,7 +55,7 @@ export function AvatarGroup({
       {overflowCount > 0 && (
         <Atoms.Container
           overrideDefaults
-          className="relative flex size-8 items-center justify-center rounded-full bg-background text-sm font-medium shadow-sm"
+          className="relative flex size-8 items-center justify-center rounded-full border border-muted-foreground bg-background text-sm font-medium shadow-xs-dark"
           style={{ marginLeft: '-8px', zIndex: 0 }}
         >
           {displayOverflow}

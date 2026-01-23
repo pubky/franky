@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Libs from '@/libs';
 import * as App from '@/app';
 import * as Core from '@/core';
 import { useState } from 'react';
@@ -20,9 +21,20 @@ export const BackupNavigation = () => {
       await Core.AuthController.signUp({ secretKey: secretKey!, signupToken: inviteCode });
       router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch (error) {
+      let description = 'Something went wrong. Please try again.';
+
+      if (Libs.isAppError(error)) {
+        // Auth errors during signup typically mean invalid/expired invite code
+        if (Libs.isAuthError(error)) {
+          description = 'Invalid or expired invite code. Please get or request a new invite code.';
+        } else if (error.message) {
+          description = error.message;
+        }
+      }
+
       toast({
         title: 'Error - Failed to sign up',
-        description: 'Something went wrong. Please try again.',
+        description,
       });
       console.error('Failed to sign up', error);
     } finally {

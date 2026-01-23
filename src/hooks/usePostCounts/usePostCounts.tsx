@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import type { UsePostCountsResult } from './usePostCounts.types';
 
 /**
@@ -23,8 +24,13 @@ import type { UsePostCountsResult } from './usePostCounts.types';
 export function usePostCounts(compositeId: string | null | undefined): UsePostCountsResult {
   const postCounts = useLiveQuery(
     async () => {
-      if (!compositeId) return null;
-      return await Core.PostController.getCounts({ compositeId });
+      try {
+        if (!compositeId) return null;
+        return await Core.PostController.getCounts({ compositeId });
+      } catch (error) {
+        Libs.Logger.error('[usePostCounts] Failed to query post counts', { compositeId, error });
+        return null;
+      }
     },
     [compositeId],
     undefined,

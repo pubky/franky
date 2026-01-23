@@ -41,7 +41,7 @@ export class PostStreamQueue {
 
     // Load from queue and filter
     const savedQueue = this.entries.get(streamId);
-    const posts = savedQueue ? filter(savedQueue.posts) : [];
+    const posts = savedQueue ? await filter(savedQueue.posts) : [];
     const seen = new Set(posts);
     let cursor = savedQueue?.cursor ?? params.cursor;
 
@@ -64,7 +64,7 @@ export class PostStreamQueue {
       const result = await fetch(cursor);
 
       // Filter and dedupe
-      const filtered = filter(result.nextPageIds);
+      const filtered = await filter(result.nextPageIds);
       for (const id of filtered) {
         if (!seen.has(id)) {
           seen.add(id);

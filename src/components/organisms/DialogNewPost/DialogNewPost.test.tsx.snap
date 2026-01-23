@@ -22,7 +22,7 @@ exports[`DialogNewPost - Snapshots > matches snapshot with default props 1`] = `
     data-testid="dialog"
   >
     <div
-      aria-label="New post"
+      aria-label="New Post"
       class="w-3xl"
       data-testid="dialog-content"
     >
@@ -37,7 +37,8 @@ exports[`DialogNewPost - Snapshots > matches snapshot with default props 1`] = `
         <p
           data-testid="dialog-description"
         >
-          New post dialog
+          New Post
+           dialog
         </p>
       </div>
       <div
@@ -58,6 +59,16 @@ exports[`DialogNewPost - Snapshots > matches snapshot with default props 1`] = `
             data-testid="mock-content-change-btn"
           >
             Change Content
+          </button>
+          <button
+            data-testid="mock-article-mode-btn"
+          >
+            Enable Article Mode
+          </button>
+          <button
+            data-testid="mock-article-mode-off-btn"
+          >
+            Disable Article Mode
           </button>
         </div>
       </div>
@@ -88,7 +99,7 @@ exports[`DialogNewPost - Snapshots > matches snapshot with open prop 1`] = `
     data-testid="dialog"
   >
     <div
-      aria-label="New post"
+      aria-label="New Post"
       class="w-3xl"
       data-testid="dialog-content"
     >
@@ -103,7 +114,8 @@ exports[`DialogNewPost - Snapshots > matches snapshot with open prop 1`] = `
         <p
           data-testid="dialog-description"
         >
-          New post dialog
+          New Post
+           dialog
         </p>
       </div>
       <div
@@ -124,6 +136,16 @@ exports[`DialogNewPost - Snapshots > matches snapshot with open prop 1`] = `
             data-testid="mock-content-change-btn"
           >
             Change Content
+          </button>
+          <button
+            data-testid="mock-article-mode-btn"
+          >
+            Enable Article Mode
+          </button>
+          <button
+            data-testid="mock-article-mode-off-btn"
+          >
+            Disable Article Mode
           </button>
         </div>
       </div>

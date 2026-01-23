@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 // Import directly to avoid circular dependency with @/hooks barrel
 import { useProfileStats } from '@/hooks/useProfileStats';
 import { toast } from '@/molecules/Toaster/use-toast';
@@ -36,9 +37,14 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
 
   // Fetch tags directly from IndexedDB - this will react to any changes made by TagController
   const localTags = useLiveQuery(async () => {
-    if (!userId) return undefined;
-    const tags = await Core.UserController.getTags({ userId });
-    return tags.length > 0 ? tags : null;
+    try {
+      if (!userId) return undefined;
+      const tags = await Core.UserController.getTags({ userId });
+      return tags.length > 0 ? tags : null;
+    } catch (error) {
+      Libs.Logger.error('[useTagged] Failed to query user tags', { userId, error });
+      return null;
+    }
   }, [userId]);
 
   // Update tag order map when localTags change (only for new tags)

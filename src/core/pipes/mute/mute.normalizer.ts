@@ -1,14 +1,20 @@
 import { MuteResult } from 'pubky-app-specs';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ValidationErrorCode, ErrorService } from '@/libs';
 
 export class MuteNormalizer {
   private constructor() {}
 
   static to({ muter, mutee }: Core.TMuteParams): MuteResult {
-    const builder = Core.PubkySpecsSingleton.get(muter);
-    const result = builder.createMute(mutee);
-    Libs.Logger.debug('Mute validated', { result });
-    return result;
+    try {
+      const builder = Core.PubkySpecsSingleton.get(muter);
+      return builder.createMute(mutee);
+    } catch (error) {
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, error as string, {
+        service: ErrorService.PubkyAppSpecs,
+        operation: 'createMute',
+        context: { muter, mutee },
+      });
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Env } from '@/libs/env';
+import { HOMEGATE_URL } from '@/config';
 
 /**
  * Homegate API Endpoints
@@ -12,7 +12,7 @@ import { Env } from '@/libs/env';
  * @returns Full Homegate URL
  */
 function buildHomegateUrl(endpoint: string): string {
-  return new URL(endpoint, Env.NEXT_PUBLIC_HOMEGATE_URL).toString();
+  return new URL(endpoint, HOMEGATE_URL).toString();
 }
 
 export const homegateApi = {
@@ -44,16 +44,16 @@ export const homegateApi = {
   createLnVerification: () => buildHomegateUrl('/ln_verification'),
 
   /**
-   * Gets the status of a Lightning Network verification by payment hash
-   * @param paymentHash - The payment hash (64 hex characters)
+   * Gets the status of a Lightning Network verification by verification ID
+   * @param verificationId - The verification ID (UUID format)
    */
-  getLnVerification: (paymentHash: string) => buildHomegateUrl(`/ln_verification/${paymentHash}`),
+  getLnVerification: (verificationId: string) => buildHomegateUrl(`/ln_verification/${verificationId}`),
 
   /**
    * Long-polls for Lightning Network verification confirmation
-   * @param paymentHash - The payment hash (64 hex characters)
+   * @param verificationId - The verification ID (UUID format)
    */
-  awaitLnVerification: (paymentHash: string) => buildHomegateUrl(`/ln_verification/${paymentHash}/await`),
+  awaitLnVerification: (verificationId: string) => buildHomegateUrl(`/ln_verification/${verificationId}/await`),
 };
 
 export type HomegateApiEndpoint = keyof typeof homegateApi;

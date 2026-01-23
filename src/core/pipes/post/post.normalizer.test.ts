@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import { PubkyAppPostKind, PostResult, PubkyAppPostEmbed } from 'pubky-app-specs';
+import { PubkyAppPostKind, PostResult, PubkyAppPostEmbed, PubkyAppPost } from 'pubky-app-specs';
 import type { FileResult } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
@@ -76,6 +76,20 @@ describe('PostNormalizer', () => {
   });
 
   /**
+   * Tests for `mapKindToEnum` - Maps stored string kind to PubkyAppPostKind enum
+   */
+  describe('mapKindToEnum', () => {
+    it.each([
+      ['short', PubkyAppPostKind.Short],
+      ['long', PubkyAppPostKind.Long],
+      ['LONG', PubkyAppPostKind.Long],
+      ['unknown', PubkyAppPostKind.Short], // defaults to Short
+    ])('should map "%s" to correct enum', (input, expected) => {
+      expect(Core.PostNormalizer.mapKindToEnum(input)).toBe(expected);
+    });
+  });
+
+  /**
    * Tests for `to` method - Creates PostResult
    */
   describe('to', () => {
@@ -90,13 +104,12 @@ describe('PostNormalizer', () => {
       afterEach(restoreMocks);
 
       describe('successful creation', () => {
-        it('should create post and log debug message', async () => {
+        it('should create post successfully', async () => {
           const post = createBasicPost();
           const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
           expect(result).toHaveProperty('post');
           expect(result).toHaveProperty('meta');
-          expect(Libs.Logger.debug).toHaveBeenCalledWith('Post validated', { result });
         });
 
         it('should call PubkySpecsSingleton.get with pubky and createPost with content/kind', async () => {
@@ -404,6 +417,213 @@ describe('PostNormalizer', () => {
           expect(returnedContent.length).toBe(60_000);
           expect(returnedContent).toBe('🚀'.repeat(30_000));
         });
+      });
+    });
+  });
+
+  /**
+   * Tests for `toEdit` method - Edits existing post content
+   */
+  describe('toEdit', () => {
+    const compositePostId = `${TEST_PUBKY.USER_1}:${TEST_POST_IDS.POST_1}`;
+
+    const createMockPostRelationships = (
+      overrides?: Partial<Core.PostRelationshipsModelSchema>,
+    ): Core.PostRelationshipsModelSchema => ({
+      id: compositePostId,
+      replied: null,
+      reposted: null,
+      mentioned: [],
+      ...overrides,
+    });
+
+    const createMockEditBuilder = (
+      overrides?: Partial<{ editPost: ReturnType<typeof vi.fn>; createPost: ReturnType<typeof vi.fn> }>,
+    ) => ({
+      editPost: vi.fn(
+        (originalPost: PubkyAppPost, postId: string, newContent: string) =>
+          ({
+            post: {
+              content: newContent,
+              kind: originalPost.kind,
+              parent: originalPost.parent,
+              embed: originalPost.embed,
+              attachments: originalPost.attachments,
+              toJson: vi.fn(() => ({
+                content: newContent,
+                kind: originalPost.kind,
+              })),
+            },
+            meta: {
+              id: postId,
+              url: buildPubkyUri(TEST_PUBKY.USER_1, `posts/${postId}`),
+              path: `/pub/pubky.app/posts/${postId}`,
+            },
+          }) as unknown as PostResult,
+      ),
+      createPost: vi.fn(),
+      ...overrides,
+    });
+
+    describe('Unit Tests', () => {
+      let mockBuilder: ReturnType<typeof createMockEditBuilder>;
+
+      beforeEach(() => {
+        mockBuilder = createMockEditBuilder();
+        setupUnitTestMocks(mockBuilder);
+      });
+
+      afterEach(restoreMocks);
+
+      it('should edit post with correct arguments', async () => {
+        const mockPostDetails = createMockPostDetails(compositePostId);
+        mockPostDetails.content = 'Original content';
+        mockPostDetails.attachments = ['pubky://attachment1'];
+
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(mockPostDetails);
+        vi.spyOn(Core.PostRelationshipsModel, 'findById').mockResolvedValue(createMockPostRelationships());
+
+        const newContent = 'Updated content';
+        const result = await Core.PostNormalizer.toEdit({
+          compositePostId,
+          content: newContent,
+          currentUserPubky: TEST_PUBKY.USER_1,
+        });
+
+        expect(result).toHaveProperty('post');
+        expect(result).toHaveProperty('meta');
+        expect(mockBuilder.editPost).toHaveBeenCalledWith(expect.any(PubkyAppPost), TEST_POST_IDS.POST_1, newContent);
+
+        // Verify original post data is preserved
+        const originalPostArg = mockBuilder.editPost.mock.calls[0][0] as PubkyAppPost;
+        expect(originalPostArg.content).toBe('Original content');
+        expect(originalPostArg.attachments).toEqual(['pubky://attachment1']);
+      });
+
+      it('should throw error when current user is not the author', async () => {
+        await expect(
+          Core.PostNormalizer.toEdit({
+            compositePostId,
+            content: 'New content',
+            currentUserPubky: TEST_PUBKY.USER_2, // Different user
+          }),
+        ).rejects.toThrow('Current user is not the author of this post');
+      });
+
+      it('should throw POST_NOT_FOUND when post does not exist', async () => {
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(null);
+
+        await expect(
+          Core.PostNormalizer.toEdit({
+            compositePostId,
+            content: 'New content',
+            currentUserPubky: TEST_PUBKY.USER_1,
+          }),
+        ).rejects.toThrow('Post not found');
+      });
+
+      it('should preserve parent URI for reply posts', async () => {
+        const parentUri = buildPubkyUri(TEST_PUBKY.USER_2, `posts/${TEST_POST_IDS.POST_2}`);
+
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(createMockPostDetails(compositePostId));
+        vi.spyOn(Core.PostRelationshipsModel, 'findById').mockResolvedValue(
+          createMockPostRelationships({ replied: parentUri }),
+        );
+
+        await Core.PostNormalizer.toEdit({
+          compositePostId,
+          content: 'Updated reply',
+          currentUserPubky: TEST_PUBKY.USER_1,
+        });
+
+        const originalPostArg = mockBuilder.editPost.mock.calls[0][0] as PubkyAppPost;
+        expect(originalPostArg.parent).toBe(parentUri);
+      });
+
+      it('should reconstruct embed for repost/quote', async () => {
+        const repostedUri = buildPubkyUri(TEST_PUBKY.USER_2, `posts/${TEST_POST_IDS.POST_2}`);
+        const embeddedPostId = `${TEST_PUBKY.USER_2}:${TEST_POST_IDS.POST_2}`;
+
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockImplementation(async (id) => {
+          if (id === compositePostId) return createMockPostDetails(compositePostId);
+          if (id === embeddedPostId) return createMockPostDetails(embeddedPostId, 'short');
+          return null;
+        });
+        vi.spyOn(Core.PostRelationshipsModel, 'findById').mockResolvedValue(
+          createMockPostRelationships({ reposted: repostedUri }),
+        );
+        vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockReturnValue(embeddedPostId);
+
+        await Core.PostNormalizer.toEdit({
+          compositePostId,
+          content: 'Updated quote',
+          currentUserPubky: TEST_PUBKY.USER_1,
+        });
+
+        const originalPostArg = mockBuilder.editPost.mock.calls[0][0] as PubkyAppPost;
+        expect(originalPostArg.embed).toBeDefined();
+      });
+
+      it('should propagate database errors', async () => {
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockRejectedValue(new Error('Database error'));
+
+        await expect(
+          Core.PostNormalizer.toEdit({
+            compositePostId,
+            content: 'New content',
+            currentUserPubky: TEST_PUBKY.USER_1,
+          }),
+        ).rejects.toThrow('Database error');
+      });
+    });
+
+    describe('Integration Tests', () => {
+      beforeEach(setupIntegrationTestMocks);
+      afterEach(restoreMocks);
+
+      it('should edit post and return valid result with new content', async () => {
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(createMockPostDetails(compositePostId));
+        vi.spyOn(Core.PostRelationshipsModel, 'findById').mockResolvedValue(createMockPostRelationships());
+
+        const newContent = 'Updated post content';
+        const result = await Core.PostNormalizer.toEdit({
+          compositePostId,
+          content: newContent,
+          currentUserPubky: TEST_PUBKY.USER_1,
+        });
+
+        expect(result.post).toBeDefined();
+        expect(result.meta.url).toMatch(/^pubky:\/\/.+\/pub\/pubky\.app\/posts\/.+/);
+        expect(result.meta.id).toBe(TEST_POST_IDS.POST_1);
+        expect(result.post.toJson().content).toBe(newContent);
+      });
+
+      it('should reject empty content', async () => {
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(createMockPostDetails(compositePostId));
+        vi.spyOn(Core.PostRelationshipsModel, 'findById').mockResolvedValue(createMockPostRelationships());
+
+        await expect(
+          Core.PostNormalizer.toEdit({
+            compositePostId,
+            content: '',
+            currentUserPubky: TEST_PUBKY.USER_1,
+          }),
+        ).rejects.toThrow();
+      });
+
+      it('should handle Long posts with extended content length', async () => {
+        vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(createMockPostDetails(compositePostId, 'long'));
+        vi.spyOn(Core.PostRelationshipsModel, 'findById').mockResolvedValue(createMockPostRelationships());
+
+        const longContent = 'E'.repeat(10_000);
+        const result = await Core.PostNormalizer.toEdit({
+          compositePostId,
+          content: longContent,
+          currentUserPubky: TEST_PUBKY.USER_1,
+        });
+
+        expect(result).toBeDefined();
+        expect(result.post.toJson().content).toBe(longContent);
       });
     });
   });
