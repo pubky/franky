@@ -56,6 +56,9 @@ ENV SUPPORT_FEEDBACK_INBOX_ID=$SUPPORT_FEEDBACK_INBOX_ID
 # Disable telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Enable standalone output for Docker builds
+ENV NEXT_STANDALONE=true
+
 # Build the application
 RUN npm run build
 

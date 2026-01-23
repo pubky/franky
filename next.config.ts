@@ -2,7 +2,8 @@ import type { NextConfig } from 'next';
 import withSerwistInit from '@serwist/next';
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  // Only use standalone output when building for Docker (set NEXT_STANDALONE=true)
+  ...(process.env.NEXT_STANDALONE === 'true' && { output: 'standalone' }),
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push('@synonymdev/pubky');
