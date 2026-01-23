@@ -53,6 +53,9 @@ export function useIsMobile(options: UseIsMobileOptions = {}): boolean {
   }, [threshold]);
 
   useEffect(() => {
+    // Check immediately on mount to handle SSR hydration
+    checkIsMobile();
+
     let timeoutId: NodeJS.Timeout;
 
     const handleResize = () => {
