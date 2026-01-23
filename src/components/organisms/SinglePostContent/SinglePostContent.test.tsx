@@ -42,12 +42,25 @@ const mockUseInfiniteScroll = vi.fn(() => ({
   sentinelRef: vi.fn(),
 }));
 
+const mockUsePostAncestors = vi.fn(() => ({
+  ancestors: [],
+  isLoading: false,
+  hasError: false,
+}));
+
+const mockUseUserDetailsFromIds = vi.fn(() => ({
+  users: [],
+  isLoading: false,
+}));
+
 vi.mock('@/hooks', () => ({
   usePostReplies: vi.fn(),
   usePostNavigation: vi.fn(),
   usePostDetails: vi.fn(),
   useInfiniteScroll: vi.fn(),
   useRequireAuth: vi.fn(),
+  usePostAncestors: vi.fn(),
+  useUserDetailsFromIds: vi.fn(),
 }));
 
 // Use vi.hoisted to define mock functions before vi.mock calls
@@ -129,6 +142,14 @@ vi.mock('../SinglePostCard', () => ({
   ),
 }));
 
+vi.mock('../PostPageHeader', () => ({
+  PostPageHeader: ({ postId }: { postId: string }) => (
+    <div data-testid="post-page-header" data-post-id={postId}>
+      PostPageHeader
+    </div>
+  ),
+}));
+
 vi.mock('../SinglePostParticipants', () => ({
   SinglePostParticipants: ({ postId }: { postId: string }) => (
     <div data-testid="single-post-participants" data-post-id={postId}>
@@ -195,6 +216,8 @@ describe('SinglePostContent', () => {
     vi.mocked(Hooks.useInfiniteScroll).mockReturnValue(
       mockUseInfiniteScroll() as unknown as ReturnType<typeof Hooks.useInfiniteScroll>,
     );
+    vi.mocked(Hooks.usePostAncestors).mockReturnValue(mockUsePostAncestors());
+    vi.mocked(Hooks.useUserDetailsFromIds).mockReturnValue(mockUseUserDetailsFromIds());
   });
 
   describe('rendering', () => {
@@ -490,6 +513,8 @@ describe('SinglePostContent - Snapshots', () => {
     vi.mocked(Hooks.useInfiniteScroll).mockReturnValue(
       mockUseInfiniteScroll() as unknown as ReturnType<typeof Hooks.useInfiniteScroll>,
     );
+    vi.mocked(Hooks.usePostAncestors).mockReturnValue(mockUsePostAncestors());
+    vi.mocked(Hooks.useUserDetailsFromIds).mockReturnValue(mockUseUserDetailsFromIds());
   });
 
   it('matches snapshot with short post and no replies', () => {
