@@ -53,7 +53,7 @@ function extractAuthorFromPostId(compositePostId: string): string | null {
  */
 export function useTtlSubscription(options: UseTtlSubscriptionOptions): UseTtlSubscriptionResult {
   const { type, id, enabled = true, rootMargin, threshold } = options;
-  const subscribeAuthor = type === 'post' ? (options as TtlPostSubscriptionOptions).subscribeAuthor ?? true : false;
+  const subscribeAuthor = type === 'post' ? ((options as TtlPostSubscriptionOptions).subscribeAuthor ?? true) : false;
 
   // Track current subscriptions for cleanup
   const subscriptionRef = useRef<{
