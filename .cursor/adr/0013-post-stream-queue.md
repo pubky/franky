@@ -55,7 +55,7 @@ filter: async (posts) => {
   // Sync: filter muted users (O(1) Set lookup)
   const afterMuteFilter = MuteFilter.filterPosts(posts, mutedUserIds);
   // Async: filter deleted posts (requires DB read)
-  return filterDeletedPosts(afterMuteFilter);
+  return PostDetailsModel.filterDeleted(afterMuteFilter);
 }
 ```
 

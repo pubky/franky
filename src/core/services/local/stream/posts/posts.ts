@@ -149,7 +149,7 @@ export class LocalStreamPostsService {
     if (!postStream) return;
 
     // Filter out deleted posts from unread stream before merging
-    const validUnreadPosts = await this.filterDeletedPosts(unreadPostStream.stream);
+    const validUnreadPosts = await Core.PostDetailsModel.filterDeleted(unreadPostStream.stream);
 
     // Deduplicate: unread posts first, then existing posts (excluding duplicates)
     const existingIds = new Set(validUnreadPosts);
@@ -160,24 +160,6 @@ export class LocalStreamPostsService {
     const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
-  }
-
-  /**
-   * Filter out deleted posts from a list of post IDs.
-   * Posts without details in cache are kept (fail-open).
-   */
-  private static async filterDeletedPosts(postIds: string[]): Promise<string[]> {
-    if (postIds.length === 0) return [];
-
-    const validPosts: string[] = [];
-    for (const postId of postIds) {
-      const details = await Core.PostDetailsModel.findById(postId);
-      // Keep posts that don't have details (fail-open) or aren't deleted
-      if (!details || details.content !== Core.DELETED) {
-        validPosts.push(postId);
-      }
-    }
-    return validPosts;
   }
 
   /**

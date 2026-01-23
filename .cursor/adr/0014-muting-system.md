@@ -99,17 +99,8 @@ Deleted posts (content === `Core.DELETED`) are also filtered from streams. This 
 
 ```typescript
 // Deleted post filter (async - requires DB lookup)
-async function filterDeletedPosts(postIds: string[]): Promise<string[]> {
-  const validPosts: string[] = [];
-  for (const postId of postIds) {
-    const details = await PostDetailsModel.findById(postId);
-    // Keep posts without details (fail-open) or with non-deleted content
-    if (!details || details.content !== DELETED) {
-      validPosts.push(postId);
-    }
-  }
-  return validPosts;
-}
+// Located in PostDetailsModel.filterDeleted() for reuse across flows
+const validPosts = await PostDetailsModel.filterDeleted(postIds);
 ```
 
 Integration with post streams (combined filtering):
@@ -122,7 +113,7 @@ const { posts } = await postStreamQueue.collect(streamId, {
     // Sync: mute filter (O(1) Set lookup)
     const afterMuteFilter = MuteFilter.filterPosts(posts, mutedUserIds);
     // Async: deleted filter (DB read)
-    return filterDeletedPosts(afterMuteFilter);
+    return PostDetailsModel.filterDeleted(afterMuteFilter);
   },
   // ...
 });
@@ -226,8 +217,7 @@ const mutedUsers = useSettingsStore((state) => state.muted);
 - Mute service: `src/core/services/local/mute/mute.ts`
 - Mute normalizer: `src/core/pipes/mute/mute.normalizer.ts`
 - Mute filter: `src/core/application/stream/posts/muting/mute-filter.ts`
-- Deleted post filter: `src/core/application/stream/posts/post.ts` (`filterDeletedPosts` method)
-- Deleted post filter (Flow 2): `src/core/services/local/stream/posts/posts.ts` (`filterDeletedPosts` method)
+- Deleted post filter: `src/core/models/post/details/postDetails.ts` (`PostDetailsModel.filterDeleted()` static method)
 - Queue types: `src/core/application/stream/posts/muting/post-stream-queue.types.ts` (`FilterFn` async support)
 - Relationships model: `src/core/models/user/relationships/userRelationships.ts`
 - Settings store: `src/core/stores/settings/settings.store.ts`

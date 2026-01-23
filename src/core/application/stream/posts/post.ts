@@ -129,7 +129,7 @@ export class PostStreamApplication {
       filter: async (posts) => {
         // First filter muted users (sync), then filter deleted posts (async)
         const afterMuteFilter = MuteFilter.filterPosts(posts, mutedUserIds);
-        return this.filterDeletedPosts(afterMuteFilter);
+        return Core.PostDetailsModel.filterDeleted(afterMuteFilter);
       },
       fetch: async (cursor) => {
         // Continue reading from cache using lastReturnedPostId to track position
@@ -483,29 +483,6 @@ export class PostStreamApplication {
       });
       await Promise.all(countUpdates);
     }
-  }
-
-  /**
-   * Filter out deleted posts from a list of post IDs.
-   * Posts without details in cache are kept (fail-open).
-   */
-  private static async filterDeletedPosts(postIds: string[]): Promise<string[]> {
-    if (postIds.length === 0) return [];
-
-    const validPosts: string[] = [];
-    for (const postId of postIds) {
-      try {
-        const details = await Core.PostDetailsModel.findById(postId);
-        // Keep posts that don't have details (fail-open) or aren't deleted
-        if (!details || details.content !== Core.DELETED) {
-          validPosts.push(postId);
-        }
-      } catch {
-        // Fail-open: keep posts we can't read
-        validPosts.push(postId);
-      }
-    }
-    return validPosts;
   }
 
   // Delegate to service for cache miss detection
