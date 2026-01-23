@@ -117,11 +117,11 @@ export function Account() {
         <Molecules.SettingsDivider />
 
         <Molecules.SettingsSection
-          icon={Libs.UserRoundX}
+          icon={Libs.Trash2}
           title="Delete your account"
           description="Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences."
           buttonText="Delete Account"
-          buttonIcon={Libs.UserRoundX}
+          buttonIcon={Libs.Trash2}
           buttonId="delete-account-btn"
           titleClassName="text-destructive"
           iconClassName="text-destructive"
