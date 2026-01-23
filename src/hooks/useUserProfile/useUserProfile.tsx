@@ -28,25 +28,22 @@ export interface UseUserProfileResult {
  * Pure data fetching - no side effects or actions.
  *
  * Separates concerns:
- * 1. useEffect: Ensures data exists (fetch from Nexus if missing)
+ * 1. useEffect: Fetches fresh data from Nexus API to ensure latest data (e.g., status)
  * 2. useLiveQuery: Reads current data reactively from local DB
  *
  * @param userId - The user ID to fetch profile for
  * @returns Profile data and loading state
  */
 export function useUserProfile(userId: string): UseUserProfileResult {
-  // Separate concern: Ensure data exists (fetch-if-missing)
-  // This runs once per userId and triggers ProfileApplication.read
-  // which handles the cache-or-fetch logic internally
+  // Separate concern: Fetch fresh data from Nexus API
+  // Always refresh to ensure we have the latest data including status
+  // This is important for profile pages where users expect to see current data
   useEffect(() => {
     if (!userId) return;
 
-    // ProfileApplication.read handles the caching strategy:
-    // 1. Check local DB first
-    // 2. If missing, fetch from Nexus
-    // 3. Write to local DB
-    // 4. Return data
-    Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
+    // Always fetch fresh details from Nexus API to ensure status is up-to-date
+    // This is especially important when viewing another user's profile
+    Core.UserController.refreshDetails({ userId }).catch((error) => {
       console.error('Failed to fetch user profile:', error);
     });
   }, [userId]);

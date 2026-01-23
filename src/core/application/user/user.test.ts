@@ -296,6 +296,70 @@ describe('UserApplication.getOrFetchDetails', () => {
   });
 });
 
+describe('UserApplication.refreshDetails', () => {
+  const userId = 'pubky_user' as Core.Pubky;
+  const mockUserDetails: Core.NexusUserDetails = {
+    id: userId,
+    name: 'Test User',
+    bio: 'Test bio',
+    image: 'https://example.com/avatar.jpg',
+    indexed_at: 1234567890,
+    links: [{ title: 'GitHub', url: 'https://github.com/user' }],
+    status: 'busy',
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should always fetch fresh data from Nexus API', async () => {
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
+    const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockResolvedValue(undefined);
+
+    const result = await UserApplication.refreshDetails({ userId });
+
+    expect(result).toEqual(mockUserDetails);
+    expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
+    expect(upsertSpy).toHaveBeenCalledWith(mockUserDetails);
+  });
+
+  it('should update local cache with fresh data including status', async () => {
+    const freshDetails: Core.NexusUserDetails = {
+      ...mockUserDetails,
+      status: 'vacationing',
+    };
+    vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(freshDetails);
+    const upsertSpy = vi.spyOn(Core.LocalProfileService, 'upsertDetails').mockResolvedValue(undefined);
+
+    const result = await UserApplication.refreshDetails({ userId });
+
+    expect(result?.status).toBe('vacationing');
+    expect(upsertSpy).toHaveBeenCalledWith(freshDetails);
+  });
+
+  it('should fall back to cached data when Nexus API fails', async () => {
+    const cachedDetails: Core.NexusUserDetails = {
+      ...mockUserDetails,
+      status: 'cached status',
+    };
+    vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(new Error('Network error'));
+    vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(cachedDetails);
+
+    const result = await UserApplication.refreshDetails({ userId });
+
+    expect(result).toEqual(cachedDetails);
+  });
+
+  it('should return null when Nexus API fails and no cached data exists', async () => {
+    vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(new Error('Network error'));
+    vi.spyOn(Core.LocalUserService, 'readDetails').mockResolvedValue(null);
+
+    const result = await UserApplication.refreshDetails({ userId });
+
+    expect(result).toBeNull();
+  });
+});
+
 describe('UserApplication.getCounts', () => {
   const userId = 'pubky_user' as Core.Pubky;
   const mockUserCounts: Core.NexusUserCounts = {

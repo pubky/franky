@@ -106,6 +106,14 @@ export class UserController {
   }
 
   /**
+   * Always fetches fresh user details from Nexus API and updates local cache.
+   * Use this when viewing a profile page to ensure the latest data is displayed.
+   */
+  static async refreshDetails(param: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+    return await Core.UserApplication.refreshDetails(param);
+  }
+
+  /**
    * Get multiple user tags with local-first strategy (bulk operation)
    * Reads from cache first, fetches from API only for missing users
    */

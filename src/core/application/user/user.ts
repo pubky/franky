@@ -36,6 +36,25 @@ export class UserApplication {
   }
 
   /**
+   * Always fetches fresh user details from Nexus API and persists to local database.
+   * Unlike getOrFetchDetails, this method always fetches from the API regardless of cache.
+   * Use this when you need to ensure the latest data is displayed (e.g., profile pages).
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user details or null if not found
+   */
+  static async refreshDetails({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+    try {
+      const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
+      await Core.LocalProfileService.upsertDetails(nexusUserDetails);
+      return nexusUserDetails;
+    } catch (error) {
+      Libs.Logger.warn('Failed to refresh user details from Nexus', { userId, error });
+      // Fall back to cached data if fetch fails
+      return await Core.LocalUserService.readDetails({ userId });
+    }
+  }
+
+  /**
    * Retrieves user counts from local database.
    * Local-only read per ADR 0001 (get* methods don't call Nexus).
    * @param params - Parameters containing user ID
