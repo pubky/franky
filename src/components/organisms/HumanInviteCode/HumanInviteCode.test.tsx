@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 import { normaliseRadixIds } from '@/libs/utils/utils';
+
 import { HumanInviteCode } from './HumanInviteCode';
 
 vi.mock('@/molecules', async () => {

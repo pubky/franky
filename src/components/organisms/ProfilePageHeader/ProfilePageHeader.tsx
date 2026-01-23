@@ -32,9 +32,6 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     isFollowing,
   } = actions;
 
-  // Check if user is authenticated for conditional rendering
-  const { isAuthenticated } = Hooks.useRequireAuth();
-
   // Subscribe to TTL coordinator based on viewport visibility
   const { ref: ttlRef } = Hooks.useTtlUserViewportSubscription({
     pubky: publicKey,
