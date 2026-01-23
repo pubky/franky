@@ -1,19 +1,14 @@
 /**
- * Types for useTtlUserViewportSubscription hook
+ * Types for useViewportObserver hook
  *
- * This hook manages TTL coordinator subscriptions for users based on viewport visibility.
+ * A pure IntersectionObserver wrapper with no business logic.
+ * Use this as a building block for higher-level viewport-aware hooks.
  */
 
 /**
- * Configuration options for the user viewport subscription hook
+ * Configuration options for the viewport observer hook
  */
-export interface UseTtlUserViewportSubscriptionOptions {
-  /**
-   * User public key to subscribe for TTL tracking
-   * If null/undefined, subscription is disabled
-   */
-  pubky: string | null | undefined;
-
+export interface UseViewportObserverOptions {
   /**
    * Root margin for IntersectionObserver
    * Positive values expand the viewport detection area
@@ -24,15 +19,23 @@ export interface UseTtlUserViewportSubscriptionOptions {
   /**
    * Intersection threshold (0-1)
    * 0 = trigger when any part is visible
+   * 1 = trigger when fully visible
    * @default 0
    */
   threshold?: number;
+
+  /**
+   * Whether viewport observation is enabled
+   * When false, isVisible will always be false
+   * @default true
+   */
+  enabled?: boolean;
 }
 
 /**
- * Result returned by useTtlUserViewportSubscription
+ * Result returned by useViewportObserver
  */
-export interface UseTtlUserViewportSubscriptionResult {
+export interface UseViewportObserverResult {
   /**
    * Callback ref to attach to the element to observe
    * Use this ref on the container element
