@@ -58,7 +58,6 @@ export function useTtlUserViewportSubscription({
    * Subscribe to TTL tracking
    */
   const subscribe = useCallback((userPubky: string) => {
-    console.warn('subscribe USER for TTL tracking', userPubky);
     const coordinator = Core.TtlCoordinator.getInstance();
 
     // Subscribe user
@@ -77,7 +76,6 @@ export function useTtlUserViewportSubscription({
 
     const coordinator = Core.TtlCoordinator.getInstance();
 
-    console.warn('unsubscribe USER for TTL tracking', subscription);
     // Unsubscribe user
     coordinator.unsubscribeUser({ pubky: subscription as Core.Pubky });
 
@@ -86,23 +84,14 @@ export function useTtlUserViewportSubscription({
 
   // Setup IntersectionObserver
   useEffect(() => {
-    console.warn('[useTtlUserViewportSubscription] useEffect running', { element: !!element, pubky });
-
     // Skip if no element or no pubky
     if (!element || !pubky) {
-      console.warn('[useTtlUserViewportSubscription] Skipping - missing element or pubky', {
-        element: !!element,
-        pubky,
-      });
       return;
     }
-
-    console.warn('[useTtlUserViewportSubscription] Setting up IntersectionObserver for pubky:', pubky);
 
     const handleIntersection = (entries: IntersectionObserverEntry[]) => {
       const entry = entries[0];
       const nowVisible = entry.isIntersecting;
-      console.warn('[useTtlUserViewportSubscription] handleIntersection', { nowVisible, pubky });
 
       setIsVisible(nowVisible);
 
