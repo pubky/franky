@@ -33,8 +33,9 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
   // Subscribe to TTL coordinator based on viewport visibility
-  const { ref: ttlRef } = Hooks.useTtlViewportSubscription({
-    compositePostId: postId,
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'post',
+    id: postId,
     subscribeAuthor: true,
   });
 
