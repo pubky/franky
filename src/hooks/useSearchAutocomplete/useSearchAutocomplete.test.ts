@@ -341,4 +341,26 @@ describe('useSearchAutocomplete', () => {
 
     expect(mockGetTagsByPrefix).toHaveBeenCalledWith({ prefix: 'tech', limit: 3 });
   });
+
+  it('searches by user ID when query starts with pubky: (with colon)', async () => {
+    renderHook(() => useSearchAutocomplete({ query: 'pubky:abc123' }));
+
+    // Fast-forward past debounce and run all pending timers
+    await act(async () => {
+      vi.advanceTimersByTime(AUTOCOMPLETE_DEBOUNCE_MS);
+      await vi.runOnlyPendingTimersAsync();
+    });
+
+    // Wait for promises to resolve
+    await act(async () => {
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    // Should strip the 'pubky:' prefix (including colon) and search with just the z32 part
+    expect(mockFetchUsersById).toHaveBeenCalledWith({ prefix: 'abc123', limit: 10 });
+    // Should not search by name or tags when doing explicit ID search with prefix
+    expect(mockGetUsersByName).not.toHaveBeenCalled();
+    expect(mockGetTagsByPrefix).not.toHaveBeenCalled();
+  });
 });
