@@ -66,11 +66,17 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally run only on mount
   }, []);
 
-  function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: 'Invoice copied to clipboard',
-    });
+  async function copyToClipboard(text: string) {
+    try {
+      await Libs.copyToClipboard({ text });
+      toast({
+        title: 'Invoice copied to clipboard',
+      });
+    } catch {
+      toast({
+        title: 'Failed to copy invoice',
+      });
+    }
   }
 
   const isDataAvailable = verification !== null && !isLoading;
