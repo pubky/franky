@@ -65,8 +65,7 @@ export class HomeserverService {
       if (TESTNET) {
         this.pubkySdk = Pubky.testnet();
       } else {
-        const relays = Config.PKARR_RELAYS.split(',').map((r) => r.trim());
-        const client = new Client({ pkarr: { relays } });
+        const client = new Client({ pkarr: { relays: Config.PKARR_RELAYS } });
         this.pubkySdk = Pubky.withClient(client);
       }
     }
