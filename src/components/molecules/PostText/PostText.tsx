@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
@@ -33,8 +33,11 @@ import { POST_ROUTES } from '@/app/routes';
  * - Mention parsing (pk:... or pubky... → clickable profile link)
  * - URL detection and linking
  * - Content truncation with "Show more" on non-post pages (500 char limit)
+ *
+ * Memoization prevents unnecessary re-renders when TTL refreshes update IndexedDB records
+ * without changes to the actual post content.
  */
-export const PostText = ({ content, isArticle, className }: PostTextProps) => {
+export const PostText = memo(function PostText({ content, isArticle, className }: PostTextProps) {
   const pathname = usePathname();
 
   const contentTruncated =
@@ -221,4 +224,4 @@ export const PostText = ({ content, isArticle, className }: PostTextProps) => {
       </Markdown>
     </Atoms.Container>
   );
-};
+});

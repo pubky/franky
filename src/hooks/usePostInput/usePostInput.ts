@@ -34,6 +34,7 @@ import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.typ
  * - Content change notifications to parent
  * - File drag and drop handling
  * - Mention autocomplete (@username and pk:id patterns)
+ * - Clipboard paste handling for file attachments
  */
 export function usePostInput({
   variant,
@@ -381,6 +382,28 @@ export function usePostInput({
     fileInputRef.current?.click();
   }, []);
 
+  // Handle paste events - extract files from clipboard
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    const files: File[] = [];
+    for (const item of items) {
+      if (item.kind === 'file') {
+        const file = item.getAsFile();
+        if (file) {
+          files.push(file);
+        }
+      }
+    }
+
+    if (files.length > 0) {
+      // Only prevent default if we have files - allow normal text paste
+      e.preventDefault();
+      handleFilesAdded(files);
+    }
+  };
+
   const handleArticleClick = () => setIsArticle(true);
 
   // Derived values
@@ -436,6 +459,7 @@ export function usePostInput({
     handleDragLeave,
     handleDragOver,
     handleDrop,
+    handlePaste,
     handleMentionSelect,
     handleMentionKeyDown: mentionHandleKeyDown,
   };

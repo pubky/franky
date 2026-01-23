@@ -1,14 +1,18 @@
 /**
  * Result of checking SMS verification availability.
- * Returns available: true if service is accessible, false if geoblocked (403).
+ * Returns available true when service is accessible.
+ * Returns available false when geoblocked (403).
+ * Returns available false with error true for generic errors (network failure, server error, etc.)
  */
-export type TSmsInfoResult = { available: boolean };
+export type TSmsInfoResult = { available: boolean; error?: boolean };
 
 /**
  * Result of checking LN verification availability and price.
- * Returns available: true with amountSat if service is accessible, false if geoblocked (403).
+ * Returns available true with amountSat when service is accessible.
+ * Returns available false when geoblocked (403).
+ * Returns available false with error true for generic errors (network failure, server error, etc.)
  */
-export type TLnInfoResult = { available: true; amountSat: number } | { available: false };
+export type TLnInfoResult = { available: true; amountSat: number } | { available: false; error?: boolean };
 
 /**
  * Represents a raw/unvalidated JSON object from API responses.
