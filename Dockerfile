@@ -1,0 +1,36 @@
+FROM node:22.16.0-slim
+
+# Set working directory
+WORKDIR /usr/src/app
+
+# Declare build arguments for Next.js public env vars (baked at build time)
+ARG NEXT_PUBLIC_DB_VERSION=1
+ARG NEXT_PUBLIC_SYNC_TTL=300000
+ARG NEXT_PUBLIC_DEBUG_MODE=false
+ARG NEXT_PUBLIC_TTL_POST_MS=4000
+ARG NEXT_PUBLIC_TTL_USER_MS=600000
+ARG NEXT_PUBLIC_HOMESERVER
+ARG NEXT_PUBLIC_NEXUS_URL
+ARG NEXT_PUBLIC_TESTNET
+ARG NEXT_PUBLIC_DEFAULT_HTTP_RELAY
+ARG NEXT_PUBLIC_MODERATION_ID
+ARG NEXT_PUBLIC_MODERATED_TAGS
+ARG BASE_URL_SUPPORT
+ARG SUPPORT_API_ACCESS_TOKEN
+ARG SUPPORT_ACCOUNT_ID
+ARG SUPPORT_FEEDBACK_INBOX_ID
+
+# Copy franky
+COPY . .
+
+# Install dependencies
+RUN npm ci --omit=dev
+
+# Build
+RUN npm run build
+
+# Expose the default Next.js port
+EXPOSE 3000
+
+# The command to run the franky web server
+CMD ["npm", "run", "start"]
