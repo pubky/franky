@@ -53,16 +53,16 @@ describe('LanguageSelector', () => {
     expect(mockSetLanguage).toHaveBeenCalledWith('en');
   });
 
-  it('does not call setLanguage when clicking disabled language', () => {
+  it('calls setLanguage when clicking any enabled language', () => {
     render(<LanguageSelector />);
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // Spanish is disabled
-    const spanishOption = screen.getByText('Spanish');
+    // Espanol (Spanish) is enabled
+    const spanishOption = screen.getByText('Espanol');
     fireEvent.click(spanishOption);
 
-    expect(mockSetLanguage).not.toHaveBeenCalled();
+    expect(mockSetLanguage).toHaveBeenCalledWith('es');
   });
 });
 

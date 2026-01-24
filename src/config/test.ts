@@ -6,6 +6,77 @@ import { vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 
+// Import English messages for i18n mock
+import enMessages from '../../messages/en.json';
+
+/**
+ * Get a nested value from an object using a dot-separated key path.
+ * @param obj - The object to search in
+ * @param path - The dot-separated key path (e.g., "common.back")
+ * @returns The value at the path, or undefined if not found
+ */
+function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+  return path.split('.').reduce((acc: unknown, key: string) => {
+    if (acc && typeof acc === 'object' && key in (acc as Record<string, unknown>)) {
+      return (acc as Record<string, unknown>)[key];
+    }
+    return undefined;
+  }, obj);
+}
+
+/**
+ * Create a translation function that looks up keys in the messages object.
+ * Supports interpolation of variables in the format {variable}.
+ */
+function createTranslationFunction(namespace: string) {
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    const fullPath = namespace ? `${namespace}.${key}` : key;
+    const value = getNestedValue(enMessages as Record<string, unknown>, fullPath);
+
+    if (typeof value === 'string') {
+      // Handle interpolation
+      if (params) {
+        return Object.entries(params).reduce((str, [paramKey, paramValue]) => {
+          return str.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
+        }, value);
+      }
+      return value;
+    }
+
+    // Return the key if not found
+    return key;
+  };
+
+  // Add raw method for accessing arrays or objects directly
+  t.raw = (key: string): unknown => {
+    const fullPath = namespace ? `${namespace}.${key}` : key;
+    return getNestedValue(enMessages as Record<string, unknown>, fullPath) ?? key;
+  };
+
+  // Add rich method for formatted text (returns same as t for testing)
+  t.rich = t;
+
+  // Add markup method (returns same as t for testing)
+  t.markup = t;
+
+  return t;
+}
+
+// Mock next-intl globally for all tests
+vi.mock('next-intl', () => ({
+  useTranslations: (namespace?: string) => createTranslationFunction(namespace ?? ''),
+  useLocale: () => 'en',
+  useMessages: () => enMessages,
+  useTimeZone: () => 'UTC',
+  useNow: () => new Date(),
+  useFormatter: () => ({
+    dateTime: (date: Date) => date.toISOString(),
+    number: (num: number) => String(num),
+    relativeTime: () => 'now',
+  }),
+  NextIntlClientProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 // Polyfill IntersectionObserver for jsdom
 class MockIntersectionObserver implements IntersectionObserver {
   constructor() {}

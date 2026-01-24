@@ -10,11 +10,12 @@ exports[`HumanSelection > matches snapshot 1`] = `
       class="font-bold text-foreground text-5xl lg:text-6xl"
       data-testid="heading-1"
     >
-      Prove 
+      Prove you're not a Robot
+      . 
       <span
         class="text-brand"
       >
-        you're not a Robot.
+        .
       </span>
     </h1>
     <h2
