@@ -57,18 +57,35 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Button: ({
+  Container: ({
     children,
     onClick,
+    onKeyDown,
     className,
+    role,
+    tabIndex,
+    'aria-label': ariaLabel,
   }: {
     children: React.ReactNode;
     onClick?: (e: React.MouseEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
     className?: string;
+    role?: string;
+    tabIndex?: number;
+    'aria-label'?: string;
+    overrideDefaults?: boolean;
   }) => (
-    <button data-testid="unblur-button" onClick={onClick} className={className}>
+    <div
+      data-testid="unblur-button"
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      className={className}
+      role={role}
+      tabIndex={tabIndex}
+      aria-label={ariaLabel}
+    >
       {children}
-    </button>
+    </div>
   ),
 }));
 
