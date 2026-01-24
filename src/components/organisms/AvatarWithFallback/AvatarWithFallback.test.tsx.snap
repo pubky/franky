@@ -39,15 +39,18 @@ exports[`AvatarWithFallback - Snapshots > matches snapshot when image is blurred
     data-testid="avatar-image"
     src="https://cdn.example.com/avatar/6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy"
   />
-  <button
+  <div
+    aria-label="Show blurred content"
     class="absolute inset-0 flex cursor-pointer items-center justify-center"
     data-testid="unblur-button"
+    role="button"
+    tabindex="0"
   >
     <span
       class="size-1/2 max-h-10 max-w-10"
       data-testid="eye-off-icon"
     />
-  </button>
+  </div>
 </div>
 `;
 

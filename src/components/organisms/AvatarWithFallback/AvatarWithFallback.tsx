@@ -43,6 +43,11 @@ export function AvatarWithFallback({
   // Show image immediately, apply blur only when status confirms
   const shouldBlur = moderationStatus?.is_blurred ?? false;
 
+  const handleUnblur = () => {
+    if (!userId) return;
+    Core.ModerationController.unBlur(userId);
+  };
+
   // Reset error state when avatarUrl changes
   useEffect(() => {
     setImageError(false);
@@ -60,18 +65,26 @@ export function AvatarWithFallback({
           />
 
           {shouldBlur && (
-            <Atoms.Button
+            <Atoms.Container
               overrideDefaults
-              type="button"
+              role="button"
+              tabIndex={0}
+              aria-label="Show blurred content"
               onClick={(e) => {
                 e.stopPropagation();
-                if (!userId) return;
-                Core.ModerationController.unBlur(userId);
+                handleUnblur();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleUnblur();
+                }
               }}
               className="absolute inset-0 flex cursor-pointer items-center justify-center"
             >
               <Libs.EyeOff className="size-1/2 max-h-10 max-w-10" />
-            </Atoms.Button>
+            </Atoms.Container>
           )}
         </>
       ) : (
