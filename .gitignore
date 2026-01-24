@@ -68,3 +68,6 @@ CLAUDE.md
 
 # AI generated reviews
 .ai-reviews/
+
+# Development Containers
+.devcontainer
