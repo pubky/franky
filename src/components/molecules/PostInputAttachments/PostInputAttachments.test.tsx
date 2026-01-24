@@ -608,12 +608,12 @@ describe('PostInputAttachments', () => {
       expect(screen.getByText('документ-文件-📄.pdf')).toBeInTheDocument();
     });
 
-    it('handles maximum allowed attachments (4)', () => {
-      const attachments = Array.from({ length: 4 }, (_, i) => createMockImageFile(`image${i}.jpg`));
+    it('handles maximum allowed attachments (3)', () => {
+      const attachments = Array.from({ length: 3 }, (_, i) => createMockImageFile(`image${i}.jpg`));
       render(<PostInputAttachments {...defaultProps} attachments={attachments} />);
 
       const images = screen.getAllByTestId('image');
-      expect(images).toHaveLength(4);
+      expect(images).toHaveLength(3);
     });
 
     it('handles file with very long name', () => {
@@ -754,8 +754,8 @@ describe('PostInputAttachments - Snapshots', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('matches snapshot with maximum attachments (4)', () => {
-    const attachments = Array.from({ length: 4 }, (_, i) => createMockImageFile(`image${i}.jpg`));
+  it('matches snapshot with maximum attachments (3)', () => {
+    const attachments = Array.from({ length: 3 }, (_, i) => createMockImageFile(`image${i}.jpg`));
     const { container } = render(<PostInputAttachments {...defaultProps} attachments={attachments} />);
     expect(container).toMatchSnapshot();
   });

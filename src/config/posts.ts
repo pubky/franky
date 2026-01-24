@@ -47,7 +47,7 @@ export const ATTACHMENT_MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 export const ATTACHMENT_MAX_OTHER_SIZE = 20 * 1024 * 1024;
 
 /** Maximum number of attachments per post */
-export const POST_ATTACHMENT_MAX_FILES = 4;
+export const POST_ATTACHMENT_MAX_FILES = 3;
 
 /** Maximum number of attachments per article */
 export const ARTICLE_ATTACHMENT_MAX_FILES = 1;

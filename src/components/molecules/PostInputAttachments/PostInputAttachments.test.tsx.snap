@@ -161,7 +161,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot when submitting 1`]
 </div>
 `;
 
-exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attachments (4) 1`] = `
+exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attachments (3) 1`] = `
 <div>
   <input
     accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
@@ -238,28 +238,6 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attach
         class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
         data-testid="image"
         src="blob:mock-url-image2.jpg"
-      />
-    </div>
-    <div
-      class="relative"
-      data-testid="container"
-    >
-      <button
-        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
-        data-size="icon"
-        data-testid="button"
-        data-variant="dark"
-      >
-        <svg
-          class="size-4"
-          data-testid="trash-icon"
-        />
-      </button>
-      <img
-        alt="Image preview"
-        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
-        data-testid="image"
-        src="blob:mock-url-image3.jpg"
       />
     </div>
   </div>
