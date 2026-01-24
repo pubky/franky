@@ -320,6 +320,39 @@ describe('AvatarWithFallback', () => {
       expect(mockUnblur).toHaveBeenCalledWith(validUserId);
     });
 
+    it('calls ModerationController.unblur when Enter key is pressed', () => {
+      mockUseLiveQuery.mockReturnValue({ is_blurred: true });
+
+      render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
+
+      const unblurButton = screen.getByTestId('unblur-button');
+      fireEvent.keyDown(unblurButton, { key: 'Enter' });
+
+      expect(mockUnblur).toHaveBeenCalledWith(validUserId);
+    });
+
+    it('calls ModerationController.unblur when Space key is pressed', () => {
+      mockUseLiveQuery.mockReturnValue({ is_blurred: true });
+
+      render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
+
+      const unblurButton = screen.getByTestId('unblur-button');
+      fireEvent.keyDown(unblurButton, { key: ' ' });
+
+      expect(mockUnblur).toHaveBeenCalledWith(validUserId);
+    });
+
+    it('does not call ModerationController.unblur for other keys', () => {
+      mockUseLiveQuery.mockReturnValue({ is_blurred: true });
+
+      render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
+
+      const unblurButton = screen.getByTestId('unblur-button');
+      fireEvent.keyDown(unblurButton, { key: 'Tab' });
+
+      expect(mockUnblur).not.toHaveBeenCalled();
+    });
+
     it('stops event propagation when unblur button is clicked', () => {
       mockUseLiveQuery.mockReturnValue({ is_blurred: true });
 
