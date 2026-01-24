@@ -55,7 +55,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
             data-cy="profile-username-header"
             as="h1"
             size="lg"
-            className="truncate text-white lg:text-6xl"
+            className="truncate leading-normal text-white lg:text-6xl lg:leading-normal"
           >
             {name}
           </Atoms.Typography>
