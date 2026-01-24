@@ -1,5 +1,5 @@
 # Stage 1: Dependencies
-FROM node:22.16.0-alpine AS deps
+FROM node:lts-alpine AS deps
 RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Stage 2: Builder
-FROM node:22.16.0-alpine AS builder
+FROM node:lts-alpine AS builder
 
 WORKDIR /app
 
@@ -99,7 +99,7 @@ ENV NEXT_STANDALONE=true
 RUN npm run build
 
 # Stage 3: Runner
-FROM node:22.16.0-alpine AS runner
+FROM node:lts-alpine AS runner
 
 WORKDIR /app
 
