@@ -540,7 +540,7 @@
       "title": "最近搜索",
       "clearAll": "清除所有最近搜索"
     },
-    "results": "搜索结果：",
+    "results": "搜索结果：{tags}",
     "searchAsTag": "搜索 \"{query}\" 作为标签",
     "searchAsTagLink": "作为标签搜索",
     "empty": {
@@ -605,9 +605,9 @@
       "repostedPost": "转发了您的帖子",
       "mentionedYou": "在帖子中提到了您",
       "deletedPost": "删除了一条帖子",
-      "editedPost": "编辑了一条帖子"
+      "editedPost": "编辑了一条帖子",
+      "fallback": "新通知"
     },
-    "fallback": "新通知",
     "settings": {
       "newFollower": "新粉丝",
       "newFriend": "新好友",

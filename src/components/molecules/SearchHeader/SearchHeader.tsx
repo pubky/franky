@@ -21,8 +21,7 @@ export function SearchHeader({ tags }: SearchHeaderProps) {
 
   return (
     <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
-      {t('results')}
-      {tags.join(', ')}
+      {t('results', { tags: tags.join(', ') })}
     </Atoms.Heading>
   );
 }

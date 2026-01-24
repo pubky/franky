@@ -540,7 +540,7 @@
       "title": "Letzte Suchen",
       "clearAll": "Alle letzten Suchen loeschen"
     },
-    "results": "Ergebnisse fuer: ",
+    "results": "Ergebnisse für: {tags}",
     "searchAsTag": "\"{query}\" als Tag suchen",
     "searchAsTagLink": "Als Tag suchen",
     "empty": {
@@ -605,9 +605,9 @@
       "repostedPost": "hat Ihren Beitrag repostet",
       "mentionedYou": "hat Sie in einem Beitrag erwaehnt",
       "deletedPost": "hat einen Beitrag geloescht",
-      "editedPost": "hat einen Beitrag bearbeitet"
+      "editedPost": "hat einen Beitrag bearbeitet",
+      "fallback": "Neue Benachrichtigung"
     },
-    "fallback": "Neue Benachrichtigung",
     "settings": {
       "newFollower": "Neuer Follower",
       "newFriend": "Neuer Freund",
