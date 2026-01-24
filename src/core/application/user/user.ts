@@ -48,7 +48,7 @@ export class UserApplication {
       await Core.LocalProfileService.upsertDetails(nexusUserDetails);
       return nexusUserDetails;
     } catch (error) {
-      Libs.Logger.warn('Failed to refresh user details from Nexus', { userId, error });
+      Logger.warn('Failed to refresh user details from Nexus', { userId, error });
       // Fall back to cached data if fetch fails
       return await Core.LocalUserService.readDetails({ userId });
     }
