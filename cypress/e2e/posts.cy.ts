@@ -12,6 +12,7 @@ import {
   MAX_POST_LENGTH,
   addImage,
   PostOrReply,
+  waitForFeedToLoad,
 } from '../support/posts';
 import { defaultMs } from '../support/slow-down';
 import { BackupType, CheckForNewPosts, HasBackedUp, WaitForNewPosts } from '../support/types/enums';
@@ -25,6 +26,7 @@ describe('posts', () => {
 
     // create profile to post from
     cy.onboardAsNewUser(username, 'Big on posting.', [BackupType.EncryptedFile]);
+    waitForFeedToLoad();
   });
 
   beforeEach(() => {
@@ -133,7 +135,7 @@ describe('posts', () => {
       cy.get('[data-cy="post-input-action-bar-post"]').click();
     });
 
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-text"]').should('contain.text', postContent);
       cy.get('iframe[data-testid="YouTube video player"]')
         .should('be.visible')
@@ -219,7 +221,7 @@ describe('posts', () => {
       cy.get('[data-cy="post-input-action-bar-post"]').click();
     });
 
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-text"]').should('contain.text', postContent);
       tags.forEach((tag) => {
         cy.contains('button', tag).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
@@ -227,7 +229,6 @@ describe('posts', () => {
     });
   });
 
-  // todo: update test to handle 0 count when FR addressed, see https://github.com/pubky/franky/issues/973
   it('can tag and remove tags from existing post on feed page', () => {
     const postContent = `I can add and remove tags from my existing post on the feed page! ${Date.now()}`;
     const tag1 = 'bananas';
@@ -236,7 +237,7 @@ describe('posts', () => {
 
     createQuickPost(postContent);
 
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-tag-add-button"]').click();
       [tag1, tag2, tag3].forEach((tag) => {
         cy.get('[data-cy="add-tag-input"]').type(`${tag}{enter}`);
@@ -245,55 +246,56 @@ describe('posts', () => {
         cy.contains('button', tag).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
       });
       cy.contains('button', tag2).click();
-      cy.contains('button', tag2).should('not.exist');
-      // cy.contains('button', tag2).click();
-      // cy.contains('button', tag2).find('[data-cy="post-tag-count"]').should('have.text', '1');
+      cy.contains('button', tag2).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '0');
+      cy.contains('button', tag2).click();
+      cy.contains('button', tag2).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
     });
 
     cy.reload();
 
     cy.findFirstPostInFeed().within(() => {
-      [tag1, tag3].forEach((tag) => {
+      [tag1, tag2, tag3].forEach((tag) => {
         cy.contains('button', tag).should('be.visible').find('[data-cy="post-tag-count"]').should('have.text', '1');
       });
-      cy.contains('button', tag2).should('not.exist');
     });
-
-    // cy.reload();
-
-    // cy.findFirstPostInFeed().within(() => {
-    //   cy.contains('button', tag2).find('[data-cy="post-tag-count"]').should('have.text', '0');
-    // });
   });
 
-  it('can tag and remove tags from existing post on post page', () => {
+  it.only('can tag and remove tags from existing post on post page', () => {
     const postContent = `I can add and remove tags from my existing post on the post page! ${Date.now()}`;
-    const tag1 = 'acorda';
+    const tag1 = 'açorda';
     const tag2 = 'cassava';
     const tag3 = 'feijoada';
 
     createQuickPost(postContent);
 
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-text"]').click();
     });
 
     cy.location('pathname').should('contain', '/post/');
 
-    cy.get('[data-cy="post-tag-add-button"]').click();
-    [tag1, tag2, tag3].forEach((tag) => {
-      cy.get('[data-cy="add-tag-input"]').type(`${tag}{enter}`);
-    });
+    cy.get('[data-cy="single-post-card"]').within(() => {
+      [tag1, tag2, tag3].forEach((tag) => {
+        cy.get('[data-cy="add-tag-input"]').filter(':visible').type(`${tag}{enter}`);
+      });
 
-    [tag1, tag2, tag3].forEach((tag) => {
-      cy.contains('button', tag).should('be.visible').should('have.attr', 'data-state', 'on');
-    });
+      cy.get('[data-cy="post-tags-panel"]').filter(':visible').within(() => {
+        [tag1, tag2, tag3].forEach((tag) => {
+          cy.contains('p', tag).should('be.visible').parent().find('[data-testid="tag-count"]').should('have.text', '1');
+        });
 
-    cy.contains('button', tag2).click();
-    cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
+        cy.contains('p', tag2).parent().click();
+        cy.contains('p', tag2).should('be.visible').parent().find('[data-testid="tag-count"]').should('have.text', '0');
+      });
+    });
 
     cy.reload();
-    cy.contains('button', tag2).should('have.attr', 'data-state', 'off');
+
+    cy.get('[data-cy="single-post-card"]').within(() => {
+      cy.get('[data-cy="post-tags-panel"]').filter(':visible').within(() => {
+        cy.contains('p', tag2).should('not.exist');
+      });
+    });
   });
 
   it('can bookmark multiple posts then remove bookmarks', () => {
@@ -301,12 +303,12 @@ describe('posts', () => {
     const postContent2 = `This post will also be bookmarked! ${Date.now()}`;
 
     createQuickPost(postContent1);
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent1, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-bookmark-btn"]').click();
     });
 
     createQuickPost(postContent2);
-    cy.findFirstPostInFeed().within(() => {
+    cy.findFirstPostInFeedFiltered(postContent2, CheckForNewPosts.No, WaitForNewPosts.Yes).within(() => {
       cy.get('[data-cy="post-bookmark-btn"]').click();
     });
 
@@ -392,7 +394,7 @@ describe('posts', () => {
     });
   });
 
-  // used to be 'cannot' be decided to allow replies to show when a post is deleted
+  // to be changed back to 'cannot' once deleted post with reply is hidden from feed, see https://github.com/pubky/franky/issues/993
   it('can see reply of a deleted post in feed', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
