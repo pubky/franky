@@ -132,7 +132,7 @@
       "signedOut": "ログアウト済み"
     },
     "human": {
-      "title": "ロボットではないことを証明してください。",
+      "title": "ロボットではないことを<highlight>証明してください。</highlight>",
       "subtitle": "メールは不要です。SMSまたは少額の支払いで素早く確認できます。または",
       "inviteCode": "招待コード。",
       "devMode": "開発者モード",
@@ -140,7 +140,7 @@
       "enterInviteCode": "招待コードを入力"
     },
     "phone": {
-      "title": "電話番号の確認。",
+      "title": "電話番号の<highlight>確認。</highlight>",
       "subtitle": "SMSで確認コードをお送りします。",
       "sendCode": "コードを送信",
       "phoneNumber": "電話番号",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "後でもう一度お試しください。問題が続く場合はサポートにお問い合わせください。"
     },
     "phoneCode": {
-      "title": "コードを入力。",
+      "title": "コードを<highlight>入力。</highlight>",
       "subtitle": "6桁の確認コードを{phoneNumber}に送信しました。",
       "label": "確認コード",
       "hint": "{phoneNumber}で受信したコードを入力してください。",
-      "resend": "コードを再送信（{resendTimer}秒）",
+      "resend": "コードを再送信",
+      "resendTimer": "コードを再送信（{seconds}秒）",
       "verify": "コードを確認",
       "valid": "確認コードは有効です",
       "invalid": "確認コードが無効です。再試行してください。",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "後でもう一度お試しください。問題が続く場合はサポートにお問い合わせください。"
     },
     "lightning": {
-      "title": "スキャンして支払い。",
+      "title": "スキャンして<highlight>支払い。</highlight>",
       "subtitle": "お好みのウォレットでQRコードをスキャンしてください。",
       "qrLabel": "Bitcoin Lightning支払い",
       "payAmount": "続行するには₿ {amount}を支払ってください。",
@@ -182,7 +183,7 @@
       "copyFailed": "請求書のコピーに失敗しました"
     },
     "inviteCode": {
-      "title": "ロボットではないことを証明してください。",
+      "title": "ロボットではないことを<highlight>証明してください。</highlight>",
       "subtitle": "SMSまたは支払い確認が利用できません。招待コードをお問い合わせください。",
       "label": "ホームサーバーの招待コード",
       "hint": "投稿、写真、動画、プロフィール用に1GBのストレージを取得できます。",

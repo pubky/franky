@@ -132,7 +132,7 @@
       "signedOut": "Sesion cerrada"
     },
     "human": {
-      "title": "Demuestra que no eres un robot.",
+      "title": "Demuestra <highlight>que no eres un robot.</highlight>",
       "subtitle": "No se necesita email. Verifica rapidamente usando SMS o un pequeno pago. O usa un",
       "inviteCode": "codigo de invitacion.",
       "devMode": "Modo desarrollador",
@@ -140,7 +140,7 @@
       "enterInviteCode": "Ingresar codigo de invitacion"
     },
     "phone": {
-      "title": "Verificacion por telefono.",
+      "title": "Verificacion por <highlight>telefono.</highlight>",
       "subtitle": "Te enviaremos un codigo de verificacion por SMS a tu numero de telefono.",
       "sendCode": "Enviar codigo",
       "phoneNumber": "Numero de telefono",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "Por favor intenta de nuevo mas tarde. Si el problema persiste, contacta a soporte."
     },
     "phoneCode": {
-      "title": "Ingresa el codigo.",
+      "title": "Ingresa el <highlight>codigo.</highlight>",
       "subtitle": "Enviamos un codigo de verificacion de 6 digitos a {phoneNumber}.",
       "label": "Codigo de verificacion",
       "hint": "Ingresa el codigo que recibiste en {phoneNumber}.",
-      "resend": "Reenviar codigo ({resendTimer}s)",
+      "resend": "Reenviar codigo",
+      "resendTimer": "Reenviar codigo ({seconds}s)",
       "verify": "Verificar codigo",
       "valid": "Codigo de verificacion valido",
       "invalid": "Codigo de verificacion invalido. Intenta de nuevo.",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "Por favor intenta de nuevo mas tarde. Si el problema persiste, contacta a soporte."
     },
     "lightning": {
-      "title": "Escanea para pagar.",
+      "title": "Escanea para <highlight>pagar.</highlight>",
       "subtitle": "Escanea el codigo QR con tu billetera favorita.",
       "qrLabel": "Pago Bitcoin Lightning",
       "payAmount": "Paga ₿ {amount} para continuar.",
@@ -182,7 +183,7 @@
       "copyFailed": "Error al copiar factura"
     },
     "inviteCode": {
-      "title": "Demuestra que no eres un robot.",
+      "title": "Demuestra que <highlight>no eres un robot.</highlight>",
       "subtitle": "Verificacion por SMS o pago no disponible. Pidenos un codigo de invitacion.",
       "label": "Codigo de invitacion para homeserver",
       "hint": "Obtendras 1GB de almacenamiento, usado para tus publicaciones, fotos, videos y tu perfil.",

@@ -132,7 +132,7 @@
       "signedOut": "Disconnesso"
     },
     "human": {
-      "title": "Dimostra di non essere un robot.",
+      "title": "Dimostra <highlight>di non essere un robot.</highlight>",
       "subtitle": "Non serve email. Verifica rapidamente tramite SMS o un piccolo pagamento. Oppure usa un",
       "inviteCode": "codice invito.",
       "devMode": "Modalita sviluppatore",
@@ -140,7 +140,7 @@
       "enterInviteCode": "Inserisci codice invito"
     },
     "phone": {
-      "title": "Verifica telefonica.",
+      "title": "Verifica <highlight>telefonica.</highlight>",
       "subtitle": "Ti invieremo un codice di verifica via SMS al tuo numero di telefono.",
       "sendCode": "Invia codice",
       "phoneNumber": "Numero di telefono",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "Riprova piu tardi. Se il problema persiste, contatta il supporto."
     },
     "phoneCode": {
-      "title": "Inserisci il codice.",
+      "title": "Inserisci il <highlight>codice.</highlight>",
       "subtitle": "Abbiamo inviato un codice di verifica a 6 cifre a {phoneNumber}.",
       "label": "Codice di verifica",
       "hint": "Inserisci il codice che hai ricevuto su {phoneNumber}.",
-      "resend": "Reinvia codice ({resendTimer}s)",
+      "resend": "Reinvia codice",
+      "resendTimer": "Reinvia codice ({seconds}s)",
       "verify": "Verifica codice",
       "valid": "Codice di verifica valido",
       "invalid": "Codice di verifica non valido. Riprova.",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "Riprova piu tardi. Se il problema persiste, contatta il supporto."
     },
     "lightning": {
-      "title": "Scansiona per pagare.",
+      "title": "Scansiona per <highlight>pagare.</highlight>",
       "subtitle": "Scansiona il codice QR con il tuo wallet preferito.",
       "qrLabel": "Pagamento Bitcoin Lightning",
       "payAmount": "Paga ₿ {amount} per continuare.",
@@ -182,7 +183,7 @@
       "copyFailed": "Copia fattura fallita"
     },
     "inviteCode": {
-      "title": "Dimostra di non essere un robot.",
+      "title": "Dimostra di <highlight>non essere un robot.</highlight>",
       "subtitle": "Verifica SMS o pagamento non disponibile. Chiedici un codice invito.",
       "label": "Codice invito per homeserver",
       "hint": "Ottieni 1GB di spazio, usato per i tuoi post, foto, video e il tuo profilo.",
