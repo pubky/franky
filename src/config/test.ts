@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 
+import React from 'react';
 import { vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
@@ -53,8 +54,73 @@ function createTranslationFunction(namespace: string) {
     return getNestedValue(enMessages as Record<string, unknown>, fullPath) ?? key;
   };
 
-  // Add rich method for formatted text (returns same as t for testing)
-  t.rich = t;
+  // Add rich method for formatted text with rich text tags support
+  t.rich = (
+    key: string,
+    values?: Record<string, string | number | ((chunks: React.ReactNode) => React.ReactNode)>,
+  ): React.ReactNode => {
+    const fullPath = namespace ? `${namespace}.${key}` : key;
+    const value = getNestedValue(enMessages as Record<string, unknown>, fullPath);
+
+    if (typeof value !== 'string') {
+      return key;
+    }
+
+    // If no values with render functions, just return the plain string
+    if (!values) {
+      return value;
+    }
+
+    // Check if there are any render functions in values
+    const renderFunctions = Object.entries(values).filter(([, v]) => typeof v === 'function') as [
+      string,
+      (chunks: React.ReactNode) => React.ReactNode,
+    ][];
+
+    if (renderFunctions.length === 0) {
+      // Just handle interpolation for non-function values
+      return Object.entries(values).reduce((str, [paramKey, paramValue]) => {
+        return str.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
+      }, value);
+    }
+
+    // Parse rich text tags and apply render functions
+    // This handles patterns like <tagName>content</tagName>
+    let result: React.ReactNode = value;
+
+    for (const [tagName, renderFn] of renderFunctions) {
+      const tagPattern = new RegExp(`<${tagName}>([^<]*)</${tagName}>`, 'g');
+      const str = typeof result === 'string' ? result : String(result);
+
+      // Check if there's a match
+      const match = tagPattern.exec(str);
+      if (match) {
+        const [fullMatch, content] = match;
+        const parts = str.split(fullMatch);
+
+        // Build React nodes array
+        const nodes: React.ReactNode[] = [];
+        if (parts[0]) nodes.push(parts[0]);
+        nodes.push(renderFn(content));
+        if (parts[1]) nodes.push(parts[1]);
+
+        // If multiple nodes, wrap in fragment-like array with keys
+        if (nodes.length === 1) {
+          result = nodes[0];
+        } else {
+          // For testing, we return an array which React can render
+          result = nodes.map((node, i) =>
+            typeof node === 'string'
+              ? node
+              : // Wrap React elements with keys for proper rendering
+                { ...node, key: i },
+          );
+        }
+      }
+    }
+
+    return result;
+  };
 
   // Add markup method (returns same as t for testing)
   t.markup = t;

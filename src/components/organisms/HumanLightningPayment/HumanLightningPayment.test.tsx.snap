@@ -9,12 +9,11 @@ exports[`HumanLightningPayment > matches snapshot 1`] = `
     class="font-bold text-foreground text-5xl lg:text-6xl"
     data-testid="heading-1"
   >
-    Scan to Pay
-    . 
+    Scan to 
     <span
       class="text-brand"
     >
-      .
+      Pay.
     </span>
   </h1>
   <h2

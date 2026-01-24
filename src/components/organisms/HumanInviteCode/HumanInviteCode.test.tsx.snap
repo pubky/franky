@@ -10,12 +10,11 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for complete code state 
       class="font-bold text-foreground text-5xl lg:text-6xl"
       data-testid="heading-1"
     >
-      Prove you're not a Robot
-      . 
+      Prove you're 
       <span
         class="text-brand"
       >
-        .
+        not a Robot.
       </span>
     </h1>
     <div
@@ -362,12 +361,11 @@ exports[`HumanInviteCode - Snapshots > matches snapshot for empty state 1`] = `
       class="font-bold text-foreground text-5xl lg:text-6xl"
       data-testid="heading-1"
     >
-      Prove you're not a Robot
-      . 
+      Prove you're 
       <span
         class="text-brand"
       >
-        .
+        not a Robot.
       </span>
     </h1>
     <div

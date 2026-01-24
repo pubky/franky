@@ -9,12 +9,11 @@ exports[`HumanPhoneCode > matches snapshot 1`] = `
     class="font-bold text-foreground text-5xl lg:text-6xl"
     data-testid="heading-1"
   >
-    Enter Code
-    . 
+    Enter 
     <span
       class="text-brand"
     >
-      .
+      Code.
     </span>
   </h1>
   <h2
