@@ -2,6 +2,7 @@
 
 import { backupDownloadFilePath, extendedTimeout } from './common';
 import { goToProfilePageFromHeader } from './header';
+import { waitForFeedToLoad } from './posts';
 import { BackupType, CheckForNewPosts, WaitForNewPosts } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
@@ -201,6 +202,7 @@ Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcod
   cy.get('#encrypted-file-restore-btn').click();
 
   cy.location('pathname').should('eq', '/home');
+  waitForFeedToLoad();
 });
 
 Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
@@ -217,6 +219,7 @@ Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
   cy.get('#recovery-phrase-restore-btn').click();
 
   cy.location('pathname').should('eq', '/home');
+  waitForFeedToLoad();
 });
 
 // Input recovery phrase words into the form
@@ -420,16 +423,17 @@ const findPostInFeed = (
 
       // Check if the requested post index exists
       if (filteredPosts.length > postIdx) {
-        cy.log(`findPostInFeed: Post found at index ${postIdx}`);
+        cy.log(`findPostInFeed: Post found at index ${postIdx} (${filteredPosts.length} matching posts found)`);
         return cy.wrap(filteredPosts.eq(postIdx));
       }
-      cy.log(`findPostInFeed: Post not found at index ${postIdx}`);
+      cy.log(`findPostInFeed: Post not found at index ${postIdx} (${filteredPosts.length} matching posts found, ${$posts.length} total posts)`);
 
       // Post not found - if checkForNewPosts is enabled, try clicking "See new posts" button
       if (checkForNewPosts) {
         cy.log(`Clicking 'See new posts' button to check for new posts`);
         // Check if "See new posts" button exists and click it
         cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
+        waitForFeedToLoad(filterText);
         // Recursively call findPostInFeed without checking for new posts
         return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
       }
@@ -437,7 +441,7 @@ const findPostInFeed = (
       // Post not found - if waitForNewPosts is enabled, wait for new posts and try again
       if (waitForNewPosts) {
         cy.log(`Waiting for new posts to appear`);
-        cy.wait(500);
+        cy.wait(Cypress.env('ci') ? 2_000 : 500);
         return findPostInFeed(postIdx, filterText, checkForNewPosts, WaitForNewPosts.No);
       }
 

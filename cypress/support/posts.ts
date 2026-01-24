@@ -410,16 +410,25 @@ export const waitForFeedToLoad = (postContent?: string) => {
         "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'",
       );
 
-    cy.get('[data-cy="timeline-posts"]')
-      .invoke('text')
-      .then((text) => {
-        // handle whitespace consistently
-        const normalisedText = text.replace(/\s+/g, ' ').trim();
-        if (normalisedText.includes('Loading') || normalisedText.includes('Checking for new content')) {
-          firstCheck ? cy.wait(200) : cy.wait(1000);
-          checkTimelineRecursively(attempts - 1, false);
-        }
-      });
+    cy.get('body').then(($body) => {
+      const bodyText = $body.text();
+      const normalisedBodyText = bodyText.replace(/\s+/g, ' ').trim();
+      const hasTimelinePosts = $body.find('[data-cy="timeline-posts"]').length > 0;
+      const hasEmptyState = normalisedBodyText.includes('No posts found');
+      const isLoading = normalisedBodyText.includes('Loading posts...');
+
+      // Feed has loaded if:
+      // 1. Not loading anymore AND
+      // 2. Either timeline-posts exists (has posts) OR empty state is shown (no posts)
+      if (!isLoading && (hasTimelinePosts || hasEmptyState)) {
+        // Feed has loaded successfully
+        return;
+      }
+
+      // Still waiting for feed to load
+      firstCheck ? cy.wait(200) : cy.wait(1000);
+      checkTimelineRecursively(attempts - 1, false);
+    });
   };
 
   const checkExistingPostContentRecursively = (postContent: string, attempts: number, firstCheck: boolean = true) => {

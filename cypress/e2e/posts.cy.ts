@@ -285,6 +285,7 @@ describe('posts', () => {
         });
 
         cy.contains('p', tag2).parent().click();
+        cy.wait(100); // short wait to ensure state has updated
         cy.contains('p', tag2).should('be.visible').parent().find('[data-testid="tag-count"]').should('have.text', '0');
       });
     });
@@ -394,8 +395,7 @@ describe('posts', () => {
     });
   });
 
-  // to be changed back to 'cannot' once deleted post with reply is hidden from feed, see https://github.com/pubky/franky/issues/993
-  it('can see reply of a deleted post in feed', () => {
+  it('cannot see reply of a deleted post in feed', () => {
     const postContent = `This post will be replied to! ${Date.now()}`;
     const replyContent = `This is my reply! ${Date.now()}`;
 
@@ -408,11 +408,12 @@ describe('posts', () => {
 
     deletePost({ type: PostOrReply.Post });
 
-    cy.findPostInFeed(0, replyContent, CheckForNewPosts.Yes);
-
-    cy.get('[data-cy="timeline-posts"]').should('contain.text', replyContent);
+    cy.get('[data-cy="timeline-posts"]').should('not.contain.text', replyContent);
     cy.get('[data-cy="timeline-posts"]').should('not.contain.text', postContent);
   });
+
+  // todo, covers bug https://github.com/pubky/franky/issues/993
+  it('"see new posts" button does not appear after deleting new post that has a reply');
 
   // todo: implement when articles are implemented, see https://github.com/pubky/franky/issues/756
   it.skip('can create an article from quick post box');
