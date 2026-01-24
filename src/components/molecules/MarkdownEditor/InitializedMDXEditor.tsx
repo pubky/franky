@@ -107,7 +107,7 @@ export default function InitializedMDXEditor({
   const [maxLengthWarning, setMaxLengthWarning] = useState<null | 'approaching' | 'reached'>(null);
 
   return (
-    <>
+    <Atoms.Container className="gap-4">
       <MDXEditor
         placeholder="Start writing your masterpiece"
         className="dark-theme cursor-auto"
@@ -192,6 +192,6 @@ export default function InitializedMDXEditor({
           </Atoms.Typography>
         </Atoms.Container>
       )}
-    </>
+    </Atoms.Container>
   );
 }
