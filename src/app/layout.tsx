@@ -21,6 +21,9 @@ export const metadata = Molecules.Metadata({
     'Pubky App is a social-media-like experience built over Pubky Core. It serves as a working example on how to build over Pubky Core to create simple or complex applications.',
 });
 
+// Force dynamic rendering since we use cookies for locale detection
+export const dynamic = 'force-dynamic';
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();

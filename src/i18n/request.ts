@@ -14,9 +14,8 @@ export default getRequestConfig(async () => {
   const localeCookie = cookieStore.get('locale')?.value;
 
   // Validate locale against supported locales
-  const locale: Locale = routing.locales.includes(localeCookie as Locale)
-    ? (localeCookie as Locale)
-    : routing.defaultLocale;
+  const locale: Locale =
+    localeCookie && routing.locales.includes(localeCookie as Locale) ? (localeCookie as Locale) : routing.defaultLocale;
 
   return {
     locale,
