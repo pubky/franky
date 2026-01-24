@@ -215,46 +215,6 @@ describe('UserController', () => {
     });
   });
 
-  describe('refreshDetails', () => {
-    it('should delegate to UserApplication.refreshDetails', async () => {
-      const userId = 'test-user-id';
-      const mockUserDetails: Core.NexusUserDetails = {
-        id: userId,
-        name: 'Test User',
-        bio: 'Test bio',
-        image: null,
-        links: [],
-        status: 'busy',
-        indexed_at: Date.now(),
-      };
-
-      const refreshDetailsSpy = vi.spyOn(Core.UserApplication, 'refreshDetails').mockResolvedValue(mockUserDetails);
-
-      const result = await UserController.refreshDetails({ userId });
-
-      expect(result).toEqual(mockUserDetails);
-      expect(refreshDetailsSpy).toHaveBeenCalledWith({ userId });
-    });
-
-    it('should return null when user details not found', async () => {
-      const userId = 'non-existent-user';
-
-      vi.spyOn(Core.UserApplication, 'refreshDetails').mockResolvedValue(null);
-
-      const result = await UserController.refreshDetails({ userId });
-
-      expect(result).toBeNull();
-    });
-
-    it('should propagate errors from application layer', async () => {
-      const userId = 'test-user-id';
-
-      vi.spyOn(Core.UserApplication, 'refreshDetails').mockRejectedValue(new Error('Network error'));
-
-      await expect(UserController.refreshDetails({ userId })).rejects.toThrow('Network error');
-    });
-  });
-
   describe('follow', () => {
     it('should normalize follow request and delegate to UserApplication.commitFollow (PUT)', async () => {
       const follower = 'pubky-follower' as unknown as Core.Pubky;

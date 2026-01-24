@@ -17,7 +17,7 @@ import * as Types from './ProfilePageHeader.types';
  * Subscribes the profile user to TTL tracking when visible in the viewport.
  * This ensures profile data gets refreshed when stale.
  */
-export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
+export function ProfilePageHeader({ profile, actions, isOwnProfile = true, userId }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const {
     onEdit,
@@ -33,9 +33,10 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
   } = actions;
 
   // Subscribe to TTL coordinator based on viewport visibility
+  // Use raw userId (without prefix) for proper TTL tracking
   const { ref: ttlRef } = Hooks.useTtlSubscription({
     type: 'user',
-    id: publicKey,
+    id: userId,
   });
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });

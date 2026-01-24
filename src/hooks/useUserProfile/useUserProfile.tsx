@@ -28,28 +28,30 @@ export interface UseUserProfileResult {
  * Pure data fetching - no side effects or actions.
  *
  * Separates concerns:
- * 1. useEffect: Fetches fresh data from Nexus API to ensure latest data (e.g., status)
+ * 1. useEffect: Ensures data exists in local DB (fetch if missing)
  * 2. useLiveQuery: Reads current data reactively from local DB
+ *
+ * Note: Data freshness is managed by TTL Coordinator via useTtlSubscription
+ * in the consuming component (e.g., ProfilePageHeader)
  *
  * @param userId - The user ID to fetch profile for
  * @returns Profile data and loading state
  */
 export function useUserProfile(userId: string): UseUserProfileResult {
-  // Separate concern: Fetch fresh data from Nexus API
-  // Always refresh to ensure we have the latest data including status
-  // This is important for profile pages where users expect to see current data
+  // Separate concern: Fetch data if not in local database
+  // Uses getOrFetch pattern per ADR-0001 (local-first)
   useEffect(() => {
     if (!userId) return;
 
-    // Always fetch fresh details from Nexus API to ensure status is up-to-date
-    // This is especially important when viewing another user's profile
-    Core.UserController.refreshDetails({ userId }).catch((error) => {
+    // Fetch details if not cached (local-first pattern)
+    // Freshness is managed by TTL Coordinator in ProfilePageHeader
+    Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
       Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
     });
   }, [userId]);
 
   // Separate concern: Read current data from local database
-  // This will reactively update when the database changes
+  // This will reactively update when the database changes (e.g., after TTL refresh)
   const userDetails = useLiveQuery(async () => {
     try {
       if (!userId) return null;

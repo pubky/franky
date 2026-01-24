@@ -8,12 +8,12 @@ import * as Core from '@/core';
 const mockMocks = vi.hoisted(() => {
   const mockUserDetails = { current: undefined as Core.NexusUserDetails | null | undefined };
   const mockGetDetails = vi.fn();
-  const mockRefreshDetails = vi.fn();
+  const mockGetOrFetchDetails = vi.fn();
   const mockGetAvatarUrl = vi.fn((userId: string) => `https://example.com/avatar/${userId}`);
   return {
     mockUserDetails,
     mockGetDetails,
-    mockRefreshDetails,
+    mockGetOrFetchDetails,
     mockGetAvatarUrl,
   };
 });
@@ -36,7 +36,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     UserController: {
       getDetails: mockMocks.mockGetDetails,
-      refreshDetails: mockMocks.mockRefreshDetails,
+      getOrFetchDetails: mockMocks.mockGetOrFetchDetails,
     },
     FileController: {
       getAvatarUrl: mockMocks.mockGetAvatarUrl,
@@ -59,7 +59,7 @@ describe('useUserProfile', () => {
     // Default to undefined (simulating query not yet executed)
     mockMocks.mockUserDetails.current = undefined;
     mockMocks.mockGetDetails.mockImplementation(() => Promise.resolve(mockMocks.mockUserDetails.current));
-    mockMocks.mockRefreshDetails.mockResolvedValue(undefined);
+    mockMocks.mockGetOrFetchDetails.mockResolvedValue(undefined);
   });
 
   describe('Profile data fetching', () => {
@@ -290,7 +290,7 @@ describe('useUserProfile', () => {
   });
 
   describe('Controller integration', () => {
-    it('triggers UserController.refreshDetails to fetch fresh data from Nexus', () => {
+    it('triggers UserController.getOrFetchDetails to ensure data exists locally', () => {
       const mockUser: Core.NexusUserDetails = {
         id: 'test-user-id' as Core.Pubky,
         name: 'Test',
@@ -305,8 +305,9 @@ describe('useUserProfile', () => {
 
       renderHook(() => useUserProfile('test-user-id'));
 
-      // UserController.refreshDetails should be called in useEffect to always fetch fresh data
-      expect(mockMocks.mockRefreshDetails).toHaveBeenCalledWith({ userId: 'test-user-id' });
+      // UserController.getOrFetchDetails should be called in useEffect to ensure data is cached
+      // Freshness is managed by TTL Coordinator via useTtlSubscription in ProfilePageHeader
+      expect(mockMocks.mockGetOrFetchDetails).toHaveBeenCalledWith({ userId: 'test-user-id' });
     });
   });
 });

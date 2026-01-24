@@ -97,6 +97,7 @@ const mockProps: ProfilePageHeaderProps = {
     isLoggingOut: false,
   },
   isOwnProfile: true,
+  userId: '1QX7GKW3abcdef1234567890',
 };
 
 const mockOtherUserProps: ProfilePageHeaderProps = {
@@ -117,6 +118,7 @@ const mockOtherUserProps: ProfilePageHeaderProps = {
     isFollowing: false,
   },
   isOwnProfile: false,
+  userId: 'other123456789012345',
 };
 
 describe('ProfilePageHeader', () => {

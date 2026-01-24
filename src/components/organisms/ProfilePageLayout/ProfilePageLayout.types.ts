@@ -43,4 +43,6 @@ export interface ProfilePageLayoutProps {
   isLoading: boolean;
   /** Whether this is the logged-in user's own profile */
   isOwnProfile?: boolean;
+  /** Raw user ID (without pubky prefix) for TTL tracking */
+  userId: string;
 }
