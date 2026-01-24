@@ -109,12 +109,18 @@ function createTranslationFunction(namespace: string) {
           result = nodes[0];
         } else {
           // For testing, we return an array which React can render
-          result = nodes.map((node, i) =>
-            typeof node === 'string'
-              ? node
-              : // Wrap React elements with keys for proper rendering
-                { ...node, key: i },
-          );
+          result = nodes.map((node, i) => {
+            // Leave strings and primitives as-is
+            if (typeof node === 'string' || typeof node === 'number' || node === null || node === undefined) {
+              return node;
+            }
+            // Use React.cloneElement for valid React elements to add keys
+            if (React.isValidElement(node)) {
+              return React.cloneElement(node, { key: i });
+            }
+            // For other objects (edge case), return as-is
+            return node;
+          });
         }
       }
     }

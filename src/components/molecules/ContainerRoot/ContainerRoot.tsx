@@ -8,14 +8,19 @@ const interTight = Inter_Tight({
   subsets: ['latin'],
 });
 
+/** RTL (Right-to-Left) language codes */
+const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
+
 interface RootContainerProps {
   children: React.ReactNode;
   locale?: string;
 }
 
 export function RootContainer({ children, locale = 'en' }: RootContainerProps) {
+  const dir = RTL_LOCALES.includes(locale) ? 'rtl' : 'ltr';
+
   return (
-    <Atoms.Container as="html" lang={locale}>
+    <Atoms.Container as="html" lang={locale} dir={dir}>
       <Atoms.Container as="body" className={`${interTight.variable} antialiased`}>
         <Molecules.PageContainer>{children}</Molecules.PageContainer>
       </Atoms.Container>

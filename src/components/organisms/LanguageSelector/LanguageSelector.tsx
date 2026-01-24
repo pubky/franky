@@ -13,7 +13,10 @@ import { LANGUAGES } from './LanguageSelector.constants';
  * Cookie is used by next-intl to determine the locale on the server.
  */
 function setLocaleCookie(locale: string) {
-  document.cookie = `locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
+  const encodedLocale = encodeURIComponent(locale);
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  const secureFlag = isSecure ? ';Secure' : '';
+  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax${secureFlag}`;
 }
 
 function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: string; onSelect: (code: string) => void }) {

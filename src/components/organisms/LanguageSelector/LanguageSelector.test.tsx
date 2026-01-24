@@ -58,8 +58,8 @@ describe('LanguageSelector', () => {
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // Espanol (Spanish) is enabled
-    const spanishOption = screen.getByText('Espanol');
+    // Español (Spanish) is enabled
+    const spanishOption = screen.getByText('Español');
     fireEvent.click(spanishOption);
 
     expect(mockSetLanguage).toHaveBeenCalledWith('es');
