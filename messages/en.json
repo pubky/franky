@@ -540,7 +540,7 @@
       "title": "Recent searches",
       "clearAll": "Clear all recent searches"
     },
-    "results": "Results for: ",
+    "results": "Results for: {tags}",
     "searchAsTag": "Search \"{query}\" as tag",
     "searchAsTagLink": "Search as tag",
     "empty": {
@@ -605,9 +605,9 @@
       "repostedPost": "reposted your post",
       "mentionedYou": "mentioned you in post",
       "deletedPost": "deleted a post",
-      "editedPost": "edited a post"
+      "editedPost": "edited a post",
+      "fallback": "New notification"
     },
-    "fallback": "New notification",
     "settings": {
       "newFollower": "New follower",
       "newFriend": "New friend",

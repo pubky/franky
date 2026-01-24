@@ -540,7 +540,7 @@
       "title": "最近の検索",
       "clearAll": "すべての最近の検索を消去"
     },
-    "results": "検索結果：",
+    "results": "検索結果：{tags}",
     "searchAsTag": "「{query}」をタグとして検索",
     "searchAsTagLink": "タグとして検索",
     "empty": {
@@ -605,9 +605,9 @@
       "repostedPost": "あなたの投稿をリポストしました",
       "mentionedYou": "投稿であなたをメンションしました",
       "deletedPost": "投稿を削除しました",
-      "editedPost": "投稿を編集しました"
+      "editedPost": "投稿を編集しました",
+      "fallback": "新しい通知"
     },
-    "fallback": "新しい通知",
     "settings": {
       "newFollower": "新しいフォロワー",
       "newFriend": "新しい友達",

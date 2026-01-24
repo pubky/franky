@@ -540,7 +540,7 @@
       "title": "عمليات البحث الاخيرة",
       "clearAll": "مسح جميع عمليات البحث الاخيرة"
     },
-    "results": "نتائج: ",
+    "results": "نتائج: {tags}",
     "searchAsTag": "بحث \"{query}\" كوسم",
     "searchAsTagLink": "بحث كوسم",
     "empty": {
@@ -605,9 +605,9 @@
       "repostedPost": "اعاد نشر منشورك",
       "mentionedYou": "ذكرك في منشور",
       "deletedPost": "حذف منشورا",
-      "editedPost": "عدل منشورا"
+      "editedPost": "عدّل منشوراً",
+      "fallback": "إشعار جديد"
     },
-    "fallback": "اشعار جديد",
     "settings": {
       "newFollower": "متابع جديد",
       "newFriend": "صديق جديد",
