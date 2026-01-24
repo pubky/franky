@@ -57,18 +57,35 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Button: ({
+  Container: ({
     children,
     onClick,
+    onKeyDown,
     className,
+    role,
+    tabIndex,
+    'aria-label': ariaLabel,
   }: {
     children: React.ReactNode;
     onClick?: (e: React.MouseEvent) => void;
+    onKeyDown?: (e: React.KeyboardEvent) => void;
     className?: string;
+    role?: string;
+    tabIndex?: number;
+    'aria-label'?: string;
+    overrideDefaults?: boolean;
   }) => (
-    <button data-testid="unblur-button" onClick={onClick} className={className}>
+    <div
+      data-testid="unblur-button"
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      className={className}
+      role={role}
+      tabIndex={tabIndex}
+      aria-label={ariaLabel}
+    >
       {children}
-    </button>
+    </div>
   ),
 }));
 
@@ -301,6 +318,39 @@ describe('AvatarWithFallback', () => {
       fireEvent.click(unblurButton);
 
       expect(mockUnblur).toHaveBeenCalledWith(validUserId);
+    });
+
+    it('calls ModerationController.unblur when Enter key is pressed', () => {
+      mockUseLiveQuery.mockReturnValue({ is_blurred: true });
+
+      render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
+
+      const unblurButton = screen.getByTestId('unblur-button');
+      fireEvent.keyDown(unblurButton, { key: 'Enter' });
+
+      expect(mockUnblur).toHaveBeenCalledWith(validUserId);
+    });
+
+    it('calls ModerationController.unblur when Space key is pressed', () => {
+      mockUseLiveQuery.mockReturnValue({ is_blurred: true });
+
+      render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
+
+      const unblurButton = screen.getByTestId('unblur-button');
+      fireEvent.keyDown(unblurButton, { key: ' ' });
+
+      expect(mockUnblur).toHaveBeenCalledWith(validUserId);
+    });
+
+    it('does not call ModerationController.unblur for other keys', () => {
+      mockUseLiveQuery.mockReturnValue({ is_blurred: true });
+
+      render(<AvatarWithFallback {...mockProps} avatarUrl={validAvatarUrl} />);
+
+      const unblurButton = screen.getByTestId('unblur-button');
+      fireEvent.keyDown(unblurButton, { key: 'Tab' });
+
+      expect(mockUnblur).not.toHaveBeenCalled();
     });
 
     it('stops event propagation when unblur button is clicked', () => {
