@@ -260,7 +260,7 @@ describe('posts', () => {
     });
   });
 
-  it.only('can tag and remove tags from existing post on post page', () => {
+  it('can tag and remove tags from existing post on post page', () => {
     const postContent = `I can add and remove tags from my existing post on the post page! ${Date.now()}`;
     const tag1 = 'açorda';
     const tag2 = 'cassava';
