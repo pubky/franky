@@ -38,9 +38,10 @@ vi.mock('@/core', () => ({
     initializeAuthenticatedSession: vi.fn().mockResolvedValue({}),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
-  useOnboardingStore: vi.fn(() => ({
-    inviteCode: 'mock-invite-code',
-  })),
+  useOnboardingStore: vi.fn((selector) => {
+    const state = { inviteCode: 'A9KM-7MJP-ERM9' };
+    return selector ? selector(state) : state;
+  }),
 }));
 
 // Mock useAuthUrl hook

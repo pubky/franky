@@ -87,13 +87,34 @@ class MuteFilter {
 }
 ```
 
-Integration with post streams:
+### Deleted Post Filtering
+
+Deleted posts (content === `Core.DELETED`) are also filtered from streams. This filtering:
+
+1. **Chains with mute filtering**: Mute filter runs first (sync), then deleted filter (async)
+2. **Fails open**: Posts without cached details are kept (avoids hiding valid posts)
+3. **Applies in two flows**:
+   - **Pagination (Flow 1)**: Filtered inside `PostStreamQueue.collect()` via async `FilterFn`
+   - **"See new posts" (Flow 2)**: Filtered in `LocalStreamPostsService.mergeUnreadStreamWithPostStream()`
+
+```typescript
+// Deleted post filter (async - requires DB lookup)
+// Located in PostDetailsModel.filterDeleted() for reuse across flows
+const validPosts = await PostDetailsModel.filterDeleted(postIds);
+```
+
+Integration with post streams (combined filtering):
 
 ```typescript
 // In PostStreamApplication.getOrFetchStreamSlice()
 const mutedUserIds = await LocalStreamUsersService.findById(MUTED);
 const { posts } = await postStreamQueue.collect(streamId, {
-  filter: (posts) => MuteFilter.filterPosts(posts, mutedUserIds),
+  filter: async (posts) => {
+    // Sync: mute filter (O(1) Set lookup)
+    const afterMuteFilter = MuteFilter.filterPosts(posts, mutedUserIds);
+    // Async: deleted filter (DB read)
+    return PostDetailsModel.filterDeleted(afterMuteFilter);
+  },
   // ...
 });
 ```
@@ -150,12 +171,14 @@ const mutedUsers = useSettingsStore((state) => state.muted);
 - Only user-level muting (no keyword/hashtag muting)
 - Muted users' posts still fetched from API (filtered client-side)
 - Filter changes don't retroactively update already-rendered posts
+- Deleted post filtering requires async DB lookups (slightly slower than sync mute filter)
 
 ### Neutral
 
 - Requires PostStreamQueue for efficient filtered pagination
 - Mute list loaded into memory for O(1) lookup during filtering
 - Bootstrap must sync mutes before feeds render correctly
+- Deleted post filtering uses fail-open strategy (posts without cached details are shown)
 
 ## Alternatives Considered
 
@@ -193,7 +216,9 @@ const mutedUsers = useSettingsStore((state) => state.muted);
 
 - Mute service: `src/core/services/local/mute/mute.ts`
 - Mute normalizer: `src/core/pipes/mute/mute.normalizer.ts`
-- Filter implementation: `src/core/application/stream/posts/muting/mute-filter.ts`
+- Mute filter: `src/core/application/stream/posts/muting/mute-filter.ts`
+- Deleted post filter: `src/core/models/post/details/postDetails.ts` (`PostDetailsModel.filterDeleted()` static method)
+- Queue types: `src/core/application/stream/posts/muting/post-stream-queue.types.ts` (`FilterFn` async support)
 - Relationships model: `src/core/models/user/relationships/userRelationships.ts`
 - Settings store: `src/core/stores/settings/settings.store.ts`
 - UI component: `src/components/organisms/MutedUsersList/MutedUsersList.tsx`

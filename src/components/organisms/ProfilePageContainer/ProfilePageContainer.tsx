@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import * as Hooks from '@/hooks';
 import * as Organisms from '@/organisms';
 import * as Providers from '@/providers';
@@ -51,26 +50,24 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
   // Business logic: Handle navigation state
   const { activePage, filterBarActivePage, navigateToPage } = Hooks.useProfileNavigation();
 
-  // Business logic: Handle follow/unfollow for other users' profiles
+  // Business logic: Handle follow/unfollow for other users' profiles (with auth check)
+  const { requireAuth } = Hooks.useRequireAuth();
   const { toggleFollow, isLoading: isFollowLoading } = Hooks.useFollowUser();
   const { isFollowing } = Hooks.useIsFollowing(pubky ?? '');
 
-  // Create follow toggle handler
-  const handleFollowToggle = React.useCallback(async () => {
+  const handleFollowToggle = () => {
     if (!pubky) return;
-    await toggleFollow(pubky, isFollowing);
-  }, [pubky, isFollowing, toggleFollow]);
+    requireAuth(async () => {
+      await toggleFollow(pubky, isFollowing);
+    });
+  };
 
-  // Merge actions with follow-related actions
-  const mergedActions = React.useMemo(
-    () => ({
-      ...actions,
-      onFollowToggle: handleFollowToggle,
-      isFollowLoading,
-      isFollowing,
-    }),
-    [actions, handleFollowToggle, isFollowLoading, isFollowing],
-  );
+  const mergedActions = {
+    ...actions,
+    onFollowToggle: handleFollowToggle,
+    isFollowLoading,
+    isFollowing,
+  };
 
   // Delegate presentation to layout organism
   return (

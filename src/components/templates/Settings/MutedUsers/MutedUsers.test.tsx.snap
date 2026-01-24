@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
+exports[`MutedUsers - Snapshots > matches snapshot with loading state 1`] = `
 <div
   class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
   data-testid="container"
@@ -15,7 +15,7 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-volume-x"
+        class="lucide lucide-megaphone-off"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -27,19 +27,19 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"
+          d="M11.636 6A13 13 0 0 0 19.4 3.2 1 1 0 0 1 21 4v11.344"
         />
-        <line
-          x1="22"
-          x2="16"
-          y1="9"
-          y2="15"
+        <path
+          d="M14.378 14.357A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1"
         />
-        <line
-          x1="16"
-          x2="22"
-          y1="9"
-          y2="15"
+        <path
+          d="m2 2 20 20"
+        />
+        <path
+          d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+        />
+        <path
+          d="M8 8v6"
         />
       </svg>
       <h2
@@ -61,14 +61,331 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
     data-testid="container"
   >
     <div
-      class="inline-flex w-full flex-col gap-3"
+      class="inline-flex w-full flex-col gap-6"
       data-testid="container"
     >
+      <div
+        class="w-full"
+        data-testid="container"
+      >
+        <span
+          class="text-base font-medium text-muted-foreground"
+          data-testid="typography"
+        >
+          Loading...
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MutedUsers - Snapshots > matches snapshot with muted users 1`] = `
+<div
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
+  data-testid="container"
+>
+  <div
+    class="flex w-full flex-col items-start gap-6"
+    data-testid="container"
+  >
+    <div
+      class="inline-flex items-center justify-start gap-3"
+      data-testid="container"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-megaphone-off"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M11.636 6A13 13 0 0 0 19.4 3.2 1 1 0 0 1 21 4v11.344"
+        />
+        <path
+          d="M14.378 14.357A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1"
+        />
+        <path
+          d="m2 2 20 20"
+        />
+        <path
+          d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+        />
+        <path
+          d="M8 8v6"
+        />
+      </svg>
       <h2
-        class="mt-5 flex self-center text-center text-2xl leading-8 font-normal opacity-20"
+        class="text-2xl font-bold text-foreground leading-8"
+        data-testid="heading-2"
+      >
+        Muted users
+      </h2>
+    </div>
+    <p
+      class="text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      Here is an overview of all users you muted. You can choose to unmute users if you want.
+    </p>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
+    <div
+      class="inline-flex w-full flex-col gap-6"
+      data-testid="container"
+    >
+      <div
+        class="flex w-full items-center justify-between gap-4"
+        data-testid="container"
+      >
+        <a
+          class="flex flex-1 items-center gap-3 hover:opacity-80"
+          href="/profile/user-1"
+        >
+          <span
+            class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
+          >
+            <span
+              class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
+            >
+              T
+            </span>
+          </span>
+          <div
+            class="inline-flex flex-col items-start"
+            data-testid="container"
+          >
+            <span
+              class="text-base font-bold"
+              data-testid="typography"
+            >
+              Test User 1
+            </span>
+            <span
+              class="text-xs tracking-widest text-muted-foreground uppercase"
+              data-testid="typography"
+            >
+              user-1
+            </span>
+          </div>
+        </a>
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 rounded-full"
+          data-size="sm"
+          data-slot="button"
+          data-variant="secondary"
+          id="unmute-btn"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-megaphone"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"
+            />
+            <path
+              d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+            />
+            <path
+              d="M8 6v8"
+            />
+          </svg>
+          Unmute
+        </button>
+      </div>
+      <div
+        class="flex w-full items-center justify-between gap-4"
+        data-testid="container"
+      >
+        <a
+          class="flex flex-1 items-center gap-3 hover:opacity-80"
+          href="/profile/user-2"
+        >
+          <span
+            class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
+          >
+            <span
+              class="flex h-full w-full items-center justify-center rounded-full border border-muted-foreground bg-muted"
+            >
+              T
+            </span>
+          </span>
+          <div
+            class="inline-flex flex-col items-start"
+            data-testid="container"
+          >
+            <span
+              class="text-base font-bold"
+              data-testid="typography"
+            >
+              Test User 2
+            </span>
+            <span
+              class="text-xs tracking-widest text-muted-foreground uppercase"
+              data-testid="typography"
+            >
+              user-2
+            </span>
+          </div>
+        </a>
+        <button
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 rounded-full"
+          data-size="sm"
+          data-slot="button"
+          data-variant="secondary"
+          id="unmute-btn"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-megaphone"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"
+            />
+            <path
+              d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+            />
+            <path
+              d="M8 6v8"
+            />
+          </svg>
+          Unmute
+        </button>
+      </div>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-auto gap-2 px-4 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal rounded-full"
+        data-size="lg"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-megaphone"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"
+          />
+          <path
+            d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+          />
+          <path
+            d="M8 6v8"
+          />
+        </svg>
+        Unmute all users
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
+<div
+  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
+  data-testid="container"
+>
+  <div
+    class="flex w-full flex-col items-start gap-6"
+    data-testid="container"
+  >
+    <div
+      class="inline-flex items-center justify-start gap-3"
+      data-testid="container"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-megaphone-off"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M11.636 6A13 13 0 0 0 19.4 3.2 1 1 0 0 1 21 4v11.344"
+        />
+        <path
+          d="M14.378 14.357A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1"
+        />
+        <path
+          d="m2 2 20 20"
+        />
+        <path
+          d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+        />
+        <path
+          d="M8 8v6"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold text-foreground leading-8"
+        data-testid="heading-2"
+      >
+        Muted users
+      </h2>
+    </div>
+    <p
+      class="text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      Here is an overview of all users you muted. You can choose to unmute users if you want.
+    </p>
+  </div>
+  <div
+    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    data-testid="container"
+  >
+    <div
+      class="inline-flex w-full flex-col gap-6"
+      data-testid="container"
+    >
+      <p
+        class="w-full py-4 text-center text-lg text-muted-foreground"
+        data-testid="typography"
       >
         No muted users yet
-      </h2>
+      </p>
     </div>
   </div>
 </div>
