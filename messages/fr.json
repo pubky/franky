@@ -132,7 +132,7 @@
       "signedOut": "Deconnecte"
     },
     "human": {
-      "title": "Prouvez que vous n'etes pas un robot.",
+      "title": "Prouvez <highlight>que vous n'etes pas un robot.</highlight>",
       "subtitle": "Pas besoin d'email. Verifiez rapidement par SMS ou un petit paiement. Ou utilisez un",
       "inviteCode": "code d'invitation.",
       "devMode": "Mode developpeur",
@@ -140,7 +140,7 @@
       "enterInviteCode": "Entrer le code d'invitation"
     },
     "phone": {
-      "title": "Preuve par telephone.",
+      "title": "Preuve par <highlight>telephone.</highlight>",
       "subtitle": "Nous vous enverrons un code de verification par SMS a votre numero de telephone.",
       "sendCode": "Envoyer le code",
       "phoneNumber": "Numero de telephone",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "Veuillez reessayer plus tard. Si le probleme persiste, contactez le support."
     },
     "phoneCode": {
-      "title": "Entrez le code.",
+      "title": "Entrez le <highlight>code.</highlight>",
       "subtitle": "Nous avons envoye un code de verification a 6 chiffres au {phoneNumber}.",
       "label": "Code de verification",
       "hint": "Entrez le code que vous avez recu au {phoneNumber}.",
-      "resend": "Renvoyer le code ({resendTimer}s)",
+      "resend": "Renvoyer le code",
+      "resendTimer": "Renvoyer le code ({seconds}s)",
       "verify": "Verifier le code",
       "valid": "Code de verification valide",
       "invalid": "Code de verification invalide. Reessayez.",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "Veuillez reessayer plus tard. Si le probleme persiste, contactez le support."
     },
     "lightning": {
-      "title": "Scannez pour payer.",
+      "title": "Scannez pour <highlight>payer.</highlight>",
       "subtitle": "Scannez le code QR avec votre portefeuille prefere.",
       "qrLabel": "Paiement Bitcoin Lightning",
       "payAmount": "Payez ₿ {amount} pour continuer.",
@@ -182,7 +183,7 @@
       "copyFailed": "Echec de la copie de la facture"
     },
     "inviteCode": {
-      "title": "Prouvez que vous n'etes pas un robot.",
+      "title": "Prouvez que vous <highlight>n'etes pas un robot.</highlight>",
       "subtitle": "Verification par SMS ou paiement non disponible. Demandez-nous un code d'invitation.",
       "label": "Code d'invitation pour le homeserver",
       "hint": "Vous obtenez 1 Go de stockage, utilise pour vos publications, photos, videos et votre profil.",

@@ -132,7 +132,7 @@
       "signedOut": "已退出"
     },
     "human": {
-      "title": "证明您不是机器人。",
+      "title": "证明<highlight>您不是机器人。</highlight>",
       "subtitle": "无需邮箱。通过短信或小额支付快速验证。或使用",
       "inviteCode": "邀请码。",
       "devMode": "开发者模式",
@@ -140,7 +140,7 @@
       "enterInviteCode": "输入邀请码"
     },
     "phone": {
-      "title": "手机验证。",
+      "title": "手机<highlight>验证。</highlight>",
       "subtitle": "我们将通过短信向您的手机号发送验证码。",
       "sendCode": "发送验证码",
       "phoneNumber": "手机号码",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "请稍后重试。如问题持续，请联系支持。"
     },
     "phoneCode": {
-      "title": "输入验证码。",
+      "title": "输入<highlight>验证码。</highlight>",
       "subtitle": "我们已向 {phoneNumber} 发送了6位验证码。",
       "label": "验证码",
       "hint": "输入您在 {phoneNumber} 收到的验证码。",
-      "resend": "重新发送验证码 ({resendTimer}秒)",
+      "resend": "重新发送验证码",
+      "resendTimer": "重新发送验证码 ({seconds}秒)",
       "verify": "验证",
       "valid": "验证码有效",
       "invalid": "验证码无效。请重试。",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "请稍后重试。如问题持续，请联系支持。"
     },
     "lightning": {
-      "title": "扫码支付。",
+      "title": "扫码<highlight>支付。</highlight>",
       "subtitle": "使用您喜欢的钱包扫描二维码。",
       "qrLabel": "比特币闪电网络支付",
       "payAmount": "支付 ₿ {amount} 以继续。",
@@ -182,7 +183,7 @@
       "copyFailed": "复制发票失败"
     },
     "inviteCode": {
-      "title": "证明您不是机器人。",
+      "title": "证明您<highlight>不是机器人。</highlight>",
       "subtitle": "短信或支付验证不可用。请向我们索取邀请码。",
       "label": "Homeserver 邀请码",
       "hint": "您将获得 1GB 存储空间，用于您的帖子、照片、视频和个人资料。",

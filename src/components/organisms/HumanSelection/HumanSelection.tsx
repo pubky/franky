@@ -14,7 +14,9 @@ export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanS
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          {t('title').split('.')[0]}. <span className="text-brand">{t('title').split('.')[1]}.</span>
+          {t.rich('title', {
+            highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+          })}
         </Molecules.PageTitle>
         <Atoms.PageSubtitle>
           {t('subtitle')}{' '}

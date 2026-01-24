@@ -132,7 +132,7 @@
       "signedOut": "Signed out"
     },
     "human": {
-      "title": "Prove you're not a Robot.",
+      "title": "Prove <highlight>you're not a Robot.</highlight>",
       "subtitle": "No email needed. Verify quickly using SMS or a small payment. Or use an",
       "inviteCode": "invite code.",
       "devMode": "Dev Mode",
@@ -140,7 +140,7 @@
       "enterInviteCode": "Enter invite code"
     },
     "phone": {
-      "title": "Proof of Phone.",
+      "title": "Proof of <highlight>Phone.</highlight>",
       "subtitle": "We will send you a verification code via SMS to your phone number.",
       "sendCode": "Send Code",
       "phoneNumber": "Phone number",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "Please try again later. If the problem persists, please contact support."
     },
     "phoneCode": {
-      "title": "Enter Code.",
+      "title": "Enter <highlight>Code.</highlight>",
       "subtitle": "We sent a 6-digit verification code to {phoneNumber}.",
       "label": "Verification code",
       "hint": "Enter the code you received on {phoneNumber}.",
-      "resend": "Resend Code ({resendTimer}s)",
+      "resend": "Resend Code",
+      "resendTimer": "Resend Code ({seconds}s)",
       "verify": "Verify Code",
       "valid": "Verification Code Valid",
       "invalid": "Verification Code Invalid. Try again.",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "Please try again later. If the problem persists, please contact support."
     },
     "lightning": {
-      "title": "Scan to Pay.",
+      "title": "Scan to <highlight>Pay.</highlight>",
       "subtitle": "Scan the QR code with your favorite wallet.",
       "qrLabel": "Bitcoin Lightning Payment",
       "payAmount": "Pay ₿ {amount} to continue.",
@@ -182,7 +183,7 @@
       "copyFailed": "Failed to copy invoice"
     },
     "inviteCode": {
-      "title": "Prove you're not a Robot.",
+      "title": "Prove you're <highlight>not a Robot.</highlight>",
       "subtitle": "SMS or payment verification not available. Ask us for an invite code.",
       "label": "Invite code for homeserver",
       "hint": "You get 1GB of storage, used for your posts, photos, videos, and your profile.",

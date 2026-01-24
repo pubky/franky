@@ -1,6 +1,3 @@
-/** Number of available quick reply prompts (must match quickReply.prompts array length in translations) */
-export const QUICK_REPLY_PROMPTS_COUNT = 5;
-
 /**
  * Height of PostThreadSpacer component in pixels.
  * Matches the h-4 Tailwind class (16px = 1rem).

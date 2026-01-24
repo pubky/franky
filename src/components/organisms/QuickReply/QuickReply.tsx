@@ -14,7 +14,6 @@ import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
 import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
 
-import { pickRandomQuickReplyPromptIndex } from './QuickReply.utils';
 import { QUICK_REPLY_CONNECTOR_SPACER_HEIGHT } from './QuickReply.constants';
 import type { QuickReplyProps } from './QuickReply.types';
 
@@ -24,8 +23,9 @@ export function QuickReply({
   onReplySubmitted,
 }: QuickReplyProps) {
   const t = useTranslations();
-  const [promptIndex] = React.useState(() => pickRandomQuickReplyPromptIndex());
-  const prompts = t.raw('quickReply.prompts') as string[];
+  const rawPrompts = t.raw('quickReply.prompts');
+  const prompts = Array.isArray(rawPrompts) ? rawPrompts : ['What are your thoughts on this?'];
+  const [promptIndex] = React.useState(() => Math.floor(Math.random() * prompts.length));
   const prompt = prompts[promptIndex] || prompts[0];
 
   const { userDetails } = Hooks.useCurrentUserProfile();

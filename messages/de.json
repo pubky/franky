@@ -132,7 +132,7 @@
       "signedOut": "Abgemeldet"
     },
     "human": {
-      "title": "Beweisen Sie, dass Sie kein Roboter sind.",
+      "title": "Beweisen Sie, <highlight>dass Sie kein Roboter sind.</highlight>",
       "subtitle": "Keine E-Mail erforderlich. Verifizieren Sie schnell per SMS oder einer kleinen Zahlung. Oder verwenden Sie einen",
       "inviteCode": "Einladungscode.",
       "devMode": "Entwicklermodus",
@@ -140,7 +140,7 @@
       "enterInviteCode": "Einladungscode eingeben"
     },
     "phone": {
-      "title": "Telefonnachweis.",
+      "title": "Telefon<highlight>nachweis.</highlight>",
       "subtitle": "Wir senden Ihnen einen Verifizierungscode per SMS an Ihre Telefonnummer.",
       "sendCode": "Code senden",
       "phoneNumber": "Telefonnummer",
@@ -154,11 +154,12 @@
       "sendFailedDescription": "Bitte versuchen Sie es spaeter erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie den Support."
     },
     "phoneCode": {
-      "title": "Code eingeben.",
+      "title": "Code <highlight>eingeben.</highlight>",
       "subtitle": "Wir haben einen 6-stelligen Verifizierungscode an {phoneNumber} gesendet.",
       "label": "Verifizierungscode",
       "hint": "Geben Sie den Code ein, den Sie auf {phoneNumber} erhalten haben.",
-      "resend": "Code erneut senden ({resendTimer}s)",
+      "resend": "Code erneut senden",
+      "resendTimer": "Code erneut senden ({seconds}s)",
       "verify": "Code verifizieren",
       "valid": "Verifizierungscode gueltig",
       "invalid": "Verifizierungscode ungueltig. Versuchen Sie es erneut.",
@@ -166,7 +167,7 @@
       "verifyFailedDescription": "Bitte versuchen Sie es spaeter erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie den Support."
     },
     "lightning": {
-      "title": "Zum Bezahlen scannen.",
+      "title": "Scannen zum <highlight>Bezahlen.</highlight>",
       "subtitle": "Scannen Sie den QR-Code mit Ihrer bevorzugten Wallet.",
       "qrLabel": "Bitcoin Lightning-Zahlung",
       "payAmount": "Zahlen Sie ₿ {amount}, um fortzufahren.",
@@ -182,7 +183,7 @@
       "copyFailed": "Kopieren der Rechnung fehlgeschlagen"
     },
     "inviteCode": {
-      "title": "Beweisen Sie, dass Sie kein Roboter sind.",
+      "title": "Beweisen Sie, dass Sie <highlight>kein Roboter sind.</highlight>",
       "subtitle": "SMS- oder Zahlungsverifizierung nicht verfuegbar. Fragen Sie uns nach einem Einladungscode.",
       "label": "Einladungscode fuer Homeserver",
       "hint": "Sie erhalten 1GB Speicherplatz fuer Ihre Beitraege, Fotos, Videos und Ihr Profil.",

@@ -60,7 +60,9 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          {t('title').split('.')[0]}. <span className="text-brand">{t('title').split('.')[1]}.</span>
+          {t.rich('title', {
+            highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+          })}
         </Molecules.PageTitle>
         <Atoms.PageSubtitle>{t('subtitle', { phoneNumber })}</Atoms.PageSubtitle>
       </Atoms.PageHeader>
@@ -111,7 +113,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           onClick={onBack}
         >
           <Libs.RefreshCcw className="mr-2 h-4 w-4" />
-          {t('resend', { resendTimer })}
+          {resendTimer > 0 ? t('resendTimer', { seconds: resendTimer }) : t('resend')}
         </Atoms.Button>
         <Atoms.Button
           data-testid="human-phone-send-code-btn"
