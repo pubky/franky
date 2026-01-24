@@ -2,7 +2,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 
 import { QuickReply } from './QuickReply';
-import { QUICK_REPLY_PROMPTS } from './QuickReply.constants';
+import { QUICK_REPLY_PROMPTS_COUNT } from './QuickReply.constants';
+
+// Mock translation prompts for testing
+const MOCK_PROMPTS = [
+  'What are your thoughts on this?',
+  'What do you think?',
+  'Do you agree?',
+  'Any additional insights?',
+  'How would you respond?',
+];
+
+vi.mock('next-intl', () => ({
+  useTranslations: () => {
+    const t = (key: string) => key;
+    t.raw = (key: string) => {
+      if (key === 'quickReply.prompts') return MOCK_PROMPTS;
+      return key;
+    };
+    return t;
+  },
+}));
 
 const mockUsePostInput = vi.fn();
 const mockUseEnterSubmit = vi.fn();
@@ -98,23 +118,23 @@ describe('QuickReply', () => {
 
     expect(mockUsePostInput).toHaveBeenCalledWith(
       expect.objectContaining({
-        placeholder: QUICK_REPLY_PROMPTS[0],
+        placeholder: MOCK_PROMPTS[0],
       }),
     );
 
-    expect(screen.getByTestId('quick-reply-textarea')).toHaveAttribute('placeholder', QUICK_REPLY_PROMPTS[0]);
+    expect(screen.getByTestId('quick-reply-textarea')).toHaveAttribute('placeholder', MOCK_PROMPTS[0]);
   });
 
   it('changes the placeholder across mounts (random per mount)', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0); // first prompt
     render(<QuickReply parentPostId="author:post1" />);
-    expect(mockUsePostInput).toHaveBeenCalledWith(expect.objectContaining({ placeholder: QUICK_REPLY_PROMPTS[0] }));
+    expect(mockUsePostInput).toHaveBeenCalledWith(expect.objectContaining({ placeholder: MOCK_PROMPTS[0] }));
 
     cleanup();
     vi.spyOn(Math, 'random').mockReturnValue(0.99); // last prompt
     render(<QuickReply parentPostId="author:post1" />);
     expect(mockUsePostInput).toHaveBeenCalledWith(
-      expect.objectContaining({ placeholder: QUICK_REPLY_PROMPTS[QUICK_REPLY_PROMPTS.length - 1] }),
+      expect.objectContaining({ placeholder: MOCK_PROMPTS[QUICK_REPLY_PROMPTS_COUNT - 1] }),
     );
   });
 });
