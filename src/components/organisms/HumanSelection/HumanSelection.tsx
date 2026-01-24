@@ -2,9 +2,11 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import type { HumanSelectionProps } from './HumanSelection.types';
 
 export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanSelectionProps) => {
+  const t = useTranslations('onboarding.human');
   // Show dev mode options if in development mode or Cypress is running (for E2E tests)
   const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
   const isDevMode = process.env.NODE_ENV === 'development' || isCypressRunning;
@@ -12,17 +14,17 @@ export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanS
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Prove <span className="text-brand">you&apos;re not a Robot.</span>
+          {t('title').split('.')[0]}. <span className="text-brand">{t('title').split('.')[1]}.</span>
         </Molecules.PageTitle>
         <Atoms.PageSubtitle>
-          No email needed. Verify quickly using SMS or a small payment. Or use an{' '}
+          {t('subtitle')}{' '}
           <Atoms.Button
             overrideDefaults
             onClick={onInviteCodeClick}
             className="inline cursor-pointer text-brand transition-all hover:font-bold"
             data-testid="invite-code-link"
           >
-            invite code.
+            {t('inviteCode')}
           </Atoms.Button>
         </Atoms.PageSubtitle>
       </Atoms.PageHeader>
@@ -37,7 +39,7 @@ export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanS
             as="p"
             className="absolute top-[-14px] left-[-6px] ml-4 bg-background px-2 text-base leading-6 font-medium text-secondary-foreground/80"
           >
-            Dev Mode
+            {t('devMode')}
           </Atoms.Typography>
           <Atoms.Container className="flex flex-row gap-2">
             <Atoms.Button
@@ -46,7 +48,7 @@ export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanS
               onClick={() => onDevMode('skip')}
               className=""
             >
-              Skip
+              {t('skip')}
             </Atoms.Button>
             <Atoms.Button
               data-testid="human-dev-invite-code-btn"
@@ -54,7 +56,7 @@ export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanS
               onClick={() => onDevMode('inviteCode')}
               className=""
             >
-              Enter invite code
+              {t('enterInviteCode')}
             </Atoms.Button>
           </Atoms.Container>
         </Atoms.Container>

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Icons from '@/libs/icons';
 import * as Core from '@/core';
@@ -18,6 +19,7 @@ import * as Core from '@/core';
  * Inspired by pubky-app's Join modal but uses Franky's design patterns.
  */
 export function DialogSignIn() {
+  const t = useTranslations('dialogs.signIn');
   const showSignInDialog = Core.useAuthStore((state) => state.showSignInDialog);
   const setShowSignInDialog = Core.useAuthStore((state) => state.setShowSignInDialog);
 
@@ -27,10 +29,8 @@ export function DialogSignIn() {
     <Atoms.Dialog open={showSignInDialog} onOpenChange={setShowSignInDialog}>
       <Atoms.DialogContent className="w-3xl gap-0">
         <Atoms.DialogHeader className="gap-2">
-          <Atoms.DialogTitle>Join Pubky</Atoms.DialogTitle>
-          <Atoms.DialogDescription>
-            Sign in or create an account to interact with posts and profiles.
-          </Atoms.DialogDescription>
+          <Atoms.DialogTitle>{t('title')}</Atoms.DialogTitle>
+          <Atoms.DialogDescription>{t('description')}</Atoms.DialogDescription>
         </Atoms.DialogHeader>
 
         <Atoms.Container className="mt-6 flex flex-col gap-4 sm:flex-row">
@@ -38,10 +38,10 @@ export function DialogSignIn() {
           <Atoms.Card className="flex flex-1 flex-col gap-4 p-6">
             <Atoms.Container className="gap-2">
               <Atoms.Typography as="h3" size="md" className="font-bold">
-                New here?
+                {t('newHere')}
               </Atoms.Typography>
               <Atoms.Typography as="p" size="sm" className="text-muted-foreground">
-                Create your account and start exploring Pubky.
+                {t('newHereDescription')}
               </Atoms.Typography>
             </Atoms.Container>
 
@@ -52,7 +52,7 @@ export function DialogSignIn() {
             <Atoms.Button asChild className="w-full">
               <Link href="/" onClick={handleClose}>
                 <Icons.UserPlus className="mr-2 size-4" />
-                Join Pubky
+                {t('joinButton')}
               </Link>
             </Atoms.Button>
           </Atoms.Card>
@@ -61,10 +61,10 @@ export function DialogSignIn() {
           <Atoms.Card className="flex flex-1 flex-col gap-4 p-6">
             <Atoms.Container className="gap-2">
               <Atoms.Typography as="h3" size="md" className="font-bold">
-                Already have an account?
+                {t('alreadyHaveAccount')}
               </Atoms.Typography>
               <Atoms.Typography as="p" size="sm" className="text-muted-foreground">
-                Sign in to interact with posts and profiles.
+                {t('alreadyHaveAccountDescription')}
               </Atoms.Typography>
             </Atoms.Container>
 
@@ -75,7 +75,7 @@ export function DialogSignIn() {
             <Atoms.Button asChild variant="secondary" className="w-full">
               <Link href="/sign-in" onClick={handleClose}>
                 <Icons.KeyRound className="mr-2 size-4" />
-                Sign In
+                {t('signInButton')}
               </Link>
             </Atoms.Button>
           </Atoms.Card>

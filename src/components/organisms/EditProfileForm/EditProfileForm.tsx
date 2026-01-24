@@ -6,8 +6,11 @@ import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Config from '@/config';
+import { useTranslations } from 'next-intl';
 
 export const EditProfileForm = () => {
+  const t = useTranslations('forms.profile');
+  const tCommon = useTranslations('common');
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
   const { state, errors, handlers, cropDialog, fileInputRef, isSubmitDisabled } = Hooks.useProfileForm({
@@ -20,7 +23,7 @@ export const EditProfileForm = () => {
     return (
       <Atoms.Container className="flex w-full flex-1 flex-col items-center justify-center gap-6">
         <Atoms.Spinner size="lg" />
-        <Atoms.Typography>Loading profile...</Atoms.Typography>
+        <Atoms.Typography>{t('loading')}</Atoms.Typography>
       </Atoms.Container>
     );
   }
@@ -33,16 +36,18 @@ export const EditProfileForm = () => {
           <Atoms.Container className="w-full gap-6">
             <Atoms.Container className="gap-3">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
-                Profile
+                {tCommon('profile')}
               </Atoms.Heading>
             </Atoms.Container>
 
             <Atoms.Container className="gap-6">
               <Atoms.Container className="gap-2">
-                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">NAME*</Atoms.Label>
+                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">
+                  {t('name')}
+                </Atoms.Label>
                 <Molecules.InputField
                   id="profile-name-input"
-                  placeholder="Enter your name"
+                  placeholder={t('namePlaceholder')}
                   variant="dashed"
                   value={state.name}
                   onChange={(e) => handlers.setName(e.target.value)}
@@ -53,10 +58,12 @@ export const EditProfileForm = () => {
               </Atoms.Container>
 
               <Atoms.Container className="gap-2">
-                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">BIO</Atoms.Label>
+                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">
+                  {t('bio')}
+                </Atoms.Label>
                 <Molecules.TextareaField
                   id="profile-bio-input"
-                  placeholder="Tell a bit about yourself."
+                  placeholder={t('bioPlaceholder')}
                   value={state.bio}
                   variant="dashed"
                   rows={40}
@@ -73,7 +80,7 @@ export const EditProfileForm = () => {
           <Atoms.Container className="mt-6 w-full gap-6 lg:mt-0">
             <Atoms.Container className="gap-3">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
-                Links
+                {t('linksTitle')}
               </Atoms.Heading>
             </Atoms.Container>
 
@@ -116,7 +123,7 @@ export const EditProfileForm = () => {
           <Atoms.Container className="mt-6 w-full gap-6 lg:mt-0">
             <Atoms.Container className="gap-3 md:text-center">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
-                Avatar
+                {t('avatarTitle')}
               </Atoms.Heading>
             </Atoms.Container>
 
@@ -126,12 +133,14 @@ export const EditProfileForm = () => {
                 className="h-48 w-48 cursor-pointer bg-muted"
                 onClick={handlers.handleChooseFileClick}
                 role="button"
-                aria-label="Choose avatar image"
+                aria-label={t('chooseAvatar')}
               >
                 {state.avatarPreview ? (
                   <Atoms.AvatarImage
                     src={state.avatarPreview}
-                    alt={state.avatarFile ? `Selected avatar preview: ${state.avatarFile.name}` : 'Current avatar'}
+                    alt={
+                      state.avatarFile ? t('avatarPreview', { filename: state.avatarFile.name }) : t('currentAvatar')
+                    }
                   />
                 ) : (
                   <Atoms.AvatarFallback className="text-4xl">
@@ -158,12 +167,12 @@ export const EditProfileForm = () => {
                 {state.avatarPreview ? (
                   <>
                     <Libs.Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
+                    <span>{tCommon('delete')}</span>
                   </>
                 ) : (
                   <>
                     <Libs.File className="h-4 w-4" />
-                    <span>Choose file</span>
+                    <span>{t('chooseFile')}</span>
                   </>
                 )}
               </Atoms.Button>
@@ -185,7 +194,7 @@ export const EditProfileForm = () => {
             disabled={state.isSaving}
             className="rounded-full px-8"
           >
-            Cancel
+            {tCommon('cancel')}
           </Atoms.Button>
           <Atoms.Button
             size="lg"
@@ -195,7 +204,7 @@ export const EditProfileForm = () => {
             className="rounded-full px-8"
           >
             {state.isSaving && <Atoms.Spinner size="sm" className="mr-2" />}
-            {state.submitText}
+            {t(state.submitTextKey)}
           </Atoms.Button>
         </Atoms.Container>
       </Atoms.Container>

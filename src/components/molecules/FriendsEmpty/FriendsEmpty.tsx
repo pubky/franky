@@ -2,15 +2,19 @@
 
 import Image from 'next/image';
 import { UserRoundPlus } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 
 export function FriendsEmpty() {
+  const t = useTranslations('profile.empty.friends');
+  const tNav = useTranslations('profile.navigation');
+
   return (
     <Atoms.Container data-cy="profile-friends-empty" className="relative items-center gap-6 px-0 py-6">
       {/* Background image */}
       <Image
         src="/images/connections-empty-state.png"
-        alt="Friends - Empty state"
+        alt={t('alt')}
         fill
         className="pointer-events-none object-contain object-center"
         aria-hidden="true"
@@ -24,13 +28,18 @@ export function FriendsEmpty() {
       {/* Title and subtitle */}
       <Atoms.Container className="items-center gap-6">
         <Atoms.Typography as="h3" size="lg">
-          No friends yet
+          {t('title')}
         </Atoms.Typography>
 
         <Atoms.Typography className="text-center text-base leading-6 font-medium text-secondary-foreground">
-          Follow someone, and if they follow you back, you&apos;ll become friends!
-          <br />
-          Start following Pubky users, you never know who might follow you back!
+          {t('subtitle')
+            .split('\n')
+            .map((line, i) => (
+              <span key={i}>
+                {line}
+                {i === 0 && <br />}
+              </span>
+            ))}
         </Atoms.Typography>
       </Atoms.Container>
 
@@ -39,13 +48,13 @@ export function FriendsEmpty() {
         <Atoms.Button variant="secondary" size="default" className="gap-2">
           <UserRoundPlus className="size-4" />
           <Atoms.Typography as="span" overrideDefaults={true}>
-            Who to Follow
+            {tNav('whoToFollow')}
           </Atoms.Typography>
         </Atoms.Button>
         <Atoms.Button variant="secondary" size="default" className="gap-2">
           <UserRoundPlus className="size-4" />
           <Atoms.Typography as="span" overrideDefaults={true}>
-            Popular Users
+            {tNav('popularUsers')}
           </Atoms.Typography>
         </Atoms.Button>
       </Atoms.Container>

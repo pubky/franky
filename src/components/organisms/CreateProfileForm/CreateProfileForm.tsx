@@ -7,8 +7,11 @@ import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Config from '@/config';
+import { useTranslations } from 'next-intl';
 
 export const CreateProfileForm = () => {
+  const t = useTranslations('forms.profile');
+  const tCommon = useTranslations('common');
   const { setShowWelcomeDialog } = Core.useOnboardingStore();
   const authStore = Core.useAuthStore();
   const pubky = authStore.selectCurrentUserPubky();
@@ -27,16 +30,18 @@ export const CreateProfileForm = () => {
           <Atoms.Container className="w-full gap-6">
             <Atoms.Container className="gap-3">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
-                Profile
+                {tCommon('profile')}
               </Atoms.Heading>
             </Atoms.Container>
 
             <Atoms.Container className="gap-6">
               <Atoms.Container className="gap-2">
-                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">NAME*</Atoms.Label>
+                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">
+                  {t('name')}
+                </Atoms.Label>
                 <Molecules.InputField
                   id="profile-name-input"
-                  placeholder="Enter your name"
+                  placeholder={t('namePlaceholder')}
                   variant="dashed"
                   value={state.name}
                   onChange={(e) => handlers.setName(e.target.value)}
@@ -47,10 +52,12 @@ export const CreateProfileForm = () => {
               </Atoms.Container>
 
               <Atoms.Container className="gap-2">
-                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">BIO</Atoms.Label>
+                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">
+                  {t('bio')}
+                </Atoms.Label>
                 <Molecules.TextareaField
                   id="profile-bio-input"
-                  placeholder="Tell a bit about yourself."
+                  placeholder={t('bioPlaceholder')}
                   value={state.bio}
                   variant="dashed"
                   rows={40}
@@ -67,7 +74,7 @@ export const CreateProfileForm = () => {
           <Atoms.Container className="mt-6 w-full gap-6 lg:mt-0">
             <Atoms.Container className="gap-3">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
-                Links
+                {t('linksTitle')}
               </Atoms.Heading>
             </Atoms.Container>
 
@@ -110,7 +117,7 @@ export const CreateProfileForm = () => {
           <Atoms.Container className="mt-6 w-full gap-6 lg:mt-0">
             <Atoms.Container className="gap-3 md:text-center">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
-                Avatar
+                {t('avatarTitle')}
               </Atoms.Heading>
             </Atoms.Container>
 
@@ -120,13 +127,15 @@ export const CreateProfileForm = () => {
                 className="h-48 w-48 cursor-pointer bg-muted"
                 onClick={handlers.handleChooseFileClick}
                 role="button"
-                aria-label="Choose avatar image"
+                aria-label={t('chooseAvatar')}
               >
                 {state.avatarPreview ? (
                   <Atoms.AvatarImage
                     src={state.avatarPreview}
                     alt={
-                      state.avatarFile ? `Selected avatar preview: ${state.avatarFile.name}` : 'Selected avatar preview'
+                      state.avatarFile
+                        ? t('avatarPreview', { filename: state.avatarFile.name })
+                        : t('avatarPreviewDefault')
                     }
                   />
                 ) : (
@@ -152,12 +161,12 @@ export const CreateProfileForm = () => {
                 {state.avatarPreview ? (
                   <>
                     <Libs.Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
+                    <span>{tCommon('delete')}</span>
                   </>
                 ) : (
                   <>
                     <Libs.File className="h-4 w-4" />
-                    <span>Choose file</span>
+                    <span>{t('chooseFile')}</span>
                   </>
                 )}
               </Atoms.Button>
@@ -174,7 +183,7 @@ export const CreateProfileForm = () => {
           backButtonDisabled={true}
           continueButtonDisabled={isSubmitDisabled}
           continueButtonLoading={state.isSaving}
-          continueText={state.submitText}
+          continueText={t(state.submitTextKey)}
           onContinue={handlers.handleSubmit}
         />
       </Atoms.Container>

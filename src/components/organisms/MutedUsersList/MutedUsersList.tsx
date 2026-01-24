@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
@@ -8,6 +9,9 @@ import * as Molecules from '@/molecules';
 import { mapUserIdsToMutedUsers } from './MutedUsersList.utils';
 
 export function MutedUsersList() {
+  const t = useTranslations('mutedUsers');
+  const tCommon = useTranslations('common');
+  const tToast = useTranslations('toast.mute');
   const { mutedUserIds, isLoading: isMutedLoading } = Hooks.useMutedUsers();
   const { usersMap, isLoading: isUsersLoading } = Hooks.useBulkUserAvatars(mutedUserIds);
   const { toggleMute, isLoading: isMuteLoading, isUserLoading: isMuteUserLoading } = Hooks.useMuteUser();
@@ -21,13 +25,13 @@ export function MutedUsersList() {
     try {
       await toggleMute(userId, true);
       Molecules.toast({
-        title: 'User unmuted',
-        description: `${userName || userId} has been unmuted.`,
+        title: t('userUnmuted'),
+        description: t('userUnmutedDesc', { username: userName || userId }),
       });
     } catch (error) {
       Molecules.toast({
-        title: 'Error',
-        description: Libs.isAppError(error) ? error.message : 'Failed to update mute status',
+        title: tCommon('error'),
+        description: Libs.isAppError(error) ? error.message : tToast('failed'),
       });
     }
   };
@@ -46,19 +50,19 @@ export function MutedUsersList() {
       const failedCount = results.filter((r) => r.status === 'rejected').length;
       if (failedCount > 0) {
         Molecules.toast({
-          title: 'Partial success',
-          description: `${idsToUnmute.length - failedCount} users unmuted, ${failedCount} failed.`,
+          title: t('partialSuccess'),
+          description: t('partialSuccessDesc', { success: idsToUnmute.length - failedCount, failed: failedCount }),
         });
       } else {
         Molecules.toast({
-          title: 'All users unmuted',
-          description: 'All muted users have been unmuted.',
+          title: t('allUsersUnmuted'),
+          description: t('allUsersUnmutedDesc'),
         });
       }
     } catch (error) {
       Molecules.toast({
-        title: 'Error',
-        description: Libs.isAppError(error) ? error.message : 'Failed to update mute status',
+        title: tCommon('error'),
+        description: Libs.isAppError(error) ? error.message : tToast('failed'),
       });
     } finally {
       setIsLoadingUnmuteAll(false);
@@ -70,7 +74,7 @@ export function MutedUsersList() {
       {isLoading ? (
         <Atoms.Container overrideDefaults className="w-full">
           <Atoms.Typography as="span" overrideDefaults className="text-base font-medium text-muted-foreground">
-            Loading...
+            {tCommon('loading')}
           </Atoms.Typography>
         </Atoms.Container>
       ) : mutedUsers && mutedUsers.length > 0 ? (
@@ -87,12 +91,14 @@ export function MutedUsersList() {
                 className="flex flex-1 items-center gap-3 hover:opacity-80"
               >
                 <Atoms.Avatar className="h-10 w-10">
-                  {mutedUser?.avatar && <Atoms.AvatarImage src={mutedUser.avatar} alt={mutedUser?.name ?? 'User'} />}
+                  {mutedUser?.avatar && (
+                    <Atoms.AvatarImage src={mutedUser.avatar} alt={mutedUser?.name ?? tCommon('user')} />
+                  )}
                   <Atoms.AvatarFallback>{mutedUser?.name?.[0] || 'U'}</Atoms.AvatarFallback>
                 </Atoms.Avatar>
                 <Atoms.Container overrideDefaults className="inline-flex flex-col items-start">
                   <Atoms.Typography as="span" overrideDefaults className="text-base font-bold">
-                    {mutedUser?.name || 'Unknown User'}
+                    {mutedUser?.name || tCommon('unknownUser')}
                   </Atoms.Typography>
                   <Atoms.Typography
                     as="span"
@@ -112,7 +118,7 @@ export function MutedUsersList() {
                 disabled={isMuteLoading || isMuteUserLoading(mutedUser.id)}
               >
                 <Libs.Megaphone size={16} />
-                Unmute
+                {t('unmute')}
               </Atoms.Button>
             </Atoms.Container>
           ))}
@@ -125,13 +131,13 @@ export function MutedUsersList() {
               disabled={isLoadingUnmuteAll}
             >
               <Libs.Megaphone size={16} />
-              Unmute all users
+              {t('unmuteAll')}
             </Atoms.Button>
           )}
         </>
       ) : (
         <Atoms.Typography as="p" overrideDefaults className="w-full py-4 text-center text-lg text-muted-foreground">
-          No muted users yet
+          {t('noMutedUsers')}
         </Atoms.Typography>
       )}
     </Atoms.Container>

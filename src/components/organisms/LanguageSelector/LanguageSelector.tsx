@@ -1,14 +1,29 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import { LANGUAGES } from './LanguageSelector.constants';
 
+/**
+ * Sets the locale cookie for server-side i18n.
+ * Cookie is used by next-intl to determine the locale on the server.
+ */
+function setLocaleCookie(locale: string) {
+  document.cookie = `locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
+}
+
 export function LanguageSelector() {
+  const t = useTranslations('language');
   const { language, setLanguage } = Core.useSettingsStore();
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Sync cookie with store on mount (in case store has a value but cookie doesn't)
+  React.useEffect(() => {
+    setLocaleCookie(language);
+  }, [language]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -21,11 +36,19 @@ export function LanguageSelector() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleLanguageChange = (langCode: string) => {
+    setLanguage(langCode);
+    setLocaleCookie(langCode);
+    setIsOpen(false);
+    // Reload to apply server-side translations
+    window.location.reload();
+  };
+
   const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
 
   return (
     <div className="flex w-full flex-col items-start gap-4">
-      <p className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">Display language</p>
+      <p className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">{t('displayLanguage')}</p>
 
       <div ref={dropdownRef} className="relative w-full">
         {/* Dropdown trigger */}
@@ -60,8 +83,7 @@ export function LanguageSelector() {
                 key={lang.code}
                 onClick={() => {
                   if (!lang.disabled) {
-                    setLanguage(lang.code);
-                    setIsOpen(false);
+                    handleLanguageChange(lang.code);
                   }
                 }}
                 disabled={lang.disabled}

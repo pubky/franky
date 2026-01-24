@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
@@ -11,6 +12,9 @@ import * as App from '@/app';
 export function Account() {
   const router = useRouter();
   const { toast } = Molecules.useToast();
+  const t = useTranslations('settings.account');
+  const tCommon = useTranslations('common');
+  const tErrors = useTranslations('errors');
   const [loadingSignOut, setLoadingSignOut] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
@@ -20,12 +24,12 @@ export function Account() {
   const showErrorToast = useCallback(
     (description: string) => {
       toast({
-        title: 'Error',
+        title: tCommon('error'),
         description,
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
     },
-    [toast],
+    [toast, tCommon],
   );
 
   const handleSignOut = async () => {
@@ -35,7 +39,7 @@ export function Account() {
       router.push(App.AUTH_ROUTES.LOGOUT);
     } catch (error) {
       Libs.Logger.error('Failed to sign out:', { error });
-      showErrorToast('Failed to sign out. Please try again.');
+      showErrorToast(tErrors('signOutFailed'));
       setLoadingSignOut(false);
     }
   };
@@ -60,12 +64,12 @@ export function Account() {
 
   return (
     <>
-      <Molecules.SettingsSectionCard icon={Libs.UserRound} title="Account">
+      <Molecules.SettingsSectionCard icon={Libs.UserRound} title={t('title')}>
         <Molecules.SettingsSection
           icon={Libs.LogOut}
-          title="Sign out from Pubky"
-          description="Sign out to protect your account from unauthorized access."
-          buttonText={loadingSignOut ? 'Signing out...' : 'Sign out'}
+          title={t('signOut.title')}
+          description={t('signOut.description')}
+          buttonText={loadingSignOut ? t('signOut.buttonLoading') : t('signOut.button')}
           buttonIcon={Libs.LogOut}
           buttonId="sign-out-btn"
           buttonDisabled={loadingSignOut}
@@ -76,9 +80,9 @@ export function Account() {
 
         <Molecules.SettingsSection
           icon={Libs.Pencil}
-          title="Edit your profile"
-          description="Update your bio or user picture, so friends can find you easier."
-          buttonText="Edit profile"
+          title={t('editProfile.title')}
+          description={t('editProfile.description')}
+          buttonText={t('editProfile.button')}
           buttonIcon={Libs.Pencil}
           buttonId="edit-profile-btn"
           buttonOnClick={handleEditProfile}
@@ -88,13 +92,9 @@ export function Account() {
 
         <Molecules.SettingsSection
           icon={Libs.LockKeyhole}
-          title="Backup your account"
-          description={
-            disposableAccount
-              ? 'Without a backup you lose your account if you close your browser!'
-              : 'You have already completed the backup, or closed your browser before doing so. Your recovery file and seed phrase have been deleted.'
-          }
-          buttonText="Back up"
+          title={t('backup.title')}
+          description={disposableAccount ? t('backup.descriptionNeeded') : t('backup.descriptionDone')}
+          buttonText={t('backup.button')}
           buttonIcon={Libs.LockKeyhole}
           buttonId="backup-account-btn"
           buttonDisabled={!disposableAccount}
@@ -105,9 +105,11 @@ export function Account() {
 
         <Molecules.SettingsSection
           icon={Libs.Download}
-          title="Download your data"
-          description="Your data on Pubky is yours. Export your account data to use it elsewhere."
-          buttonText={loadingDownload ? `Downloading... ${progressDownload}%` : 'Download data'}
+          title={t('download.title')}
+          description={t('download.description')}
+          buttonText={
+            loadingDownload ? t('download.buttonLoading', { progress: progressDownload }) : t('download.button')
+          }
           buttonIcon={Libs.Download}
           buttonId="download-data-btn"
           buttonDisabled={loadingDownload}
@@ -118,9 +120,9 @@ export function Account() {
 
         <Molecules.SettingsSection
           icon={Libs.Trash2}
-          title="Delete your account"
-          description="Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences."
-          buttonText="Delete Account"
+          title={t('deleteAccount.title')}
+          description={t('deleteAccount.description')}
+          buttonText={t('deleteAccount.button')}
           buttonIcon={Libs.Trash2}
           buttonId="delete-account-btn"
           titleClassName="text-destructive"

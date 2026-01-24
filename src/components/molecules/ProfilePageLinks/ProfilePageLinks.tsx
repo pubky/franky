@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
@@ -10,6 +11,7 @@ import { SETTINGS_ROUTES } from '@/app/routes';
 import type { ProfilePageLinksProps } from './ProfilePageLinks.types';
 
 export function ProfilePageLinks({ links, isOwnProfile = false }: ProfilePageLinksProps) {
+  const t = useTranslations('profile.sidebar');
   const router = useRouter();
   const { privacy } = Core.useSettingsStore();
   const checkLinkEnabled = privacy.showConfirm;
@@ -49,7 +51,7 @@ export function ProfilePageLinks({ links, isOwnProfile = false }: ProfilePageLin
     <>
       <Atoms.Container>
         <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
-          Links
+          {t('links')}
         </Atoms.Heading>
 
         <Atoms.Container>
@@ -71,7 +73,7 @@ export function ProfilePageLinks({ links, isOwnProfile = false }: ProfilePageLin
           })}
           {transformedLinks.length === 0 && (
             <Atoms.Typography as="span" className="text-base font-medium text-muted-foreground">
-              No links added yet.
+              {t('noLinks')}
             </Atoms.Typography>
           )}
 
@@ -85,7 +87,7 @@ export function ProfilePageLinks({ links, isOwnProfile = false }: ProfilePageLin
             >
               <Libs.Link size={16} className="text-foreground" />
               <Atoms.Typography as="span" className="text-sm font-bold">
-                Add Link
+                {t('addLink')}
               </Atoms.Typography>
             </Atoms.Button>
           )}

@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
@@ -55,6 +56,8 @@ function useActiveUsersStreamId(currentUserPubky: Core.Pubky | null): Core.UserS
  * - FRIENDS: Friends of the current user
  */
 export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotActiveUsersProps) {
+  const t = useTranslations('hot');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
   const streamId = useActiveUsersStreamId(currentUserPubky);
@@ -84,15 +87,15 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
       data-testid="hot-active-users"
     >
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-        Active users
+        {t('activeUsers')}
       </Atoms.Heading>
       {error ? (
-        <Atoms.Typography className="text-destructive">Failed to load users</Atoms.Typography>
+        <Atoms.Typography className="text-destructive">{t('failedToLoadUsers')}</Atoms.Typography>
       ) : isLoading ? (
         // TODO: Replace with Skeleton component
-        <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">{tCommon('loading')}</Atoms.Typography>
       ) : users.length === 0 ? (
-        <Atoms.Typography className="font-light text-muted-foreground">No users to show</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">{t('noUsersToShow')}</Atoms.Typography>
       ) : (
         <Atoms.Container className="gap-3.5 rounded-md py-2 lg:gap-3">
           {users.map((user) => (

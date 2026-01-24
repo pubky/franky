@@ -1,16 +1,19 @@
 'use client';
 
 import { Frown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import * as Molecules from '@/molecules';
 
 export function NotificationsEmpty() {
+  const t = useTranslations('notifications.empty');
+
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/notifications-empty-state.png"
-      imageAlt="Notifications - Empty state"
+      imageAlt={t('alt')}
       icon={Frown}
-      title="Nothing to see here yet"
-      subtitle="Tags, follows, reposts and account information will be displayed here."
+      title={t('title')}
+      subtitle={t('subtitle')}
     />
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
@@ -17,6 +18,8 @@ import * as Providers from '@/providers';
  * Uses ProfileContext to get the target user's pubky.
  */
 export function ProfileTagged() {
+  const t = useTranslations('common');
+
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
 
@@ -34,7 +37,7 @@ export function ProfileTagged() {
       <Atoms.Container className="flex items-center justify-center gap-3">
         <Atoms.Spinner size="md" />
         <Atoms.Typography as="p" className="text-muted-foreground">
-          Loading tags...
+          {t('loadingTags')}
         </Atoms.Typography>
       </Atoms.Container>
     );

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 
@@ -10,17 +11,19 @@ import * as Molecules from '@/molecules';
  * Guides the user on how to search for posts.
  */
 export function SearchEmptyState() {
+  const t = useTranslations('search.empty');
+
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/tagged-empty-state.png"
-      imageAlt="Search - Empty state"
+      imageAlt={t('alt')}
       icon={Libs.Search}
-      title="Search for posts by tags"
+      title={t('title')}
       subtitle={
         <>
-          Use the search bar or click on a tag to discover posts.
+          {t('subtitle1')}
           <br />
-          You can search for multiple tags separated by commas.
+          {t('subtitle2')}
         </>
       }
     />

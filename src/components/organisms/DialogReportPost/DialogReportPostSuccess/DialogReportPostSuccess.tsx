@@ -1,21 +1,30 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import type { DialogReportPostSuccessProps } from './DialogReportPostSuccess.types';
 
 export function DialogReportPostSuccess({ onOpenChange }: DialogReportPostSuccessProps) {
+  const t = useTranslations('report.success');
+  const tCommon = useTranslations('common');
+
   return (
     <>
       <Atoms.DialogHeader>
-        <Atoms.DialogTitle>Report Sent</Atoms.DialogTitle>
-        <Atoms.DialogDescription>Your report will be reviewed soon. Thank you.</Atoms.DialogDescription>
+        <Atoms.DialogTitle>{t('title')}</Atoms.DialogTitle>
+        <Atoms.DialogDescription>{t('description')}</Atoms.DialogDescription>
       </Atoms.DialogHeader>
       <Atoms.DialogFooter>
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="dark-outline" size="lg" onClick={() => onOpenChange(false)} aria-label="Close dialog">
+          <Atoms.Button
+            variant="dark-outline"
+            size="lg"
+            onClick={() => onOpenChange(false)}
+            aria-label={tCommon('close')}
+          >
             <Libs.Check className="size-4" aria-hidden="true" />
-            You&apos;re welcome!
+            {tCommon('yourWelcome')}
           </Atoms.Button>
         </Atoms.DialogClose>
       </Atoms.DialogFooter>

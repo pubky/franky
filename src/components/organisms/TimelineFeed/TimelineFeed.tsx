@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useCallback, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -83,6 +84,7 @@ function TimelineFeedContent({
   variant: TimelineFeedProps['variant'];
   children?: TimelineFeedProps['children'];
 }) {
+  const t = useTranslations('toast.post');
   const {
     postIds: rawPostIds,
     loading,
@@ -156,11 +158,11 @@ function TimelineFeedContent({
     } catch (error) {
       console.error('Failed to load new posts:', error);
       Molecules.toast({
-        title: 'Failed to load new posts',
-        description: 'Unable to display new posts. Please try again.',
+        title: t('failedToLoadPosts'),
+        description: t('failedToLoadPostsDesc'),
       });
     }
-  }, [streamId, prependPosts, actualNewPostIds]);
+  }, [streamId, prependPosts, actualNewPostIds, t]);
 
   const contextValue: TimelineFeedContextValue = {
     prependPosts,

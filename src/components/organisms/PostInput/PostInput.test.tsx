@@ -4,6 +4,21 @@ import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      dropFiles: 'Drop files here',
+      articleTitle: 'Article Title',
+      'placeholder.reply': 'Write a reply...',
+      'placeholder.post': "What's on your mind?",
+      'placeholder.repost': 'Optional comment',
+      'placeholder.edit': 'Edit post',
+    };
+    return translations[key] ?? key;
+  },
+}));
+
 vi.mock('@/atoms', async () => {
   const { POST_THREAD_CONNECTOR_VARIANTS } =
     await import('@/components/atoms/PostThreadConnector/PostThreadConnector.constants');

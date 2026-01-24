@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
@@ -14,14 +15,16 @@ export function DialogFeedbackContent({
   hasContent,
   currentUserPubky,
 }: DialogFeedbackContentProps) {
+  const t = useTranslations('feedback');
+  const tCommon = useTranslations('common');
   const characterLimit =
     feedback.length > 0 ? { count: Libs.getCharacterCount(feedback), max: FEEDBACK_MAX_CHARACTER_LENGTH } : undefined;
 
   return (
     <>
       <Atoms.DialogHeader>
-        <Atoms.DialogTitle>Provide Feedback</Atoms.DialogTitle>
-        <Atoms.DialogDescription className="sr-only">Feedback dialog</Atoms.DialogDescription>
+        <Atoms.DialogTitle>{t('title')}</Atoms.DialogTitle>
+        <Atoms.DialogDescription className="sr-only">{t('description')}</Atoms.DialogDescription>
       </Atoms.DialogHeader>
       <Atoms.Container className="gap-3">
         <Atoms.Container overrideDefaults className="rounded-md border border-dashed border-input p-6">
@@ -34,7 +37,7 @@ export function DialogFeedbackContent({
             />
 
             <Atoms.Textarea
-              placeholder="What do you think about Pubky? Any suggestions?"
+              placeholder={t('placeholder')}
               className="min-h-6 resize-none border-none bg-transparent px-0 py-2 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
               value={feedback}
               onChange={handleChange}
@@ -66,7 +69,7 @@ export function DialogFeedbackContent({
                       size="sm"
                       className="text-xs leading-4 font-bold text-secondary-foreground"
                     >
-                      Send
+                      {tCommon('send')}
                     </Atoms.Typography>
                   </Atoms.Container>
                 )}

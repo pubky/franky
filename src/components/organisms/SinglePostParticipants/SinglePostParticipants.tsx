@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -53,6 +54,7 @@ function ParticipantItem({
  * Uses SidebarSection + UserListItem for consistent layout with other sidebar components.
  */
 export function SinglePostParticipants({ postId, className }: SinglePostParticipantsProps) {
+  const t = useTranslations('common');
   const router = useRouter();
   const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const { participants, isLoading } = Hooks.usePostParticipants(postId, { limit: 10 });
@@ -72,7 +74,7 @@ export function SinglePostParticipants({ postId, className }: SinglePostParticip
       <Atoms.Container className={Libs.cn('flex items-center justify-center gap-3 py-4', className)}>
         <Atoms.Spinner size="md" />
         <Atoms.Typography as="p" className="text-muted-foreground">
-          Loading participants...
+          {t('loadingParticipants')}
         </Atoms.Typography>
       </Atoms.Container>
     );
@@ -84,7 +86,7 @@ export function SinglePostParticipants({ postId, className }: SinglePostParticip
   }
 
   return (
-    <Molecules.SidebarSection title="Participants" className={className} data-testid="single-post-participants">
+    <Molecules.SidebarSection title={t('participants')} className={className} data-testid="single-post-participants">
       {participants.map((participant) => (
         <ParticipantItem
           key={participant.id}
