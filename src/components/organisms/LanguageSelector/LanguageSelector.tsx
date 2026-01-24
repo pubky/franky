@@ -76,6 +76,7 @@ export function LanguageSelector() {
               'absolute top-full right-0 left-0 z-50 mt-2',
               'rounded-lg border border-border bg-popover shadow-lg',
               'animate-in py-2 duration-200 fade-in-0 zoom-in-95',
+              'max-h-[400px] overflow-y-auto',
             )}
           >
             {LANGUAGES.map((lang) => (

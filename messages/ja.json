@@ -1,0 +1,1016 @@
+{
+  "time": {
+    "now": "今",
+    "minutesShort": "{count}分",
+    "hoursShort": "{count}時間"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "delete": "削除",
+    "send": "送信",
+    "submit": "送信",
+    "loading": "読み込み中...",
+    "loadingActions": "アクション読み込み中...",
+    "loadingHeader": "ヘッダー読み込み中...",
+    "loadingPost": "投稿読み込み中...",
+    "loadingContent": "コンテンツ読み込み中...",
+    "loadingReplies": "返信読み込み中...",
+    "loadingParticipants": "参加者読み込み中...",
+    "loadingTags": "タグ読み込み中...",
+    "loadingMoreTags": "タグをさらに読み込み中...",
+    "loadingPosts": "投稿読み込み中...",
+    "loadingMorePosts": "投稿をさらに読み込み中...",
+    "loadingPreview": "プレビュー読み込み中...",
+    "loadingBookmark": "読み込み中...",
+    "addBookmark": "ブックマークに追加",
+    "removeBookmark": "ブックマークを削除",
+    "redirecting": "リダイレクト中...",
+    "participants": "参加者",
+    "error": "エラー",
+    "profile": "プロフィール",
+    "back": "戻る",
+    "continue": "続ける",
+    "finish": "完了",
+    "next": "次へ",
+    "close": "閉じる",
+    "seeAll": "すべて見る",
+    "exploreAll": "すべて探索",
+    "edit": "編集",
+    "done": "完了",
+    "download": "ダウンロード",
+    "copy": "コピー",
+    "share": "共有",
+    "me": "自分",
+    "or": "または",
+    "and": "と",
+    "user": "ユーザー",
+    "unknownUser": "不明なユーザー",
+    "yourWelcome": "どういたしまして！",
+    "links": "リンク",
+    "tags": "タグ",
+    "posts": "投稿",
+    "avatar": "アバター"
+  },
+  "header": {
+    "home": "ホーム",
+    "hot": "人気",
+    "bookmarks": "ブックマーク",
+    "settings": "設定"
+  },
+  "settings": {
+    "title": "設定",
+    "menu": {
+      "account": "アカウント",
+      "notifications": "通知",
+      "privacySafety": "プライバシーとセキュリティ",
+      "mutedUsers": "ミュートしたユーザー",
+      "language": "言語",
+      "help": "ヘルプ"
+    },
+    "account": {
+      "title": "アカウント",
+      "signOut": {
+        "title": "Pubkyからログアウト",
+        "description": "不正アクセスからアカウントを保護するためにログアウトしてください。",
+        "button": "ログアウト",
+        "buttonLoading": "ログアウト中..."
+      },
+      "editProfile": {
+        "title": "プロフィールを編集",
+        "description": "自己紹介やプロフィール写真を更新して、友達があなたを見つけやすくしましょう。",
+        "button": "プロフィールを編集"
+      },
+      "backup": {
+        "title": "アカウントをバックアップ",
+        "descriptionNeeded": "バックアップなしでブラウザを閉じるとアカウントを失います！",
+        "descriptionDone": "バックアップは既に完了しているか、バックアップ前にブラウザを閉じました。リカバリーファイルとシードフレーズは削除されました。",
+        "button": "バックアップ"
+      },
+      "download": {
+        "title": "データをダウンロード",
+        "description": "Pubky上のあなたのデータはあなたのものです。アカウントデータをエクスポートして他で使用できます。",
+        "button": "データをダウンロード",
+        "buttonLoading": "ダウンロード中... {progress}%"
+      },
+      "deleteAccount": {
+        "title": "アカウントを削除",
+        "description": "アカウントを削除すると、すべての投稿、タグ、プロフィール情報、連絡先、カスタムストリーム、設定や環境設定が削除されます。",
+        "button": "アカウントを削除"
+      }
+    },
+    "notifications": {
+      "title": "プラットフォーム通知",
+      "description": "Pubkyで受信したい通知を選択してください。"
+    },
+    "privacy": {
+      "title": "プライバシーとセキュリティ",
+      "description": "プライバシーは犯罪ではありません。Pubkyでの表示と安全を管理しましょう。"
+    },
+    "mutedUsers": {
+      "title": "ミュートしたユーザー",
+      "description": "ミュートしたすべてのユーザーの概要です。必要に応じてミュートを解除できます。"
+    },
+    "language": {
+      "title": "言語",
+      "description": "Pubkyインターフェースの言語を選択してください。",
+      "displayLanguage": "表示言語"
+    }
+  },
+  "language": {
+    "displayLanguage": "表示言語"
+  },
+  "onboarding": {
+    "steps": {
+      "createAccount": "アカウント作成",
+      "identityKeys": "IDキー",
+      "usePubkyRing": "Pubky Ringを使用",
+      "yourPubky": "あなたのpubky",
+      "backup": "バックアップ",
+      "profile": "プロフィール",
+      "signedOut": "ログアウト済み"
+    },
+    "human": {
+      "title": "ロボットではないことを証明してください。",
+      "subtitle": "メールは不要です。SMSまたは少額の支払いで素早く確認できます。または",
+      "inviteCode": "招待コード。",
+      "devMode": "開発者モード",
+      "skip": "スキップ",
+      "enterInviteCode": "招待コードを入力"
+    },
+    "phone": {
+      "title": "電話番号の確認。",
+      "subtitle": "SMSで確認コードをお送りします。",
+      "sendCode": "コードを送信",
+      "phoneNumber": "電話番号",
+      "phoneHint": "国番号を含めて電話番号を入力してください（例：日本は+81）。",
+      "placeholder": "+81XXXXXXXXXX",
+      "blocked": "電話番号がブロックされています",
+      "blockedDescription": "この電話番号は確認に使用できません。",
+      "tooManyAttempts": "確認の試行回数が多すぎます",
+      "tooManyAttemptsDescription": "この電話番号の最大確認回数に達しました。",
+      "sendFailed": "SMSコードの送信に失敗しました",
+      "sendFailedDescription": "後でもう一度お試しください。問題が続く場合はサポートにお問い合わせください。"
+    },
+    "phoneCode": {
+      "title": "コードを入力。",
+      "subtitle": "6桁の確認コードを{phoneNumber}に送信しました。",
+      "label": "確認コード",
+      "hint": "{phoneNumber}で受信したコードを入力してください。",
+      "resend": "コードを再送信（{resendTimer}秒）",
+      "verify": "コードを確認",
+      "valid": "確認コードは有効です",
+      "invalid": "確認コードが無効です。再試行してください。",
+      "verifyFailed": "SMSコードの確認に失敗しました",
+      "verifyFailedDescription": "後でもう一度お試しください。問題が続く場合はサポートにお問い合わせください。"
+    },
+    "lightning": {
+      "title": "スキャンして支払い。",
+      "subtitle": "お好みのウォレットでQRコードをスキャンしてください。",
+      "qrLabel": "Bitcoin Lightning支払い",
+      "payAmount": "続行するには₿ {amount}を支払ってください。",
+      "payAmountUsd": "続行するには₿ {amount}（${usdAmount}）を支払ってください。",
+      "expired": "支払いの期限が切れました",
+      "newInvoice": "新しい請求書",
+      "copyInvoice": "請求書をコピー",
+      "paymentSuccess": "支払い成功",
+      "paymentExpired": "支払いの期限が切れました",
+      "requestFailed": "Lightning請求書のリクエストに失敗しました",
+      "requestFailedDescription": "後でもう一度お試しください。問題が続く場合はサポートにお問い合わせください。",
+      "invoiceCopied": "請求書をクリップボードにコピーしました",
+      "copyFailed": "請求書のコピーに失敗しました"
+    },
+    "inviteCode": {
+      "title": "ロボットではないことを証明してください。",
+      "subtitle": "SMSまたは支払い確認が利用できません。招待コードをお問い合わせください。",
+      "label": "ホームサーバーの招待コード",
+      "hint": "投稿、写真、動画、プロフィール用に1GBのストレージを取得できます。",
+      "placeholder": "XXXX-XXXX-XXXX",
+      "customHomeserver": "カスタムホームサーバー",
+      "customHomeserverHint": "異なるホームサーバーの使用はまもなく可能になります。"
+    },
+    "bitcoin": {
+      "title": "Bitcoin支払い",
+      "morePrivate": "（よりプライベート）",
+      "storage": "1GBストレージ",
+      "speedLimit": "1MB/s速度制限",
+      "payOnce": "一度だけ支払い",
+      "notAvailable": "現在お住まいの国では利用できません",
+      "unavailable": "サービスは一時的に利用できません"
+    },
+    "sms": {
+      "title": "SMS確認",
+      "free": "無料",
+      "lessPrivate": "プライバシーは低いが簡単",
+      "storage": "1GBストレージ",
+      "speedLimit": "1MB/s速度制限",
+      "receiveSms": "SMSを受信",
+      "notAvailable": "現在お住まいの国では利用できません",
+      "unavailable": "サービスは一時的に利用できません"
+    },
+    "footer": {
+      "agreement": "Pubkyアカウントを作成することで、",
+      "copyright": "PubkyはPubky Coreを搭載し、Synonym Software, S.A. DE C.V.によって愛と献身をもって作られました。©2025。すべての権利を保有。"
+    },
+    "scan": {
+      "titleMobile": "タップして認証。",
+      "titleDesktop": "QRコードをスキャン。",
+      "subtitle": "Pubky Ringを開き、pubkyを作成してQRをスキャンしてください。",
+      "generating": "QRコード生成中...",
+      "generatingShort": "生成中...",
+      "authorize": "Pubky Ringで認証",
+      "authorizeSub": "Pubky RingまたはPubky Core搭載の他のキーチェーンを使用してください。",
+      "linkFailed": "Pubky Ring署名アプリへの接続に失敗しました",
+      "tryAgain": "再試行してください。"
+    },
+    "signIn": {
+      "title": "Pubkyにログイン。",
+      "subtitle": "Pubky Ringで認証してログインしてください。",
+      "generating": "QRコード生成中...",
+      "generatingShort": "生成中...",
+      "authorize": "Pubky Ringで認証",
+      "linkCopied": "リンクをコピーしました",
+      "linkCopiedDescription": "認証リンクをクリップボードにコピーしました。",
+      "linkFailed": "Pubky Ring署名アプリへの接続に失敗しました",
+      "tryAgain": "再試行してください。",
+      "recoveryHint": "Pubky Ringでログインできませんか？リカバリーフレーズまたは暗号化ファイルを使用してアカウントを復元してください。",
+      "verifyingAccount": "アカウントを確認中",
+      "loadingData": "データを読み込み中",
+      "buildingFeed": "フィードを構築中",
+      "syncingSettings": "設定を同期中"
+    },
+    "pubky": {
+      "title": "あなたのpubky",
+      "uniqueTitle": "あなたの固有のpubky。",
+      "uniqueSubtitle": "友達とpubkyを共有して、フォローしてもらいましょう。",
+      "copy": "クリップボードにコピー",
+      "share": "共有",
+      "generating": "pubkyを生成中...",
+      "myPubky": "マイPubky",
+      "shareText": "これが私のPubkyです：\n{displayPubky}",
+      "shareUnavailable": "共有が利用できません",
+      "shareUnavailableDescription": "pubkyをコピーしました。お気に入りのアプリに貼り付けできます。",
+      "shareFailed": "共有に失敗しました",
+      "shareFailedDescription": "現在共有できません。再試行してください。"
+    },
+    "backupMethod": {
+      "title": "バックアップ方法を選択",
+      "subtitle": "pubkyのシークレットシードを安全にバックアップして保存してください。どのバックアップ方法を希望しますか？後で行うこともできます。",
+      "recoveryPhrase": "リカバリーフレーズ",
+      "encryptedFile": "暗号化ファイル"
+    },
+    "backup": {
+      "title": "pubkyをバックアップ。",
+      "subtitle": "後でアカウントにアクセスを復元するにはバックアップが必要です。",
+      "signUpFailed": "エラー - 登録に失敗しました",
+      "signUpError": "問題が発生しました。再試行してください。",
+      "invalidInvite": "招待コードが無効または期限切れです。新しい招待コードを取得または申請してください。"
+    },
+    "backupPhrase": {
+      "title": "リカバリーフレーズのバックアップ",
+      "subtitle": "以下のリカバリーフレーズを使用して後でアカウントを復元できます。この12単語を正しい順序で書き留め、安全な場所に保管してください。",
+      "writeDown": "この12単語を正しい順序で書き留め、安全な場所に保管してください。",
+      "neverShare": "このリカバリーフレーズを誰とも共有しないでください。",
+      "reveal": "リカバリーフレーズを表示",
+      "hide": "リカバリーフレーズを非表示",
+      "confirmTitle": "リカバリーフレーズを確認",
+      "confirmSubtitle": "12単語を正しい順序でクリックまたはタップするか、手動で入力してください。",
+      "validate": "検証",
+      "completeTitle": "バックアップ完了",
+      "completeSubtitle": "バックアップしたリカバリーフレーズを使用して後でアカウントを復元できます。"
+    },
+    "backupEncrypted": {
+      "title": "暗号化ファイルとしてバックアップ",
+      "subtitle": "以下のリカバリーファイルを安全なパスワードで暗号化し、ダウンロードしてコンピューターまたはクラウドに保存してください。",
+      "neverShareDesktop": "このファイルを誰とも共有しないでください。",
+      "neverShareMobile": "このファイルとパスワードを誰とも共有しないでください。",
+      "password": "パスワード",
+      "passwordPlaceholder": "強力なパスワードを入力",
+      "passwordHint": "大文字、小文字、数字、記号を含む8文字以上を推奨します。",
+      "repeatPassword": "パスワードを再入力",
+      "repeatPasswordPlaceholder": "パスワードを再入力",
+      "passwordsDoNotMatch": "パスワードが一致しません",
+      "downloadFile": "ファイルをダウンロード",
+      "completeTitle": "バックアップ完了",
+      "completeSubtitle": "バックアップした暗号化ファイルを使用して後でアカウントを復元できます。"
+    },
+    "install": {
+      "title": "Pubky Ringをインストール。",
+      "subtitle": "Pubky RingはPubkyエコシステムのIDキーのためのキーチェーンです。",
+      "instructions": "モバイルアプリをダウンロードしてインストールしてください。次に次のステップに進んでください。",
+      "alternative": "Pubky RingまたはPubky Core搭載の他のキーチェーンを使用するか、ブラウザでキーを作成してください（安全性は低下）。",
+      "createInBrowser": "ブラウザでキーを作成",
+      "continueWithRing": "Pubky Ringで続行"
+    },
+    "createProfile": {
+      "title": "プロフィールを作成。",
+      "subtitle": "名前、自己紹介、リンク、アバターを追加してください。"
+    }
+  },
+  "post": {
+    "placeholder": {
+      "reply": "返信を書く...",
+      "post": "何を考えていますか？",
+      "repost": "オプションのコメント",
+      "edit": "投稿を編集"
+    },
+    "button": {
+      "reply": "返信",
+      "post": "投稿",
+      "repost": "リポスト",
+      "edit": "編集"
+    },
+    "actions": {
+      "title": "投稿アクション",
+      "copyPubky": "pubkyをコピー",
+      "copyLink": "投稿リンクをコピー",
+      "copyText": "投稿テキストをコピー",
+      "editPost": "投稿を編集",
+      "deletePost": "投稿を削除",
+      "reportPost": "投稿を報告",
+      "followUser": "{username}をフォロー",
+      "unfollowUser": "{username}のフォローを解除",
+      "muteUser": "{username}をミュート",
+      "unmuteUser": "{username}のミュートを解除"
+    },
+    "deleted": "この投稿は作成者によって削除されました。",
+    "dropFiles": "ここにファイルをドロップ",
+    "articleTitle": "記事タイトル",
+    "addTag": "タグを追加",
+    "limitReached": "上限に達しました",
+    "addEmoji": "絵文字を追加",
+    "addImage": "画像を追加",
+    "addFile": "ファイルを追加",
+    "addArticle": "記事を追加",
+    "posting": "投稿中...",
+    "viewOriginal": "元の投稿を見る",
+    "newPostsSingular": "{count}件の新しい投稿を見る",
+    "newPostsPlural": "{count}件の新しい投稿を見る"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "tabs": {
+      "notifications": "通知",
+      "posts": "投稿",
+      "replies": "返信",
+      "followers": "フォロワー",
+      "following": "フォロー中",
+      "friends": "友達",
+      "tagged": "タグ付け"
+    },
+    "stats": {
+      "followers": "フォロワー",
+      "following": "フォロー中",
+      "friends": "友達",
+      "posts": "投稿",
+      "tags": "タグ"
+    },
+    "actions": {
+      "title": "プロフィールアクション",
+      "edit": "編集",
+      "link": "リンク",
+      "loggingOut": "ログアウト中...",
+      "signOut": "ログアウト",
+      "unfollowing": "フォロー解除中...",
+      "followingProgress": "フォロー中...",
+      "followingButton": "フォロー中",
+      "follow": "フォロー",
+      "unfollow": "フォロー解除",
+      "copyPubky": "ユーザーpubkyをコピー",
+      "copyLink": "プロフィールリンクをコピー",
+      "mute": "{username}をミュート",
+      "unmute": "{username}のミュートを解除",
+      "viewProfile": "{name}のプロフィールを見る",
+      "thisIsYou": "これはあなたです"
+    },
+    "friendsWithYou": "（相互フォロー）",
+    "empty": {
+      "friends": {
+        "title": "まだ友達がいません",
+        "subtitle": "誰かをフォローして、フォローバックされれば友達になります！\nPubkyユーザーをフォローしましょう。誰がフォローバックするかわかりません！",
+        "alt": "友達 - 空の状態"
+      },
+      "following": {
+        "title": "あなたがアルゴリズム",
+        "subtitle": "アカウントをフォローすることはタイムラインをキュレートする簡単な方法です。\n興味のあるトピックや人々の最新情報を入手しましょう。",
+        "alt": "フォロー中 - 空の状態"
+      },
+      "followers": {
+        "title": "フォロワーを探していますか？",
+        "subtitle": "誰かがこのアカウントをフォローすると、ここにプロフィールが表示されます。\n投稿して他の人と交流してフォロワーを増やしましょう！",
+        "alt": "フォロワー - 空の状態",
+        "createPost": "投稿を作成"
+      }
+    },
+    "sidebar": {
+      "taggedAs": "タグ付け",
+      "loadingTags": "タグ読み込み中...",
+      "noTags": "まだタグがありません。",
+      "addTag": "タグを追加",
+      "links": "リンク",
+      "noLinks": "まだリンクがありません。",
+      "addLink": "リンクを追加"
+    },
+    "links": {
+      "title": "リンク",
+      "noLinks": "まだリンクがありません。",
+      "addLink": "リンクを追加"
+    },
+    "taggedAs": {
+      "title": "タグ付け",
+      "loading": "タグ読み込み中...",
+      "noTags": "まだタグがありません。",
+      "addTag": "タグを追加"
+    },
+    "navigation": {
+      "whoToFollow": "おすすめユーザー",
+      "popularUsers": "人気ユーザー"
+    }
+  },
+  "dialogs": {
+    "editPost": {
+      "editArticle": "記事を編集",
+      "editPost": "投稿を編集",
+      "description": "{title}ダイアログ"
+    },
+    "newPost": {
+      "newArticle": "新しい記事",
+      "newPost": "新しい投稿",
+      "description": "{title}ダイアログ"
+    },
+    "reply": {
+      "title": "返信",
+      "hiddenTitle": "投稿に返信",
+      "button": "返信",
+      "description": "返信ダイアログ"
+    },
+    "repost": {
+      "title": "リポスト",
+      "button": "リポスト",
+      "description": "リポストダイアログ"
+    },
+    "signIn": {
+      "title": "Pubkyに参加",
+      "description": "投稿やプロフィールとやり取りするにはログインまたはアカウントを作成してください。",
+      "newHere": "初めてですか？",
+      "newHereDescription": "アカウントを作成してPubkyを探索しましょう。",
+      "joinButton": "Pubkyに参加",
+      "alreadyHaveAccount": "既にアカウントをお持ちですか？",
+      "alreadyHaveAccountDescription": "投稿やプロフィールとやり取りするにはログインしてください。",
+      "signInButton": "ログイン"
+    },
+    "backupExport": {
+      "importPhrase": "リカバリーフレーズをインポート",
+      "pubkyRingExport": "Pubky Ringエクスポート",
+      "steps": {
+        "step1": "1. Pubky Ringを開き、「pubkyを追加」をタップ",
+        "step2": "2. 「pubkyをインポート」オプションを選択",
+        "step3": "3. 「QRをスキャンしてインポート」をタップ",
+        "step4": "4. このQRコードをスキャンしてリカバリーフレーズをインポート",
+        "step2Alt": "2. 「pubkyをインポート」オプションを選択",
+        "step3Alt": "3. このQRをスキャンしてインポート"
+      },
+      "tapDescription": "下のボタンをタップしてpubkyをエクスポートし、Pubky Ringにインポートしてより安全で簡単なログイン体験を。",
+      "tapDescriptionPhrase": "下のボタンをタップしてリカバリーフレーズをPubky Ringにインポートしてより安全で簡単なログイン体験を。",
+      "importButton": "Pubky Ringにインポート"
+    },
+    "backup": {
+      "title": "バックアップ",
+      "dialogTitle": "pubkyをバックアップ",
+      "subtitle": "pubkyのシークレットシードを安全にバックアップして保存してください。どのバックアップ方法を希望しますか？必要に応じて複数の方法を選択できます。",
+      "recoveryPhrase": "リカバリーフレーズ",
+      "note": "注意",
+      "encryptedFile": "暗号化ファイルをダウンロード",
+      "folder": "フォルダ",
+      "exportRing": "Pubky Ringにエクスポート",
+      "keys": "キー"
+    },
+    "confirmBackup": {
+      "title": "バックアップ完了しましたか？",
+      "subtitle": "希望のバックアップ方法を完了したことを確認してください。セキュリティのため、シークレットシードはブラウザから削除されます。リカバリーフレーズまたは暗号化ファイルを使用してアカウントへのアクセスを復元できます。",
+      "warning": "確認後、シードはブラウザから削除されます（！）",
+      "backupMethods": "バックアップ方法",
+      "confirmButton": "確認（シードを削除）"
+    },
+    "deleteAccount": {
+      "title": "アカウントを削除",
+      "description": "よろしいですか？アカウント情報は復元できません。"
+    },
+    "confirmDiscard": {
+      "title": "閉じますか？",
+      "description": "閉じると、コンテンツが失われます。",
+      "discard": "破棄"
+    },
+    "checkLink": {
+      "title": "このリンクを確認",
+      "description": "リンクは別のサイトに移動します：",
+      "confirmQuestion": "続行しますか？",
+      "dontShowAgain": "今後表示しない"
+    },
+    "addLink": {
+      "title": "リンクを追加",
+      "labelField": "ラベル",
+      "labelPlaceholder": "Twitter",
+      "urlField": "URL",
+      "urlPlaceholder": "https://twitter.com/satoshi",
+      "saveButton": "リンクを保存"
+    }
+  },
+  "sidebar": {
+    "whoToFollow": "おすすめユーザー",
+    "hotTags": "人気タグ",
+    "activeUsers": "アクティブユーザー",
+    "noTags": "表示するタグがありません",
+    "noUsers": "表示するユーザーがいません",
+    "action": "アクション"
+  },
+  "search": {
+    "placeholder": "検索",
+    "activeTags": "アクティブな検索タグ",
+    "inputLabel": "検索入力",
+    "suggestions": "検索候補",
+    "sections": {
+      "tags": "タグ",
+      "users": "ユーザー",
+      "hotTags": "人気タグ"
+    },
+    "recent": {
+      "title": "最近の検索",
+      "clearAll": "すべての最近の検索を消去"
+    },
+    "results": "検索結果：",
+    "searchAsTag": "「{query}」をタグとして検索",
+    "searchAsTagLink": "タグとして検索",
+    "empty": {
+      "alt": "検索 - 空の状態",
+      "title": "タグで投稿を検索",
+      "subtitle1": "検索バーを使用するかタグをクリックして投稿を発見しましょう。",
+      "subtitle2": "カンマで区切って複数のタグを検索できます。"
+    },
+    "userSuggestion": "ユーザー {name}（{pubky}）",
+    "viewProfile": "{name}のプロフィールを見る"
+  },
+  "feedback": {
+    "title": "フィードバックを送信",
+    "description": "フィードバックダイアログ",
+    "placeholder": "Pubkyについてどう思いますか？何か提案はありますか？",
+    "cardTitle": "フィードバック",
+    "cardButton": "Pubkyについてどう思いますか？",
+    "defaultName": "あなたの名前",
+    "success": {
+      "title": "フィードバックを受け取りました",
+      "description": "Pubkyの改善にご協力いただきありがとうございます。"
+    }
+  },
+  "report": {
+    "title": "投稿を報告",
+    "description": "投稿報告ダイアログ",
+    "issueStep": {
+      "title": "投稿を報告",
+      "question": "どのような問題を報告していますか？",
+      "label": "問題の種類"
+    },
+    "reasonStep": {
+      "title": "投稿を報告",
+      "question": "この投稿を報告する理由を説明してください。",
+      "label": "報告理由",
+      "placeholder": "なぜ報告していますか？"
+    },
+    "success": {
+      "title": "報告が送信されました",
+      "description": "報告は間もなく審査されます。ありがとうございます。"
+    },
+    "issues": {
+      "personalInfoLeak": "個人情報の漏洩",
+      "hateSpeech": "ヘイトスピーチまたは脅迫",
+      "harassment": "嫌がらせまたは標的型攻撃",
+      "childAbuse": "児童の性的虐待または搾取",
+      "terrorism": "テロリズムの促進",
+      "violence": "過激または犯罪的暴力",
+      "illegalSales": "違法な販売または犯罪活動",
+      "sexualContent": "非同意または犯罪的な性的コンテンツ",
+      "copyright": "著作権侵害"
+    }
+  },
+  "notifications": {
+    "title": "通知",
+    "actions": {
+      "followedYou": "あなたをフォローしました",
+      "newFriend": "あなたと友達になりました",
+      "taggedPost": "あなたの投稿にタグ付けしました",
+      "taggedProfile": "あなたのプロフィールにタグ付けしました",
+      "repliedToPost": "あなたの投稿に返信しました",
+      "repostedPost": "あなたの投稿をリポストしました",
+      "mentionedYou": "投稿であなたをメンションしました",
+      "deletedPost": "投稿を削除しました",
+      "editedPost": "投稿を編集しました"
+    },
+    "fallback": "新しい通知",
+    "settings": {
+      "newFollower": "新しいフォロワー",
+      "newFriend": "新しい友達",
+      "taggedPost": "誰かがあなたの投稿にタグ付けしました",
+      "taggedProfile": "誰かがあなたのプロフィールにタグ付けしました",
+      "mentionedProfile": "誰かがあなたのプロフィールをメンションしました",
+      "newReply": "あなたの投稿への新しい返信",
+      "newRepost": "あなたの投稿への新しいリポスト",
+      "deletedPost": "やり取りした投稿が削除されました",
+      "editedPost": "やり取りした投稿が編集されました"
+    },
+    "empty": {
+      "alt": "通知 - 空の状態",
+      "title": "まだ何もありません",
+      "subtitle": "タグ、フォロー、リポスト、アカウント情報がここに表示されます。"
+    }
+  },
+  "forms": {
+    "profile": {
+      "title": "あなたの",
+      "titleHighlight": "プロフィールを編集。",
+      "subtitle": "名前、自己紹介、リンク、アバターを更新してください。",
+      "name": "名前*",
+      "namePlaceholder": "名前を入力",
+      "bio": "自己紹介",
+      "bioPlaceholder": "自分について少し教えてください。",
+      "linksTitle": "リンク",
+      "avatarTitle": "アバター",
+      "chooseAvatar": "アバター画像を選択",
+      "avatarPreview": "選択したアバターのプレビュー：{filename}",
+      "avatarPreviewDefault": "選択したアバターのプレビュー",
+      "currentAvatar": "現在のアバター",
+      "chooseFile": "ファイルを選択",
+      "saveProfile": "プロフィールを保存",
+      "finish": "完了",
+      "saving": "保存中...",
+      "uploadingAvatar": "アバターをアップロード中...",
+      "savingProfile": "プロフィールを保存中...",
+      "tryAgain": "再試行！",
+      "loading": "プロフィール読み込み中...",
+      "defaultLinks": {
+        "website": "ウェブサイト",
+        "twitter": "X（Twitter）"
+      }
+    },
+    "copyright": {
+      "title": "著作権削除リクエスト",
+      "date": "日付：{date}",
+      "companyInfo": "Synonym Software, S.A. de C.V.（\"Synonym\"）",
+      "greeting": "Synonym様：",
+      "onBehalfOf": "以下の代理として書いています：",
+      "rightsOwner": "権利所有者情報",
+      "iAmOwner": "私は権利所有者です",
+      "iAmReporting": "私は組織またはクライアントの代理で報告しています",
+      "ownerName": "権利所有者の名前",
+      "ownerNameHint": "（フルネームまたは組織名）",
+      "noticeIntro": "ここに著作権侵害を通知します...",
+      "originalUrls": "オリジナルコンテンツのURL",
+      "originalUrlsPlaceholder": "オリジナルコンテンツのURLを入力",
+      "description": "オリジナルコンテンツの簡単な説明",
+      "descriptionPlaceholder": "オリジナルコンテンツを説明",
+      "attentionIntro": "著作権所有者の注意を引いたことは...",
+      "infringingTitle": "侵害作品の詳細",
+      "infringingUrls": "侵害コンテンツのURL",
+      "infringingUrlsPlaceholder": "侵害コンテンツのURLを入力",
+      "goodFaith": "私たちは誠意を持って信じています...",
+      "contact": "連絡先情報",
+      "firstName": "名",
+      "firstNamePlaceholder": "サトシ",
+      "lastName": "姓",
+      "lastNamePlaceholder": "ナカモト",
+      "email": "メール",
+      "emailPlaceholder": "email@example.com",
+      "phone": "電話番号",
+      "phonePlaceholder": "000-000-0000",
+      "address": "住所",
+      "street": "番地",
+      "streetPlaceholder": "番地と通り名",
+      "country": "国",
+      "countryPlaceholder": "日本",
+      "city": "市区町村",
+      "cityPlaceholder": "市区町村名",
+      "state": "都道府県",
+      "statePlaceholder": "都道府県名",
+      "zip": "郵便番号",
+      "zipPlaceholder": "000-0000",
+      "signature": "署名",
+      "signatureName": "署名としてのフルネーム",
+      "signaturePlaceholder": "フルネーム",
+      "submitting": "送信中...",
+      "submitForm": "フォームを送信"
+    },
+    "validation": {
+      "required": "このフィールドは必須です",
+      "invalidEmail": "有効なメールアドレスを入力してください",
+      "invalidPhone": "有効な電話番号を入力してください",
+      "invalidUrl": "無効なURL",
+      "ownerRequired": "権利所有者名は必須です",
+      "originalUrlsRequired": "オリジナルコンテンツのURLは必須です",
+      "descriptionRequired": "簡単な説明は必須です",
+      "infringingUrlRequired": "侵害コンテンツのURLは必須です",
+      "firstNameRequired": "名は必須です",
+      "lastNameRequired": "姓は必須です",
+      "emailRequired": "メールは必須です",
+      "phoneRequired": "電話番号は必須です",
+      "streetRequired": "番地は必須です",
+      "countryRequired": "国は必須です",
+      "cityRequired": "市区町村は必須です",
+      "stateRequired": "都道府県は必須です",
+      "zipRequired": "郵便番号は必須です",
+      "signatureRequired": "署名は必須です",
+      "selectRightsOwner": "権利所有者かどうか、または代理かを選択してください",
+      "nameMin": "名前は{min}文字以上必要です",
+      "nameMax": "名前は{max}文字以内にしてください",
+      "bioMax": "自己紹介は{max}文字以内にしてください",
+      "invalidName": "無効な名前",
+      "invalidBio": "無効な自己紹介",
+      "avatarImageOnly": "アバターは画像ファイルである必要があります",
+      "labelRequired": "ラベルは必須です",
+      "labelMax": "最大{max}文字",
+      "alphanumericOnly": "英数字のみ",
+      "urlMax": "最大{max}文字",
+      "invalidLabel": "無効なラベル"
+    }
+  },
+  "toast": {
+    "success": "成功",
+    "error": "エラー",
+    "errors": "エラー",
+    "post": {
+      "replyPosted": "返信を投稿しました",
+      "replyPostedDesc": "返信が正常に投稿されました。",
+      "replyFailed": "返信の投稿に失敗しました。再試行してください。",
+      "postCreated": "投稿を作成しました",
+      "postCreatedDesc": "投稿が正常に作成されました。",
+      "postFailed": "投稿の作成に失敗しました。再試行してください。",
+      "repostSuccess": "リポスト成功",
+      "repostSuccessDesc": "リポストが正常に作成されました。",
+      "repostFailed": "リポストに失敗しました。再試行してください。",
+      "postEdited": "投稿を編集しました",
+      "postEditedDesc": "投稿が正常に編集されました。",
+      "editFailed": "投稿の編集に失敗しました。再試行してください。",
+      "postDeleted": "投稿を削除しました",
+      "postDeletedDesc": "投稿が削除されました",
+      "deleteFailed": "投稿の削除に失敗しました。再試行してください。",
+      "invalidPostId": "無効な投稿ID。再試行してください。",
+      "attachmentsCleared": "添付ファイルを消去しました",
+      "attachmentsClearedDesc": "記事はカバー画像1枚のみをサポートします。",
+      "failedToLoadPosts": "新しい投稿の読み込みに失敗しました",
+      "failedToLoadPostsDesc": "新しい投稿を表示できません。再試行してください。",
+      "parseError": "記事コンテンツの解析に失敗しました",
+      "coverImageError": "記事のカバー画像の読み込みに失敗しました"
+    },
+    "bookmark": {
+      "added": "ブックマークを追加しました",
+      "addedDesc": "投稿をブックマークに保存しました",
+      "removed": "ブックマークを削除しました",
+      "removedDesc": "投稿をブックマークから削除しました",
+      "addFailed": "ブックマークの追加に失敗しました",
+      "removeFailed": "ブックマークの削除に失敗しました",
+      "loginRequired": "投稿をブックマークするにはログインが必要です"
+    },
+    "copy": {
+      "pubkyCopied": "pubkyをクリップボードにコピーしました",
+      "linkCopied": "リンクをクリップボードにコピーしました",
+      "textCopied": "テキストをクリップボードにコピーしました",
+      "profileLinkCopied": "プロフィールリンクをクリップボードにコピーしました",
+      "copyFailed": "コピーに失敗しました",
+      "copyFailedDesc": "クリップボードにコピーできません",
+      "ok": "OK"
+    },
+    "follow": {
+      "failed": "フォロー状態の更新に失敗しました"
+    },
+    "mute": {
+      "muted": "ユーザーをミュートしました",
+      "unmuted": "ユーザーのミュートを解除しました",
+      "mutedDesc": "{username}をミュートしました。",
+      "unmutedDesc": "{username}のミュートを解除しました。",
+      "failed": "ミュート状態の更新に失敗しました"
+    },
+    "profile": {
+      "updated": "プロフィールを更新しました",
+      "updatedDesc": "プロフィールが正常に更新されました。",
+      "sessionExpired": "セッションが期限切れです",
+      "sessionExpiredDesc": "続行するにはログアウトして再度ログインしてください。",
+      "saveFailed": "プロフィールの保存に失敗しました",
+      "saveFailedDesc": "再試行してください。",
+      "fetchFailed": "再試行してください。",
+      "fetchFailedDesc": "新しいユーザーデータの取得に失敗しました。インデックスが進行中の可能性があります...",
+      "updateFailed": "プロフィールの更新に失敗しました。"
+    },
+    "report": {
+      "userNotLoaded": "ユーザープロフィールが読み込まれていません。再試行してください。",
+      "submitFailed": "報告の送信に失敗しました",
+      "submitFailedDesc": "報告の送信に失敗しました。再試行してください。"
+    },
+    "feedback": {
+      "userNotLoaded": "ユーザープロフィールが読み込まれていません。再試行してください。",
+      "submitFailed": "フィードバックの送信に失敗しました",
+      "submitFailedDesc": "フィードバックの送信に失敗しました。再試行してください。"
+    },
+    "copyright": {
+      "success": "リクエストが正常に送信されました",
+      "error": "リクエスト送信エラー",
+      "submitFailed": "リクエストの送信に失敗しました"
+    },
+    "tags": {
+      "loadFailed": "タグの追加読み込みに失敗しました",
+      "loadFailedDesc": "タグを追加で読み込めません。再試行してください。",
+      "labelEmpty": "タグラベルは空にできません",
+      "postIdRequired": "投稿IDは必須です",
+      "userIdRequired": "ユーザーIDは必須です",
+      "loginRequired": "タグを追加するにはログインが必要です",
+      "alreadyAdded": "このタグは既に追加済みです",
+      "addFailed": "タグの追加に失敗しました",
+      "addFailedDesc": "「{label}」を追加できません。再試行してください。",
+      "removeFailed": "タグの削除に失敗しました",
+      "removeFailedDesc": "「{label}」を削除できません。再試行してください。"
+    },
+    "auth": {
+      "signInFailed": "ログインに失敗しました。再試行してください。",
+      "signInFailedDesc": "Pubky Ringでの認証を完了できませんでした。再試行してください。",
+      "authNotCompleted": "認証が完了しませんでした",
+      "authNotCompletedDesc": "署名者が認証を完了しませんでした。再試行してください。",
+      "qrFailed": "QRコード生成に失敗しました",
+      "qrFailedDesc": "ログインQRコードを生成できません。更新して再試行してください。"
+    },
+    "file": {
+      "maxFiles": "最大{max}ファイルまで許可されています",
+      "maxFilesPartial": "最大{max}ファイルまで許可されています。一部のファイルは追加されませんでした。",
+      "unsupportedType": "「{name}」はサポートされていないタイプ「{type}」です。サポートされている形式：{formats}。",
+      "fileTooLarge": "「{name}」は最大サイズ{maxSize}を超えています。"
+    }
+  },
+  "empty": {
+    "noPosts": "投稿が見つかりません",
+    "endOfFeed": "最後まで到達しました！🎉",
+    "timeline": "まだ投稿がありません",
+    "noFollowers": "まだフォロワーがいません",
+    "noNotifications": "通知がありません"
+  },
+  "errors": {
+    "signOutFailed": "ログアウトに失敗しました。再試行してください。",
+    "generic": "問題が発生しました",
+    "network": "ネットワークエラー。再試行してください。",
+    "notFound": "ページが見つかりません",
+    "couldNotFind": "リクエストされたリソースが見つかりませんでした"
+  },
+  "password": {
+    "weak": "弱いパスワード",
+    "fair": "普通のパスワード",
+    "good": "良いパスワード",
+    "strong": "強いパスワード！"
+  },
+  "quickReply": {
+    "prompts": [
+      "これについてどう思いますか？",
+      "あなたの意見は？",
+      "同意しますか？",
+      "追加の洞察はありますか？",
+      "どう返信しますか？"
+    ]
+  },
+  "userList": {
+    "follow": "フォロー",
+    "unfollow": "フォロー解除",
+    "following": "フォロー中",
+    "me": "自分",
+    "tags": "タグ",
+    "posts": "投稿",
+    "followers": "フォロワー",
+    "followingLabel": "フォロー中"
+  },
+  "filters": {
+    "reach": {
+      "title": "範囲",
+      "all": "すべて",
+      "following": "フォロー中",
+      "friends": "友達"
+    },
+    "sort": {
+      "title": "並べ替え",
+      "recent": "最新",
+      "popularity": "人気"
+    },
+    "layout": {
+      "title": "レイアウト",
+      "columns": "カラム",
+      "wide": "ワイド"
+    },
+    "content": {
+      "title": "コンテンツ",
+      "all": "すべて",
+      "posts": "投稿",
+      "articles": "記事",
+      "images": "画像",
+      "videos": "動画",
+      "links": "リンク",
+      "files": "ファイル"
+    },
+    "timeframe": {
+      "title": "期間",
+      "today": "今日",
+      "thisMonth": "今月",
+      "allTime": "全期間"
+    }
+  },
+  "hot": {
+    "hotTags": "人気タグ",
+    "activeUsers": "アクティブユーザー",
+    "trendingPosts": "トレンド投稿",
+    "postsCount": "{count}件の投稿",
+    "failedToLoadUsers": "ユーザーの読み込みに失敗しました",
+    "noUsersToShow": "表示するユーザーがいません"
+  },
+  "privacy": {
+    "showConfirmation": "リダイレクト前に確認を表示",
+    "blurCensored": "検閲された投稿やプロフィール写真をぼかす",
+    "signOutInactive": "5分間非アクティブでログアウト",
+    "requirePin": "5分間非アクティブでPINを要求",
+    "hideWhoToFollow": "「おすすめユーザー」でプロフィールを非表示",
+    "hideActiveFriends": "「アクティブな友達」でプロフィールを非表示",
+    "hideSearch": "検索結果でプロフィールを非表示",
+    "neverShowPosts": "フォローしていない人の投稿を表示しない"
+  },
+  "mutedUsers": {
+    "unmute": "ミュート解除",
+    "unmuteAll": "すべてのユーザーのミュートを解除",
+    "noMutedUsers": "まだミュートしたユーザーがいません",
+    "userUnmuted": "ユーザーのミュートを解除しました",
+    "userUnmutedDesc": "{username}のミュートを解除しました。",
+    "allUsersUnmuted": "すべてのユーザーのミュートを解除しました",
+    "allUsersUnmutedDesc": "すべてのミュートしたユーザーのミュートを解除しました。",
+    "partialSuccess": "部分的に成功",
+    "partialSuccessDesc": "{success}人のユーザーのミュートを解除、{failed}人失敗。"
+  },
+  "settingsInfo": {
+    "termsPrivacy": {
+      "title": "利用規約とプライバシー",
+      "subtitle": "利用規約をよくお読みください。",
+      "termsOfService": "利用規約",
+      "privacyPolicy": "プライバシーポリシー"
+    },
+    "faq": {
+      "title": "よくある質問",
+      "moreFaq": "その他のFAQ",
+      "questions": {
+        "updateProfile": "プロフィール情報を更新するには？",
+        "deletePost": "投稿を削除するには？",
+        "muteSomeone": "誰かをミュートするには？",
+        "restoreAccount": "アカウントを復元するには？",
+        "pubkyDifferent": "Pubkyは他のソーシャルプラットフォームとどう違うの？"
+      }
+    },
+    "version": {
+      "title": "バージョン",
+      "text": "Pubky v0.12 © Synonym Software Ltd"
+    }
+  },
+  "help": {
+    "faq": "よくある質問",
+    "faqDescription": "Pubkyユーザーからのよくある質問",
+    "userGuide": "ユーザーガイド",
+    "userGuideDescription": "Pubkyユーザーガイドはアプリの操作、主要機能の活用、Pubky体験を最大限に活かすお手伝いをします。",
+    "userGuideButton": "ユーザーガイド",
+    "support": "サポート",
+    "supportDescription": "お探しの答えが見つかりませんか？Pubkyサポートがすぐにお手伝いします。",
+    "supportButton": "サポート（Telegram）",
+    "sections": {
+      "onboarding": "1. 入門とオンボーディング",
+      "backup": "2. バックアップとアカウント復元",
+      "profile": "3. プロフィールとソーシャル機能",
+      "pubky": "4. Pubkyアプリの仕組み"
+    },
+    "questions": {
+      "q1": "Pubkyが招待コードを必要とするのはなぜ？",
+      "a1": "Pubkyはスパム防止とサーバー過負荷対策として一時的に招待コードを使用しています。ユーザーはホームサーバーにユーザーを作成するために招待コードが必要です。Pubkyアプリではなくホームサーバーにユーザーを作成します。インフラが改善され、より多くのホームサーバーがオンラインになるにつれ、招待コードは不要になる可能性があります。",
+      "q2": "ウェブアプリでPubky Ringを使用するには？",
+      "a2": "まず、Pubky Ringアプリでキーペアを作成します。次に、Pubkyウェブアプリにアクセスし、同じキーペアでログインします。アプリは暗号化IDを通じて接続されています。",
+      "q3": "AndroidでPWAを使用するとログインが失敗することがあるのはなぜ？",
+      "a3": "VanadiumやTorなどのセキュリティとプライバシーに重点を置いた一部のブラウザは、デフォルトでJavaScriptのJust-In-Time（JIT）コンパイルを無効にしており、これによりPubkyアプリが正常に機能しなくなります。\n\n有効にするには：設定 > サイトの設定 > JavaScript JIT > 許可。",
+      "q4": "アカウントを復元するには？",
+      "a4": "登録時に、以下のいずれかを使用してIDをバックアップするよう求められました：\n\n- リカバリーファイル（.pkarr）\n- リカバリーフレーズ（ニーモニック）\n- QRコード\n\n.pkarrファイルで復元するには：\n\n1. 保存したファイルを選択。\n2. パスワードを入力。\n3. 「ログイン」をクリック。",
+      "q5": "別のデバイスでPubkyアカウントを復元できますか？",
+      "a5": "はい、.pkarrファイルまたはシードフレーズがあれば可能です。（シードフレーズのサポートはPubky Ringの今後のバージョンで追加されます。）",
+      "q6": "シードフレーズを後で.pkarrファイルに変換できますか？",
+      "a6": "まだできません。この機能は将来のアップデートで予定されています。",
+      "q7": "アカウントをバックアップしたがファイルにアクセスできない。何が起きた？",
+      "a7": "一部のオペレーティングシステムは.pkarrファイルの名前を変更したり、誤ってラベル付けすることがあります。ファイル拡張子を.pkarrに変更して再インポートを試してください。",
+      "q8": ".pkarrバックアップの代わりに.txtファイルをダウンロードした。どうすればいい？",
+      "a8": "ニーモニック（シードフレーズ）バックアップオプションを選択した場合に発生します。Pubky Ringはまだシードのインポートをサポートしていません。将来のアップデートを待つか、.pkarrバックアップでアカウントを再作成してください。",
+      "q9": "リカバリーファイルのダウンロードを逃した。再度バックアップできる？",
+      "a9": "現在、バックアップはウェブアプリから一度だけ作成できます。これは将来のアップデートで変更される可能性があります。",
+      "q10": "プロフィール情報を更新するには？",
+      "a10": "アバター（右上隅）をクリックし、「編集」をクリックしてプロフィール情報を更新します。",
+      "q11": "投稿を削除するには？",
+      "a11": "削除したい投稿の三点リーダーにカーソルを合わせ、「投稿を削除」を選択します。",
+      "q12": "誰かをミュートするには？",
+      "a12": "そのユーザーのプロフィールに移動し、三点リーダーをクリックして「ユーザーをミュート」を選択します。",
+      "q13": "Pubkyは他のソーシャルメディアプラットフォームとどう違う？",
+      "a13": "Pubkyは自己主権型で分散型のソーシャルインタラクション向けに構築されています。主な違い：\n\n- あなたがアルゴリズム：セマンティックタグとキュレーションで見たいものをカスタマイズ。\n- メールや電話は不要：あなたのIDは公開鍵です。\n- タグ付けと信頼モデルでソーシャルグラフを完全制御。\n- プライバシーを尊重するブラウザベースのPWA。",
+      "q14": "PubkyはNostrとどう違う？",
+      "a14": "Pubkyは互換性のためにEd25519キーを使用し、中央集権的なリレーを避けています。代わりに、分散ハッシュテーブル（DHT）を使用して分散型ルックアップとID解決を行います。"
+    }
+  }
+}

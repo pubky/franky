@@ -8,7 +8,7 @@ import { defineRouting } from 'next-intl/routing';
  * Language is determined via cookie instead.
  */
 export const routing = defineRouting({
-  locales: ['en', 'pt-BR'],
+  locales: ['en', 'pt-BR', 'de', 'fr', 'it', 'zh', 'ja', 'ar', 'es'],
   defaultLocale: 'en',
   localePrefix: 'never',
   localeDetection: false,
