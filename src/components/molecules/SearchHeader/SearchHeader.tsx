@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import type { SearchHeaderProps } from './SearchHeader.types';
 
@@ -12,13 +13,16 @@ import type { SearchHeaderProps } from './SearchHeader.types';
  * @returns null if tags array is empty (defensive check)
  */
 export function SearchHeader({ tags }: SearchHeaderProps) {
+  const t = useTranslations('search');
+
   if (tags.length === 0) {
     return null;
   }
 
   return (
     <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
-      Results for: {tags.join(', ')}
+      {t('results')}
+      {tags.join(', ')}
     </Atoms.Heading>
   );
 }

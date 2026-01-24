@@ -5,8 +5,10 @@ import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import { COPYRIGHT_FORM_FIELDS, type CopyrightFormData } from '@/hooks';
+import { useTranslations } from 'next-intl';
 
 export function CopyrightForm() {
+  const t = useTranslations('forms.copyright');
   const { form, onSubmit, handleRoleChange } = Hooks.useCopyrightForm();
   const { isSubmitting, errors } = form.formState;
   const roleError = errors.isRightsOwner?.message;
@@ -18,15 +20,15 @@ export function CopyrightForm() {
         <Atoms.Card className="rounded-t-lg rounded-b-none border border-border p-8 md:p-12">
           <Atoms.Container className="gap-6">
             <Atoms.Typography as="h1" size="lg">
-              Copyright Removal Request
+              {t('title')}
             </Atoms.Typography>
 
             <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
-              Date: {currentDate}
+              {t('date', { date: currentDate })}
             </Atoms.Typography>
 
             <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
-              Synonym Software, S.A. de C.V. (&quot;Synonym&quot;)
+              {t('companyInfo')}
               <br />
               87 avenida norte, calle El Mirador, edificio Torre Futura, oficina 06, nivel 11, colonia Escalón, del
               municipio de San Salvador, departamento de San Salvador. Código postal 01101, República de El Salvador.
@@ -36,14 +38,14 @@ export function CopyrightForm() {
 
             <Atoms.Container className="gap-6 rounded-lg bg-muted p-4">
               <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
-                Dear Synonym:
+                {t('greeting')}
                 <br />
                 <br />
-                We write on behalf of:
+                {t('onBehalfOf')}
               </Atoms.Typography>
             </Atoms.Container>
 
-            <Atoms.Typography size="md">Rights Owner Information</Atoms.Typography>
+            <Atoms.Typography size="md">{t('rightsOwner')}</Atoms.Typography>
 
             <Atoms.Container className="gap-4 xl:flex-row xl:justify-between">
               <Atoms.Checkbox
@@ -51,7 +53,7 @@ export function CopyrightForm() {
                 name={COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER}
                 checked={form.watch(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER)}
                 onCheckedChange={(checked) => handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_RIGHTS_OWNER, Boolean(checked))}
-                label="I am the rights owner"
+                label={t('iAmOwner')}
                 disabled={isSubmitting}
               />
               <Atoms.Checkbox
@@ -61,7 +63,7 @@ export function CopyrightForm() {
                 onCheckedChange={(checked) =>
                   handleRoleChange(COPYRIGHT_FORM_FIELDS.IS_REPORTING_ON_BEHALF, Boolean(checked))
                 }
-                label="I am reporting on behalf of my organization or client"
+                label={t('iAmReporting')}
                 disabled={isSubmitting}
               />
             </Atoms.Container>
@@ -75,14 +77,14 @@ export function CopyrightForm() {
             <Molecules.ControlledInputField<CopyrightFormData>
               name="nameOwner"
               control={form.control}
-              label="Name of the rights owner"
+              label={t('ownerName')}
               labelHint={
                 <Atoms.Typography as="span" overrideDefaults className="text-xs normal-case">
                   {' '}
-                  (This may be your full name or the name of the organization)
+                  {t('ownerNameHint')}
                 </Atoms.Typography>
               }
-              placeholder="Name of the rights owner"
+              placeholder={t('ownerName')}
               maxLength={50}
               disabled={isSubmitting}
             />
@@ -101,8 +103,8 @@ export function CopyrightForm() {
               <Molecules.ControlledTextareaField<CopyrightFormData>
                 name="originalContentUrls"
                 control={form.control}
-                label="Original Content URLs"
-                placeholder="Enter URLs of your original content"
+                label={t('originalUrls')}
+                placeholder={t('originalUrlsPlaceholder')}
                 disabled={isSubmitting}
                 className="min-w-0"
                 textareaClassName="overflow-y-auto overflow-x-hidden break-words"
@@ -111,8 +113,8 @@ export function CopyrightForm() {
               <Molecules.ControlledTextareaField<CopyrightFormData>
                 name="briefDescription"
                 control={form.control}
-                label="Brief description of your original content"
-                placeholder="Describe your original content"
+                label={t('description')}
+                placeholder={t('descriptionPlaceholder')}
                 disabled={isSubmitting}
                 className="min-w-0"
                 textareaClassName="overflow-y-auto overflow-x-hidden"
@@ -130,13 +132,13 @@ export function CopyrightForm() {
               </Atoms.Typography>
             </Atoms.Container>
 
-            <Atoms.Typography size="md">Infringing work details</Atoms.Typography>
+            <Atoms.Typography size="md">{t('infringingTitle')}</Atoms.Typography>
 
             <Molecules.ControlledTextareaField<CopyrightFormData>
               name="infringingContentUrl"
               control={form.control}
-              label="Infringing Content URLs"
-              placeholder="Enter URLs of infringing content"
+              label={t('infringingUrls')}
+              placeholder={t('infringingUrlsPlaceholder')}
               disabled={isSubmitting}
               className="min-w-0"
               textareaClassName="overflow-y-auto overflow-x-hidden break-words"
@@ -161,14 +163,14 @@ export function CopyrightForm() {
               </Atoms.Typography>
             </Atoms.Container>
 
-            <Atoms.Typography size="md">Contact Information</Atoms.Typography>
+            <Atoms.Typography size="md">{t('contact')}</Atoms.Typography>
 
             <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="firstName"
                 control={form.control}
-                label="First Name"
-                placeholder="Satoshi"
+                label={t('firstName')}
+                placeholder={t('firstNamePlaceholder')}
                 maxLength={30}
                 disabled={isSubmitting}
               />
@@ -176,8 +178,8 @@ export function CopyrightForm() {
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="lastName"
                 control={form.control}
-                label="Last Name"
-                placeholder="Nakamoto"
+                label={t('lastName')}
+                placeholder={t('lastNamePlaceholder')}
                 maxLength={30}
                 disabled={isSubmitting}
               />
@@ -187,8 +189,8 @@ export function CopyrightForm() {
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="email"
                 control={form.control}
-                label="Email"
-                placeholder="email@example.com"
+                label={t('email')}
+                placeholder={t('emailPlaceholder')}
                 maxLength={100}
                 disabled={isSubmitting}
               />
@@ -196,21 +198,21 @@ export function CopyrightForm() {
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="phoneNumber"
                 control={form.control}
-                label="Phone number"
-                placeholder="000-000-0000"
+                label={t('phone')}
+                placeholder={t('phonePlaceholder')}
                 maxLength={30}
                 disabled={isSubmitting}
               />
             </Atoms.Container>
 
-            <Atoms.Typography size="md">Address</Atoms.Typography>
+            <Atoms.Typography size="md">{t('address')}</Atoms.Typography>
 
             <Atoms.Container className="gap-8 xl:flex-row xl:justify-between">
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="streetAddress"
                 control={form.control}
-                label="Street address"
-                placeholder="Street number and name"
+                label={t('street')}
+                placeholder={t('streetPlaceholder')}
                 maxLength={100}
                 disabled={isSubmitting}
               />
@@ -218,8 +220,8 @@ export function CopyrightForm() {
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="country"
                 control={form.control}
-                label="Country"
-                placeholder="United States"
+                label={t('country')}
+                placeholder={t('countryPlaceholder')}
                 maxLength={50}
                 disabled={isSubmitting}
               />
@@ -229,8 +231,8 @@ export function CopyrightForm() {
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="city"
                 control={form.control}
-                label="City"
-                placeholder="City name"
+                label={t('city')}
+                placeholder={t('cityPlaceholder')}
                 maxLength={50}
                 disabled={isSubmitting}
               />
@@ -238,8 +240,8 @@ export function CopyrightForm() {
               <Molecules.ControlledInputField<CopyrightFormData>
                 name="stateProvince"
                 control={form.control}
-                label="State/Province"
-                placeholder="State name"
+                label={t('state')}
+                placeholder={t('statePlaceholder')}
                 maxLength={50}
                 disabled={isSubmitting}
               />
@@ -248,8 +250,8 @@ export function CopyrightForm() {
             <Molecules.ControlledInputField<CopyrightFormData>
               name="zipCode"
               control={form.control}
-              label="Zip code"
-              placeholder="000000"
+              label={t('zip')}
+              placeholder={t('zipPlaceholder')}
               maxLength={20}
               disabled={isSubmitting}
             />
@@ -257,14 +259,14 @@ export function CopyrightForm() {
             <Atoms.Container overrideDefaults className="my-3 h-px w-full bg-border" aria-hidden="true" />
 
             <Atoms.Typography as="h2" size="md">
-              Signature
+              {t('signature')}
             </Atoms.Typography>
 
             <Molecules.ControlledInputField<CopyrightFormData>
               name="signature"
               control={form.control}
-              label="Full Name as Signature"
-              placeholder="Full name"
+              label={t('signatureName')}
+              placeholder={t('signaturePlaceholder')}
               maxLength={100}
               disabled={isSubmitting}
             />
@@ -278,15 +280,15 @@ export function CopyrightForm() {
               disabled={isSubmitting}
               size="lg"
               className="w-auto"
-              aria-label={isSubmitting ? 'Submitting form' : 'Submit form'}
+              aria-label={isSubmitting ? t('submitting') : t('submitForm')}
             >
               {isSubmitting ? (
                 <>
                   <Libs.Loader2 className="mr-2 size-4 animate-spin" aria-hidden="true" />
-                  Submitting...
+                  {t('submitting')}
                 </>
               ) : (
-                'Submit Form'
+                t('submitForm')
               )}
             </Atoms.Button>
           </Atoms.Container>

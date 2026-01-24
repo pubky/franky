@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
@@ -18,6 +19,8 @@ import type { WhoToFollowProps } from './WhoToFollow.types';
  * Note: This is an Organism because it interacts with Core via hooks (useUserStream, useFollowUser).
  */
 export function WhoToFollow({ className }: WhoToFollowProps) {
+  const t = useTranslations('sidebar');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const { users, isLoading: isStreamLoading } = Hooks.useUserStream({
     streamId: Core.UserStreamTypes.RECOMMENDED,
@@ -40,9 +43,9 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
 
   return (
     <Molecules.SidebarSection
-      title="Who to follow"
+      title={t('whoToFollow')}
       footerIcon={Libs.Users}
-      footerText="See all"
+      footerText={tCommon('seeAll')}
       onFooterClick={handleSeeAll}
       className={className}
       data-testid="who-to-follow"

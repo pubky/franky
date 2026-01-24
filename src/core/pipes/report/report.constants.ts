@@ -22,18 +22,19 @@ export const REPORT_ISSUE_TYPES = {
 } as const;
 
 /**
- * Report issue labels for display
+ * Report issue translation keys for i18n
+ * Maps each issue type to its translation key in 'report.issues' namespace
  */
-export const REPORT_ISSUE_LABELS: Record<ReportIssueType, string> = {
-  [REPORT_ISSUE_TYPES.PERSONAL_INFO]: 'Personal Info Leak',
-  [REPORT_ISSUE_TYPES.HATE_SPEECH]: 'Hate or Threatening Speech',
-  [REPORT_ISSUE_TYPES.HARASSMENT]: 'Harassment or Targeted',
-  [REPORT_ISSUE_TYPES.CHILD_ABUSE]: 'Child Sexual Abuse or Exploitation',
-  [REPORT_ISSUE_TYPES.TERRORISM]: 'Promotion of Terrorist',
-  [REPORT_ISSUE_TYPES.VIOLENCE]: 'Graphic or Criminal Violence',
-  [REPORT_ISSUE_TYPES.ILLEGAL_SALES]: 'Illegal Sales or Criminal',
-  [REPORT_ISSUE_TYPES.SEXUAL_CONTENT]: 'Non-consensual or Criminal Sexual Content',
-  [REPORT_ISSUE_TYPES.COPYRIGHT]: 'Copyright Infringement',
+export const REPORT_ISSUE_LABEL_KEYS: Record<ReportIssueType, string> = {
+  [REPORT_ISSUE_TYPES.PERSONAL_INFO]: 'personalInfoLeak',
+  [REPORT_ISSUE_TYPES.HATE_SPEECH]: 'hateSpeech',
+  [REPORT_ISSUE_TYPES.HARASSMENT]: 'harassment',
+  [REPORT_ISSUE_TYPES.CHILD_ABUSE]: 'childAbuse',
+  [REPORT_ISSUE_TYPES.TERRORISM]: 'terrorism',
+  [REPORT_ISSUE_TYPES.VIOLENCE]: 'violence',
+  [REPORT_ISSUE_TYPES.ILLEGAL_SALES]: 'illegalSales',
+  [REPORT_ISSUE_TYPES.SEXUAL_CONTENT]: 'sexualContent',
+  [REPORT_ISSUE_TYPES.COPYRIGHT]: 'copyright',
 };
 
 /**

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -15,7 +16,7 @@ import { buildSearchUrl } from '@/hooks/useTagSearch/useTagSearch.utils';
 import {
   getNotificationLink,
   getUserIdFromNotification,
-  getNotificationActionText,
+  getNotificationActionKey,
   getPostUriFromNotification,
   pubkyUriToCompositeId,
   formatPreviewText,
@@ -24,6 +25,9 @@ import {
 import type { NotificationItemProps } from './NotificationItem.types';
 
 export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
+  const t = useTranslations('notifications.actions');
+  const tCommon = useTranslations('common');
+  const tProfile = useTranslations('profile');
   const router = useRouter();
   const { toast } = Molecules.useToast();
 
@@ -87,11 +91,12 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   }, [postCompositeId]);
 
   // Get user name and avatar from profile hook
-  const userName = profile?.name || 'User';
+  const userName = profile?.name || tCommon('user');
   const avatarUrl = profile?.avatarUrl;
 
   // Get notification action text (without username, for separate rendering)
-  const actionText = getNotificationActionText(notification);
+  const actionKey = getNotificationActionKey(notification);
+  const actionText = t(actionKey);
 
   // Get post preview text
   const previewText = hasPostPreview(notification.type) ? formatPreviewText(postContent) : null;
@@ -183,7 +188,7 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
           {/* Friend notification extra text */}
           {notification.type === NotificationType.NewFriend && (
             <Atoms.Typography as="p" className="hidden shrink-0 text-base font-medium text-muted-foreground xl:inline">
-              (you follow each other)
+              {tProfile('friendsWithYou')}
             </Atoms.Typography>
           )}
         </Atoms.Container>

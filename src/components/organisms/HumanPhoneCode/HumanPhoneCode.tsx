@@ -5,9 +5,11 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { HumanPhoneCodeProps } from './HumanPhoneCode.types';
 
 export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCodeProps) => {
+  const t = useTranslations('onboarding.phoneCode');
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
   const { toast } = Molecules.useToast();
@@ -35,19 +37,19 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
       const result = await Core.HomegateController.verifySmsCode({ phoneNumber, code: codeValue });
       if (result.valid && result.signupCode) {
         toast({
-          title: 'Verification Code Valid',
+          title: t('valid'),
         });
         onSuccess(result.signupCode);
       } else {
         toast({
-          title: 'Verification Code Invalid. Try again.',
+          title: t('invalid'),
         });
         setIsVerifyingCode(false);
       }
     } catch {
       toast({
-        title: 'Failed to verify sms code',
-        description: 'Please try again later. If the problem persists, please contact support.',
+        title: t('verifyFailed'),
+        description: t('verifyFailedDescription'),
       });
       setIsVerifyingCode(false);
     }
@@ -58,9 +60,9 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Enter <span className="text-brand">Code.</span>
+          {t('title').split('.')[0]}. <span className="text-brand">{t('title').split('.')[1]}.</span>
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>We sent a 6-digit verification code to {phoneNumber}.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>{t('subtitle', { phoneNumber })}</Atoms.PageSubtitle>
       </Atoms.PageHeader>
 
       {/* Verification code card */}
@@ -81,10 +83,10 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
             {/* Card header */}
             <Atoms.Container className="flex-col gap-3">
               <Atoms.Typography as="h3" className="text-2xl leading-[32px] font-semibold text-foreground">
-                Verification code
+                {t('label')}
               </Atoms.Typography>
               <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-                Enter the code you received on {phoneNumber}.
+                {t('hint', { phoneNumber })}
               </Atoms.Typography>
             </Atoms.Container>
 
@@ -109,7 +111,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           onClick={onBack}
         >
           <Libs.RefreshCcw className="mr-2 h-4 w-4" />
-          Resend Code {resendTimer > 0 && `(${resendTimer}s)`}
+          {t('resend', { resendTimer })}
         </Atoms.Button>
         <Atoms.Button
           data-testid="human-phone-send-code-btn"
@@ -121,7 +123,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           onClick={() => isCodeComplete && !isVerifyingCode && onVerifyCode()}
         >
           <Libs.ArrowRight className="mr-2 h-4 w-4" />
-          Verify Code
+          {t('verify')}
         </Atoms.Button>
       </Atoms.Container>
     </React.Fragment>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
@@ -7,6 +8,8 @@ import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
 import type { FollowerItemProps } from './FollowerItem.types';
 
 export function FollowerItem({ follower, isFollowing = false, onFollow, isCurrentUser = false }: FollowerItemProps) {
+  const t = useTranslations('userList');
+  const tProfile = useTranslations('profile.actions');
   const avatarUrl = follower.avatarUrl || follower.image || undefined;
   const formattedPublicKey = Libs.formatPublicKey({ key: follower.id });
   const tags = follower.tags || [];
@@ -55,7 +58,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
         <Atoms.Container overrideDefaults={true} className="flex shrink-0 items-center gap-3">
           <Atoms.Container className="items-start">
             <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
-              Tags
+              {t('tags')}
             </Atoms.Typography>
             <Atoms.Typography data-cy="profile-follower-item-tags-count" size="sm" className="font-bold">
               {stats.tags}
@@ -63,7 +66,7 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
           </Atoms.Container>
           <Atoms.Container className="items-start">
             <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
-              Posts
+              {t('posts')}
             </Atoms.Typography>
             <Atoms.Typography data-cy="profile-follower-item-posts-count" size="sm" className="font-bold">
               {stats.posts}
@@ -79,9 +82,9 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
             size="sm"
             className="hidden w-[110px] justify-center lg:flex"
             disabled
-            aria-label="This is you"
+            aria-label={tProfile('thisIsYou')}
           >
-            <span>Me</span>
+            <span>{t('me')}</span>
           </Atoms.Button>
         ) : (
           <Atoms.Button
@@ -90,28 +93,28 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
             size="sm"
             className="group hidden w-[110px] justify-center lg:flex"
             onClick={handleFollowClick}
-            aria-label={isFollowing ? 'Unfollow' : 'Follow'}
+            aria-label={isFollowing ? t('unfollow') : t('follow')}
           >
             {isFollowing ? (
               <>
                 <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
                   <Check className="size-4" />
-                  <span>Following</span>
+                  <span>{t('following')}</span>
                 </Atoms.Container>
                 <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
                   <UserMinus className="size-4" />
-                  <span>Unfollow</span>
+                  <span>{t('unfollow')}</span>
                 </Atoms.Container>
               </>
             ) : (
               <>
                 <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
                   <UserRoundPlus className="size-4" />
-                  <span>Follow</span>
+                  <span>{t('follow')}</span>
                 </Atoms.Container>
                 <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
                   <Check className="size-4" />
-                  <span>Follow</span>
+                  <span>{t('follow')}</span>
                 </Atoms.Container>
               </>
             )}
@@ -136,9 +139,9 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
             size="sm"
             className="w-[110px] justify-center"
             disabled
-            aria-label="This is you"
+            aria-label={tProfile('thisIsYou')}
           >
-            <span>Me</span>
+            <span>{t('me')}</span>
           </Atoms.Button>
         ) : (
           <Atoms.Button
@@ -146,28 +149,28 @@ export function FollowerItem({ follower, isFollowing = false, onFollow, isCurren
             size="sm"
             className="group w-[110px] justify-center"
             onClick={handleFollowClick}
-            aria-label={isFollowing ? 'Unfollow' : 'Follow'}
+            aria-label={isFollowing ? t('unfollow') : t('follow')}
           >
             {isFollowing ? (
               <>
                 <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
                   <Check className="size-4" />
-                  <span>Following</span>
+                  <span>{t('following')}</span>
                 </Atoms.Container>
                 <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
                   <UserMinus className="size-4" />
-                  <span>Unfollow</span>
+                  <span>{t('unfollow')}</span>
                 </Atoms.Container>
               </>
             ) : (
               <>
                 <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
                   <UserRoundPlus className="size-4" />
-                  <span>Follow</span>
+                  <span>{t('follow')}</span>
                 </Atoms.Container>
                 <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
                   <Check className="size-4" />
-                  <span>Follow</span>
+                  <span>{t('follow')}</span>
                 </Atoms.Container>
               </>
             )}

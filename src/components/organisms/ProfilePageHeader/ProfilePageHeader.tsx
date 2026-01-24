@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
@@ -18,6 +19,7 @@ import * as Types from './ProfilePageHeader.types';
  * This ensures profile data gets refreshed when stale.
  */
 export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
+  const t = useTranslations('profile.actions');
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const {
     onEdit,
@@ -88,7 +90,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
             <>
               <Atoms.Button variant="secondary" size="sm" onClick={onEdit}>
                 <Icons.Pencil className="size-4" />
-                Edit
+                {t('edit')}
               </Atoms.Button>
               <Atoms.Button className="uppercase" variant="secondary" size="sm" onClick={onCopyPublicKey}>
                 <Icons.KeyRound className="size-4" />
@@ -96,7 +98,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               </Atoms.Button>
               <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
                 <Icons.Link className="size-4" />
-                Link
+                {t('link')}
               </Atoms.Button>
               <Atoms.Button
                 variant="secondary"
@@ -108,12 +110,12 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                 {isLoggingOut ? (
                   <>
                     <Icons.Loader2 className="size-4 animate-spin" />
-                    Logging out...
+                    {t('loggingOut')}
                   </>
                 ) : (
                   <>
                     <Icons.LogOut className="size-4" />
-                    Sign out
+                    {t('signOut')}
                   </>
                 )}
               </Atoms.Button>
@@ -140,19 +142,19 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                   {isFollowLoading ? (
                     <>
                       <Icons.Loader2 className="size-4 animate-spin" />
-                      {isFollowing ? 'Unfollowing...' : 'Following...'}
+                      {isFollowing ? t('unfollowing') : t('followingProgress')}
                     </>
                   ) : (
                     <>
                       {isFollowing ? (
                         <>
                           <Icons.Check className="size-4" />
-                          Following
+                          {t('followingButton')}
                         </>
                       ) : (
                         <>
                           <Icons.UserPlus className="size-4" />
-                          Follow
+                          {t('follow')}
                         </>
                       )}
                     </>
@@ -165,7 +167,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               </Atoms.Button>
               <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
                 <Icons.Link className="size-4" />
-                Link
+                {t('link')}
               </Atoms.Button>
               {/* Three-dot menu with additional profile actions */}
               <Organisms.ProfileMenuActions

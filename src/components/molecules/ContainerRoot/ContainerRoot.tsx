@@ -10,11 +10,12 @@ const interTight = Inter_Tight({
 
 interface RootContainerProps {
   children: React.ReactNode;
+  locale?: string;
 }
 
-export function RootContainer({ children }: RootContainerProps) {
+export function RootContainer({ children, locale = 'en' }: RootContainerProps) {
   return (
-    <Atoms.Container as="html">
+    <Atoms.Container as="html" lang={locale}>
       <Atoms.Container as="body" className={`${interTight.variable} antialiased`}>
         <Molecules.PageContainer>{children}</Molecules.PageContainer>
       </Atoms.Container>

@@ -1,11 +1,20 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { LANGUAGES } from './LanguageSelector.constants';
+
+/**
+ * Sets the locale cookie for server-side i18n.
+ * Cookie is used by next-intl to determine the locale on the server.
+ */
+function setLocaleCookie(locale: string) {
+  document.cookie = `locale=${locale};path=/;max-age=31536000;SameSite=Lax`;
+}
 
 function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: string; onSelect: (code: string) => void }) {
   return (
@@ -39,16 +48,20 @@ function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: strin
 }
 
 export function LanguageSelector() {
+  const t = useTranslations('language');
   const { language, setLanguage } = Core.useSettingsStore();
   const isMobile = Hooks.useIsMobile();
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
-
   const handleSelect = (code: string) => {
     setLanguage(code);
+    setLocaleCookie(code);
     setIsOpen(false);
+    // Reload to apply server-side translations
+    window.location.reload();
   };
+
+  const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
 
   const trigger = (
     <Atoms.Button
@@ -75,7 +88,7 @@ export function LanguageSelector() {
         overrideDefaults
         className="text-xs leading-4 font-medium tracking-[1.2px] text-muted-foreground uppercase"
       >
-        Display language
+        {t('displayLanguage')}
       </Atoms.Typography>
 
       {isMobile ? (
@@ -83,7 +96,7 @@ export function LanguageSelector() {
           <Atoms.SheetTrigger asChild>{trigger}</Atoms.SheetTrigger>
           <Atoms.SheetContent side="bottom" className="rounded-t-2xl pb-8">
             <Atoms.SheetHeader className="mb-4">
-              <Atoms.SheetTitle>Select Language</Atoms.SheetTitle>
+              <Atoms.SheetTitle>{t('selectLanguage')}</Atoms.SheetTitle>
             </Atoms.SheetHeader>
             <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
           </Atoms.SheetContent>

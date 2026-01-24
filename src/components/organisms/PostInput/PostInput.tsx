@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
@@ -30,6 +31,9 @@ export function PostInput({
   editContent,
   editIsArticle,
 }: PostInputProps) {
+  const t = useTranslations('post');
+  const tCommon = useTranslations('common');
+  const tToast = useTranslations('toast.post');
   const {
     textareaRef,
     markdownEditorRef,
@@ -114,8 +118,8 @@ export function PostInput({
           setContent(parsed.body || '');
         } catch {
           toast({
-            title: 'Error',
-            description: 'Failed to parse article content',
+            title: tCommon('error'),
+            description: tToast('parseError'),
           });
         }
       } else {
@@ -145,7 +149,7 @@ export function PostInput({
           className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-brand/10"
           overrideDefaults
         >
-          <Atoms.Typography className="text-brand">Drop files here</Atoms.Typography>
+          <Atoms.Typography className="text-brand">{t('dropFiles')}</Atoms.Typography>
         </Atoms.Container>
       )}
 
@@ -153,7 +157,7 @@ export function PostInput({
       <Atoms.Container className="gap-4">
         {isArticle && (
           <Atoms.Input
-            placeholder="Article Title"
+            placeholder={t('articleTitle')}
             defaultValue={articleTitle}
             onChange={handleArticleTitleChange}
             maxLength={ARTICLE_TITLE_MAX_CHARACTER_LENGTH}
