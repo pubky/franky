@@ -79,13 +79,13 @@
       },
       "editProfile": {
         "title": "Modifica il tuo profilo",
-        "description": "Aggiorna la tua bio o la foto profilo per farti trovare piu facilmente dai tuoi amici.",
+        "description": "Aggiorna la tua bio o la foto profilo per farti trovare più facilmente dai tuoi amici.",
         "button": "Modifica profilo"
       },
       "backup": {
         "title": "Backup del tuo account",
         "descriptionNeeded": "Senza backup perdi il tuo account se chiudi il browser!",
-        "descriptionDone": "Hai gia completato il backup o hai chiuso il browser prima di farlo. Il file di recupero e la frase seed sono stati eliminati.",
+        "descriptionDone": "Hai già completato il backup o hai chiuso il browser prima di farlo. Il file di recupero e la frase seed sono stati eliminati.",
         "button": "Backup"
       },
       "download": {
@@ -106,7 +106,7 @@
     },
     "privacy": {
       "title": "Privacy e sicurezza",
-      "description": "La privacy non e un crimine. Gestisci la tua visibilita e sicurezza su Pubky."
+      "description": "La privacy non e un crimine. Gestisci la tua visibilità e sicurezza su Pubky."
     },
     "mutedUsers": {
       "title": "Utenti silenziati",
@@ -124,7 +124,7 @@
   "onboarding": {
     "steps": {
       "createAccount": "Crea account",
-      "identityKeys": "Chiavi di identita",
+      "identityKeys": "Chiavi di identità",
       "usePubkyRing": "Usa Pubky Ring",
       "yourPubky": "Il tuo pubky",
       "backup": "Backup",
@@ -147,11 +147,11 @@
       "phoneHint": "Inserisci il tuo numero di telefono, incluso il prefisso internazionale (es. +39 per Italia).",
       "placeholder": "+39XXXXXXXXXX",
       "blocked": "Numero di telefono bloccato",
-      "blockedDescription": "Questo numero di telefono non puo essere usato per la verifica.",
+      "blockedDescription": "Questo numero di telefono non può essere usato per la verifica.",
       "tooManyAttempts": "Troppi tentativi di verifica",
       "tooManyAttemptsDescription": "Hai raggiunto il numero massimo di verifiche per questo numero di telefono.",
       "sendFailed": "Invio codice SMS fallito",
-      "sendFailedDescription": "Riprova piu tardi. Se il problema persiste, contatta il supporto."
+      "sendFailedDescription": "Riprova più tardi. Se il problema persiste, contatta il supporto."
     },
     "phoneCode": {
       "title": "Inserisci il <highlight>codice.</highlight>",
@@ -164,7 +164,7 @@
       "valid": "Codice di verifica valido",
       "invalid": "Codice di verifica non valido. Riprova.",
       "verifyFailed": "Verifica codice SMS fallita",
-      "verifyFailedDescription": "Riprova piu tardi. Se il problema persiste, contatta il supporto."
+      "verifyFailedDescription": "Riprova più tardi. Se il problema persiste, contatta il supporto."
     },
     "lightning": {
       "title": "Scansiona per <highlight>pagare.</highlight>",
@@ -178,7 +178,7 @@
       "paymentSuccess": "Pagamento riuscito",
       "paymentExpired": "Pagamento scaduto",
       "requestFailed": "Richiesta fattura Lightning fallita",
-      "requestFailedDescription": "Riprova piu tardi. Se il problema persiste, contatta il supporto.",
+      "requestFailedDescription": "Riprova più tardi. Se il problema persiste, contatta il supporto.",
       "invoiceCopied": "Fattura copiata negli appunti",
       "copyFailed": "Copia fattura fallita"
     },
@@ -189,11 +189,11 @@
       "hint": "Ottieni 1GB di spazio, usato per i tuoi post, foto, video e il tuo profilo.",
       "placeholder": "XXXX-XXXX-XXXX",
       "customHomeserver": "Homeserver personalizzato",
-      "customHomeserverHint": "L'uso di un homeserver diverso sara possibile presto."
+      "customHomeserverHint": "L'uso di un homeserver diverso sarà possibile presto."
     },
     "bitcoin": {
       "title": "Pagamento Bitcoin",
-      "morePrivate": "(Piu privato)",
+      "morePrivate": "(Più privato)",
       "storage": "1GB di spazio",
       "speedLimit": "Limite velocita 1MB/s",
       "payOnce": "Paga una volta",
@@ -288,7 +288,7 @@
       "neverShareMobile": "Non condividere mai questo file e questa password con nessuno.",
       "password": "PASSWORD",
       "passwordPlaceholder": "Inserisci una password forte",
-      "passwordHint": "Raccomandiamo di usare 8 o piu caratteri con maiuscole, minuscole, numeri e simboli.",
+      "passwordHint": "Raccomandiamo di usare 8 o più caratteri con maiuscole, minuscole, numeri e simboli.",
       "repeatPassword": "RIPETI PASSWORD",
       "repeatPasswordPlaceholder": "Ripeti la tua password",
       "passwordsDoNotMatch": "Le password non corrispondono",
@@ -298,7 +298,7 @@
     },
     "install": {
       "title": "Installa Pubky Ring.",
-      "subtitle": "Pubky Ring e un portachiavi per le tue chiavi di identita nell'ecosistema Pubky.",
+      "subtitle": "Pubky Ring e un portachiavi per le tue chiavi di identità nell'ecosistema Pubky.",
       "instructions": "Scarica e installa l'app mobile. Poi continua al passo successivo.",
       "alternative": "Usa Pubky Ring o qualsiasi altro portachiavi alimentato da Pubky Core, o crea le tue chiavi nel browser (meno sicuro).",
       "createInBrowser": "Crea chiavi nel browser",
@@ -331,7 +331,7 @@
       "deletePost": "Elimina post",
       "reportPost": "Segnala post",
       "followUser": "Segui {username}",
-      "unfollowUser": "Non seguire piu {username}",
+      "unfollowUser": "Non seguire più {username}",
       "muteUser": "Silenzia {username}",
       "unmuteUser": "Riattiva {username}"
     },
@@ -457,7 +457,7 @@
       "newHere": "Nuovo qui?",
       "newHereDescription": "Crea il tuo account e inizia a esplorare Pubky.",
       "joinButton": "Unisciti a Pubky",
-      "alreadyHaveAccount": "Hai gia un account?",
+      "alreadyHaveAccount": "Hai già un account?",
       "alreadyHaveAccountDescription": "Accedi per interagire con post e profili.",
       "signInButton": "Accedi"
     },
@@ -472,14 +472,14 @@
         "step2Alt": "2. Scegli l'opzione 'Importa pubky'",
         "step3Alt": "3. Scansiona questo QR per importare"
       },
-      "tapDescription": "Tocca il pulsante qui sotto per esportare il tuo pubky e importarlo in Pubky Ring per un'esperienza di accesso piu sicura e facile.",
-      "tapDescriptionPhrase": "Tocca il pulsante qui sotto per importare la tua frase di recupero in Pubky Ring per un'esperienza di accesso piu sicura e facile.",
+      "tapDescription": "Tocca il pulsante qui sotto per esportare il tuo pubky e importarlo in Pubky Ring per un'esperienza di accesso più sicura e facile.",
+      "tapDescriptionPhrase": "Tocca il pulsante qui sotto per importare la tua frase di recupero in Pubky Ring per un'esperienza di accesso più sicura e facile.",
       "importButton": "Importa in Pubky Ring"
     },
     "backup": {
       "title": "Backup",
       "dialogTitle": "Backup del tuo pubky",
-      "subtitle": "Esegui il backup e conserva in modo sicuro il seed segreto del tuo pubky. Quale metodo di backup preferisci? Puoi scegliere piu metodi di backup se lo desideri.",
+      "subtitle": "Esegui il backup e conserva in modo sicuro il seed segreto del tuo pubky. Quale metodo di backup preferisci? Puoi scegliere più metodi di backup se lo desideri.",
       "recoveryPhrase": "Frase di recupero",
       "note": "Nota",
       "encryptedFile": "Scarica file crittografato",
@@ -489,8 +489,8 @@
     },
     "confirmBackup": {
       "title": "Tutto salvato?",
-      "subtitle": "Conferma di aver completato i tuoi metodi di backup preferiti. Per la tua sicurezza, il seed segreto verra eliminato dal tuo browser. Puoi ripristinare l'accesso al tuo account usando la tua frase di recupero o il file crittografato.",
-      "warning": "Dopo la conferma, il tuo seed verra eliminato dal browser (!)",
+      "subtitle": "Conferma di aver completato i tuoi metodi di backup preferiti. Per la tua sicurezza, il seed segreto verrà eliminato dal tuo browser. Puoi ripristinare l'accesso al tuo account usando la tua frase di recupero o il file crittografato.",
+      "warning": "Dopo la conferma, il tuo seed verrà eliminato dal browser (!)",
       "backupMethods": "Metodi di backup",
       "confirmButton": "Conferma (elimina seed)"
     },
@@ -547,7 +547,7 @@
       "alt": "Ricerca - Stato vuoto",
       "title": "Cerca post per tag",
       "subtitle1": "Usa la barra di ricerca o clicca su un tag per scoprire post.",
-      "subtitle2": "Puoi cercare piu tag separati da virgole."
+      "subtitle2": "Puoi cercare più tag separati da virgole."
     },
     "userSuggestion": "Utente {name} ({pubky})",
     "viewProfile": "Vedi profilo di {name}"
@@ -576,11 +576,11 @@
       "title": "Segnala post",
       "question": "Descrivi il motivo per cui stai segnalando questo post.",
       "label": "Motivo segnalazione",
-      "placeholder": "Perche stai segnalando?"
+      "placeholder": "Perché stai segnalando?"
     },
     "success": {
       "title": "Segnalazione inviata",
-      "description": "La tua segnalazione sara esaminata a breve. Grazie."
+      "description": "La tua segnalazione sarà esaminata a breve. Grazie."
     },
     "issues": {
       "personalInfoLeak": "Divulgazione di informazioni personali",
@@ -818,11 +818,11 @@
     "tags": {
       "loadFailed": "Caricamento altri tag fallito",
       "loadFailedDesc": "Impossibile caricare altri tag. Riprova.",
-      "labelEmpty": "L'etichetta del tag non puo essere vuota",
+      "labelEmpty": "L'etichetta del tag non può essere vuota",
       "postIdRequired": "ID post obbligatorio",
       "userIdRequired": "ID utente obbligatorio",
       "loginRequired": "Devi accedere per aggiungere tag",
-      "alreadyAdded": "Hai gia aggiunto questo tag",
+      "alreadyAdded": "Hai già aggiunto questo tag",
       "addFailed": "Aggiunta tag fallita",
       "addFailedDesc": "Impossibile aggiungere \"{label}\". Riprova.",
       "removeFailed": "Rimozione tag fallita",
@@ -892,7 +892,7 @@
     "sort": {
       "title": "Ordina",
       "recent": "Recenti",
-      "popularity": "Popolarita"
+      "popularity": "Popolarità"
     },
     "layout": {
       "title": "Layout",
@@ -927,8 +927,8 @@
   "privacy": {
     "showConfirmation": "Mostra conferma prima del reindirizzamento",
     "blurCensored": "Sfoca post o foto profilo censurati",
-    "signOutInactive": "Disconnettimi dopo 5 minuti di inattivita",
-    "requirePin": "Richiedi PIN dopo 5 minuti di inattivita",
+    "signOutInactive": "Disconnettimi dopo 5 minuti di inattività",
+    "requirePin": "Richiedi PIN dopo 5 minuti di inattività",
     "hideWhoToFollow": "Nascondi il tuo profilo in 'Chi seguire'",
     "hideActiveFriends": "Nascondi il tuo profilo in 'Amici attivi'",
     "hideSearch": "Nascondi il tuo profilo nei risultati di ricerca",
@@ -972,7 +972,7 @@
     "faq": "FAQ",
     "faqDescription": "Domande frequenti dagli utenti Pubky",
     "userGuide": "Guida utente",
-    "userGuideDescription": "La guida utente Pubky ti aiutera a navigare nell'app, utilizzare le sue funzionalita principali e ottenere il massimo dalla tua esperienza Pubky.",
+    "userGuideDescription": "La guida utente Pubky ti aiutera a navigare nell'app, utilizzare le sue funzionalità principali e ottenere il massimo dalla tua esperienza Pubky.",
     "userGuideButton": "Guida utente",
     "support": "Supporto",
     "supportDescription": "Non trovi la risposta che cerchi? Il supporto Pubky ti aiutera in pochissimo tempo.",
@@ -980,22 +980,22 @@
     "sections": {
       "onboarding": "1. Primi passi e onboarding",
       "backup": "2. Backup e recupero account",
-      "profile": "3. Profilo e funzionalita social",
+      "profile": "3. Profilo e funzionalità social",
       "pubky": "4. Come funziona l'app Pubky"
     },
     "questions": {
-      "q1": "Perche Pubky richiede codici invito?",
-      "a1": "Pubky usa i codici invito come misura temporanea per prevenire spam e sovraccarico del server. Gli utenti hanno bisogno di un codice invito per creare un utente sul nostro Homeserver. Non creiamo un utente per l'app Pubky, ma sul nostro Homeserver. Man mano che l'infrastruttura migliora e piu homeserver vanno online, i codici invito potrebbero non essere piu necessari.",
+      "q1": "Perché Pubky richiede codici invito?",
+      "a1": "Pubky usa i codici invito come misura temporanea per prevenire spam e sovraccarico del server. Gli utenti hanno bisogno di un codice invito per creare un utente sul nostro Homeserver. Non creiamo un utente per l'app Pubky, ma sul nostro Homeserver. Man mano che l'infrastruttura migliora e più homeserver vanno online, i codici invito potrebbero non essere più necessari.",
       "q2": "Come uso Pubky Ring con l'app web?",
-      "a2": "Prima, crea la tua coppia di chiavi nell'app Pubky Ring. Poi visita l'app web Pubky e accedi usando la stessa coppia di chiavi. Le app sono connesse tramite la tua identita crittografica.",
-      "q3": "Perche il login a volte fallisce usando la PWA su Android?",
+      "a2": "Prima, crea la tua coppia di chiavi nell'app Pubky Ring. Poi visita l'app web Pubky e accedi usando la stessa coppia di chiavi. Le app sono connesse tramite la tua identità crittografica.",
+      "q3": "Perché il login a volte fallisce usando la PWA su Android?",
       "a3": "Alcuni browser focalizzati su sicurezza e privacy, come Vanadium o Tor, disabilitano la compilazione Just-In-Time (JIT) per JavaScript di default, impedendo il corretto funzionamento dell'app Pubky.\n\nPer abilitarla, vai su: Impostazioni > Impostazioni sito > JavaScript JIT > Consentito.",
       "q4": "Come posso ripristinare il mio account?",
-      "a4": "Durante la registrazione, ti e stato chiesto di fare il backup della tua identita usando una delle seguenti opzioni:\n\n- File di recupero (.pkarr)\n- Frase di recupero (mnemonica)\n- Codice QR\n\nPer ripristinare con un file .pkarr:\n\n1. Seleziona il file che hai salvato.\n2. Inserisci la tua password.\n3. Clicca su \"Accedi\".",
+      "a4": "Durante la registrazione, ti e stato chiesto di fare il backup della tua identità usando una delle seguenti opzioni:\n\n- File di recupero (.pkarr)\n- Frase di recupero (mnemonica)\n- Codice QR\n\nPer ripristinare con un file .pkarr:\n\n1. Seleziona il file che hai salvato.\n2. Inserisci la tua password.\n3. Clicca su \"Accedi\".",
       "q5": "Posso ripristinare il mio account Pubky su un altro dispositivo?",
-      "a5": "Si, se hai il tuo file .pkarr o la frase seed. (Il supporto per la frase seed sara aggiunto nelle future versioni di Pubky Ring.)",
+      "a5": "Si, se hai il tuo file .pkarr o la frase seed. (Il supporto per la frase seed sarà aggiunto nelle future versioni di Pubky Ring.)",
       "q6": "Posso convertire una frase seed in un file .pkarr dopo?",
-      "a6": "Non ancora. Questa funzionalita e pianificata per un futuro aggiornamento.",
+      "a6": "Non ancora. Questa funzionalità e pianificata per un futuro aggiornamento.",
       "q7": "Ho fatto il backup del mio account ma non riesco ad accedere al file. Cosa e successo?",
       "a7": "Alcuni sistemi operativi potrebbero rinominare il file .pkarr o etichettarlo erroneamente. Prova a rinominare l'estensione del file in .pkarr e reimportare.",
       "q8": "Ho scaricato un file .txt invece di un backup .pkarr. Cosa faccio?",
@@ -1009,9 +1009,9 @@
       "q12": "Come silenziare qualcuno?",
       "a12": "Vai sul loro profilo, clicca sui tre puntini e scegli \"Silenzia utente\".",
       "q13": "In cosa Pubky e diverso dalle altre piattaforme social?",
-      "a13": "Pubky e costruito per un'interazione sociale sovrana e decentralizzata. Differenze principali:\n\n- Tu sei l'algoritmo: personalizza cio che vedi con tag semantici e curatela.\n- Nessuna email o telefono richiesto: la tua identita e la tua chiave pubblica.\n- Pieno controllo del tuo grafo sociale tramite tagging e modelli di fiducia.\n- PWA basata su browser che rispetta la privacy.",
+      "a13": "Pubky e costruito per un'interazione sociale sovrana e decentralizzata. Differenze principali:\n\n- Tu sei l'algoritmo: personalizza cio che vedi con tag semantici e curatela.\n- Nessuna email o telefono richiesto: la tua identità e la tua chiave pubblica.\n- Pieno controllo del tuo grafo sociale tramite tagging e modelli di fiducia.\n- PWA basata su browser che rispetta la privacy.",
       "q14": "In cosa Pubky differisce da Nostr?",
-      "a14": "Pubky usa chiavi Ed25519 per compatibilita e evita relay centralizzati. Invece, usa una Distributed Hash Table (DHT) per ricerca decentralizzata e risoluzione identita."
+      "a14": "Pubky usa chiavi Ed25519 per compatibilita e evita relay centralizzati. Invece, usa una Distributed Hash Table (DHT) per ricerca decentralizzata e risoluzione identità."
     }
   }
 }

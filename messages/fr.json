@@ -8,21 +8,21 @@
     "save": "Enregistrer",
     "cancel": "Annuler",
     "confirm": "Confirmer",
-    "delete": "Supprimer",
+    "delete": "Supprimér",
     "send": "Envoyer",
     "submit": "Soumettre",
     "loading": "Chargement...",
     "loadingActions": "Chargement des actions...",
-    "loadingHeader": "Chargement de l'en-tete...",
+    "loadingHeader": "Chargement de l'en-tête...",
     "loadingPost": "Chargement de la publication...",
     "loadingContent": "Chargement du contenu...",
-    "loadingReplies": "Chargement des reponses...",
+    "loadingReplies": "Chargement des réponses...",
     "loadingParticipants": "Chargement des participants...",
     "loadingTags": "Chargement des tags...",
     "loadingMoreTags": "Chargement de plus de tags...",
     "loadingPosts": "Chargement des publications...",
     "loadingMorePosts": "Chargement de plus de publications...",
-    "loadingPreview": "Chargement de l'apercu...",
+    "loadingPreview": "Chargement de l'aperçu...",
     "loadingBookmark": "Chargement...",
     "addBookmark": "Ajouter aux favoris",
     "removeBookmark": "Retirer des favoris",
@@ -32,14 +32,14 @@
     "profile": "Profil",
     "back": "Retour",
     "continue": "Continuer",
-    "finish": "Terminer",
+    "finish": "Terminér",
     "next": "Suivant",
     "close": "Fermer",
     "seeAll": "Voir tout",
     "exploreAll": "Explorer tout",
-    "edit": "Modifier",
-    "done": "Termine",
-    "download": "Telecharger",
+    "edit": "Modifiér",
+    "done": "Terminé",
+    "download": "Télécharger",
     "copy": "Copier",
     "share": "Partager",
     "me": "Moi",
@@ -57,14 +57,14 @@
     "home": "Accueil",
     "hot": "Tendances",
     "bookmarks": "Favoris",
-    "settings": "Parametres"
+    "settings": "Paramètres"
   },
   "settings": {
-    "title": "Parametres",
+    "title": "Paramètres",
     "menu": {
       "account": "Compte",
       "notifications": "Notifications",
-      "privacySafety": "Confidentialite et securite",
+      "privacySafety": "Confidentialite et sécurité",
       "mutedUsers": "Utilisateurs masques",
       "language": "Langue",
       "help": "Aide"
@@ -72,32 +72,32 @@
     "account": {
       "title": "Compte",
       "signOut": {
-        "title": "Se deconnecter de Pubky",
-        "description": "Deconnectez-vous pour proteger votre compte contre les acces non autorises.",
-        "button": "Se deconnecter",
-        "buttonLoading": "Deconnexion..."
+        "title": "Se déconnectér de Pubky",
+        "description": "Déconnectéz-vous pour proteger votre compte contre les acces non autorises.",
+        "button": "Se déconnectér",
+        "buttonLoading": "Déconnexion..."
       },
       "editProfile": {
-        "title": "Modifier votre profil",
+        "title": "Modifiér votre profil",
         "description": "Mettez a jour votre bio ou votre photo de profil pour que vos amis puissent vous trouver plus facilement.",
-        "button": "Modifier le profil"
+        "button": "Modifiér le profil"
       },
       "backup": {
         "title": "Sauvegarder votre compte",
         "descriptionNeeded": "Sans sauvegarde, vous perdez votre compte si vous fermez votre navigateur !",
-        "descriptionDone": "Vous avez deja effectue la sauvegarde, ou ferme votre navigateur avant de le faire. Votre fichier de recuperation et votre phrase de recuperation ont ete supprimes.",
+        "descriptionDone": "Vous avez déjà effectue la sauvegarde, ou ferme votre navigateur avant de le faire. Votre fichier de récupération et votre phrase de récupération ont ete supprimés.",
         "button": "Sauvegarder"
       },
       "download": {
-        "title": "Telecharger vos donnees",
+        "title": "Télécharger vos donnees",
         "description": "Vos donnees sur Pubky vous appartiennent. Exportez les donnees de votre compte pour les utiliser ailleurs.",
-        "button": "Telecharger les donnees",
-        "buttonLoading": "Telechargement... {progress}%"
+        "button": "Télécharger les donnees",
+        "buttonLoading": "Téléchargement... {progress}%"
       },
       "deleteAccount": {
-        "title": "Supprimer votre compte",
-        "description": "La suppression de votre compte supprimera toutes vos publications, tags, informations de profil, contacts, flux personnalises et parametres ou preferences.",
-        "button": "Supprimer le compte"
+        "title": "Supprimér votre compte",
+        "description": "La suppression de votre compte suppriméra toutes vos publications, tags, informations de profil, contacts, flux personnalises et paramètres ou préférénces.",
+        "button": "Supprimér le compte"
       }
     },
     "notifications": {
@@ -105,16 +105,16 @@
       "description": "Veuillez selectionner les notifications que vous souhaitez recevoir sur Pubky."
     },
     "privacy": {
-      "title": "Confidentialite et securite",
-      "description": "La confidentialite n'est pas un crime. Gerez votre visibilite et votre securite sur Pubky."
+      "title": "Confidentialite et sécurité",
+      "description": "La confidentialite n'est pas un crime. Gerez votre visibilite et votre sécurité sur Pubky."
     },
     "mutedUsers": {
       "title": "Utilisateurs masques",
-      "description": "Voici un apercu de tous les utilisateurs que vous avez masques. Vous pouvez choisir de les reactiver si vous le souhaitez."
+      "description": "Voici un aperçu de tous les utilisateurs que vous avez masques. Vous pouvez choisir de les reactiver si vous le souhaitez."
     },
     "language": {
       "title": "Langue",
-      "description": "Choisissez votre langue preferee pour l'interface Pubky.",
+      "description": "Choisissez votre langue préférée pour l'interface Pubky.",
       "displayLanguage": "Langue d'affichage"
     }
   },
@@ -123,52 +123,52 @@
   },
   "onboarding": {
     "steps": {
-      "createAccount": "Creer un compte",
+      "createAccount": "Créér un compte",
       "identityKeys": "Cles d'identite",
       "usePubkyRing": "Utiliser Pubky Ring",
       "yourPubky": "Votre pubky",
       "backup": "Sauvegarde",
       "profile": "Profil",
-      "signedOut": "Deconnecte"
+      "signedOut": "Déconnecté"
     },
     "human": {
       "title": "Prouvez <highlight>que vous n'etes pas un robot.</highlight>",
-      "subtitle": "Pas besoin d'email. Verifiez rapidement par SMS ou un petit paiement. Ou utilisez un",
+      "subtitle": "Pas besoin d'email. Vérifiez rapidement par SMS ou un petit paiement. Ou utilisez un",
       "inviteCode": "code d'invitation.",
-      "devMode": "Mode developpeur",
+      "devMode": "Mode développeur",
       "skip": "Passer",
       "enterInviteCode": "Entrer le code d'invitation"
     },
     "phone": {
-      "title": "Preuve par <highlight>telephone.</highlight>",
-      "subtitle": "Nous vous enverrons un code de verification par SMS a votre numero de telephone.",
+      "title": "Preuve par <highlight>téléphone.</highlight>",
+      "subtitle": "Nous vous enverrons un code de vérification par SMS a votre numéro de téléphone.",
       "sendCode": "Envoyer le code",
-      "phoneNumber": "Numero de telephone",
-      "phoneHint": "Entrez votre numero de telephone, y compris l'indicatif du pays (ex: +33 pour la France).",
+      "phoneNumber": "Numéro de téléphone",
+      "phoneHint": "Entrez votre numéro de téléphone, y compris l'indicatif du pays (ex: +33 pour la France).",
       "placeholder": "+33XXXXXXXXX",
-      "blocked": "Numero de telephone bloque",
-      "blockedDescription": "Ce numero de telephone ne peut pas etre utilise pour la verification.",
-      "tooManyAttempts": "Trop de tentatives de verification",
-      "tooManyAttemptsDescription": "Vous avez atteint le nombre maximum de verifications pour ce numero de telephone.",
-      "sendFailed": "Echec de l'envoi du code SMS",
-      "sendFailedDescription": "Veuillez reessayer plus tard. Si le probleme persiste, contactez le support."
+      "blocked": "Numéro de téléphone bloque",
+      "blockedDescription": "Ce numéro de téléphone ne peut pas etre utilise pour la vérification.",
+      "tooManyAttempts": "Trop de tentatives de vérification",
+      "tooManyAttemptsDescription": "Vous avez atteint le nombre maximum de vérifications pour ce numéro de téléphone.",
+      "sendFailed": "Échec de l'envoi du code SMS",
+      "sendFailedDescription": "Veuillez réessayer plus tard. Si le probleme persiste, contactez le support."
     },
     "phoneCode": {
       "title": "Entrez le <highlight>code.</highlight>",
-      "subtitle": "Nous avons envoye un code de verification a 6 chiffres au {phoneNumber}.",
-      "label": "Code de verification",
+      "subtitle": "Nous avons envoye un code de vérification a 6 chiffres au {phoneNumber}.",
+      "label": "Code de vérification",
       "hint": "Entrez le code que vous avez recu au {phoneNumber}.",
       "resend": "Renvoyer le code",
       "resendTimer": "Renvoyer le code ({seconds}s)",
       "verify": "Verifier le code",
-      "valid": "Code de verification valide",
-      "invalid": "Code de verification invalide. Reessayez.",
-      "verifyFailed": "Echec de la verification du code SMS",
-      "verifyFailedDescription": "Veuillez reessayer plus tard. Si le probleme persiste, contactez le support."
+      "valid": "Code de vérification valide",
+      "invalid": "Code de vérification invalide. Reessayez.",
+      "verifyFailed": "Échec de la vérification du code SMS",
+      "verifyFailedDescription": "Veuillez réessayer plus tard. Si le probleme persiste, contactez le support."
     },
     "lightning": {
       "title": "Scannez pour <highlight>payer.</highlight>",
-      "subtitle": "Scannez le code QR avec votre portefeuille prefere.",
+      "subtitle": "Scannez le code QR avec votre portefeuille préféré.",
       "qrLabel": "Paiement Bitcoin Lightning",
       "payAmount": "Payez ₿ {amount} pour continuer.",
       "payAmountUsd": "Payez ₿ {amount} (${usdAmount}) pour continuer.",
@@ -177,14 +177,14 @@
       "copyInvoice": "Copier la facture",
       "paymentSuccess": "Paiement reussi",
       "paymentExpired": "Paiement expire",
-      "requestFailed": "Echec de la demande de facture Lightning",
-      "requestFailedDescription": "Veuillez reessayer plus tard. Si le probleme persiste, contactez le support.",
+      "requestFailed": "Échec de la demande de facture Lightning",
+      "requestFailedDescription": "Veuillez réessayer plus tard. Si le probleme persiste, contactez le support.",
       "invoiceCopied": "Facture copiee dans le presse-papiers",
-      "copyFailed": "Echec de la copie de la facture"
+      "copyFailed": "Échec de la copie de la facture"
     },
     "inviteCode": {
       "title": "Prouvez que vous <highlight>n'etes pas un robot.</highlight>",
-      "subtitle": "Verification par SMS ou paiement non disponible. Demandez-nous un code d'invitation.",
+      "subtitle": "Vérification par SMS ou paiement non disponible. Demandez-nous un code d'invitation.",
       "label": "Code d'invitation pour le homeserver",
       "hint": "Vous obtenez 1 Go de stockage, utilise pour vos publications, photos, videos et votre profil.",
       "placeholder": "XXXX-XXXX-XXXX",
@@ -201,7 +201,7 @@
       "unavailable": "Service temporairement indisponible"
     },
     "sms": {
-      "title": "Verification par SMS",
+      "title": "Vérification par SMS",
       "free": "Gratuit",
       "lessPrivate": "MOINS PRIVE, MAIS FACILE",
       "storage": "1 Go de stockage",
@@ -217,29 +217,29 @@
     "scan": {
       "titleMobile": "Appuyez pour autoriser.",
       "titleDesktop": "Scannez le code QR.",
-      "subtitle": "Ouvrez Pubky Ring, creez un pubky et scannez le QR.",
-      "generating": "Generation du code QR...",
-      "generatingShort": "Generation...",
+      "subtitle": "Ouvrez Pubky Ring, crééz un pubky et scannez le QR.",
+      "generating": "Génération du code QR...",
+      "generatingShort": "Génération...",
       "authorize": "Autoriser avec Pubky Ring",
       "authorizeSub": "Utilisez Pubky Ring ou tout autre trousseau alimente par Pubky Core.",
       "linkFailed": "Impossible de se connecter a l'application Pubky Ring",
-      "tryAgain": "Veuillez reessayer."
+      "tryAgain": "Veuillez réessayer."
     },
     "signIn": {
       "title": "Connectez-vous a Pubky.",
       "subtitle": "Autorisez avec Pubky Ring pour vous connecter.",
-      "generating": "Generation du code QR...",
-      "generatingShort": "Generation...",
+      "generating": "Génération du code QR...",
+      "generatingShort": "Génération...",
       "authorize": "Autoriser avec Pubky Ring",
       "linkCopied": "Lien copie",
       "linkCopiedDescription": "Lien d'authentification copie dans le presse-papiers.",
       "linkFailed": "Impossible de se connecter a l'application Pubky Ring",
-      "tryAgain": "Veuillez reessayer.",
-      "recoveryHint": "Vous ne pouvez pas vous connecter avec Pubky Ring ? Utilisez la phrase de recuperation ou le fichier chiffre pour restaurer votre compte.",
-      "verifyingAccount": "Verification du compte",
+      "tryAgain": "Veuillez réessayer.",
+      "recoveryHint": "Vous ne pouvez pas vous connecter avec Pubky Ring ? Utilisez la phrase de récupération ou le fichier chiffre pour restaurer votre compte.",
+      "verifyingAccount": "Vérification du compte",
       "loadingData": "Chargement de vos donnees",
       "buildingFeed": "Construction de votre fil",
-      "syncingSettings": "Synchronisation des parametres"
+      "syncingSettings": "Synchronisation des paramètres"
     },
     "pubky": {
       "title": "Votre pubky",
@@ -247,95 +247,95 @@
       "uniqueSubtitle": "Partagez votre pubky avec vos amis pour qu'ils puissent vous suivre.",
       "copy": "Copier dans le presse-papiers",
       "share": "Partager",
-      "generating": "Generation du pubky...",
+      "generating": "Génération du pubky...",
       "myPubky": "Mon Pubky",
       "shareText": "Voici mon Pubky :\n{displayPubky}",
       "shareUnavailable": "Partage indisponible",
-      "shareUnavailableDescription": "Nous avons copie votre pubky pour que vous puissiez le coller dans votre application preferee.",
-      "shareFailed": "Echec du partage",
-      "shareFailedDescription": "Impossible de partager pour le moment. Veuillez reessayer."
+      "shareUnavailableDescription": "Nous avons copie votre pubky pour que vous puissiez le coller dans votre application préférée.",
+      "shareFailed": "Échec du partage",
+      "shareFailedDescription": "Impossible de partager pour le moment. Veuillez réessayer."
     },
     "backupMethod": {
       "title": "Choisir la methode de sauvegarde",
-      "subtitle": "Sauvegardez et stockez en toute securite la graine secrete de votre pubky. Quelle methode de sauvegarde preferez-vous ? Vous pouvez aussi choisir de le faire plus tard.",
-      "recoveryPhrase": "Phrase de recuperation",
+      "subtitle": "Sauvegardez et stockez en toute sécurité la graine secrete de votre pubky. Quelle methode de sauvegarde préférez-vous ? Vous pouvez aussi choisir de le faire plus tard.",
+      "recoveryPhrase": "Phrase de récupération",
       "encryptedFile": "Fichier chiffre"
     },
     "backup": {
       "title": "Sauvegardez votre pubky.",
       "subtitle": "Vous avez besoin d'une sauvegarde pour restaurer l'acces a votre compte plus tard.",
-      "signUpFailed": "Erreur - Echec de l'inscription",
-      "signUpError": "Quelque chose s'est mal passe. Veuillez reessayer.",
+      "signUpFailed": "Erreur - Échec de l'inscription",
+      "signUpError": "Quelque chose s'est mal passe. Veuillez réessayer.",
       "invalidInvite": "Code d'invitation invalide ou expire. Veuillez obtenir ou demander un nouveau code d'invitation."
     },
     "backupPhrase": {
-      "title": "Sauvegarde de la phrase de recuperation",
-      "subtitle": "Utilisez la phrase de recuperation ci-dessous pour recuperer votre compte ulterieurement. Notez ces 12 mots dans le bon ordre et conservez-les dans un endroit sur.",
+      "title": "Sauvegarde de la phrase de récupération",
+      "subtitle": "Utilisez la phrase de récupération ci-dessous pour recuperer votre compte ultérieurement. Notez ces 12 mots dans le bon ordre et conservez-les dans un endroit sur.",
       "writeDown": "Notez ces 12 mots dans le bon ordre et conservez-les dans un endroit sur.",
-      "neverShare": "Ne partagez jamais cette phrase de recuperation avec qui que ce soit.",
-      "reveal": "Reveler la phrase de recuperation",
-      "hide": "Masquer la phrase de recuperation",
-      "confirmTitle": "Confirmer la phrase de recuperation",
+      "neverShare": "Ne partagez jamais cette phrase de récupération avec qui que ce soit.",
+      "reveal": "Reveler la phrase de récupération",
+      "hide": "Masquer la phrase de récupération",
+      "confirmTitle": "Confirmer la phrase de récupération",
       "confirmSubtitle": "Cliquez ou appuyez sur les 12 mots dans le bon ordre ou entrez les mots manuellement.",
       "validate": "Valider",
-      "completeTitle": "Sauvegarde terminee",
-      "completeSubtitle": "Vous pouvez utiliser votre phrase de recuperation sauvegardee pour restaurer votre compte plus tard."
+      "completeTitle": "Sauvegarde terminée",
+      "completeSubtitle": "Vous pouvez utiliser votre phrase de récupération sauvegardee pour restaurer votre compte plus tard."
     },
     "backupEncrypted": {
       "title": "Sauvegarder en fichier chiffre",
-      "subtitle": "Chiffrez votre fichier de recuperation ci-dessous avec un mot de passe securise, telechargez-le et enregistrez-le sur votre ordinateur ou fournisseur cloud.",
+      "subtitle": "Chiffrez votre fichier de récupération ci-dessous avec un mot de passe securise, telechargez-le et enregistrez-le sur votre ordinateur ou fournisseur cloud.",
       "neverShareDesktop": "Ne partagez jamais ce fichier avec qui que ce soit.",
       "neverShareMobile": "Ne partagez jamais ce fichier et ce mot de passe avec qui que ce soit.",
       "password": "MOT DE PASSE",
       "passwordPlaceholder": "Entrez un mot de passe fort",
       "passwordHint": "Nous recommandons d'utiliser 8 caracteres ou plus avec des majuscules, minuscules, chiffres et symboles.",
       "repeatPassword": "REPETER LE MOT DE PASSE",
-      "repeatPasswordPlaceholder": "Repetez votre mot de passe",
+      "repeatPasswordPlaceholder": "Répétez votre mot de passe",
       "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
-      "downloadFile": "Telecharger le fichier",
-      "completeTitle": "Sauvegarde terminee",
+      "downloadFile": "Télécharger le fichier",
+      "completeTitle": "Sauvegarde terminée",
       "completeSubtitle": "Vous pouvez utiliser votre fichier chiffre sauvegarde pour restaurer votre compte plus tard."
     },
     "install": {
       "title": "Installez Pubky Ring.",
-      "subtitle": "Pubky Ring est un trousseau pour vos cles d'identite dans l'ecosysteme Pubky.",
-      "instructions": "Telechargez et installez l'application mobile. Ensuite, passez a l'etape suivante.",
-      "alternative": "Utilisez Pubky Ring ou tout autre trousseau alimente par Pubky Core, ou creez vos cles dans le navigateur (moins securise).",
-      "createInBrowser": "Creer les cles dans le navigateur",
+      "subtitle": "Pubky Ring est un trousseau pour vos cles d'identite dans l'écosystème Pubky.",
+      "instructions": "Telechargez et installez l'application mobile. Ensuite, passez a l'étape suivante.",
+      "alternative": "Utilisez Pubky Ring ou tout autre trousseau alimente par Pubky Core, ou crééz vos cles dans le navigateur (moins securise).",
+      "createInBrowser": "Créér les cles dans le navigateur",
       "continueWithRing": "Continuer avec Pubky Ring"
     },
     "createProfile": {
-      "title": "Creez votre profil.",
+      "title": "Crééz votre profil.",
       "subtitle": "Ajoutez votre nom, bio, liens et avatar."
     }
   },
   "post": {
     "placeholder": {
-      "reply": "Ecrire une reponse...",
+      "reply": "Ecrire une réponse...",
       "post": "Qu'avez-vous en tete ?",
       "repost": "Commentaire optionnel",
-      "edit": "Modifier la publication"
+      "edit": "Modifiér la publication"
     },
     "button": {
       "reply": "Repondre",
       "post": "Publier",
       "repost": "Republier",
-      "edit": "Modifier"
+      "edit": "Modifiér"
     },
     "actions": {
       "title": "Actions de publication",
       "copyPubky": "Copier le pubky",
       "copyLink": "Copier le lien de la publication",
       "copyText": "Copier le texte de la publication",
-      "editPost": "Modifier la publication",
-      "deletePost": "Supprimer la publication",
+      "editPost": "Modifiér la publication",
+      "deletePost": "Supprimér la publication",
       "reportPost": "Signaler la publication",
       "followUser": "Suivre {username}",
       "unfollowUser": "Ne plus suivre {username}",
       "muteUser": "Masquer {username}",
       "unmuteUser": "Afficher {username}"
     },
-    "deleted": "Cette publication a ete supprimee par son auteur.",
+    "deleted": "Cette publication a ete supprimée par son auteur.",
     "dropFiles": "Deposez les fichiers ici",
     "articleTitle": "Titre de l'article",
     "addTag": "ajouter un tag",
@@ -354,7 +354,7 @@
     "tabs": {
       "notifications": "Notifications",
       "posts": "Publications",
-      "replies": "Reponses",
+      "replies": "Réponses",
       "followers": "Abonnes",
       "following": "Abonnements",
       "friends": "Amis",
@@ -369,15 +369,15 @@
     },
     "actions": {
       "title": "Actions du profil",
-      "edit": "Modifier",
+      "edit": "Modifiér",
       "link": "Lien",
-      "loggingOut": "Deconnexion...",
-      "signOut": "Se deconnecter",
-      "unfollowing": "Desabonnement...",
+      "loggingOut": "Déconnexion...",
+      "signOut": "Se déconnectér",
+      "unfollowing": "Désabonnement...",
       "followingProgress": "Abonnement...",
       "followingButton": "Abonne",
       "follow": "S'abonner",
-      "unfollow": "Se desabonner",
+      "unfollow": "Se désabonner",
       "copyPubky": "Copier le pubky de l'utilisateur",
       "copyLink": "Copier le lien du profil",
       "mute": "Masquer {username}",
@@ -401,7 +401,7 @@
         "title": "Vous cherchez des abonnes ?",
         "subtitle": "Quand quelqu'un suit ce compte, son profil apparaitra ici.\nCommencez a publier et a interagir avec d'autres pour augmenter vos abonnes !",
         "alt": "Abonnes - Etat vide",
-        "createPost": "Creer une publication"
+        "createPost": "Créér une publication"
       }
     },
     "sidebar": {
@@ -431,8 +431,8 @@
   },
   "dialogs": {
     "editPost": {
-      "editArticle": "Modifier l'article",
-      "editPost": "Modifier la publication",
+      "editArticle": "Modifiér l'article",
+      "editPost": "Modifiér la publication",
       "description": "Dialogue de {title}"
     },
     "newPost": {
@@ -441,10 +441,10 @@
       "description": "Dialogue de {title}"
     },
     "reply": {
-      "title": "Reponse",
+      "title": "Réponse",
       "hiddenTitle": "Repondre a la publication",
       "button": "Repondre",
-      "description": "Dialogue de reponse"
+      "description": "Dialogue de réponse"
     },
     "repost": {
       "title": "Republication",
@@ -453,50 +453,50 @@
     },
     "signIn": {
       "title": "Rejoindre Pubky",
-      "description": "Connectez-vous ou creez un compte pour interagir avec les publications et les profils.",
+      "description": "Connectez-vous ou crééz un compte pour interagir avec les publications et les profils.",
       "newHere": "Nouveau ici ?",
-      "newHereDescription": "Creez votre compte et commencez a explorer Pubky.",
+      "newHereDescription": "Crééz votre compte et commencez a explorer Pubky.",
       "joinButton": "Rejoindre Pubky",
-      "alreadyHaveAccount": "Vous avez deja un compte ?",
+      "alreadyHaveAccount": "Vous avez déjà un compte ?",
       "alreadyHaveAccountDescription": "Connectez-vous pour interagir avec les publications et les profils.",
       "signInButton": "Se connecter"
     },
     "backupExport": {
-      "importPhrase": "Importer la phrase de recuperation",
+      "importPhrase": "Importer la phrase de récupération",
       "pubkyRingExport": "Export Pubky Ring",
       "steps": {
         "step1": "1. Ouvrez Pubky Ring, appuyez sur 'Ajouter un pubky'",
         "step2": "2. Choisissez l'option 'Importer un pubky'",
         "step3": "3. Appuyez sur 'Scanner le QR pour importer'",
-        "step4": "4. Scannez ce code QR pour importer votre phrase de recuperation",
+        "step4": "4. Scannez ce code QR pour importer votre phrase de récupération",
         "step2Alt": "2. Choisissez l'option 'Importer un pubky'",
         "step3Alt": "3. Scannez ce QR pour importer"
       },
       "tapDescription": "Appuyez sur le bouton ci-dessous pour exporter votre pubky et l'importer dans Pubky Ring pour une experience de connexion plus sure et plus facile.",
-      "tapDescriptionPhrase": "Appuyez sur le bouton ci-dessous pour importer votre phrase de recuperation dans Pubky Ring pour une experience de connexion plus sure et plus facile.",
+      "tapDescriptionPhrase": "Appuyez sur le bouton ci-dessous pour importer votre phrase de récupération dans Pubky Ring pour une experience de connexion plus sure et plus facile.",
       "importButton": "Importer dans Pubky Ring"
     },
     "backup": {
       "title": "Sauvegarde",
       "dialogTitle": "Sauvegarder votre pubky",
-      "subtitle": "Sauvegardez et stockez en toute securite la graine secrete de votre pubky. Quelle methode de sauvegarde preferez-vous ? Vous pouvez choisir plusieurs methodes de sauvegarde si vous le souhaitez.",
-      "recoveryPhrase": "Phrase de recuperation",
+      "subtitle": "Sauvegardez et stockez en toute sécurité la graine secrete de votre pubky. Quelle methode de sauvegarde préférez-vous ? Vous pouvez choisir plusieurs methodes de sauvegarde si vous le souhaitez.",
+      "recoveryPhrase": "Phrase de récupération",
       "note": "Note",
-      "encryptedFile": "Telecharger le fichier chiffre",
+      "encryptedFile": "Télécharger le fichier chiffre",
       "folder": "Dossier",
       "exportRing": "Exporter vers Pubky Ring",
       "keys": "Cles"
     },
     "confirmBackup": {
       "title": "Tout est sauvegarde ?",
-      "subtitle": "Veuillez confirmer que vous avez termine vos methodes de sauvegarde preferees. Pour votre securite, la graine secrete sera supprimee de votre navigateur. Vous pouvez restaurer l'acces a votre compte en utilisant votre phrase de recuperation ou votre fichier chiffre.",
-      "warning": "Apres confirmation, votre graine sera supprimee du navigateur (!)",
+      "subtitle": "Veuillez confirmer que vous avez terminé vos methodes de sauvegarde préférées. Pour votre sécurité, la graine secrete sera supprimée de votre navigateur. Vous pouvez restaurer l'acces a votre compte en utilisant votre phrase de récupération ou votre fichier chiffre.",
+      "warning": "Apres confirmation, votre graine sera supprimée du navigateur (!)",
       "backupMethods": "Methodes de sauvegarde",
-      "confirmButton": "Confirmer (supprimer la graine)"
+      "confirmButton": "Confirmer (supprimér la graine)"
     },
     "deleteAccount": {
-      "title": "Supprimer le compte",
-      "description": "Etes-vous sur ? Les informations de votre compte ne peuvent pas etre recuperees."
+      "title": "Supprimér le compte",
+      "description": "Êtes-vous sur ? Les informations de votre compte ne peuvent pas etre recuperees."
     },
     "confirmDiscard": {
       "title": "Voulez-vous fermer ?",
@@ -504,9 +504,9 @@
       "discard": "Abandonner"
     },
     "checkLink": {
-      "title": "Verifiez ce lien",
+      "title": "Vérifiez ce lien",
       "description": "Le lien vous amene vers un autre site :",
-      "confirmQuestion": "Etes-vous sur de vouloir continuer ?",
+      "confirmQuestion": "Êtes-vous sur de vouloir continuer ?",
       "dontShowAgain": "Ne plus afficher"
     },
     "addLink": {
@@ -537,8 +537,8 @@
       "hotTags": "Tags tendances"
     },
     "recent": {
-      "title": "Recherches recentes",
-      "clearAll": "Effacer toutes les recherches recentes"
+      "title": "Recherches récentes",
+      "clearAll": "Effacer toutes les recherches récentes"
     },
     "results": "Résultats pour : {tags}",
     "searchAsTag": "Rechercher \"{query}\" comme tag",
@@ -561,7 +561,7 @@
     "defaultName": "Votre nom",
     "success": {
       "title": "Commentaires recus",
-      "description": "Merci de nous aider a ameliorer Pubky."
+      "description": "Merci de nous aider a améliorer Pubky."
     }
   },
   "report": {
@@ -589,7 +589,7 @@
       "childAbuse": "Abus sexuel ou exploitation d'enfants",
       "terrorism": "Promotion du terrorisme",
       "violence": "Violence graphique ou criminelle",
-      "illegalSales": "Ventes illegales ou criminelles",
+      "illegalSales": "Ventes illégales ou criminelles",
       "sexualContent": "Contenu sexuel non consenti ou criminel",
       "copyright": "Violation du droit d'auteur"
     }
@@ -604,7 +604,7 @@
       "repliedToPost": "a repondu a votre publication",
       "repostedPost": "a republie votre publication",
       "mentionedYou": "vous a mentionne dans une publication",
-      "deletedPost": "a supprime une publication",
+      "deletedPost": "a supprimé une publication",
       "editedPost": "a modifié une publication",
       "fallback": "Nouvelle notification"
     },
@@ -614,10 +614,10 @@
       "taggedPost": "Quelqu'un a tagge votre publication",
       "taggedProfile": "Quelqu'un a tagge votre profil",
       "mentionedProfile": "Quelqu'un a mentionne votre profil",
-      "newReply": "Nouvelle reponse a votre publication",
+      "newReply": "Nouvelle réponse a votre publication",
       "newRepost": "Nouvelle republication de votre publication",
-      "deletedPost": "Quelqu'un a supprime la publication avec laquelle vous avez interagi",
-      "editedPost": "Quelqu'un a modifie la publication avec laquelle vous avez interagi"
+      "deletedPost": "Quelqu'un a supprimé la publication avec laquelle vous avez interagi",
+      "editedPost": "Quelqu'un a modifié la publication avec laquelle vous avez interagi"
     },
     "empty": {
       "alt": "Notifications - Etat vide",
@@ -627,7 +627,7 @@
   },
   "forms": {
     "profile": {
-      "title": "Modifiez votre",
+      "title": "Modifiéz votre",
       "titleHighlight": "profil.",
       "subtitle": "Mettez a jour votre nom, bio, liens et avatar.",
       "name": "NOM*",
@@ -642,11 +642,11 @@
       "currentAvatar": "Avatar actuel",
       "chooseFile": "Choisir un fichier",
       "saveProfile": "Enregistrer le profil",
-      "finish": "Terminer",
+      "finish": "Terminér",
       "saving": "Enregistrement...",
-      "uploadingAvatar": "Telechargement de l'avatar...",
+      "uploadingAvatar": "Téléchargement de l'avatar...",
       "savingProfile": "Enregistrement du profil...",
-      "tryAgain": "Reessayer !",
+      "tryAgain": "Réessayer !",
       "loading": "Chargement du profil...",
       "defaultLinks": {
         "website": "SITE WEB",
@@ -681,11 +681,11 @@
       "lastNamePlaceholder": "Nakamoto",
       "email": "Email",
       "emailPlaceholder": "email@exemple.com",
-      "phone": "Numero de telephone",
+      "phone": "Numéro de téléphone",
       "phonePlaceholder": "000-000-0000",
       "address": "Adresse",
       "street": "Adresse de rue",
-      "streetPlaceholder": "Numero et nom de rue",
+      "streetPlaceholder": "Numéro et nom de rue",
       "country": "Pays",
       "countryPlaceholder": "France",
       "city": "Ville",
@@ -703,7 +703,7 @@
     "validation": {
       "required": "Ce champ est obligatoire",
       "invalidEmail": "Veuillez entrer une adresse email valide",
-      "invalidPhone": "Veuillez entrer un numero de telephone valide",
+      "invalidPhone": "Veuillez entrer un numéro de téléphone valide",
       "invalidUrl": "URL invalide",
       "ownerRequired": "Le nom du titulaire des droits est obligatoire",
       "originalUrlsRequired": "Les URLs du contenu original sont obligatoires",
@@ -712,7 +712,7 @@
       "firstNameRequired": "Le prenom est obligatoire",
       "lastNameRequired": "Le nom de famille est obligatoire",
       "emailRequired": "L'email est obligatoire",
-      "phoneRequired": "Le numero de telephone est obligatoire",
+      "phoneRequired": "Le numéro de téléphone est obligatoire",
       "streetRequired": "L'adresse de rue est obligatoire",
       "countryRequired": "Le pays est obligatoire",
       "cityRequired": "La ville est obligatoire",
@@ -738,36 +738,36 @@
     "error": "Erreur",
     "errors": "Erreurs",
     "post": {
-      "replyPosted": "Reponse publiee",
-      "replyPostedDesc": "Votre reponse a ete publiee avec succes.",
-      "replyFailed": "Echec de la publication de la reponse. Veuillez reessayer.",
-      "postCreated": "Publication creee",
-      "postCreatedDesc": "Votre publication a ete creee avec succes.",
-      "postFailed": "Echec de la creation de la publication. Veuillez reessayer.",
+      "replyPosted": "Réponse publiee",
+      "replyPostedDesc": "Votre réponse a ete publiee avec succes.",
+      "replyFailed": "Échec de la publication de la réponse. Veuillez réessayer.",
+      "postCreated": "Publication créée",
+      "postCreatedDesc": "Votre publication a ete créée avec succes.",
+      "postFailed": "Échec de la creation de la publication. Veuillez réessayer.",
       "repostSuccess": "Republication reussie",
-      "repostSuccessDesc": "Votre republication a ete creee avec succes.",
-      "repostFailed": "Echec de la republication. Veuillez reessayer.",
-      "postEdited": "Publication modifiee",
-      "postEditedDesc": "Votre publication a ete modifiee avec succes.",
-      "editFailed": "Echec de la modification de la publication. Veuillez reessayer.",
-      "postDeleted": "Publication supprimee",
-      "postDeletedDesc": "Votre publication a ete supprimee",
-      "deleteFailed": "Echec de la suppression de la publication. Veuillez reessayer.",
-      "invalidPostId": "ID de publication invalide. Veuillez reessayer.",
-      "attachmentsCleared": "Pieces jointes supprimees",
+      "repostSuccessDesc": "Votre republication a ete créée avec succes.",
+      "repostFailed": "Échec de la republication. Veuillez réessayer.",
+      "postEdited": "Publication modifiée",
+      "postEditedDesc": "Votre publication a ete modifiée avec succes.",
+      "editFailed": "Échec de la modification de la publication. Veuillez réessayer.",
+      "postDeleted": "Publication supprimée",
+      "postDeletedDesc": "Votre publication a ete supprimée",
+      "deleteFailed": "Échec de la suppression de la publication. Veuillez réessayer.",
+      "invalidPostId": "ID de publication invalide. Veuillez réessayer.",
+      "attachmentsCleared": "Pieces jointes supprimées",
       "attachmentsClearedDesc": "Les articles ne supportent qu'une seule image de couverture.",
-      "failedToLoadPosts": "Echec du chargement des nouvelles publications",
-      "failedToLoadPostsDesc": "Impossible d'afficher les nouvelles publications. Veuillez reessayer.",
-      "parseError": "Echec de l'analyse du contenu de l'article",
-      "coverImageError": "Echec du chargement de l'image de couverture de l'article"
+      "failedToLoadPosts": "Échec du chargement des nouvelles publications",
+      "failedToLoadPostsDesc": "Impossible d'afficher les nouvelles publications. Veuillez réessayer.",
+      "parseError": "Échec de l'analyse du contenu de l'article",
+      "coverImageError": "Échec du chargement de l'image de couverture de l'article"
     },
     "bookmark": {
       "added": "Favori ajoute",
       "addedDesc": "Publication enregistree dans vos favoris",
       "removed": "Favori retire",
       "removedDesc": "Publication retiree de vos favoris",
-      "addFailed": "Echec de l'ajout du favori",
-      "removeFailed": "Echec du retrait du favori",
+      "addFailed": "Échec de l'ajout du favori",
+      "removeFailed": "Échec du retrait du favori",
       "loginRequired": "Vous devez etre connecte pour ajouter des favoris"
     },
     "copy": {
@@ -775,66 +775,66 @@
       "linkCopied": "Lien copie dans le presse-papiers",
       "textCopied": "Texte copie dans le presse-papiers",
       "profileLinkCopied": "Lien du profil copie dans le presse-papiers",
-      "copyFailed": "Echec de la copie",
+      "copyFailed": "Échec de la copie",
       "copyFailedDesc": "Impossible de copier dans le presse-papiers",
       "ok": "OK"
     },
     "follow": {
-      "failed": "Echec de la mise a jour du statut de suivi"
+      "failed": "Échec de la mise a jour du statut de suivi"
     },
     "mute": {
       "muted": "Utilisateur masque",
       "unmuted": "Utilisateur affiche",
       "mutedDesc": "{username} a ete masque.",
       "unmutedDesc": "{username} a ete affiche.",
-      "failed": "Echec de la mise a jour du statut de masquage"
+      "failed": "Échec de la mise a jour du statut de masquage"
     },
     "profile": {
       "updated": "Profil mis a jour",
       "updatedDesc": "Votre profil a ete mis a jour avec succes.",
       "sessionExpired": "Session expiree",
-      "sessionExpiredDesc": "Veuillez vous deconnecter et vous reconnecter pour continuer.",
-      "saveFailed": "Echec de l'enregistrement du profil",
-      "saveFailedDesc": "Veuillez reessayer.",
-      "fetchFailed": "Veuillez reessayer.",
-      "fetchFailedDesc": "Echec de la recuperation des nouvelles donnees utilisateur. L'indexation est peut-etre en cours...",
-      "updateFailed": "Echec de la mise a jour du profil."
+      "sessionExpiredDesc": "Veuillez vous déconnectér et vous reconnecter pour continuer.",
+      "saveFailed": "Échec de l'enregistrement du profil",
+      "saveFailedDesc": "Veuillez réessayer.",
+      "fetchFailed": "Veuillez réessayer.",
+      "fetchFailedDesc": "Échec de la récupération des nouvelles donnees utilisateur. L'indexation est peut-etre en cours...",
+      "updateFailed": "Échec de la mise a jour du profil."
     },
     "report": {
-      "userNotLoaded": "Profil utilisateur non charge. Veuillez reessayer.",
-      "submitFailed": "Echec de l'envoi du signalement",
-      "submitFailedDesc": "Echec de l'envoi du signalement. Veuillez reessayer."
+      "userNotLoaded": "Profil utilisateur non charge. Veuillez réessayer.",
+      "submitFailed": "Échec de l'envoi du signalement",
+      "submitFailedDesc": "Échec de l'envoi du signalement. Veuillez réessayer."
     },
     "feedback": {
-      "userNotLoaded": "Profil utilisateur non charge. Veuillez reessayer.",
-      "submitFailed": "Echec de l'envoi des commentaires",
-      "submitFailedDesc": "Echec de l'envoi des commentaires. Veuillez reessayer."
+      "userNotLoaded": "Profil utilisateur non charge. Veuillez réessayer.",
+      "submitFailed": "Échec de l'envoi des commentaires",
+      "submitFailedDesc": "Échec de l'envoi des commentaires. Veuillez réessayer."
     },
     "copyright": {
       "success": "Demande envoyee avec succes",
       "error": "Erreur lors de l'envoi de la demande",
-      "submitFailed": "Echec de l'envoi de la demande"
+      "submitFailed": "Échec de l'envoi de la demande"
     },
     "tags": {
-      "loadFailed": "Echec du chargement de plus de tags",
-      "loadFailedDesc": "Impossible de charger plus de tags. Veuillez reessayer.",
+      "loadFailed": "Échec du chargement de plus de tags",
+      "loadFailedDesc": "Impossible de charger plus de tags. Veuillez réessayer.",
       "labelEmpty": "Le libelle du tag ne peut pas etre vide",
       "postIdRequired": "L'ID de publication est obligatoire",
       "userIdRequired": "L'ID utilisateur est obligatoire",
       "loginRequired": "Vous devez etre connecte pour ajouter des tags",
-      "alreadyAdded": "Vous avez deja ajoute ce tag",
-      "addFailed": "Echec de l'ajout du tag",
-      "addFailedDesc": "Impossible d'ajouter \"{label}\". Veuillez reessayer.",
-      "removeFailed": "Echec du retrait du tag",
-      "removeFailedDesc": "Impossible de retirer \"{label}\". Veuillez reessayer."
+      "alreadyAdded": "Vous avez déjà ajoute ce tag",
+      "addFailed": "Échec de l'ajout du tag",
+      "addFailedDesc": "Impossible d'ajouter \"{label}\". Veuillez réessayer.",
+      "removeFailed": "Échec du retrait du tag",
+      "removeFailedDesc": "Impossible de retirer \"{label}\". Veuillez réessayer."
     },
     "auth": {
-      "signInFailed": "Echec de la connexion. Veuillez reessayer.",
-      "signInFailedDesc": "Impossible de terminer l'autorisation avec Pubky Ring. Veuillez reessayer.",
+      "signInFailed": "Échec de la connexion. Veuillez réessayer.",
+      "signInFailedDesc": "Impossible de terminér l'autorisation avec Pubky Ring. Veuillez réessayer.",
       "authNotCompleted": "L'autorisation n'a pas ete completee",
-      "authNotCompletedDesc": "Le signataire n'a pas complete l'autorisation. Veuillez reessayer.",
-      "qrFailed": "Echec de la generation du code QR",
-      "qrFailedDesc": "Impossible de generer le code QR de connexion. Veuillez rafraichir et reessayer."
+      "authNotCompletedDesc": "Le signataire n'a pas complete l'autorisation. Veuillez réessayer.",
+      "qrFailed": "Échec de la génération du code QR",
+      "qrFailedDesc": "Impossible de générér le code QR de connexion. Veuillez rafraichir et réessayer."
     },
     "file": {
       "maxFiles": "Maximum {max} fichiers autorises",
@@ -851,9 +851,9 @@
     "noNotifications": "Aucune notification"
   },
   "errors": {
-    "signOutFailed": "Echec de la deconnexion. Veuillez reessayer.",
+    "signOutFailed": "Échec de la déconnexion. Veuillez réessayer.",
     "generic": "Quelque chose s'est mal passe",
-    "network": "Erreur reseau. Veuillez reessayer.",
+    "network": "Erreur réseau. Veuillez réessayer.",
     "notFound": "Page non trouvee",
     "couldNotFind": "Impossible de trouver la ressource demandee"
   },
@@ -867,14 +867,14 @@
     "prompts": [
       "Qu'en pensez-vous ?",
       "Quel est votre avis ?",
-      "Etes-vous d'accord ?",
+      "Êtes-vous d'accord ?",
       "D'autres idees ?",
       "Comment repondriez-vous ?"
     ]
   },
   "userList": {
     "follow": "S'abonner",
-    "unfollow": "Se desabonner",
+    "unfollow": "Se désabonner",
     "following": "Abonne",
     "me": "Moi",
     "tags": "TAGS",
@@ -921,13 +921,13 @@
     "activeUsers": "Utilisateurs actifs",
     "trendingPosts": "Publications tendances",
     "postsCount": "{count} publications",
-    "failedToLoadUsers": "Echec du chargement des utilisateurs",
+    "failedToLoadUsers": "Échec du chargement des utilisateurs",
     "noUsersToShow": "Aucun utilisateur a afficher"
   },
   "privacy": {
     "showConfirmation": "Afficher la confirmation avant la redirection",
     "blurCensored": "Flouter les publications ou photos de profil censurees",
-    "signOutInactive": "Me deconnecter apres 5 minutes d'inactivite",
+    "signOutInactive": "Me déconnectér apres 5 minutes d'inactivite",
     "requirePin": "Exiger le PIN apres 5 minutes d'inactivite",
     "hideWhoToFollow": "Masquer votre profil dans 'Qui suivre'",
     "hideActiveFriends": "Masquer votre profil dans 'Amis actifs'",
@@ -957,7 +957,7 @@
       "moreFaq": "Plus de FAQ",
       "questions": {
         "updateProfile": "Comment puis-je mettre a jour les informations de mon profil ?",
-        "deletePost": "Comment puis-je supprimer ma publication ?",
+        "deletePost": "Comment puis-je supprimér ma publication ?",
         "muteSomeone": "Comment masquer quelqu'un ?",
         "restoreAccount": "Comment puis-je restaurer mon compte ?",
         "pubkyDifferent": "En quoi Pubky est-il different des autres plateformes sociales ?"
@@ -975,41 +975,41 @@
     "userGuideDescription": "Le guide de l'utilisateur Pubky vous aidera a naviguer dans l'application, a utiliser ses fonctionnalites cles et a tirer le meilleur parti de votre experience Pubky.",
     "userGuideButton": "Guide de l'utilisateur",
     "support": "Support",
-    "supportDescription": "Vous ne trouvez pas la reponse que vous cherchez ? Le support Pubky vous aidera en un rien de temps.",
+    "supportDescription": "Vous ne trouvez pas la réponse que vous cherchez ? Le support Pubky vous aidera en un rien de temps.",
     "supportButton": "Support (Telegram)",
     "sections": {
       "onboarding": "1. Premiers pas et integration",
-      "backup": "2. Sauvegardes et recuperation de compte",
+      "backup": "2. Sauvegardes et récupération de compte",
       "profile": "3. Profil et fonctionnalites sociales",
       "pubky": "4. Comment fonctionne l'application Pubky"
     },
     "questions": {
       "q1": "Pourquoi Pubky necessite-t-il des codes d'invitation ?",
-      "a1": "Pubky utilise des codes d'invitation comme mesure temporaire pour prevenir le spam et la surcharge du serveur. Les utilisateurs ont besoin d'un code d'invitation pour creer un utilisateur sur notre Homeserver. Nous ne creons pas un utilisateur pour l'application Pubky, mais sur notre Homeserver. A mesure que l'infrastructure s'ameliore et que davantage de homeservers sont mis en ligne, les codes d'invitation pourraient ne plus etre necessaires.",
+      "a1": "Pubky utilise des codes d'invitation comme mesure temporaire pour prevenir le spam et la surcharge du serveur. Les utilisateurs ont besoin d'un code d'invitation pour créér un utilisateur sur notre Homeserver. Nous ne creons pas un utilisateur pour l'application Pubky, mais sur notre Homeserver. A mesure que l'infrastructure s'ameliore et que davantage de homeservers sont mis en ligne, les codes d'invitation pourraient ne plus etre necessaires.",
       "q2": "Comment utiliser Pubky Ring avec l'application web ?",
-      "a2": "Tout d'abord, creez votre paire de cles dans l'application Pubky Ring. Ensuite, visitez l'application web Pubky et connectez-vous avec la meme paire de cles. Les applications sont connectees via votre identite cryptographique.",
+      "a2": "Tout d'abord, crééz votre paire de cles dans l'application Pubky Ring. Ensuite, visitez l'application web Pubky et connectez-vous avec la meme paire de cles. Les applications sont connectees via votre identite cryptographique.",
       "q3": "Pourquoi la connexion echoue-t-elle parfois lors de l'utilisation de la PWA sur Android ?",
-      "a3": "Certains navigateurs axes sur la securite et la confidentialite, comme Vanadium ou Tor, desactivent par defaut la compilation Just-In-Time (JIT) pour JavaScript, ce qui empeche l'application Pubky de fonctionner correctement.\n\nPour l'activer, allez dans : Parametres > Parametres du site > JavaScript JIT > Autorise.",
+      "a3": "Certains navigateurs axes sur la sécurité et la confidentialite, comme Vanadium ou Tor, desactivent par defaut la compilation Just-In-Time (JIT) pour JavaScript, ce qui empeche l'application Pubky de fonctionner correctement.\n\nPour l'activer, allez dans : Paramètres > Paramètres du site > JavaScript JIT > Autorise.",
       "q4": "Comment puis-je restaurer mon compte ?",
-      "a4": "Lors de votre inscription, vous avez ete invite a sauvegarder votre identite en utilisant l'une des options suivantes :\n\n- Fichier de recuperation (.pkarr)\n- Phrase de recuperation (mnemonique)\n- Code QR\n\nPour restaurer avec un fichier .pkarr :\n\n1. Selectionnez le fichier que vous avez enregistre.\n2. Entrez votre mot de passe.\n3. Cliquez sur \"Connexion\".",
+      "a4": "Lors de votre inscription, vous avez ete invite a sauvegarder votre identite en utilisant l'une des options suivantes :\n\n- Fichier de récupération (.pkarr)\n- Phrase de récupération (mnemonique)\n- Code QR\n\nPour restaurer avec un fichier .pkarr :\n\n1. Selectionnez le fichier que vous avez enregistre.\n2. Entrez votre mot de passe.\n3. Cliquez sur \"Connexion\".",
       "q5": "Puis-je restaurer mon compte Pubky sur un autre appareil ?",
-      "a5": "Oui, si vous avez votre fichier .pkarr ou votre phrase de recuperation. (Le support de la phrase de recuperation sera ajoute dans les futures versions de Pubky Ring.)",
-      "q6": "Puis-je convertir une phrase de recuperation en fichier .pkarr plus tard ?",
+      "a5": "Oui, si vous avez votre fichier .pkarr ou votre phrase de récupération. (Le support de la phrase de récupération sera ajoute dans les futures versions de Pubky Ring.)",
+      "q6": "Puis-je convertir une phrase de récupération en fichier .pkarr plus tard ?",
       "a6": "Pas encore. Cette fonctionnalite est prevue pour une future mise a jour.",
       "q7": "J'ai sauvegarde mon compte mais je ne peux pas acceder au fichier. Que s'est-il passe ?",
       "a7": "Certains systemes d'exploitation peuvent renommer le fichier .pkarr ou le mal etiqueter. Essayez de renommer l'extension du fichier en .pkarr et de le reimporter.",
       "q8": "J'ai telecharge un fichier .txt au lieu d'une sauvegarde .pkarr. Que dois-je faire ?",
-      "a8": "Cela se produit si vous avez choisi l'option de sauvegarde mnemonique (phrase de recuperation). Pubky Ring ne prend pas encore en charge l'importation de phrase. Attendez les mises a jour futures ou recreez votre compte avec une sauvegarde .pkarr.",
-      "q9": "J'ai rate le telechargement du fichier de recuperation. Puis-je faire une nouvelle sauvegarde ?",
-      "a9": "Actuellement, les sauvegardes ne peuvent etre creees qu'une seule fois via l'application web. Cela pourrait changer dans les futures mises a jour.",
+      "a8": "Cela se produit si vous avez choisi l'option de sauvegarde mnemonique (phrase de récupération). Pubky Ring ne prend pas encore en charge l'importation de phrase. Attendez les mises a jour futures ou recrééz votre compte avec une sauvegarde .pkarr.",
+      "q9": "J'ai rate le téléchargement du fichier de récupération. Puis-je faire une nouvelle sauvegarde ?",
+      "a9": "Actuellement, les sauvegardes ne peuvent etre créées qu'une seule fois via l'application web. Cela pourrait changer dans les futures mises a jour.",
       "q10": "Comment puis-je mettre a jour les informations de mon profil ?",
-      "a10": "Cliquez sur votre avatar (coin superieur droit), puis cliquez sur \"Modifier\" pour mettre a jour les informations de votre profil.",
-      "q11": "Comment puis-je supprimer ma publication ?",
-      "a11": "Survolez les trois points sur la publication que vous souhaitez supprimer et selectionnez \"Supprimer la publication\".",
+      "a10": "Cliquez sur votre avatar (coin superieur droit), puis cliquez sur \"Modifiér\" pour mettre a jour les informations de votre profil.",
+      "q11": "Comment puis-je supprimér ma publication ?",
+      "a11": "Survolez les trois points sur la publication que vous souhaitez supprimér et selectionnez \"Supprimér la publication\".",
       "q12": "Comment masquer quelqu'un ?",
       "a12": "Allez sur son profil, cliquez sur les trois points et choisissez \"Masquer l'utilisateur\".",
       "q13": "En quoi Pubky est-il different des autres plateformes de medias sociaux ?",
-      "a13": "Pubky est concu pour une interaction sociale souveraine et decentralisee. Principales differences :\n\n- Vous etes l'algorithme : personnalisez ce que vous voyez avec des tags semantiques et de la curation.\n- Pas besoin d'email ou de telephone : votre identite est votre cle publique.\n- Controle total de votre graphe social via le tagging et les modeles de confiance.\n- PWA base sur navigateur qui respecte la vie privee.",
+      "a13": "Pubky est concu pour une interaction sociale souveraine et decentralisee. Principales differences :\n\n- Vous etes l'algorithme : personnalisez ce que vous voyez avec des tags semantiques et de la curation.\n- Pas besoin d'email ou de téléphone : votre identite est votre cle publique.\n- Controle total de votre graphe social via le tagging et les modeles de confiance.\n- PWA base sur navigateur qui respecte la vie privee.",
       "q14": "En quoi Pubky differe-t-il de Nostr ?",
       "a14": "Pubky utilise des cles Ed25519 pour la compatibilite et evite les relais centralises. Au lieu de cela, il utilise une Table de Hachage Distribuee (DHT) pour la recherche decentralisee et la resolution d'identite."
     }
