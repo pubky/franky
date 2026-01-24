@@ -19,7 +19,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
     >
       <div
         class="flex items-center gap-2"
-        data-cy="profile-filter-item-custom"
+        data-cy="profile-filter-item-notifications"
         data-testid="container"
       >
         <span>
@@ -28,12 +28,12 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
         <span
           class=""
         >
-          Custom
+          Notifications
         </span>
       </div>
       <span
         class="text-base font-medium text-foreground"
-        data-cy="profile-filter-item-custom-count"
+        data-cy="profile-filter-item-notifications-count"
         data-testid="typography"
       >
         10

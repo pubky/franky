@@ -60,9 +60,13 @@ exports[`FollowersEmpty - Snapshots > matches snapshot with default props 1`] = 
       class="text-center text-base leading-6 font-medium text-secondary-foreground"
       data-testid="typography"
     >
-      When someone follows this account, their profile will appear here.
-      <br />
-      Start posting and engaging with others to grow your followers!
+      <span>
+        When someone follows this account, their profile will appear here.
+        <br />
+      </span>
+      <span>
+        Start posting and engaging with others to grow your followers!
+      </span>
     </p>
   </div>
   <button

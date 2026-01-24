@@ -36,7 +36,6 @@ exports[`PostInputTags - Snapshots > matches snapshot with input open 1`] = `
     >
       <input
         data-testid="tag-input"
-        placeholder="add tag"
         value=""
       />
       <button

@@ -24,11 +24,19 @@ describe('ProfilePageFilterBar', () => {
         stats={mockStats}
       />,
     );
-    const defaultItems = getDefaultItems(mockStats);
-    defaultItems.forEach((item) => {
-      expect(screen.getByText(item.label)).toBeInTheDocument();
-      expect(screen.getByText((item.count ?? 0).toString())).toBeInTheDocument();
-    });
+    // Check that filter items are rendered with their translated labels
+    // The component uses t(item.labelKey) to translate labels
+    expect(screen.getByText('Notifications')).toBeInTheDocument();
+    expect(screen.getByText('Posts')).toBeInTheDocument();
+    expect(screen.getByText('Replies')).toBeInTheDocument();
+    expect(screen.getByText('Followers')).toBeInTheDocument();
+    expect(screen.getByText('Following')).toBeInTheDocument();
+    expect(screen.getByText('Friends')).toBeInTheDocument();
+    expect(screen.getByText('Tagged')).toBeInTheDocument();
+
+    // Check that counts are rendered
+    expect(screen.getByText('2')).toBeInTheDocument(); // notifications
+    expect(screen.getByText('4')).toBeInTheDocument(); // posts
   });
 
   it('has correct structure with sticky positioning', () => {
@@ -117,7 +125,12 @@ describe('ProfilePageFilterBar', () => {
 
   it('renders with custom items', () => {
     const customItems = [
-      { icon: () => <span>Icon</span>, label: 'Custom', count: 10, pageType: PROFILE_PAGE_TYPES.NOTIFICATIONS },
+      {
+        icon: () => <span>Icon</span>,
+        labelKey: 'notifications',
+        count: 10,
+        pageType: PROFILE_PAGE_TYPES.NOTIFICATIONS,
+      },
     ];
     render(
       <ProfilePageFilterBar
@@ -126,7 +139,8 @@ describe('ProfilePageFilterBar', () => {
         onPageChangeAction={() => {}}
       />,
     );
-    expect(screen.getByText('Custom')).toBeInTheDocument();
+    // labelKey 'notifications' translates to 'Notifications' in en.json profile.tabs namespace
+    expect(screen.getByText('Notifications')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
   });
 
@@ -134,7 +148,7 @@ describe('ProfilePageFilterBar', () => {
     const customItems = [
       {
         icon: () => <span>Icon</span>,
-        label: 'Loading Item',
+        labelKey: 'posts',
         count: undefined,
         pageType: PROFILE_PAGE_TYPES.NOTIFICATIONS,
       },
@@ -146,7 +160,8 @@ describe('ProfilePageFilterBar', () => {
         onPageChangeAction={() => {}}
       />,
     );
-    expect(screen.getByText('Loading Item')).toBeInTheDocument();
+    // labelKey 'posts' translates to 'Posts' in en.json profile.tabs namespace
+    expect(screen.getByText('Posts')).toBeInTheDocument();
     const spinners = screen.getAllByTestId('spinner');
     expect(spinners.length).toBe(1);
   });
@@ -217,7 +232,12 @@ describe('ProfilePageFilterBar - Snapshots', () => {
 
   it('matches snapshot with custom items', () => {
     const customItems = [
-      { icon: () => <span>Icon</span>, label: 'Custom', count: 10, pageType: PROFILE_PAGE_TYPES.NOTIFICATIONS },
+      {
+        icon: () => <span>Icon</span>,
+        labelKey: 'notifications',
+        count: 10,
+        pageType: PROFILE_PAGE_TYPES.NOTIFICATIONS,
+      },
     ];
     const { container } = render(
       <ProfilePageFilterBar

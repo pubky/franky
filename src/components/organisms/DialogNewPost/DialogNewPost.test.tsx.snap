@@ -37,8 +37,7 @@ exports[`DialogNewPost - Snapshots > matches snapshot with default props 1`] = `
         <p
           data-testid="dialog-description"
         >
-          New Post
-           dialog
+          New Post dialog
         </p>
       </div>
       <div
@@ -114,8 +113,7 @@ exports[`DialogNewPost - Snapshots > matches snapshot with open prop 1`] = `
         <p
           data-testid="dialog-description"
         >
-          New Post
-           dialog
+          New Post dialog
         </p>
       </div>
       <div

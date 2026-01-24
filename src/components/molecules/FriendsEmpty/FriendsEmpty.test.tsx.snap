@@ -63,9 +63,13 @@ exports[`FriendsEmpty - Snapshots > matches snapshot with default props 1`] = `
       class="text-center text-base leading-6 font-medium text-secondary-foreground"
       data-testid="typography"
     >
-      Follow someone, and if they follow you back, you'll become friends!
-      <br />
-      Start following Pubky users, you never know who might follow you back!
+      <span>
+        Follow someone, and if they follow you back, you'll become friends!
+        <br />
+      </span>
+      <span>
+        Start following Pubky users, you never know who might follow you back!
+      </span>
     </p>
   </div>
   <div

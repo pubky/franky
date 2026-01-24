@@ -69,7 +69,7 @@ exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
           class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          Tags
+          TAGS
         </p>
         <p
           class="font-bold"
@@ -86,7 +86,7 @@ exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
           class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          Posts
+          POSTS
         </p>
         <p
           class="font-bold"
@@ -249,7 +249,7 @@ exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
           class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          Tags
+          TAGS
         </p>
         <p
           class="font-bold"
@@ -266,7 +266,7 @@ exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
           class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          Posts
+          POSTS
         </p>
         <p
           class="font-bold"
@@ -414,7 +414,7 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
           class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          Tags
+          TAGS
         </p>
         <p
           class="font-bold"
@@ -431,7 +431,7 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
           class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
           data-testid="typography"
         >
-          Posts
+          POSTS
         </p>
         <p
           class="font-bold"
