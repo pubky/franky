@@ -47,38 +47,6 @@ exports[`HumanSelection > matches snapshot 1`] = `
     </div>
   </div>
   <div
-    class="mx-auto w-full flex-col relative mt-6 flex items-start rounded border px-4 py-6"
-    data-testid="container"
-  >
-    <p
-      class="absolute top-[-14px] left-[-6px] ml-4 bg-background px-2 text-base leading-6 font-medium text-secondary-foreground/80"
-      data-testid="typography"
-    >
-      Dev Mode
-    </p>
-    <div
-      class="mx-auto w-full flex flex-row gap-2"
-      data-testid="container"
-    >
-      <button
-        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
-        data-slot="button"
-        data-testid="human-dev-skip-btn"
-        data-variant="secondary"
-      >
-        Skip
-      </button>
-      <button
-        class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
-        data-slot="button"
-        data-testid="human-dev-invite-code-btn"
-        data-variant="secondary"
-      >
-        Enter invite code
-      </button>
-    </div>
-  </div>
-  <div
     data-testid="mock-human-footer"
   >
     Human Footer
