@@ -11,6 +11,7 @@ vi.mock('@/hooks', () => ({
   }),
   useTtlSubscription: () => ({
     ref: mockTtlRef,
+    isVisible: false,
   }),
 }));
 
