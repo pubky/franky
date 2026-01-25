@@ -20,6 +20,7 @@ import * as Types from './ProfilePageHeader.types';
  */
 export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
   const t = useTranslations('profile.actions');
+  const tStatus = useTranslations('status');
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const {
     onEdit,
@@ -182,7 +183,12 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               {status && (
                 <Atoms.Container overrideDefaults={true} className="flex h-8 items-center gap-1">
                   <span className="text-base leading-6">{displayEmoji}</span>
-                  <span className="text-base leading-6 font-bold text-white">{Libs.parseStatus(status).text}</span>
+                  <span className="text-base leading-6 font-bold text-white">
+                    {(() => {
+                      const parsed = Libs.parseStatus(status);
+                      return parsed.key ? tStatus(parsed.key as Parameters<typeof tStatus>[0]) : parsed.text;
+                    })()}
+                  </span>
                 </Atoms.Container>
               )}
             </>

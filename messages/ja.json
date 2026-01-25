@@ -12,6 +12,21 @@
     "aTetherCompany": "<tether>tether.</tether>グループ企業",
     "copyright": "Synonym Software, S.A. DE C.V. ©2026. 無断転載を禁じます。"
   },
+  "status": {
+    "available": "対応可能",
+    "away": "離席中",
+    "vacationing": "休暇中",
+    "working": "仕事中",
+    "traveling": "旅行中",
+    "celebrating": "お祝い中",
+    "sick": "体調不良",
+    "noStatus": "ステータスなし",
+    "loading": "読み込み中",
+    "customStatus": "カスタムステータス",
+    "addStatus": "ステータスを追加",
+    "selectStatus": "ステータスを選択",
+    "selectStatusDescription": "プロフィールに表示するステータスを選択"
+  },
   "common": {
     "save": "保存",
     "cancel": "キャンセル",
@@ -442,6 +457,11 @@
         "subtitle": "誰かがこのアカウントをフォローすると、ここにプロフィールが表示されます。\n投稿して他の人と交流してフォロワーを増やしましょう！",
         "alt": "フォロワー - 空の状態",
         "createPost": "投稿を作成"
+      },
+      "tagged": {
+        "title": "誰があなたをタグ付けしたか確認",
+        "subtitle": "まだ誰もあなたをタグ付けしていません。\nヒント：自分のプロフィールにタグを追加することもできます。",
+        "alt": "タグ付け - 空の状態"
       }
     },
     "sidebar": {

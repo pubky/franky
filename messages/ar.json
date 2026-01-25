@@ -12,6 +12,21 @@
     "aTetherCompany": "شركة تابعة لـ <tether>tether.</tether>",
     "copyright": "Synonym Software, S.A. DE C.V. ©2026. جميع الحقوق محفوظة."
   },
+  "status": {
+    "available": "متاح",
+    "away": "بعيد",
+    "vacationing": "في إجازة",
+    "working": "يعمل",
+    "traveling": "مسافر",
+    "celebrating": "يحتفل",
+    "sick": "مريض",
+    "noStatus": "بدون حالة",
+    "loading": "جاري التحميل",
+    "customStatus": "حالة مخصصة",
+    "addStatus": "إضافة حالة",
+    "selectStatus": "اختر الحالة",
+    "selectStatusDescription": "اختر حالة لعرضها على ملفك الشخصي"
+  },
   "common": {
     "save": "حفظ",
     "cancel": "الغاء",
@@ -442,6 +457,11 @@
         "subtitle": "عندما يتابع شخص ما هذا الحساب، سيظهر ملفه الشخصي هنا.\nابدا بالنشر والتفاعل مع الاخرين لزيادة متابعيك!",
         "alt": "المتابعون - حالة فارغة",
         "createPost": "انشاء منشور"
+      },
+      "tagged": {
+        "title": "اكتشف من وسمك",
+        "subtitle": "لم يقم أحد بوسمك بعد.\nنصيحة: يمكنك أيضًا إضافة وسوم إلى ملفك الشخصي.",
+        "alt": "موسوم - حالة فارغة"
       }
     },
     "sidebar": {
