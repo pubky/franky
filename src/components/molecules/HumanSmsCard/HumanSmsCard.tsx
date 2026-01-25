@@ -5,8 +5,10 @@ import * as Libs from '@/libs';
 import { useSmsVerificationInfo } from '@/hooks/useSmsVerificationInfo';
 import { HumanSmsCardSkeleton } from './HumanSmsCard.skeleton';
 import type { HumanSmsCardProps } from './HumanSmsCard.types';
+import { useTranslations } from 'next-intl';
 
 export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
+  const t = useTranslations('onboarding.sms');
   const smsInfo = useSmsVerificationInfo();
 
   // Waiting for availability check
@@ -41,23 +43,23 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
           <Atoms.Container className="w-full flex-1 items-start gap-6">
             <Atoms.Container className="gap-3">
               <Atoms.Typography as="h3" className="text-2xl leading-8 font-semibold text-foreground">
-                SMS Verification
+                {t('title')}
               </Atoms.Typography>
 
               <Atoms.Typography as="p" className="text-5xl leading-none font-semibold text-brand lg:text-6xl">
-                Free
+                {t('free')}
               </Atoms.Typography>
 
               <Atoms.Typography as="p" className="text-xs font-medium tracking-widest text-muted-foreground uppercase">
-                LESS PRIVATE, BUT EASY
+                {t('lessPrivate')}
               </Atoms.Typography>
 
               <Atoms.Container className="gap-1">
                 <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-                  1GB storage
+                  {t('storage')}
                 </Atoms.Typography>
                 <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-                  1MB/s speed limit
+                  {t('speedLimit')}
                 </Atoms.Typography>
               </Atoms.Container>
             </Atoms.Container>
@@ -70,7 +72,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
               disabled={isUnavailable}
             >
               <Libs.Smartphone className="mr-2 size-4" />
-              Receive SMS
+              {t('receiveSms')}
             </Atoms.Button>
           </Atoms.Container>
         </Atoms.Container>
@@ -90,7 +92,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
             overrideDefaults
             className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
           >
-            Currently not available in your country
+            {t('notAvailable')}
           </Atoms.Typography>
         </Atoms.Container>
       )}
@@ -109,7 +111,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
             overrideDefaults
             className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
           >
-            Service temporarily unavailable
+            {t('unavailable')}
           </Atoms.Typography>
         </Atoms.Container>
       )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -13,6 +14,7 @@ interface DialogRestoreRecoveryPhraseProps {
 }
 
 export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecoveryPhraseProps) {
+  const t = useTranslations('onboarding.signIn');
   const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
   const [isRestoring, setIsRestoring] = useState(false);
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
@@ -48,8 +50,8 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       // TODO: handle error based on the error type
       // show error toast
       toast({
-        title: 'Error logging in with mnemonic',
-        description: 'Please try again.',
+        title: t('restoreRecoveryPhrase.errorTitle'),
+        description: t('restoreRecoveryPhrase.errorDescription'),
       });
       setIsRestoring(false);
     }
@@ -60,10 +62,10 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       <Atoms.DialogTrigger asChild>
         <Atoms.Button id="restore-recovery-phrase-btn" variant="outline" className="w-auto rounded-full md:flex-none">
           <Libs.FileText className="mr-2 h-4 w-4" />
-          Use recovery phrase
+          {t('useRecoveryPhrase')}
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8" hiddenTitle="Restore with recovery phrase">
+      <Atoms.DialogContent className="gap-6 p-8" hiddenTitle={t('restoreRecoveryPhrase.title')}>
         <RestoreForm
           userWords={userWords}
           errors={errors}
@@ -98,6 +100,7 @@ function RestoreForm({
   onTouchedChange: (touched: boolean[]) => void;
   onRestore: () => void;
 }) {
+  const t = useTranslations('onboarding.signIn.restoreRecoveryPhrase');
   const handleWordChange = useCallback(
     (index: number, value: string) => {
       // Check if the value contains multiple words (e.g. pasted from clipboard or inserted from Android keyboard suggestions)
@@ -181,12 +184,8 @@ function RestoreForm({
   return (
     <>
       <Atoms.DialogHeader className="space-y-1.5 pr-6">
-        <Atoms.DialogTitle className="text-2xl font-bold sm:text-[24px]">
-          Restore with recovery phrase
-        </Atoms.DialogTitle>
-        <Atoms.DialogDescription className="text-sm text-muted-foreground">
-          Use your 12 words (recovery phrase) to restore your account and sign in.
-        </Atoms.DialogDescription>
+        <Atoms.DialogTitle className="text-2xl font-bold sm:text-[24px]">{t('title')}</Atoms.DialogTitle>
+        <Atoms.DialogDescription className="text-sm text-muted-foreground">{t('description')}</Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
       <Atoms.Container className="space-y-6">
@@ -215,11 +214,9 @@ function RestoreForm({
           <Atoms.Container className="rounded-lg border border-red-500/20 bg-red-500/10 p-4">
             <div className="flex items-center gap-2 text-red-500">
               <Libs.AlertCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Invalid words detected</span>
+              <span className="text-sm font-medium">{t('invalidWords')}</span>
             </div>
-            <p className="mt-1 text-sm text-red-500/80">
-              Please check that all words are valid and contain only lowercase letters.
-            </p>
+            <p className="mt-1 text-sm text-red-500/80">{t('invalidWordsHint')}</p>
           </Atoms.Container>
         )}
       </Atoms.Container>
@@ -227,7 +224,7 @@ function RestoreForm({
       <Atoms.Container className="flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4">
         <Atoms.DialogClose asChild>
           <Atoms.Button variant="outline" className="h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6">
-            Cancel
+            {t('cancel')}
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
@@ -239,12 +236,12 @@ function RestoreForm({
           {isRestoring ? (
             <>
               <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Restoring...
+              {t('restoring')}
             </>
           ) : (
             <>
               <Libs.RotateCcw className="mr-2 h-4 w-4" />
-              Restore
+              {t('restore')}
             </>
           )}
         </Atoms.Button>

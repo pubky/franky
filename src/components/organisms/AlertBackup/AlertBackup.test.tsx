@@ -116,8 +116,9 @@ describe('AlertBackup', () => {
     render(<AlertBackup />);
 
     // TriangleAlert icon is now actual lucide-react component (SVG), not mocked div
-    expect(screen.getByText('Back up now')).toBeInTheDocument();
-    expect(screen.getByText('to avoid losing your account!')).toBeInTheDocument();
+    // Text comes from translation keys (mocked returns key names)
+    expect(screen.getByText('alertShort')).toBeInTheDocument();
+    expect(screen.getByText('alertFull')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-backup')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-confirm-backup')).toBeInTheDocument();
   });

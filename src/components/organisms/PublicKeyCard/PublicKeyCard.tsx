@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -9,6 +10,7 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
+  const t = useTranslations('onboarding.pubky');
   const secretKey = Core.useOnboardingStore((state) => state.secretKey);
   const pubky = Core.useAuthStore((state) => state.currentUserPubky);
   const displayPubky = pubky ? Libs.withPubkyPrefix(pubky) : '';
@@ -33,8 +35,8 @@ export function PublicKeyCard() {
     try {
       await Libs.shareWithFallback(
         {
-          title: 'My Pubky',
-          text: `Here is my Pubky:\n${displayPubky}`,
+          title: t('myPubky'),
+          text: t('shareText', { displayPubky }),
         },
         {
           onFallback: async () => {
@@ -47,15 +49,15 @@ export function PublicKeyCard() {
           onSuccess: (result) => {
             if (result.method === 'fallback') {
               toast({
-                title: 'Sharing unavailable',
-                description: 'We copied your pubky so you can paste it into your favorite app.',
+                title: t('shareUnavailable'),
+                description: t('shareUnavailableDescription'),
               });
             }
           },
           onError: () => {
             toast({
-              title: 'Share failed',
-              description: 'Unable to share right now. Please try again.',
+              title: t('shareFailed'),
+              description: t('shareFailedDescription'),
             });
           },
         },
@@ -70,7 +72,7 @@ export function PublicKeyCard() {
   const actions = [
     {
       id: 'copy-to-clipboard-action-btn',
-      label: 'Copy to clipboard',
+      label: t('copy'),
       icon: <Libs.Copy className="mr-2 h-4 w-4" />,
       onClick: handleCopyToClipboard,
       variant: 'secondary' as const,
@@ -80,7 +82,7 @@ export function PublicKeyCard() {
     // When Web Share API is unavailable, it falls back to clipboard copy.
     // See issue #265: visibility based on screen size, not Web Share API support.
     {
-      label: 'Share',
+      label: t('share'),
       icon: <Libs.Share className="mr-2 h-4 w-4" />,
       onClick: handleShare,
       variant: 'secondary' as const,
@@ -100,7 +102,7 @@ export function PublicKeyCard() {
     >
       <Atoms.Container className="flex-row items-center gap-1">
         <Atoms.Heading level={3} size="lg">
-          Your pubky
+          {t('title')}
         </Atoms.Heading>
         <Molecules.PopoverPublicKey />
       </Atoms.Container>
@@ -111,7 +113,7 @@ export function PublicKeyCard() {
           readOnly
           onClick={handleCopyToClipboard}
           loading={!displayPubky}
-          loadingText="Generating pubky..."
+          loadingText={t('generating')}
           icon={<Libs.Key className="h-4 w-4 text-brand" />}
           status={displayPubky ? 'success' : 'default'}
           className="w-full max-w-[576px]"

@@ -7,15 +7,11 @@ exports[`BackupNavigation > matches snapshot for default BackupNavigation 1`] = 
 >
   <button
     data-testid="back-button"
-  >
-    Back
-  </button>
+  />
   <button
     data-loading="false"
     data-testid="continue-button"
-  >
-    Continue
-  </button>
+  />
 </div>
 `;
 

@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import { LANGUAGES } from './LanguageSelector.constants';
@@ -12,21 +13,22 @@ import { LANGUAGES } from './LanguageSelector.constants';
  */
 function setLocaleCookie(locale: string) {
   const encodedLocale = encodeURIComponent(locale);
-  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
-  const secureFlag = isSecure ? ';Secure' : '';
-  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax${secureFlag}`;
+  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax`;
 }
 
 export function LanguageSelector() {
   const t = useTranslations('language');
-  const { language, setLanguage } = Core.useSettingsStore();
+  const router = useRouter();
+  // Use server locale as source of truth
+  const serverLocale = useLocale();
+  const { setLanguage } = Core.useSettingsStore();
   const [isOpen, setIsOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-  // Sync cookie with store on mount (in case store has a value but cookie doesn't)
+  // Sync store with server locale on mount (one-way sync: server -> client)
   React.useEffect(() => {
-    setLocaleCookie(language);
-  }, [language]);
+    setLanguage(serverLocale);
+  }, [serverLocale, setLanguage]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,14 +42,22 @@ export function LanguageSelector() {
   }, []);
 
   const handleLanguageChange = (langCode: string) => {
-    setLanguage(langCode);
+    // Prevent same language click
+    if (langCode === serverLocale) {
+      setIsOpen(false);
+      return;
+    }
+
+    // Set cookie and close dropdown
     setLocaleCookie(langCode);
+    setLanguage(langCode);
     setIsOpen(false);
-    // Reload to apply server-side translations
-    window.location.reload();
+
+    // Refresh server components to pick up new locale
+    router.refresh();
   };
 
-  const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
+  const selectedLang = LANGUAGES.find((lang) => lang.code === serverLocale) || LANGUAGES[0];
 
   return (
     <div className="flex w-full flex-col items-start gap-4">
@@ -94,12 +104,12 @@ export function LanguageSelector() {
                 className={Libs.cn(
                   'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
                   lang.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:bg-accent',
-                  language === lang.code && 'bg-accent/50',
+                  serverLocale === lang.code && 'bg-accent/50',
                 )}
               >
                 <span className="text-2xl">{lang.flag}</span>
                 <span className="font-light">{lang.name}</span>
-                {language === lang.code && <Libs.Check size={16} className="ml-auto" />}
+                {serverLocale === lang.code && <Libs.Check size={16} className="ml-auto" />}
               </button>
             ))}
           </div>
