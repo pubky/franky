@@ -30,15 +30,15 @@ const envSchema = z.object({
     .pipe(z.boolean()),
 
   // =============================================================================
-  // REQUIRED VARIABLES (no defaults - must be configured per environment)
+  // NETWORK CONFIGURATION (defaults to staging for dev/CI convenience)
   // =============================================================================
-  // These variables are critical for the app to work correctly.
-  // They must be explicitly set in .env or Docker build args.
+  // These variables have staging defaults for development and CI/CD.
+  // For production, override these with your production URLs.
 
-  /** Main API endpoint - REQUIRED */
-  NEXT_PUBLIC_NEXUS_URL: z.string().url(),
-  /** CDN URL for static assets - REQUIRED */
-  NEXT_PUBLIC_CDN_URL: z.string().url(),
+  /** Main API endpoint */
+  NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app'),
+  /** CDN URL for static assets */
+  NEXT_PUBLIC_CDN_URL: z.string().url().default('https://nexus.staging.pubky.app/static'),
 
   NEXT_PUBLIC_SYNC_TTL: z
     .string()
@@ -150,16 +150,16 @@ const envSchema = z.object({
     .transform(parsePkarrRelays)
     .pipe(z.array(z.string().url()).min(1)),
 
-  /** Homeserver public key - REQUIRED */
-  NEXT_PUBLIC_HOMESERVER: z.string().min(1),
+  /** Homeserver public key */
+  NEXT_PUBLIC_HOMESERVER: z.string().min(1).default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
   // Server-side only admin credentials for signup token generation (dev/test only)
   // These are NOT exposed to the client bundle - only available on the server
   HOMESERVER_ADMIN_URL: z.string().url().default('http://localhost:6288/generate_signup_token'),
   HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
 
-  /** HTTP relay for pubky protocol - REQUIRED */
-  NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url(),
+  /** HTTP relay for pubky protocol */
+  NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://httprelay.staging.pubky.app'),
   NEXT_PUBLIC_MODERATION_ID: z.string().default('euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro'),
   NEXT_PUBLIC_MODERATED_TAGS: z
     .string()
@@ -167,8 +167,8 @@ const envSchema = z.object({
     .transform((val) => JSON.parse(val))
     .pipe(z.array(z.string().min(1)).min(1)),
   NEXT_PUBLIC_EXCHANGE_RATE_API: z.url().default('https://api1.blocktank.to/api/fx/rates/btc'),
-  /** Homegate authentication service URL - REQUIRED */
-  NEXT_PUBLIC_HOMEGATE_URL: z.url(),
+  /** Homegate authentication service URL */
+  NEXT_PUBLIC_HOMEGATE_URL: z.url().default('https://homegate.staging.pubky.app'),
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
