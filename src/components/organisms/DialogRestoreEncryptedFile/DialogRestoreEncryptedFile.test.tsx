@@ -258,7 +258,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('handles file selection', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const testFile = mockFile('test.pkarr');
 
     fireEvent.change(fileInput, { target: { files: [testFile] } });
@@ -271,7 +271,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('validates file extension', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const invalidFile = mockFile('test.txt');
 
     fireEvent.change(fileInput, { target: { files: [invalidFile] } });
@@ -284,7 +284,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('accepts .pkarr files regardless of case', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const validFile = mockFile('test.PKARR');
 
     fireEvent.change(fileInput, { target: { files: [validFile] } });
@@ -309,7 +309,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -332,7 +332,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('enables restore button when both file and password are provided', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -350,7 +350,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -380,7 +380,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -405,7 +405,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -427,7 +427,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -449,7 +449,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -469,7 +469,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('resets state when cancel is clicked', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -493,7 +493,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('displays selected file name with a tooltip for long filenames', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const longFile = mockFile('this_is_a_very_long_filename_that_should_truncate_when_displayed.pkarr');
 
     fireEvent.change(fileInput, { target: { files: [longFile] } });
@@ -508,7 +508,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('triggers file selection when upload area is clicked', () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file') as HTMLInputElement;
+    const fileInput = screen.getByLabelText('Select file') as HTMLInputElement;
     const clickSpy = vi.spyOn(fileInput, 'click');
 
     const uploadArea = screen.getByText('encryptedfile.pkarr').closest('[data-testid="container"]');
@@ -532,7 +532,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -571,7 +571,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -611,7 +611,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 
@@ -631,7 +631,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('guards against IME composition on Enter key', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const fileInput = screen.getByLabelText('Select file');
     const passwordInput = screen.getByTestId('input');
     const testFile = mockFile('test.pkarr');
 

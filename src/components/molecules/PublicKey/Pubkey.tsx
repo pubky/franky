@@ -2,18 +2,22 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as App from '@/app';
 
 export const PublicKeyHeader = () => {
+  const t = useTranslations('onboarding.pubky');
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        Your unique <span className="text-brand">pubky.</span>
+        {t.rich('uniqueTitle', {
+          highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+        })}
       </Molecules.PageTitle>
-      <Atoms.PageSubtitle>Share your pubky with your friends so they can follow you.</Atoms.PageSubtitle>
+      <Atoms.PageSubtitle>{t('uniqueSubtitle')}</Atoms.PageSubtitle>
     </Atoms.PageHeader>
   );
 };

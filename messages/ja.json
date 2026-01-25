@@ -4,6 +4,14 @@
     "minutesShort": "{count}分",
     "hoursShort": "{count}時間"
   },
+  "landing": {
+    "title": "ウェブを<highlight>解放</highlight>する。",
+    "subtitle": "あなたの鍵、あなたのコンテンツ、あなたのルール。",
+    "signIn": "サインイン",
+    "createAccount": "アカウント作成",
+    "aTetherCompany": "<tether>tether.</tether>グループ企業",
+    "copyright": "Synonym Software, S.A. DE C.V. ©2026. 無断転載を禁じます。"
+  },
   "common": {
     "save": "保存",
     "cancel": "キャンセル",
@@ -57,7 +65,8 @@
     "home": "ホーム",
     "hot": "人気",
     "bookmarks": "ブックマーク",
-    "settings": "設定"
+    "settings": "設定",
+    "signIn": "ログイン"
   },
   "settings": {
     "title": "設定",
@@ -211,22 +220,23 @@
       "unavailable": "サービスは一時的に利用できません"
     },
     "footer": {
-      "agreement": "Pubkyアカウントを作成することで、",
-      "copyright": "PubkyはPubky Coreを搭載し、Synonym Software, S.A. DE C.V.によって愛と献身をもって作られました。©2025。すべての権利を保有。"
+      "agreement": "<pubky>Pubky</pubky>アカウントを作成することで、",
+      "andConfirmAge": "、また",
+      "copyright": "Pubkyは<pubkyCore>Pubky Core</pubkyCore>を搭載し、Synonym Software, S.A. DE C.V.によって愛と献身をもって作られました。©2025。すべての権利を保有。"
     },
     "scan": {
-      "titleMobile": "タップして認証。",
-      "titleDesktop": "QRコードをスキャン。",
+      "titleMobile": "タップして<highlight>認証。</highlight>",
+      "titleDesktop": "<highlight>QRコード</highlight>をスキャン。",
       "subtitle": "Pubky Ringを開き、pubkyを作成してQRをスキャンしてください。",
       "generating": "QRコード生成中...",
       "generatingShort": "生成中...",
       "authorize": "Pubky Ringで認証",
-      "authorizeSub": "Pubky RingまたはPubky Core搭載の他のキーチェーンを使用してください。",
+      "authorizeSub": "<pubkyRing>Pubky Ring</pubkyRing>または<pubkyCore>Pubky Core</pubkyCore>搭載の他のキーチェーンを使用してください。",
       "linkFailed": "Pubky Ring署名アプリへの接続に失敗しました",
       "tryAgain": "再試行してください。"
     },
     "signIn": {
-      "title": "Pubkyにログイン。",
+      "title": "<highlight>Pubky</highlight>にログイン。",
       "subtitle": "Pubky Ringで認証してログインしてください。",
       "generating": "QRコード生成中...",
       "generatingShort": "生成中...",
@@ -235,15 +245,45 @@
       "linkCopiedDescription": "認証リンクをクリップボードにコピーしました。",
       "linkFailed": "Pubky Ring署名アプリへの接続に失敗しました",
       "tryAgain": "再試行してください。",
-      "recoveryHint": "Pubky Ringでログインできませんか？リカバリーフレーズまたは暗号化ファイルを使用してアカウントを復元してください。",
+      "recoveryHint": "<pubkyRing>Pubky Ring</pubkyRing>でログインできませんか？リカバリーフレーズまたは暗号化ファイルを使用してアカウントを復元してください。",
       "verifyingAccount": "アカウントを確認中",
       "loadingData": "データを読み込み中",
       "buildingFeed": "フィードを構築中",
-      "syncingSettings": "設定を同期中"
+      "syncingSettings": "設定を同期中",
+      "useRecoveryPhrase": "リカバリーフレーズを使用",
+      "useEncryptedFile": "暗号化ファイルを使用",
+      "restoreRecoveryPhrase": {
+        "title": "リカバリーフレーズで復元",
+        "description": "12個の単語（リカバリーフレーズ）を使用してアカウントを復元しログインしてください。",
+        "invalidWords": "無効な単語が検出されました",
+        "invalidWordsHint": "すべての単語が有効で小文字のみで構成されていることを確認してください。",
+        "cancel": "キャンセル",
+        "restore": "復元",
+        "restoring": "復元中...",
+        "errorTitle": "ニーモニックでのログインエラー",
+        "errorDescription": "再試行してください。"
+      },
+      "restoreEncryptedFile": {
+        "title": "暗号化ファイルで復元",
+        "description": "暗号化されたバックアップファイルを使用してアカウントを復元しログインしてください。",
+        "uploadLabel": "暗号化ファイルをアップロード",
+        "passwordLabel": "パスワードを入力",
+        "passwordPlaceholder": "パスワードを入力してください",
+        "selectFile": "ファイルを選択",
+        "invalidFileType": ".pkarrファイルを選択してください",
+        "missingFields": "ファイルを選択してパスワードを入力してください",
+        "invalidPassword": "パスワードが無効かファイルが破損しています。パスワードを確認して再試行してください。",
+        "nexusError": "nexusでエラーが発生しました。再試行してください。",
+        "restoreError": "ファイルからの復元に失敗しました。ファイルを確認して再試行してください。",
+        "unexpectedError": "予期しないエラーが発生しました",
+        "cancel": "キャンセル",
+        "restore": "復元",
+        "restoring": "復元中..."
+      }
     },
     "pubky": {
       "title": "あなたのpubky",
-      "uniqueTitle": "あなたの固有のpubky。",
+      "uniqueTitle": "あなたの固有の<highlight>pubky。</highlight>",
       "uniqueSubtitle": "友達とpubkyを共有して、フォローしてもらいましょう。",
       "copy": "クリップボードにコピー",
       "share": "共有",
@@ -262,7 +302,7 @@
       "encryptedFile": "暗号化ファイル"
     },
     "backup": {
-      "title": "pubkyをバックアップ。",
+      "title": "<highlight>pubky</highlight>をバックアップ。",
       "subtitle": "後でアカウントにアクセスを復元するにはバックアップが必要です。",
       "signUpFailed": "エラー - 登録に失敗しました",
       "signUpError": "問題が発生しました。再試行してください。",
@@ -297,15 +337,15 @@
       "completeSubtitle": "バックアップした暗号化ファイルを使用して後でアカウントを復元できます。"
     },
     "install": {
-      "title": "Pubky Ringをインストール。",
+      "title": "<highlight>Pubky Ring</highlight>をインストール。",
       "subtitle": "Pubky RingはPubkyエコシステムのIDキーのためのキーチェーンです。",
       "instructions": "モバイルアプリをダウンロードしてインストールしてください。次に次のステップに進んでください。",
-      "alternative": "Pubky RingまたはPubky Core搭載の他のキーチェーンを使用するか、ブラウザでキーを作成してください（安全性は低下）。",
+      "alternative": "<pubkyRing>Pubky Ring</pubkyRing>または<pubkyCore>Pubky Core</pubkyCore>搭載の他のキーチェーンを使用するか、ブラウザでキーを作成してください（安全性は低下）。",
       "createInBrowser": "ブラウザでキーを作成",
       "continueWithRing": "Pubky Ringで続行"
     },
     "createProfile": {
-      "title": "プロフィールを作成。",
+      "title": "<highlight>プロフィール</highlight>を作成。",
       "subtitle": "名前、自己紹介、リンク、アバターを追加してください。"
     }
   },
@@ -485,7 +525,9 @@
       "encryptedFile": "暗号化ファイルをダウンロード",
       "folder": "フォルダ",
       "exportRing": "Pubky Ringにエクスポート",
-      "keys": "キー"
+      "keys": "キー",
+      "alertShort": "今すぐバックアップ",
+      "alertFull": "アカウントを失わないよう今すぐバックアップしてください！"
     },
     "confirmBackup": {
       "title": "バックアップ完了しましたか？",

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import Image from 'next/image';
@@ -43,6 +44,7 @@ function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCar
 
 export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
   const { mnemonic } = Core.useOnboardingStore();
+  const t = useTranslations('settings.backup');
 
   return (
     <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,37 +55,34 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
             variant="outline"
             className="border text-xs font-bold text-primary-foreground shadow-sm hover:text-primary-foreground"
           >
-            Backup
+            {t('title')}
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="max-w-sm p-6 md:max-w-xl md:p-8" hiddenTitle="Back up your pubky">
+      <Atoms.DialogContent className="max-w-sm p-6 md:max-w-xl md:p-8" hiddenTitle={t('dialogTitle')}>
         <Atoms.DialogHeader>
           <Atoms.DialogTitle id="backup-dialog-title" className="text-xl md:text-2xl">
-            Back up your pubky
+            {t('dialogTitle')}
           </Atoms.DialogTitle>
-          <Atoms.DialogDescription id="backup-dialog-description">
-            Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose
-            multiple backup methods if you wish.
-          </Atoms.DialogDescription>
+          <Atoms.DialogDescription id="backup-dialog-description">{t('subtitle')}</Atoms.DialogDescription>
         </Atoms.DialogHeader>
         <Atoms.Container className="flex-col gap-3 md:flex-row">
           <BackupMethodCard
-            title="Recovery phrase"
+            title={t('recoveryPhrase')}
             imageSrc="/images/note.png"
-            imageAlt="Note"
+            imageAlt={t('note')}
             dialog={<Organisms.DialogBackupPhrase />}
           />
           <BackupMethodCard
-            title="Download encrypted file"
+            title={t('encryptedFile')}
             imageSrc="/images/folder.png"
-            imageAlt="Folder"
+            imageAlt={t('folder')}
             dialog={<Organisms.DialogBackupEncrypted />}
           />
           <BackupMethodCard
-            title="Export to Pubky Ring"
+            title={t('exportRing')}
             imageSrc="/images/keyring.png"
-            imageAlt="Keys"
+            imageAlt={t('keys')}
             dialog={<Organisms.DialogBackupExport mnemonic={mnemonic} />}
           />
         </Atoms.Container>

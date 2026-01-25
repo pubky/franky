@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
@@ -14,9 +15,7 @@ import { LANGUAGES } from './LanguageSelector.constants';
  */
 function setLocaleCookie(locale: string) {
   const encodedLocale = encodeURIComponent(locale);
-  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
-  const secureFlag = isSecure ? ';Secure' : '';
-  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax${secureFlag}`;
+  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax`;
 }
 
 function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: string; onSelect: (code: string) => void }) {
@@ -52,19 +51,35 @@ function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: strin
 
 export function LanguageSelector() {
   const t = useTranslations('language');
-  const { language, setLanguage } = Core.useSettingsStore();
+  const router = useRouter();
+  // Use server locale as source of truth
+  const serverLocale = useLocale();
+  const { setLanguage } = Core.useSettingsStore();
   const isMobile = Hooks.useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  // Sync store with server locale on mount (one-way sync: server -> client)
+  React.useEffect(() => {
+    setLanguage(serverLocale);
+  }, [serverLocale, setLanguage]);
 
   const handleSelect = (code: string) => {
-    setLanguage(code);
+    // Prevent same language click
+    if (code === serverLocale) {
+      setIsOpen(false);
+      return;
+    }
+
+    // Set cookie and close dropdown
     setLocaleCookie(code);
+    setLanguage(code);
     setIsOpen(false);
-    // Reload to apply server-side translations
-    window.location.reload();
+
+    // Refresh server components to pick up new locale
+    router.refresh();
   };
 
-  const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
+  const selectedLang = LANGUAGES.find((lang) => lang.code === serverLocale) || LANGUAGES[0];
 
   const trigger = (
     <Atoms.Button
@@ -101,7 +116,7 @@ export function LanguageSelector() {
             <Atoms.SheetHeader className="mb-4">
               <Atoms.SheetTitle>{t('selectLanguage')}</Atoms.SheetTitle>
             </Atoms.SheetHeader>
-            <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
+            <LanguageOptions currentLanguage={serverLocale} onSelect={handleSelect} />
           </Atoms.SheetContent>
         </Atoms.Sheet>
       ) : (
@@ -112,7 +127,7 @@ export function LanguageSelector() {
             sideOffset={8}
             className="w-(--radix-popover-trigger-width) rounded-md border border-border bg-card p-0 py-2 shadow-lg"
           >
-            <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
+            <LanguageOptions currentLanguage={serverLocale} onSelect={handleSelect} />
           </Atoms.PopoverContent>
         </Atoms.Popover>
       )}

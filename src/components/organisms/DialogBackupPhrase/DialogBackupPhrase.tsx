@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ReactNode } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
@@ -18,6 +19,8 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
   const [recoveryWords, setRecoveryWords] = useState<string[]>([]);
   const [step, setStep] = useState(1);
   const { mnemonic } = Stores.useOnboardingStore();
+  const t = useTranslations('onboarding.backupPhrase');
+  const tCommon = useTranslations('common');
 
   const handleClose = () => {
     setIsHidden(true);
@@ -43,10 +46,10 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
         <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
       ) : (
         <Atoms.DialogTrigger asChild>
-          <Atoms.Button id="backup-recovery-phrase-btn">Continue</Atoms.Button>
+          <Atoms.Button id="backup-recovery-phrase-btn">{tCommon('continue')}</Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="max-w-sm md:max-w-2xl" hiddenTitle="Backup recovery phrase">
+      <Atoms.DialogContent className="max-w-sm md:max-w-2xl" hiddenTitle={t('title')}>
         {step === 1 && (
           <RecoveryStep1
             recoveryWords={recoveryWords}
@@ -73,19 +76,17 @@ function RecoveryStep1({
   setIsHidden: (isHidden: boolean) => void;
   setStep: (step: number) => void;
 }) {
+  const t = useTranslations('onboarding.backupPhrase');
+  const tCommon = useTranslations('common');
+
   return (
     <>
       <Atoms.DialogHeader>
-        <Atoms.DialogTitle>Backup recovery phrase</Atoms.DialogTitle>
+        <Atoms.DialogTitle>{t('title')}</Atoms.DialogTitle>
         <Atoms.DialogDescription>
-          <span className="hidden md:inline">
-            Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the
-            correct order and store them in a safe place.{' '}
-          </span>
-          <span className="md:hidden">
-            Write down these 12 words in the correct order and store them in a safe place.{' '}
-          </span>
-          <span className="font-bold text-brand">Never share this recovery phrase with anyone.</span>
+          <span className="hidden md:inline">{t('subtitle')} </span>
+          <span className="md:hidden">{t('writeDown')} </span>
+          <span className="font-bold text-brand">{t('neverShare')}</span>
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
@@ -114,7 +115,7 @@ function RecoveryStep1({
           <>
             <Atoms.DialogClose asChild>
               <Atoms.Button id="backup-recovery-phrase-cancel-btn" variant="outline" size="lg">
-                Cancel
+                {tCommon('cancel')}
               </Atoms.Button>
             </Atoms.DialogClose>
             <Atoms.Button
@@ -126,7 +127,7 @@ function RecoveryStep1({
               }}
             >
               <Libs.Eye className="h-4 w-4" />
-              Reveal recovery phrase
+              {t('reveal')}
             </Atoms.Button>
           </>
         ) : (
@@ -134,7 +135,7 @@ function RecoveryStep1({
             <div className="contents md:hidden">
               <Atoms.Button id="backup-recovery-phrase-confirm-btn-mobile" size="lg" onClick={() => setStep(2)}>
                 <Libs.ArrowRight className="h-4 w-4" />
-                Confirm recovery phrase
+                {t('confirmTitle')}
               </Atoms.Button>
               <Atoms.Button
                 variant="outline"
@@ -145,7 +146,7 @@ function RecoveryStep1({
                 }}
               >
                 <Libs.EyeOff className="h-4 w-4" />
-                Hide recovery phrase
+                {t('hide')}
               </Atoms.Button>
             </div>
             <div className="hidden md:contents">
@@ -158,11 +159,11 @@ function RecoveryStep1({
                 }}
               >
                 <Libs.EyeOff className="h-4 w-4" />
-                Hide recovery phrase
+                {t('hide')}
               </Atoms.Button>
               <Atoms.Button id="backup-recovery-phrase-confirm-btn-desktop" size="lg" onClick={() => setStep(2)}>
                 <Libs.ArrowRight className="h-4 w-4" />
-                Confirm recovery phrase
+                {t('confirmTitle')}
               </Atoms.Button>
             </div>
           </>
@@ -175,6 +176,8 @@ function RecoveryStep1({
 function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; setStep: (step: number) => void }) {
   const { userWords, errors, remainingWords, handleWordClick, validateWords, clearWord, isComplete } =
     Hooks.useRecoveryPhraseValidation({ recoveryWords });
+  const t = useTranslations('onboarding.backupPhrase');
+  const tCommon = useTranslations('common');
 
   const handleValidate = () => {
     if (validateWords()) {
@@ -185,10 +188,8 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   return (
     <>
       <Atoms.DialogHeader>
-        <Atoms.DialogTitle>Confirm recovery phrase</Atoms.DialogTitle>
-        <Atoms.DialogDescription>
-          Click or tap the 12 words in the correct order or enter the words manually.
-        </Atoms.DialogDescription>
+        <Atoms.DialogTitle>{t('confirmTitle')}</Atoms.DialogTitle>
+        <Atoms.DialogDescription>{t('confirmSubtitle')}</Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
       <Atoms.Container className="space-y-6">
@@ -233,7 +234,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       <Atoms.DialogFooter>
         <Atoms.Button variant="outline" size="lg" onClick={() => setStep(1)}>
           <Libs.ArrowLeft className="h-4 w-4" />
-          Back
+          {tCommon('back')}
         </Atoms.Button>
         <Atoms.Button
           id="backup-recovery-phrase-validate-btn"
@@ -242,7 +243,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           disabled={!isComplete}
         >
           <Libs.Check className="h-4 w-4" />
-          Validate
+          {t('validate')}
         </Atoms.Button>
       </Atoms.DialogFooter>
     </>
@@ -250,29 +251,30 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
 }
 
 function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
+  const t = useTranslations('onboarding.backupPhrase');
+  const tCommon = useTranslations('common');
+
   return (
     <>
       <Atoms.DialogHeader>
-        <Atoms.DialogTitle>Backup complete</Atoms.DialogTitle>
-        <Atoms.DialogDescription>
-          You can use your backed up recovery phrase to restore your account later.
-        </Atoms.DialogDescription>
+        <Atoms.DialogTitle>{t('completeTitle')}</Atoms.DialogTitle>
+        <Atoms.DialogDescription>{t('completeSubtitle')}</Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
       <Atoms.Container className="flex w-full items-center justify-center rounded-md bg-card p-12">
-        <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="h-48 w-48" />
+        <Image src="/images/check.png" alt={t('completeTitle')} width={180} height={180} className="h-48 w-48" />
       </Atoms.Container>
 
       <Atoms.DialogFooter className="flex-col gap-3">
         <Atoms.DialogClose asChild>
           <Atoms.Button id="backup-recovery-phrase-finish-btn" size="lg" className="w-full" onClick={handleClose}>
             <Libs.ArrowRight className="h-4 w-4" />
-            Finish
+            {tCommon('finish')}
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
           <Atoms.Button variant="outline" size="lg" className="w-full" onClick={handleClose}>
-            Cancel
+            {tCommon('cancel')}
           </Atoms.Button>
         </Atoms.DialogClose>
       </Atoms.DialogFooter>

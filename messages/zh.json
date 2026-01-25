@@ -4,6 +4,14 @@
     "minutesShort": "{count}分钟",
     "hoursShort": "{count}小时"
   },
+  "landing": {
+    "title": "<highlight>解锁</highlight>网络。",
+    "subtitle": "你的密钥，你的内容，你的规则。",
+    "signIn": "登录",
+    "createAccount": "创建账户",
+    "aTetherCompany": "<tether>tether.</tether> 旗下公司",
+    "copyright": "Synonym Software, S.A. DE C.V. ©2026。保留所有权利。"
+  },
   "common": {
     "save": "保存",
     "cancel": "取消",
@@ -57,7 +65,8 @@
     "home": "首页",
     "hot": "热门",
     "bookmarks": "书签",
-    "settings": "设置"
+    "settings": "设置",
+    "signIn": "登录"
   },
   "settings": {
     "title": "设置",
@@ -211,22 +220,23 @@
       "unavailable": "服务暂时不可用"
     },
     "footer": {
-      "agreement": "创建 Pubky 账户即表示您同意",
-      "copyright": "Pubky 由 Pubky Core 驱动，由 Synonym Software, S.A. DE C.V. 用爱和奉献精神打造。©2025。保留所有权利。"
+      "agreement": "创建 <pubky>Pubky</pubky> 账户即表示您同意",
+      "andConfirmAge": "，并确认您",
+      "copyright": "Pubky 由 <pubkyCore>Pubky Core</pubkyCore> 驱动，由 Synonym Software, S.A. DE C.V. 用爱和奉献精神打造。©2025。保留所有权利。"
     },
     "scan": {
-      "titleMobile": "点击授权。",
-      "titleDesktop": "扫描二维码。",
+      "titleMobile": "点击<highlight>授权。</highlight>",
+      "titleDesktop": "扫描<highlight>二维码。</highlight>",
       "subtitle": "打开 Pubky Ring，创建一个 pubky，然后扫描二维码。",
       "generating": "正在生成二维码...",
       "generatingShort": "生成中...",
       "authorize": "使用 Pubky Ring 授权",
-      "authorizeSub": "使用 Pubky Ring 或任何其他由 Pubky Core 驱动的密钥链。",
+      "authorizeSub": "使用 <pubkyRing>Pubky Ring</pubkyRing> 或任何其他由 <pubkyCore>Pubky Core</pubkyCore> 驱动的密钥链。",
       "linkFailed": "无法连接到 Pubky Ring 签名应用",
       "tryAgain": "请重试。"
     },
     "signIn": {
-      "title": "登录 Pubky。",
+      "title": "登录 <highlight>Pubky。</highlight>",
       "subtitle": "使用 Pubky Ring 授权登录。",
       "generating": "正在生成二维码...",
       "generatingShort": "生成中...",
@@ -235,15 +245,45 @@
       "linkCopiedDescription": "认证链接已复制到剪贴板。",
       "linkFailed": "无法连接到 Pubky Ring 签名应用",
       "tryAgain": "请重试。",
-      "recoveryHint": "无法使用 Pubky Ring 登录？使用恢复短语或加密文件恢复您的账户。",
+      "recoveryHint": "无法使用 <pubkyRing>Pubky Ring</pubkyRing> 登录？使用恢复短语或加密文件恢复您的账户。",
       "verifyingAccount": "验证账户",
       "loadingData": "加载您的数据",
       "buildingFeed": "构建您的信息流",
-      "syncingSettings": "同步设置"
+      "syncingSettings": "同步设置",
+      "useRecoveryPhrase": "使用恢复短语",
+      "useEncryptedFile": "使用加密文件",
+      "restoreRecoveryPhrase": {
+        "title": "使用恢复短语恢复",
+        "description": "使用您的12个单词（恢复短语）恢复您的账户并登录。",
+        "invalidWords": "检测到无效单词",
+        "invalidWordsHint": "请检查所有单词是否有效且仅包含小写字母。",
+        "cancel": "取消",
+        "restore": "恢复",
+        "restoring": "恢复中...",
+        "errorTitle": "助记词登录错误",
+        "errorDescription": "请重试。"
+      },
+      "restoreEncryptedFile": {
+        "title": "使用加密文件恢复",
+        "description": "使用您的加密备份文件恢复您的账户并登录。",
+        "uploadLabel": "上传加密文件",
+        "passwordLabel": "输入密码",
+        "passwordPlaceholder": "输入您的密码",
+        "selectFile": "选择文件",
+        "invalidFileType": "请选择 .pkarr 文件",
+        "missingFields": "请选择文件并输入密码",
+        "invalidPassword": "密码无效或文件损坏。请检查密码后重试。",
+        "nexusError": "nexus 出现问题。请重试。",
+        "restoreError": "从文件恢复失败。请检查您的文件后重试。",
+        "unexpectedError": "发生意外错误",
+        "cancel": "取消",
+        "restore": "恢复",
+        "restoring": "恢复中..."
+      }
     },
     "pubky": {
       "title": "您的 pubky",
-      "uniqueTitle": "您的唯一 pubky。",
+      "uniqueTitle": "您的唯一 <highlight>pubky。</highlight>",
       "uniqueSubtitle": "与朋友分享您的 pubky，让他们可以关注您。",
       "copy": "复制到剪贴板",
       "share": "分享",
@@ -262,7 +302,7 @@
       "encryptedFile": "加密文件"
     },
     "backup": {
-      "title": "备份您的 pubky。",
+      "title": "备份您的 <highlight>pubky。</highlight>",
       "subtitle": "您需要备份才能在以后恢复账户访问权限。",
       "signUpFailed": "错误 - 注册失败",
       "signUpError": "出现问题。请重试。",
@@ -297,15 +337,15 @@
       "completeSubtitle": "您可以使用已备份的加密文件在以后恢复您的账户。"
     },
     "install": {
-      "title": "安装 Pubky Ring。",
+      "title": "安装 <highlight>Pubky Ring。</highlight>",
       "subtitle": "Pubky Ring 是 Pubky 生态系统中您身份密钥的密钥链。",
       "instructions": "下载并安装移动应用。然后继续下一步。",
-      "alternative": "使用 Pubky Ring 或任何其他由 Pubky Core 驱动的密钥链，或在浏览器中创建密钥（安全性较低）。",
+      "alternative": "使用 <pubkyRing>Pubky Ring</pubkyRing> 或任何其他由 <pubkyCore>Pubky Core</pubkyCore> 驱动的密钥链，或在浏览器中创建密钥（安全性较低）。",
       "createInBrowser": "在浏览器中创建密钥",
       "continueWithRing": "继续使用 Pubky Ring"
     },
     "createProfile": {
-      "title": "创建您的个人资料。",
+      "title": "创建您的<highlight>个人资料。</highlight>",
       "subtitle": "添加您的姓名、简介、链接和头像。"
     }
   },
@@ -485,7 +525,9 @@
       "encryptedFile": "下载加密文件",
       "folder": "文件夹",
       "exportRing": "导出到 Pubky Ring",
-      "keys": "密钥"
+      "keys": "密钥",
+      "alertShort": "立即备份",
+      "alertFull": "立即备份以避免丢失您的账户！"
     },
     "confirmBackup": {
       "title": "全部备份了吗？",

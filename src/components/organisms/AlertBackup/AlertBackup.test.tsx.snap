@@ -37,11 +37,15 @@ exports[`AlertBackup - Snapshot > matches snapshot for default AlertBackup 1`] =
       data-size="sm"
       data-testid="typography"
     >
-      Back up now
+      <span
+        class="md:hidden"
+      >
+        alertShort
+      </span>
       <span
         class="hidden md:inline"
       >
-         to avoid losing your account!
+        alertFull
       </span>
     </p>
   </div>

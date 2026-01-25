@@ -4,6 +4,14 @@
     "minutesShort": "{count}m",
     "hoursShort": "{count}h"
   },
+  "landing": {
+    "title": "<highlight>Entsperre</highlight> das Web.",
+    "subtitle": "Deine Schlüssel, deine Inhalte, deine Regeln.",
+    "signIn": "Anmelden",
+    "createAccount": "Konto erstellen",
+    "aTetherCompany": "ein <tether>tether.</tether> Unternehmen",
+    "copyright": "Synonym Software, S.A. DE C.V. ©2026. Alle Rechte vorbehalten."
+  },
   "common": {
     "save": "Speichern",
     "cancel": "Abbrechen",
@@ -57,7 +65,8 @@
     "home": "Startseite",
     "hot": "Beliebt",
     "bookmarks": "Lesezeichen",
-    "settings": "Einstellungen"
+    "settings": "Einstellungen",
+    "signIn": "Anmelden"
   },
   "settings": {
     "title": "Einstellungen",
@@ -211,22 +220,23 @@
       "unavailable": "Service vorübergehend nicht verfügbar"
     },
     "footer": {
-      "agreement": "Durch die Erstellung eines Pubky-Kontos stimmen Sie den",
-      "copyright": "Pubky wird von Pubky Core betrieben und wurde mit Liebe und Hingabe von Synonym Software, S.A. DE C.V. ©2025 erstellt. Alle Rechte vorbehalten."
+      "agreement": "Durch die Erstellung eines <pubky>Pubky</pubky>-Kontos stimmen Sie den",
+      "andConfirmAge": ", und bestätigen, dass Sie",
+      "copyright": "Pubky wird von <pubkyCore>Pubky Core</pubkyCore> betrieben und wurde mit Liebe und Hingabe von Synonym Software, S.A. DE C.V. ©2025 erstellt. Alle Rechte vorbehalten."
     },
     "scan": {
-      "titleMobile": "Zum Autorisieren tippen.",
-      "titleDesktop": "QR-Code scannen.",
+      "titleMobile": "Zum <highlight>Autorisieren</highlight> tippen.",
+      "titleDesktop": "<highlight>QR-Code</highlight> scannen.",
       "subtitle": "Oeffnen Sie Pubky Ring, erstellen Sie einen Pubky und scannen Sie den QR.",
       "generating": "QR-Code wird generiert...",
       "generatingShort": "Generieren...",
       "authorize": "Mit Pubky Ring autorisieren",
-      "authorizeSub": "Verwenden Sie Pubky Ring oder einen anderen von Pubky Core betriebenen Schlüsselbund.",
+      "authorizeSub": "Verwenden Sie <pubkyRing>Pubky Ring</pubkyRing> oder einen anderen von <pubkyCore>Pubky Core</pubkyCore> betriebenen Schlüsselbund.",
       "linkFailed": "Verbindung zur Signer-Anwendung Pubky Ring nicht möglich",
       "tryAgain": "Bitte versuchen Sie es erneut."
     },
     "signIn": {
-      "title": "Bei Pubky anmelden.",
+      "title": "Bei <highlight>Pubky</highlight> anmelden.",
       "subtitle": "Autorisieren Sie mit Pubky Ring, um sich anzumelden.",
       "generating": "QR-Code wird generiert...",
       "generatingShort": "Generieren...",
@@ -235,15 +245,45 @@
       "linkCopiedDescription": "Authentifizierungslink in die Zwischenablage kopiert.",
       "linkFailed": "Verbindung zur Signer-Anwendung Pubky Ring nicht möglich",
       "tryAgain": "Bitte versuchen Sie es erneut.",
-      "recoveryHint": "Können Sie sich nicht mit Pubky Ring anmelden? Verwenden Sie die Wiederherstellungsphrase oder die verschlüsselte Datei, um Ihr Konto wiederherzustellen.",
+      "recoveryHint": "Können Sie sich nicht mit <pubkyRing>Pubky Ring</pubkyRing> anmelden? Verwenden Sie die Wiederherstellungsphrase oder die verschlüsselte Datei, um Ihr Konto wiederherzustellen.",
       "verifyingAccount": "Konto wird verifiziert",
       "loadingData": "Ihre Daten werden geladen",
       "buildingFeed": "Ihr Feed wird erstellt",
-      "syncingSettings": "Einstellungen werden synchronisiert"
+      "syncingSettings": "Einstellungen werden synchronisiert",
+      "useRecoveryPhrase": "Wiederherstellungsphrase verwenden",
+      "useEncryptedFile": "Verschlüsselte Datei verwenden",
+      "restoreRecoveryPhrase": {
+        "title": "Mit Wiederherstellungsphrase wiederherstellen",
+        "description": "Verwenden Sie Ihre 12 Wörter (Wiederherstellungsphrase), um Ihr Konto wiederherzustellen und sich anzumelden.",
+        "invalidWords": "Ungültige Wörter erkannt",
+        "invalidWordsHint": "Bitte überprüfen Sie, ob alle Wörter gültig sind und nur Kleinbuchstaben enthalten.",
+        "cancel": "Abbrechen",
+        "restore": "Wiederherstellen",
+        "restoring": "Wird wiederhergestellt...",
+        "errorTitle": "Fehler bei der Anmeldung mit Mnemonic",
+        "errorDescription": "Bitte versuchen Sie es erneut."
+      },
+      "restoreEncryptedFile": {
+        "title": "Mit verschlüsselter Datei wiederherstellen",
+        "description": "Verwenden Sie Ihre verschlüsselte Sicherungsdatei, um Ihr Konto wiederherzustellen und sich anzumelden.",
+        "uploadLabel": "VERSCHLÜSSELTE DATEI HOCHLADEN",
+        "passwordLabel": "PASSWORT EINGEBEN",
+        "passwordPlaceholder": "Geben Sie Ihr Passwort ein",
+        "selectFile": "Datei auswählen",
+        "invalidFileType": "Bitte wählen Sie eine .pkarr-Datei",
+        "missingFields": "Bitte wählen Sie eine Datei und geben Sie Ihr Passwort ein",
+        "invalidPassword": "Ungültiges Passwort oder beschädigte Datei. Bitte überprüfen Sie Ihr Passwort und versuchen Sie es erneut.",
+        "nexusError": "Bei Nexus ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+        "restoreError": "Wiederherstellung aus Datei fehlgeschlagen. Bitte überprüfen Sie Ihre Datei und versuchen Sie es erneut.",
+        "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten",
+        "cancel": "Abbrechen",
+        "restore": "Wiederherstellen",
+        "restoring": "Wird wiederhergestellt..."
+      }
     },
     "pubky": {
       "title": "Ihr Pubky",
-      "uniqueTitle": "Ihr einzigartiger Pubky.",
+      "uniqueTitle": "Ihr einzigartiger <highlight>Pubky.</highlight>",
       "uniqueSubtitle": "Teilen Sie Ihren Pubky mit Ihren Freunden, damit sie Ihnen folgen können.",
       "copy": "In Zwischenablage kopieren",
       "share": "Teilen",
@@ -262,7 +302,7 @@
       "encryptedFile": "Verschlüsselte Datei"
     },
     "backup": {
-      "title": "Sichern Sie Ihren Pubky.",
+      "title": "Sichern Sie Ihren <highlight>Pubky.</highlight>",
       "subtitle": "Sie benötigen ein Backup, um später wieder auf Ihr Konto zugreifen zu können.",
       "signUpFailed": "Fehler - Anmeldung fehlgeschlagen",
       "signUpError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
@@ -297,15 +337,15 @@
       "completeSubtitle": "Sie können Ihre gesicherte verschlüsselte Datei verwenden, um Ihr Konto später wiederherzustellen."
     },
     "install": {
-      "title": "Pubky Ring installieren.",
+      "title": "<highlight>Pubky Ring</highlight> installieren.",
       "subtitle": "Pubky Ring ist ein Schlüsselbund für Ihre Identitätsschlüssel im Pubky-Ökosystem.",
       "instructions": "Laden Sie die mobile App herunter und installieren Sie sie. Fahren Sie dann mit dem nächsten Schritt fort.",
-      "alternative": "Verwenden Sie Pubky Ring oder einen anderen von Pubky Core betriebenen Schlüsselbund, oder erstellen Sie Ihre Schlüssel im Browser (weniger sicher).",
+      "alternative": "Verwenden Sie <pubkyRing>Pubky Ring</pubkyRing> oder einen anderen von <pubkyCore>Pubky Core</pubkyCore> betriebenen Schlüsselbund, oder erstellen Sie Ihre Schlüssel im Browser (weniger sicher).",
       "createInBrowser": "Schlüssel im Browser erstellen",
       "continueWithRing": "Mit Pubky Ring fortfahren"
     },
     "createProfile": {
-      "title": "Erstellen Sie Ihr Profil.",
+      "title": "Erstellen Sie Ihr <highlight>Profil.</highlight>",
       "subtitle": "Fuegen Sie Ihren Namen, Ihre Bio, Links und Ihren Avatar hinzu."
     }
   },
@@ -485,7 +525,9 @@
       "encryptedFile": "Verschlüsselte Datei herunterladen",
       "folder": "Ordner",
       "exportRing": "Zu Pubky Ring exportieren",
-      "keys": "Schlüssel"
+      "keys": "Schlüssel",
+      "alertShort": "Jetzt sichern",
+      "alertFull": "Jetzt sichern, um Ihren Account nicht zu verlieren!"
     },
     "confirmBackup": {
       "title": "Alles gesichert?",

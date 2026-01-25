@@ -4,6 +4,14 @@
     "minutesShort": "{count}د",
     "hoursShort": "{count}س"
   },
+  "landing": {
+    "title": "<highlight>افتح</highlight> الويب.",
+    "subtitle": "مفاتيحك، محتواك، قواعدك.",
+    "signIn": "تسجيل الدخول",
+    "createAccount": "إنشاء حساب",
+    "aTetherCompany": "شركة تابعة لـ <tether>tether.</tether>",
+    "copyright": "Synonym Software, S.A. DE C.V. ©2026. جميع الحقوق محفوظة."
+  },
   "common": {
     "save": "حفظ",
     "cancel": "الغاء",
@@ -57,7 +65,8 @@
     "home": "الرئيسية",
     "hot": "الرائج",
     "bookmarks": "المفضلة",
-    "settings": "الاعدادات"
+    "settings": "الاعدادات",
+    "signIn": "تسجيل الدخول"
   },
   "settings": {
     "title": "الاعدادات",
@@ -211,22 +220,23 @@
       "unavailable": "الخدمة غير متاحة مؤقتا"
     },
     "footer": {
-      "agreement": "بانشاء حساب Pubky، فانك توافق على",
-      "copyright": "Pubky مدعوم من Pubky Core وتم بناؤه بحب وتفان من Synonym Software, S.A. DE C.V. ©2025. جميع الحقوق محفوظة."
+      "agreement": "بانشاء حساب <pubky>Pubky</pubky>، فانك توافق على",
+      "andConfirmAge": "، وتؤكد أنك",
+      "copyright": "Pubky مدعوم من <pubkyCore>Pubky Core</pubkyCore> وتم بناؤه بحب وتفان من Synonym Software, S.A. DE C.V. ©2025. جميع الحقوق محفوظة."
     },
     "scan": {
-      "titleMobile": "انقر للتفويض.",
-      "titleDesktop": "امسح رمز QR.",
+      "titleMobile": "انقر <highlight>للتفويض.</highlight>",
+      "titleDesktop": "امسح <highlight>رمز QR.</highlight>",
       "subtitle": "افتح Pubky Ring، انشئ pubky وامسح رمز QR.",
       "generating": "جاري انشاء رمز QR...",
       "generatingShort": "جاري الانشاء...",
       "authorize": "تفويض باستخدام Pubky Ring",
-      "authorizeSub": "استخدم Pubky Ring او اي سلسلة مفاتيح اخرى مدعومة من Pubky Core.",
+      "authorizeSub": "استخدم <pubkyRing>Pubky Ring</pubkyRing> او اي سلسلة مفاتيح اخرى مدعومة من <pubkyCore>Pubky Core</pubkyCore>.",
       "linkFailed": "تعذر الاتصال بتطبيق التوقيع Pubky Ring",
       "tryAgain": "يرجى المحاولة مرة اخرى."
     },
     "signIn": {
-      "title": "تسجيل الدخول الى Pubky.",
+      "title": "تسجيل الدخول الى <highlight>Pubky.</highlight>",
       "subtitle": "قم بالتفويض باستخدام Pubky Ring لتسجيل الدخول.",
       "generating": "جاري انشاء رمز QR...",
       "generatingShort": "جاري الانشاء...",
@@ -235,15 +245,45 @@
       "linkCopiedDescription": "تم نسخ رابط المصادقة الى الحافظة.",
       "linkFailed": "تعذر الاتصال بتطبيق التوقيع Pubky Ring",
       "tryAgain": "يرجى المحاولة مرة اخرى.",
-      "recoveryHint": "لا تستطيع تسجيل الدخول باستخدام Pubky Ring؟ استخدم عبارة الاسترداد او الملف المشفر لاستعادة حسابك.",
+      "recoveryHint": "لا تستطيع تسجيل الدخول باستخدام <pubkyRing>Pubky Ring</pubkyRing>؟ استخدم عبارة الاسترداد او الملف المشفر لاستعادة حسابك.",
       "verifyingAccount": "جاري التحقق من الحساب",
       "loadingData": "جاري تحميل بياناتك",
       "buildingFeed": "جاري بناء خلاصتك",
-      "syncingSettings": "جاري مزامنة الاعدادات"
+      "syncingSettings": "جاري مزامنة الاعدادات",
+      "useRecoveryPhrase": "استخدام عبارة الاسترداد",
+      "useEncryptedFile": "استخدام ملف مشفر",
+      "restoreRecoveryPhrase": {
+        "title": "الاستعادة باستخدام عبارة الاسترداد",
+        "description": "استخدم الـ 12 كلمة (عبارة الاسترداد) لاستعادة حسابك وتسجيل الدخول.",
+        "invalidWords": "تم اكتشاف كلمات غير صالحة",
+        "invalidWordsHint": "يرجى التحقق من ان جميع الكلمات صالحة وتحتوي فقط على حروف صغيرة.",
+        "cancel": "الغاء",
+        "restore": "استعادة",
+        "restoring": "جاري الاستعادة...",
+        "errorTitle": "خطا في تسجيل الدخول بالعبارة السرية",
+        "errorDescription": "يرجى المحاولة مرة اخرى."
+      },
+      "restoreEncryptedFile": {
+        "title": "الاستعادة باستخدام ملف مشفر",
+        "description": "استخدم ملف النسخ الاحتياطي المشفر لاستعادة حسابك وتسجيل الدخول.",
+        "uploadLabel": "تحميل الملف المشفر",
+        "passwordLabel": "ادخل كلمة المرور",
+        "passwordPlaceholder": "ادخل كلمة المرور الخاصة بك",
+        "selectFile": "اختر ملف",
+        "invalidFileType": "يرجى اختيار ملف .pkarr",
+        "missingFields": "يرجى اختيار ملف وادخال كلمة المرور",
+        "invalidPassword": "كلمة مرور غير صالحة او ملف تالف. يرجى التحقق من كلمة المرور والمحاولة مرة اخرى.",
+        "nexusError": "حدث خطا مع nexus. يرجى المحاولة مرة اخرى.",
+        "restoreError": "فشلت الاستعادة من الملف. يرجى التحقق من الملف والمحاولة مرة اخرى.",
+        "unexpectedError": "حدث خطا غير متوقع",
+        "cancel": "الغاء",
+        "restore": "استعادة",
+        "restoring": "جاري الاستعادة..."
+      }
     },
     "pubky": {
       "title": "بوبكي الخاص بك",
-      "uniqueTitle": "بوبكي الفريد الخاص بك.",
+      "uniqueTitle": "<highlight>بوبكي</highlight> الفريد الخاص بك.",
       "uniqueSubtitle": "شارك بوبكي الخاص بك مع اصدقائك ليتمكنوا من متابعتك.",
       "copy": "نسخ الى الحافظة",
       "share": "مشاركة",
@@ -262,7 +302,7 @@
       "encryptedFile": "ملف مشفر"
     },
     "backup": {
-      "title": "قم بعمل نسخة احتياطية للبوبكي.",
+      "title": "قم بعمل نسخة احتياطية <highlight>للبوبكي.</highlight>",
       "subtitle": "تحتاج الى نسخة احتياطية لاستعادة الوصول الى حسابك لاحقا.",
       "signUpFailed": "خطا - فشل التسجيل",
       "signUpError": "حدث خطا ما. يرجى المحاولة مرة اخرى.",
@@ -297,15 +337,15 @@
       "completeSubtitle": "يمكنك استخدام الملف المشفر المحفوظ لاستعادة حسابك لاحقا."
     },
     "install": {
-      "title": "ثبت Pubky Ring.",
+      "title": "ثبت <highlight>Pubky Ring.</highlight>",
       "subtitle": "Pubky Ring هو سلسلة مفاتيح لمفاتيح هويتك في نظام Pubky البيئي.",
       "instructions": "قم بتحميل وتثبيت التطبيق المحمول. ثم تابع الى الخطوة التالية.",
-      "alternative": "استخدم Pubky Ring او اي سلسلة مفاتيح اخرى مدعومة من Pubky Core، او انشئ مفاتيحك في المتصفح (اقل امانا).",
+      "alternative": "استخدم <pubkyRing>Pubky Ring</pubkyRing> او اي سلسلة مفاتيح اخرى مدعومة من <pubkyCore>Pubky Core</pubkyCore>، او انشئ مفاتيحك في المتصفح (اقل امانا).",
       "createInBrowser": "انشاء المفاتيح في المتصفح",
       "continueWithRing": "متابعة مع Pubky Ring"
     },
     "createProfile": {
-      "title": "انشئ ملفك الشخصي.",
+      "title": "انشئ <highlight>ملفك الشخصي.</highlight>",
       "subtitle": "اضف اسمك ونبذتك وروابطك وصورتك الرمزية."
     }
   },
@@ -485,7 +525,9 @@
       "encryptedFile": "تحميل ملف مشفر",
       "folder": "مجلد",
       "exportRing": "تصدير الى Pubky Ring",
-      "keys": "المفاتيح"
+      "keys": "المفاتيح",
+      "alertShort": "انسخ احتياطياً الآن",
+      "alertFull": "انسخ احتياطياً الآن لتجنب فقدان حسابك!"
     },
     "confirmBackup": {
       "title": "هل انتهيت من النسخ الاحتياطي؟",
