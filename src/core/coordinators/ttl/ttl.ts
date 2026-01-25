@@ -176,6 +176,10 @@ export class TtlCoordinator {
    */
   public subscribeUser({ pubky }: TtlSubscribeUserParams): void {
     this.addUserSubscription(pubky);
+    Logger.debug('TtlCoordinator: User subscribed', {
+      pubky,
+      totalSubscribedUsers: this.state.subscribedUsers.size,
+    });
     void this.checkAndQueueEntity(pubky, this.getUserOps());
   }
 
@@ -184,6 +188,10 @@ export class TtlCoordinator {
    */
   public unsubscribeUser({ pubky }: TtlUnsubscribeUserParams): void {
     this.removeUserSubscription(pubky);
+    Logger.debug('TtlCoordinator: User unsubscribed', {
+      pubky,
+      totalSubscribedUsers: this.state.subscribedUsers.size,
+    });
   }
 
   /**
