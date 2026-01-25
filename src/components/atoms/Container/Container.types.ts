@@ -32,8 +32,8 @@ export type ContainerProps = {
   tabIndex?: React.HTMLAttributes<HTMLElement>['tabIndex'];
   /** HTML lang attribute for the element */
   lang?: string;
-  /** HTML dir attribute for text direction (ltr, rtl) */
-  dir?: 'ltr' | 'rtl';
+  /** HTML dir attribute for text direction (ltr, rtl, auto) */
+  dir?: React.HTMLAttributes<HTMLElement>['dir'];
   /** HTML translate attribute to disable browser translation */
   translate?: 'yes' | 'no';
 };
