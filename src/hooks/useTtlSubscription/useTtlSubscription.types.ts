@@ -37,12 +37,6 @@ export interface TtlPostSubscriptionOptions extends BaseTtlSubscriptionOptions {
    * If null/undefined, subscription is disabled
    */
   id: string | null | undefined;
-
-  /**
-   * Whether to also subscribe the post author for user TTL tracking
-   * @default true
-   */
-  subscribeAuthor?: boolean;
 }
 
 /**

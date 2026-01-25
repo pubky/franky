@@ -245,79 +245,11 @@ describe('useTtlSubscription', () => {
       });
     });
 
-    it('should subscribe author by default (subscribeAuthor=true)', () => {
-      const { result } = renderHook(() =>
-        useTtlSubscription({
-          type: 'post',
-          id: 'author123:post456',
-        }),
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author123',
-      });
-    });
-
-    it('should subscribe author when subscribeAuthor is explicitly true', () => {
-      const { result } = renderHook(() =>
-        useTtlSubscription({
-          type: 'post',
-          id: 'pk1abc123xyz:0000000123',
-          subscribeAuthor: true,
-        }),
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'pk1abc123xyz',
-      });
-    });
-
-    it('should NOT subscribe author when subscribeAuthor is false', () => {
-      const { result } = renderHook(() =>
-        useTtlSubscription({
-          type: 'post',
-          id: 'author123:post456',
-          subscribeAuthor: false,
-        }),
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribePost).toHaveBeenCalled();
-      expect(mockSubscribeUser).not.toHaveBeenCalled();
-    });
-
-    it('should handle malformed ID without colon - subscribes post but not author', () => {
+    it('should handle malformed ID without colon', () => {
       const { result } = renderHook(() =>
         useTtlSubscription({
           type: 'post',
           id: 'malformed-id-without-colon',
-          subscribeAuthor: true,
         }),
       );
 
@@ -362,35 +294,6 @@ describe('useTtlSubscription', () => {
       expect(result.current.isVisible).toBe(false);
       expect(mockUnsubscribePost).toHaveBeenCalledWith({
         compositePostId: 'author123:post456',
-      });
-    });
-
-    it('should unsubscribe author when element leaves viewport', () => {
-      const { result } = renderHook(() =>
-        useTtlSubscription({
-          type: 'post',
-          id: 'author123:post456',
-          subscribeAuthor: true,
-        }),
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      // Enter viewport
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      // Leave viewport
-      act(() => {
-        simulateVisibility(false);
-      });
-
-      expect(mockUnsubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author123',
       });
     });
   });
@@ -456,7 +359,6 @@ describe('useTtlSubscription', () => {
           useTtlSubscription({
             type: 'post',
             id,
-            subscribeAuthor: true,
           }),
         {
           initialProps: { id: 'author1:post1' },
@@ -492,49 +394,6 @@ describe('useTtlSubscription', () => {
       });
       expect(mockSubscribePost).toHaveBeenCalledWith({
         compositePostId: 'author2:post2',
-      });
-    });
-
-    it('should swap author subscription when post ID changes while visible', () => {
-      const { result, rerender } = renderHook(
-        ({ id }) =>
-          useTtlSubscription({
-            type: 'post',
-            id,
-            subscribeAuthor: true,
-          }),
-        {
-          initialProps: { id: 'author1:post1' },
-        },
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      // Make visible
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
-
-      // Clear mocks
-      mockSubscribeUser.mockClear();
-      mockUnsubscribeUser.mockClear();
-
-      // Change post ID while visible
-      rerender({ id: 'author2:post2' });
-
-      // Should unsubscribe old author and subscribe new author
-      expect(mockUnsubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author2',
       });
     });
 
@@ -609,13 +468,11 @@ describe('useTtlSubscription', () => {
   describe('Prop Changes', () => {
     it('should switch subscriptions when type changes while visible', () => {
       const { result, rerender } = renderHook(
-        ({ type, id, subscribeAuthor }: { type: 'post' | 'user'; id: string; subscribeAuthor?: boolean }) =>
-          useTtlSubscription(type === 'post' ? { type, id, subscribeAuthor } : { type, id }),
+        ({ type, id }: { type: 'post' | 'user'; id: string }) => useTtlSubscription({ type, id }),
         {
           initialProps: {
             type: 'post',
             id: 'author1:post1',
-            subscribeAuthor: true,
           },
         },
       );
@@ -633,9 +490,6 @@ describe('useTtlSubscription', () => {
       expect(mockSubscribePost).toHaveBeenCalledWith({
         compositePostId: 'author1:post1',
       });
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
 
       // Clear mocks
       mockSubscribePost.mockClear();
@@ -649,93 +503,8 @@ describe('useTtlSubscription', () => {
       expect(mockUnsubscribePost).toHaveBeenCalledWith({
         compositePostId: 'author1:post1',
       });
-      expect(mockUnsubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
       expect(mockSubscribeUser).toHaveBeenCalledWith({
         pubky: 'user1',
-      });
-    });
-
-    it('should subscribe author when subscribeAuthor toggles on while visible', () => {
-      const { result, rerender } = renderHook(
-        ({ subscribeAuthor }) =>
-          useTtlSubscription({
-            type: 'post',
-            id: 'author1:post1',
-            subscribeAuthor,
-          }),
-        {
-          initialProps: { subscribeAuthor: false },
-        },
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      // Make visible
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribeUser).not.toHaveBeenCalled();
-
-      // Enable author subscription while visible
-      mockSubscribeUser.mockClear();
-      rerender({ subscribeAuthor: true });
-
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
-    });
-
-    it('should unsubscribe author when subscribeAuthor toggles off while visible', () => {
-      const { result, rerender } = renderHook(
-        ({ subscribeAuthor }) =>
-          useTtlSubscription({
-            type: 'post',
-            id: 'author1:post1',
-            subscribeAuthor,
-          }),
-        {
-          initialProps: { subscribeAuthor: true },
-        },
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      // Make visible
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribePost).toHaveBeenCalledWith({
-        compositePostId: 'author1:post1',
-      });
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
-
-      // Disable author subscription while visible
-      mockSubscribePost.mockClear();
-      mockUnsubscribePost.mockClear();
-      mockSubscribeUser.mockClear();
-      mockUnsubscribeUser.mockClear();
-      rerender({ subscribeAuthor: false });
-
-      // Should unsubscribe author but post subscription should be re-established
-      expect(mockUnsubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author1',
-      });
-      expect(mockSubscribeUser).not.toHaveBeenCalled();
-      // Post gets re-subscribed after effect cleanup/re-run cycle
-      expect(mockSubscribePost).toHaveBeenCalledWith({
-        compositePostId: 'author1:post1',
       });
     });
 
@@ -745,7 +514,6 @@ describe('useTtlSubscription', () => {
           useTtlSubscription({
             type: 'post',
             id,
-            subscribeAuthor: false,
           }),
         {
           initialProps: { id: 'author1:post1' },
@@ -779,7 +547,6 @@ describe('useTtlSubscription', () => {
         useTtlSubscription({
           type: 'post',
           id: 'author123:post456',
-          subscribeAuthor: true,
         }),
       );
 
@@ -866,7 +633,6 @@ describe('useTtlSubscription', () => {
         useTtlSubscription({
           type: 'post',
           id: 'author123:post456',
-          subscribeAuthor: true,
         }),
       );
 
@@ -946,7 +712,6 @@ describe('useTtlSubscription', () => {
         useTtlSubscription({
           type: 'post',
           id: 'author123:post456',
-          subscribeAuthor: false,
         }),
       );
 
@@ -972,40 +737,6 @@ describe('useTtlSubscription', () => {
 
       expect(mockUnsubscribePost).toHaveBeenCalledWith({
         compositePostId: 'author123:post456',
-      });
-    });
-
-    it('should unsubscribe author on unmount while visible', () => {
-      const { result, unmount } = renderHook(() =>
-        useTtlSubscription({
-          type: 'post',
-          id: 'author123:post456',
-          subscribeAuthor: true,
-        }),
-      );
-
-      const mockElement = document.createElement('div');
-      act(() => {
-        result.current.ref(mockElement);
-      });
-
-      // Make visible
-      act(() => {
-        simulateVisibility(true);
-      });
-
-      expect(mockSubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author123',
-      });
-
-      // Clear mocks to verify unmount behavior
-      mockUnsubscribeUser.mockClear();
-
-      // Unmount while still visible
-      unmount();
-
-      expect(mockUnsubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author123',
       });
     });
 
@@ -1047,7 +778,6 @@ describe('useTtlSubscription', () => {
         useTtlSubscription({
           type: 'post',
           id: 'author123:post456',
-          subscribeAuthor: true,
         }),
       );
 
@@ -1151,7 +881,6 @@ describe('useTtlSubscription', () => {
           useTtlSubscription({
             type: 'post',
             id: 'author123:post456',
-            subscribeAuthor: true,
             enabled,
           }),
         {
@@ -1170,11 +899,9 @@ describe('useTtlSubscription', () => {
       });
 
       expect(mockSubscribePost).toHaveBeenCalled();
-      expect(mockSubscribeUser).toHaveBeenCalled();
 
       // Clear mocks
       mockUnsubscribePost.mockClear();
-      mockUnsubscribeUser.mockClear();
 
       // Disable
       rerender({ enabled: false });
@@ -1182,9 +909,6 @@ describe('useTtlSubscription', () => {
       // Should unsubscribe when disabled
       expect(mockUnsubscribePost).toHaveBeenCalledWith({
         compositePostId: 'author123:post456',
-      });
-      expect(mockUnsubscribeUser).toHaveBeenCalledWith({
-        pubky: 'author123',
       });
     });
 
