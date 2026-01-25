@@ -36,7 +36,6 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { ref: ttlRef } = Hooks.useTtlSubscription({
     type: 'post',
     id: postId,
-    subscribeAuthor: true,
   });
 
   // Determine thread connector variant based on reply status

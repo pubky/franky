@@ -32,7 +32,6 @@ export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
   const { ref: ttlRef } = Hooks.useTtlSubscription({
     type: 'post',
     id: postId,
-    subscribeAuthor: true,
   });
 
   const handleClick = (e: React.MouseEvent) => {
