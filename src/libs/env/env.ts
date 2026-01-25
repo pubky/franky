@@ -146,6 +146,8 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_PKARR_RELAYS: z
     .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== '' ? val : undefined))
     .default(JSON.stringify(DEFAULT_PKARR_RELAYS))
     .transform(parsePkarrRelays)
     .pipe(z.array(z.string().url()).min(1)),
@@ -163,6 +165,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_MODERATION_ID: z.string().default('euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro'),
   NEXT_PUBLIC_MODERATED_TAGS: z
     .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== '' ? val : undefined))
     .default('["nudity"]')
     .transform((val) => JSON.parse(val))
     .pipe(z.array(z.string().min(1)).min(1)),

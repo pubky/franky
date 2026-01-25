@@ -27,10 +27,12 @@ describe('NEXT_PUBLIC_PKARR_RELAYS parsing', () => {
 });
 
 /**
- * Tests for environment variables with defaults
+ * Tests for environment variables configuration
  */
-describe('Environment variables with defaults', () => {
-  it('should have valid default values for required URLs', () => {
+describe('Environment variables configuration', () => {
+  it('should have valid values when explicitly set in test config', () => {
+    // These are now REQUIRED variables (no defaults)
+    // This test verifies they are set correctly in test.ts
     expect(Env.NEXT_PUBLIC_NEXUS_URL).toBeDefined();
     expect(Env.NEXT_PUBLIC_CDN_URL).toBeDefined();
     expect(Env.NEXT_PUBLIC_HOMEGATE_URL).toBeDefined();
