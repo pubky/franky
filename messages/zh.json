@@ -12,6 +12,21 @@
     "aTetherCompany": "<tether>tether.</tether> 旗下公司",
     "copyright": "Synonym Software, S.A. DE C.V. ©2026。保留所有权利。"
   },
+  "status": {
+    "available": "有空",
+    "away": "离开",
+    "vacationing": "度假中",
+    "working": "工作中",
+    "traveling": "旅行中",
+    "celebrating": "庆祝中",
+    "sick": "生病",
+    "noStatus": "无状态",
+    "loading": "加载中",
+    "customStatus": "自定义状态",
+    "addStatus": "添加状态",
+    "selectStatus": "选择状态",
+    "selectStatusDescription": "选择要在个人资料上显示的状态"
+  },
   "common": {
     "save": "保存",
     "cancel": "取消",
@@ -442,6 +457,11 @@
         "subtitle": "当有人关注此账户时，他们的个人资料将出现在这里。\n开始发帖并与他人互动来增加您的粉丝！",
         "alt": "粉丝 - 空状态",
         "createPost": "创建帖子"
+      },
+      "tagged": {
+        "title": "发现谁标记了你",
+        "subtitle": "还没有人标记你。\n提示：你也可以给自己的个人资料添加标签。",
+        "alt": "标记 - 空状态"
       }
     },
     "sidebar": {

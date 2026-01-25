@@ -12,6 +12,21 @@
     "aTetherCompany": "ein <tether>tether.</tether> Unternehmen",
     "copyright": "Synonym Software, S.A. DE C.V. ©2026. Alle Rechte vorbehalten."
   },
+  "status": {
+    "available": "Verfügbar",
+    "away": "Abwesend",
+    "vacationing": "Im Urlaub",
+    "working": "Arbeiten",
+    "traveling": "Unterwegs",
+    "celebrating": "Feiern",
+    "sick": "Krank",
+    "noStatus": "Kein Status",
+    "loading": "Laden",
+    "customStatus": "Benutzerdefinierter Status",
+    "addStatus": "Status hinzufügen",
+    "selectStatus": "Status auswählen",
+    "selectStatusDescription": "Wähle einen Status für dein Profil"
+  },
   "common": {
     "save": "Speichern",
     "cancel": "Abbrechen",
@@ -442,6 +457,11 @@
         "subtitle": "Wenn jemand diesem Konto folgt, erscheint sein Profil hier.\nBeginnen Sie zu posten und mit anderen zu interagieren, um Ihre Follower zu erhöhen!",
         "alt": "Follower - Leerer Zustand",
         "createPost": "Beitrag erstellen"
+      },
+      "tagged": {
+        "title": "Entdecke, wer dich getaggt hat",
+        "subtitle": "Noch hat dich niemand getaggt.\nTipp: Du kannst auch Tags zu deinem eigenen Profil hinzufügen.",
+        "alt": "Getaggt - Leerer Zustand"
       }
     },
     "sidebar": {

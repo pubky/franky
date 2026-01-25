@@ -12,6 +12,21 @@
     "aTetherCompany": "a <tether>tether.</tether> company",
     "copyright": "Synonym Software, S.A. DE C.V. ©2026. All rights reserved."
   },
+  "status": {
+    "available": "Available",
+    "away": "Away",
+    "vacationing": "Vacationing",
+    "working": "Working",
+    "traveling": "Traveling",
+    "celebrating": "Celebrating",
+    "sick": "Sick",
+    "noStatus": "No Status",
+    "loading": "Loading",
+    "customStatus": "Custom Status",
+    "addStatus": "Add status",
+    "selectStatus": "Select Status",
+    "selectStatusDescription": "Choose a status to display on your profile"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -442,6 +457,11 @@
         "subtitle": "When someone follows this account, their profile will appear here.\nStart posting and engaging with others to grow your followers!",
         "alt": "Followers - Empty state",
         "createPost": "Create a Post"
+      },
+      "tagged": {
+        "title": "Discover who tagged you",
+        "subtitle": "No one has tagged you yet.\nTip: You can add tags to your own profile too.",
+        "alt": "Tagged - Empty state"
       }
     },
     "sidebar": {
