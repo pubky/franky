@@ -57,11 +57,7 @@ function TaggerUserRow({
  * Shows each user with their avatar, name, pubky, and a follow/unfollow button.
  * Max height of 300px with scroll for overflow.
  */
-export function WhoTaggedExpandedList({
-  taggers,
-  className,
-  'data-testid': dataTestId,
-}: WhoTaggedExpandedListProps) {
+export function WhoTaggedExpandedList({ taggers, className, 'data-testid': dataTestId }: WhoTaggedExpandedListProps) {
   const router = useRouter();
   const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
   const { requireAuth } = Hooks.useRequireAuth();

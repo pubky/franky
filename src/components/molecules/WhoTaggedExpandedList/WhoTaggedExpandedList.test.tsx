@@ -58,11 +58,7 @@ vi.mock('@/organisms', async (importOriginal) => {
       isLoading?: boolean;
       isCurrentUser?: boolean;
     }) => (
-      <div
-        data-testid={`user-list-item-${user.id}`}
-        data-loading={isLoading}
-        data-current-user={isCurrentUser}
-      >
+      <div data-testid={`user-list-item-${user.id}`} data-loading={isLoading} data-current-user={isCurrentUser}>
         <span>{user.name || user.id}</span>
         <button data-testid={`user-click-${user.id}`} onClick={() => onUserClick?.(user.id)}>
           View Profile
