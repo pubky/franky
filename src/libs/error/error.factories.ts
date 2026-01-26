@@ -11,7 +11,6 @@ import type {
   ValidationErrorCode,
   DatabaseErrorCode,
 } from './error.codes';
-import { Logger } from '../logger/logger';
 
 /**
  * Common parameters for all error factories.
@@ -53,7 +52,8 @@ function createAppError<C extends ErrorCategory>(
     traceId: params.traceId,
   } as AppErrorParams);
 
-  Logger.error(`[${params.service}:${params.operation}]`, error.message, params.context);
+  // Avoid logger import here to prevent Env initialization cycles in dev.
+  console.error(`[${params.service}:${params.operation}]`, error.message, params.context);
 
   // We could send to sentry error here
   // Sentry.captureException(err);

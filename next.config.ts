@@ -16,9 +16,13 @@ const nextConfig: NextConfig = {
 
     return config;
   },
-  // Empty turbopack config to silence the warning
-  // We're using webpack (via --webpack flag) due to our WebAssembly requirements
-  turbopack: {},
+  // Turbopack config for WebAssembly dependencies
+  turbopack: {
+    resolveAlias: {
+      '@synonymdev/pubky': '@synonymdev/pubky/index.js',
+      'pubky-app-specs': 'pubky-app-specs/index.js',
+    },
+  },
 };
 
 const withSerwist = withSerwistInit({
