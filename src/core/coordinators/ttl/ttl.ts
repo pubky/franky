@@ -176,6 +176,10 @@ export class TtlCoordinator {
    */
   public subscribeUser({ pubky }: TtlSubscribeUserParams): void {
     this.addUserSubscription(pubky);
+    Logger.debug('TtlCoordinator: User subscribed', {
+      pubky,
+      totalSubscribedUsers: this.state.subscribedUsers.size,
+    });
     void this.checkAndQueueEntity(pubky, this.getUserOps());
   }
 
@@ -184,6 +188,10 @@ export class TtlCoordinator {
    */
   public unsubscribeUser({ pubky }: TtlUnsubscribeUserParams): void {
     this.removeUserSubscription(pubky);
+    Logger.debug('TtlCoordinator: User unsubscribed', {
+      pubky,
+      totalSubscribedUsers: this.state.subscribedUsers.size,
+    });
   }
 
   /**
@@ -239,6 +247,10 @@ export class TtlCoordinator {
 
     // Listen to page visibility changes
     if (typeof document !== 'undefined') {
+      // Sync initial visibility state with actual DOM state
+      // This is critical for PWA mode where the app may load in the background
+      this.state.isPageVisible = document.visibilityState === 'visible';
+
       this.visibilityChangeHandler = this.handleVisibilityChange.bind(this);
       document.addEventListener('visibilitychange', this.visibilityChangeHandler);
     }

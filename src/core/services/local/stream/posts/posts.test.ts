@@ -934,6 +934,51 @@ describe('LocalStreamPostsService', () => {
       // Shared post should only appear once, from the unread stream
       expect(result?.stream).toEqual([postId('unread-1'), sharedPostId, postId('post-1')]);
     });
+
+    it('should filter out deleted posts from unread stream during merge', async () => {
+      // Setup: unread stream has a deleted post and a normal post
+      const deletedPostId = postId('deleted-post');
+      const normalUnreadPostId = postId('unread-normal');
+      const unreadStream = [deletedPostId, normalUnreadPostId];
+      const postStream = [postId('post-1')];
+
+      // Create post details - one deleted, one normal
+      await Core.PostDetailsModel.create({
+        id: deletedPostId,
+        content: Core.DELETED,
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 2,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/deleted-post`,
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: normalUnreadPostId,
+        content: 'Normal unread post',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 1,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/unread-normal`,
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: postId('post-1'),
+        content: 'Post 1',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/post-1`,
+        attachments: null,
+      });
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, unreadStream);
+      await createStream(postStream);
+
+      await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+
+      const result = await Core.LocalStreamPostsService.read({ streamId });
+      // Deleted post should NOT be in the merged stream
+      expect(result?.stream).not.toContain(deletedPostId);
+      // Normal posts should be present, sorted by timestamp (descending)
+      expect(result?.stream).toEqual([normalUnreadPostId, postId('post-1')]);
+    });
   });
 
   describe('persistUnreadNewStreamChunk', () => {
