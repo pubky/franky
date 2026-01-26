@@ -6,7 +6,7 @@ import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
-const USERS_PER_PAGE = 30;
+import { USERS_PER_PAGE } from './WhoToFollowPageMain.constants';
 
 /**
  * WhoToFollowPageMain
