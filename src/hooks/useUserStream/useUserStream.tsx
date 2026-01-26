@@ -1,53 +1,67 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import type { UseUserStreamParams, UseUserStreamResult, UserStreamUser } from './useUserStream.types';
-import { DEFAULT_USER_STREAM_LIMIT } from './useUserStream.constants';
+import { DEFAULT_USER_STREAM_LIMIT, DEFAULT_USER_STREAM_PAGE_SIZE } from './useUserStream.constants';
 
 /**
  * useUserStream
  *
  * Hook for fetching users from a user stream (e.g., influencers, recommended).
- * Uses StreamUserController for fetching IDs and useLiveQuery for reactive details/counts.
- *
- * @param params - Hook parameters
- * @param params.streamId - Stream ID to fetch (e.g., UserStreamTypes.TODAY_INFLUENCERS_ALL)
- * @param params.limit - Maximum number of users to fetch (default: 3)
- * @param params.includeCounts - Whether to also fetch user counts (default: false)
- * @returns Users array, loading state, error state, and refetch function
+ * Uses StreamUserController for fetching IDs and useLiveQuery for reactive details.
  *
  * @example
  * ```tsx
+ * // Sidebar usage (fixed limit)
  * const { users, isLoading } = useUserStream({
- *   streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+ *   streamId: Core.UserStreamTypes.RECOMMENDED,
  *   limit: 3,
- *   includeCounts: true,
+ * });
+ *
+ * // Full page with infinite scroll
+ * const { users, hasMore, loadMore } = useUserStream({
+ *   streamId: Core.UserStreamTypes.RECOMMENDED,
+ *   paginated: true,
  * });
  * ```
  */
 export function useUserStream({
   streamId,
-  limit = DEFAULT_USER_STREAM_LIMIT,
+  limit,
   includeCounts = false,
   includeRelationships = false,
   includeTags = false,
+  paginated = false,
 }: UseUserStreamParams): UseUserStreamResult {
+  const effectiveLimit = limit ?? (paginated ? DEFAULT_USER_STREAM_PAGE_SIZE : DEFAULT_USER_STREAM_LIMIT);
+
+  // Pagination state
   const [userIds, setUserIds] = useState<Core.Pubky[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(paginated);
   const [error, setError] = useState<string | null>(null);
+
+  // Track skip position for pagination
+  const skipRef = useRef(0);
+
+  // Tags state (not reactive via useLiveQuery since it requires fetch)
   const [userTagsMap, setUserTagsMap] = useState<Map<Core.Pubky, Core.NexusTag[]>>(new Map());
 
-  // Reactive user details from local database
+  // ============================================================================
+  // Reactive Data Queries
+  // ============================================================================
+
   const userDetailsMap = useLiveQuery(
     async () => {
+      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
       try {
-        if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
         return await Core.UserController.getManyDetails({ userIds });
-      } catch (error) {
-        Libs.Logger.error('[useUserStream] Failed to query user details', { userIds, error });
+      } catch (err) {
+        Libs.Logger.error('[useUserStream] Failed to query user details', { error: err });
         return new Map<Core.Pubky, Core.NexusUserDetails>();
       }
     },
@@ -55,14 +69,13 @@ export function useUserStream({
     new Map<Core.Pubky, Core.NexusUserDetails>(),
   );
 
-  // Reactive user counts from local database (only if includeCounts is true)
   const userCountsMap = useLiveQuery(
     async () => {
+      if (!includeCounts || userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
       try {
-        if (!includeCounts || userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
         return await Core.UserController.getManyCounts({ userIds });
-      } catch (error) {
-        Libs.Logger.error('[useUserStream] Failed to query user counts', { userIds, error });
+      } catch (err) {
+        Libs.Logger.error('[useUserStream] Failed to query user counts', { error: err });
         return new Map<Core.Pubky, Core.NexusUserCounts>();
       }
     },
@@ -70,15 +83,14 @@ export function useUserStream({
     new Map<Core.Pubky, Core.NexusUserCounts>(),
   );
 
-  // Reactive user relationships from local database (only if includeRelationships is true)
   const userRelationshipsMap = useLiveQuery(
     async () => {
+      if (!includeRelationships || userIds.length === 0)
+        return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
       try {
-        if (!includeRelationships || userIds.length === 0)
-          return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
         return await Core.UserController.getManyRelationships({ userIds });
-      } catch (error) {
-        Libs.Logger.error('[useUserStream] Failed to query user relationships', { userIds, error });
+      } catch (err) {
+        Libs.Logger.error('[useUserStream] Failed to query user relationships', { error: err });
         return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
       }
     },
@@ -86,7 +98,7 @@ export function useUserStream({
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
   );
 
-  // Fetch user tags (local-first with API fallback for missing)
+  // Fetch tags when userIds change (requires API call, not just DB query)
   useEffect(() => {
     if (!includeTags || userIds.length === 0) {
       setUserTagsMap(new Map());
@@ -106,7 +118,10 @@ export function useUserStream({
     void fetchTags();
   }, [userIds, includeTags]);
 
-  // Combine userIds with details, counts, relationships, and tags
+  // ============================================================================
+  // Computed Users Array
+  // ============================================================================
+
   const users = useMemo((): UserStreamUser[] => {
     const result: UserStreamUser[] = [];
 
@@ -117,15 +132,13 @@ export function useUserStream({
       const counts = userCountsMap.get(id);
       const relationship = userRelationshipsMap.get(id);
       const userTags = userTagsMap.get(id);
-      // Only compute CDN avatar URL if user has an image set
-      const avatarUrl = details.image ? Core.FileController.getAvatarUrl(id) : null;
 
       result.push({
         id: details.id,
         name: details.name,
         bio: details.bio,
         image: details.image,
-        avatarUrl,
+        avatarUrl: details.image ? Core.FileController.getAvatarUrl(id) : null,
         status: details.status,
         counts: counts
           ? {
@@ -143,38 +156,85 @@ export function useUserStream({
     return result;
   }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap, userTagsMap]);
 
-  // Fetch user IDs from the stream
-  const fetchUserIds = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  // ============================================================================
+  // Fetch Logic
+  // ============================================================================
 
-    try {
-      const { nextPageIds } = await Core.StreamUserController.getOrFetchStreamSlice({
-        streamId,
-        limit,
-        skip: 0,
-      });
+  const fetchStreamSlice = useCallback(
+    async (isInitial: boolean) => {
+      // Set loading state
+      if (isInitial) {
+        setIsLoading(true);
+        setError(null);
+        skipRef.current = 0;
+      } else {
+        setIsLoadingMore(true);
+      }
 
-      setUserIds(nextPageIds);
-      Libs.Logger.debug('[useUserStream] Fetched user IDs', { streamId, count: nextPageIds.length });
-    } catch (err) {
-      const errorMessage = Libs.isAppError(err) ? err.message : 'Failed to fetch users';
-      setError(errorMessage);
-      Libs.Logger.error('[useUserStream] Failed to fetch users:', err);
-    } finally {
-      setIsLoading(false);
+      try {
+        const { nextPageIds, skip: nextSkip } = await Core.StreamUserController.getOrFetchStreamSlice({
+          streamId,
+          limit: effectiveLimit,
+          skip: isInitial ? 0 : skipRef.current,
+        });
+
+        // Update user IDs
+        if (isInitial) {
+          setUserIds(nextPageIds);
+          skipRef.current = nextSkip ?? nextPageIds.length;
+        } else if (nextPageIds.length > 0) {
+          setUserIds((prev) => {
+            const existingIds = new Set(prev);
+            const newIds = nextPageIds.filter((id) => !existingIds.has(id));
+            return [...prev, ...newIds];
+          });
+          skipRef.current = nextSkip ?? skipRef.current + nextPageIds.length;
+        }
+
+        // Update hasMore based on whether we got a full page
+        setHasMore(paginated && nextPageIds.length >= effectiveLimit);
+      } catch (err) {
+        if (isInitial) {
+          setError(Libs.isAppError(err) ? err.message : 'Failed to fetch users');
+        }
+        Libs.Logger.error('[useUserStream] Failed to fetch users:', err);
+      } finally {
+        if (isInitial) {
+          setIsLoading(false);
+        } else {
+          setIsLoadingMore(false);
+        }
+      }
+    },
+    [streamId, effectiveLimit, paginated],
+  );
+
+  const loadMore = useCallback(async () => {
+    if (!paginated || isLoadingMore || !hasMore) return;
+    await fetchStreamSlice(false);
+  }, [paginated, isLoadingMore, hasMore, fetchStreamSlice]);
+
+  const refetch = useCallback(async () => {
+    if (paginated) {
+      setUserIds([]);
+      setHasMore(true);
     }
-  }, [streamId, limit]);
+    await fetchStreamSlice(true);
+  }, [paginated, fetchStreamSlice]);
 
+  // Initial fetch on mount or when streamId changes
   useEffect(() => {
-    void fetchUserIds();
-  }, [fetchUserIds]);
+    void fetchStreamSlice(true);
+  }, [fetchStreamSlice]);
 
   return {
     users,
     userIds,
     isLoading,
+    isLoadingMore,
+    hasMore,
     error,
-    refetch: fetchUserIds,
+    loadMore,
+    refetch,
   };
 }
