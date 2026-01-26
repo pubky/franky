@@ -19,6 +19,15 @@ const nextConfig: NextConfig = {
   // Empty turbopack config to silence the warning
   // We're using webpack (via --webpack flag) due to our WebAssembly requirements
   turbopack: {},
+  async redirects() {
+    return [
+      {
+        source: '/settings',
+        destination: '/settings/account',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 const withSerwist = withSerwistInit({

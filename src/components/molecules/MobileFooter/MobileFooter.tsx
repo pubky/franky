@@ -42,7 +42,7 @@ export function MobileFooter({ className }: MobileFooterProps) {
     { href: App.APP_ROUTES.SEARCH, icon: Libs.Search, label: 'Search' },
     { href: App.APP_ROUTES.HOT, icon: Libs.Flame, label: 'Hot' },
     { href: App.APP_ROUTES.BOOKMARKS, icon: Libs.Bookmark, label: 'Bookmarks' },
-    { href: App.APP_ROUTES.SETTINGS, icon: Libs.Settings, label: 'Settings' },
+    { href: App.SETTINGS_ROUTES.ACCOUNT, icon: Libs.Settings, label: 'Settings' },
   ];
 
   return (

@@ -46,8 +46,10 @@ vi.mock('@/app', async () => {
       SEARCH: '/search',
       HOT: '/hot',
       BOOKMARKS: '/bookmarks',
-      SETTINGS: '/settings',
       PROFILE: '/profile',
+    },
+    SETTINGS_ROUTES: {
+      ACCOUNT: '/settings/account',
     },
     UNAUTHENTICATED_ROUTES: [],
     AUTHENTICATED_ROUTES: [],
@@ -114,7 +116,7 @@ describe('MobileFooter', () => {
       { href: '/search', iconClass: '.lucide-search', label: 'Search' },
       { href: '/hot', iconClass: '.lucide-flame', label: 'Hot' },
       { href: '/bookmarks', iconClass: '.lucide-bookmark', label: 'Bookmarks' },
-      { href: '/settings', iconClass: '.lucide-settings', label: 'Settings' },
+      { href: '/settings/account', iconClass: '.lucide-settings', label: 'Settings' },
     ];
 
     const links = screen.getAllByRole('link');
