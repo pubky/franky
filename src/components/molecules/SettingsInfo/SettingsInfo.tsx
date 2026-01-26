@@ -5,11 +5,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 import * as App from '@/app';
-
-export interface SettingsInfoProps {
-  className?: string;
-  hideFAQ?: boolean;
-}
+import type { SettingsInfoProps } from './SettingsInfo.types';
 
 const FAQ_QUESTIONS = [
   { id: 'delete-post', question: 'How can I delete my post?', href: App.SETTINGS_ROUTES.HELP },
@@ -87,24 +83,10 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
         </Atoms.Typography>
         {/* Synonym Logo with Tether tagline */}
         <Atoms.Container overrideDefaults className="flex flex-col items-start">
-          <a
-            href="https://synonym.to"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block h-6"
-            aria-label="Synonym"
-          >
-            <Libs.SynonymLogo />
-          </a>
-          <Atoms.Container overrideDefaults className="flex h-4 items-center gap-[5px]">
-            <Atoms.Typography as="span" overrideDefaults className="text-[10px] leading-none text-white/50">
-              a
-            </Atoms.Typography>
-            <Libs.TetherLogo />
-            <Atoms.Typography as="span" overrideDefaults className="text-[10px] leading-none text-white/50">
-              company
-            </Atoms.Typography>
-          </Atoms.Container>
+          <Atoms.Link href="https://synonym.to" target="_blank" className="block" aria-label="Synonym">
+            <Atoms.Image src="/images/synonym-white-logo.svg" alt="Synonym" width={96} height={24} />
+          </Atoms.Link>
+          <Atoms.Image src="/images/a-tether-company.svg" alt="a tether company" width={109} height={16} />
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>
