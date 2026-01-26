@@ -25,6 +25,7 @@ import {
   canSubmitPost,
   formatUSDate,
   generateRandomUsername,
+  stripPubkyPrefix,
 } from './utils';
 
 describe('Utils', () => {
@@ -1572,6 +1573,34 @@ describe('Utils', () => {
         const result = formatUSDate(testDate);
         expect(result).toBe('01/01/2024');
       });
+    });
+  });
+
+  describe('stripPubkyPrefix', () => {
+    it('should strip "pubky" prefix from a pubky identifier', () => {
+      const prefixedKey = 'pubkyo1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      const expected = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(stripPubkyPrefix(prefixedKey)).toBe(expected);
+    });
+
+    it('should strip "pk:" legacy prefix from a pubky identifier', () => {
+      const prefixedKey = 'pk:o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      const expected = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(stripPubkyPrefix(prefixedKey)).toBe(expected);
+    });
+
+    it('should return the key unchanged if no prefix is present', () => {
+      const rawKey = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(stripPubkyPrefix(rawKey)).toBe(rawKey);
+    });
+
+    it('should return empty string for empty input', () => {
+      expect(stripPubkyPrefix('')).toBe('');
+    });
+
+    it('should handle null-like values gracefully', () => {
+      expect(stripPubkyPrefix(null as unknown as string)).toBe('');
+      expect(stripPubkyPrefix(undefined as unknown as string)).toBe('');
     });
   });
 
