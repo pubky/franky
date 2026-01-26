@@ -32,13 +32,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(2);
     const userDetailsMap = createUserDetailsMap(2);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     expect(screen.getByTestId('post-breadcrumb')).toBeInTheDocument();
   });
@@ -48,13 +42,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(3);
     const userDetailsMap = createUserDetailsMap(3);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     expect(screen.getByText('John')).toBeInTheDocument();
     expect(screen.getByText('Satoshi')).toBeInTheDocument();
@@ -67,13 +55,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(5);
     const userDetailsMap = createUserDetailsMap(5);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     // First item visible
     expect(screen.getByText('John')).toBeInTheDocument();
@@ -91,13 +73,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(5);
     const userDetailsMap = createUserDetailsMap(5);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     // Dropdown trigger (ellipsis) should be present
     const ellipsisTrigger = screen.getByTestId('breadcrumb-ellipsis-trigger');
@@ -109,13 +85,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(3);
     const userDetailsMap = createUserDetailsMap(3);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     // Click on first item (John) which is not current
     const johnItem = screen.getByText('John').closest('button');
@@ -128,13 +98,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(3);
     const userDetailsMap = createUserDetailsMap(3);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     // Click on last item (Anna) which is current
     const annaItem = screen.getByText('Anna').closest('button');
@@ -147,13 +111,7 @@ describe('PostPageBreadcrumb', () => {
     const ancestors = createAncestors(5);
     const userDetailsMap = createUserDetailsMap(5);
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     // Click on Alice (second-to-last, visible in truncated state)
     const aliceItem = screen.getByText('Alice').closest('button');
@@ -168,13 +126,7 @@ describe('PostPageBreadcrumb', () => {
     const userDetailsMap = new Map<string, string>();
     userDetailsMap.set('user2', 'Satoshi');
 
-    render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
-    );
+    render(<PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />);
 
     expect(screen.getByText('Unknown')).toBeInTheDocument();
     expect(screen.getByText('Satoshi')).toBeInTheDocument();
@@ -208,11 +160,7 @@ describe('PostPageBreadcrumb - Snapshots', () => {
     const userDetailsMap = createUserDetailsMap(2);
 
     const { container } = render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
+      <PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />,
     );
 
     const normalizedContainer = normaliseRadixIds(container);
@@ -224,11 +172,7 @@ describe('PostPageBreadcrumb - Snapshots', () => {
     const userDetailsMap = createUserDetailsMap(3);
 
     const { container } = render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
+      <PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />,
     );
 
     const normalizedContainer = normaliseRadixIds(container);
@@ -240,11 +184,7 @@ describe('PostPageBreadcrumb - Snapshots', () => {
     const userDetailsMap = createUserDetailsMap(5);
 
     const { container } = render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
+      <PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />,
     );
 
     const normalizedContainer = normaliseRadixIds(container);
@@ -256,11 +196,7 @@ describe('PostPageBreadcrumb - Snapshots', () => {
     const userDetailsMap = createUserDetailsMap(6);
 
     const { container } = render(
-      <PostPageBreadcrumb
-        ancestors={ancestors}
-        userDetailsMap={userDetailsMap}
-        onNavigate={mockOnNavigate}
-      />,
+      <PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={mockOnNavigate} />,
     );
 
     const normalizedContainer = normaliseRadixIds(container);

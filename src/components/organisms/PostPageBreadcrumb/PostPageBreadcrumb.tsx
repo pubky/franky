@@ -22,11 +22,7 @@ import type { Ancestor } from '@/hooks/usePostAncestors/usePostAncestors.types';
  * />
  * ```
  */
-export function PostPageBreadcrumb({
-  ancestors,
-  userDetailsMap,
-  onNavigate,
-}: PostPageBreadcrumbProps) {
+export function PostPageBreadcrumb({ ancestors, userDetailsMap, onNavigate }: PostPageBreadcrumbProps) {
   const ITEMS_TO_DISPLAY = 3;
   const shouldTruncate = ancestors.length > ITEMS_TO_DISPLAY;
 
@@ -52,8 +48,7 @@ export function PostPageBreadcrumb({
   return (
     <Molecules.Breadcrumb size="md" data-testid="post-breadcrumb">
       {/* Case 1: No Truncation needed */}
-      {!shouldTruncate &&
-        ancestors.map((ancestor, index) => renderItem(ancestor, index, ancestors.length))}
+      {!shouldTruncate && ancestors.map((ancestor, index) => renderItem(ancestor, index, ancestors.length))}
 
       {/* Case 2: Truncation Active */}
       {shouldTruncate && (
