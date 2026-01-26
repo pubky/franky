@@ -38,7 +38,7 @@ export function WhoToFollowPageRightSidebar() {
   return (
     <>
       <Organisms.ActiveUsers />
-      <Atoms.Container overrideDefaults className="sticky top-[100px] self-start">
+      <Atoms.Container overrideDefaults className="sticky top-25 self-start">
         <Organisms.FeedbackCard />
       </Atoms.Container>
     </>

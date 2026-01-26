@@ -3,7 +3,7 @@
 exports[`WhoToFollowPageMain - Snapshots > matches snapshot when loading 1`] = `
 <div>
   <div
-    class="mt-6 flex min-h-[200px] items-center justify-center lg:mt-0"
+    class="mt-6 min-h-50 items-center justify-center lg:mt-0"
     data-testid="container"
   >
     <div

@@ -3,7 +3,8 @@
 import * as React from 'react';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
-import { WHO_TO_FOLLOW_SORT, type WhoToFollowSortType } from './FilterSortWhoToFollow.types';
+import { WHO_TO_FOLLOW_SORT } from './FilterSortWhoToFollow.constants';
+import type { WhoToFollowSortType } from './FilterSortWhoToFollow.types';
 
 /**
  * FilterSortWhoToFollow

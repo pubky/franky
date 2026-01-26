@@ -39,7 +39,7 @@ export function WhoToFollowPageMain() {
 
   if (isLoading) {
     return (
-      <Atoms.Container className="mt-6 flex min-h-[200px] items-center justify-center lg:mt-0">
+      <Atoms.Container className="mt-6 min-h-50 items-center justify-center lg:mt-0">
         <Atoms.Spinner />
       </Atoms.Container>
     );
@@ -89,7 +89,7 @@ export function WhoToFollowPageMain() {
 
       {/* Loading more indicator */}
       {isLoadingMore && (
-        <Atoms.Container className="flex justify-center py-4">
+        <Atoms.Container className="justify-center py-4">
           <Atoms.Spinner />
         </Atoms.Container>
       )}
