@@ -1,5 +1,7 @@
 'use client';
 
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 
@@ -20,10 +22,26 @@ export function WhoToFollow() {
 
   return (
     <Organisms.ContentLayout
-      leftSidebarContent={<Organisms.WhoToFollowPageLeftSidebar />}
-      rightSidebarContent={<Organisms.WhoToFollowPageRightSidebar />}
-      leftDrawerContent={<Organisms.WhoToFollowPageLeftDrawer />}
-      rightDrawerContent={<Organisms.WhoToFollowPageRightDrawer />}
+      leftSidebarContent={<Molecules.FilterSortWhoToFollow />}
+      rightSidebarContent={
+        <>
+          <Organisms.ActiveUsers />
+          <Atoms.Container overrideDefaults className="sticky top-25 self-start">
+            <Organisms.FeedbackCard />
+          </Atoms.Container>
+        </>
+      }
+      leftDrawerContent={
+        <Atoms.Container overrideDefaults className="flex flex-col gap-6">
+          <Molecules.FilterSortWhoToFollow />
+        </Atoms.Container>
+      }
+      rightDrawerContent={
+        <Atoms.Container overrideDefaults className="flex flex-col gap-6">
+          <Organisms.ActiveUsers />
+          <Organisms.FeedbackCard />
+        </Atoms.Container>
+      }
     >
       <Organisms.WhoToFollowPageMain />
     </Organisms.ContentLayout>
