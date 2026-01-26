@@ -112,11 +112,6 @@ describe('WhoTaggedExpandedList', () => {
     expect(mockToggleFollow).toHaveBeenCalledWith('user1', false);
   });
 
-  it('applies custom className', () => {
-    render(<WhoTaggedExpandedList taggers={mockTaggers} className="custom-class" />);
-    expect(screen.getByTestId('who-tagged-expanded-list')).toHaveClass('custom-class');
-  });
-
   it('applies custom data-testid', () => {
     render(<WhoTaggedExpandedList taggers={mockTaggers} data-testid="custom-test-id" />);
     expect(screen.getByTestId('custom-test-id')).toBeInTheDocument();

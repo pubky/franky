@@ -54,7 +54,7 @@ export function TaggedItem({
           count={tag.taggers_count}
           clicked={!!tag.relationship}
           onClick={handleTagClick}
-          className="max-w-[160px] cursor-pointer transition-opacity hover:opacity-80"
+          className="max-w-(--tag-max-width) cursor-pointer transition-opacity hover:opacity-80"
         />
 
         {/* Search button */}
@@ -67,7 +67,7 @@ export function TaggedItem({
           <Atoms.Button
             overrideDefaults
             onClick={handleAvatarGroupClick}
-            className="flex cursor-pointer items-center pr-2 pl-0 transition-opacity hover:opacity-80"
+            className="flex cursor-pointer items-center pr-2 transition-opacity hover:opacity-80"
             aria-expanded={isExpanded}
             aria-label={`Show ${tag.taggers_count} users who tagged`}
           >
@@ -76,7 +76,8 @@ export function TaggedItem({
                 key={tagger.id}
                 name={tagger.id}
                 avatarUrl={tagger.avatarUrl}
-                className={Libs.cn('h-8 w-8 shrink-0', index > 0 && '-ml-2')}
+                size="md"
+                className={Libs.cn('shrink-0', index > 0 && '-ml-2')}
               />
             ))}
             {overflowCount > 0 && (
@@ -84,7 +85,7 @@ export function TaggedItem({
                 overrideDefaults={true}
                 className={Libs.cn(
                   'flex shrink-0 items-center justify-center rounded-full bg-background shadow-sm',
-                  'h-8 w-8 text-xs font-medium text-foreground',
+                  'size-8 text-xs font-medium text-foreground',
                   visibleTaggers.length > 0 && '-ml-2',
                 )}
               >
