@@ -18,11 +18,6 @@ vi.mock('@/hooks', () => ({
     handleTagToggle: mockHandleTagToggle,
     handleTagAdd: mockHandleTagAdd,
   })),
-  useTagInput: vi.fn(({ onTagAdd }) => ({
-    inputValue: '',
-    setInputValue: vi.fn(),
-    handleTagSubmit: vi.fn(() => onTagAdd?.('new-tag')),
-  })),
   useRequireAuth: () => ({
     isAuthenticated: true,
     requireAuth: <T,>(action: () => T) => action(),
@@ -64,20 +59,14 @@ vi.mock('@/molecules', () => ({
       )}
     </button>
   ),
-  PostTagInput: ({
-    value,
-    onChange,
-    onSubmit,
-  }: {
-    value: string;
-    onChange: (v: string) => void;
-    onSubmit: () => void;
-  }) => (
+  TagInput: ({ onTagAdd }: { onTagAdd: (tag: string) => void }) => (
     <input
-      data-testid="post-tag-input"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
+      data-testid="tag-input"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          onTagAdd('new-tag');
+        }
+      }}
     />
   ),
   PostTagAddButton: ({ onClick }: { onClick: () => void }) => (
@@ -171,7 +160,7 @@ describe('ClickableTagsList', () => {
     it('shows input when showInput is true', () => {
       render(<ClickableTagsList taggedId="post-123" taggedKind={Core.TagKind.POST} tags={mockTags} showInput={true} />);
 
-      expect(screen.getByTestId('post-tag-input')).toBeInTheDocument();
+      expect(screen.getByTestId('tag-input')).toBeInTheDocument();
     });
 
     it('hides input when showInput is false', () => {
@@ -179,7 +168,7 @@ describe('ClickableTagsList', () => {
         <ClickableTagsList taggedId="post-123" taggedKind={Core.TagKind.POST} tags={mockTags} showInput={false} />,
       );
 
-      expect(screen.queryByTestId('post-tag-input')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('tag-input')).not.toBeInTheDocument();
     });
 
     it('shows add button when showAddButton is true and no input', () => {
@@ -284,11 +273,11 @@ describe('ClickableTagsList', () => {
         />,
       );
 
-      expect(screen.queryByTestId('post-tag-input')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('tag-input')).not.toBeInTheDocument();
 
       fireEvent.click(screen.getByTestId('post-tag-add-button'));
 
-      expect(screen.getByTestId('post-tag-input')).toBeInTheDocument();
+      expect(screen.getByTestId('tag-input')).toBeInTheDocument();
     });
   });
 
@@ -317,13 +306,7 @@ describe('ClickableTagsList', () => {
 
     it('matches snapshot with input visible', () => {
       const { container } = render(
-        <ClickableTagsList
-          taggedId="post-123"
-          taggedKind={Core.TagKind.POST}
-          tags={mockTags}
-          showInput={true}
-          showEmojiPicker={true}
-        />,
+        <ClickableTagsList taggedId="post-123" taggedKind={Core.TagKind.POST} tags={mockTags} showInput={true} />,
       );
 
       expect(container).toMatchSnapshot();

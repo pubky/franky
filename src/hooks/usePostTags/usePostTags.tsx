@@ -64,21 +64,48 @@ export function usePostTags(postId: string | null | undefined, options: UsePostT
     return tagsCollection[0]?.tags ?? [];
   }, [tagsCollection]);
 
-  // Update tag order map when localTags change (only for new tags)
+  // Update tag order map when localTags change
+  // - On initial load: assign indices in order (0, 1, 2, ...) to preserve original order
+  // - On subsequent additions: prepend new tags (negative indices) so they appear first
   useEffect(() => {
     if (localTags.length === 0) return;
 
     setTagOrder((prevOrder) => {
+      const isInitialLoad = prevOrder.size === 0;
       let hasChanges = false;
       const newOrder = new Map(prevOrder);
 
-      localTags.forEach((tag) => {
-        const labelLower = tag.label.toLowerCase();
-        if (!newOrder.has(labelLower)) {
-          newOrder.set(labelLower, newOrder.size);
+      if (isInitialLoad) {
+        // Initial load: assign indices in order to preserve original sorting
+        localTags.forEach((tag, index) => {
+          const labelLower = tag.label.toLowerCase();
+          newOrder.set(labelLower, index);
+        });
+        hasChanges = true;
+      } else {
+        // Subsequent additions: prepend new tags with negative indices
+        // Find the minimum index to prepend before it
+        let minIndex = 0;
+        prevOrder.forEach((index) => {
+          if (index < minIndex) minIndex = index;
+        });
+
+        // Collect new tags first to assign in reverse (so first new tag gets lowest index)
+        const newTags: string[] = [];
+        localTags.forEach((tag) => {
+          const labelLower = tag.label.toLowerCase();
+          if (!newOrder.has(labelLower)) {
+            newTags.push(labelLower);
+          }
+        });
+
+        // Assign negative indices - first new tag gets the lowest (most negative) index
+        newTags.forEach((labelLower) => {
+          minIndex--;
+          newOrder.set(labelLower, minIndex);
           hasChanges = true;
-        }
-      });
+        });
+      }
 
       return hasChanges ? newOrder : prevOrder;
     });

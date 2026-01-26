@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TagInput } from './TagInput';
@@ -34,6 +35,13 @@ describe('TagInput', () => {
   it('renders emoji picker button', () => {
     render(<TagInput onTagAdd={mockOnTagAdd} />);
     expect(screen.getByLabelText('Open emoji picker')).toBeInTheDocument();
+  });
+
+  it('forwards ref to input element', () => {
+    const ref = React.createRef<HTMLInputElement>();
+    render(<TagInput ref={ref} onTagAdd={mockOnTagAdd} />);
+    expect(ref.current).toBeInstanceOf(HTMLInputElement);
+    expect(ref.current?.placeholder).toBe('add tag');
   });
 
   it('calls onTagAdd when Enter is pressed with valid tag', async () => {

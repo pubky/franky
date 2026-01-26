@@ -1,214 +1,248 @@
 'use client';
 
-import { useState, useRef, useMemo, useCallback } from 'react';
+import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import { TAG_MAX_LENGTH } from '@/config';
+import { BLUR_DELAY_MS, INPUT_BASE_CLASSES } from './TagInput.constants';
 import type { TagInputProps } from './TagInput.types';
 
-export function TagInput({
-  onTagAdd,
-  placeholder = 'add tag',
-  existingTags = [],
-  showCloseButton = false,
-  onClose,
-  hideSuggestions = false,
-  disabled = false,
-  maxTags,
-  currentTagsCount = 0,
-  limitReachedPlaceholder = 'limit reached',
-  onBlur,
-  onClick,
-}: TagInputProps) {
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Convert existingTags to string array for the hook
-  const existingTagLabels = useMemo(() => existingTags.map((tag) => tag.label), [existingTags]);
-
-  // Calculate if at limit
-  const isAtLimit = maxTags !== undefined && currentTagsCount >= maxTags;
-  const isDisabled = disabled || isAtLimit;
-
-  const handleTagAddWrapper = useCallback(
-    (tag: string) => {
-      // Fire and forget - don't await the promise
-      const result = onTagAdd(tag);
-
-      // Handle promise if it's returned (for async handlers)
-      if (result instanceof Promise) {
-        result.catch((error: unknown) => {
-          Libs.Logger.error('Failed to add tag:', error);
-        });
-      }
+/**
+ * TagInput - A tag input component with emoji picker and autocomplete suggestions.
+ *
+ * Features:
+ * - Emoji picker integration
+ * - Global tag search autocomplete (searches all tags in the system)
+ * - Character sanitization (removes colons, commas, spaces)
+ * - Tag limit support
+ * - Auto-focus support
+ * - Keyboard navigation for suggestions (Arrow Up/Down, Enter, Escape)
+ */
+const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
+  (
+    {
+      onTagAdd,
+      placeholder = 'add tag',
+      existingTags = [],
+      showCloseButton = false,
+      onClose,
+      hideSuggestions = false,
+      disabled = false,
+      maxTags,
+      currentTagsCount = 0,
+      limitReachedPlaceholder = 'limit reached',
+      onBlur,
+      onClick,
+      autoFocus = false,
+      className,
     },
-    [onTagAdd],
-  );
+    ref,
+  ) => {
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const isEmojiPickerOpenRef = React.useRef(false);
 
-  const {
-    inputValue,
-    setInputValue,
-    inputRef,
-    showEmojiPicker,
-    setShowEmojiPicker,
-    handleTagSubmit,
-    handleEmojiSelect,
-    handlePaste,
-  } = Hooks.useTagInput({
-    onTagAdd: handleTagAddWrapper,
-    existingTags: existingTagLabels,
-    maxTags,
-    disabled,
-  });
+    // Derived state
+    const existingTagLabels = React.useMemo(() => existingTags.map((tag) => tag.label), [existingTags]);
+    const isAtLimit = maxTags !== undefined && currentTagsCount >= maxTags;
+    const isDisabled = disabled || isAtLimit;
+    const displayPlaceholder = isAtLimit ? limitReachedPlaceholder : placeholder;
 
-  // Filter existing tags based on input (match full text+emoji combination)
-  const filteredSuggestions = useMemo(() => {
-    if (hideSuggestions || !inputValue.trim()) return [];
-    const inputText = inputValue.toLowerCase();
-    return existingTags
-      .filter((tag) => {
-        const tagLabel = tag.label.toLowerCase();
-        return tagLabel.includes(inputText) && tagLabel !== inputText;
-      })
-      .slice(0, 5);
-  }, [inputValue, existingTags, hideSuggestions]);
-
-  const handleSuggestionClick = useCallback(
-    (tagLabel: string) => {
-      setInputValue(tagLabel.toLowerCase());
-      setShowSuggestions(false);
-      inputRef.current?.focus();
-    },
-    [setInputValue, inputRef],
-  );
-
-  const handleKeyDown = Hooks.useEnterSubmit(() => Boolean(inputValue.trim()), handleTagSubmit);
-
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      // Sanitize input: remove banned characters (colons, commas, spaces)
-      const sanitized = Libs.sanitizeTagInput(e.target.value);
-      const value = sanitized.toLowerCase();
-      setInputValue(value);
-      if (!hideSuggestions) {
-        setShowSuggestions(value.trim().length > 0);
-      }
-    },
-    [setInputValue, hideSuggestions],
-  );
-
-  const handleInputFocus = useCallback(() => {
-    if (!hideSuggestions && inputValue.trim()) {
-      setShowSuggestions(true);
-    }
-  }, [inputValue, hideSuggestions]);
-
-  const handleInputBlur = useCallback(() => {
-    setTimeout(() => {
-      if (!containerRef.current?.contains(document.activeElement)) {
-        setShowSuggestions(false);
-        // Call external onBlur if input is empty
-        if (!inputValue && onBlur) {
-          onBlur();
+    // Wrap onTagAdd with error logging
+    const handleTagAdd = React.useCallback(
+      (tag: string) => {
+        const result = onTagAdd(tag);
+        if (result instanceof Promise) {
+          result.catch((error: unknown) => Libs.Logger.error('Failed to add tag:', error));
         }
+      },
+      [onTagAdd],
+    );
+
+    // Tag input state and handlers
+    const {
+      inputValue,
+      setInputValue,
+      inputRef: hookInputRef,
+      showEmojiPicker,
+      setShowEmojiPicker,
+      handleTagSubmit,
+      handleEmojiSelect,
+      handlePaste,
+    } = Hooks.useTagInput({
+      onTagAdd: handleTagAdd,
+      existingTags: existingTagLabels,
+      maxTags,
+      disabled,
+    });
+
+    // Suggestion selection callback (memoized to avoid hook recreation)
+    const handleSuggestionSelect = React.useCallback(
+      (tag: string) => {
+        setInputValue(tag.toLowerCase());
+        hookInputRef.current?.focus();
+      },
+      [setInputValue, hookInputRef],
+    );
+
+    // Global tag search autocomplete
+    const {
+      suggestedTags,
+      selectedIndex,
+      handleKeyDown: handleSuggestionKeyDown,
+      handleTagClick,
+      clearSuggestions,
+    } = Hooks.useSuggestedTags({
+      tagInput: hideSuggestions ? '' : inputValue,
+      onTagSelect: handleSuggestionSelect,
+    });
+
+    // Sync emoji picker state to ref (for blur handling)
+    React.useEffect(() => {
+      isEmojiPickerOpenRef.current = showEmojiPicker;
+    }, [showEmojiPicker]);
+
+    // Merge external ref with hook's internal ref
+    const mergedInputRef = React.useMemo(() => Libs.mergeRefs(ref, hookInputRef), [ref, hookInputRef]);
+
+    // Keyboard handling: suggestions first, then Enter submit
+    const enterSubmitHandler = Hooks.useEnterSubmit(() => Boolean(inputValue.trim()), handleTagSubmit);
+    const handleKeyDown = React.useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (handleSuggestionKeyDown(e)) return;
+        enterSubmitHandler(e);
+      },
+      [handleSuggestionKeyDown, enterSubmitHandler],
+    );
+
+    // Input change with sanitization
+    const handleInputChange = React.useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const sanitized = Libs.sanitizeTagInput(e.target.value);
+        setInputValue(sanitized.toLowerCase());
+      },
+      [setInputValue],
+    );
+
+    // Blur handling with delay for clicking suggestions/emoji
+    const handleInputBlur = React.useCallback(() => {
+      setTimeout(() => {
+        const focusStillInside = containerRef.current?.contains(document.activeElement);
+        if (!focusStillInside && !isEmojiPickerOpenRef.current) {
+          clearSuggestions();
+          if (!inputValue && onBlur) onBlur();
+        }
+      }, BLUR_DELAY_MS);
+    }, [inputValue, onBlur, clearSuggestions]);
+
+    // Auto-focus on mount
+    React.useEffect(() => {
+      if (autoFocus && !isDisabled && hookInputRef.current) {
+        hookInputRef.current.focus();
       }
-    }, 200);
-  }, [inputValue, onBlur]);
+    }, [autoFocus, isDisabled, hookInputRef]);
 
-  const displayPlaceholder = isAtLimit ? limitReachedPlaceholder : placeholder;
-
-  return (
-    <>
-      <Atoms.Container
-        ref={containerRef}
-        overrideDefaults={true}
-        className={Libs.cn(
-          'relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm',
-          onClick && 'cursor-pointer',
-        )}
-        onClick={onClick}
-      >
-        <Atoms.Input
-          data-cy="add-tag-input"
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          placeholder={displayPlaceholder}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
-          onPaste={handlePaste}
-          disabled={isDisabled}
-          maxLength={TAG_MAX_LENGTH}
+    return (
+      <>
+        <Atoms.Container
+          ref={containerRef}
+          data-testid="tag-input"
+          overrideDefaults
           className={Libs.cn(
-            'flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white',
-            'border-none shadow-none ring-0 outline-none hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
-            'placeholder:font-bold',
-            isAtLimit ? 'placeholder:text-destructive' : 'placeholder:text-input',
-            inputValue ? 'text-foreground' : 'text-input',
-            // Allow parent click handler when disabled (for auth prompts)
-            isDisabled && onClick && 'pointer-events-none',
+            'relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm',
+            onClick && 'cursor-pointer',
+            className,
           )}
-        />
-        <Atoms.Button
-          overrideDefaults={true}
-          onClick={() => setShowEmojiPicker(true)}
-          className={Libs.cn(
-            'inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark',
-            // Allow parent click handler when disabled (for auth prompts)
-            isDisabled && onClick && 'pointer-events-none',
-          )}
-          aria-label="Open emoji picker"
-          disabled={isDisabled}
+          onClick={onClick}
         >
-          <Icons.Smile className="size-4" strokeWidth={2} />
-        </Atoms.Button>
+          <Atoms.Input
+            data-cy="add-tag-input"
+            ref={mergedInputRef}
+            type="text"
+            value={inputValue}
+            placeholder={displayPlaceholder}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onBlur={handleInputBlur}
+            onPaste={handlePaste}
+            disabled={isDisabled}
+            maxLength={TAG_MAX_LENGTH}
+            className={Libs.cn(
+              INPUT_BASE_CLASSES,
+              isAtLimit ? 'placeholder:text-destructive' : 'placeholder:text-input',
+              inputValue ? 'text-foreground' : 'text-input',
+              isDisabled && onClick && 'pointer-events-none',
+            )}
+          />
 
-        {/* Close button */}
-        {showCloseButton && (
+          {/* Emoji picker button */}
           <Atoms.Button
-            overrideDefaults={true}
-            onClick={onClose}
-            className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 hover:opacity-80"
-            aria-label="Close tag input"
+            overrideDefaults
+            onClick={() => setShowEmojiPicker(true)}
+            className={Libs.cn(
+              'inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark',
+              isDisabled && onClick && 'pointer-events-none',
+            )}
+            aria-label="Open emoji picker"
+            disabled={isDisabled}
           >
-            <Icons.X className="size-3" strokeWidth={2} />
+            <Icons.Smile className="size-4" strokeWidth={2} />
           </Atoms.Button>
-        )}
 
-        {/* Suggestions Dropdown */}
-        {!hideSuggestions && showSuggestions && filteredSuggestions.length > 0 && (
-          <Atoms.Container
-            overrideDefaults={true}
-            className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border border-border bg-popover"
-          >
-            {filteredSuggestions.map((tag, index) => (
-              <Atoms.Container
-                key={`${tag.label}-${index}`}
-                overrideDefaults={true}
-                className="cursor-pointer px-3 py-2 hover:rounded-md hover:bg-accent"
-                onClick={() => handleSuggestionClick(tag.label)}
-              >
-                <Atoms.Typography as="span" className="text-sm font-medium text-popover-foreground">
-                  {tag.label}
-                </Atoms.Typography>
-              </Atoms.Container>
-            ))}
-          </Atoms.Container>
-        )}
-      </Atoms.Container>
+          {/* Close button */}
+          {showCloseButton && (
+            <Atoms.Button
+              overrideDefaults
+              onClick={onClose}
+              className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 hover:opacity-80"
+              aria-label="Close tag input"
+            >
+              <Icons.X className="size-3" strokeWidth={2} />
+            </Atoms.Button>
+          )}
 
-      {/* Emoji Picker Dialog */}
-      <Molecules.EmojiPickerDialog
-        open={showEmojiPicker && !disabled}
-        onOpenChange={setShowEmojiPicker}
-        onEmojiSelect={handleEmojiSelect}
-        currentInput={inputValue}
-      />
-    </>
-  );
-}
+          {/* Tag suggestions dropdown */}
+          {!hideSuggestions && suggestedTags.length > 0 && (
+            <Atoms.Container
+              overrideDefaults
+              role="listbox"
+              aria-label="Tag suggestions"
+              className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border border-border bg-popover"
+            >
+              {suggestedTags.map((tag, index) => (
+                <Atoms.Container
+                  key={tag}
+                  overrideDefaults
+                  role="option"
+                  aria-selected={index === selectedIndex}
+                  className={Libs.cn(
+                    'cursor-pointer px-3 py-2 hover:rounded-md hover:bg-accent',
+                    index === selectedIndex && 'rounded-md bg-accent',
+                  )}
+                  onClick={() => handleTagClick(tag)}
+                >
+                  <Atoms.Typography as="span" className="text-sm font-medium text-popover-foreground">
+                    {tag}
+                  </Atoms.Typography>
+                </Atoms.Container>
+              ))}
+            </Atoms.Container>
+          )}
+        </Atoms.Container>
+
+        <Molecules.EmojiPickerDialog
+          open={showEmojiPicker && !disabled}
+          onOpenChange={setShowEmojiPicker}
+          onEmojiSelect={handleEmojiSelect}
+          currentInput={inputValue}
+        />
+      </>
+    );
+  },
+);
+
+TagInput.displayName = 'TagInput';
+
+export { TagInput };

@@ -1,3 +1,4 @@
+import type * as React from 'react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatDistanceToNow } from 'date-fns';
@@ -836,4 +837,33 @@ export function generateRandomUsername(): string {
   }
 
   return `${randomAdjective}-${randomNoun1}-${randomNoun2}`;
+}
+
+/**
+ * Merges multiple refs into a single callback ref.
+ * Handles both callback refs and RefObject refs.
+ *
+ * @param refs - Array of refs to merge
+ * @returns A callback ref that updates all provided refs
+ *
+ * @example
+ * ```tsx
+ * const Component = forwardRef<HTMLDivElement>((props, ref) => {
+ *   const internalRef = useRef<HTMLDivElement>(null);
+ *   const mergedRef = useMemo(() => mergeRefs(ref, internalRef), [ref]);
+ *   return <div ref={mergedRef} />;
+ * });
+ * ```
+ */
+export function mergeRefs<T>(...refs: Array<React.Ref<T> | null | undefined>): React.RefCallback<T> {
+  return (node: T | null) => {
+    refs.forEach((ref) => {
+      if (!ref) return;
+      if (typeof ref === 'function') {
+        ref(node);
+      } else {
+        ref.current = node;
+      }
+    });
+  };
 }

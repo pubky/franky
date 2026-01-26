@@ -39,6 +39,7 @@ export * from './useHotTags';
 export * from './useHotStreamId';
 export * from './useUserStream';
 export * from './useTagInput';
+export * from './useSuggestedTags';
 export * from './useProfileForm';
 export * from './useBookmarksStreamId';
 export * from './useBookmark';

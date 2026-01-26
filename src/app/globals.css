@@ -378,7 +378,7 @@ body {
     box-shadow: var(--shadow-xs-dark);
   }
 
-  /* Thicker white caret for focused inputs (used by PostTagInput) */
+  /* Thicker white caret for focused inputs (used by TagInput) */
   .caret-white {
     caret-color: white;
   }
