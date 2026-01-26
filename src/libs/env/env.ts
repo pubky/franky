@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Err, ErrorService, ValidationErrorCode } from '@/libs';
+import { Err, ErrorService, ValidationErrorCode } from '@/libs/error';
 
 const DEFAULT_PKARR_RELAYS = ['https://pkarr.pubky.app', 'https://pkarr.pubky.org'];
 
