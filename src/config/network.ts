@@ -1,4 +1,4 @@
-import { Env } from '@/libs';
+import { Env } from '@/libs/env';
 
 export const TESTNET = Env.NEXT_PUBLIC_TESTNET;
 export const PKARR_RELAYS = Env.NEXT_PUBLIC_PKARR_RELAYS;
