@@ -6,6 +6,8 @@ import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
+const USERS_PER_PAGE = 30;
+
 /**
  * WhoToFollowPageMain
  *
@@ -17,7 +19,7 @@ export function WhoToFollowPageMain() {
 
   const { users, isLoading, isLoadingMore, hasMore, loadMore } = Hooks.useUserStream({
     streamId: Core.UserStreamTypes.RECOMMENDED,
-    limit: 30,
+    limit: USERS_PER_PAGE,
     paginated: true,
     includeRelationships: true,
     includeCounts: true,
