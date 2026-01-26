@@ -105,6 +105,7 @@ export * from './TaggedEmpty';
 export * from './TaggedItem';
 export * from './TaggedList';
 export * from './TaggedSection';
+export * from './WhoTaggedExpandedList';
 export * from './OnboardingLayout';
 export * from './TextareaField';
 export * from './TimelineEmpty';
