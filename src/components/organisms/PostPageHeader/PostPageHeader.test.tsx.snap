@@ -7,7 +7,7 @@ exports[`PostPageHeader > matches snapshot for reply post with breadcrumb 1`] = 
     data-testid="post-page-header"
   >
     <div
-      class="flex items-center justify-between gap-4"
+      class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4"
       data-testid="container"
     >
       <h1
@@ -28,6 +28,7 @@ exports[`PostPageHeader > matches snapshot for reply post with breadcrumb 1`] = 
         >
           <li
             class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            data-testid="breadcrumb-item-0"
           >
             <button
               class="flex items-center gap-1"
@@ -65,6 +66,7 @@ exports[`PostPageHeader > matches snapshot for reply post with breadcrumb 1`] = 
           </li>
           <li
             class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            data-testid="breadcrumb-item-1"
           >
             <button
               class="flex items-center gap-1"
@@ -102,6 +104,7 @@ exports[`PostPageHeader > matches snapshot for reply post with breadcrumb 1`] = 
           </li>
           <li
             class="flex items-center justify-center gap-2.5 text-foreground"
+            data-testid="breadcrumb-item-2"
           >
             <button
               class="flex items-center gap-1"
@@ -128,7 +131,7 @@ exports[`PostPageHeader > matches snapshot for root post 1`] = `
     data-testid="post-page-header"
   >
     <div
-      class="flex items-center justify-between gap-4"
+      class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4"
       data-testid="container"
     >
       <h1

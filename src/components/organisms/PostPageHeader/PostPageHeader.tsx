@@ -2,9 +2,9 @@
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import type { PostPageHeaderProps } from './PostPageHeader.types';
+import { PostPageBreadcrumb } from '@/organisms/PostPageBreadcrumb';
 
 /**
  * PostPageHeader Organism
@@ -14,6 +14,10 @@ import type { PostPageHeaderProps } from './PostPageHeader.types';
  *
  * The breadcrumb shows the path from the root post to the current post,
  * allowing users to navigate to parent posts in the reply tree.
+ *
+ * Responsive behavior:
+ * - Mobile: Title on top, breadcrumbs below (stacked vertically)
+ * - Desktop: Title left, breadcrumbs right (side by side)
  *
  * @example
  * ```tsx
@@ -68,8 +72,11 @@ export function PostPageHeader({ postId }: PostPageHeaderProps) {
 
   return (
     <Atoms.PageHeader data-testid="post-page-header">
-      <Atoms.Container className="flex items-center justify-between gap-4" overrideDefaults>
-        {/* Left: Title */}
+      <Atoms.Container
+        className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between md:gap-4"
+        overrideDefaults
+      >
+        {/* Title */}
         <Atoms.Typography
           as="h1"
           overrideDefaults
@@ -79,26 +86,9 @@ export function PostPageHeader({ postId }: PostPageHeaderProps) {
           {titlePrefix} {authorName}
         </Atoms.Typography>
 
-        {/* Right: Breadcrumb (only for replies) */}
+        {/* Breadcrumb (only for replies) */}
         {hasParents && (
-          <Molecules.Breadcrumb size="md" data-testid="post-breadcrumb">
-            {ancestors.map((ancestor, index) => {
-              const isLast = index === ancestors.length - 1;
-              const userName = userDetailsMap.get(ancestor.userId) || 'Unknown';
-
-              return (
-                <React.Fragment key={ancestor.postId}>
-                  <Molecules.BreadcrumbItem
-                    variant={isLast ? 'current' : 'link'}
-                    onClick={isLast ? undefined : () => navigateToPost(ancestor.postId)}
-                  >
-                    {userName}
-                  </Molecules.BreadcrumbItem>
-                  {!isLast && <Molecules.BreadcrumbSeparator size="sm" />}
-                </React.Fragment>
-              );
-            })}
-          </Molecules.Breadcrumb>
+          <PostPageBreadcrumb ancestors={ancestors} userDetailsMap={userDetailsMap} onNavigate={navigateToPost} />
         )}
       </Atoms.Container>
     </Atoms.PageHeader>
