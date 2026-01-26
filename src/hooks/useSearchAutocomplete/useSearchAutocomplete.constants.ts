@@ -17,5 +17,11 @@ export const AUTOCOMPLETE_USER_LIMIT = 10;
 /** Minimum character length for user ID searches after "pubky" prefix */
 export const MIN_USER_ID_SEARCH_LENGTH = 3;
 
-/** Prefix for user ID searches */
-export const USER_ID_PREFIXES = ['pubky:', 'pk:'] as const;
+/**
+ * Prefixes for user ID searches
+ * Order matters - longer prefixes should come first to match correctly
+ * - pubky: legacy format with colon
+ * - pk: legacy format
+ * - pubky: new format without colon (must be last to not match 'pubky:' first)
+ */
+export const USER_ID_PREFIXES = ['pubky:', 'pk:', 'pubky'] as const;
