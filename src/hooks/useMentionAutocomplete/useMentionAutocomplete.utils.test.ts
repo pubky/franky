@@ -234,6 +234,19 @@ describe('extractMentionQuery', () => {
       // @example.com is at the end
       expect(result.atQuery).toBe('example.com');
     });
+
+    it('does not match pubky: with colon (invalid format)', () => {
+      // pubky: (with colon) is not the new format - should not match
+      const result = extractMentionQuery('Hello pubky:abc123');
+      expect(result.atQuery).toBeNull();
+      expect(result.pkQuery).toBeNull();
+    });
+
+    it('does not match pubky: alone', () => {
+      const result = extractMentionQuery('Hello pubky:');
+      expect(result.atQuery).toBeNull();
+      expect(result.pkQuery).toBeNull();
+    });
   });
 });
 
@@ -317,6 +330,12 @@ describe('getContentWithMention', () => {
     it('appends when @ pattern is not at the end', () => {
       const result = getContentWithMention('@john is cool', userId);
       expect(result).toBe(`@john is cool pubky${userId} `);
+    });
+
+    it('appends when pubky: (with colon) is at the end (invalid format)', () => {
+      // pubky: with colon is not a valid pattern, so it falls back to append
+      const result = getContentWithMention('Hello pubky:abc', userId);
+      expect(result).toBe(`Hello pubky:abc pubky${userId} `);
     });
   });
 

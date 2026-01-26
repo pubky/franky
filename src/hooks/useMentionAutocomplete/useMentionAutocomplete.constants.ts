@@ -26,8 +26,9 @@ export const AT_PATTERN_END = /@[^\s]*$/;
 /**
  * Regex pattern to match pubky ID at end of text
  * Supports both new format (pubky) and legacy format (pk:) for backwards compatibility
+ * Uses negative lookahead (?!:) to ensure pubky is not followed by a colon
  */
-export const PUBKY_PATTERN_END = /(?:pk:|pubky)[^\s]*$/;
+export const PUBKY_PATTERN_END = /(?:pk:|pubky(?!:))[^\s]*$/;
 
 /** Legacy prefix for backwards compatibility detection */
 export const LEGACY_PK_PREFIX = 'pk:';
