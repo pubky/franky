@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { toast } from 'sonner';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 // Import directly to avoid circular dependency with @/hooks barrel
 import { useProfileStats } from '@/hooks/useProfileStats';
 import type { UseTaggedResult, UseTaggedOptions } from './useTagged.types';
@@ -20,8 +21,8 @@ import { TAGS_PER_PAGE } from './useTagged.constants';
 export function useTagged(userId: string | null | undefined, options: UseTaggedOptions = {}): UseTaggedResult {
   const { enablePagination = true, enableStats = true, viewerId: customViewerId } = options;
 
-  // Use currentUserPubky directly instead of selectCurrentUserPubky() to avoid throwing
-  // when user is not authenticated (e.g., during logout)
+  // selectCurrentUserPubky() throws an error when user is not authenticated;
+  // access currentUserPubky directly to get null instead (e.g., during logout or unauthenticated views)
   const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
   const viewerId = customViewerId ?? currentUserId;
 
@@ -36,9 +37,14 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
 
   // Fetch tags directly from IndexedDB - this will react to any changes made by TagController
   const localTags = useLiveQuery(async () => {
-    if (!userId) return undefined;
-    const tags = await Core.UserController.getTags({ userId });
-    return tags.length > 0 ? tags : null;
+    try {
+      if (!userId) return undefined;
+      const tags = await Core.UserController.getTags({ userId });
+      return tags.length > 0 ? tags : null;
+    } catch (error) {
+      Libs.Logger.error('[useTagged] Failed to query user tags', { userId, error });
+      return null;
+    }
   }, [userId]);
 
   // Update tag order map when localTags change (only for new tags)

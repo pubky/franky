@@ -7,17 +7,57 @@ import type {
   FormatPublicKeyProps,
   GetDisplayTagsOptions,
 } from './utils.types';
+import type { PostInputVariant } from '@/organisms';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPublicKey({ key, length = 12 }: FormatPublicKeyProps) {
+const PUBKY_PREFIX = 'pubky';
+const LEGACY_PUBKY_PREFIX = 'pk:';
+
+export function withPubkyPrefix(key: string): string {
   if (!key) return '';
-  if (key.length <= length) return key;
-  const prefix = key.slice(0, length / 2);
-  const suffix = key.slice(-length / 2);
-  return `${prefix}...${suffix}`;
+  if (key.startsWith(PUBKY_PREFIX)) return key;
+  if (key.startsWith(LEGACY_PUBKY_PREFIX)) {
+    return `${PUBKY_PREFIX}${key.slice(LEGACY_PUBKY_PREFIX.length)}`;
+  }
+  return `${PUBKY_PREFIX}${key}`;
+}
+
+const stripPubkyPrefix = (key: string): string => {
+  if (!key) return '';
+  if (key.startsWith(PUBKY_PREFIX)) return key.slice(PUBKY_PREFIX.length);
+  if (key.startsWith(LEGACY_PUBKY_PREFIX)) return key.slice(LEGACY_PUBKY_PREFIX.length);
+  return key;
+};
+
+export function formatPublicKey({ key, length = 12, includePrefix = false }: FormatPublicKeyProps) {
+  if (!key) return '';
+  const rawKey = stripPubkyPrefix(key);
+  const prefixLabel = includePrefix ? PUBKY_PREFIX : '';
+  if (rawKey.length <= length) return `${prefixLabel}${rawKey}`;
+  const prefix = rawKey.slice(0, Math.floor(length / 2));
+  const suffix = rawKey.slice(-(length - prefix.length));
+  return `${prefixLabel}${prefix}...${suffix}`;
+}
+
+/**
+ * Checks if a string is a valid pubky identifier.
+ * Pubky identifiers are exactly 52 lowercase alphanumeric characters (z-base-32 encoded).
+ *
+ * @param value - The string to validate
+ * @returns true if the string is a valid pubky identifier
+ *
+ * @example
+ * ```ts
+ * isPubkyIdentifier('o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy') // true
+ * isPubkyIdentifier('posts') // false
+ * isPubkyIdentifier('ABC123...') // false (uppercase)
+ * ```
+ */
+export function isPubkyIdentifier(value: string): boolean {
+  return /^[a-z0-9]{52}$/.test(value);
 }
 
 export async function copyToClipboard({ text }: CopyToClipboardProps) {
@@ -75,10 +115,27 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
 // This is to ensure that the IDs are consistent across test runs
 export const normaliseRadixIds = (container: HTMLElement) => {
   const clonedContainer = container.cloneNode(true) as HTMLElement;
-  const normalizedId = 'radix-_r_0_';
+  const normalizedId = 'radix-normalized';
   const radixIdPatterns = [/^radix-_r_[\da-z]+_?$/i, /^_r_[\da-z]+_?$/i];
   const shouldNormalise = (value: string | null) =>
     Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
+
+  // Normalise root element attributes too (querySelectorAll does not include the root)
+  if (shouldNormalise(clonedContainer.getAttribute('id'))) {
+    clonedContainer.setAttribute('id', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-controls'))) {
+    clonedContainer.setAttribute('aria-controls', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-labelledby'))) {
+    clonedContainer.setAttribute('aria-labelledby', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('aria-describedby'))) {
+    clonedContainer.setAttribute('aria-describedby', normalizedId);
+  }
+  if (shouldNormalise(clonedContainer.getAttribute('for'))) {
+    clonedContainer.setAttribute('for', normalizedId);
+  }
 
   // Normalise all radix IDs to a consistent value
   const elementsWithIds = clonedContainer.querySelectorAll('[id]');
@@ -101,6 +158,14 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   elementsWithAriaLabelledBy.forEach((el) => {
     if (shouldNormalise(el.getAttribute('aria-labelledby'))) {
       el.setAttribute('aria-labelledby', normalizedId);
+    }
+  });
+
+  // Normalise aria-describedby attributes
+  const elementsWithAriaDescribedBy = clonedContainer.querySelectorAll('[aria-describedby]');
+  elementsWithAriaDescribedBy.forEach((el) => {
+    if (shouldNormalise(el.getAttribute('aria-describedby'))) {
+      el.setAttribute('aria-describedby', normalizedId);
     }
   });
 
@@ -603,17 +668,20 @@ export function sanitizeTagInput(value: string): string {
 }
 
 /**
- * Determines if a post can be submitted based on variant, content, attachments, and submission state.
+ * Determines if a post can be submitted based on variant, content, attachments, submission state, and article options.
  *
- * @param variant - The post input variant ('post', 'reply', or 'repost')
+ * @param variant - The post input variant ('post', 'reply', 'repost', or 'edit')
  * @param content - The text content of the post
  * @param attachments - Array of attached files
  * @param isSubmitting - Whether a submission is currently in progress
+ * @param isArticle - Whether the post is an article (optional)
+ * @param articleTitle - The title of the article (optional)
  * @returns true if the post can be submitted, false otherwise
  *
  * @remarks
  * - Reposts allow empty content
  * - Posts and replies require either content or attachments
+ * - Articles require both content and title
  * - Cannot submit if already submitting
  *
  * @example
@@ -621,17 +689,151 @@ export function sanitizeTagInput(value: string): string {
  * canSubmitPost('post', '', [], false) // false
  * canSubmitPost('repost', '', [], false) // true
  * canSubmitPost('post', 'Hello', [], true) // false (submitting)
+ * canSubmitPost('post', 'Content', [], false, true, 'Title') // true (article)
+ * canSubmitPost('post', 'Content', [], false, true, '') // false (article without title)
  */
 export function canSubmitPost(
-  variant: 'post' | 'reply' | 'repost',
+  variant: PostInputVariant,
   content: string,
   attachments: File[],
   isSubmitting: boolean,
+  isArticle?: boolean,
+  articleTitle?: string,
 ): boolean {
   if (isSubmitting) return false;
 
   // Reposts allow empty content, posts and replies require content or attachments
   if (variant === 'repost') return true;
 
+  // Articles require both content and title
+  if (isArticle) {
+    return !!content.trim() && !!articleTitle?.trim();
+  }
+
+  // Edit mode requires content to submit
+  if (variant === 'edit') return !!content.trim();
+
   return Boolean(content.trim()) || attachments.length > 0;
+}
+
+/**
+ * Formats a date to US locale format (MM/DD/YYYY)
+ *
+ * @param date - The date to format (defaults to current date)
+ * @returns Formatted date string in MM/DD/YYYY format
+ *
+ * @example
+ * formatUSDate() // "01/15/2026" (current date)
+ * formatUSDate(new Date('2024-12-25')) // "12/25/2024"
+ */
+export function formatUSDate(date: Date = new Date()): string {
+  return date.toLocaleDateString('en-US', {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+  });
+}
+
+/**
+ * Word lists for random username generation
+ * Format: Adjective-Noun-Noun (e.g., "Blue-Rabbit-Hat")
+ */
+const USERNAME_ADJECTIVES = [
+  'Blue',
+  'Red',
+  'Green',
+  'Golden',
+  'Silver',
+  'Purple',
+  'Orange',
+  'Pink',
+  'Cosmic',
+  'Bright',
+  'Swift',
+  'Noble',
+  'Brave',
+  'Calm',
+  'Bold',
+  'Wild',
+  'Wise',
+  'Lucky',
+  'Happy',
+  'Sunny',
+  'Misty',
+  'Rusty',
+  'Dusty',
+  'Frosty',
+  'Mighty',
+  'Gentle',
+  'Clever',
+  'Silent',
+  'Ancient',
+  'Mystic',
+];
+
+const USERNAME_NOUNS = [
+  'Rabbit',
+  'Fox',
+  'Wolf',
+  'Bear',
+  'Eagle',
+  'Hawk',
+  'Owl',
+  'Tiger',
+  'Lion',
+  'Panda',
+  'Koala',
+  'Dolphin',
+  'Falcon',
+  'Phoenix',
+  'Dragon',
+  'Raven',
+  'Sparrow',
+  'Otter',
+  'Badger',
+  'Lynx',
+  'Hat',
+  'Star',
+  'Moon',
+  'Sun',
+  'Cloud',
+  'Storm',
+  'Wave',
+  'Stone',
+  'Crystal',
+  'Flame',
+  'Frost',
+  'Wind',
+  'Thunder',
+  'Shadow',
+  'Light',
+  'Blade',
+  'Shield',
+  'Crown',
+  'Tower',
+  'Garden',
+];
+
+/**
+ * Generates a random username in the format "Adjective-Noun-Noun"
+ * Creates unique, memorable usernames like "Blue-Rabbit-Hat" or "Golden-Eagle-Star"
+ *
+ * @returns A random username string
+ *
+ * @example
+ * generateRandomUsername() // "Blue-Rabbit-Hat"
+ * generateRandomUsername() // "Golden-Eagle-Star"
+ * generateRandomUsername() // "Swift-Fox-Moon"
+ */
+export function generateRandomUsername(): string {
+  const randomAdjective = USERNAME_ADJECTIVES[Math.floor(Math.random() * USERNAME_ADJECTIVES.length)];
+  const randomNoun1 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+
+  // Ensure second noun is different from the first
+  let randomNoun2 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+  while (randomNoun2 === randomNoun1) {
+    randomNoun2 = USERNAME_NOUNS[Math.floor(Math.random() * USERNAME_NOUNS.length)];
+  }
+
+  return `${randomAdjective}-${randomNoun1}-${randomNoun2}`;
 }

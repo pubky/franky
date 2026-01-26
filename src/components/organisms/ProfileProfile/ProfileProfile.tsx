@@ -3,7 +3,6 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-
 import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import { ProfilePageHeader } from '@/organisms';
@@ -23,7 +22,8 @@ export function ProfileProfile() {
   // Note: useProfileHeader guarantees a non-null profile with default values during loading
   const { profile, actions, isLoading } = Hooks.useProfileHeader(pubky ?? '');
 
-  // Handle follow/unfollow for other users' profiles
+  // Handle follow/unfollow for other users' profiles (with auth check)
+  const { requireAuth } = Hooks.useRequireAuth();
   const { toggleFollow, isLoading: isFollowLoading } = Hooks.useFollowUser();
   const { isFollowing } = Hooks.useIsFollowing(pubky ?? '');
 
@@ -42,25 +42,25 @@ export function ProfileProfile() {
     return [...allTags].sort((a, b) => (b.taggers_count ?? 0) - (a.taggers_count ?? 0)).slice(0, MAX_SIDEBAR_TAGS);
   }, [allTags]);
 
-  // Create follow toggle handler
-  const handleFollowToggle = React.useCallback(async () => {
+  const handleFollowToggle = () => {
     if (!pubky) return;
-    await toggleFollow(pubky, isFollowing);
-  }, [pubky, isFollowing, toggleFollow]);
+    requireAuth(async () => {
+      await toggleFollow(pubky, isFollowing);
+    });
+  };
 
-  // Merge actions with follow-related actions
-  const mergedActions = React.useMemo(
-    () => ({
-      ...actions,
-      onFollowToggle: handleFollowToggle,
-      isFollowLoading,
-      isFollowing,
-    }),
-    [actions, handleFollowToggle, isFollowLoading, isFollowing],
-  );
+  const mergedActions = {
+    ...actions,
+    onFollowToggle: handleFollowToggle,
+    isFollowLoading,
+    isFollowing,
+  };
 
   return (
-    <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-6 lg:mt-0 lg:hidden">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="mt-6 flex min-w-0 flex-col gap-6 overflow-hidden lg:mt-0 lg:hidden"
+    >
       {!isLoading && <ProfilePageHeader profile={profile} actions={mergedActions} isOwnProfile={isOwnProfile} />}
 
       {/* Tagged as section */}
@@ -69,11 +69,10 @@ export function ProfileProfile() {
         isLoading={isLoadingTags}
         onTagClick={handleTagToggle}
         pubky={pubky ?? ''}
-        userName={profile?.name}
       />
 
       {/* Links section */}
-      <Molecules.ProfilePageLinks links={profile?.links} />
+      <Molecules.ProfilePageLinks links={profile?.links} isOwnProfile={isOwnProfile} />
     </Atoms.Container>
   );
 }

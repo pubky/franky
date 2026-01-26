@@ -12,6 +12,8 @@ export function PostMenuActions({ postId, trigger }: PostMenuActionsProps) {
   const isMobile = Hooks.useIsMobile();
   const [open, setOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const { requireAuth } = Hooks.useRequireAuth();
   const closeMenu = () => setOpen(false);
 
   const handleReportClick = () => {
@@ -19,10 +21,24 @@ export function PostMenuActions({ postId, trigger }: PostMenuActionsProps) {
     setReportDialogOpen(true);
   };
 
+  const handleEditClick = () => {
+    closeMenu();
+    setEditDialogOpen(true);
+  };
+
+  // Handle open/close with auth check - opens sign-in dialog for unauthenticated users
+  const handleOpenChange = (newOpen: boolean) => {
+    if (newOpen) {
+      requireAuth(() => setOpen(true));
+    } else {
+      setOpen(false);
+    }
+  };
+
   return (
     <>
       {isMobile ? (
-        <Atoms.Sheet open={open} onOpenChange={setOpen}>
+        <Atoms.Sheet open={open} onOpenChange={handleOpenChange}>
           <Atoms.SheetTrigger asChild>{trigger}</Atoms.SheetTrigger>
           <Atoms.SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()}>
             <Atoms.SheetHeader>
@@ -34,12 +50,13 @@ export function PostMenuActions({ postId, trigger }: PostMenuActionsProps) {
                 variant={MENU_VARIANT.SHEET}
                 onActionComplete={closeMenu}
                 onReportClick={handleReportClick}
+                onEditClick={handleEditClick}
               />
             </Atoms.Container>
           </Atoms.SheetContent>
         </Atoms.Sheet>
       ) : (
-        <Atoms.DropdownMenu open={open} onOpenChange={setOpen}>
+        <Atoms.DropdownMenu open={open} onOpenChange={handleOpenChange}>
           <Atoms.DropdownMenuTrigger asChild>{trigger}</Atoms.DropdownMenuTrigger>
           <Atoms.DropdownMenuContent
             align="end"
@@ -51,11 +68,13 @@ export function PostMenuActions({ postId, trigger }: PostMenuActionsProps) {
               variant={MENU_VARIANT.DROPDOWN}
               onActionComplete={closeMenu}
               onReportClick={handleReportClick}
+              onEditClick={handleEditClick}
             />
           </Atoms.DropdownMenuContent>
         </Atoms.DropdownMenu>
       )}
       <Organisms.DialogReportPost open={reportDialogOpen} onOpenChange={setReportDialogOpen} postId={postId} />
+      <Organisms.DialogEditPost open={editDialogOpen} onOpenChangeAction={setEditDialogOpen} postId={postId} />
     </>
   );
 }

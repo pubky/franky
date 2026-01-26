@@ -5,7 +5,7 @@ exports[`DropdownMenu - Snapshots > matches snapshot for DropdownMenuTrigger wit
   aria-expanded="false"
   aria-haspopup="menu"
   data-state="closed"
-  id="radix-_r_0_"
+  id="radix-normalized"
   type="button"
 >
   Open Menu
@@ -17,7 +17,7 @@ exports[`DropdownMenu - Snapshots > matches snapshot for DropdownMenuTrigger wit
   aria-expanded="false"
   aria-haspopup="menu"
   data-state="closed"
-  id="radix-_r_0_"
+  id="radix-normalized"
   type="button"
 >
   Open Menu
@@ -26,11 +26,11 @@ exports[`DropdownMenu - Snapshots > matches snapshot for DropdownMenuTrigger wit
 
 exports[`DropdownMenu - Snapshots > matches snapshot for dropdown menu in open state 1`] = `
 <button
-  aria-controls="radix-_r_0_"
+  aria-controls="radix-normalized"
   aria-expanded="true"
   aria-haspopup="menu"
   data-state="open"
-  id="radix-_r_0_"
+  id="radix-normalized"
   type="button"
 >
   Open Menu

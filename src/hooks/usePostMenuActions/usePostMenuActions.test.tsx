@@ -13,6 +13,8 @@ const {
   mockUseUserProfile,
   mockUseIsFollowing,
   mockUseFollowUser,
+  mockUseMuteUser,
+  mockUseMutedUsers,
   mockUseDeletePost,
   mockUseCopyToClipboard,
   mockToast,
@@ -24,6 +26,8 @@ const {
   mockUseUserProfile: vi.fn(),
   mockUseIsFollowing: vi.fn(),
   mockUseFollowUser: vi.fn(),
+  mockUseMuteUser: vi.fn(),
+  mockUseMutedUsers: vi.fn(),
   mockUseDeletePost: vi.fn(),
   mockUseCopyToClipboard: vi.fn(),
   mockToast: {
@@ -44,6 +48,8 @@ vi.mock('@/hooks', () => ({
   useUserProfile: (userId: string) => mockUseUserProfile(userId),
   useIsFollowing: (userId: string) => mockUseIsFollowing(userId),
   useFollowUser: () => mockUseFollowUser(),
+  useMuteUser: () => mockUseMuteUser(),
+  useMutedUsers: () => mockUseMutedUsers(),
   useDeletePost: (postId: string) => mockUseDeletePost(postId),
   useCopyToClipboard: (options: unknown) => mockUseCopyToClipboard(options),
 }));
@@ -68,7 +74,9 @@ vi.mock('@/libs', async () => {
     Link: vi.fn(() => <span>Link</span>),
     FileText: vi.fn(() => <span>FileText</span>),
     MegaphoneOff: vi.fn(() => <span>MegaphoneOff</span>),
+    Megaphone: vi.fn(() => <span>Megaphone</span>),
     Flag: vi.fn(() => <span>Flag</span>),
+    Edit: vi.fn(() => <span>Edit</span>),
     Trash: vi.fn(() => <span>Trash</span>),
     isAppError: mockIsAppError,
   };
@@ -95,6 +103,10 @@ describe('usePostMenuActions', () => {
     toggleFollow: vi.fn().mockResolvedValue(undefined),
     isFollowLoading: false,
     isUserLoading: vi.fn().mockReturnValue(false),
+    toggleMute: vi.fn().mockResolvedValue(undefined),
+    isMuteLoading: false,
+    isMuteUserLoading: vi.fn().mockReturnValue(false),
+    isMuted: vi.fn().mockReturnValue(false),
     deletePost: vi.fn(),
     isDeleting: false,
     copyToClipboard: vi.fn().mockResolvedValue(true),
@@ -103,6 +115,7 @@ describe('usePostMenuActions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAppError.mockReturnValue(false);
+    defaultMocks.isMuted.mockReturnValue(false);
 
     mockParseCompositeId.mockReturnValue({
       pubky: mockAuthorId,
@@ -132,6 +145,19 @@ describe('usePostMenuActions', () => {
       toggleFollow: defaultMocks.toggleFollow,
       isLoading: defaultMocks.isFollowLoading,
       isUserLoading: defaultMocks.isUserLoading,
+    });
+
+    mockUseMuteUser.mockReturnValue({
+      toggleMute: defaultMocks.toggleMute,
+      isLoading: defaultMocks.isMuteLoading,
+      isUserLoading: defaultMocks.isMuteUserLoading,
+    });
+
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: defaultMocks.isMuted,
+      isLoading: false,
     });
 
     mockUseDeletePost.mockReturnValue({
@@ -233,13 +259,38 @@ describe('usePostMenuActions', () => {
       });
     });
 
-    it('includes mute action (disabled)', () => {
+    it('includes mute action', () => {
       const { result } = renderHook(() => usePostMenuActions(mockPostId, { onReportClick: vi.fn() }));
 
       const muteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.MUTE);
       expect(muteItem).toBeDefined();
-      expect(muteItem?.disabled).toBe(true);
+      expect(muteItem?.disabled).toBe(false);
       expect(muteItem?.label).toBe('Mute Test Author');
+    });
+
+    it('shows unmute when user is already muted', () => {
+      defaultMocks.isMuted.mockReturnValue(true);
+
+      const { result } = renderHook(() => usePostMenuActions(mockPostId, { onReportClick: vi.fn() }));
+
+      const muteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.MUTE);
+      expect(muteItem?.label).toBe('Unmute Test Author');
+    });
+
+    it('calls toggleMute on mute action click', async () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId, { onReportClick: vi.fn() }));
+
+      const muteItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.MUTE);
+
+      await act(async () => {
+        await muteItem?.onClick();
+      });
+
+      expect(defaultMocks.toggleMute).toHaveBeenCalledWith(mockAuthorId, false);
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'User muted',
+        description: 'Test Author has been muted.',
+      });
     });
 
     it('includes report action', () => {
@@ -249,6 +300,13 @@ describe('usePostMenuActions', () => {
       expect(reportItem).toBeDefined();
       expect(reportItem?.label).toBe('Report post');
       expect(reportItem?.disabled).toBeUndefined();
+    });
+
+    it('does not include edit action for other user posts', () => {
+      const { result } = renderHook(() => usePostMenuActions(mockPostId, { onReportClick: vi.fn() }));
+
+      const editItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.EDIT);
+      expect(editItem).toBeUndefined();
     });
 
     it('does not include delete action for other user posts', () => {
@@ -285,6 +343,33 @@ describe('usePostMenuActions', () => {
 
       const reportItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.REPORT);
       expect(reportItem).toBeUndefined();
+    });
+
+    it('includes edit action', () => {
+      const mockOnEditClick = vi.fn();
+      const { result } = renderHook(() =>
+        usePostMenuActions(mockPostId, { onReportClick: vi.fn(), onEditClick: mockOnEditClick }),
+      );
+
+      const editItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.EDIT);
+      expect(editItem).toBeDefined();
+      expect(editItem?.label).toBe('Edit post');
+      expect(editItem?.variant).toBe('default');
+    });
+
+    it('calls onEditClick on edit action click', async () => {
+      const mockOnEditClick = vi.fn();
+      const { result } = renderHook(() =>
+        usePostMenuActions(mockPostId, { onReportClick: vi.fn(), onEditClick: mockOnEditClick }),
+      );
+
+      const editItem = result.current.menuItems.find((item) => item.id === POST_MENU_ACTION_IDS.EDIT);
+
+      await act(async () => {
+        await editItem?.onClick();
+      });
+
+      expect(mockOnEditClick).toHaveBeenCalled();
     });
 
     it('includes delete action', () => {
@@ -340,7 +425,7 @@ describe('usePostMenuActions', () => {
         await copyPubkyItem?.onClick();
       });
 
-      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith(mockAuthorId);
+      expect(defaultMocks.copyToClipboard).toHaveBeenCalledWith(`pubky${mockAuthorId}`);
     });
 
     it('includes copy link action', () => {
@@ -502,6 +587,7 @@ describe('usePostMenuActions', () => {
         POST_MENU_ACTION_IDS.COPY_PUBKY,
         POST_MENU_ACTION_IDS.COPY_LINK,
         POST_MENU_ACTION_IDS.COPY_TEXT,
+        POST_MENU_ACTION_IDS.EDIT,
         POST_MENU_ACTION_IDS.DELETE,
       ]);
     });

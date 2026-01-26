@@ -1,9 +1,130 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostInputAttachments - Snapshots > matches snapshot in article mode when submitting 1`] = `
+<div>
+  <input
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp"
+    class="hidden"
+    data-testid="file-input"
+    type="file"
+  />
+  <div
+    class="h-39 w-full cursor-auto items-center justify-center rounded-md"
+    data-testid="card"
+  >
+    <div
+      class="flex flex-col items-center justify-center gap-3"
+      data-testid="card-content"
+    >
+      <div
+        class="flex size-16 items-center justify-center rounded-full bg-brand/15"
+        data-testid="container"
+      >
+        <svg
+          class="size-8 text-brand"
+          data-testid="image-plus-icon"
+        />
+      </div>
+      <button
+        data-size="sm"
+        data-testid="button"
+        data-variant="secondary"
+        disabled=""
+      >
+        <svg
+          class="size-4"
+          data-testid="plus-icon"
+        />
+         Add image
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot in article mode with image attachment 1`] = `
+<div>
+  <input
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp"
+    class="hidden"
+    data-testid="file-input"
+    type="file"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      class="relative"
+      data-testid="container"
+    >
+      <button
+        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
+        data-size="icon"
+        data-testid="button"
+        data-variant="dark"
+      >
+        <svg
+          class="size-4"
+          data-testid="trash-icon"
+        />
+      </button>
+      <img
+        alt="Image preview"
+        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
+        data-testid="image"
+        src="blob:mock-url-article-image.jpg"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostInputAttachments - Snapshots > matches snapshot in article mode with no attachments (placeholder) 1`] = `
+<div>
+  <input
+    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp"
+    class="hidden"
+    data-testid="file-input"
+    type="file"
+  />
+  <div
+    class="h-39 w-full cursor-auto items-center justify-center rounded-md"
+    data-testid="card"
+  >
+    <div
+      class="flex flex-col items-center justify-center gap-3"
+      data-testid="card-content"
+    >
+      <div
+        class="flex size-16 items-center justify-center rounded-full bg-brand/15"
+        data-testid="container"
+      >
+        <svg
+          class="size-8 text-brand"
+          data-testid="image-plus-icon"
+        />
+      </div>
+      <button
+        data-size="sm"
+        data-testid="button"
+        data-variant="secondary"
+      >
+        <svg
+          class="size-4"
+          data-testid="plus-icon"
+        />
+         Add image
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`PostInputAttachments - Snapshots > matches snapshot when submitting 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -40,10 +161,10 @@ exports[`PostInputAttachments - Snapshots > matches snapshot when submitting 1`]
 </div>
 `;
 
-exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attachments (4) 1`] = `
+exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attachments (3) 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -119,28 +240,6 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attach
         src="blob:mock-url-image2.jpg"
       />
     </div>
-    <div
-      class="relative"
-      data-testid="container"
-    >
-      <button
-        class="absolute right-4 z-10 disabled:pointer-events-auto disabled:cursor-not-allowed disabled:opacity-100 top-4 size-12"
-        data-size="icon"
-        data-testid="button"
-        data-variant="dark"
-      >
-        <svg
-          class="size-4"
-          data-testid="trash-icon"
-        />
-      </button>
-      <img
-        alt="Image preview"
-        class="h-48 w-full cursor-auto rounded-md bg-black object-contain"
-        data-testid="image"
-        src="blob:mock-url-image3.jpg"
-      />
-    </div>
   </div>
 </div>
 `;
@@ -148,7 +247,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with maximum attach
 exports[`PostInputAttachments - Snapshots > matches snapshot with mixed attachment types 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -262,7 +361,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with mixed attachme
 exports[`PostInputAttachments - Snapshots > matches snapshot with multiple images 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -345,7 +444,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with multiple image
 exports[`PostInputAttachments - Snapshots > matches snapshot with no attachments 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -357,7 +456,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with no attachments
 exports[`PostInputAttachments - Snapshots > matches snapshot with single PDF attachment 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -406,7 +505,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with single PDF att
 exports[`PostInputAttachments - Snapshots > matches snapshot with single audio attachment 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -445,7 +544,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with single audio a
 exports[`PostInputAttachments - Snapshots > matches snapshot with single image attachment 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""
@@ -484,7 +583,7 @@ exports[`PostInputAttachments - Snapshots > matches snapshot with single image a
 exports[`PostInputAttachments - Snapshots > matches snapshot with single video attachment 1`] = `
 <div>
   <input
-    accept="image/gif,image/jpeg,image/png,image/svg+xml,image/webp,audio/mpeg,audio/wav,video/mp4,video/mpeg,application/pdf"
+    accept="application/javascript,application/json,application/octet-stream,application/pdf,application/x-www-form-urlencoded,application/xml,application/zip,audio/mpeg,audio/wav,image/gif,image/jpeg,image/png,image/svg+xml,image/webp,multipart/form-data,text/css,text/html,text/plain,text/xml,video/mp4,video/mpeg"
     class="hidden"
     data-testid="file-input"
     multiple=""

@@ -3,6 +3,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import { HttpMethod, JSON_HEADERS } from '@/libs';
 
 /**
  * Hook to handle feedback submission.
@@ -46,10 +47,8 @@ export function useFeedback() {
     setIsSubmitting(true);
     try {
       const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        method: HttpMethod.POST,
+        headers: JSON_HEADERS,
         body: JSON.stringify({
           pubky: currentUserPubky,
           comment: currentFeedback,

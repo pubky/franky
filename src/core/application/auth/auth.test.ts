@@ -15,7 +15,7 @@ describe('AuthApplication', () => {
     const createParams = (): Core.THomeserverSignUpParams => ({
       keypair: {
         publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
-        secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
+        secret: vi.fn(() => new Uint8Array([1, 2, 3])),
       } as unknown as Keypair,
       signupToken: 'test-signup-token',
     });
@@ -46,7 +46,7 @@ describe('AuthApplication', () => {
     const createParams = (): Core.THomeserverAuthenticateParams => ({
       keypair: {
         publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
-        secretKey: vi.fn(() => new Uint8Array([1, 2, 3])),
+        secret: vi.fn(() => new Uint8Array([1, 2, 3])),
       } as unknown as Keypair,
       secretKey: 'test-secret-key',
     });
@@ -114,27 +114,23 @@ describe('AuthApplication', () => {
   });
 
   describe('logout', () => {
-    it('should successfully logout and reset PubkySpecsSingleton', async () => {
+    it('should successfully logout', async () => {
       const mockSession = { signout: vi.fn() } as unknown as Session;
       const params = { session: mockSession };
       const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockResolvedValue(undefined);
-      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await Core.AuthApplication.logout(params);
 
       expect(logoutSpy).toHaveBeenCalledWith(params);
-      expect(resetSpy).toHaveBeenCalledOnce();
     });
 
-    it('should propagate error when logout fails and not reset PubkySpecsSingleton', async () => {
+    it('should propagate error when logout fails', async () => {
       const mockSession = { signout: vi.fn() } as unknown as Session;
       const params = { session: mockSession };
       const logoutSpy = vi.spyOn(Core.HomeserverService, 'logout').mockRejectedValue(new Error('Logout failed'));
-      const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       await expect(Core.AuthApplication.logout(params)).rejects.toThrow('Logout failed');
       expect(logoutSpy).toHaveBeenCalledOnce();
-      expect(resetSpy).not.toHaveBeenCalled();
     });
   });
 

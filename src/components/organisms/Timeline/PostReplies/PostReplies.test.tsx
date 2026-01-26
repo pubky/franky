@@ -18,11 +18,17 @@ vi.mock('@/libs', async () => {
 
 // Mock usePostDetails hook
 const mockUsePostDetails = vi.fn();
+const mockUseMutedUsers = vi.fn();
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
     ...actual,
     usePostDetails: (postId: string) => mockUsePostDetails(postId),
+    useRequireAuth: vi.fn(() => ({
+      isAuthenticated: true,
+      requireAuth: vi.fn((action: () => void) => action()),
+    })),
+    useMutedUsers: () => mockUseMutedUsers(),
   };
 });
 
@@ -71,6 +77,12 @@ describe('TimelinePostReplies', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseMutedUsers.mockReturnValue({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: vi.fn(() => false),
+      isLoading: false,
+    });
 
     // Mock StreamPostsController.getOrFetchStreamSlice
     vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
@@ -132,6 +144,36 @@ describe('TimelinePostReplies', () => {
         // Should render 3 PostMain components (one for each reply)
         const replies = screen.getAllByTestId(/^post-main-/);
         expect(replies).toHaveLength(3);
+      });
+    });
+
+    it('should filter out replies from muted users', async () => {
+      mockUseMutedUsers.mockReturnValue({
+        mutedUserIds: ['muted-user'],
+        mutedUserIdSet: new Set(['muted-user']),
+        isMuted: vi.fn((id) => id === 'muted-user'),
+        isLoading: false,
+      });
+
+      mockUseLiveQuery.mockImplementation((_, deps) => {
+        if (Array.isArray(deps) && deps[0] === mockPostId && deps.length === 1) {
+          return { id: mockPostId, replies: 2, tags: 0, unique_tags: 0, reposts: 0 } as unknown as ReturnType<
+            typeof useLiveQuery
+          >;
+        }
+        return undefined as unknown as ReturnType<typeof useLiveQuery>;
+      });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: ['muted-user:reply1', 'author:reply2'],
+        timestamp: undefined,
+      });
+
+      render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
+
+      await waitFor(() => {
+        const replies = screen.getAllByTestId(/^post-main-/);
+        expect(replies).toHaveLength(1);
       });
     });
 

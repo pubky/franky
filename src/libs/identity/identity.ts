@@ -2,7 +2,7 @@ import { Keypair } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 import * as Core from '@/core';
 
-import * as Libs from '@/libs';
+import { Err, ErrorService, ValidationErrorCode, ServerErrorCode, ClientErrorCode } from '@/libs';
 import type { TMnemonicWords, TCreateRecoveryFileParams, TDecryptRecoveryFileParams } from './identity.types';
 
 export class Identity {
@@ -22,12 +22,12 @@ export class Identity {
         throw error;
       }
 
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to create recovery file. Please try regenerating your keys.',
-        500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
-      );
+      throw Err.client(ClientErrorCode.UNPROCESSABLE, 'Failed to create recovery file, invalid secret key', {
+        service: ErrorService.Local,
+        operation: 'createRecoveryFile',
+        context: { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        cause: error,
+      });
     }
   }
 
@@ -58,8 +58,10 @@ export class Identity {
 
       URL.revokeObjectURL(link.href);
     } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to download recovery file', 500, {
-        error,
+      throw Err.server(ServerErrorCode.UNKNOWN_ERROR, 'Failed to download recovery file', {
+        service: ErrorService.Local,
+        operation: 'handleDownloadRecoveryFile',
+        cause: error,
       });
     }
   }
@@ -76,30 +78,52 @@ export class Identity {
     try {
       return Keypair.fromRecoveryFile(recoveryFile, passphrase);
     } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery file or passphrase', 400, {
-        error,
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid recovery file or passphrase', {
+        service: ErrorService.Local,
+        operation: 'decryptRecoveryFile',
+        cause: error,
       });
     }
   }
 
   /**
-   * Converts a keypair to a pubky string
+   * Converts a keypair to a z32 pubky string
    * @param keypair - The keypair to convert
    * @returns The z-base32 encoding of this public key
    */
-  static pubkyFromKeypair(keypair: Keypair): string {
+  static z32FromKeypair(keypair: Keypair): Core.Pubky {
     return keypair.publicKey.z32();
   }
 
   /**
-   * Converts a secret key to a pubky string
+   * Converts a secret key to a z32 pubky string
    * @param secretKey - The secret key to convert
    * @returns The z-base32 encoding of this public key
    */
+  static z32FromSecret(secretKey: string): Core.Pubky {
+    const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
+    const keypair = Keypair.fromSecret(secretKeyUint8Array);
+    return keypair.publicKey.z32();
+  }
+
+  /**
+   * Converts a keypair to a human-readable pubky string
+   * @param keypair - The keypair to convert
+   * @returns The pubky string with prefix
+   */
+  static pubkyFromKeypair(keypair: Keypair): string {
+    return keypair.publicKey.toString();
+  }
+
+  /**
+   * Converts a secret key to a human-readable pubky string
+   * @param secretKey - The secret key to convert
+   * @returns The pubky string with prefix
+   */
   static pubkyFromSecret(secretKey: string): string {
     const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-    const keypair = Keypair.fromSecretKey(secretKeyUint8Array);
-    return keypair.publicKey.z32();
+    const keypair = Keypair.fromSecret(secretKeyUint8Array);
+    return keypair.publicKey.toString();
   }
 
   /**
@@ -125,12 +149,12 @@ export class Identity {
 
       return words.join(' ');
     } catch (error) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to generate BIP39 seed words. Please try regenerating your keys.',
-        500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
-      );
+      throw Err.client(ClientErrorCode.UNPROCESSABLE, 'Failed to generate BIP39 seed words, invalid mnemonic', {
+        service: ErrorService.Local,
+        operation: 'generateMnemonic',
+        context: { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        cause: error,
+      });
     }
   }
 
@@ -141,7 +165,10 @@ export class Identity {
    */
   private static generateSecretKeyFromMnemonic(mnemonic: string): string {
     if (!bip39.validateMnemonic(mnemonic)) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid mnemonic', 400);
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid mnemonic', {
+        service: ErrorService.Local,
+        operation: 'generateSecretKeyFromMnemonic',
+      });
     }
 
     try {
@@ -152,12 +179,12 @@ export class Identity {
       // Convert secret key to hex string format
       return this.secretKeyToHex(secretKey);
     } catch (error) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Failed to generate secret key from mnemonic',
-        400,
-        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
-      );
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Failed to generate secret key from mnemonic', {
+        service: ErrorService.Local,
+        operation: 'generateSecretKeyFromMnemonic',
+        context: { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        cause: error,
+      });
     }
   }
 
@@ -169,9 +196,13 @@ export class Identity {
   static keypairFromSecretKey(secretKey: string): Keypair {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      return Keypair.fromSecretKey(secretKeyUint8Array);
+      return Keypair.fromSecret(secretKeyUint8Array);
     } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid secret key format', {
+        service: ErrorService.Local,
+        operation: 'keypairFromSecretKey',
+        cause: error,
+      });
     }
   }
 
@@ -196,7 +227,11 @@ export class Identity {
     try {
       return new Uint8Array(Buffer.from(secretKey, 'hex'));
     } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid secret key format', {
+        service: ErrorService.Local,
+        operation: 'secretKeyFromHex',
+        cause: error,
+      });
     }
   }
 
@@ -209,7 +244,11 @@ export class Identity {
     try {
       return Buffer.from(secretKey).toString('hex');
     } catch (error) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid secret key format', {
+        service: ErrorService.Local,
+        operation: 'secretKeyToHex',
+        cause: error,
+      });
     }
   }
 
@@ -220,7 +259,10 @@ export class Identity {
    */
   static keypairFromMnemonic(mnemonic: string) {
     if (!bip39.validateMnemonic(mnemonic)) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery phrase', 400);
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Invalid recovery phrase', {
+        service: ErrorService.Local,
+        operation: 'keypairFromMnemonic',
+      });
     }
 
     try {
@@ -231,24 +273,33 @@ export class Identity {
       // TODO: const secretKey = new Uint8Array(seedMnemonic.subarray(0, 32));
       const secretKey = seedMnemonic.slice(0, 32);
 
-      return Keypair.fromSecretKey(secretKey);
+      return Keypair.fromSecret(secretKey);
     } catch (error) {
-      throw Libs.createCommonError(
-        Libs.CommonErrorType.INVALID_INPUT,
-        'Failed to restore keypair from recovery phrase',
-        400,
-        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
-      );
+      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Failed to restore keypair from recovery phrase', {
+        service: ErrorService.Local,
+        operation: 'keypairFromMnemonic',
+        context: { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        cause: error,
+      });
     }
   }
 
   /**
-   * Gets the pubky from a session
+   * Gets the z32 pubky from a session
    * @param session - The session to get the pubky from
-   * @returns The pubky
+   * @returns The z32 pubky
    */
-  static pubkyFromSession({ session }: Core.THomeserverSessionResult): Core.Pubky {
+  static z32FromSession({ session }: Core.THomeserverSessionResult): Core.Pubky {
     return session.info.publicKey.z32();
+  }
+
+  /**
+   * Gets the human-readable pubky from a session
+   * @param session - The session to get the pubky from
+   * @returns The pubky string with prefix
+   */
+  static pubkyFromSession({ session }: Core.THomeserverSessionResult): string {
+    return session.info.publicKey.toString();
   }
 
   /**

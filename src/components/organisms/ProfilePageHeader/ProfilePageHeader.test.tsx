@@ -3,6 +3,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { ProfilePageHeader } from './ProfilePageHeader';
 import { ProfilePageHeaderProps } from './ProfilePageHeader.types';
 
+// Mock Molecules components
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    PostText: ({ content }: { content: string }) => <div data-testid="post-text">{content}</div>,
+  };
+});
+
 // Mock Organisms components
 vi.mock('@/organisms', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/organisms')>();
@@ -65,6 +74,10 @@ vi.mock('@/organisms', async (importOriginal) => {
   };
 });
 
+// Note: ProfilePageHeader no longer has auth logic - it was moved to parent components
+// (ProfileProfile, ProfilePageContainer). The Follow button is always shown when
+// onFollowToggle is provided, and auth is handled on click in the parent.
+
 const mockProps: ProfilePageHeaderProps = {
   profile: {
     name: 'Satoshi Nakamoto',
@@ -120,14 +133,14 @@ describe('ProfilePageHeader', () => {
     render(<ProfilePageHeader {...mockProps} />);
 
     // formatPublicKey with length 12: first 6 + ... + last 6
-    expect(screen.getByText(/1QX7GK\.\.\.567890/)).toBeInTheDocument();
+    expect(screen.getByText(/pubky1QX7GK\.\.\.567890/)).toBeInTheDocument();
   });
 
   it('renders all action buttons', () => {
     render(<ProfilePageHeader {...mockProps} />);
 
     expect(screen.getByText('Edit')).toBeInTheDocument();
-    expect(screen.getByText(/1QX7GK\.\.\.567890/)).toBeInTheDocument();
+    expect(screen.getByText(/pubky1QX7GK\.\.\.567890/)).toBeInTheDocument();
     expect(screen.getByText('Link')).toBeInTheDocument();
     expect(screen.getByText('Sign out')).toBeInTheDocument();
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
@@ -150,7 +163,7 @@ describe('ProfilePageHeader', () => {
     render(<ProfilePageHeader {...props} />);
 
     // Find button containing the formatted public key
-    const publicKeyButton = screen.getByText(/1QX7GK/).closest('button');
+    const publicKeyButton = screen.getByText(/pubky1QX7GK/).closest('button');
     fireEvent.click(publicKeyButton!);
 
     expect(onCopyPublicKey).toHaveBeenCalledTimes(1);
@@ -283,5 +296,14 @@ describe('ProfilePageHeader - Other User Profile', () => {
     const emojis = screen.getAllByText('🎉');
     expect(emojis.length).toBeGreaterThanOrEqual(2); // Badge + status
     expect(screen.getByText('Active')).toBeInTheDocument();
+  });
+
+  it('always shows Follow button when onFollowToggle is provided (auth handled by parent)', () => {
+    // Note: Auth check was moved to parent components (ProfileProfile, ProfilePageContainer).
+    // The ProfilePageHeader always shows the Follow button when onFollowToggle is provided.
+    // Auth is triggered on click, not on render.
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    expect(screen.getByText('Follow')).toBeInTheDocument();
   });
 });

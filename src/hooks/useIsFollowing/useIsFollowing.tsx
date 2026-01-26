@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import type { UseIsFollowingResult } from './useIsFollowing.types';
 
 /**
@@ -15,7 +16,7 @@ import type { UseIsFollowingResult } from './useIsFollowing.types';
  *
  * @example
  * ```tsx
- * const { isFollowing, isLoading } = useIsFollowing('pk:abc123');
+ * const { isFollowing, isLoading } = useIsFollowing('pubkyabc123');
  *
  * if (isLoading) return <Spinner />;
  * return isFollowing ? <UnfollowButton /> : <FollowButton />;
@@ -26,11 +27,16 @@ export function useIsFollowing(targetUserId: string): UseIsFollowingResult {
 
   const relationship = useLiveQuery(
     async () => {
-      if (!targetUserId || !currentUserPubky) return null;
-      // Don't check if targeting yourself
-      if (targetUserId === currentUserPubky) return null;
+      try {
+        if (!targetUserId || !currentUserPubky) return null;
+        // Don't check if targeting yourself
+        if (targetUserId === currentUserPubky) return null;
 
-      return await Core.UserController.getRelationships({ userId: targetUserId });
+        return await Core.UserController.getRelationships({ userId: targetUserId });
+      } catch (error) {
+        Libs.Logger.error('[useIsFollowing] Failed to query relationship', { targetUserId, error });
+        return null;
+      }
     },
     [targetUserId, currentUserPubky],
     null,

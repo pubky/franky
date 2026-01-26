@@ -11,13 +11,13 @@ exports[`NewPostCTA - Snapshots > matches snapshot with default state 1`] = `
   >
     <button
       aria-label="New post"
-      class="fixed right-3 bottom-[72px] sm:right-10 md:bottom-20 lg:bottom-6 h-20 w-20 rounded-full flex items-center justify-center bg-white/12 backdrop-blur-lg hover:bg-brand text-white shadow-xl transition-colors group cursor-pointer z-40"
+      class="fixed right-3 bottom-[72px] sm:right-10 md:bottom-20 lg:bottom-6 size-20 rounded-full flex items-center justify-center bg-white/12 backdrop-blur-lg hover:bg-brand text-white shadow-xl transition-colors group cursor-pointer z-40"
       data-cy="new-post-btn"
       data-testid="new-post-cta"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-plus h-10 w-10 transition-colors group-hover:text-black"
+        class="lucide lucide-plus size-10 transition-colors group-hover:text-black"
         fill="none"
         height="24"
         stroke="currentColor"

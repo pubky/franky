@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import type {
@@ -32,7 +33,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
         size="icon"
         onClick={onClick}
         disabled={showLoading}
-        className="size-10 shrink-0 rounded-full"
+        className="size-8 shrink-0 rounded-full"
         aria-label={isFollowing ? `Unfollow ${displayName}` : `Follow ${displayName}`}
       >
         {showLoading ? (
@@ -96,7 +97,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
       <Atoms.Button
         variant="secondary"
         size="icon"
-        className={Libs.cn('size-10 shrink-0 cursor-not-allowed rounded-full opacity-50', className)}
+        className={Libs.cn('size-8 shrink-0 cursor-not-allowed rounded-full opacity-50', className)}
         disabled
         aria-label="This is you"
       >
@@ -124,7 +125,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
  */
 function StatsSubtitle({ tags, posts }: StatsSubtitleProps) {
   return (
-    <Atoms.Container overrideDefaults className="flex items-center gap-2 text-sm text-muted-foreground/50">
+    <Atoms.Container overrideDefaults className="flex items-center gap-2 text-sm text-muted-foreground">
       <Atoms.Container overrideDefaults className="flex items-center gap-1">
         <Libs.Tag className="size-3.5" />
         <Atoms.Typography as="span" overrideDefaults>
@@ -209,9 +210,11 @@ function CompactVariant({
   dataTestId,
   onUserClick,
   onFollowClick,
+  ttlRef,
 }: VariantProps) {
   return (
     <Atoms.Container
+      ref={ttlRef}
       overrideDefaults
       className={Libs.cn('flex w-full items-center gap-3', className)}
       data-testid={dataTestId || `user-list-item-${user.id}`}
@@ -223,16 +226,16 @@ function CompactVariant({
         className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition-opacity hover:opacity-80"
         aria-label={`View ${displayName}'s profile`}
       >
-        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="lg" className="shrink-0" />
+        <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" className="shrink-0" />
 
         <Atoms.Container overrideDefaults className="flex min-w-0 flex-1 flex-col">
           <Atoms.Typography as="span" overrideDefaults className="truncate text-base font-bold text-foreground">
-            {displayName.slice(0, 10)}
+            {displayName}
           </Atoms.Typography>
           {showStats ? (
             <StatsSubtitle tags={stats.tags} posts={stats.posts} />
           ) : (
-            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground/50">
+            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground">
               {formattedPublicKey}
             </Atoms.Typography>
           )}
@@ -273,9 +276,11 @@ function FullVariant({
   className,
   dataTestId,
   onFollowClick,
+  ttlRef,
 }: VariantProps) {
   return (
     <Atoms.Container
+      ref={ttlRef}
       className={Libs.cn('gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0', className)}
       data-testid={dataTestId || `user-list-item-${user.id}`}
     >
@@ -348,6 +353,10 @@ function FullVariant({
  * Supports two variants:
  * - `compact`: For sidebars (WhoToFollow, ActiveUsers) - avatar, name, subtitle, icon button
  * - `full`: For profile pages (Followers, Following) - avatar, name, pubky, tags, stats, text button
+ *
+ * **TTL Tracking:**
+ * Subscribes the user to TTL tracking when visible in the viewport.
+ * This ensures user data gets refreshed when stale.
  */
 export function UserListItem({
   user,
@@ -362,10 +371,19 @@ export function UserListItem({
   className,
   'data-testid': dataTestId,
 }: UserListItemProps) {
+  // Auth requirement for follow action
+  const { requireAuth } = Hooks.useRequireAuth();
+
+  // Subscribe to TTL coordinator based on viewport visibility
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'user',
+    id: user.id,
+  });
+
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
   const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
-  const formattedPublicKey = Libs.truncateMiddle(user.id, variant === 'compact' ? 10 : 12);
+  const formattedPublicKey = Libs.formatPublicKey({ key: user.id, length: variant === 'compact' ? 10 : 12 });
   const tags = user.tags || [];
   const stats = user.stats || user.counts || { tags: 0, posts: 0 };
   const isFollowing = isFollowingProp ?? user.isFollowing ?? false;
@@ -374,10 +392,11 @@ export function UserListItem({
     onUserClick?.(user.id);
   };
 
+  // Wrap follow click with auth requirement
   const handleFollowClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onFollowClick?.(user.id, isFollowing);
+    requireAuth(() => onFollowClick?.(user.id, isFollowing));
   };
 
   const commonProps: VariantProps = {
@@ -396,6 +415,7 @@ export function UserListItem({
     dataTestId,
     onUserClick: handleUserClick,
     onFollowClick: handleFollowClick,
+    ttlRef,
   };
 
   if (variant === 'compact') {

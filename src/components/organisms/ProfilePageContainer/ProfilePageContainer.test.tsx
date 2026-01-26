@@ -24,7 +24,7 @@ vi.mock('@/providers', () => ({
 const mockProfile = {
   name: 'Test User',
   bio: 'Test bio',
-  publicKey: 'pk:user123',
+  publicKey: 'pubkyuser123',
   emoji: '🌴',
   status: 'Available',
   avatarUrl: 'https://example.com/avatar.jpg',
@@ -62,6 +62,10 @@ vi.mock('@/hooks', () => ({
     activePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
     filterBarActivePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
     navigateToPage: mockNavigateToPage,
+  })),
+  useRequireAuth: vi.fn(() => ({
+    isAuthenticated: true,
+    requireAuth: vi.fn((callback) => callback()),
   })),
   useFollowUser: vi.fn(() => ({
     toggleFollow: vi.fn(),
@@ -161,7 +165,7 @@ describe('ProfilePageContainer', () => {
     );
     const layout = screen.getByTestId('profile-page-layout');
     const actionsCount = parseInt(layout.getAttribute('data-actions-count') || '0');
-    // 5 from useProfileHeader + 3 from useFollowUser/useIsFollowing (onFollowToggle, isFollowLoading, isFollowing)
+    // 5 from useProfileHeader + 3 from follow (onFollowToggle, isFollowLoading, isFollowing)
     expect(actionsCount).toBe(8);
   });
 

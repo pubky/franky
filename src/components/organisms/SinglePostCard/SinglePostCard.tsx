@@ -14,8 +14,7 @@ import type { SinglePostCardProps } from './SinglePostCard.types';
  * - Right column: PostTagsPanel (tags with avatars and search)
  *
  * This component is used on the single post page for the main post display.
- * It differs from PostMain by having the tags panel in a separate column
- * rather than inline with the action bar.
+ * Tags are always visible on both mobile and desktop (no toggle).
  */
 export function SinglePostCard({ postId, className }: SinglePostCardProps) {
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
@@ -29,14 +28,6 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
     setRepostDialogOpen(true);
   };
 
-  const handleInteractiveClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
-  const handleInteractiveKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
-  };
-
   return (
     <>
       <Atoms.Card className={Libs.cn('min-w-0 rounded-lg py-0', className)}>
@@ -44,41 +35,25 @@ export function SinglePostCard({ postId, className }: SinglePostCardProps) {
           <Atoms.Container className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Left column - Post content */}
             <Atoms.Container className="flex flex-col gap-4 lg:col-span-2">
-              <Atoms.Container overrideDefaults onClick={handleInteractiveClick} onKeyDown={handleInteractiveKeyDown}>
-                <Organisms.PostHeader postId={postId} />
-              </Atoms.Container>
+              <Organisms.PostHeader postId={postId} />
 
               <Organisms.PostContent postId={postId} />
 
               {/* Spacer to push actions bar to bottom */}
               <Atoms.Container overrideDefaults className="flex-1" />
 
-              {/* Tags on mobile - between content and buttons */}
-              <Atoms.Container
-                className="block lg:hidden"
-                onClick={handleInteractiveClick}
-                onKeyDown={handleInteractiveKeyDown}
-              >
-                <Organisms.PostTagsPanel postId={postId} />
-              </Atoms.Container>
+              {/* Tags on mobile - always visible */}
+              <Organisms.PostTagsPanel postId={postId} className="lg:hidden" />
 
-              <Atoms.Container overrideDefaults onClick={handleInteractiveClick} onKeyDown={handleInteractiveKeyDown}>
-                <Organisms.PostActionsBar
-                  postId={postId}
-                  onReplyClick={handleReplyClick}
-                  onRepostClick={handleRepostClick}
-                />
-              </Atoms.Container>
+              <Organisms.PostActionsBar
+                postId={postId}
+                onReplyClick={handleReplyClick}
+                onRepostClick={handleRepostClick}
+              />
             </Atoms.Container>
 
             {/* Right column - Tags (desktop only) */}
-            <Atoms.Container
-              className="hidden lg:block"
-              onClick={handleInteractiveClick}
-              onKeyDown={handleInteractiveKeyDown}
-            >
-              <Organisms.PostTagsPanel postId={postId} />
-            </Atoms.Container>
+            <Organisms.PostTagsPanel postId={postId} className="hidden lg:flex" />
           </Atoms.Container>
         </Atoms.CardContent>
       </Atoms.Card>

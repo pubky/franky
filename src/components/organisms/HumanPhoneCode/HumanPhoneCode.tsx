@@ -31,18 +31,18 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
     const codeValue = code.join('');
     try {
       setIsVerifyingCode(true);
-      const result = await Core.HomegateController.verifySmsCode(phoneNumber, codeValue);
+      const result = await Core.HomegateController.verifySmsCode({ phoneNumber, code: codeValue });
       if (result.valid && result.signupCode) {
         Molecules.toast.success('Verification Code Valid');
         onSuccess(result.signupCode);
       } else {
         Molecules.toast.error('Verification Code Invalid. Try again.');
+        setIsVerifyingCode(false);
       }
     } catch {
       Molecules.toast.error('Failed to verify sms code', {
         description: 'Please try again later. If the problem persists, please contact support.',
       });
-    } finally {
       setIsVerifyingCode(false);
     }
   }

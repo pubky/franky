@@ -4,9 +4,10 @@ import type { Pubky } from '@/core';
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: vi.fn((pubky: string) => `pubky://${pubky}/pub/pubky.app/`),
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
-// Mock HomeserverService methods and provide enum-like HomeserverAction
+// Mock HomeserverService methods
 vi.mock('@/core/services/homeserver', () => ({
   HomeserverService: {
     list: vi.fn(),
@@ -54,7 +55,7 @@ describe('ProfileApplication.commitDelete', () => {
     await ProfileApplication.commitDelete({ pubky });
 
     expect(localDeleteSpy).toHaveBeenCalledTimes(1);
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({ baseDirectory, cursor: undefined, reverse: false, limit: Infinity });
     expect(deleteSpy).toHaveBeenCalledTimes(4);
 
     expect(deleteSpy).toHaveBeenNthCalledWith(1, `${baseDirectory}tags/tag1`);
@@ -100,7 +101,7 @@ describe('ProfileApplication.commitDelete', () => {
     await ProfileApplication.commitDelete({ pubky });
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
     // homeserver.list does not yet support pagination. This ensures all files are deleted.
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({ baseDirectory, cursor: undefined, reverse: false, limit: Infinity });
     expect(deleteSpy).toHaveBeenCalledTimes(1);
     expect(deleteSpy).toHaveBeenCalledWith(profileUrl);
   });
@@ -176,6 +177,6 @@ describe('ProfileApplication.commitDelete', () => {
     await ProfileApplication.commitDelete({ pubky });
 
     // Verify that list was called with Infinity to get all files
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({ baseDirectory, cursor: undefined, reverse: false, limit: Infinity });
   });
 });

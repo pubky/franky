@@ -11,8 +11,71 @@ import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Hooks from '@/hooks';
 
+// Step configuration for the progress display
+const SIGN_IN_STEPS = [
+  { key: 'profileChecked', label: 'Verifying account' },
+  { key: 'bootstrapFetched', label: 'Loading your data' },
+  { key: 'dataPersisted', label: 'Building your feed' },
+  { key: 'homeserverSynced', label: 'Syncing settings' },
+] as const;
+
+type StepKey = (typeof SIGN_IN_STEPS)[number]['key'];
+type StepStatus = 'completed' | 'running' | 'pending';
+
+const getStepStatus = (stepKey: StepKey, state: Core.SignInState): StepStatus => {
+  if (state[stepKey]) return 'completed';
+
+  // Find the first false step (currently running)
+  const firstPendingKey = SIGN_IN_STEPS.find((step) => !state[step.key])?.key;
+  if (stepKey === firstPendingKey) return 'running';
+
+  return 'pending';
+};
+
+const StepIcon = ({ status }: { status: StepStatus }) => {
+  switch (status) {
+    case 'completed':
+      return <Libs.CheckCircle className="h-6 w-6 text-brand" />;
+    case 'running':
+      return <Libs.Loader2 className="h-6 w-6 animate-spin text-brand" />;
+    case 'pending':
+      return <Libs.Circle className="h-6 w-6 text-muted-foreground" />;
+  }
+};
+
+const SignInProgress = () => {
+  const state = Core.useSignInStore();
+
+  return (
+    <Atoms.Container className="items-center justify-center">
+      <div className="flex flex-col gap-4">
+        {SIGN_IN_STEPS.map((step) => {
+          const status = getStepStatus(step.key, state);
+          return (
+            <div key={step.key} className="flex items-center gap-3">
+              <StepIcon status={status} />
+              <Atoms.Typography
+                as="span"
+                className={Libs.cn(
+                  'text-base leading-normal font-light',
+                  status === 'completed' && 'font-bold text-foreground',
+                  status === 'running' && 'text-foreground',
+                  status === 'pending' && 'text-muted-foreground',
+                )}
+              >
+                {step.label}
+              </Atoms.Typography>
+            </div>
+          );
+        })}
+      </div>
+    </Atoms.Container>
+  );
+};
+
 export const SignInContent = () => {
   const { url, isLoading, fetchUrl } = Hooks.useAuthUrl();
+  const authUrlResolved = Core.useSignInStore((state) => state.authUrlResolved);
 
   const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
@@ -27,6 +90,20 @@ export const SignInContent = () => {
 
     try {
       await Libs.copyToClipboard({ text: url });
+    } catch (error) {
+      Libs.Logger.error('Failed to copy auth URL to clipboard:', error);
+    }
+  };
+
+  const handleQRClick = async () => {
+    if (!url) return;
+
+    try {
+      await Libs.copyToClipboard({ text: url });
+      Molecules.toast({
+        title: 'Link copied',
+        description: 'Authentication link copied to clipboard.',
+      });
     } catch (error) {
       Libs.Logger.error('Failed to copy auth URL to clipboard:', error);
     }
@@ -67,6 +144,18 @@ export const SignInContent = () => {
     }
   };
 
+  // Show progress steps once auth URL is resolved
+  if (authUrlResolved) {
+    return (
+      <Atoms.Container size="container" className="flex flex-col">
+        <SignInHeader />
+        <Molecules.ContentCard layout="column">
+          <SignInProgress />
+        </Molecules.ContentCard>
+      </Atoms.Container>
+    );
+  }
+
   return (
     <>
       {/** Desktop view */}
@@ -74,7 +163,13 @@ export const SignInContent = () => {
         <SignInHeader />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="items-center justify-center">
-            <div className="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
+            <button
+              type="button"
+              className="relative flex h-[220px] w-[220px] cursor-pointer items-center justify-center rounded-lg bg-foreground p-4 transition-opacity hover:opacity-90 active:opacity-80"
+              onClick={handleQRClick}
+              disabled={isLoading || !url}
+              aria-label="Copy authentication link"
+            >
               {isLoading || !url ? (
                 <Atoms.Container className="items-center gap-2">
                   <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
@@ -83,9 +178,18 @@ export const SignInContent = () => {
                   </Atoms.Typography>
                 </Atoms.Container>
               ) : (
-                <QRCodeSVG value={url} size={220} />
+                <>
+                  <QRCodeSVG value={url} size={220} />
+                  <Image
+                    src="/images/ring-logo.svg"
+                    alt="Pubky Ring"
+                    width={48}
+                    height={48}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  />
+                </>
               )}
-            </div>
+            </button>
           </Atoms.Container>
         </Molecules.ContentCard>
       </Atoms.Container>

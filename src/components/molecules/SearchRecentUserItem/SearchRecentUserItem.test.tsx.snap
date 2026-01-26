@@ -4,7 +4,7 @@ exports[`SearchRecentUserItem > SearchRecentUserItem - Snapshots > matches snaps
 <div
   aria-label="View profile for Test User"
   class="flex min-w-0 cursor-pointer items-center gap-2 rounded-md transition-colors hover:bg-secondary"
-  data-testid="recent-user-pk:abc123"
+  data-testid="recent-user-abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnop"
   role="button"
 >
   <div
@@ -19,7 +19,7 @@ exports[`SearchRecentUserItem > SearchRecentUserItem - Snapshots > matches snaps
     class="min-w-0 flex-1 flex-col items-start"
   >
     <span
-      class="block truncate text-sm font-bold text-foreground"
+      class="block max-w-full truncate text-sm font-bold text-foreground"
       data-testid="user-name"
     >
       Test User
@@ -28,7 +28,7 @@ exports[`SearchRecentUserItem > SearchRecentUserItem - Snapshots > matches snaps
       class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
       data-testid="user-pubky"
     >
-      pk:a...c123
+      abcd...mnop
     </span>
   </div>
 </div>

@@ -39,6 +39,7 @@ vi.mock('dexie-react-hooks', () => ({
       name: 'Test User',
       bio: 'Test bio',
       image: 'test-image.jpg',
+      indexed_at: 1234567890,
     };
   }),
 }));
@@ -53,6 +54,7 @@ vi.mock('@/hooks', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   formatPublicKey: vi.fn(({ key, length }) => `${key.slice(0, 4)}...${key.slice(-length + 4)}`),
+  withPubkyPrefix: (key: string) => `pubky${key}`,
   Key: ({ className }: { className?: string }) => <svg data-testid="key-icon" className={className} />,
   ArrowRight: ({ className }: { className?: string }) => <svg data-testid="arrow-right-icon" className={className} />,
 }));
@@ -220,11 +222,26 @@ describe('DialogWelcome', () => {
     const copyButton = screen.getByTestId('button-secondary');
     fireEvent.click(copyButton);
 
-    expect(mockCopyToClipboard).toHaveBeenCalledWith('test-pubky-123');
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('pubkytest-pubky-123');
   });
 
-  it('uses generated avatar url', () => {
+  it('uses generated avatar url when user has image', () => {
     render(<DialogWelcome />);
-    expect(mockGetAvatarUrl).toHaveBeenCalledWith('test-pubky-123');
+    expect(mockGetAvatarUrl).toHaveBeenCalledWith('test-pubky-123', 1234567890);
+  });
+
+  it('does not generate avatar url when user has no image', async () => {
+    const { useLiveQuery } = await import('dexie-react-hooks');
+    vi.mocked(useLiveQuery).mockReturnValue({
+      name: 'Test User',
+      bio: 'Test bio',
+      image: null,
+      indexed_at: 1234567890,
+    });
+
+    mockGetAvatarUrl.mockClear();
+    render(<DialogWelcome />);
+
+    expect(mockGetAvatarUrl).not.toHaveBeenCalled();
   });
 });

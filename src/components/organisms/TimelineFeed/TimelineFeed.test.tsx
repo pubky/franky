@@ -21,6 +21,12 @@ vi.mock('@/hooks', async (importOriginal) => {
     useStreamIdFromFilters: vi.fn(),
     useBookmarksStreamId: vi.fn(),
     useStreamPagination: vi.fn(),
+    useMutedUsers: vi.fn(() => ({
+      mutedUserIds: [],
+      mutedUserIdSet: new Set(),
+      isMuted: vi.fn(() => false),
+      isLoading: false,
+    })),
   };
 });
 
@@ -281,6 +287,15 @@ describe('TimelineFeed', () => {
 });
 
 describe('TimelineFeed - Snapshots', () => {
+  beforeEach(() => {
+    // Ensure snapshot tests are deterministic even when the non-snapshot tests in this file run too.
+    // (In CI we run the full suite, not just testNamePattern="Snapshots".)
+    vi.clearAllMocks();
+    mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.TIMELINE_ALL_ALL);
+    mockUseBookmarksStreamId.mockReturnValue(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
+    mockUseStreamPagination.mockReturnValue(defaultPaginationResult);
+  });
+
   it('should match snapshot for home variant', () => {
     const { container } = render(<TimelineFeed variant={TIMELINE_FEED_VARIANT.HOME} />);
     expect(container).toMatchSnapshot();

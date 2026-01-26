@@ -134,9 +134,9 @@ describe('LocalFollowService.create', () => {
       await Core.LocalFollowService.create({ follower: userA, followee: userB });
       expect.unreachable('should throw');
     } catch (err: unknown) {
-      const e = err as { message?: string; details?: { error?: { message?: string } } };
+      const e = err as { message?: string; cause?: { message?: string } };
       expect(e.message ?? '').toMatch('Failed to create follow relationship');
-      expect(e.details?.error?.message ?? '').toMatch('counts-fail');
+      expect(e.cause?.message ?? '').toMatch('counts-fail');
     }
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
@@ -663,5 +663,105 @@ describe('LocalFollowService - Stream Updates', () => {
       expect(followingAll).toBeNull();
       expect(friendsAll).toBeNull();
     });
+  });
+});
+
+/**
+ * Bug regression test: Unfollow/re-follow counter double-counting
+ *
+ * This test replicates the exact bug scenario from the bug report:
+ * - Fresh DB with data synced from Nexus (relationship exists, connections do NOT)
+ * - Unfollow from Friends list should decrement counters
+ * - Re-follow should increment counters back to original values (not double-count)
+ *
+ * Root cause: UserConnectionsModel is never populated from Nexus sync, but the
+ * follow/unfollow logic originally relied solely on connection mutations to gate
+ * counter updates. This caused counters to not decrement on unfollow (because
+ * deleteConnection returned false) but increment on re-follow (because
+ * createConnection returned true).
+ */
+describe('Bug regression: Nexus-synced data without connections', () => {
+  beforeEach(async () => {
+    await Core.db.initialize();
+    await clearUserTables();
+  });
+
+  it('does not double-count when unfollow/re-follow with Nexus-synced relationship data', async () => {
+    // Simulate Nexus sync: relationship and counts exist, but connections do NOT
+    // This is exactly what happens when viewing a Friends list after fresh login
+    await Core.db.transaction('rw', [Core.UserRelationshipsModel.table, Core.UserCountsModel.table], async () => {
+      // User A is following User B (mutual - they are friends)
+      await Core.UserRelationshipsModel.create({
+        id: userB,
+        following: true,
+        followed_by: true,
+        muted: false,
+      });
+
+      // Counts reflect the existing relationship
+      await Core.UserCountsModel.table.bulkAdd([
+        { id: userA, ...DEFAULT_USER_COUNTS, following: 1, friends: 1 },
+        { id: userB, ...DEFAULT_USER_COUNTS, followers: 1, friends: 1 },
+      ]);
+    });
+
+    // NOTE: UserConnectionsModel is intentionally NOT populated
+    // This simulates Nexus sync which only populates relationships, not connections
+
+    // Step 1: Unfollow from Friends list
+    await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+    // Verify counters DECREMENTED (this was the bug - they didn't decrement before)
+    const [aCountsAfterUnfollow, bCountsAfterUnfollow] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+    ]);
+
+    expect(aCountsAfterUnfollow?.following ?? -1).toBe(0);
+    expect(aCountsAfterUnfollow?.friends ?? -1).toBe(0);
+    expect(bCountsAfterUnfollow?.followers ?? -1).toBe(0);
+    expect(bCountsAfterUnfollow?.friends ?? -1).toBe(0);
+
+    // Step 2: Re-follow the same user
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+    // Verify counters are back to 1 (not 2 - that was the double-counting bug)
+    const [aCountsAfterRefollow, bCountsAfterRefollow] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+    ]);
+
+    expect(aCountsAfterRefollow?.following ?? -1).toBe(1);
+    expect(aCountsAfterRefollow?.friends ?? -1).toBe(1);
+    expect(bCountsAfterRefollow?.followers ?? -1).toBe(1);
+    expect(bCountsAfterRefollow?.friends ?? -1).toBe(1);
+  });
+
+  it('decrements counters on unfollow even when connections table is empty', async () => {
+    // Simulate Nexus sync: only relationship and counts, no connections
+    await Core.db.transaction('rw', [Core.UserRelationshipsModel.table, Core.UserCountsModel.table], async () => {
+      await Core.UserRelationshipsModel.create({
+        id: userB,
+        following: true,
+        followed_by: false,
+        muted: false,
+      });
+      await Core.UserCountsModel.table.bulkAdd([
+        { id: userA, ...DEFAULT_USER_COUNTS, following: 1 },
+        { id: userB, ...DEFAULT_USER_COUNTS, followers: 1 },
+      ]);
+    });
+
+    // Unfollow with empty connections table
+    await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+    ]);
+
+    // Counters should decrement based on relationship state
+    expect(aCounts?.following ?? -1).toBe(0);
+    expect(bCounts?.followers ?? -1).toBe(0);
   });
 });

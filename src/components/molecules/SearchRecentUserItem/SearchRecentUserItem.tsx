@@ -29,14 +29,19 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
       role="button"
       aria-label={`View profile for ${userDetails?.name || user.id}`}
     >
-      <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails?.name || ''} size="default" />
+      <Organisms.AvatarWithFallback
+        avatarUrl={avatarUrl}
+        name={userDetails?.name || ''}
+        size="default"
+        className="shrink-0"
+      />
       <Atoms.Container overrideDefaults className="min-w-0 flex-1 flex-col items-start">
         <Atoms.Typography
-          className="block truncate text-sm font-bold text-foreground"
+          className="block max-w-full truncate text-sm font-bold text-foreground"
           overrideDefaults
           data-testid="user-name"
         >
-          {Libs.truncateString(userDetails?.name || 'Unknown User', 20)}
+          {userDetails?.name || 'Unknown User'}
         </Atoms.Typography>
         <Atoms.Typography
           as="span"

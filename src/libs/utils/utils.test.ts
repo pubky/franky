@@ -4,6 +4,7 @@ import {
   cn,
   formatInviteCode,
   formatPublicKey,
+  isPubkyIdentifier,
   copyToClipboard,
   clearCookies,
   generateRandomColor,
@@ -21,6 +22,9 @@ import {
   getCharacterCount,
   sanitizeTagInput,
   TAG_BANNED_CHARS,
+  canSubmitPost,
+  formatUSDate,
+  generateRandomUsername,
 } from './utils';
 
 describe('Utils', () => {
@@ -120,16 +124,22 @@ describe('Utils', () => {
       expect(result).toBe('abcd...7890');
     });
 
-    it('should return the original key if shorter than or equal to length', () => {
+    it('should return the key if shorter than or equal to length', () => {
       const shortKey = 'short';
       const result = formatPublicKey({ key: shortKey, length: 12 });
       expect(result).toBe('short');
     });
 
-    it('should return the original key if equal to length', () => {
+    it('should return the key if equal to length', () => {
       const exactKey = 'exactlength1';
       const result = formatPublicKey({ key: exactKey, length: 12 });
       expect(result).toBe('exactlength1');
+    });
+
+    it('should include the pubky prefix when requested', () => {
+      const longKey = 'abcdefghijklmnopqrstuvwxyz1234567890';
+      const result = formatPublicKey({ key: longKey, length: 12, includePrefix: true });
+      expect(result).toBe('pubkyabcdef...567890');
     });
 
     it('should handle empty string', () => {
@@ -146,15 +156,102 @@ describe('Utils', () => {
     it('should handle odd length parameter', () => {
       const key = 'abcdefghijklmno';
       const result = formatPublicKey({ key, length: 5 });
-      expect(result).toBe('ab...no');
+      expect(result).toBe('ab...mno');
     });
 
     it('should handle length of 1', () => {
       const key = 'abcdefghij';
       const result = formatPublicKey({ key, length: 1 });
-      // When length is 1, length/2 = 0.5, which rounds down to 0
-      // So prefix = key.slice(0, 0) = '' and suffix = key.slice(-0) = entire key
-      expect(result).toBe('...abcdefghij');
+      // With length 1, only the last character of the key is shown.
+      expect(result).toBe('...j');
+    });
+  });
+
+  describe('isPubkyIdentifier', () => {
+    it('should return true for valid 52-char lowercase alphanumeric string', () => {
+      const validPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return true for another valid pubky', () => {
+      const validPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return false for string shorter than 52 characters', () => {
+      expect(isPubkyIdentifier('short')).toBe(false);
+      expect(isPubkyIdentifier('12345678901234567890')).toBe(false); // 20 chars
+      expect(isPubkyIdentifier('123456789012345678901234567890123456789012345678901')).toBe(false); // 51 chars
+    });
+
+    it('should return false for string longer than 52 characters', () => {
+      expect(isPubkyIdentifier('12345678901234567890123456789012345678901234567890123')).toBe(false); // 53 chars
+    });
+
+    it('should return false for string with uppercase characters', () => {
+      expect(isPubkyIdentifier('GUJX6QD8KSYDH1MAKDPHD3BXU351D9B8WAQKA8HFG6Q7HNQKXEXO')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexO')).toBe(false); // One uppercase
+    });
+
+    it('should return false for string with special characters', () => {
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex!')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex-')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex_')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isPubkyIdentifier('')).toBe(false);
+    });
+
+    it('should return false for common route names', () => {
+      expect(isPubkyIdentifier('posts')).toBe(false);
+      expect(isPubkyIdentifier('followers')).toBe(false);
+      expect(isPubkyIdentifier('following')).toBe(false);
+      expect(isPubkyIdentifier('notifications')).toBe(false);
+    });
+  });
+
+  describe('isPubkyIdentifier', () => {
+    it('should return true for valid 52-char lowercase alphanumeric string', () => {
+      const validPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return true for another valid pubky', () => {
+      const validPubky = 'gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexo';
+      expect(isPubkyIdentifier(validPubky)).toBe(true);
+    });
+
+    it('should return false for string shorter than 52 characters', () => {
+      expect(isPubkyIdentifier('short')).toBe(false);
+      expect(isPubkyIdentifier('12345678901234567890')).toBe(false); // 20 chars
+      expect(isPubkyIdentifier('123456789012345678901234567890123456789012345678901')).toBe(false); // 51 chars
+    });
+
+    it('should return false for string longer than 52 characters', () => {
+      expect(isPubkyIdentifier('12345678901234567890123456789012345678901234567890123')).toBe(false); // 53 chars
+    });
+
+    it('should return false for string with uppercase characters', () => {
+      expect(isPubkyIdentifier('GUJX6QD8KSYDH1MAKDPHD3BXU351D9B8WAQKA8HFG6Q7HNQKXEXO')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxexO')).toBe(false); // One uppercase
+    });
+
+    it('should return false for string with special characters', () => {
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex!')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex-')).toBe(false);
+      expect(isPubkyIdentifier('gujx6qd8ksydh1makdphd3bxu351d9b8waqka8hfg6q7hnqkxex_')).toBe(false);
+    });
+
+    it('should return false for empty string', () => {
+      expect(isPubkyIdentifier('')).toBe(false);
+    });
+
+    it('should return false for common route names', () => {
+      expect(isPubkyIdentifier('posts')).toBe(false);
+      expect(isPubkyIdentifier('followers')).toBe(false);
+      expect(isPubkyIdentifier('following')).toBe(false);
+      expect(isPubkyIdentifier('notifications')).toBe(false);
     });
   });
 
@@ -478,8 +575,8 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
-      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-normalized');
+      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-normalized');
     });
 
     it('should not modify non-radix aria-controls attributes', () => {
@@ -517,7 +614,7 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-normalized');
       expect(buttons[1].getAttribute('aria-controls')).toBe('normal-id');
     });
 
@@ -531,9 +628,20 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const div = normalized.querySelector('div');
 
-      expect(div?.getAttribute('id')).toBe('radix-_r_0_');
-      expect(div?.getAttribute('aria-controls')).toBe('radix-_r_0_');
-      expect(div?.getAttribute('aria-labelledby')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('id')).toBe('radix-normalized');
+      expect(div?.getAttribute('aria-controls')).toBe('radix-normalized');
+      expect(div?.getAttribute('aria-labelledby')).toBe('radix-normalized');
+    });
+
+    it('should normalize radix IDs in aria-describedby attributes', () => {
+      const element = document.createElement('div');
+      element.setAttribute('aria-describedby', 'radix-_r_1u_');
+      mockContainer.appendChild(element);
+
+      const normalized = normaliseRadixIds(mockContainer);
+      const div = normalized.querySelector('div');
+
+      expect(div?.getAttribute('aria-describedby')).toBe('radix-normalized');
     });
 
     it('should return a cloned container', () => {
@@ -551,6 +659,19 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       expect(normalized).toBeDefined();
       expect(normalized.children.length).toBe(0);
+    });
+
+    it('should normalize radix IDs on the root container element itself', () => {
+      // This tests the case where the container element has radix attributes directly,
+      // not just its descendants (querySelectorAll only finds descendants)
+      const element = document.createElement('h2');
+      element.setAttribute('id', 'radix-_r_s_');
+      element.textContent = 'Title';
+
+      const normalized = normaliseRadixIds(element);
+
+      expect(normalized.getAttribute('id')).toBe('radix-normalized');
+      expect(normalized.textContent).toBe('Title');
     });
   });
 
@@ -1238,6 +1359,260 @@ describe('Utils', () => {
       expect('a'.match(TAG_BANNED_CHARS)).toBeNull();
       expect('-'.match(TAG_BANNED_CHARS)).toBeNull();
       expect('_'.match(TAG_BANNED_CHARS)).toBeNull();
+    });
+  });
+
+  describe('canSubmitPost', () => {
+    describe('when submitting is in progress', () => {
+      it('should return false regardless of content', () => {
+        expect(canSubmitPost('post', 'Hello', [], true)).toBe(false);
+        expect(canSubmitPost('reply', 'Hello', [], true)).toBe(false);
+        expect(canSubmitPost('repost', '', [], true)).toBe(false);
+        expect(canSubmitPost('edit', 'Hello', [], true)).toBe(false);
+      });
+    });
+
+    describe('for post variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('post', 'Hello world', [], false)).toBe(true);
+      });
+
+      it('should return true when attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', '', [mockFile], false)).toBe(true);
+      });
+
+      it('should return true when both content and attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', 'Hello', [mockFile], false)).toBe(true);
+      });
+
+      it('should return false when no content and no attachments', () => {
+        expect(canSubmitPost('post', '', [], false)).toBe(false);
+      });
+
+      it('should return false for whitespace-only content', () => {
+        expect(canSubmitPost('post', '   ', [], false)).toBe(false);
+        expect(canSubmitPost('post', '\n\t', [], false)).toBe(false);
+      });
+    });
+
+    describe('for reply variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('reply', 'Hello world', [], false)).toBe(true);
+      });
+
+      it('should return true when attachments are provided', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('reply', '', [mockFile], false)).toBe(true);
+      });
+
+      it('should return false when no content and no attachments', () => {
+        expect(canSubmitPost('reply', '', [], false)).toBe(false);
+      });
+    });
+
+    describe('for repost variant', () => {
+      it('should return true even with empty content', () => {
+        expect(canSubmitPost('repost', '', [], false)).toBe(true);
+      });
+
+      it('should return true with content', () => {
+        expect(canSubmitPost('repost', 'Adding my thoughts', [], false)).toBe(true);
+      });
+    });
+
+    describe('for edit variant', () => {
+      it('should return true when content is provided', () => {
+        expect(canSubmitPost('edit', 'Updated content', [], false)).toBe(true);
+      });
+
+      it('should return false when content is empty', () => {
+        expect(canSubmitPost('edit', '', [], false)).toBe(false);
+      });
+
+      it('should return false for whitespace-only content', () => {
+        expect(canSubmitPost('edit', '   ', [], false)).toBe(false);
+        expect(canSubmitPost('edit', '\n\t', [], false)).toBe(false);
+      });
+
+      it('should return true with content even without attachments', () => {
+        expect(canSubmitPost('edit', 'Updated content', [], false)).toBe(true);
+      });
+
+      it('should return false with attachments but no content', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('edit', '', [mockFile], false)).toBe(false);
+      });
+
+      it('should require both content and title when isArticle is true', () => {
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, 'Article Title')).toBe(true);
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, '')).toBe(false);
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, undefined)).toBe(false);
+        expect(canSubmitPost('edit', '', [], false, true, 'Article Title')).toBe(false);
+        expect(canSubmitPost('edit', '   ', [], false, true, 'Article Title')).toBe(false);
+        expect(canSubmitPost('edit', 'Updated article content', [], false, true, '   ')).toBe(false);
+      });
+    });
+
+    describe('for article posts', () => {
+      it('should return true when both content and title are provided', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, 'Article Title')).toBe(true);
+      });
+
+      it('should return false when content is empty', () => {
+        expect(canSubmitPost('post', '', [], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when title is empty', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, '')).toBe(false);
+      });
+
+      it('should return false when title is undefined', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, undefined)).toBe(false);
+      });
+
+      it('should return false when content is whitespace-only', () => {
+        expect(canSubmitPost('post', '   ', [], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when title is whitespace-only', () => {
+        expect(canSubmitPost('post', 'Article content', [], false, true, '   ')).toBe(false);
+      });
+
+      it('should ignore attachments for article validation', () => {
+        const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
+        expect(canSubmitPost('post', '', [mockFile], false, true, 'Article Title')).toBe(false);
+      });
+
+      it('should return false when submitting even with valid content and title', () => {
+        expect(canSubmitPost('post', 'Article content', [], true, true, 'Article Title')).toBe(false);
+      });
+    });
+
+    describe('when isArticle is false or undefined', () => {
+      it('should use standard post validation when isArticle is false', () => {
+        expect(canSubmitPost('post', 'Hello', [], false, false, '')).toBe(true);
+        expect(canSubmitPost('post', '', [], false, false, 'Title')).toBe(false);
+      });
+
+      it('should use standard post validation when isArticle is undefined', () => {
+        expect(canSubmitPost('post', 'Hello', [], false, undefined, undefined)).toBe(true);
+        expect(canSubmitPost('post', '', [], false, undefined, undefined)).toBe(false);
+      });
+    });
+    describe('formatUSDate', () => {
+      it('should format current date in US locale format', () => {
+        const result = formatUSDate();
+        // Should match MM/DD/YYYY format
+        expect(result).toMatch(/^\d{2}\/\d{2}\/\d{4}$/);
+      });
+
+      it('should format a specific date correctly', () => {
+        const testDate = new Date(2024, 11, 25); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/25/2024');
+      });
+
+      it('should pad single digit months and days with zeros', () => {
+        const testDate = new Date(2024, 0, 5); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/05/2024');
+      });
+
+      it('should handle different years', () => {
+        const testDate = new Date(2030, 5, 15); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('06/15/2030');
+      });
+
+      it('should handle end of year date', () => {
+        const testDate = new Date(2024, 11, 31); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/31/2024');
+      });
+
+      it('should handle beginning of year date', () => {
+        const testDate = new Date(2024, 0, 1); // Month is 0-indexed
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/01/2024');
+      });
+
+      it('should format a specific date correctly', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 11, 25); // Dec 25, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/25/2024');
+      });
+
+      it('should pad single digit months and days with zeros', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 0, 5); // Jan 5, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/05/2024');
+      });
+
+      it('should handle different years', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2030, 5, 15); // Jun 15, 2030
+        const result = formatUSDate(testDate);
+        expect(result).toBe('06/15/2030');
+      });
+
+      it('should handle end of year date', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 11, 31); // Dec 31, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('12/31/2024');
+      });
+
+      it('should handle beginning of year date', () => {
+        // Use local date constructor to avoid timezone issues
+        const testDate = new Date(2024, 0, 1); // Jan 1, 2024
+        const result = formatUSDate(testDate);
+        expect(result).toBe('01/01/2024');
+      });
+    });
+  });
+
+  describe('generateRandomUsername', () => {
+    it('should return a string in Adjective-Noun-Noun format', () => {
+      const username = generateRandomUsername();
+      const parts = username.split('-');
+      expect(parts).toHaveLength(3);
+      // Each part should start with uppercase and contain only letters
+      parts.forEach((part) => {
+        expect(part).toMatch(/^[A-Z][a-z]+$/);
+      });
+    });
+
+    it('should generate different usernames on multiple calls', () => {
+      const usernames = new Set<string>();
+      // Generate 20 usernames - with 30 adjectives and 40 nouns, collisions should be rare
+      for (let i = 0; i < 20; i++) {
+        usernames.add(generateRandomUsername());
+      }
+      // At least 10 should be unique (allowing for some randomness)
+      expect(usernames.size).toBeGreaterThanOrEqual(10);
+    });
+
+    it('should not have the same noun repeated twice', () => {
+      // Run multiple times to increase confidence
+      for (let i = 0; i < 50; i++) {
+        const username = generateRandomUsername();
+        const parts = username.split('-');
+        expect(parts[1]).not.toBe(parts[2]);
+      }
+    });
+
+    it('should generate usernames with reasonable length', () => {
+      for (let i = 0; i < 20; i++) {
+        const username = generateRandomUsername();
+        // Minimum: 3 chars + hyphen + 3 chars + hyphen + 3 chars = 11 chars
+        // Maximum: 7 chars + hyphen + 7 chars + hyphen + 7 chars = 23 chars (based on word lists)
+        expect(username.length).toBeGreaterThanOrEqual(11);
+        expect(username.length).toBeLessThanOrEqual(25);
+      }
     });
   });
 });

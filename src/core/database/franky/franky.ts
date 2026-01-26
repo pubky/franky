@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import * as Libs from '@/libs';
+import { Err, ErrorService, DatabaseErrorCode, Logger } from '@/libs';
 import * as Config from '@/config';
 import * as Core from '@/core';
 
@@ -92,14 +92,11 @@ export class AppDatabase extends Dexie {
         moderation: moderationTableSchema,
       });
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DB_SCHEMA_ERROR,
-        'Failed to initialize database schema',
-        500,
-        {
-          error,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.SCHEMA_ERROR, 'Failed to initialize database schema of indexedDB', {
+        service: ErrorService.Local,
+        operation: 'constructor',
+        cause: error,
+      });
     }
   }
 
@@ -157,7 +154,7 @@ export class AppDatabase extends Dexie {
           const deleteRequest = indexedDB.deleteDatabase(this.name);
 
           deleteRequest.onblocked = () => {
-            Libs.Logger.warn(
+            Logger.warn(
               'Database deletion is blocked by open connections. Please close all other tabs/windows using this application.',
               {
                 databaseName: this.name,
@@ -174,49 +171,47 @@ export class AppDatabase extends Dexie {
         await Dexie.delete(this.name);
       }
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DB_DELETE_FAILED,
-        'Failed to delete outdated database',
-        500,
-        {
-          error,
+      throw Err.database(DatabaseErrorCode.DELETE_FAILED, 'Failed to delete outdated database, indexedDB', {
+        service: ErrorService.Local,
+        operation: 'recreateDatabase',
+        context: {
           currentVersion,
           rawVersion,
           expectedVersion: Config.DB_VERSION,
           databaseName: this.name,
         },
-      );
+        cause: error,
+      });
     }
 
     try {
       await this.open();
-      Libs.Logger.info('Database recreated with new schema');
+      Logger.info('Database recreated with new schema');
     } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DB_OPEN_FAILED,
-        'Failed to open database after recreation',
-        500,
-        {
-          error,
+      throw Err.database(DatabaseErrorCode.INIT_FAILED, 'Failed to open database after recreation', {
+        service: ErrorService.Local,
+        operation: 'recreateDatabase',
+        context: {
           version: Config.DB_VERSION,
           rawVersion,
           databaseName: this.name,
         },
-      );
+        cause: error,
+      });
     }
   }
 
   async initialize() {
     try {
       if (typeof indexedDB === 'undefined') {
-        Libs.Logger.warn('IndexedDB is not available in this environment. Skipping database initialization.');
+        Logger.warn('IndexedDB is not available in this environment. Skipping database initialization.');
         return;
       }
 
       const dbExists = await Dexie.exists(this.name);
 
       if (!dbExists) {
-        Libs.Logger.info('Creating new database...');
+        Logger.info('Creating new database...');
         await this.open();
         return;
       }
@@ -228,19 +223,19 @@ export class AppDatabase extends Dexie {
         rawVersion = await this.getExistingDbVersion();
         currentVersion = this.normalizeStoredVersion(rawVersion);
       } catch (error) {
-        Libs.Logger.warn('Failed to determine current database version. Recreating database...', {
+        Logger.warn('Failed to determine current database version. Recreating database...', {
           error,
         });
       }
 
       if (currentVersion === null) {
-        Libs.Logger.warn('Unable to determine current database version. Recreating database...');
+        Logger.warn('Unable to determine current database version. Recreating database...');
         await this.recreateDatabase(currentVersion, rawVersion);
         return;
       }
 
       if (currentVersion !== Config.DB_VERSION) {
-        Libs.Logger.info(`Database version mismatch. Current: ${currentVersion}, Expected: ${Config.DB_VERSION}`, {
+        Logger.info(`Database version mismatch. Current: ${currentVersion}, Expected: ${Config.DB_VERSION}`, {
           rawVersion,
           normalizedVersion: currentVersion,
           expectedVersion: Config.DB_VERSION,
@@ -248,13 +243,15 @@ export class AppDatabase extends Dexie {
         });
         await this.recreateDatabase(currentVersion, rawVersion);
       } else {
-        Libs.Logger.debug('Database version is current');
+        Logger.debug('Database version is current');
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
 
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.DB_INIT_FAILED, 'Failed to initialize database', 500, {
-        error,
+      throw Err.database(DatabaseErrorCode.INIT_FAILED, 'Failed to initialize database, indexedDB', {
+        service: ErrorService.Local,
+        operation: 'initialize',
+        cause: error,
       });
     }
   }

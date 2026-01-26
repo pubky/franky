@@ -18,13 +18,23 @@ export class HomegateController {
   }
 
   /**
-   * Get the Lightning Network verification price.
+   * Get SMS verification availability info.
    *
-   * @returns The price in satoshis
+   * @returns The availability status
    * @throws AppError if retrieval fails
    */
-  static async getLnVerificationPrice(): Promise<Core.TGetLnVerificationPriceResult> {
-    return await Core.HomegateApplication.getLnVerificationPrice();
+  static async getSmsVerificationInfo(): Promise<Core.THomegateSmsInfoResult> {
+    return await Core.HomegateApplication.getSmsVerificationInfo();
+  }
+
+  /**
+   * Get Lightning Network verification availability and price.
+   *
+   * @returns The availability status and price if available
+   * @throws AppError if retrieval fails
+   */
+  static async getLnVerificationInfo(): Promise<Core.THomegateLnInfoResult> {
+    return await Core.HomegateApplication.getLnVerificationInfo();
   }
 
   /**
@@ -41,24 +51,27 @@ export class HomegateController {
    * Await Lightning Network payment confirmation.
    * Long-polling endpoint that waits for payment to be confirmed.
    *
-   * @param paymentHash - The payment hash from createLnVerification
+   * @param verificationId - The verification ID from createLnVerification
    * @returns The verification result
    * @throws AppError if awaiting fails
    */
-  static async awaitLnVerification(paymentHash: string): Promise<Core.THomegateAwaitLnVerificationResult> {
-    return await Core.HomegateApplication.awaitLnVerification(paymentHash);
+  static async awaitLnVerification(verificationId: string): Promise<Core.THomegateAwaitLnVerificationResult> {
+    return await Core.HomegateApplication.awaitLnVerification(verificationId);
   }
 
   /**
    * Verify an SMS code for a given phone number.
    *
-   * @param phoneNumber - The phone number to verify
-   * @param code - The SMS code to verify
+   * @param params.phoneNumber - The phone number to verify
+   * @param params.code - The SMS code to verify
    * @returns The verification result with signup code if valid
    * @throws AppError if verification fails
    */
-  static async verifySmsCode(phoneNumber: string, code: string): Promise<Core.THomegateVerifySmsCodeResult> {
-    return await Core.HomegateApplication.verifySmsCode(phoneNumber, code);
+  static async verifySmsCode({
+    phoneNumber,
+    code,
+  }: Core.THomegateVerifySmsCodeParams): Promise<Core.THomegateVerifySmsCodeResult> {
+    return await Core.HomegateApplication.verifySmsCode({ phoneNumber, code });
   }
 
   /**

@@ -23,7 +23,7 @@ export class AuthController {
     const { session } = result;
     const initialState = {
       session,
-      currentUserPubky: Libs.Identity.pubkyFromSession({ session }),
+      currentUserPubky: Libs.Identity.z32FromSession({ session }),
       hasProfile: authStore.hasProfile,
     };
     authStore.init(initialState);
@@ -55,10 +55,27 @@ export class AuthController {
    * @param params.pubky - The user's public key identifier
    */
   private static async hydrateMeImAlive({ pubky }: Core.TPubkyParams) {
+    const signInStore = Core.useSignInStore.getState();
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
-    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
+
+    // Progress callback to update signInStore from Controller layer (respecting architecture rules)
+    const onProgress: Core.BootstrapProgressCallback = (step) => {
+      switch (step) {
+        case 'bootstrapFetched':
+          signInStore.setBootstrapFetched(true); // Step 3 complete (60%)
+          break;
+        case 'dataPersisted':
+          signInStore.setDataPersisted(true); // Step 4 complete (80%)
+          break;
+        case 'homeserverSynced':
+          signInStore.setHomeserverSynced(true); // Step 5 complete (100%)
+          break;
+      }
+    };
+
+    const { notification } = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url }, onProgress);
     Core.useNotificationStore.getState().setState(notification);
   }
 
@@ -68,17 +85,33 @@ export class AuthController {
    * @param params.session - The user session data
    */
   static async initializeAuthenticatedSession({ session }: Core.THomeserverSessionResult) {
-    this.cancelActiveAuthFlow();
-    const pubky = Libs.Identity.pubkyFromSession({ session });
+    const signInStore = Core.useSignInStore.getState();
+    signInStore.reset(); // Reset for fresh sign-in
+    signInStore.setAuthUrlResolved(true); // Step 1 complete (20%)
+
     const authStore = Core.useAuthStore.getState();
-    const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
-    if (isSignedUp) {
-      // IMPORTANT: That one has to be executed before the initial state is set. If not, the routeProvider
-      // it will redirect to '/home' page and after it would hit the bootstrap endpoint while user is waiting in the home page.
-      await this.hydrateMeImAlive({ pubky });
+
+    try {
+      this.cancelActiveAuthFlow();
+      const pubky = Libs.Identity.z32FromSession({ session });
+
+      authStore.init({ session, currentUserPubky: pubky, hasProfile: null });
+
+      const isSignedUp = await Core.AuthApplication.userIsSignedUp({ pubky });
+      signInStore.setProfileChecked(true); // Step 2 complete (40%)
+
+      if (isSignedUp) {
+        await this.hydrateMeImAlive({ pubky });
+      }
+
+      // Update hasProfile after bootstrap completes - triggers redirect via useAuthStatus
+      authStore.setHasProfile(isSignedUp);
+    } catch (error) {
+      // Clean up early-stored session to prevent dangling state
+      authStore.reset();
+      signInStore.setError(error as Libs.AppError);
+      throw error;
     }
-    const initialState = { session, currentUserPubky: pubky, hasProfile: isSignedUp };
-    authStore.init(initialState);
   }
 
   /**
@@ -93,7 +126,7 @@ export class AuthController {
     const keypair = Libs.Identity.keypairFromSecretKey(secretKey);
     const { session } = await Core.AuthApplication.signUp({ keypair, signupToken });
     const authStore = Core.useAuthStore.getState();
-    const initialState = { session, currentUserPubky: Libs.Identity.pubkyFromSession({ session }), hasProfile: false };
+    const initialState = { session, currentUserPubky: Libs.Identity.z32FromSession({ session }), hasProfile: false };
     authStore.init(initialState);
   }
 
@@ -164,6 +197,7 @@ export class AuthController {
   static async logout() {
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
+    const signInStore = Core.useSignInStore.getState();
 
     if (authStore.session) {
       try {
@@ -172,9 +206,13 @@ export class AuthController {
         Libs.Logger.warn('Homeserver logout failed, clearing local state anyway', { error });
       }
     }
+    // Reset PubkySpecsSingleton here to ensure it's always called even when homeserver logout fails.
+    // This allows users to sign out even when their profile pubky cannot be resolved (issue #538).
+    Core.PubkySpecsSingleton.reset();
     this.cancelActiveAuthFlow();
     onboardingStore.reset();
     authStore.reset();
+    signInStore.reset();
     Libs.clearCookies();
     await Core.clearDatabase();
   }

@@ -29,9 +29,9 @@ import type { PostPreviewCardProps } from './PostPreviewCard.types';
  */
 export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
   const { navigateToPost } = Hooks.usePostNavigation();
-  const { ref: ttlRef } = Hooks.useTtlViewportSubscription({
-    compositePostId: postId,
-    subscribeAuthor: true,
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'post',
+    id: postId,
   });
 
   const handleClick = (e: React.MouseEvent) => {

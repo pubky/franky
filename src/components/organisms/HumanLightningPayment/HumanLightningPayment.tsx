@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useBtcRate } from '@/hooks/useSatUsdRate';
 import { VerificationHandler } from './HumanLightningPayment.utils';
+import { QRCodeSkeleton, PriceSkeleton } from './HumanLightningPayment.skeleton';
 import type { HumanLightningPaymentProps } from './HumanLightningPayment.types';
 
 export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPaymentProps) => {
@@ -59,10 +60,26 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally run only on mount
   }, []);
 
-  function copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text);
-    Molecules.toast.success('Invoice copied to clipboard');
+  async function copyToClipboard(text: string) {
+    try {
+      await Libs.copyToClipboard({ text });
+      Molecules.toast.success('Invoice copied to clipboard');
+    } catch {
+      Molecules.toast.error('Failed to copy invoice');
+    }
   }
+
+  const isDataAvailable = verification !== null && !isLoading;
+
+  // Format the payment description with optional USD conversion
+  const getPaymentDescription = () => {
+    if (!verification) return '';
+    const amountFormatted = verification.data.amountSat.toLocaleString('en-US');
+    const usdAmount = rate?.satUsd
+      ? ` (approximately $${Math.round(rate.satUsd * verification.data.amountSat * 100) / 100})`
+      : '';
+    return `Pay ₿ ${amountFormatted}${usdAmount} to continue.`;
+  };
 
   return (
     <React.Fragment>
@@ -79,11 +96,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
       >
         {/* Payment QR code */}
         <Atoms.Container overrideDefaults={true} className="flex h-full flex-col items-center justify-center">
-          {isLoading && (
-            <Atoms.Container overrideDefaults={true} className="flex h-[192px] w-[192px] items-center justify-center">
-              <Atoms.Spinner size="md" />
-            </Atoms.Container>
-          )}
+          {isLoading && <QRCodeSkeleton />}
           {!isLoading && verification && (
             <React.Fragment>
               {!isPaymentExpired && (
@@ -132,14 +145,18 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
           <Atoms.Typography as="h3" className="text-2xl leading-[32px] font-semibold text-foreground">
             Bitcoin Lightning Payment
           </Atoms.Typography>
-          <Atoms.Typography as="p" className="text-5xl leading-none font-semibold text-brand lg:text-6xl">
-            {verification ? `₿ ${verification.data.amountSat.toLocaleString()}` : '₿ '}
-          </Atoms.Typography>
-          <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-            {verification
-              ? `Pay ₿ ${verification.data.amountSat.toLocaleString()} ${rate?.satUsd ? `(approximately $${Math.round(rate.satUsd * verification.data.amountSat * 100) / 100})` : ''} to continue.`
-              : ''}
-          </Atoms.Typography>
+          {isDataAvailable ? (
+            <React.Fragment>
+              <Atoms.Typography as="p" className="text-5xl leading-none font-semibold text-brand lg:text-6xl">
+                ₿ {verification.data.amountSat.toLocaleString('en-US')}
+              </Atoms.Typography>
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
+                {getPaymentDescription()}
+              </Atoms.Typography>
+            </React.Fragment>
+          ) : (
+            <PriceSkeleton />
+          )}
         </Atoms.Container>
       </Atoms.Card>
 
@@ -160,7 +177,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
-          disabled={!verification}
+          disabled={!isDataAvailable}
           onClick={() => verification && copyToClipboard(verification.data.bolt11Invoice)}
         >
           <Libs.Copy className="mr-2 h-4 w-4" />

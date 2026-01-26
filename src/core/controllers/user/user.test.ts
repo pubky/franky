@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { FollowResult } from 'pubky-app-specs';
 import { UserController } from './user';
 import * as Core from '@/core';
+import { HttpMethod } from '@/libs';
 
 describe('UserController', () => {
   beforeEach(() => {
@@ -19,7 +20,7 @@ describe('UserController', () => {
         id: userId,
         name: 'Test User',
         bio: 'Test bio',
-        image: '',
+        image: null,
         links: [],
         status: '',
         indexed_at: Date.now(),
@@ -234,12 +235,12 @@ describe('UserController', () => {
       } as unknown as typeof Core.useHomeStore);
       const followSpy = vi.spyOn(Core.UserApplication, 'commitFollow').mockResolvedValue(undefined);
 
-      await UserController.commitFollow(Core.HomeserverAction.PUT, { follower, followee });
+      await UserController.commitFollow(HttpMethod.PUT, { follower, followee });
 
       expect(toSpy).toHaveBeenCalledWith({ follower, followee });
       expect(mockToJson).toHaveBeenCalled();
       expect(followSpy).toHaveBeenCalledWith({
-        eventType: Core.HomeserverAction.PUT,
+        eventType: HttpMethod.PUT,
         followUrl: mockMeta.url,
         followJson: mockFollowJson,
         follower,
@@ -267,10 +268,10 @@ describe('UserController', () => {
       } as unknown as typeof Core.useHomeStore);
       const followSpy = vi.spyOn(Core.UserApplication, 'commitFollow').mockResolvedValue(undefined);
 
-      await UserController.commitFollow(Core.HomeserverAction.DELETE, { follower, followee });
+      await UserController.commitFollow(HttpMethod.DELETE, { follower, followee });
 
       expect(followSpy).toHaveBeenCalledWith({
-        eventType: Core.HomeserverAction.DELETE,
+        eventType: HttpMethod.DELETE,
         followUrl: mockMeta.url,
         followJson: mockFollowJson,
         follower,
@@ -288,7 +289,7 @@ describe('UserController', () => {
       });
       const followSpy = vi.spyOn(Core.UserApplication, 'commitFollow').mockResolvedValue(undefined);
 
-      await expect(UserController.commitFollow(Core.HomeserverAction.PUT, { follower, followee })).rejects.toThrow(
+      await expect(UserController.commitFollow(HttpMethod.PUT, { follower, followee })).rejects.toThrow(
         'normalize-fail',
       );
 
@@ -310,7 +311,7 @@ describe('UserController', () => {
       } as unknown as typeof Core.useHomeStore);
       vi.spyOn(Core.UserApplication, 'commitFollow').mockRejectedValue(new Error('delegate-fail'));
 
-      await expect(UserController.commitFollow(Core.HomeserverAction.PUT, { follower, followee })).rejects.toThrow(
+      await expect(UserController.commitFollow(HttpMethod.PUT, { follower, followee })).rejects.toThrow(
         'delegate-fail',
       );
     });
@@ -341,10 +342,10 @@ describe('UserController', () => {
       vi.spyOn(Core, 'getStreamId').mockReturnValue(mockStreamId);
       const followSpy = vi.spyOn(Core.UserApplication, 'commitFollow').mockResolvedValue(undefined);
 
-      await UserController.commitFollow(Core.HomeserverAction.PUT, { follower, followee });
+      await UserController.commitFollow(HttpMethod.PUT, { follower, followee });
 
       expect(followSpy).toHaveBeenCalledWith({
-        eventType: Core.HomeserverAction.PUT,
+        eventType: HttpMethod.PUT,
         followUrl: mockMeta.url,
         followJson: mockFollowJson,
         follower,

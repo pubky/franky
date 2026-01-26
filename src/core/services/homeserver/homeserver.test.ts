@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Session, Keypair, PublicKey } from '@synonymdev/pubky';
-import * as Core from '@/core';
-import * as Libs from '@/libs';
+import {
+  HttpMethod,
+  AppError,
+  ErrorCategory,
+  ServerErrorCode,
+  AuthErrorCode,
+  ClientErrorCode,
+  ValidationErrorCode,
+} from '@/libs';
 
 // =============================================================================
 // HOISTED MOCKS - Must be hoisted to run before module imports
@@ -33,13 +40,14 @@ const mockState = vi.hoisted(() => ({
   currentSession: null as Session | null,
 }));
 
-// Mock global fetch for generateSignupToken tests
+// Mock global fetch for generateSignupToken tests (calls /api/dev/signup-token)
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
 // Mock Logger to suppress console output during tests
@@ -105,7 +113,7 @@ vi.mock('@synonymdev/pubky', () => {
     },
     Keypair: {
       random: vi.fn(),
-      fromSecretKey: vi.fn(),
+      fromSecret: vi.fn(),
     },
     AuthFlowKind: {
       signin: () => mockState.authFlowKindSignin(),
@@ -146,7 +154,7 @@ const createMockKeypair = (): Keypair =>
     publicKey: {
       z32: () => 'test-public-key-z32',
     } as PublicKey,
-    secretKey: new Uint8Array(32).fill(1),
+    secret: vi.fn(() => new Uint8Array(32).fill(1)),
   }) as unknown as Keypair;
 
 // =============================================================================
@@ -253,8 +261,8 @@ describe('HomeserverService', () => {
         mockState.signup.mockRejectedValue(new Error('Invalid token'));
 
         await expect(HomeserverService.signUp({ keypair, signupToken })).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.SIGNUP_FAILED,
-          statusCode: 500,
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.INTERNAL_ERROR,
         });
       });
 
@@ -265,8 +273,8 @@ describe('HomeserverService', () => {
         mockState.signup.mockRejectedValue('string error');
 
         await expect(HomeserverService.signUp({ keypair, signupToken })).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.SIGNUP_FAILED,
-          statusCode: 500,
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.INTERNAL_ERROR,
         });
       });
 
@@ -283,7 +291,8 @@ describe('HomeserverService', () => {
         } catch (error) {
           // Use name check instead of instanceof due to module reset
           expect((error as Error).name).toBe('AppError');
-          expect((error as Libs.AppError).details?.originalError).toBe(originalMessage);
+          // The original error message becomes the error message
+          expect((error as AppError).message).toBe(originalMessage);
         }
       });
     });
@@ -335,8 +344,8 @@ describe('HomeserverService', () => {
         mockState.publishHomeserverForce.mockRejectedValue(new Error('Republish failed'));
 
         await expect(HomeserverService.signIn({ keypair })).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.SESSION_EXPIRED,
-          statusCode: 401,
+          category: ErrorCategory.Auth,
+          code: AuthErrorCode.SESSION_EXPIRED,
         });
       });
     });
@@ -350,13 +359,13 @@ describe('HomeserverService', () => {
         expect(mockState.sessionSignout).toHaveBeenCalledOnce();
       });
 
-      it('should throw FETCH_FAILED error when signout fails', async () => {
+      it('should throw error when signout fails', async () => {
         const session = createMockSession();
         mockState.sessionSignout.mockRejectedValue(new Error('Network error'));
 
         await expect(HomeserverService.logout({ session })).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.LOGOUT_FAILED,
-          statusCode: 500,
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.INTERNAL_ERROR,
         });
       });
     });
@@ -444,14 +453,14 @@ describe('HomeserverService', () => {
         expect(mockState.startAuthFlow).toHaveBeenCalledWith(customCaps, 'signin-kind', expect.any(String));
       });
 
-      it('should throw AUTH_REQUEST_FAILED error when flow fails', async () => {
+      it('should throw error when flow fails', async () => {
         mockState.startAuthFlow.mockImplementation(() => {
           throw new Error('Flow initialization failed');
         });
 
         await expect(HomeserverService.generateAuthUrl()).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.AUTH_REQUEST_FAILED,
-          statusCode: 500,
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.INTERNAL_ERROR,
         });
       });
     });
@@ -469,10 +478,10 @@ describe('HomeserverService', () => {
           const testData = { name: 'test', value: 123 };
           mockState.sessionStorageGet.mockResolvedValue(new Response(JSON.stringify(testData), { status: 200 }));
 
-          const result = await HomeserverService.request<typeof testData>(
-            Core.HomeserverAction.GET,
-            'pubky://user/pub/data.json',
-          );
+          const result = await HomeserverService.request<typeof testData>({
+            method: HttpMethod.GET,
+            url: 'pubky://user/pub/data.json',
+          });
 
           expect(result).toEqual(testData);
           expect(mockState.sessionStorageGet).toHaveBeenCalledWith('/pub/data.json');
@@ -482,7 +491,10 @@ describe('HomeserverService', () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockResolvedValue(new Response('', { status: 200 }));
 
-          const result = await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/empty.json');
+          const result = await HomeserverService.request({
+            method: HttpMethod.GET,
+            url: 'pubky://user/pub/empty.json',
+          });
 
           expect(result).toBeUndefined();
         });
@@ -491,7 +503,10 @@ describe('HomeserverService', () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockResolvedValue(new Response('not-valid-json', { status: 200 }));
 
-          const result = await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/invalid.json');
+          const result = await HomeserverService.request({
+            method: HttpMethod.GET,
+            url: 'pubky://user/pub/invalid.json',
+          });
 
           expect(result).toBeUndefined();
         });
@@ -501,7 +516,11 @@ describe('HomeserverService', () => {
         it('should send JSON body for PUT request', async () => {
           mockState.currentSession = createMockSession();
           const bodyData = { name: 'new-value' };
-          await HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://user/pub/data.json', bodyData);
+          await HomeserverService.request({
+            method: HttpMethod.PUT,
+            url: 'pubky://user/pub/data.json',
+            bodyJson: bodyData,
+          });
 
           expect(mockState.sessionStoragePutJson).toHaveBeenCalledWith('/pub/data.json', bodyData);
         });
@@ -509,18 +528,26 @@ describe('HomeserverService', () => {
         it('should throw INVALID_INPUT when PUT is attempted without a session on a pubky:// address', async () => {
           mockState.currentSession = null;
           await expect(
-            HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://someone/pub/data.json', { ok: true }),
+            HomeserverService.request({
+              method: HttpMethod.PUT,
+              url: 'pubky://someone/pub/data.json',
+              bodyJson: { ok: true },
+            }),
           ).rejects.toMatchObject({
-            type: Libs.CommonErrorType.INVALID_INPUT,
-            statusCode: 400,
+            category: ErrorCategory.Validation,
+            code: ValidationErrorCode.INVALID_INPUT,
           });
         });
 
         it('should return undefined for successful PUT', async () => {
           mockState.currentSession = createMockSession();
 
-          const result = await HomeserverService.request(Core.HomeserverAction.PUT, 'pubky://user/pub/data.json', {
-            data: 'test',
+          const result = await HomeserverService.request({
+            method: HttpMethod.PUT,
+            url: 'pubky://user/pub/data.json',
+            bodyJson: {
+              data: 'test',
+            },
           });
 
           expect(result).toBeUndefined();
@@ -531,24 +558,24 @@ describe('HomeserverService', () => {
         it('should send DELETE request without body', async () => {
           mockState.currentSession = createMockSession();
 
-          await HomeserverService.request(Core.HomeserverAction.DELETE, 'pubky://user/pub/data.json');
+          await HomeserverService.request({ method: HttpMethod.DELETE, url: 'pubky://user/pub/data.json' });
 
           expect(mockState.sessionStorageDelete).toHaveBeenCalledWith('/pub/data.json');
         });
       });
 
       describe('Error handling', () => {
-        it('should throw FETCH_FAILED error for non-OK response', async () => {
+        it('should throw NOT_FOUND error for 404 response', async () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockResolvedValue(
             new Response('Not Found', { status: 404, statusText: 'Not Found' }),
           );
 
           await expect(
-            HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/missing.json'),
+            HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/missing.json' }),
           ).rejects.toMatchObject({
-            type: Libs.HomeserverErrorType.FETCH_FAILED,
-            statusCode: 404,
+            category: ErrorCategory.Client,
+            code: ClientErrorCode.NOT_FOUND,
           });
         });
 
@@ -559,22 +586,22 @@ describe('HomeserverService', () => {
           );
 
           await expect(
-            HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/data.json'),
+            HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' }),
           ).rejects.toMatchObject({
-            type: Libs.HomeserverErrorType.SESSION_EXPIRED,
-            statusCode: 401,
+            category: ErrorCategory.Auth,
+            code: AuthErrorCode.SESSION_EXPIRED,
           });
         });
 
-        it('should throw FETCH_FAILED error for network errors', async () => {
+        it('should throw INTERNAL_ERROR for network errors', async () => {
           mockState.currentSession = createMockSession();
           mockState.sessionStorageGet.mockRejectedValue(new Error('Network error'));
 
           await expect(
-            HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/data.json'),
+            HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' }),
           ).rejects.toMatchObject({
-            type: Libs.HomeserverErrorType.FETCH_FAILED,
-            statusCode: 500,
+            category: ErrorCategory.Server,
+            code: ServerErrorCode.INTERNAL_ERROR,
           });
         });
       });
@@ -585,12 +612,12 @@ describe('HomeserverService', () => {
         mockState.currentSession = createMockSession();
         const blobData = new Uint8Array([1, 2, 3, 4, 5]);
 
-        await HomeserverService.putBlob('pubky://user/pub/avatar.png', blobData);
+        await HomeserverService.putBlob({ url: 'pubky://user/pub/avatar.png', blob: blobData });
 
         expect(mockState.sessionStoragePutBytes).toHaveBeenCalledWith('/pub/avatar.png', blobData);
       });
 
-      it('should throw PUT_FAILED error for non-OK response', async () => {
+      it('should throw PAYLOAD_TOO_LARGE error for 413 response', async () => {
         mockState.currentSession = createMockSession();
         const blobData = new Uint8Array([1, 2, 3]);
         mockState.sessionStoragePutBytes.mockRejectedValue({
@@ -599,9 +626,11 @@ describe('HomeserverService', () => {
           data: { statusCode: 413 },
         });
 
-        await expect(HomeserverService.putBlob('pubky://user/pub/large.bin', blobData)).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.PUT_FAILED,
-          statusCode: 413,
+        await expect(
+          HomeserverService.putBlob({ url: 'pubky://user/pub/large.bin', blob: blobData }),
+        ).rejects.toMatchObject({
+          category: ErrorCategory.Client,
+          code: ClientErrorCode.PAYLOAD_TOO_LARGE,
         });
       });
 
@@ -614,9 +643,11 @@ describe('HomeserverService', () => {
           data: { statusCode: 401 },
         });
 
-        await expect(HomeserverService.putBlob('pubky://user/pub/avatar.png', blobData)).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.SESSION_EXPIRED,
-          statusCode: 401,
+        await expect(
+          HomeserverService.putBlob({ url: 'pubky://user/pub/avatar.png', blob: blobData }),
+        ).rejects.toMatchObject({
+          category: ErrorCategory.Auth,
+          code: AuthErrorCode.SESSION_EXPIRED,
         });
       });
 
@@ -624,9 +655,11 @@ describe('HomeserverService', () => {
         mockState.currentSession = null;
         const blobData = new Uint8Array([1, 2, 3]);
 
-        await expect(HomeserverService.putBlob('pubky://someone/pub/avatar.png', blobData)).rejects.toMatchObject({
-          type: Libs.CommonErrorType.INVALID_INPUT,
-          statusCode: 400,
+        await expect(
+          HomeserverService.putBlob({ url: 'pubky://someone/pub/avatar.png', blob: blobData }),
+        ).rejects.toMatchObject({
+          category: ErrorCategory.Validation,
+          code: ValidationErrorCode.INVALID_INPUT,
         });
       });
     });
@@ -636,7 +669,7 @@ describe('HomeserverService', () => {
         const mockFiles = ['file1.json', 'file2.json', 'file3.json'];
         mockState.publicStorageList.mockResolvedValue(mockFiles);
 
-        const result = await HomeserverService.list('pubky://user/pub/posts/');
+        const result = await HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' });
 
         expect(result).toEqual(mockFiles);
       });
@@ -646,7 +679,7 @@ describe('HomeserverService', () => {
         const mockFiles = ['pubky://user/pub/posts/file1.json', 'pubky://user/pub/posts/file2.json'];
         mockState.sessionStorageList.mockResolvedValue(mockFiles);
 
-        const result = await HomeserverService.list('pubky://user/pub/posts/');
+        const result = await HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' });
 
         expect(result).toEqual(mockFiles);
         expect(mockState.sessionStorageList).toHaveBeenCalledWith(
@@ -662,7 +695,7 @@ describe('HomeserverService', () => {
       it('should call list with default parameters', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
 
-        await HomeserverService.list('pubky://user/pub/posts/');
+        await HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' });
 
         expect(mockState.publicStorageList).toHaveBeenCalledWith(
           'pubky://user/pub/posts/',
@@ -676,7 +709,12 @@ describe('HomeserverService', () => {
       it('should pass pagination parameters to list', async () => {
         mockState.publicStorageList.mockResolvedValue([]);
 
-        await HomeserverService.list('pubky://user/pub/posts/', 'cursor123', true, 100);
+        await HomeserverService.list({
+          baseDirectory: 'pubky://user/pub/posts/',
+          cursor: 'cursor123',
+          reverse: true,
+          limit: 100,
+        });
 
         expect(mockState.publicStorageList).toHaveBeenCalledWith(
           'pubky://user/pub/posts/',
@@ -687,12 +725,12 @@ describe('HomeserverService', () => {
         );
       });
 
-      it('should throw FETCH_FAILED error on list failure', async () => {
+      it('should throw INTERNAL_ERROR on list failure', async () => {
         mockState.publicStorageList.mockRejectedValue(new Error('List failed'));
 
-        await expect(HomeserverService.list('pubky://user/pub/posts/')).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.FETCH_FAILED,
-          statusCode: 500,
+        await expect(HomeserverService.list({ baseDirectory: 'pubky://user/pub/posts/' })).rejects.toMatchObject({
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.INTERNAL_ERROR,
         });
       });
     });
@@ -706,8 +744,8 @@ describe('HomeserverService', () => {
         expect(mockState.sessionStorageDelete).toHaveBeenCalledWith('/pub/file.json');
       });
 
-      it('should throw DELETE_FAILED error on delete failure', async () => {
-        // NOTE: For owned paths, delete uses session.storage.delete which throws DELETE_FAILED
+      it('should throw FORBIDDEN error on delete failure with 403', async () => {
+        // NOTE: For owned paths, delete uses session.storage.delete
         // handleError extracts status code from error.data.statusCode if available
         mockState.currentSession = createMockSession();
         mockState.sessionStorageDelete.mockRejectedValue({
@@ -717,8 +755,8 @@ describe('HomeserverService', () => {
         });
 
         await expect(HomeserverService.delete('pubky://user/pub/protected.json')).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.DELETE_FAILED,
-          statusCode: 403,
+          category: ErrorCategory.Auth,
+          code: AuthErrorCode.FORBIDDEN,
         });
       });
     });
@@ -764,8 +802,8 @@ describe('HomeserverService', () => {
         mockState.publicStorageGet.mockRejectedValue(networkError);
 
         await expect(HomeserverService.get(testUrl)).rejects.toMatchObject({
-          type: Libs.HomeserverErrorType.FETCH_FAILED,
-          statusCode: 500,
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.INTERNAL_ERROR,
         });
       });
     });
@@ -780,11 +818,10 @@ describe('HomeserverService', () => {
       it('should re-throw AppError instances without wrapping', async () => {
         // Import Libs after module reset to get matching AppError class
         const freshLibs = await import('@/libs');
-        const appError = freshLibs.createHomeserverError(
-          freshLibs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Already an AppError',
-          401,
-        );
+        const appError = freshLibs.Err.auth(freshLibs.AuthErrorCode.UNAUTHORIZED, 'Already an AppError', {
+          service: freshLibs.ErrorService.Homeserver,
+          operation: 'test',
+        });
         mockState.signup.mockRejectedValue(appError);
 
         try {
@@ -796,25 +833,26 @@ describe('HomeserverService', () => {
         } catch (error) {
           // Should be the exact same error instance (not wrapped)
           expect(error).toBe(appError);
-          expect((error as Libs.AppError).type).toBe(freshLibs.HomeserverErrorType.NOT_AUTHENTICATED);
-          expect((error as Libs.AppError).message).toBe('Already an AppError');
+          expect((error as AppError).category).toBe(freshLibs.ErrorCategory.Auth);
+          expect((error as AppError).code).toBe(freshLibs.AuthErrorCode.UNAUTHORIZED);
+          expect((error as AppError).message).toBe('Already an AppError');
         }
       });
     });
 
     describe('Session expiration handling', () => {
-      it('should include URL in SESSION_EXPIRED error details', async () => {
+      it('should include endpoint in SESSION_EXPIRED error context', async () => {
         const testUrl = 'pubky://user/pub/data.json';
         mockState.currentSession = createMockSession();
         mockState.sessionStorageGet.mockResolvedValue(new Response('Session expired', { status: 401 }));
 
         try {
-          await HomeserverService.request(Core.HomeserverAction.GET, testUrl);
+          await HomeserverService.request({ method: HttpMethod.GET, url: testUrl });
           expect.fail('Should have thrown');
         } catch (error) {
           // Use name check instead of instanceof due to module reset
           expect((error as Error).name).toBe('AppError');
-          expect((error as Libs.AppError).details?.url).toContain('user/pub/data.json');
+          expect((error as AppError).context?.endpoint).toContain('user/pub/data.json');
         }
       });
 
@@ -824,57 +862,72 @@ describe('HomeserverService', () => {
         mockState.sessionStorageGet.mockResolvedValue(new Response(customMessage, { status: 401 }));
 
         try {
-          await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/data.json');
+          await HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' });
           expect.fail('Should have thrown');
         } catch (error) {
           // Use name check instead of instanceof due to module reset
           expect((error as Error).name).toBe('AppError');
-          expect((error as Libs.AppError).message).toBe(customMessage);
+          expect((error as AppError).message).toBe(customMessage);
         }
       });
     });
 
-    describe('generateSignupToken (admin utility)', () => {
-      it('should fetch token from admin endpoint with auth header', async () => {
+    describe('generateSignupToken (via API route)', () => {
+      it('should fetch token from server-side API route', async () => {
         const expectedToken = 'generated-signup-token-123';
-        mockFetch.mockResolvedValue(new Response(expectedToken, { status: 200 }));
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({ token: expectedToken }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         const result = await HomeserverService.generateSignupToken();
 
-        expect(mockFetch).toHaveBeenCalledWith(
-          expect.any(String), // Admin URL from env
-          expect.objectContaining({
-            method: 'GET',
-            headers: expect.objectContaining({
-              'X-Admin-Password': expect.any(String),
-            }),
-          }),
-        );
+        expect(mockFetch).toHaveBeenCalledWith('/api/dev/signup-token', { method: 'GET' });
         expect(result).toBe(expectedToken);
       });
 
-      it('should throw NETWORK_ERROR for non-OK response', async () => {
-        mockFetch.mockResolvedValue(new Response('Forbidden', { status: 403 }));
+      it('should throw FORBIDDEN error for 403 response', async () => {
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         await expect(HomeserverService.generateSignupToken()).rejects.toMatchObject({
-          type: Libs.CommonErrorType.NETWORK_ERROR,
+          category: ErrorCategory.Auth,
+          code: AuthErrorCode.FORBIDDEN,
         });
       });
 
       it('should throw UNEXPECTED_ERROR when no token received', async () => {
-        mockFetch.mockResolvedValue(new Response('', { status: 200 }));
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({}), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         await expect(HomeserverService.generateSignupToken()).rejects.toMatchObject({
-          type: Libs.CommonErrorType.UNEXPECTED_ERROR,
+          category: ErrorCategory.Server,
+          code: ServerErrorCode.UNKNOWN_ERROR,
         });
       });
 
-      it('should trim whitespace from received token', async () => {
-        mockFetch.mockResolvedValue(new Response('  token-with-spaces  \n', { status: 200 }));
+      it('should return token from JSON response', async () => {
+        const expectedToken = 'token-from-json';
+        mockFetch.mockResolvedValue(
+          new Response(JSON.stringify({ token: expectedToken }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+          }),
+        );
 
         const result = await HomeserverService.generateSignupToken();
 
-        expect(result).toBe('token-with-spaces');
+        expect(result).toBe(expectedToken);
       });
     });
 
@@ -883,7 +936,7 @@ describe('HomeserverService', () => {
         mockState.currentSession = createMockSession();
         mockState.sessionStorageGet.mockResolvedValue(new Response('{}', { status: 200 }));
 
-        await HomeserverService.request(Core.HomeserverAction.GET, 'pubky://user/pub/data.json');
+        await HomeserverService.request({ method: HttpMethod.GET, url: 'pubky://user/pub/data.json' });
 
         expect(mockState.sessionStorageGet).toHaveBeenCalledWith('/pub/data.json');
       });

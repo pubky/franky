@@ -70,8 +70,8 @@ export const ScanContent = () => {
       <Atoms.Container size="container" className="hidden md:flex">
         <ScanHeader isMobile={false} />
         <Molecules.ContentCard layout="column">
-          <Atoms.Container className="items-center justify-center">
-            <div className="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
+          <Atoms.Container className="items-center justify-center gap-4">
+            <div className="relative flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
               {isLoading || !url ? (
                 <Atoms.Container className="items-center gap-2">
                   <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
@@ -80,9 +80,23 @@ export const ScanContent = () => {
                   </Atoms.Typography>
                 </Atoms.Container>
               ) : (
-                <QRCodeSVG value={url} size={220} />
+                <>
+                  <QRCodeSVG value={url} size={220} />
+                  <Image
+                    src="/images/ring-logo.svg"
+                    alt="Pubky Ring"
+                    width={48}
+                    height={48}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  />
+                </>
               )}
             </div>
+            {inviteCode && (
+              <Atoms.Typography as="p" className="text-lg font-semibold tracking-widest text-brand">
+                {inviteCode}
+              </Atoms.Typography>
+            )}
           </Atoms.Container>
         </Molecules.ContentCard>
       </Atoms.Container>

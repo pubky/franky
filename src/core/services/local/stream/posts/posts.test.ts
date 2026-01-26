@@ -149,12 +149,11 @@ describe('LocalStreamPostsService', () => {
 
     it('should propagate error when PostStreamModel.upsert throws', async () => {
       // Mock PostStreamModel.upsert to throw database error
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPSERT_FAILED,
-        'Failed to upsert PostStream',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.WRITE_FAILED, 'Failed to upsert PostStream', {
+        service: Libs.ErrorService.Local,
+        operation: 'upsert',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'upsert').mockRejectedValue(databaseError);
 
       const postIds = [buildCompositeId({ pubky: 'user1', id: 'post1' })];
@@ -187,12 +186,11 @@ describe('LocalStreamPostsService', () => {
 
     it('should propagate error when PostStreamModel.findById throws', async () => {
       // Mock PostStreamModel.findById to throw database error
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'findById',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.read({ streamId })).rejects.toThrow('Database query failed');
@@ -218,12 +216,11 @@ describe('LocalStreamPostsService', () => {
 
     it('should propagate error when PostStreamModel.deleteById throws', async () => {
       // Mock PostStreamModel.deleteById to throw database error
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        'Failed to delete stream',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.DELETE_FAILED, 'Failed to delete stream', {
+        service: Libs.ErrorService.Local,
+        operation: 'deleteById',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'deleteById').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.deleteById({ streamId })).rejects.toThrow('Failed to delete stream');
@@ -348,12 +345,10 @@ describe('LocalStreamPostsService', () => {
       const mockPosts: Core.NexusPost[] = [createMockNexusPost('post-1', 'user-1')];
 
       // Mock PostDetailsModel.bulkSave to throw error
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.SAVE_FAILED,
-        'Failed to save post details',
-        500,
-        {},
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.WRITE_FAILED, 'Failed to save post details', {
+        service: Libs.ErrorService.Local,
+        operation: 'bulkSave',
+      });
       vi.spyOn(Core.PostDetailsModel, 'bulkSave').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.persistPosts({ posts: mockPosts })).rejects.toThrow(
@@ -583,12 +578,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when PostStreamModel.findById throws in persistNewStreamChunk', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'findById',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(
@@ -602,12 +596,10 @@ describe('LocalStreamPostsService', () => {
     it('should propagate error when PostDetailsModel.findByIdsPreserveOrder throws', async () => {
       await createStream([postId('post-1')]);
 
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        {},
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'findByIdsPreserveOrder',
+      });
       vi.spyOn(Core.PostDetailsModel, 'findByIdsPreserveOrder').mockRejectedValue(databaseError);
 
       await expect(
@@ -624,12 +616,11 @@ describe('LocalStreamPostsService', () => {
         posts: [createMockNexusPost('post-1', DEFAULT_AUTHOR), createMockNexusPost('post-2', DEFAULT_AUTHOR)],
       });
 
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPSERT_FAILED,
-        'Failed to upsert stream',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.WRITE_FAILED, 'Failed to upsert stream', {
+        service: Libs.ErrorService.Local,
+        operation: 'upsert',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'upsert').mockRejectedValue(databaseError);
 
       await expect(
@@ -713,12 +704,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when underlying model throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'getStreamHead',
+        context: { streamId },
+      });
       vi.spyOn(Core.UnreadPostStreamModel, 'getStreamHead').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.getStreamHead({ streamId })).rejects.toThrow('Database query failed');
@@ -827,12 +817,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when underlying model throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'prependToStream',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(
@@ -872,12 +861,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when underlying model throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'removeFromStream',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(
@@ -920,12 +908,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when underlying model throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'mergeUnreadStreamWithPostStream',
+        context: { streamId },
+      });
       vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId })).rejects.toThrow(
@@ -946,6 +933,51 @@ describe('LocalStreamPostsService', () => {
       const result = await Core.LocalStreamPostsService.read({ streamId });
       // Shared post should only appear once, from the unread stream
       expect(result?.stream).toEqual([postId('unread-1'), sharedPostId, postId('post-1')]);
+    });
+
+    it('should filter out deleted posts from unread stream during merge', async () => {
+      // Setup: unread stream has a deleted post and a normal post
+      const deletedPostId = postId('deleted-post');
+      const normalUnreadPostId = postId('unread-normal');
+      const unreadStream = [deletedPostId, normalUnreadPostId];
+      const postStream = [postId('post-1')];
+
+      // Create post details - one deleted, one normal
+      await Core.PostDetailsModel.create({
+        id: deletedPostId,
+        content: Core.DELETED,
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 2,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/deleted-post`,
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: normalUnreadPostId,
+        content: 'Normal unread post',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP + 1,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/unread-normal`,
+        attachments: null,
+      });
+      await Core.PostDetailsModel.create({
+        id: postId('post-1'),
+        content: 'Post 1',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/post-1`,
+        attachments: null,
+      });
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, unreadStream);
+      await createStream(postStream);
+
+      await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+
+      const result = await Core.LocalStreamPostsService.read({ streamId });
+      // Deleted post should NOT be in the merged stream
+      expect(result?.stream).not.toContain(deletedPostId);
+      // Normal posts should be present, sorted by timestamp (descending)
+      expect(result?.stream).toEqual([normalUnreadPostId, postId('post-1')]);
     });
   });
 
@@ -1004,13 +1036,63 @@ describe('LocalStreamPostsService', () => {
       expect(result?.stream).toEqual(initialStream);
     });
 
+    // Regression test for reply count bug: when duplicate posts arrive in batches,
+    // the function must return only the actually new posts so counts are updated correctly.
+    // Previously, the function returned void and the caller used the full batch size,
+    // causing reply counts to inflate when the same posts arrived multiple times.
+    it('should return only actually new post IDs to prevent count inflation from duplicates', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      // Batch contains 3 posts, but 2 are duplicates
+      const batchWithDuplicates = [postId('post-2'), postId('post-3'), postId('post-1')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+
+      const newPostIds = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: batchWithDuplicates,
+      });
+
+      // Must return only the 1 new post, not 3 (the batch size)
+      // This is critical: using batch size (3) instead of actual new count (1)
+      // would cause reply counts to be inflated by 2 extra
+      expect(newPostIds).toEqual([postId('post-3')]);
+      expect(newPostIds.length).toBe(1);
+    });
+
+    it('should return all posts when stream does not exist yet', async () => {
+      const newChunk = [postId('post-1'), postId('post-2'), postId('post-3')];
+
+      const newPostIds = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: newChunk,
+      });
+
+      expect(newPostIds).toEqual(newChunk);
+      expect(newPostIds.length).toBe(3);
+    });
+
+    it('should return empty array when all posts are duplicates', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const allDuplicates = [postId('post-1'), postId('post-2')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+
+      const newPostIds = await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: allDuplicates,
+      });
+
+      // Must return empty array, not the batch size of 2
+      expect(newPostIds).toEqual([]);
+      expect(newPostIds.length).toBe(0);
+    });
+
     it('should propagate error when underlying model throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'persistUnreadNewStreamChunk',
+        context: { streamId },
+      });
       vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(
@@ -1044,12 +1126,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when upsert throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.UPSERT_FAILED,
-        'Failed to upsert stream',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.WRITE_FAILED, 'Failed to upsert stream', {
+        service: Libs.ErrorService.Local,
+        operation: 'bulkSave',
+        context: { streamId },
+      });
       vi.spyOn(Core.PostStreamModel, 'upsert').mockRejectedValue(databaseError);
 
       await expect(
@@ -1080,12 +1161,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when UnreadPostStreamModel.findById throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'readUnreadStream',
+        context: { streamId },
+      });
       vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.readUnreadStream({ streamId })).rejects.toThrow(
@@ -1125,12 +1205,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should propagate error when UnreadPostStreamModel.findById throws', async () => {
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'clearUnreadStream',
+        context: { streamId },
+      });
       vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.clearUnreadStream({ streamId })).rejects.toThrow(
@@ -1142,12 +1221,11 @@ describe('LocalStreamPostsService', () => {
       const unreadPostIds = [postId('unread-1')];
       await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, unreadPostIds);
 
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        'Failed to delete unread stream',
-        500,
-        { streamId },
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.DELETE_FAILED, 'Failed to delete unread stream', {
+        service: Libs.ErrorService.Local,
+        operation: 'clearUnreadStream',
+        context: { streamId },
+      });
       vi.spyOn(Core.UnreadPostStreamModel, 'deleteById').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.clearUnreadStream({ streamId })).rejects.toThrow(
@@ -1233,12 +1311,10 @@ describe('LocalStreamPostsService', () => {
 
     it('should propagate error when PostDetailsModel.findByIdsPreserveOrder throws', async () => {
       const postIds = [postId('post-1')];
-      const databaseError = Libs.createDatabaseError(
-        Libs.DatabaseErrorType.QUERY_FAILED,
-        'Database query failed',
-        500,
-        {},
-      );
+      const databaseError = Libs.Err.database(Libs.DatabaseErrorCode.QUERY_FAILED, 'Database query failed', {
+        service: Libs.ErrorService.Local,
+        operation: 'getNotPersistedPostsInCache',
+      });
       vi.spyOn(Core.PostDetailsModel, 'findByIdsPreserveOrder').mockRejectedValue(databaseError);
 
       await expect(Core.LocalStreamPostsService.getNotPersistedPostsInCache(postIds)).rejects.toThrow(

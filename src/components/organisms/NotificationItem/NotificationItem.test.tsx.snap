@@ -2,16 +2,16 @@
 
 exports[`NotificationItem - Snapshots > matches snapshot for Follow notification 1`] = `
 <div
-  class="flex w-full items-center justify-between gap-2"
+  class="flex w-full min-w-0 items-center justify-between gap-2"
   data-testid="container"
 >
-  <a
-    class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
-    href="/profile/user1"
+  <div
+    class="flex min-w-0 flex-1 items-center gap-2"
+    data-testid="container"
   >
-    <div
-      class="flex items-center gap-2"
-      data-testid="container"
+    <a
+      class="shrink-0 transition-opacity hover:opacity-80"
+      href="/profile/user1"
     >
       <div
         class="lg:size-8"
@@ -22,41 +22,53 @@ exports[`NotificationItem - Snapshots > matches snapshot for Follow notification
           U
         </span>
       </div>
-      <div
-        class="flex items-center gap-2"
-        data-testid="container"
-      >
-        <p
-          class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
-          data-testid="typography"
-        >
-          User followed you
-        </p>
-      </div>
-    </div>
+    </a>
     <div
-      class="flex items-center gap-2"
+      class="flex min-w-0 flex-1 items-center gap-2"
       data-testid="container"
     >
       <p
-        class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+        class="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
         data-testid="typography"
       >
-        30m
+        <a
+          class="hover:underline"
+          href="/profile/user1"
+        >
+          User
+        </a>
+         
+        <a
+          class="text-muted-foreground hover:underline"
+          href="/profile/user1"
+        >
+          followed you
+        </a>
       </p>
-      <p
-        class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
-        data-testid="typography"
-      >
-        30m
-      </p>
-      <div
-        data-badge="false"
-        data-testid="notification-icon"
-        data-type="follow"
-      >
-        Icon
-      </div>
+    </div>
+  </div>
+  <a
+    class="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
+    href="/profile/user1"
+  >
+    <p
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <p
+      class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <div
+      data-badge="false"
+      data-testid="notification-icon"
+      data-type="follow"
+    >
+      Icon
     </div>
   </a>
 </div>
@@ -64,16 +76,16 @@ exports[`NotificationItem - Snapshots > matches snapshot for Follow notification
 
 exports[`NotificationItem - Snapshots > matches snapshot for Mention notification 1`] = `
 <div
-  class="flex w-full items-center justify-between gap-2"
+  class="flex w-full min-w-0 items-center justify-between gap-2"
   data-testid="container"
 >
-  <a
-    class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
-    href="/post/user1/post123"
+  <div
+    class="flex min-w-0 flex-1 items-center gap-2"
+    data-testid="container"
   >
-    <div
-      class="flex items-center gap-2"
-      data-testid="container"
+    <a
+      class="shrink-0 transition-opacity hover:opacity-80"
+      href="/profile/user1"
     >
       <div
         class="lg:size-8"
@@ -84,41 +96,53 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
           U
         </span>
       </div>
-      <div
-        class="flex items-center gap-2"
-        data-testid="container"
-      >
-        <p
-          class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
-          data-testid="typography"
-        >
-          User mentioned you in post
-        </p>
-      </div>
-    </div>
+    </a>
     <div
-      class="flex items-center gap-2"
+      class="flex min-w-0 flex-1 items-center gap-2"
       data-testid="container"
     >
       <p
-        class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+        class="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
         data-testid="typography"
       >
-        30m
+        <a
+          class="hover:underline"
+          href="/profile/user1"
+        >
+          User
+        </a>
+         
+        <a
+          class="text-muted-foreground hover:underline"
+          href="/post/user1/post123"
+        >
+          mentioned you in post
+        </a>
       </p>
-      <p
-        class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
-        data-testid="typography"
-      >
-        30m
-      </p>
-      <div
-        data-badge="false"
-        data-testid="notification-icon"
-        data-type="mention"
-      >
-        Icon
-      </div>
+    </div>
+  </div>
+  <a
+    class="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
+    href="/post/user1/post123"
+  >
+    <p
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <p
+      class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <div
+      data-badge="false"
+      data-testid="notification-icon"
+      data-type="mention"
+    >
+      Icon
     </div>
   </a>
 </div>
@@ -126,16 +150,16 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
 
 exports[`NotificationItem - Snapshots > matches snapshot for TagPost notification 1`] = `
 <div
-  class="flex w-full items-center justify-between gap-2"
+  class="flex w-full min-w-0 items-center justify-between gap-2"
   data-testid="container"
 >
-  <a
-    class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
-    href="/post/user1/post123"
+  <div
+    class="flex min-w-0 flex-1 items-center gap-2"
+    data-testid="container"
   >
-    <div
-      class="flex items-center gap-2"
-      data-testid="container"
+    <a
+      class="shrink-0 transition-opacity hover:opacity-80"
+      href="/profile/user1"
     >
       <div
         class="lg:size-8"
@@ -146,46 +170,58 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
           U
         </span>
       </div>
-      <div
-        class="flex items-center gap-2"
-        data-testid="container"
-      >
-        <p
-          class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
-          data-testid="typography"
-        >
-          User tagged your post
-        </p>
-        <span
-          data-testid="post-tag"
-        >
-          bitcoin
-        </span>
-      </div>
-    </div>
+    </a>
     <div
-      class="flex items-center gap-2"
+      class="flex min-w-0 flex-1 items-center gap-2"
       data-testid="container"
     >
       <p
-        class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+        class="min-w-0 shrink truncate text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
         data-testid="typography"
       >
-        30m
+        <a
+          class="hover:underline"
+          href="/profile/user1"
+        >
+          User
+        </a>
+         
+        <a
+          class="text-muted-foreground hover:underline"
+          href="/post/user1/post123"
+        >
+          tagged your post
+        </a>
       </p>
-      <p
-        class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
-        data-testid="typography"
+      <span
+        data-testid="post-tag"
       >
-        30m
-      </p>
-      <div
-        data-badge="false"
-        data-testid="notification-icon"
-        data-type="tag_post"
-      >
-        Icon
-      </div>
+        bitcoin
+      </span>
+    </div>
+  </div>
+  <a
+    class="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80"
+    href="/post/user1/post123"
+  >
+    <p
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <p
+      class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <div
+      data-badge="false"
+      data-testid="notification-icon"
+      data-type="tag_post"
+    >
+      Icon
     </div>
   </a>
 </div>

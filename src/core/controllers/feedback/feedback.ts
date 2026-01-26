@@ -24,7 +24,6 @@ export class FeedbackController {
     const comment = Core.FeedbackValidators.validateComment(params.comment);
     const name = Core.FeedbackValidators.validateName(params.name);
 
-    // Delegate to application layer
     await Core.FeedbackApplication.submit({ pubky, comment, name });
   }
 }

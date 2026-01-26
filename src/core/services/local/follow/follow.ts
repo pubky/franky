@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { DatabaseErrorCode, Err, ErrorService, Logger } from '@/libs';
 import { FOLLOWING_TIMELINE_STREAMS, FRIENDS_TIMELINE_STREAMS } from './follow.constants';
 import type {
   CreateFollowParams,
@@ -20,6 +20,8 @@ export class LocalFollowService {
           const rel = await Core.UserRelationshipsModel.findById(followee);
           // Snapshot: whether followee already follows follower
           const isFollowedBy = !!rel?.followed_by;
+          // Snapshot: whether we're already following according to relationship model
+          const wasFollowing = !!rel?.following;
 
           // Connections first
           const [addedFollowing, addedFollower] = await Promise.all([
@@ -27,15 +29,20 @@ export class LocalFollowService {
             Core.UserConnectionsModel.createConnection(followee, follower, Core.UserConnectionsFields.FOLLOWERS),
           ]);
 
-          // Gate counts by actual mutations; do not upsert counts
+          // Gate counts by BOTH relationship state AND connection mutations
+          // This handles: 1) Nexus-synced data (relationship exists, connections don't)
+          //               2) Local-only data (connections exist, relationship may not)
+          const shouldIncrementFollowing = !wasFollowing && addedFollowing;
+          const shouldIncrementFollowers = !wasFollowing && addedFollower;
+
           const ops: Promise<unknown>[] = [];
-          if (addedFollowing) {
+          if (shouldIncrementFollowing) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { following: 1 } }));
           }
-          if (addedFollower) {
+          if (shouldIncrementFollowers) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { followers: 1 } }));
           }
-          if (isFollowedBy && addedFollowing) {
+          if (isFollowedBy && shouldIncrementFollowing) {
             becomingFriends = true;
             ops.push(
               Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { friends: 1 } }),
@@ -66,12 +73,12 @@ export class LocalFollowService {
         friendshipChanged: becomingFriends,
         activeStreamId,
       });
-
-      Libs.Logger.debug('Follow created successfully', { follower, followee });
     } catch (error) {
-      Libs.Logger.error('Failed to follow a user', { follower, followee, error });
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to create follow relationship', 500, {
-        error,
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to create follow relationship', {
+        service: ErrorService.Local,
+        operation: 'createFollow',
+        context: { follower, followee },
+        cause: error,
       });
     }
   }
@@ -85,7 +92,9 @@ export class LocalFollowService {
         [Core.UserCountsModel.table, Core.UserConnectionsModel.table, Core.UserRelationshipsModel.table],
         async () => {
           const rel = await Core.UserRelationshipsModel.findById(followee);
-          const wasFriends = !!rel?.followed_by && !!rel?.following;
+          // Snapshot: whether we were following according to relationship model
+          const wasFollowing = !!rel?.following;
+          const wasFriends = !!rel?.followed_by && wasFollowing;
 
           // Connections first
           const [removedFollowing, removedFollower] = await Promise.all([
@@ -93,15 +102,20 @@ export class LocalFollowService {
             Core.UserConnectionsModel.deleteConnection(followee, follower, Core.UserConnectionsFields.FOLLOWERS),
           ]);
 
-          // Gate counts by actual mutations; do not upsert counts
+          // Gate counts by BOTH relationship state AND connection mutations
+          // This handles: 1) Nexus-synced data (relationship exists, connections don't)
+          //               2) Local-only data (connections exist, relationship may not)
+          const shouldDecrementFollowing = wasFollowing || removedFollowing;
+          const shouldDecrementFollowers = wasFollowing || removedFollower;
+
           const ops: Promise<unknown>[] = [];
-          if (removedFollowing) {
+          if (shouldDecrementFollowing) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { following: -1 } }));
           }
-          if (removedFollower) {
+          if (shouldDecrementFollowers) {
             ops.push(Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { followers: -1 } }));
           }
-          if (wasFriends && removedFollowing) {
+          if (wasFriends || (removedFollowing && !!rel?.followed_by)) {
             breakingFriendship = true;
             ops.push(
               Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { friends: -1 } }),
@@ -132,18 +146,13 @@ export class LocalFollowService {
         friendshipChanged: breakingFriendship,
         activeStreamId,
       });
-
-      Libs.Logger.debug('Unfollow completed successfully', { follower, followee });
     } catch (error) {
-      Libs.Logger.error('Failed to unfollow a user', { follower, followee, error });
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        'Failed to delete follow relationship',
-        500,
-        {
-          error,
-        },
-      );
+      throw Err.database(DatabaseErrorCode.WRITE_FAILED, 'Failed to delete follow relationship', {
+        service: ErrorService.Local,
+        operation: 'deleteFollow',
+        context: { follower, followee },
+        cause: error,
+      });
     }
   }
 
@@ -172,12 +181,12 @@ export class LocalFollowService {
 
     if (streamsToInvalidate.length > 0) {
       await Promise.all(streamsToInvalidate.map((streamId) => Core.LocalStreamPostsService.deleteById({ streamId })));
-      Libs.Logger.debug('Invalidated timeline streams', {
+      Logger.debug('Invalidated timeline streams', {
         invalidated: streamsToInvalidate.length,
         preserved: activeStreamId,
       });
     } else {
-      Libs.Logger.debug('No timeline streams to invalidate (all preserved)', { activeStreamId });
+      Logger.debug('No timeline streams to invalidate (all preserved)', { activeStreamId });
     }
   }
 

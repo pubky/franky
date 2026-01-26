@@ -4,7 +4,7 @@ import * as Organisms from '@/organisms';
 import React from 'react';
 import type { HumanSelectionProps } from './HumanSelection.types';
 
-export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
+export const HumanSelection = ({ onClick, onInviteCodeClick, onDevMode }: HumanSelectionProps) => {
   // Show dev mode options if in development mode or Cypress is running (for E2E tests)
   const isCypressRunning = typeof window !== 'undefined' && 'Cypress' in window;
   const isDevMode = process.env.NODE_ENV === 'development' || isCypressRunning;
@@ -12,9 +12,19 @@ export const HumanSelection = ({ onClick, onDevMode }: HumanSelectionProps) => {
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Proof of <span className="text-brand">Human.</span>
+          Prove <span className="text-brand">you&apos;re not a Robot.</span>
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>Prove your humanity. This keeps the arena real and fair for everyone.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>
+          No email needed. Verify quickly using SMS or a small payment. Or use an{' '}
+          <Atoms.Button
+            overrideDefaults
+            onClick={onInviteCodeClick}
+            className="inline cursor-pointer text-brand transition-all hover:font-bold"
+            data-testid="invite-code-link"
+          >
+            invite code.
+          </Atoms.Button>
+        </Atoms.PageSubtitle>
       </Atoms.PageHeader>
 
       <Atoms.Container data-testid="human-verification-cards" className="gap-6 lg:flex-row lg:items-stretch lg:gap-8">

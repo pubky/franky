@@ -21,16 +21,23 @@ vi.mock('@/molecules', () => ({
   ButtonsNavigation: ({
     onHandleBackButton,
     onHandleContinueButton,
+    loadingContinueButton,
   }: {
     onHandleBackButton: () => void;
     onHandleContinueButton: () => void;
+    loadingContinueButton?: boolean;
   }) => (
     <div data-testid="buttons-navigation">
       <button data-testid="back-button" onClick={onHandleBackButton}>
         Back
       </button>
-      <button data-testid="continue-button" onClick={onHandleContinueButton}>
-        Continue
+      <button
+        data-testid="continue-button"
+        onClick={onHandleContinueButton}
+        disabled={loadingContinueButton}
+        data-loading={loadingContinueButton}
+      >
+        {loadingContinueButton ? 'Loading...' : 'Continue'}
       </button>
     </div>
   ),
@@ -81,6 +88,19 @@ describe('PublicKeyNavigation', () => {
     fireEvent.click(continueButton);
 
     expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.BACKUP);
+  });
+
+  it('shows loading state after clicking continue button', () => {
+    render(<PublicKeyNavigation />);
+
+    const continueButton = screen.getByTestId('continue-button');
+    expect(continueButton).not.toBeDisabled();
+    expect(continueButton).toHaveAttribute('data-loading', 'false');
+
+    fireEvent.click(continueButton);
+
+    expect(continueButton).toBeDisabled();
+    expect(continueButton).toHaveAttribute('data-loading', 'true');
   });
 });
 

@@ -10,7 +10,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,13 +20,13 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -131,7 +131,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -141,13 +141,13 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >
@@ -252,7 +252,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="radix-_r_0_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -262,13 +262,13 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="radix-_r_0_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex-col flex gap-2"
+      class="mx-auto w-full flex-col flex"
       data-slot="filter-list"
       data-testid="filter-list"
     >

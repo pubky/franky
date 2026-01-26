@@ -137,7 +137,8 @@ export class LocalStreamPostsService {
   }
 
   /**
-   * Merge the unread stream with the post stream, sorted by timestamp
+   * Merge the unread stream with the post stream, sorted by timestamp.
+   * Filters out deleted posts from unread stream before merging.
    * @param streamId - The stream ID to merge the unread stream with the post stream
    * @returns void
    */
@@ -147,10 +148,13 @@ export class LocalStreamPostsService {
     const postStream = await Core.PostStreamModel.findById(streamId);
     if (!postStream) return;
 
+    // Filter out deleted posts from unread stream before merging
+    const validUnreadPosts = await Core.PostDetailsModel.filterDeleted(unreadPostStream.stream);
+
     // Deduplicate: unread posts first, then existing posts (excluding duplicates)
-    const existingIds = new Set(unreadPostStream.stream);
+    const existingIds = new Set(validUnreadPosts);
     const uniqueExistingPosts = postStream.stream.filter((id) => !existingIds.has(id));
-    const combinedStream = [...unreadPostStream.stream, ...uniqueExistingPosts];
+    const combinedStream = [...validUnreadPosts, ...uniqueExistingPosts];
 
     // Sort by timestamp (indexed_at) in descending order (most recent first)
     const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
@@ -305,9 +309,6 @@ export class LocalStreamPostsService {
     // Combine existing and new posts
     const combinedStream = [...postStream.stream, ...newPostsToAdd];
 
-    // TODO: Not sure if we need line 189-202. From nexus we bring from a SORTED SET being the score the timestamp
-    // and if they are new posts, it does not exist in the cache
-
     // Sort by timestamp (indexed_at) in descending order (most recent first)
     const sortedStream = await Core.sortPostIdsByTimestamp(combinedStream);
 
@@ -318,18 +319,19 @@ export class LocalStreamPostsService {
    * Persist a new chunk of posts to the unread post stream
    * @param stream - Array of post IDs to persist
    * @param streamId - The stream ID to persist the new chunk to
-   * @returns
+   * @returns The post IDs that were actually added (after deduplication)
    */
-  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
+  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams): Promise<string[]> {
     const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
     if (!unreadPostStream) {
       await Core.UnreadPostStreamModel.upsert(streamId, stream);
-      return;
+      return stream;
     }
     const existingIds = new Set(unreadPostStream.stream);
     const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
-    if (newPostsToAdd.length === 0) return;
+    if (newPostsToAdd.length === 0) return [];
     const combinedStream = [...newPostsToAdd, ...unreadPostStream.stream];
     await Core.UnreadPostStreamModel.upsert(streamId, combinedStream);
+    return newPostsToAdd;
   }
 }

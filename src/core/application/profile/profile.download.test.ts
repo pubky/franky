@@ -9,6 +9,7 @@ const mockJSZipConstructor = vi.fn();
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: (pubky: string) => `pubky://${pubky}/pub/pubky.app/`,
+  getValidMimeTypes: () => ['image/jpeg', 'image/png'],
 }));
 
 // Mock config
@@ -23,11 +24,11 @@ vi.mock('@/config', async (importOriginal) => {
   };
 });
 
-// Mock the Env module
+// Mock the Env module (admin credentials are now server-side only)
 vi.mock('@/libs/env', () => ({
   Env: {
-    NEXT_PUBLIC_HOMESERVER_ADMIN_URL: 'http://test-admin.com',
-    NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: 'test-password',
+    HOMESERVER_ADMIN_URL: 'http://test-admin.com',
+    HOMESERVER_ADMIN_PASSWORD: 'test-password',
   },
 }));
 
@@ -158,7 +159,12 @@ describe('ProfileApplication.downloadData', () => {
 
     await ProfileApplication.downloadData({ pubky });
 
-    expect(listSpy).toHaveBeenCalledWith(`pubky://${pubky}/pub/pubky.app/`, undefined, false, Infinity);
+    expect(listSpy).toHaveBeenCalledWith({
+      baseDirectory: `pubky://${pubky}/pub/pubky.app/`,
+      cursor: undefined,
+      reverse: false,
+      limit: Infinity,
+    });
   });
 
   it('should propagate error when list fails', async () => {

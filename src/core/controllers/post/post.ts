@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import { Err, ErrorService, ClientErrorCode } from '@/libs';
 import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export class PostController {
@@ -59,12 +59,13 @@ export class PostController {
    * Read or fetch a post - reads from local DB first, fetches from Nexus if not found
    * @param params - Parameters object
    * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @param params.viewerId - Optional viewer ID for relationship data
    * @returns Post details or null if not found
    */
   static async getOrFetchDetails({
     compositeId,
     viewerId,
-  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
+  }: Core.TGetOrFetchPostParams): Promise<Core.PostDetailsModelSchema | null> {
     return await Core.PostApplication.getOrFetchDetails({ compositeId, viewerId });
   }
 
@@ -164,18 +165,21 @@ export class PostController {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
     if (authorId !== userId) {
-      throw Libs.createSanitizationError(
-        Libs.SanitizationErrorType.POST_NOT_FOUND,
-        'User is not the author of this post',
-        403,
-        {
-          postId,
-          userId,
-        },
-      );
+      throw Err.client(ClientErrorCode.NOT_FOUND, 'User is not the author of this post', {
+        service: ErrorService.Local,
+        operation: 'commitDelete',
+        context: { postId, userId },
+      });
     }
 
     await Core.PostApplication.commitDelete({ compositePostId });
+  }
+
+  static async commitEdit({ compositePostId, content }: Core.TEditPostParams) {
+    const currentUserPubky = Core.useAuthStore.getState().selectCurrentUserPubky();
+    const { post, meta } = await Core.PostNormalizer.toEdit({ compositePostId, content, currentUserPubky });
+
+    await Core.PostApplication.commitEdit({ compositePostId, post, postUrl: meta.url });
   }
 
   /**

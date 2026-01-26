@@ -8,12 +8,16 @@ exports[`PostHeaderUserInfoPopoverContent - Snapshots > matches snapshot 1`] = `
   <div
     data-testid="header"
   />
-  <p
-    class="text-base leading-6 font-medium whitespace-pre-wrap text-secondary-foreground"
-    data-testid="typography"
+  <div
+    class="max-h-(--popover-bio-max-height) overflow-y-auto"
+    data-testid="container"
   >
-    Bio
-  </p>
+    <div
+      data-testid="post-text"
+    >
+      Bio
+    </div>
+  </div>
   <div
     data-testid="stats"
   />

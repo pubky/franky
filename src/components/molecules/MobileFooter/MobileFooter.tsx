@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as App from '@/app';
@@ -12,11 +13,25 @@ export interface MobileFooterProps {
   className?: string;
 }
 
+/**
+ * MobileFooter - Bottom navigation for mobile devices
+ *
+ * Hidden for unauthenticated users on public routes (single post, profile)
+ * following pubky-app pattern.
+ */
 export function MobileFooter({ className }: MobileFooterProps) {
   const pathname = usePathname();
+  const isAuthenticated = Core.useAuthStore((state) => Boolean(state.currentUserPubky));
+  const { isPublicRoute } = Hooks.usePublicRoute();
   const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
+  const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
 
   const isActive = (path: string) => pathname === path;
+
+  // Hide footer for unauthenticated users on public routes
+  if (!isAuthenticated && isPublicRoute) {
+    return null;
+  }
 
   // Get avatar URL and fallback initial - same logic as desktop header
   const avatarUrl = currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined;
@@ -62,6 +77,21 @@ export function MobileFooter({ className }: MobileFooterProps) {
             className={Libs.cn(isActive(App.APP_ROUTES.PROFILE) && 'ring-2 ring-primary')}
             alt="Profile"
           />
+          {unreadNotifications > 0 && (
+            <Atoms.Badge
+              data-testid="mobile-notification-counter"
+              data-cy="mobile-notification-counter"
+              className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand shadow-sm"
+              variant="secondary"
+            >
+              <Atoms.Typography
+                className={Libs.cn('font-semibold text-primary-foreground', unreadNotifications > 21 && 'text-xs')}
+                size="xs"
+              >
+                {unreadNotifications > 21 ? '21+' : unreadNotifications}
+              </Atoms.Typography>
+            </Atoms.Badge>
+          )}
         </Link>
       </div>
     </div>

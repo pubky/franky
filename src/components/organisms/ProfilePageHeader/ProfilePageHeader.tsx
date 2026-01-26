@@ -1,12 +1,22 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
 
+/**
+ * ProfilePageHeader
+ *
+ * Displays the user's profile header with avatar, name, bio, and action buttons.
+ *
+ * **TTL Tracking:**
+ * Subscribes the profile user to TTL tracking when visible in the viewport.
+ * This ensures profile data gets refreshed when stale.
+ */
 export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const {
@@ -22,13 +32,20 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     isFollowing,
   } = actions;
 
-  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
+  // Subscribe to TTL coordinator based on viewport visibility
+  const { ref: ttlRef } = Hooks.useTtlSubscription({
+    type: 'user',
+    id: publicKey,
+  });
+
+  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (
     <Atoms.Container
+      ref={ttlRef}
       overrideDefaults={true}
-      className="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
+      className="flex min-w-0 flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
       data-testid="profile-page-header"
     >
       <Atoms.Container overrideDefaults={true} className="relative cursor-pointer lg:px-4" onClick={onAvatarClick}>
@@ -42,23 +59,23 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
         <Atoms.AvatarEmojiBadge emoji={displayEmoji} />
       </Atoms.Container>
 
-      <Atoms.Container overrideDefaults={true} className="flex flex-1 flex-col gap-5">
+      <Atoms.Container overrideDefaults={true} className="flex min-w-0 flex-1 flex-col gap-3">
         <Atoms.Container
           overrideDefaults={true}
-          className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}
+          className={Libs.cn('flex min-w-0 flex-col text-center lg:text-left', bio && 'gap-1')}
         >
-          <Atoms.Typography data-cy="profile-username-header" as="h1" size="lg" className="text-white lg:text-6xl">
-            {Libs.truncateString(name, 20)}
+          <Atoms.Typography
+            data-cy="profile-username-header"
+            as="h1"
+            size="lg"
+            className="truncate leading-tight text-white lg:text-6xl"
+          >
+            {name}
           </Atoms.Typography>
           {bio && (
-            <Atoms.Typography
-              data-cy="profile-bio-header"
-              as="p"
-              size="sm"
-              className="font-medium text-secondary-foreground lg:text-base"
-            >
-              {bio}
-            </Atoms.Typography>
+            <Atoms.Container data-cy="profile-bio-header" overrideDefaults>
+              <Molecules.PostText content={bio} />
+            </Atoms.Container>
           )}
         </Atoms.Container>
 
@@ -111,6 +128,37 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
           {/* Other user profile actions */}
           {!isOwnProfile && (
             <>
+              {/* Follow/Unfollow button */}
+              {onFollowToggle && (
+                <Atoms.Button
+                  data-cy="profile-follow-toggle-btn"
+                  variant="secondary"
+                  size="sm"
+                  onClick={onFollowToggle}
+                  disabled={isFollowLoading}
+                >
+                  {isFollowLoading ? (
+                    <>
+                      <Icons.Loader2 className="size-4 animate-spin" />
+                      {isFollowing ? 'Unfollowing...' : 'Following...'}
+                    </>
+                  ) : (
+                    <>
+                      {isFollowing ? (
+                        <>
+                          <Icons.Check className="size-4" />
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <Icons.UserPlus className="size-4" />
+                          Follow
+                        </>
+                      )}
+                    </>
+                  )}
+                </Atoms.Button>
+              )}
               <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
                 <Icons.KeyRound className="size-4" />
                 {formattedPublicKey}
@@ -119,35 +167,15 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                 <Icons.Link className="size-4" />
                 Link
               </Atoms.Button>
-              {/* Follow/Unfollow button */}
-              <Atoms.Button
-                data-cy="profile-follow-toggle-btn"
-                variant="secondary"
-                size="sm"
-                onClick={onFollowToggle}
-                disabled={isFollowLoading}
-              >
-                {isFollowLoading ? (
-                  <>
-                    <Icons.Loader2 className="size-4 animate-spin" />
-                    {isFollowing ? 'Unfollowing...' : 'Following...'}
-                  </>
-                ) : (
-                  <>
-                    {isFollowing ? (
-                      <>
-                        <Icons.Check className="size-4" />
-                        Following
-                      </>
-                    ) : (
-                      <>
-                        <Icons.UserPlus className="size-4" />
-                        Follow
-                      </>
-                    )}
-                  </>
-                )}
-              </Atoms.Button>
+              {/* Three-dot menu with additional profile actions */}
+              <Organisms.ProfileMenuActions
+                userId={publicKey}
+                trigger={
+                  <Atoms.Button variant="secondary" size="sm" aria-label="Profile actions">
+                    <Libs.Ellipsis className="size-4" />
+                  </Atoms.Button>
+                }
+              />
               {/* Status display inline with buttons */}
               {status && (
                 <Atoms.Container overrideDefaults={true} className="flex h-8 items-center gap-1">
