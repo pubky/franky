@@ -1,4 +1,4 @@
-import { Env } from '@/libs';
+import { Env } from '@/libs/env';
 
 /**
  * External Links Configuration
