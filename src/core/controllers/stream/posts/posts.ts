@@ -134,12 +134,20 @@ export class StreamPostsController {
   }
 
   /**
-   * Checks if the stream cache is stale and clears it if so.
-   * Only clears the stream index, keeping posts and users in IndexedDB.
+   * Prepares the stream for initial load by performing cleanup operations.
    *
-   * @param params.streamId - The ID of the stream to check
+   * This method should be called before fetching the initial stream slice to ensure
+   * the stream state is consistent. It performs the following operations:
+   * 1. Clears stale cache if the stream head is older than configured max age
+   * 2. Merges any existing unread posts into the main stream
+   * 3. Clears the unread stream
+   *
+   * This prevents race conditions where the StreamCoordinator might fetch posts
+   * that are already in the main stream (due to stale unread stream head).
+   *
+   * @param params.streamId - The ID of the stream to prepare
    */
-  static async clearStaleStreamCache(params: Core.TStreamIdParams): Promise<void> {
-    await Core.PostStreamApplication.clearStaleStreamCache(params);
+  static async prepareStreamForInitialLoad(params: Core.TStreamIdParams): Promise<void> {
+    await Core.PostStreamApplication.prepareStreamForInitialLoad(params);
   }
 }

@@ -70,30 +70,93 @@ export class PostStreamApplication {
   }
 
   /**
-   * Checks if the stream cache is stale (first post older than configured max age) and clears it if so.
-   * Only clears the stream index, keeping posts and users in IndexedDB.
+   * Prepares the stream for initial load by performing cleanup operations.
    *
-   * @param streamId - The ID of the stream to check
+   * This method should be called before fetching the initial stream slice to ensure
+   * the stream state is consistent. It performs the following operations:
+   * 1. Clears stale cache if the stream head is older than configured max age
+   * 2. Merges any existing unread posts into the main stream
+   * 3. Clears the unread stream
+   *
+   * This prevents race conditions where the StreamCoordinator might fetch posts
+   * that are already in the main stream (due to stale unread stream head).
+   *
+   * @param streamId - The ID of the stream to prepare
    */
-  static async clearStaleStreamCache({ streamId }: Core.TStreamIdParams): Promise<void> {
-    const headTimestamp = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+  static async prepareStreamForInitialLoad({ streamId }: Core.TStreamIdParams): Promise<void> {
+    const now = Date.now();
 
-    // Skip sentinel values: SKIP_FETCH_NEW_POSTS (0) when post not found, FORCE_FETCH_NEW_POSTS (1) when stream empty
-    // Without this check, sentinel value 1 would calculate age ≈ Date.now() and trigger unnecessary deleteById
-    if (headTimestamp === Core.SKIP_FETCH_NEW_POSTS || headTimestamp === Core.FORCE_FETCH_NEW_POSTS) {
+    // 1. Check if main stream cache is stale
+    const mainStreamHead = await this.getMainStreamHeadTimestamp({ streamId });
+    if (this.isTimestampStale(mainStreamHead, now)) {
+      // Main cache is stale - clear both main stream and unread stream (both are outdated)
+      Libs.Logger.debug('[PostStreamApplication] Main stream cache is stale, clearing both streams', {
+        streamId,
+        headTimestamp: mainStreamHead,
+        ageMs: now - mainStreamHead,
+        maxAgeMs: Config.STREAM_CACHE_MAX_AGE_MS,
+      });
+      await Promise.all([
+        Core.LocalStreamPostsService.deleteById({ streamId }),
+        Core.LocalStreamPostsService.clearUnreadStream({ streamId }),
+      ]);
       return;
     }
 
-    const ageMs = Date.now() - headTimestamp;
-    if (ageMs > Config.STREAM_CACHE_MAX_AGE_MS) {
-      Libs.Logger.debug('[PostStreamApplication] Stream cache is stale, clearing', {
+    // 2. Check if unread stream is stale before merging
+    const unreadStreamHead = await this.getUnreadStreamHeadTimestamp({ streamId });
+    if (this.isTimestampStale(unreadStreamHead, now)) {
+      // Unread stream is stale - just clear it without merging
+      Libs.Logger.debug('[PostStreamApplication] Unread stream is stale, clearing without merge', {
         streamId,
-        headTimestamp,
-        ageMs,
+        headTimestamp: unreadStreamHead,
+        ageMs: now - unreadStreamHead,
         maxAgeMs: Config.STREAM_CACHE_MAX_AGE_MS,
       });
-      await Core.LocalStreamPostsService.deleteById({ streamId });
+      await Core.LocalStreamPostsService.clearUnreadStream({ streamId });
+      return;
     }
+
+    // 3. Both streams are fresh - merge unread posts into main stream and clear unread
+    await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+    await Core.LocalStreamPostsService.clearUnreadStream({ streamId });
+  }
+
+  /**
+   * Check if a timestamp is stale (older than configured max age)
+   * Returns false for sentinel values (0, 1) as they indicate empty/missing streams
+   */
+  private static isTimestampStale(timestamp: number, now: number): boolean {
+    // Sentinel values indicate empty/missing streams - not stale
+    if (timestamp === Core.SKIP_FETCH_NEW_POSTS || timestamp === Core.FORCE_FETCH_NEW_POSTS) {
+      return false;
+    }
+    const ageMs = now - timestamp;
+    return ageMs > Config.STREAM_CACHE_MAX_AGE_MS;
+  }
+
+  /**
+   * Get the head timestamp of the main post stream only (not unread)
+   */
+  private static async getMainStreamHeadTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
+    const postCompositeId = await Core.PostStreamModel.getStreamHead(streamId);
+    if (!postCompositeId) {
+      return Core.FORCE_FETCH_NEW_POSTS;
+    }
+    const postDetails = await Core.PostDetailsModel.findById(postCompositeId);
+    return postDetails?.indexed_at ?? Core.SKIP_FETCH_NEW_POSTS;
+  }
+
+  /**
+   * Get the head timestamp of the unread stream only
+   */
+  private static async getUnreadStreamHeadTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
+    const unreadCompositePostId = await Core.UnreadPostStreamModel.getStreamHead(streamId);
+    if (!unreadCompositePostId) {
+      return Core.FORCE_FETCH_NEW_POSTS;
+    }
+    const postDetails = await Core.PostDetailsModel.findById(unreadCompositePostId);
+    return postDetails?.indexed_at ?? Core.SKIP_FETCH_NEW_POSTS;
   }
 
   /**
