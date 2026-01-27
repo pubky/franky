@@ -171,7 +171,6 @@ export function QuickReply({
             showEmojiPicker={showEmojiPicker}
             setShowEmojiPicker={setShowEmojiPicker}
             onEmojiSelect={handleEmojiSelect}
-            onFileClick={handleFileClick}
             onImageClick={handleFileClick}
             isPostDisabled={!isValid()}
             submitMode={POST_INPUT_VARIANT.REPLY}
