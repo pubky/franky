@@ -11,7 +11,7 @@ vi.mock('@/core', async () => {
     StreamPostsController: {
       getCachedLastPostTimestamp: vi.fn(),
       getOrFetchStreamSlice: vi.fn(),
-      clearStaleStreamCache: vi.fn(),
+      prepareStreamForInitialLoad: vi.fn(),
     },
     PostDetailsModel: {
       findByIdsPreserveOrder: vi.fn(),
@@ -43,7 +43,7 @@ describe('useStreamPagination', () => {
     vi.clearAllMocks();
 
     // Default mock implementations
-    vi.mocked(Core.StreamPostsController.clearStaleStreamCache).mockResolvedValue(undefined);
+    vi.mocked(Core.StreamPostsController.prepareStreamForInitialLoad).mockResolvedValue(undefined);
     vi.mocked(Core.StreamPostsController.getCachedLastPostTimestamp).mockResolvedValue(0);
     vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
       nextPageIds: mockPostIds,
@@ -370,8 +370,8 @@ describe('useStreamPagination', () => {
     });
   });
 
-  describe('Stale Cache Sanity Check', () => {
-    it('should call clearStaleStreamCache on initial load', async () => {
+  describe('Stream Preparation on Initial Load', () => {
+    it('should call prepareStreamForInitialLoad on initial load', async () => {
       const { result } = renderHook(() =>
         useStreamPagination({
           streamId: mockStreamId,
@@ -382,12 +382,12 @@ describe('useStreamPagination', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      expect(Core.StreamPostsController.clearStaleStreamCache).toHaveBeenCalledWith({
+      expect(Core.StreamPostsController.prepareStreamForInitialLoad).toHaveBeenCalledWith({
         streamId: mockStreamId,
       });
     });
 
-    it('should continue to fetch posts after stale cache check', async () => {
+    it('should continue to fetch posts after stream preparation', async () => {
       const { result } = renderHook(() =>
         useStreamPagination({
           streamId: mockStreamId,
@@ -398,15 +398,15 @@ describe('useStreamPagination', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      // Cache check should have been called
-      expect(Core.StreamPostsController.clearStaleStreamCache).toHaveBeenCalled();
+      // Stream preparation should have been called
+      expect(Core.StreamPostsController.prepareStreamForInitialLoad).toHaveBeenCalled();
 
       // Posts should still be fetched
       expect(Core.StreamPostsController.getOrFetchStreamSlice).toHaveBeenCalled();
       expect(result.current.postIds).toEqual(mockPostIds);
     });
 
-    it('should not call clearStaleStreamCache on loadMore', async () => {
+    it('should not call prepareStreamForInitialLoad on loadMore', async () => {
       const limit = 30;
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
         nextPageIds: Array(limit).fill('post'),
@@ -425,15 +425,15 @@ describe('useStreamPagination', () => {
       });
 
       // Clear the mock calls from initial load
-      vi.mocked(Core.StreamPostsController.clearStaleStreamCache).mockClear();
+      vi.mocked(Core.StreamPostsController.prepareStreamForInitialLoad).mockClear();
 
       // Load more
       await act(async () => {
         await result.current.loadMore();
       });
 
-      // clearStaleStreamCache should NOT be called on loadMore
-      expect(Core.StreamPostsController.clearStaleStreamCache).not.toHaveBeenCalled();
+      // prepareStreamForInitialLoad should NOT be called on loadMore
+      expect(Core.StreamPostsController.prepareStreamForInitialLoad).not.toHaveBeenCalled();
     });
   });
 

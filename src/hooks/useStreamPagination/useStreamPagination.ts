@@ -51,8 +51,8 @@ export function useStreamPagination({
         let result: Core.TReadPostStreamChunkResponse;
 
         if (isInitialLoad) {
-          // Sanity check: if the first post in the cached stream is older than configured max age, clear the stream cache
-          await Core.StreamPostsController.clearStaleStreamCache({ streamId });
+          // Prepare stream for initial load: clear stale cache, merge unread posts, clear unread stream
+          await Core.StreamPostsController.prepareStreamForInitialLoad({ streamId });
 
           const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp({ streamId });
           setStreamTail(cachedLastPostTimestamp);
