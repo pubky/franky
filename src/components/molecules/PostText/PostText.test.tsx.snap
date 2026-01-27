@@ -7,7 +7,7 @@ exports[`PostText - Snapshots > matches snapshot for article with h1 heading 1`]
   data-testid="container"
 >
   <h1
-    class="text-2xl leading-8 font-light text-muted-foreground"
+    class="text-2xl leading-8 font-bold text-white"
   >
     Main Title
   </h1>
@@ -33,14 +33,14 @@ exports[`PostText - Snapshots > matches snapshot for article with multiple headi
   data-testid="container"
 >
   <h1
-    class="text-2xl leading-8 font-light text-muted-foreground"
+    class="text-2xl leading-8 font-bold text-white"
   >
     Article Title
   </h1>
   
 
   <h2
-    class="text-xl leading-7 font-light text-muted-foreground"
+    class="text-xl leading-7 font-bold text-white"
   >
     Introduction
   </h2>
@@ -52,7 +52,7 @@ exports[`PostText - Snapshots > matches snapshot for article with multiple headi
   
 
   <h3
-    class="text-lg leading-7 font-light text-muted-foreground"
+    class="text-lg leading-7 font-bold text-white"
   >
     Details
   </h3>
@@ -64,7 +64,7 @@ exports[`PostText - Snapshots > matches snapshot for article with multiple headi
   
 
   <h4
-    class="text-[17px] leading-6 font-light text-muted-foreground"
+    class="text-[17px] leading-6 font-bold text-white"
   >
     Sub-details
   </h4>
