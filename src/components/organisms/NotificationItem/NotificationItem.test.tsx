@@ -272,6 +272,27 @@ describe('NotificationItem', () => {
 
     expect(mockPush).toHaveBeenCalledWith('/search?tags=c%2B%2B');
   });
+
+  it('links to parent post (not the reply) for Reply notifications', () => {
+    // Issue #1034: Reply notifications should link to the parent post thread,
+    // not the isolated reply, so user sees the full conversation context
+    const replyNotification = {
+      id: 'reply:123:replier-user',
+      type: NotificationType.Reply,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      replied_by: 'replier-user',
+      parent_post_uri: 'pubky://original-author/pub/pubky.app/posts/parent-post-id',
+      reply_uri: 'pubky://replier-user/pub/pubky.app/posts/reply-post-id',
+    } as Core.FlatNotification;
+
+    render(<NotificationItem notification={replyNotification} isUnread={false} />);
+
+    // Find the action text link
+    const actionLink = screen.getByText('replied to your post');
+
+    // Verify the href points to the PARENT post, not the reply
+    expect(actionLink.closest('a')).toHaveAttribute('href', '/post/original-author/parent-post-id');
+  });
 });
 
 describe('NotificationItem - Snapshots', () => {
