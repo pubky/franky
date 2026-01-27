@@ -22,11 +22,7 @@ const USER_ID_PATTERN = /^[a-z0-9]{52}$/;
  * ```
  */
 export function extractUserIdFromAvatarUrl(avatarUrl: string | undefined | null): string | null {
-  console.log('extractUserIdFromAvatarUrl debug:', {
-    avatarUrl,
-    expectedPrefix: `${Config.CDN_URL}/avatar/`,
-    cdnUrl: Config.CDN_URL,
-  });
+  if (!avatarUrl) return null;
   if (!avatarUrl) return null;
 
   const expectedPrefix = `${Config.CDN_URL}/avatar/`;
