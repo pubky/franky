@@ -38,7 +38,7 @@ export function WhoTaggedExpandedList({ taggers, 'data-testid': dataTestId }: Wh
       aria-label="Who tagged expanded list"
       role="list"
       overrideDefaults
-      className="flex max-h-(--who-tagged-expanded-list-max-height) w-(--who-tagged-expanded-list-width) flex-col gap-2 overflow-y-auto rounded-md border border-border bg-popover p-4 shadow-2xl"
+      className="flex max-h-(--who-tagged-expanded-list-max-height) w-full max-w-(--who-tagged-expanded-list-width) flex-col gap-2 overflow-y-auto rounded-md border border-border bg-popover p-4 shadow-2xl"
       data-testid={dataTestId || 'who-tagged-expanded-list'}
     >
       {taggers.map((tagger) => (
