@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -22,6 +23,7 @@ export function HotTagCard({
   className,
   'data-testid': dataTestId,
 }: HotTagCardProps) {
+  const t = useTranslations('hot');
   const tagColor = React.useMemo(() => Libs.generateRandomColor(tagName), [tagName]);
 
   const handleClick = () => {
@@ -70,7 +72,7 @@ export function HotTagCard({
 
         {/* Post Count */}
         <Atoms.Typography size="md" className="text-secondary-foreground">
-          {postCount.toLocaleString('en-US')} posts
+          {t('postsCount', { count: postCount.toLocaleString() })}
         </Atoms.Typography>
       </Atoms.Container>
 

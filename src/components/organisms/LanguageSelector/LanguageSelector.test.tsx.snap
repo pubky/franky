@@ -99,7 +99,7 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
       </svg>
     </button>
     <div
-      class="absolute top-full right-0 left-0 z-50 mt-2 rounded-lg border border-border bg-popover shadow-lg animate-in py-2 duration-200 fade-in-0 zoom-in-95"
+      class="absolute top-full right-0 left-0 z-50 mt-2 rounded-lg border border-border bg-popover shadow-lg animate-in py-2 duration-200 fade-in-0 zoom-in-95 max-h-[400px] overflow-y-auto"
     >
       <button
         class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent bg-accent/50"
@@ -133,8 +133,21 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
         </svg>
       </button>
       <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇧🇷
+        </span>
+        <span
+          class="font-light"
+        >
+          Português (Brasil)
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
       >
         <span
           class="text-2xl"
@@ -144,12 +157,11 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
         <span
           class="font-light"
         >
-          Spanish
+          Español
         </span>
       </button>
       <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
       >
         <span
           class="text-2xl"
@@ -159,12 +171,11 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
         <span
           class="font-light"
         >
-          German
+          Deutsch
         </span>
       </button>
       <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
       >
         <span
           class="text-2xl"
@@ -174,12 +185,11 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
         <span
           class="font-light"
         >
-          French
+          Français
         </span>
       </button>
       <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
       >
         <span
           class="text-2xl"
@@ -189,7 +199,49 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
         <span
           class="font-light"
         >
-          Italian
+          Italiano
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇨🇳
+        </span>
+        <span
+          class="font-light"
+        >
+          中文
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇯🇵
+        </span>
+        <span
+          class="font-light"
+        >
+          日本語
+        </span>
+      </button>
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent"
+      >
+        <span
+          class="text-2xl"
+        >
+          🇸🇦
+        </span>
+        <span
+          class="font-light"
+        >
+          العربية
         </span>
       </button>
     </div>

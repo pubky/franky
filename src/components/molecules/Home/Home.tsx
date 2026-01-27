@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -8,6 +9,7 @@ import * as Libs from '@/libs';
 import * as App from '@/app';
 
 export const HomeActions = () => {
+  const t = useTranslations('landing');
   const router = useRouter();
 
   const handleCreateAccount = () => {
@@ -18,10 +20,18 @@ export const HomeActions = () => {
     router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
-  return <Molecules.ActionButtons onSignIn={handleSignIn} onCreateAccount={handleCreateAccount} />;
+  return (
+    <Molecules.ActionButtons
+      onSignIn={handleSignIn}
+      onCreateAccount={handleCreateAccount}
+      signInText={t('signIn')}
+      createAccountText={t('createAccount')}
+    />
+  );
 };
 
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+  const t = useTranslations('landing');
   return (
     <Atoms.Container
       className={Libs.cn('flex-1 flex-col items-start justify-end gap-1 pt-3 sm:pr-12', props.className)}
@@ -33,36 +43,41 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
         </Atoms.Link>
         <Atoms.Container className="flex-row items-center gap-1">
           <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
-            a
-          </Atoms.Typography>
-          <Atoms.Image src="/images/tether-text.svg" alt="Tether" width={40} height={9} />
-          <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
-            company
+            {t.rich('aTetherCompany', {
+              tether: () => <Atoms.Image src="/images/tether-text.svg" alt="tether." width={40} height={9} />,
+            })}
           </Atoms.Typography>
         </Atoms.Container>
       </Atoms.Container>
       <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
-        Synonym Software, S.A. DE C.V. ©2026. All rights reserved.
+        {t('copyright')}
       </Atoms.Typography>
     </Atoms.Container>
   );
 };
 
 export const HomeSectionTitle = () => {
+  const t = useTranslations('landing');
   return (
     <Atoms.Container className="flex-row items-start gap-2">
       <Atoms.Typography size="md" className="self-center font-light text-brand sm:text-2xl">
-        Your keys, your content, your rules.
+        {t('subtitle')}
       </Atoms.Typography>
     </Atoms.Container>
   );
 };
 
 export const HomePageHeading = () => {
+  const t = useTranslations('landing');
   return (
     <Atoms.Heading level={1} size="2xl">
-      <span className="text-brand">Unlock</span> <br className="block sm:hidden" />
-      the web.
+      {t.rich('title', {
+        highlight: (chunks) => (
+          <>
+            <span className="text-brand">{chunks}</span> <br className="block sm:hidden" />
+          </>
+        ),
+      })}
     </Atoms.Heading>
   );
 };

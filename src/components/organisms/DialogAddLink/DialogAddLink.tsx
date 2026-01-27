@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -26,6 +27,8 @@ interface DialogAddLinkProps {
 }
 
 export function DialogAddLink({ onSave, disabled = false }: DialogAddLinkProps) {
+  const t = useTranslations('dialogs.addLink');
+  const tCommon = useTranslations('common');
   const [label, setLabel] = useState('');
   const [url, setUrl] = useState('');
   const [labelError, setLabelError] = useState<string | null>(null);
@@ -80,22 +83,24 @@ export function DialogAddLink({ onSave, disabled = false }: DialogAddLinkProps) 
       <Atoms.DialogTrigger asChild>
         <Atoms.Button variant="secondary" size="sm" className="w-fit rounded-full">
           <Libs.Link className="h-4 w-4" />
-          <span>Add link</span>
+          <span>{t('title')}</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent
         className="max-w-xl rounded-xl border bg-popover p-8 sm:rounded-lg sm:p-6"
-        hiddenTitle="Add link"
+        hiddenTitle={t('title')}
       >
         <Atoms.DialogHeader className="pr-6">
-          <Atoms.DialogTitle className="text-2xl font-bold text-foreground sm:text-xl">Add link</Atoms.DialogTitle>
+          <Atoms.DialogTitle className="text-2xl font-bold text-foreground sm:text-xl">{t('title')}</Atoms.DialogTitle>
         </Atoms.DialogHeader>
 
         <Atoms.Container className="gap-6">
           <Atoms.Container className="gap-2">
-            <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">LABEL</Atoms.Label>
+            <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">
+              {t('labelField')}
+            </Atoms.Label>
             <Molecules.InputField
-              placeholder="Twitter"
+              placeholder={t('labelPlaceholder')}
               variant="dashed"
               value={label}
               onChange={(e) => {
@@ -112,9 +117,11 @@ export function DialogAddLink({ onSave, disabled = false }: DialogAddLinkProps) 
           </Atoms.Container>
 
           <Atoms.Container className="gap-2">
-            <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">URL</Atoms.Label>
+            <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">
+              {t('urlField')}
+            </Atoms.Label>
             <Molecules.InputField
-              placeholder="https://twitter.com/satoshi"
+              placeholder={t('urlPlaceholder')}
               variant="dashed"
               value={url}
               onChange={(e) => {
@@ -145,7 +152,7 @@ export function DialogAddLink({ onSave, disabled = false }: DialogAddLinkProps) 
               size="lg"
               className="sm:size-default flex-1 rounded-full border border-border bg-background"
             >
-              Cancel
+              {tCommon('cancel')}
             </Atoms.Button>
           </Atoms.DialogClose>
           <Atoms.DialogClose asChild>
@@ -155,7 +162,7 @@ export function DialogAddLink({ onSave, disabled = false }: DialogAddLinkProps) 
               onClick={handleSave}
               disabled={!isValid}
             >
-              Save link
+              {t('saveButton')}
             </Atoms.Button>
           </Atoms.DialogClose>
         </Atoms.DialogFooter>

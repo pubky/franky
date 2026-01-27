@@ -1,9 +1,19 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Libs from '@/libs';
-import { SETTINGS_MENU_ITEMS } from '@/molecules/SettingsMenu/SettingsMenu';
+import { SETTINGS_ROUTES } from '@/app';
 import * as Atoms from '@/atoms';
+
+const SETTINGS_MOBILE_ITEMS = [
+  { icon: Libs.UserRound, labelKey: 'account', path: SETTINGS_ROUTES.ACCOUNT },
+  { icon: Libs.Bell, labelKey: 'notifications', path: SETTINGS_ROUTES.NOTIFICATIONS },
+  { icon: Libs.Shield, labelKey: 'privacySafety', path: SETTINGS_ROUTES.PRIVACY_SAFETY },
+  { icon: Libs.MegaphoneOff, labelKey: 'mutedUsers', path: SETTINGS_ROUTES.MUTED_USERS },
+  { icon: Libs.Globe, labelKey: 'language', path: SETTINGS_ROUTES.LANGUAGE },
+  { icon: Libs.CircleHelp, labelKey: 'help', path: SETTINGS_ROUTES.HELP },
+];
 
 export interface SettingsMobileMenuProps {
   className?: string;
@@ -12,6 +22,7 @@ export interface SettingsMobileMenuProps {
 export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const t = useTranslations('settings.menu');
 
   return (
     <Atoms.Container
@@ -23,7 +34,7 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
       )}
     >
       <Atoms.Container overrideDefaults className="flex w-full">
-        {SETTINGS_MENU_ITEMS.map((item) => {
+        {SETTINGS_MOBILE_ITEMS.map((item) => {
           const Icon = item.icon;
           const isSelected = pathname === item.path;
 
@@ -39,7 +50,7 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
                   ? 'border-b border-white text-foreground'
                   : 'border-b border-transparent text-muted-foreground',
               )}
-              aria-label={item.label}
+              aria-label={t(item.labelKey)}
               aria-current={isSelected ? 'page' : undefined}
             >
               <Icon size={20} className="shrink-0" />

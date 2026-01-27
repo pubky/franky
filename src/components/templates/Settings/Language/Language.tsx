@@ -1,16 +1,15 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 
 export function Language() {
+  const t = useTranslations('settings.language');
+
   return (
-    <Molecules.SettingsSectionCard
-      icon={Libs.Languages}
-      title="Language"
-      description="Choose your preferred language for the Pubky interface."
-    >
+    <Molecules.SettingsSectionCard icon={Libs.Languages} title={t('title')} description={t('description')}>
       <Organisms.LanguageSelector />
     </Molecules.SettingsSectionCard>
   );

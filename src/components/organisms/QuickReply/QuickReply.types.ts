@@ -1,7 +1,4 @@
-import { QUICK_REPLY_PROMPTS } from './QuickReply.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
-
-export type QuickReplyPrompt = (typeof QUICK_REPLY_PROMPTS)[number];
 
 export interface QuickReplyProps {
   parentPostId: string;

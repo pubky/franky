@@ -6,6 +6,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import { formatInviteCode } from './HumanInviteCode.utils';
 import type { HumanInviteCodeProps } from './HumanInviteCode.types';
@@ -16,6 +17,8 @@ import type { HumanInviteCodeProps } from './HumanInviteCode.types';
  * @param onSuccess - Function to call when the user successfully enters the invite code.
  */
 export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => {
+  const t = useTranslations('onboarding.inviteCode');
+  const tCommon = useTranslations('common');
   const [inviteCode, setInviteCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const trimmedInviteCode = inviteCode.trim();
@@ -47,10 +50,12 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Prove you&apos;re <span className="text-brand">not a Robot.</span>
+          {t.rich('title', {
+            highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+          })}
         </Molecules.PageTitle>
         <Atoms.Container className="flex-row items-center gap-3">
-          <Atoms.PageSubtitle>SMS or payment verification not available. Ask us for an invite code.</Atoms.PageSubtitle>
+          <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
           <Atoms.Link href={Config.TWITTER_URL} target="_blank" className="text-muted-foreground hover:text-brand">
             <Libs.XTwitter className="h-6 w-6" />
           </Atoms.Link>
@@ -78,12 +83,12 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
           <Atoms.Container className="gap-3">
             <Atoms.Container className="flex-row items-center gap-1">
               <Atoms.Typography as="h3" className="text-2xl leading-8 font-bold text-foreground">
-                Invite code for homeserver
+                {t('label')}
               </Atoms.Typography>
               <Molecules.PopoverInviteHomeserver className="h-6 w-6 opacity-80" />
             </Atoms.Container>
             <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-              You get 1GB of storage, used for your posts, photos, videos, and your profile.
+              {t('hint')}
             </Atoms.Typography>
           </Atoms.Container>
 
@@ -103,7 +108,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
                 autoFocus
                 value={inviteCode}
                 onChange={(e) => setInviteCode(formatInviteCode(e.target.value))}
-                placeholder="XXXX-XXXX-XXXX"
+                placeholder={t('placeholder')}
                 maxLength={14}
                 className={Libs.cn(
                   'h-auto flex-1 border-none bg-transparent p-0 text-base font-medium placeholder:text-muted-foreground focus:ring-0 focus:outline-none',
@@ -124,13 +129,13 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
                 variant="secondary"
                 className="shrink-0 rounded-full opacity-40"
                 disabled
-                aria-label="Custom homeserver"
+                aria-label={t('customHomeserver')}
               >
                 <Libs.Server className="mr-2 h-4 w-4" />
-                Custom homeserver
+                {t('customHomeserver')}
               </Atoms.Button>
               <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground">
-                Using a different homeserver will be possible soon.
+                {t('customHomeserverHint')}
               </Atoms.Typography>
             </Atoms.Container>
           </Atoms.Container>
@@ -149,7 +154,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
           onClick={onBack}
         >
           <Libs.ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {tCommon('back')}
         </Atoms.Button>
         <Atoms.Button
           id="human-invite-continue-btn"
@@ -165,7 +170,7 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
           ) : (
             <Libs.ArrowRight className="mr-2 h-4 w-4" />
           )}
-          Continue
+          {tCommon('continue')}
         </Atoms.Button>
       </Atoms.Container>
     </React.Fragment>

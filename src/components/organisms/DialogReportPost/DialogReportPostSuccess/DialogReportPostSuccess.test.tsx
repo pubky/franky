@@ -42,7 +42,8 @@ describe('DialogReportPostSuccess', () => {
   it('renders welcome button with check icon', () => {
     renderWithDialog(<DialogReportPostSuccess onOpenChange={mockOnOpenChange} />);
 
-    const button = screen.getByRole('button', { name: 'Close dialog' });
+    // The main close button in the footer (not the X button)
+    const button = screen.getByText("You're welcome!").closest('button');
     expect(button).toBeInTheDocument();
     expect(screen.getByText("You're welcome!")).toBeInTheDocument();
   });
@@ -50,8 +51,9 @@ describe('DialogReportPostSuccess', () => {
   it('calls onOpenChange with false when button is clicked', () => {
     renderWithDialog(<DialogReportPostSuccess onOpenChange={mockOnOpenChange} />);
 
-    const button = screen.getByRole('button', { name: 'Close dialog' });
-    fireEvent.click(button);
+    // The main close button in the footer (not the X button)
+    const button = screen.getByText("You're welcome!").closest('button');
+    fireEvent.click(button!);
 
     expect(mockOnOpenChange).toHaveBeenCalledWith(false);
   });

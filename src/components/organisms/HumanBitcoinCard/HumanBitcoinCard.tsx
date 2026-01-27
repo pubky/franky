@@ -6,8 +6,10 @@ import { useLnVerificationInfo } from '@/hooks/useLnVerificationInfo';
 import * as Libs from '@/libs';
 import { HumanBitcoinCardSkeleton, PriceSkeleton } from './HumanBitcoinCard.skeleton';
 import type { HumanBitcoinCardProps } from './HumanBitcoinCard.types';
+import { useTranslations } from 'next-intl';
 
 export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
+  const t = useTranslations('onboarding.bitcoin');
   const satUsdRate = useBtcRate()?.satUsd;
   const lnInfo = useLnVerificationInfo();
 
@@ -42,14 +44,14 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
               className="size-48"
             />
             <Atoms.Typography as="p" className="text-center text-xs font-semibold tracking-widest text-brand uppercase">
-              (More private)
+              {t('morePrivate')}
             </Atoms.Typography>
           </Atoms.Container>
 
           <Atoms.Container className="w-full flex-1 items-start gap-6">
             <Atoms.Container className="gap-3">
               <Atoms.Typography as="h3" className="text-2xl leading-8 font-semibold text-foreground">
-                Bitcoin Payment
+                {t('title')}
               </Atoms.Typography>
 
               {dataAvailable && priceSat !== undefined && satUsdRate !== undefined ? (
@@ -74,10 +76,10 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
 
               <Atoms.Container className="gap-1">
                 <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-                  1GB storage
+                  {t('storage')}
                 </Atoms.Typography>
                 <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-                  1MB/s speed limit
+                  {t('speedLimit')}
                 </Atoms.Typography>
               </Atoms.Container>
             </Atoms.Container>
@@ -89,7 +91,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
               disabled={!dataAvailable || isUnavailable}
             >
               <Libs.Wallet className="mr-2 size-4" />
-              Pay Once
+              {t('payOnce')}
             </Atoms.Button>
           </Atoms.Container>
         </Atoms.Container>
@@ -109,7 +111,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
             overrideDefaults
             className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
           >
-            Currently not available in your country
+            {t('notAvailable')}
           </Atoms.Typography>
         </Atoms.Container>
       )}
@@ -128,7 +130,7 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
             overrideDefaults
             className="text-destructive-foreground text-sm font-semibold whitespace-nowrap"
           >
-            Service temporarily unavailable
+            {t('unavailable')}
           </Atoms.Typography>
         </Atoms.Container>
       )}

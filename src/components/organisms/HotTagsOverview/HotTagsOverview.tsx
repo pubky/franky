@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
@@ -20,6 +21,7 @@ const DEFAULT_TAGS_LIMIT = 50;
  * Fetches hot tags based on reach and timeframe filters from the hot store.
  */
 export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTagsOverviewProps) {
+  const t = useTranslations('common');
   const router = useRouter();
   const { reach, timeframe } = Core.useHotStore();
 
@@ -50,7 +52,7 @@ export function HotTagsOverview({ limit = DEFAULT_TAGS_LIMIT, className }: HotTa
     >
       {isLoading ? (
         // TODO: Replace with Skeleton component
-        <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">{t('loading')}</Atoms.Typography>
       ) : (
         <Atoms.Container overrideDefaults className="flex flex-wrap content-start gap-2">
           {tags.map((tag) => (

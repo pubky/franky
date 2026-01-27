@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
@@ -24,6 +25,12 @@ import type {
  * @returns Menu items array, loading state, and report post data
  */
 export function usePostMenuActions(postId: string, options: UsePostMenuActionsOptions): UsePostMenuActionsResult {
+  const t = useTranslations('post.actions');
+  const tToast = useTranslations('toast');
+  const tMute = useTranslations('toast.mute');
+  const tCopy = useTranslations('toast.copy');
+  const tFollow = useTranslations('toast.follow');
+
   const { onReportClick, onEditClick } = options;
   const parsedId = Core.parseCompositeId(postId);
   const postAuthorId = parsedId.pubky;
@@ -38,13 +45,13 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   const { isMuted } = Hooks.useMutedUsers();
   const { deletePost, isDeleting } = Hooks.useDeletePost(postId);
   const { copyToClipboard: copyPubky } = Hooks.useCopyToClipboard({
-    successTitle: 'Pubky copied to clipboard',
+    successTitle: tCopy('pubkyCopied'),
   });
   const { copyToClipboard: copyLink } = Hooks.useCopyToClipboard({
-    successTitle: 'Link copied to clipboard',
+    successTitle: tCopy('linkCopied'),
   });
   const { copyToClipboard: copyText } = Hooks.useCopyToClipboard({
-    successTitle: 'Text copied to clipboard',
+    successTitle: tCopy('textCopied'),
   });
 
   const isOwnPost = currentUserPubky === postAuthorId;
@@ -60,15 +67,15 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   if (!isOwnPost) {
     menuItems.push({
       id: POST_MENU_ACTION_IDS.FOLLOW,
-      label: isFollowing ? `Unfollow ${username}` : `Follow ${username}`,
+      label: isFollowing ? t('unfollowUser', { username }) : t('followUser', { username }),
       icon: isFollowing ? Libs.UserRoundMinus : Libs.UserRoundPlus,
       onClick: async () => {
         try {
           await toggleFollow(postAuthorId, isFollowing);
         } catch (error) {
           Molecules.toast({
-            title: 'Error',
-            description: Libs.isAppError(error) ? error.message : 'Failed to update follow status',
+            title: tToast('error'),
+            description: Libs.isAppError(error) ? error.message : tFollow('failed'),
           });
         }
       },
@@ -79,15 +86,15 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
 
   menuItems.push({
     id: POST_MENU_ACTION_IDS.COPY_PUBKY,
-    label: 'Copy pubky',
+    label: t('copyPubky'),
     icon: Libs.Key,
     onClick: async () => {
       try {
         await copyPubky(Libs.withPubkyPrefix(postAuthorId));
       } catch (error) {
         Molecules.toast({
-          title: 'Error',
-          description: Libs.isAppError(error) ? error.message : 'Failed to copy pubky',
+          title: tToast('error'),
+          description: Libs.isAppError(error) ? error.message : tCopy('copyFailedDesc'),
         });
       }
     },
@@ -96,15 +103,15 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
 
   menuItems.push({
     id: POST_MENU_ACTION_IDS.COPY_LINK,
-    label: 'Copy link to post',
+    label: t('copyLink'),
     icon: Libs.Link,
     onClick: async () => {
       try {
         await copyLink(postUrl);
       } catch (error) {
         Molecules.toast({
-          title: 'Error',
-          description: Libs.isAppError(error) ? error.message : 'Failed to copy link',
+          title: tToast('error'),
+          description: Libs.isAppError(error) ? error.message : tCopy('copyFailedDesc'),
         });
       }
     },
@@ -114,15 +121,15 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   if (!isArticle) {
     menuItems.push({
       id: POST_MENU_ACTION_IDS.COPY_TEXT,
-      label: 'Copy text of post',
+      label: t('copyText'),
       icon: Libs.FileText,
       onClick: async () => {
         try {
           await copyText(postDetails?.content ?? '');
         } catch (error) {
           Molecules.toast({
-            title: 'Error',
-            description: Libs.isAppError(error) ? error.message : 'Failed to copy text',
+            title: tToast('error'),
+            description: Libs.isAppError(error) ? error.message : tCopy('copyFailedDesc'),
           });
         }
       },
@@ -133,19 +140,19 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   if (!isOwnPost) {
     menuItems.push({
       id: POST_MENU_ACTION_IDS.MUTE,
-      label: `${isUserMuted ? 'Unmute' : 'Mute'} ${username}`,
+      label: isUserMuted ? t('unmuteUser', { username }) : t('muteUser', { username }),
       icon: isUserMuted ? Libs.Megaphone : Libs.MegaphoneOff,
       onClick: async () => {
         try {
           await toggleMute(postAuthorId, isUserMuted);
           Molecules.toast({
-            title: isUserMuted ? 'User unmuted' : 'User muted',
-            description: `${username} has been ${isUserMuted ? 'unmuted' : 'muted'}.`,
+            title: isUserMuted ? tMute('unmuted') : tMute('muted'),
+            description: isUserMuted ? tMute('unmutedDesc', { username }) : tMute('mutedDesc', { username }),
           });
         } catch (error) {
           Molecules.toast({
-            title: 'Error',
-            description: Libs.isAppError(error) ? error.message : 'Failed to update mute status',
+            title: tToast('error'),
+            description: Libs.isAppError(error) ? error.message : tMute('failed'),
           });
         }
       },
@@ -155,7 +162,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
 
     menuItems.push({
       id: POST_MENU_ACTION_IDS.REPORT,
-      label: 'Report post',
+      label: t('reportPost'),
       icon: Libs.Flag,
       onClick: onReportClick,
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
@@ -165,7 +172,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
   if (isOwnPost) {
     menuItems.push({
       id: POST_MENU_ACTION_IDS.EDIT,
-      label: 'Edit post',
+      label: t('editPost'),
       icon: Libs.Edit,
       onClick: onEditClick,
       variant: POST_MENU_ACTION_VARIANTS.DEFAULT,
@@ -173,7 +180,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
 
     menuItems.push({
       id: POST_MENU_ACTION_IDS.DELETE,
-      label: 'Delete post',
+      label: t('deletePost'),
       icon: Libs.Trash,
       onClick: deletePost,
       variant: POST_MENU_ACTION_VARIANTS.DESTRUCTIVE,

@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
@@ -9,6 +10,7 @@ import { pathToStepConfig } from './Header.constants';
 
 export function Header() {
   const pathname = usePathname();
+  const t = useTranslations('onboarding.steps');
   const isAuthenticated = Core.useAuthStore((state) => Boolean(state.currentUserPubky));
   const { isPublicRoute } = Hooks.usePublicRoute();
 
@@ -16,7 +18,7 @@ export function Header() {
   const isCopyrightPage = pathname === '/copyright';
   const stepConfig = pathname ? pathToStepConfig[pathname] : undefined;
   const currentStep = stepConfig?.step ?? 1;
-  const currentTitle = stepConfig?.title;
+  const currentTitle = stepConfig?.titleKey ? t(stepConfig.titleKey) : undefined;
 
   // Hide header on mobile when:
   // - User is authenticated (not during onboarding) - they use MobileHeader

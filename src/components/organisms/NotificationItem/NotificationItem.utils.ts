@@ -10,26 +10,27 @@ import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
 // ============================================================================
 
 /**
- * Human-readable action text for each notification type
- * TODO: Replace with translation keys when i18n is implemented
+ * Translation keys for notification action text
+ * Returns the i18n key to be used with useTranslations('notifications.actions')
  */
-const NOTIFICATION_ACTION_TEXT: Record<NotificationType, string> = {
-  [NotificationType.Follow]: 'followed you',
-  [NotificationType.NewFriend]: 'is now your friend',
-  [NotificationType.TagPost]: 'tagged your post',
-  [NotificationType.TagProfile]: 'tagged your profile',
-  [NotificationType.Reply]: 'replied to your post',
-  [NotificationType.Repost]: 'reposted your post',
-  [NotificationType.Mention]: 'mentioned you in post',
-  [NotificationType.PostDeleted]: 'deleted a post',
-  [NotificationType.PostEdited]: 'edited a post',
+const NOTIFICATION_ACTION_KEY: Record<NotificationType, string> = {
+  [NotificationType.Follow]: 'followedYou',
+  [NotificationType.NewFriend]: 'newFriend',
+  [NotificationType.TagPost]: 'taggedPost',
+  [NotificationType.TagProfile]: 'taggedProfile',
+  [NotificationType.Reply]: 'repliedToPost',
+  [NotificationType.Repost]: 'repostedPost',
+  [NotificationType.Mention]: 'mentionedYou',
+  [NotificationType.PostDeleted]: 'deletedPost',
+  [NotificationType.PostEdited]: 'editedPost',
 };
 
 /**
- * Get notification action text (without the username) based on type
+ * Get notification action translation key (without the username) based on type
+ * Returns the i18n key to be used with useTranslations('notifications.actions')
  */
-export function getNotificationActionText(notification: FlatNotification): string {
-  return NOTIFICATION_ACTION_TEXT[notification.type] ?? 'New notification';
+export function getNotificationActionKey(notification: FlatNotification): string {
+  return NOTIFICATION_ACTION_KEY[notification.type] ?? 'fallback';
 }
 
 /**

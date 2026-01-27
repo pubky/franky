@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import type { NewPostsButtonProps } from './NewPostsButton.types';
@@ -22,6 +23,8 @@ import type { NewPostsButtonProps } from './NewPostsButton.types';
  * ```
  */
 export function NewPostsButton({ count, onClick, visible, isScrolled = false }: NewPostsButtonProps) {
+  const t = useTranslations('post');
+
   if (!visible || count === 0) return null;
 
   return (
@@ -39,9 +42,7 @@ export function NewPostsButton({ count, onClick, visible, isScrolled = false }: 
       )}
     >
       <Libs.ArrowUp className={Libs.cn('h-4 w-4', !isScrolled && 'animate-bounce')} />
-      <span>
-        See {count} new {count === 1 ? 'post' : 'posts'}
-      </span>
+      <span>{count === 1 ? t('newPostsSingular', { count }) : t('newPostsPlural', { count })}</span>
     </Atoms.Button>
   );
 }

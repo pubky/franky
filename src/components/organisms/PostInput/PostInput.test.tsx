@@ -4,6 +4,8 @@ import { PostInput } from './PostInput';
 import { POST_INPUT_VARIANT } from './PostInput.constants';
 import { POST_THREAD_CONNECTOR_VARIANTS } from '@/components/atoms/PostThreadConnector/PostThreadConnector.constants';
 
+// next-intl is mocked globally in src/config/test.ts
+
 vi.mock('@/atoms', async () => {
   const { POST_THREAD_CONNECTOR_VARIANTS } =
     await import('@/components/atoms/PostThreadConnector/PostThreadConnector.constants');

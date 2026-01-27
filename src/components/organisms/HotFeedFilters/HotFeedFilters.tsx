@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -14,25 +15,28 @@ interface FilterTimeframeProps {
   onTabChange?: (tab: Core.TimeframeType) => void;
 }
 
-const timeframeTabs: { key: Core.TimeframeType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: Core.TIMEFRAME.TODAY, label: 'Today', icon: Libs.Star },
-  { key: Core.TIMEFRAME.THIS_MONTH, label: 'This Month', icon: Libs.Calendar },
-  { key: Core.TIMEFRAME.ALL_TIME, label: 'All Time', icon: Libs.Clock },
-];
-
 /**
  * FilterTimeframe
  *
  * Filter component for selecting timeframe (Today, This Month, All Time).
  */
 export function FilterTimeframe({ selectedTab = Core.TIMEFRAME.TODAY, onTabChange }: FilterTimeframeProps) {
+  const t = useTranslations('filters.timeframe');
+
+  const timeframeTabs: { key: Core.TimeframeType; label: string; icon: React.ComponentType<{ className?: string }> }[] =
+    [
+      { key: Core.TIMEFRAME.TODAY, label: t('today'), icon: Libs.Star },
+      { key: Core.TIMEFRAME.THIS_MONTH, label: t('thisMonth'), icon: Libs.Calendar },
+      { key: Core.TIMEFRAME.ALL_TIME, label: t('allTime'), icon: Libs.Clock },
+    ];
+
   const handleTabClick = (tab: Core.TimeframeType) => {
     onTabChange?.(tab);
   };
 
   return (
     <Atoms.FilterRoot>
-      <Atoms.FilterHeader title="Timeframe" />
+      <Atoms.FilterHeader title={t('title')} />
       <Atoms.FilterList>
         {timeframeTabs.map(({ key, label, icon: Icon }) => {
           const isSelected = selectedTab === key;

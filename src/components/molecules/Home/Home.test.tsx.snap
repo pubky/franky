@@ -49,21 +49,15 @@ exports[`Home - Snapshots > matches snapshot for HomeFooter with default props 1
         data-size="sm"
         data-testid="typography"
       >
-        a
-      </span>
-      <img
-        alt="Tether"
-        data-testid="image"
-        height="9"
-        src="/images/tether-text.svg"
-        width="40"
-      />
-      <span
-        class="font-normal text-muted-foreground"
-        data-size="sm"
-        data-testid="typography"
-      >
-        company
+        a 
+        <img
+          alt="tether."
+          data-testid="image"
+          height="9"
+          src="/images/tether-text.svg"
+          width="40"
+        />
+         company
       </span>
     </div>
   </div>
@@ -91,7 +85,7 @@ exports[`Home - Snapshots > matches snapshot for HomePageHeading with default pr
   <br
     class="block sm:hidden"
   />
-  the web.
+   the web.
 </div>
 `;
 

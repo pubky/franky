@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import {
-  REPORT_ISSUE_LABELS,
+  REPORT_ISSUE_LABEL_KEYS,
   REPORT_ISSUE_TYPES,
   REPORT_ISSUE_TYPE_VALUES,
   type ReportIssueType,
@@ -18,6 +19,9 @@ export function DialogReportPostIssueStep({
   onCancel,
   onOpenChange,
 }: DialogReportPostIssueStepProps) {
+  const t = useTranslations('report');
+  const tIssues = useTranslations('report.issues');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<ReportIssueType | null>(null);
 
@@ -42,15 +46,16 @@ export function DialogReportPostIssueStep({
   return (
     <>
       <Atoms.DialogHeader>
-        <Atoms.DialogTitle>Report Post</Atoms.DialogTitle>
-        <Atoms.DialogDescription>What sort of issue are you reporting?</Atoms.DialogDescription>
+        <Atoms.DialogTitle>{t('issueStep.title')}</Atoms.DialogTitle>
+        <Atoms.DialogDescription>{t('issueStep.question')}</Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container className="gap-1 py-2" role="listbox" aria-label="Issue types">
+      <Atoms.Container className="gap-1 py-2" role="listbox" aria-label={t('issueStep.label')}>
         {REPORT_ISSUE_TYPE_VALUES.map((issueType) => {
           const Icon = ISSUE_TYPE_ICONS[issueType as ReportIssueType];
           const isSelected = selectedType === issueType;
-          const label = REPORT_ISSUE_LABELS[issueType as ReportIssueType];
+          const labelKey = REPORT_ISSUE_LABEL_KEYS[issueType as ReportIssueType];
+          const label = tIssues(labelKey);
 
           return (
             <Atoms.Button
@@ -76,17 +81,17 @@ export function DialogReportPostIssueStep({
       </Atoms.Container>
 
       <Atoms.DialogFooter>
-        <Atoms.Button variant="secondary" size="lg" onClick={onCancel} aria-label="Cancel report">
-          Cancel
+        <Atoms.Button variant="secondary" size="lg" onClick={onCancel} aria-label={tCommon('cancel')}>
+          {tCommon('cancel')}
         </Atoms.Button>
         <Atoms.Button
           variant="dark-outline"
           size="lg"
           onClick={handleNext}
           disabled={!selectedType}
-          aria-label="Continue to reason step"
+          aria-label={tCommon('next')}
         >
-          Next
+          {tCommon('next')}
         </Atoms.Button>
       </Atoms.DialogFooter>
     </>

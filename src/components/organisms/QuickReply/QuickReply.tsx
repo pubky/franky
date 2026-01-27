@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
@@ -13,7 +14,6 @@ import { POST_THREAD_CONNECTOR_VARIANTS } from '@/atoms';
 import { PostInputExpandableSection } from '@/organisms/PostInputExpandableSection';
 import { PostInputAttachments } from '@/molecules/PostInputAttachments/PostInputAttachments';
 
-import { pickRandomQuickReplyPrompt } from './QuickReply.utils';
 import { QUICK_REPLY_CONNECTOR_SPACER_HEIGHT } from './QuickReply.constants';
 import type { QuickReplyProps } from './QuickReply.types';
 
@@ -22,7 +22,11 @@ export function QuickReply({
   connectorVariant = POST_THREAD_CONNECTOR_VARIANTS.LAST,
   onReplySubmitted,
 }: QuickReplyProps) {
-  const [prompt] = React.useState(() => pickRandomQuickReplyPrompt());
+  const t = useTranslations();
+  const rawPrompts = t.raw('quickReply.prompts');
+  const prompts = Array.isArray(rawPrompts) ? rawPrompts : ['What are your thoughts on this?'];
+  const [promptIndex] = React.useState(() => Math.floor(Math.random() * prompts.length));
+  const prompt = prompts[promptIndex] || prompts[0];
 
   const { userDetails } = Hooks.useCurrentUserProfile();
   const avatarUrl = Hooks.useAvatarUrl(userDetails);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
@@ -10,6 +11,7 @@ import * as Config from '@/config';
 import * as Types from './index';
 
 export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.StatusPickerContentProps) {
+  const t = useTranslations('status');
   const [customStatus, setCustomStatus] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -82,7 +84,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
                   isSelected ? 'text-popover-foreground' : 'text-muted-foreground group-hover:text-popover-foreground',
                 )}
               >
-                {option.label}
+                {t(option.value as Parameters<typeof t>[0])}
               </Atoms.Typography>
             </Atoms.Container>
             {isSelected && <Icons.Check className="size-5 text-popover-foreground" />}
@@ -93,7 +95,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
       {/* Custom Status Section */}
       <Atoms.Container className="gap-2.5 pt-1 pb-0">
         <Atoms.Label className="text-xs leading-5 tracking-[1.2px] text-muted-foreground uppercase">
-          Custom Status
+          {t('customStatus')}
         </Atoms.Label>
         <Atoms.Container className="gap-3">
           <Atoms.Container
@@ -131,7 +133,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.Sta
               ref={inputRef}
               type="text"
               value={customStatus}
-              placeholder="Add status"
+              placeholder={t('addStatus')}
               maxLength={Config.USER_STATUS_MAX_LENGTH}
               onChange={(e) => setCustomStatus(e.target.value)}
               onKeyDown={handleKeyDown}

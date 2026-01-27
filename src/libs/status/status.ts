@@ -41,6 +41,7 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
       emoji: STATUS_EMOJIS[DEFAULT_STATUS],
       text: STATUS_LABELS[DEFAULT_STATUS],
       isCustom: false,
+      key: DEFAULT_STATUS,
     };
   }
 
@@ -50,6 +51,7 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
       emoji,
       text: status.replace(EMOJI_REGEX, '').trim() || STATUS_LABELS.noStatus,
       isCustom: true,
+      key: null,
     };
   }
 
@@ -62,6 +64,7 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
       emoji: STATUS_EMOJIS[statusKey] || defaultEmoji,
       text: STATUS_LABELS[statusKey],
       isCustom: false,
+      key: statusKey,
     };
   }
 
@@ -70,6 +73,7 @@ export function parseStatus(status: string, defaultEmoji: string = STATUS_EMOJIS
     emoji: '',
     text: status,
     isCustom: true,
+    key: null,
   };
 }
 

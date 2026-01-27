@@ -8,6 +8,8 @@ export interface ProfileLink {
   url: string;
 }
 
+export type SubmitTextKey = 'saveProfile' | 'finish' | 'saving' | 'uploadingAvatar' | 'savingProfile' | 'tryAgain';
+
 export interface ProfileFormState {
   name: string;
   bio: string;
@@ -16,7 +18,7 @@ export interface ProfileFormState {
   avatarPreview: string | null;
   isSaving: boolean;
   isLoading: boolean;
-  submitText: string;
+  submitTextKey: SubmitTextKey;
 }
 
 export interface ProfileFormErrors {

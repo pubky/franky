@@ -113,14 +113,14 @@ describe('HomeFooter', () => {
     render(<HomeFooter />);
 
     expect(screen.getByAltText('Synonym')).toBeInTheDocument();
-    expect(screen.getByAltText('Tether')).toBeInTheDocument();
+    expect(screen.getByAltText('tether.')).toBeInTheDocument();
   });
 
   it('renders branding text and copyright', () => {
     render(<HomeFooter />);
 
-    expect(screen.getByText('a')).toBeInTheDocument();
-    expect(screen.getByText('company')).toBeInTheDocument();
+    // The translation "a {tether} company" is rendered with Tether image in place of {tether}
+    expect(screen.getByText(/company/)).toBeInTheDocument();
     expect(screen.getByText(/Synonym Software, S\.A\. DE C\.V\. ©2026/)).toBeInTheDocument();
   });
 

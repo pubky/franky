@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl';
+
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import type { HumanPhoneInputProps } from './HumanPhoneInputField.types';
@@ -5,10 +7,13 @@ import type { HumanPhoneInputProps } from './HumanPhoneInputField.types';
 export const HumanPhoneInputField = ({
   value,
   onChange,
-  placeholder = '+316XXXXXXXX',
+  placeholder,
   isValid = false,
   onEnter,
 }: HumanPhoneInputProps) => {
+  const t = useTranslations('onboarding.phone');
+  const defaultPlaceholder = t('placeholder');
+
   return (
     <Atoms.Card data-testid="human-phone-input-card" className="gap-0 p-6 lg:p-12">
       <Atoms.Container className="flex-col gap-8 lg:flex-row lg:items-center">
@@ -24,11 +29,11 @@ export const HumanPhoneInputField = ({
         <Atoms.Container className="mr-6 w-full flex-3 gap-6">
           <Atoms.Container className="gap-3">
             <Atoms.Typography as="h3" className="text-2xl leading-[32px] font-semibold text-foreground sm:text-[28px]">
-              Phone number
+              {t('phoneNumber')}
             </Atoms.Typography>
 
             <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
-              Enter your phone number, including country code (e.g. +1 for US).
+              {t('phoneHint')}
             </Atoms.Typography>
           </Atoms.Container>
 
@@ -43,7 +48,7 @@ export const HumanPhoneInputField = ({
                 autoFocus
                 value={value}
                 onChange={onChange}
-                placeholder={placeholder}
+                placeholder={placeholder ?? defaultPlaceholder}
                 className="border-none bg-transparent text-base font-medium text-brand placeholder:text-brand/50 focus:ring-0 focus:outline-none"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && isValid) {

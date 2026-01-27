@@ -5,9 +5,12 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { HumanPhoneInputProps } from './HumanPhoneInput.types';
 
 export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: HumanPhoneInputProps) => {
+  const t = useTranslations('onboarding.phone');
+  const tCommon = useTranslations('common');
   const [phoneNumberInput, setPhoneNumberInput] = useState(initialPhoneNumber || '');
   const [isSendingCode, setIsSendingCode] = useState(false);
 
@@ -29,18 +32,18 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
       if (!result.success) {
         if (result.errorType === 'blocked') {
           Molecules.toast({
-            title: 'Phone number blocked',
-            description: 'This phone number cannot be used for verification.',
+            title: t('blocked'),
+            description: t('blockedDescription'),
           });
         } else if (result.errorType === 'rate_limited') {
           Molecules.toast({
-            title: 'Too many verification attempts',
-            description: 'You have reached the maximum number of verifications for this phone number.',
+            title: t('tooManyAttempts'),
+            description: t('tooManyAttemptsDescription'),
           });
         } else {
           Molecules.toast({
-            title: 'Failed to send SMS code',
-            description: 'Please try again later. If the problem persists, please contact support.',
+            title: t('sendFailed'),
+            description: t('sendFailedDescription'),
           });
         }
         return;
@@ -49,8 +52,8 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
       onCodeSent(phoneNumber);
     } catch {
       Molecules.toast({
-        title: 'Failed to send SMS code',
-        description: 'Please try again later. If the problem persists, please contact support.',
+        title: t('sendFailed'),
+        description: t('sendFailedDescription'),
       });
     } finally {
       setIsSendingCode(false);
@@ -61,9 +64,11 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Proof of <span className="text-brand">Phone.</span>
+          {t.rich('title', {
+            highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+          })}
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>We will send you a verification code via SMS to your phone number.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
       </Atoms.PageHeader>
       <Molecules.HumanPhoneInputField
         value={phoneNumberInput}
@@ -80,7 +85,7 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
           onClick={onBack}
         >
           <Libs.ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {tCommon('back')}
         </Atoms.Button>
         <Atoms.Button
           id="human-phone-send-code-btn"
@@ -91,7 +96,7 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
           onClick={() => isValidNumber && onSendCode(phoneNumberInput)}
         >
           <Libs.ArrowRight className="mr-2 h-4 w-4" />
-          Send Code
+          {t('sendCode')}
         </Atoms.Button>
       </Atoms.Container>
     </React.Fragment>

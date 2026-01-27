@@ -38,8 +38,7 @@ exports[`TaggedEmpty - Snapshots > matches snapshot 1`] = `
   </h3>
   <div>
     No one has tagged you yet.
-    <br />
-    Tip: You can add tags to your own profile too.
+Tip: You can add tags to your own profile too.
   </div>
   <div
     data-testid="tag-input"

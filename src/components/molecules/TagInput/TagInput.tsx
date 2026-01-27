@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useMemo, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
@@ -11,7 +12,7 @@ import type { TagInputProps } from './TagInput.types';
 
 export function TagInput({
   onTagAdd,
-  placeholder = 'add tag',
+  placeholder,
   existingTags = [],
   showCloseButton = false,
   onClose,
@@ -19,10 +20,13 @@ export function TagInput({
   disabled = false,
   maxTags,
   currentTagsCount = 0,
-  limitReachedPlaceholder = 'limit reached',
+  limitReachedPlaceholder,
   onBlur,
   onClick,
 }: TagInputProps) {
+  const t = useTranslations('post');
+  const defaultPlaceholder = placeholder ?? t('addTag');
+  const defaultLimitReachedPlaceholder = limitReachedPlaceholder ?? t('limitReached');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -118,7 +122,7 @@ export function TagInput({
     }, 200);
   }, [inputValue, onBlur]);
 
-  const displayPlaceholder = isAtLimit ? limitReachedPlaceholder : placeholder;
+  const displayPlaceholder = isAtLimit ? defaultLimitReachedPlaceholder : defaultPlaceholder;
 
   return (
     <>
