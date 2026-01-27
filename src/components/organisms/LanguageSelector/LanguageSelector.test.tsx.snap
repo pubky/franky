@@ -2,197 +2,110 @@
 
 exports[`LanguageSelector - Snapshots > matches snapshot - closed 1`] = `
 <div
-  class="flex w-full flex-col items-start gap-4"
+  class="flex w-full flex-col gap-4"
+  data-testid="container"
 >
-  <p
-    class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+  <label
+    class="text-xs leading-4 font-medium tracking-[1.2px] text-muted-foreground uppercase"
+    data-testid="typography"
   >
     Display language
-  </p>
-  <div
-    class="relative w-full"
+  </label>
+  <button
+    aria-controls="radix-_r_4_"
+    aria-expanded="false"
+    aria-haspopup="dialog"
+    class="flex h-8 w-full cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
+    data-as-child="true"
+    data-slot="popover-trigger"
+    data-state="closed"
+    data-testid="popover-trigger"
+    type="button"
   >
-    <button
-      class="flex h-8 w-full cursor-pointer items-center justify-between transition-opacity hover:opacity-80"
+    <span
+      class="text-base"
+      data-testid="typography"
     >
-      <span
-        class="flex items-center gap-1"
-      >
-        <span
-          class="w-4 text-[17px]"
-        >
-          🇺🇸
-        </span>
-        <span
-          class="text-base leading-6 font-bold"
-        >
-          US English
-        </span>
-      </span>
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-chevron-down transition-transform duration-300"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="m6 9 6 6 6-6"
-        />
-      </svg>
-    </button>
-  </div>
+      🇺🇸
+    </span>
+    <span
+      class="flex-1 text-left text-base leading-6 font-bold"
+      data-testid="typography"
+    >
+      US English
+    </span>
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-chevron-down shrink-0 transition-transform duration-300"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m6 9 6 6 6-6"
+      />
+    </svg>
+  </button>
 </div>
 `;
 
 exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
 <div
-  class="flex w-full flex-col items-start gap-4"
+  class="flex w-full flex-col gap-4"
+  data-testid="container"
 >
-  <p
-    class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+  <label
+    class="text-xs leading-4 font-medium tracking-[1.2px] text-muted-foreground uppercase"
+    data-testid="typography"
   >
     Display language
-  </p>
-  <div
-    class="relative w-full"
+  </label>
+  <button
+    aria-controls="radix-_r_5_"
+    aria-expanded="true"
+    aria-haspopup="dialog"
+    class="flex h-8 w-full cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
+    data-as-child="true"
+    data-slot="popover-trigger"
+    data-state="open"
+    data-testid="popover-trigger"
+    type="button"
   >
-    <button
-      class="flex h-8 w-full cursor-pointer items-center justify-between transition-opacity hover:opacity-80"
+    <span
+      class="text-base"
+      data-testid="typography"
     >
-      <span
-        class="flex items-center gap-1"
-      >
-        <span
-          class="w-4 text-[17px]"
-        >
-          🇺🇸
-        </span>
-        <span
-          class="text-base leading-6 font-bold"
-        >
-          US English
-        </span>
-      </span>
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-chevron-down transition-transform duration-300 rotate-180"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="m6 9 6 6 6-6"
-        />
-      </svg>
-    </button>
-    <div
-      class="absolute top-full right-0 left-0 z-50 mt-2 rounded-lg border border-border bg-popover shadow-lg animate-in py-2 duration-200 fade-in-0 zoom-in-95"
+      🇺🇸
+    </span>
+    <span
+      class="flex-1 text-left text-base leading-6 font-bold"
+      data-testid="typography"
     >
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-pointer hover:bg-accent bg-accent/50"
-      >
-        <span
-          class="text-2xl"
-        >
-          🇺🇸
-        </span>
-        <span
-          class="font-light"
-        >
-          US English
-        </span>
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-check ml-auto"
-          fill="none"
-          height="16"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="16"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M20 6 9 17l-5-5"
-          />
-        </svg>
-      </button>
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
-      >
-        <span
-          class="text-2xl"
-        >
-          🇪🇸
-        </span>
-        <span
-          class="font-light"
-        >
-          Spanish
-        </span>
-      </button>
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
-      >
-        <span
-          class="text-2xl"
-        >
-          🇩🇪
-        </span>
-        <span
-          class="font-light"
-        >
-          German
-        </span>
-      </button>
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
-      >
-        <span
-          class="text-2xl"
-        >
-          🇫🇷
-        </span>
-        <span
-          class="font-light"
-        >
-          French
-        </span>
-      </button>
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors cursor-not-allowed opacity-40"
-        disabled=""
-      >
-        <span
-          class="text-2xl"
-        >
-          🇮🇹
-        </span>
-        <span
-          class="font-light"
-        >
-          Italian
-        </span>
-      </button>
-    </div>
-  </div>
+      US English
+    </span>
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-chevron-down shrink-0 transition-transform duration-300 rotate-180"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m6 9 6 6 6-6"
+      />
+    </svg>
+  </button>
 </div>
 `;
