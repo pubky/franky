@@ -67,7 +67,7 @@ exports[`Language - Snapshots > matches snapshot 1`] = `
         Display language
       </label>
       <button
-        aria-controls="radix-_r_2_"
+        aria-controls="radix-_r_0_"
         aria-expanded="false"
         aria-haspopup="dialog"
         class="flex h-8 w-full cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
