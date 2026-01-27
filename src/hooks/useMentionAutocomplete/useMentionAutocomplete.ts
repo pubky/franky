@@ -13,8 +13,9 @@ import { extractMentionQuery } from './useMentionAutocomplete.utils';
 /**
  * Hook for mention autocomplete functionality in post input
  *
- * Detects @username and pk:id patterns in content and provides
- * user suggestions for autocomplete.
+ * Detects @username and pubky ID patterns in content and provides
+ * user suggestions for autocomplete. Supports both new format (pubky)
+ * and legacy format (pk:) for backwards compatibility.
  */
 export function useMentionAutocomplete({
   content,

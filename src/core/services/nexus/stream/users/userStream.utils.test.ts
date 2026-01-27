@@ -111,18 +111,19 @@ describe('createUserStreamParams', () => {
   // ============================================================================
 
   describe('3-part enum types (source:timeframe:reach)', () => {
-    it('should parse influencers stream ID correctly', () => {
+    it('should parse influencers stream ID correctly and omit reach when "all"', () => {
       const streamId = Core.UserStreamTypes.TODAY_INFLUENCERS_ALL;
 
       const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('influencers');
+      // 'all' is not a valid API value for reach, so it should be omitted
       expect(result.apiParams).toEqual({
         skip: 0,
         limit: 20,
         timeframe: 'today',
-        reach: 'all',
       });
+      expect(result.apiParams).not.toHaveProperty('reach');
     });
 
     it('should parse recommended stream ID correctly', () => {
@@ -165,7 +166,7 @@ describe('createUserStreamParams', () => {
       });
     });
 
-    it('should spread baseParams for influencers', () => {
+    it('should spread baseParams for influencers and omit reach when "all"', () => {
       const streamId = Core.UserStreamTypes.TODAY_INFLUENCERS_ALL;
       const paramsWithViewer: Core.TUserStreamBase = {
         skip: 5,
@@ -175,13 +176,14 @@ describe('createUserStreamParams', () => {
 
       const result = createUserStreamParams(streamId, paramsWithViewer);
 
+      // 'all' is not a valid API value for reach, so it should be omitted
       expect(result.apiParams).toEqual({
         skip: 5,
         limit: 15,
         viewer_id: 'viewer-abc',
         timeframe: 'today',
-        reach: 'all',
       });
+      expect(result.apiParams).not.toHaveProperty('reach');
     });
 
     it('should handle 3-part non-influencers format without viewer_id', () => {
@@ -296,11 +298,10 @@ describe('createUserStreamParams', () => {
 
       const result = createUserStreamParams(streamId, baseParams);
 
-      // Type check: should have timeframe and reach properties
+      // Type check: should have timeframe but NOT reach when reach is 'all'
       expect(result.apiParams).toHaveProperty('timeframe');
-      expect(result.apiParams).toHaveProperty('reach');
+      expect(result.apiParams).not.toHaveProperty('reach');
       expect((result.apiParams as Core.TUserStreamInfluencersParams).timeframe).toBe('today');
-      expect((result.apiParams as Core.TUserStreamInfluencersParams).reach).toBe('all');
     });
 
     it('should return correct apiParams type for most_followed', () => {
@@ -391,7 +392,8 @@ describe('createUserStreamParams', () => {
       // Should be able to call userStreamApi with these params
       const url = Core.userStreamApi.influencers(result.apiParams as Core.TUserStreamInfluencersParams);
       expect(url).toContain('timeframe=today');
-      expect(url).toContain('reach=all');
+      // 'all' is not a valid API value, so it should NOT be in the URL
+      expect(url).not.toContain('reach=all');
     });
 
     it('should generate parameters compatible with userStreamApi.mostFollowed', () => {

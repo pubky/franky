@@ -62,10 +62,10 @@ exports[`PostInput - Snapshots > matches snapshot for article mode 1`] = `
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -142,10 +142,10 @@ exports[`PostInput - Snapshots > matches snapshot for edit variant 1`] = `
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -219,10 +219,10 @@ exports[`PostInput - Snapshots > matches snapshot for edit variant with article 
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -314,10 +314,10 @@ exports[`PostInput - Snapshots > matches snapshot for post variant when dragging
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -399,10 +399,10 @@ exports[`PostInput - Snapshots > matches snapshot for post variant when submitti
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Posting..."
@@ -489,10 +489,10 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with attachme
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -574,10 +574,10 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with content 
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -657,10 +657,10 @@ exports[`PostInput - Snapshots > matches snapshot for post variant with custom p
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -741,10 +741,10 @@ exports[`PostInput - Snapshots > matches snapshot for post variant without conte
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -825,10 +825,10 @@ exports[`PostInput - Snapshots > matches snapshot for reply variant without cont
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -913,10 +913,10 @@ exports[`PostInput - Snapshots > matches snapshot for reply with thread connecto
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"
@@ -1005,10 +1005,10 @@ exports[`PostInput - Snapshots > matches snapshot for repost variant without con
                 Emoji
               </button>
               <button
-                aria-label="Add file"
-                data-testid="file-button"
+                aria-label="Add image"
+                data-testid="image-button"
               >
-                File
+                Image
               </button>
               <button
                 aria-label="Post"

@@ -168,7 +168,7 @@ export const PostText = memo(function PostText({ content, isArticle, className }
             const { children, className, node: _node, ref: _ref, ...rest } = props;
 
             return (
-              <h1 {...rest} className={Libs.cn(className, 'text-2xl leading-8 font-light text-muted-foreground')}>
+              <h1 {...rest} className={Libs.cn(className, 'text-2xl leading-8 font-bold text-white')}>
                 {children}
               </h1>
             );
@@ -177,7 +177,7 @@ export const PostText = memo(function PostText({ content, isArticle, className }
             const { children, className, node: _node, ref: _ref, ...rest } = props;
 
             return (
-              <h2 {...rest} className={Libs.cn(className, 'text-xl leading-7 font-light text-muted-foreground')}>
+              <h2 {...rest} className={Libs.cn(className, 'text-xl leading-7 font-bold text-white')}>
                 {children}
               </h2>
             );
@@ -186,7 +186,7 @@ export const PostText = memo(function PostText({ content, isArticle, className }
             const { children, className, node: _node, ref: _ref, ...rest } = props;
 
             return (
-              <h3 {...rest} className={Libs.cn(className, 'text-lg leading-7 font-light text-muted-foreground')}>
+              <h3 {...rest} className={Libs.cn(className, 'text-lg leading-7 font-bold text-white')}>
                 {children}
               </h3>
             );
@@ -195,7 +195,7 @@ export const PostText = memo(function PostText({ content, isArticle, className }
             const { children, className, node: _node, ref: _ref, ...rest } = props;
 
             return (
-              <h4 {...rest} className={Libs.cn(className, 'text-[17px] leading-6 font-light text-muted-foreground')}>
+              <h4 {...rest} className={Libs.cn(className, 'text-[17px] leading-6 font-bold text-white')}>
                 {children}
               </h4>
             );

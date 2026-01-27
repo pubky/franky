@@ -7,7 +7,6 @@ export type PostInputActionSubmitMode = PostInputVariant;
 export interface PostInputActionBarProps {
   onEmojiClick?: () => void;
   onImageClick?: () => void;
-  onFileClick?: () => void;
   onArticleClick?: () => void;
   onPostClick?: () => void;
   isPostDisabled?: boolean;

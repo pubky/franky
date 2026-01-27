@@ -49,14 +49,11 @@ export const SinglePostArticle = ({ postId, content, attachments, isBlurred }: S
 
           <Organisms.PostHeader postId={postId} size="large" timeAgoPlacement="bottom-left" />
 
-          {/* Tags on mobile - always visible */}
-          <Organisms.PostTagsPanel postId={postId} className="mt-3 mb-6 lg:hidden" />
-
           <Organisms.PostActionsBar
             postId={postId}
             onReplyClick={handleReplyClick}
             onRepostClick={handleRepostClick}
-            className="mb-6"
+            className="mt-3 mb-6"
           />
 
           {isBlurred ? (
@@ -70,6 +67,9 @@ export const SinglePostArticle = ({ postId, content, attachments, isBlurred }: S
               <Molecules.PostText content={body} isArticle />
             </>
           )}
+
+          {/* Tags on mobile */}
+          <Organisms.PostTagsPanel postId={postId} className="mt-6 flex lg:hidden" />
         </Atoms.Container>
 
         {/* Right column - Tags (desktop only) */}

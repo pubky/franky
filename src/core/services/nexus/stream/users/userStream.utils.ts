@@ -40,14 +40,16 @@ export function createUserStreamParams(
   if (parts.length === 3) {
     const [source, timeframe, reach] = parts;
 
-    // Influencers need timeframe and reach in params
+    // Influencers need timeframe and optionally reach in params
+    // Note: 'all' is not a valid API value for reach - omit it to get all users
     if (source === Core.UserStreamSource.INFLUENCERS) {
       return {
         reach: source,
         apiParams: {
           ...baseParams,
           timeframe: timeframe as Core.UserStreamTimeframe,
-          reach: reach as Core.UserStreamReach,
+          // Only include reach if it's a valid API value (not 'all')
+          ...(reach !== 'all' && { reach: reach as Core.UserStreamReach }),
         },
       } as NexusParamsResult<'influencers'>;
     }

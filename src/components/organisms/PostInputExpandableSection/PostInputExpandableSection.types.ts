@@ -19,7 +19,6 @@ export interface PostInputExpandableSectionProps {
   showEmojiPicker: boolean;
   setShowEmojiPicker: (open: boolean) => void;
   onEmojiSelect: (emoji: { native: string }) => void;
-  onFileClick?: () => void;
   onImageClick?: () => void;
   onArticleClick?: () => void;
   className?: string;

@@ -33,7 +33,7 @@ import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.typ
  * - Click outside detection for collapse
  * - Content change notifications to parent
  * - File drag and drop handling
- * - Mention autocomplete (@username and pk:id patterns)
+ * - Mention autocomplete (@username and pubky ID patterns)
  * - Clipboard paste handling for file attachments
  */
 export function usePostInput({
@@ -81,7 +81,7 @@ export function usePostInput({
   const timelineFeed = useTimelineFeedContext();
   const { toast } = Molecules.useToast();
 
-  // Handle mention selection - inserts pk:{userId} into content
+  // Handle mention selection - inserts pubky{userId} into content
   const handleMentionSelect = useCallback(
     (userId: string) => {
       const newContent = getContentWithMention(content, userId);

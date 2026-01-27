@@ -118,8 +118,22 @@ describe('useMentionAutocomplete', () => {
     );
   });
 
-  it('triggers search when pk: pattern is detected at end of content', async () => {
+  it('triggers search when pk: pattern is detected at end of content (legacy)', async () => {
     renderHook(() => useMentionAutocomplete({ content: 'Hello pk:abc' }));
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    expect(mockFetchUsersById).toHaveBeenCalledWith(
+      expect.objectContaining({
+        prefix: 'abc',
+      }),
+    );
+  });
+
+  it('triggers search when pubky pattern is detected at end of content (new format)', async () => {
+    renderHook(() => useMentionAutocomplete({ content: 'Hello pubkyabc' }));
 
     await act(async () => {
       await vi.runAllTimersAsync();
@@ -154,10 +168,33 @@ describe('useMentionAutocomplete', () => {
     expect(mockFetchUsersById).not.toHaveBeenCalled();
   });
 
+  it('does not search when pubky query is too short', async () => {
+    renderHook(() => useMentionAutocomplete({ content: 'Hello pubkyab' }));
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    // Should not be called because 'ab' is only 2 characters (min is 3)
+    expect(mockFetchUsersById).not.toHaveBeenCalled();
+  });
+
   it('skips complete pubkeys in pk: search', async () => {
     // A complete pubkey is 52 characters
     const completePubky = 'a'.repeat(52);
     renderHook(() => useMentionAutocomplete({ content: `Hello pk:${completePubky}` }));
+
+    await act(async () => {
+      await vi.runAllTimersAsync();
+    });
+
+    expect(mockFetchUsersById).not.toHaveBeenCalled();
+  });
+
+  it('skips complete pubkeys in pubky search', async () => {
+    // A complete pubkey is 52 characters
+    const completePubky = 'a'.repeat(52);
+    renderHook(() => useMentionAutocomplete({ content: `Hello pubky${completePubky}` }));
 
     await act(async () => {
       await vi.runAllTimersAsync();
