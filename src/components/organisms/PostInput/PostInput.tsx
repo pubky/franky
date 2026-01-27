@@ -240,7 +240,6 @@ export function PostInput({
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
-          onFileClick={handleFileClick}
           onImageClick={handleFileClick}
           onArticleClick={handleArticleClick}
           isPostDisabled={!isValid()}
