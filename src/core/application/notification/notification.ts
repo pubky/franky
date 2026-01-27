@@ -165,7 +165,13 @@ export class NotificationApplication {
     viewerId,
   }: Core.TFetchMissingEntitiesParams): Promise<Core.TFlatNotificationList> {
     // Transforms Nexus notifications to flat notification format for persistence
-    const flatNotifications = notifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+    const allFlatNotifications = notifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+
+    // Filter out unsupported notification types (e.g., lost_friend from the server)
+    // Only keep notifications with types defined in the NotificationType enum
+    const supportedTypes = Object.values(Core.NotificationType) as string[];
+    const flatNotifications = allFlatNotifications.filter((n) => supportedTypes.includes(n.type));
+
     const { relatedPostIds, relatedUserIds } = Core.LocalNotificationService.parseNotifications({ flatNotifications });
 
     const notPersistedPostIds = await Core.LocalStreamPostsService.getNotPersistedPostsInCache(relatedPostIds);

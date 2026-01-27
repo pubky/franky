@@ -15,7 +15,6 @@ export function NotificationSettings() {
   };
 
   // Only show notification types that have defined labels
-  // We have Lost friend on the server but we don't wantto show it
   const notificationTypes = (Object.keys(NOTIFICATION_LABELS) as NotificationType[]).filter(
     (type) => type in notifications,
   );
