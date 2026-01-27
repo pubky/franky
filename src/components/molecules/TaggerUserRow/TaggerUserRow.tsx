@@ -11,13 +11,7 @@ import type { TaggerUserRowProps } from './TaggerUserRow.types';
  * for each individual tagger. This allows us to use the useIsFollowing hook
  * per-user since hooks cannot be called in loops.
  */
-export function TaggerUserRow({
-  tagger,
-  isLoading,
-  isCurrentUser,
-  onUserClick,
-  onFollowClick,
-}: TaggerUserRowProps) {
+export function TaggerUserRow({ tagger, isLoading, isCurrentUser, onUserClick, onFollowClick }: TaggerUserRowProps) {
   const { isFollowing, isLoading: isStatusLoading } = Hooks.useIsFollowing(tagger.id);
 
   return (
