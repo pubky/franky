@@ -8,7 +8,7 @@ describe('SettingsDivider', () => {
     const divider = container.firstChild as HTMLElement;
 
     expect(divider).toBeInTheDocument();
-    expect(divider).toHaveClass('h-px', 'w-full', 'bg-white/10');
+    expect(divider).toHaveClass('h-px', 'w-full', 'bg-border');
     expect(divider).toHaveAttribute('aria-hidden', 'true');
   });
 });

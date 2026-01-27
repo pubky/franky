@@ -10,7 +10,7 @@ exports[`Switch - Snapshots > matches snapshot when checked 1`] = `
   value="on"
 >
   <span
-    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
     data-state="checked"
   />
 </button>
@@ -28,7 +28,7 @@ exports[`Switch - Snapshots > matches snapshot when disabled 1`] = `
   value="on"
 >
   <span
-    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
     data-disabled=""
     data-state="unchecked"
   />
@@ -47,7 +47,7 @@ exports[`Switch - Snapshots > matches snapshot when disabled and checked 1`] = `
   value="on"
 >
   <span
-    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
     data-disabled=""
     data-state="checked"
   />
@@ -64,7 +64,7 @@ exports[`Switch - Snapshots > matches snapshot when unchecked 1`] = `
   value="on"
 >
   <span
-    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
     data-state="unchecked"
   />
 </button>
@@ -80,7 +80,7 @@ exports[`Switch - Snapshots > matches snapshot with custom className 1`] = `
   value="on"
 >
   <span
-    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
     data-state="unchecked"
   />
 </button>
@@ -96,7 +96,7 @@ exports[`Switch - Snapshots > matches snapshot with default props 1`] = `
   value="on"
 >
   <span
-    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+    class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
     data-state="unchecked"
   />
 </button>

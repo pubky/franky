@@ -7,20 +7,14 @@ exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start"
-    data-override-defaults="true"
-    data-testid="container"
+    aria-level="4"
+    class="text-xl leading-7"
+    data-level="4"
+    data-size="md"
+    data-testid="heading"
+    role="heading"
   >
-    <div
-      aria-level="2"
-      class="custom-title"
-      data-level="2"
-      data-size="lg"
-      data-testid="heading"
-      role="heading"
-    >
-      Account Settings
-    </div>
+    Account Settings
   </div>
   <p
     class="text-base leading-6 font-medium text-secondary-foreground"
@@ -55,19 +49,14 @@ exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] =
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start"
-    data-override-defaults="true"
-    data-testid="container"
+    aria-level="4"
+    class="text-xl leading-7"
+    data-level="4"
+    data-size="md"
+    data-testid="heading"
+    role="heading"
   >
-    <div
-      aria-level="2"
-      data-level="2"
-      data-size="lg"
-      data-testid="heading"
-      role="heading"
-    >
-      Account Settings
-    </div>
+    Account Settings
   </div>
   <p
     class="text-base leading-6 font-medium text-secondary-foreground"
@@ -102,19 +91,14 @@ exports[`SettingsSection - Snapshots > matches snapshot with destructive variant
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start"
-    data-override-defaults="true"
-    data-testid="container"
+    aria-level="4"
+    class="text-xl leading-7"
+    data-level="4"
+    data-size="md"
+    data-testid="heading"
+    role="heading"
   >
-    <div
-      aria-level="2"
-      data-level="2"
-      data-size="lg"
-      data-testid="heading"
-      role="heading"
-    >
-      Account Settings
-    </div>
+    Account Settings
   </div>
   <p
     class="text-base leading-6 font-medium text-secondary-foreground"
@@ -149,19 +133,14 @@ exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`]
   data-testid="container"
 >
   <div
-    class="inline-flex items-center justify-start"
-    data-override-defaults="true"
-    data-testid="container"
+    aria-level="4"
+    class="text-xl leading-7"
+    data-level="4"
+    data-size="md"
+    data-testid="heading"
+    role="heading"
   >
-    <div
-      aria-level="2"
-      data-level="2"
-      data-size="lg"
-      data-testid="heading"
-      role="heading"
-    >
-      Account Settings
-    </div>
+    Account Settings
   </div>
   <p
     class="text-base leading-6 font-medium text-secondary-foreground"
