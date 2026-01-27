@@ -105,7 +105,8 @@ function getPostLink(notification: FlatNotification): string | null {
 
   switch (notification.type) {
     case NotificationType.Reply:
-      uri = notification.reply_uri;
+      // Navigate to parent post so user sees the full thread with the reply in context
+      uri = notification.parent_post_uri;
       break;
 
     case NotificationType.Mention:
