@@ -33,7 +33,7 @@ describe('NotificationSettings', () => {
     expect(screen.getByText('Someone tagged your profile')).toBeInTheDocument();
     expect(screen.getByText('Someone mentioned your profile')).toBeInTheDocument();
     expect(screen.getByText('New reply to your post')).toBeInTheDocument();
-    expect(screen.getByText('New repost to your post')).toBeInTheDocument();
+    expect(screen.getByText('New repost of your post')).toBeInTheDocument();
     expect(screen.getByText('Someone deleted the post you interacted with')).toBeInTheDocument();
     expect(screen.getByText('Someone edited the post you interacted with')).toBeInTheDocument();
   });

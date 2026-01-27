@@ -7,8 +7,8 @@ import * as Libs from '@/libs';
 export function Privacy() {
   return (
     <Molecules.SettingsSectionCard
-      icon={Libs.ShieldCheck}
-      title="Privacy and Safety"
+      icon={Libs.Shield}
+      title="Privacy & Safety"
       description="Privacy is not a crime. Manage your visibility and safety on Pubky."
     >
       <Organisms.PrivacySettings />
