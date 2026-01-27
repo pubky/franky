@@ -1,17 +1,25 @@
 'use client';
 
+import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import { HelpCircle, FileText, MessageCircle, Send } from '@/libs';
+import * as Organisms from '@/organisms';
+import { HelpCircle, FileText, MessageCircle, Send, LockKeyhole, MessageSquare } from '@/libs';
 import { FAQ_SECTIONS, SUPPORT_LINKS } from './HelpContent.constants';
 
 export function HelpContent() {
+  const [isFeedbackDialogOpen, setIsFeedbackDialogOpen] = useState(false);
+
   const handleUserGuideClick = () => {
     window.open(SUPPORT_LINKS.userGuide, '_blank', 'noopener,noreferrer');
   };
 
   const handleSupportClick = () => {
     window.open(SUPPORT_LINKS.telegram, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleFeedbackClick = () => {
+    setIsFeedbackDialogOpen(true);
   };
 
   return (
@@ -41,6 +49,28 @@ export function HelpContent() {
       </Atoms.Container>
 
       <Molecules.SettingsDivider />
+
+      {/* Feedback Section - Mobile only (hidden on lg screens where sidebar is visible) */}
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6 lg:hidden">
+        <Atoms.Container overrideDefaults className="inline-flex items-center gap-3">
+          <MessageSquare size={24} />
+          <Atoms.Heading level={2} size="lg" className="leading-8">
+            Feedback
+          </Atoms.Heading>
+        </Atoms.Container>
+        <Atoms.Typography as="p" overrideDefaults className="text-base leading-6 font-medium text-secondary-foreground">
+          What do you think about Pubky? Send us your feedback to improve or add new features that you would like to see
+          in the next releases.
+        </Atoms.Typography>
+        <Atoms.Button id="feedback-btn" variant="secondary" size="default" onClick={handleFeedbackClick}>
+          <Send size={16} />
+          Send Feedback
+        </Atoms.Button>
+      </Atoms.Container>
+
+      <Atoms.Container overrideDefaults className="w-full lg:hidden">
+        <Molecules.SettingsDivider />
+      </Atoms.Container>
 
       {/* User Guide Section */}
       <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
@@ -78,6 +108,47 @@ export function HelpContent() {
           Support (Telegram)
         </Atoms.Button>
       </Atoms.Container>
+
+      {/* Terms of Service & Privacy - Mobile only (hidden on lg screens where sidebar is visible) */}
+      <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6 lg:hidden">
+        <Molecules.SettingsDivider />
+        <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
+          <Atoms.Container overrideDefaults className="inline-flex items-center gap-3">
+            <LockKeyhole size={24} />
+            <Atoms.Heading level={2} size="lg" className="leading-8">
+              Terms of Service & Privacy
+            </Atoms.Heading>
+          </Atoms.Container>
+          <Atoms.Typography
+            as="p"
+            overrideDefaults
+            className="text-base leading-6 font-medium text-secondary-foreground"
+          >
+            Read our terms carefully.
+          </Atoms.Typography>
+          <Atoms.Container overrideDefaults className="flex flex-wrap gap-2">
+            <Organisms.DialogTerms
+              trigger={
+                <Atoms.Button id="tos-btn" variant="secondary" size="default">
+                  <FileText size={16} />
+                  Terms of service
+                </Atoms.Button>
+              }
+            />
+            <Organisms.DialogPrivacy
+              trigger={
+                <Atoms.Button id="privacy-btn" variant="secondary" size="default">
+                  <LockKeyhole size={16} />
+                  Privacy policy
+                </Atoms.Button>
+              }
+            />
+          </Atoms.Container>
+        </Atoms.Container>
+      </Atoms.Container>
+
+      {/* Feedback Dialog */}
+      <Organisms.DialogFeedback open={isFeedbackDialogOpen} onOpenChange={setIsFeedbackDialogOpen} />
     </Atoms.Container>
   );
 }

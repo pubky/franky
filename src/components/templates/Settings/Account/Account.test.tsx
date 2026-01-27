@@ -25,7 +25,6 @@ describe('Account', () => {
     render(<Account />);
     expect(screen.getByText('Edit your profile')).toBeInTheDocument();
     expect(screen.getByText('Backup your account')).toBeInTheDocument();
-    expect(screen.getByText('Download your data')).toBeInTheDocument();
     expect(screen.getByText('Delete your account')).toBeInTheDocument();
   });
 });

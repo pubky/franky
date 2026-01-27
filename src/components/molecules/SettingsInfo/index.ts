@@ -1,1 +1,2 @@
-export { SettingsInfo, type SettingsInfoProps } from './SettingsInfo';
+export { SettingsInfo } from './SettingsInfo';
+export type { SettingsInfoProps } from './SettingsInfo.types';

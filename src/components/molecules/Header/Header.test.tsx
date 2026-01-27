@@ -440,7 +440,7 @@ describe('Header Components', () => {
       expect(homeLink).toHaveAttribute('href', '/home');
       expect(hotLink).toHaveAttribute('href', '/hot');
       expect(bookmarkLink).toHaveAttribute('href', '/bookmarks');
-      expect(settingsLink).toHaveAttribute('href', '/settings');
+      expect(settingsLink).toHaveAttribute('href', '/settings/account');
       expect(profileLink).toHaveAttribute('href', '/profile');
     });
 

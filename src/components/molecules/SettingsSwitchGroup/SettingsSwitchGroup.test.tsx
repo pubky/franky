@@ -15,15 +15,6 @@ describe('SettingsSwitchGroup', () => {
     expect(screen.getByText('Child 1')).toBeInTheDocument();
     expect(screen.getByText('Child 2')).toBeInTheDocument();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(
-      <SettingsSwitchGroup className="custom-group">
-        <div>Content</div>
-      </SettingsSwitchGroup>,
-    );
-    expect(container.firstChild).toHaveClass('custom-group');
-  });
 });
 
 describe('SettingsSwitchGroup - Snapshots', () => {
@@ -32,15 +23,6 @@ describe('SettingsSwitchGroup - Snapshots', () => {
       <SettingsSwitchGroup>
         <div>Child 1</div>
         <div>Child 2</div>
-      </SettingsSwitchGroup>,
-    );
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(
-      <SettingsSwitchGroup className="custom-group">
-        <div>Content</div>
       </SettingsSwitchGroup>,
     );
     expect(container.firstChild).toMatchSnapshot();

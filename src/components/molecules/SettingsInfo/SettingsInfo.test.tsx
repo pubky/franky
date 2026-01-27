@@ -14,17 +14,16 @@ describe('SettingsInfo', () => {
 
     expect(screen.getByText('Terms of Service & Privacy')).toBeInTheDocument();
     expect(screen.getByText('FAQ')).toBeInTheDocument();
-    expect(screen.getByText('Version')).toBeInTheDocument();
   });
 
   it('renders subtitle for Terms section', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Please read our terms carefully.')).toBeInTheDocument();
+    expect(screen.getByText('Read our terms carefully.')).toBeInTheDocument();
   });
 
-  it('renders version text', () => {
+  it('renders copyright text', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Pubky v0.12 © Synonym Software Ltd')).toBeInTheDocument();
+    expect(screen.getByText(/© 2026 Synonym Software/)).toBeInTheDocument();
   });
 });
 

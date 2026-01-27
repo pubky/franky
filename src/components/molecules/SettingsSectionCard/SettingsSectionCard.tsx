@@ -18,7 +18,7 @@ export function SettingsSectionCard({
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn('flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12', className)}
+      className={Libs.cn('flex flex-col items-start gap-8 rounded-md bg-card px-6 py-8 md:p-12', className)}
     >
       {(hasHeader || description) && (
         <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
@@ -45,7 +45,7 @@ export function SettingsSectionCard({
       {wrapChildren ? (
         <Atoms.Container
           overrideDefaults
-          className="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+          className="flex w-full flex-col items-start gap-8 rounded-md border border-border bg-card p-6 shadow-lg md:gap-6"
         >
           {children}
         </Atoms.Container>

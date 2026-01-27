@@ -2,13 +2,16 @@
 
 exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
 <div
-  class="flex w-full flex-col items-start justify-start gap-6"
+  class="flex w-full flex-col items-start gap-6"
+  data-testid="container"
 >
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -28,16 +31,18 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -57,16 +62,18 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-state="checked"
       />
     </button>
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -88,7 +95,7 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-disabled=""
         data-state="unchecked"
       />
@@ -96,9 +103,11 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -120,7 +129,7 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-disabled=""
         data-state="unchecked"
       />
@@ -128,9 +137,11 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -152,7 +163,7 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-disabled=""
         data-state="unchecked"
       />
@@ -160,9 +171,11 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -184,7 +197,7 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-disabled=""
         data-state="unchecked"
       />
@@ -192,9 +205,11 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -216,7 +231,7 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-disabled=""
         data-state="unchecked"
       />
@@ -224,9 +239,11 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
   </div>
   <div
     class="flex w-full items-center justify-between gap-3"
+    data-testid="container"
   >
     <div
       class="flex flex-1 flex-col items-start gap-2"
+      data-testid="container"
     >
       <label
         class="text-sm text-foreground leading-5 font-medium"
@@ -248,7 +265,7 @@ exports[`PrivacySettings - Snapshots > matches snapshot 1`] = `
       value="on"
     >
       <span
-        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+        class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
         data-disabled=""
         data-state="unchecked"
       />

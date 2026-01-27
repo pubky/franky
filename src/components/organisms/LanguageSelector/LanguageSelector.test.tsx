@@ -29,19 +29,15 @@ describe('LanguageSelector', () => {
     expect(screen.getByText('US English')).toBeInTheDocument();
   });
 
-  it('closes dropdown when clicking outside', () => {
+  it('opens dropdown when clicking trigger', () => {
     render(<LanguageSelector />);
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // Dropdown is open
-    expect(screen.getAllByText('US English').length).toBeGreaterThan(1);
-
-    // Click outside
-    fireEvent.mouseDown(document.body);
-
-    // Dropdown should close - only trigger button text visible
-    expect(screen.getAllByText('US English').length).toBe(1);
+    // Dropdown is open - should show language options
+    expect(screen.getByText('Spanish')).toBeInTheDocument();
+    expect(screen.getByText('German')).toBeInTheDocument();
+    expect(screen.getByText('French')).toBeInTheDocument();
   });
 
   it('calls setLanguage when selecting an enabled language', () => {

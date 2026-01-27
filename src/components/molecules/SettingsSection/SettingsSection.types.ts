@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 export interface SettingsSectionProps {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
   title: string;
   description: string;
   buttonText: string;
@@ -10,6 +9,4 @@ export interface SettingsSectionProps {
   buttonVariant?: 'secondary' | 'destructive';
   buttonDisabled?: boolean;
   buttonOnClick: () => void;
-  titleClassName?: string;
-  iconClassName?: string;
 }

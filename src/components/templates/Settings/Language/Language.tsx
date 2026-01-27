@@ -7,7 +7,7 @@ import * as Libs from '@/libs';
 export function Language() {
   return (
     <Molecules.SettingsSectionCard
-      icon={Libs.Languages}
+      icon={Libs.Globe}
       title="Language"
       description="Choose your preferred language for the Pubky interface."
     >

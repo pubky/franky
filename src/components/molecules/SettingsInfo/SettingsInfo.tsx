@@ -5,28 +5,28 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 import * as App from '@/app';
-
-export interface SettingsInfoProps {
-  className?: string;
-}
+import type { SettingsInfoProps } from './SettingsInfo.types';
 
 const FAQ_QUESTIONS = [
-  { question: 'How can I update my profile information?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How can I delete my post?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How do I mute someone?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How can I restore my account?', href: App.SETTINGS_ROUTES.HELP },
-  { question: 'How is Pubky different from other social platforms?', href: App.SETTINGS_ROUTES.HELP },
+  { id: 'delete-post', question: 'How can I delete my post?', href: App.SETTINGS_ROUTES.HELP },
+  { id: 'mute-someone', question: 'How do I mute someone?', href: App.SETTINGS_ROUTES.HELP },
+  { id: 'restore-account', question: 'How do I restore my account?', href: App.SETTINGS_ROUTES.HELP },
+  {
+    id: 'pubky-difference',
+    question: 'How is Pubky different from other social platforms',
+    href: App.SETTINGS_ROUTES.HELP,
+  },
 ];
 
-const APP_VERSION = 'Pubky v0.12 © Synonym Software Ltd';
+const COPYRIGHT_TEXT = '© 2026 Synonym Software, S.A. DE C.V.';
 
-export function SettingsInfo({ className }: SettingsInfoProps) {
+export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) {
   return (
-    <div className={Libs.cn('flex flex-col gap-6', className)}>
+    <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-6', className)}>
       {/* Terms of Service & Privacy Section */}
       <Atoms.FilterRoot>
-        <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Please read our terms carefully." />
-        <Atoms.FilterList>
+        <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Read our terms carefully." />
+        <Atoms.FilterList className="gap-2">
           <Organisms.DialogTerms
             trigger={<Atoms.SidebarButton icon={Libs.FileText}>Terms of service</Atoms.SidebarButton>}
           />
@@ -36,37 +36,59 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
         </Atoms.FilterList>
       </Atoms.FilterRoot>
 
-      {/* FAQ Section */}
-      <Atoms.FilterRoot>
-        <Atoms.FilterHeader title="FAQ" />
-        <Atoms.FilterList>
-          {FAQ_QUESTIONS.map((faq, index) => (
-            <Link key={index} href={faq.href}>
-              <div className="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white">
-                <span className="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]">
-                  {faq.question}
-                </span>
-                <div className="absolute top-1/2 right-3 -translate-y-1/2">
-                  <Libs.ChevronRight size={16} />
-                </div>
-              </div>
+      {/* FAQ Section - Hidden when on FAQ page */}
+      {!hideFAQ && (
+        <Atoms.FilterRoot>
+          <Atoms.FilterHeader title="FAQ" />
+          <Atoms.FilterList className="gap-2">
+            {FAQ_QUESTIONS.map((faq) => (
+              <Link key={faq.id} href={faq.href}>
+                <Atoms.Container
+                  overrideDefaults
+                  className="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+                >
+                  <Atoms.Typography
+                    as="span"
+                    size="sm"
+                    overrideDefaults
+                    className="block pr-6 leading-normal font-bold text-popover-foreground"
+                  >
+                    {faq.question}
+                  </Atoms.Typography>
+                  <Atoms.Container overrideDefaults className="absolute top-1/2 right-3 -translate-y-1/2">
+                    <Libs.ChevronRight size={16} />
+                  </Atoms.Container>
+                </Atoms.Container>
+              </Link>
+            ))}
+            <Link href={App.SETTINGS_ROUTES.HELP} className="w-full">
+              <Atoms.SidebarButton icon={Libs.MessageCircleQuestion}>More FAQ</Atoms.SidebarButton>
             </Link>
-          ))}
-          <Link href={App.SETTINGS_ROUTES.HELP}>
-            <Atoms.SidebarButton icon={Libs.HelpCircle}>More FAQ</Atoms.SidebarButton>
-          </Link>
-        </Atoms.FilterList>
-      </Atoms.FilterRoot>
+          </Atoms.FilterList>
+        </Atoms.FilterRoot>
+      )}
 
-      {/* Version Section */}
-      <Atoms.FilterRoot>
-        <Atoms.FilterHeader title="Version" />
-        <Atoms.FilterList className="gap-2">
-          <p className="text-base leading-normal font-medium text-[var(--base-secondary-foreground,#D4D4DB)]">
-            {APP_VERSION}
-          </p>
-        </Atoms.FilterList>
-      </Atoms.FilterRoot>
-    </div>
+      {/* Feedback Section */}
+      <Organisms.FeedbackCard />
+
+      {/* Copyright & Branding Section */}
+      <Atoms.Container overrideDefaults className="flex flex-col gap-4">
+        <Atoms.Typography
+          as="p"
+          size="md"
+          overrideDefaults
+          className="leading-normal font-medium text-secondary-foreground"
+        >
+          {COPYRIGHT_TEXT}
+        </Atoms.Typography>
+        {/* Synonym Logo with Tether tagline */}
+        <Atoms.Container overrideDefaults className="flex flex-col items-start">
+          <Atoms.Link href="https://synonym.to" target="_blank" className="block" aria-label="Synonym">
+            <Atoms.Image src="/images/synonym-white-logo.svg" alt="Synonym" width={96} height={24} />
+          </Atoms.Link>
+          <Atoms.Image src="/images/a-tether-company.svg" alt="a tether company" width={109} height={16} />
+        </Atoms.Container>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

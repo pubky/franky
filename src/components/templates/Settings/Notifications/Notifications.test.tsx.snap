@@ -2,7 +2,7 @@
 
 exports[`Notifications - Snapshots > matches snapshot 1`] = `
 <div
-  class="flex flex-col items-start gap-6 rounded-md bg-card p-8 md:p-12"
+  class="flex flex-col items-start gap-8 rounded-md bg-card px-6 py-8 md:p-12"
   data-testid="container"
 >
   <div
@@ -48,17 +48,20 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
     </p>
   </div>
   <div
-    class="flex w-full flex-col items-start gap-6 rounded-md border border-border bg-card p-6 shadow-[0px_10px_15px_0px_rgba(5,5,10,0.5),0px_4px_6px_0px_rgba(5,5,10,0.25)]"
+    class="flex w-full flex-col items-start gap-8 rounded-md border border-border bg-card p-6 shadow-lg md:gap-6"
     data-testid="container"
   >
     <div
-      class="flex w-full flex-col items-start justify-start gap-6"
+      class="flex w-full flex-col items-start gap-6"
+      data-testid="container"
     >
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -78,16 +81,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -107,16 +112,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -136,16 +143,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -165,16 +174,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -194,16 +205,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -223,23 +236,25 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
             data-testid="typography"
             for="notification-switch-repost"
           >
-            New repost to your post
+            New repost of your post
           </label>
         </div>
         <button
@@ -252,16 +267,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -281,16 +298,18 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>
       </div>
       <div
         class="flex w-full items-center justify-between gap-3"
+        data-testid="container"
       >
         <div
           class="flex flex-1 flex-col items-start gap-2"
+          data-testid="container"
         >
           <label
             class="text-sm text-foreground leading-5 font-medium"
@@ -310,7 +329,7 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
           value="on"
         >
           <span
-            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
+            class="pointer-events-none block size-4 rounded-full bg-background shadow-sm ring-0 transition-transform data-[state=checked]:translate-x-3 data-[state=unchecked]:translate-x-0"
             data-state="checked"
           />
         </button>

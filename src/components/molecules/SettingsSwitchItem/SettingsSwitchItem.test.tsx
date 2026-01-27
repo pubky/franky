@@ -38,11 +38,6 @@ describe('SettingsSwitchItem', () => {
     const switchElement = screen.getByRole('switch');
     expect(switchElement).toBeDisabled();
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<SettingsSwitchItem {...defaultProps} className="custom-item" />);
-    expect(container.firstChild).toHaveClass('custom-item');
-  });
 });
 
 describe('SettingsSwitchItem - Snapshots', () => {
@@ -64,11 +59,6 @@ describe('SettingsSwitchItem - Snapshots', () => {
 
   it('matches snapshot when disabled', () => {
     const { container } = render(<SettingsSwitchItem {...defaultProps} disabled />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<SettingsSwitchItem {...defaultProps} className="custom-item" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

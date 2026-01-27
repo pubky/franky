@@ -1,13 +1,12 @@
 'use client';
 
-import * as React from 'react';
-import * as Libs from '@/libs';
+import * as Atoms from '@/atoms';
+import type { SettingsSwitchGroupProps } from './SettingsSwitchGroup.types';
 
-export interface SettingsSwitchGroupProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export function SettingsSwitchGroup({ children, className }: SettingsSwitchGroupProps) {
-  return <div className={Libs.cn('flex w-full flex-col items-start justify-start gap-6', className)}>{children}</div>;
+export function SettingsSwitchGroup({ children }: SettingsSwitchGroupProps) {
+  return (
+    <Atoms.Container overrideDefaults className="flex w-full flex-col items-start gap-6">
+      {children}
+    </Atoms.Container>
+  );
 }

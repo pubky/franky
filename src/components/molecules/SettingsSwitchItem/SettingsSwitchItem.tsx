@@ -1,31 +1,12 @@
 'use client';
 
-import * as React from 'react';
 import * as Atoms from '@/atoms';
-import * as Libs from '@/libs';
+import type { SettingsSwitchItemProps } from './SettingsSwitchItem.types';
 
-export interface SettingsSwitchItemProps {
-  id: string;
-  label: string;
-  description?: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange?: (checked: boolean) => void;
-  className?: string;
-}
-
-export function SettingsSwitchItem({
-  id,
-  label,
-  description,
-  checked,
-  disabled,
-  onChange,
-  className,
-}: SettingsSwitchItemProps) {
+export function SettingsSwitchItem({ id, label, description, checked, disabled, onChange }: SettingsSwitchItemProps) {
   return (
-    <div className={Libs.cn('flex w-full items-center justify-between gap-3', className)}>
-      <div className="flex flex-1 flex-col items-start gap-2">
+    <Atoms.Container overrideDefaults className="flex w-full items-center justify-between gap-3">
+      <Atoms.Container overrideDefaults className="flex flex-1 flex-col items-start gap-2">
         <Atoms.Typography as="label" htmlFor={id} size="sm" className="leading-5 font-medium">
           {label}
         </Atoms.Typography>
@@ -34,8 +15,8 @@ export function SettingsSwitchItem({
             {description}
           </Atoms.Typography>
         )}
-      </div>
+      </Atoms.Container>
       <Atoms.Switch id={id} checked={checked} disabled={disabled} onCheckedChange={onChange} />
-    </div>
+    </Atoms.Container>
   );
 }
