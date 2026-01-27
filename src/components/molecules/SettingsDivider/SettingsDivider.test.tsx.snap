@@ -3,7 +3,7 @@
 exports[`SettingsDivider - Snapshots > matches snapshot 1`] = `
 <div
   aria-hidden="true"
-  class="h-px w-full bg-white/10"
+  class="h-px w-full bg-border"
   data-testid="container"
 />
 `;
