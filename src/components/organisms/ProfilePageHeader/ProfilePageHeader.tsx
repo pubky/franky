@@ -41,6 +41,10 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
+  console.log('ProfilePageHeader debug:', {
+    avatarUrl,
+  });
+
   return (
     <Atoms.Container
       ref={ttlRef}

@@ -3,6 +3,7 @@ export * from './auth';
 export * from './signIn';
 export * from './home';
 export * from './hot';
+export * from './localFiles';
 export * from './notification';
 export * from './search';
 export * from './settings';
