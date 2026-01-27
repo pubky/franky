@@ -46,7 +46,7 @@ exports[`TaggedItem > matches snapshot 1`] = `
     <button
       aria-expanded="false"
       aria-label="Show 3 users who tagged"
-      class="flex cursor-pointer items-center pr-2 pl-0 transition-opacity hover:opacity-80"
+      class="flex cursor-pointer items-center pr-2 transition-opacity hover:opacity-80"
       data-testid="avatar-group-button"
     >
       <div

@@ -40,30 +40,30 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-// Mock UserListItem
-vi.mock('@/organisms', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/organisms')>();
+// Mock TaggerUserRow - this is what WhoTaggedExpandedList directly uses
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    UserListItem: ({
-      user,
+    TaggerUserRow: ({
+      tagger,
       onUserClick,
       onFollowClick,
       isLoading,
       isCurrentUser,
     }: {
-      user: { id: string; name?: string };
+      tagger: { id: string; name?: string };
       onUserClick?: (id: string) => void;
       onFollowClick?: (id: string, isFollowing: boolean) => void;
       isLoading?: boolean;
       isCurrentUser?: boolean;
     }) => (
-      <div data-testid={`user-list-item-${user.id}`} data-loading={isLoading} data-current-user={isCurrentUser}>
-        <span>{user.name || user.id}</span>
-        <button data-testid={`user-click-${user.id}`} onClick={() => onUserClick?.(user.id)}>
+      <div data-testid={`user-list-item-${tagger.id}`} data-loading={isLoading} data-current-user={isCurrentUser}>
+        <span>{tagger.name || tagger.id}</span>
+        <button data-testid={`user-click-${tagger.id}`} onClick={() => onUserClick?.(tagger.id)}>
           View Profile
         </button>
-        <button data-testid={`follow-click-${user.id}`} onClick={() => onFollowClick?.(user.id, false)}>
+        <button data-testid={`follow-click-${tagger.id}`} onClick={() => onFollowClick?.(tagger.id, false)}>
           Follow
         </button>
       </div>

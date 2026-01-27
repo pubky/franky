@@ -10,222 +10,60 @@ exports[`WhoTaggedExpandedList - Snapshots > matches snapshot with multiple user
   role="list"
 >
   <div
-    class="flex w-full items-center gap-3"
+    data-current-user="false"
+    data-loading="false"
     data-testid="user-list-item-user1"
   >
+    <span>
+      Alice
+    </span>
     <button
-      aria-label="View Alice's profile"
-      class="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition-opacity hover:opacity-80"
-      data-slot="button"
+      data-testid="user-click-user1"
     >
-      <span
-        class="relative flex overflow-hidden rounded-full h-8 w-8 shrink-0"
-      />
-      <div
-        class="flex min-w-0 flex-1 flex-col"
-        data-testid="container"
-      >
-        <span
-          class="truncate text-base font-bold text-foreground"
-          data-testid="typography"
-        >
-          Alice
-        </span>
-        <span
-          class="truncate text-sm text-muted-foreground"
-          data-testid="typography"
-        >
-          user1
-        </span>
-      </div>
+      View Profile
     </button>
     <button
-      aria-label="Follow Alice"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-8 shrink-0 rounded-full"
-      data-size="icon"
-      data-slot="button"
-      data-variant="secondary"
+      data-testid="follow-click-user1"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-user-plus size-5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
-        />
-        <circle
-          cx="9"
-          cy="7"
-          r="4"
-        />
-        <line
-          x1="19"
-          x2="19"
-          y1="8"
-          y2="14"
-        />
-        <line
-          x1="22"
-          x2="16"
-          y1="11"
-          y2="11"
-        />
-      </svg>
+      Follow
     </button>
   </div>
   <div
-    class="flex w-full items-center gap-3"
+    data-current-user="false"
+    data-loading="false"
     data-testid="user-list-item-user2"
   >
+    <span>
+      Bob
+    </span>
     <button
-      aria-label="View Bob's profile"
-      class="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition-opacity hover:opacity-80"
-      data-slot="button"
+      data-testid="user-click-user2"
     >
-      <span
-        class="relative flex overflow-hidden rounded-full h-8 w-8 shrink-0"
-      />
-      <div
-        class="flex min-w-0 flex-1 flex-col"
-        data-testid="container"
-      >
-        <span
-          class="truncate text-base font-bold text-foreground"
-          data-testid="typography"
-        >
-          Bob
-        </span>
-        <span
-          class="truncate text-sm text-muted-foreground"
-          data-testid="typography"
-        >
-          user2
-        </span>
-      </div>
+      View Profile
     </button>
     <button
-      aria-label="Follow Bob"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-8 shrink-0 rounded-full"
-      data-size="icon"
-      data-slot="button"
-      data-variant="secondary"
+      data-testid="follow-click-user2"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-user-plus size-5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
-        />
-        <circle
-          cx="9"
-          cy="7"
-          r="4"
-        />
-        <line
-          x1="19"
-          x2="19"
-          y1="8"
-          y2="14"
-        />
-        <line
-          x1="22"
-          x2="16"
-          y1="11"
-          y2="11"
-        />
-      </svg>
+      Follow
     </button>
   </div>
   <div
-    class="flex w-full items-center gap-3"
+    data-current-user="false"
+    data-loading="false"
     data-testid="user-list-item-user3"
   >
+    <span>
+      user3
+    </span>
     <button
-      aria-label="View user3's profile"
-      class="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition-opacity hover:opacity-80"
-      data-slot="button"
+      data-testid="user-click-user3"
     >
-      <span
-        class="relative flex overflow-hidden rounded-full h-8 w-8 shrink-0"
-      />
-      <div
-        class="flex min-w-0 flex-1 flex-col"
-        data-testid="container"
-      >
-        <span
-          class="truncate text-base font-bold text-foreground"
-          data-testid="typography"
-        >
-          user3
-        </span>
-        <span
-          class="truncate text-sm text-muted-foreground"
-          data-testid="typography"
-        >
-          user3
-        </span>
-      </div>
+      View Profile
     </button>
     <button
-      aria-label="Follow user3"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-8 shrink-0 rounded-full"
-      data-size="icon"
-      data-slot="button"
-      data-variant="secondary"
+      data-testid="follow-click-user3"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-user-plus size-5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
-        />
-        <circle
-          cx="9"
-          cy="7"
-          r="4"
-        />
-        <line
-          x1="19"
-          x2="19"
-          y1="8"
-          y2="14"
-        />
-        <line
-          x1="22"
-          x2="16"
-          y1="11"
-          y2="11"
-        />
-      </svg>
+      Follow
     </button>
   </div>
 </div>
@@ -239,76 +77,22 @@ exports[`WhoTaggedExpandedList - Snapshots > matches snapshot with single user 1
   role="list"
 >
   <div
-    class="flex w-full items-center gap-3"
+    data-current-user="false"
+    data-loading="false"
     data-testid="user-list-item-user1"
   >
+    <span>
+      Alice
+    </span>
     <button
-      aria-label="View Alice's profile"
-      class="flex min-w-0 flex-1 cursor-pointer items-center gap-3 text-left transition-opacity hover:opacity-80"
-      data-slot="button"
+      data-testid="user-click-user1"
     >
-      <span
-        class="relative flex overflow-hidden rounded-full h-8 w-8 shrink-0"
-      />
-      <div
-        class="flex min-w-0 flex-1 flex-col"
-        data-testid="container"
-      >
-        <span
-          class="truncate text-base font-bold text-foreground"
-          data-testid="typography"
-        >
-          Alice
-        </span>
-        <span
-          class="truncate text-sm text-muted-foreground"
-          data-testid="typography"
-        >
-          user1
-        </span>
-      </div>
+      View Profile
     </button>
     <button
-      aria-label="Follow Alice"
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-8 shrink-0 rounded-full"
-      data-size="icon"
-      data-slot="button"
-      data-variant="secondary"
+      data-testid="follow-click-user1"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-user-plus size-5"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
-        />
-        <circle
-          cx="9"
-          cy="7"
-          r="4"
-        />
-        <line
-          x1="19"
-          x2="19"
-          y1="8"
-          y2="14"
-        />
-        <line
-          x1="22"
-          x2="16"
-          y1="11"
-          y2="11"
-        />
-      </svg>
+      Follow
     </button>
   </div>
 </div>
