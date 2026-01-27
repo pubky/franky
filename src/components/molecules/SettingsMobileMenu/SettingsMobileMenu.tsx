@@ -9,6 +9,11 @@ export interface SettingsMobileMenuProps {
   className?: string;
 }
 
+/**
+ * Mobile settings navigation menu.
+ * Follows same pattern as ProfilePageMobileMenu.
+ * Uses --header-height-mobile CSS var for consistent positioning.
+ */
 export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -18,7 +23,7 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
       overrideDefaults
       data-testid="settings-mobile-menu"
       className={Libs.cn(
-        'fixed top-[73px] right-0 left-0 z-(--z-sticky-header) border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm',
+        'fixed top-(--header-height-mobile) right-0 left-0 z-(--z-sticky-header) bg-background shadow-xl',
         className,
       )}
     >
@@ -28,22 +33,24 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
           const isSelected = pathname === item.path;
 
           return (
-            <Atoms.Button
-              overrideDefaults
+            <Atoms.Container
               key={item.path}
-              onClick={() => router.push(item.path)}
+              overrideDefaults
               className={Libs.cn(
-                'relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all',
-                'hover:bg-secondary/10',
-                isSelected
-                  ? 'border-b border-white text-foreground'
-                  : 'border-b border-transparent text-muted-foreground',
+                'flex flex-1 justify-center border-b px-0 py-1.5',
+                isSelected ? 'border-foreground' : 'border-border',
               )}
-              aria-label={item.label}
-              aria-current={isSelected ? 'page' : undefined}
             >
-              <Icon size={20} className="shrink-0" />
-            </Atoms.Button>
+              <Atoms.Button
+                overrideDefaults
+                onClick={() => router.push(item.path)}
+                className="px-2.5 py-2"
+                aria-label={item.label}
+                aria-current={isSelected ? 'page' : undefined}
+              >
+                <Icon size={20} className={isSelected ? 'text-foreground' : 'text-muted-foreground'} />
+              </Atoms.Button>
+            </Atoms.Container>
           );
         })}
       </Atoms.Container>

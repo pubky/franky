@@ -1,84 +1,105 @@
 'use client';
 
-import * as React from 'react';
-import * as Libs from '@/libs';
+import { useState } from 'react';
+import * as Atoms from '@/atoms';
 import * as Core from '@/core';
+import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
 import { LANGUAGES } from './LanguageSelector.constants';
+
+function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: string; onSelect: (code: string) => void }) {
+  return (
+    <Atoms.Container overrideDefaults className="flex flex-col">
+      {LANGUAGES.map((lang) => {
+        const isSelected = currentLanguage === lang.code;
+        return (
+          <Atoms.Button
+            key={lang.code}
+            overrideDefaults
+            onClick={() => onSelect(lang.code)}
+            disabled={lang.disabled}
+            className={Libs.cn(
+              'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
+              lang.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:bg-accent',
+              isSelected && 'bg-accent/50',
+            )}
+          >
+            <Atoms.Typography as="span" overrideDefaults className="text-2xl">
+              {lang.flag}
+            </Atoms.Typography>
+            <Atoms.Typography as="span" overrideDefaults className="font-light">
+              {lang.name}
+            </Atoms.Typography>
+            {isSelected && <Libs.Check size={16} className="ml-auto" />}
+          </Atoms.Button>
+        );
+      })}
+    </Atoms.Container>
+  );
+}
 
 export function LanguageSelector() {
   const { language, setLanguage } = Core.useSettingsStore();
-  const [isOpen, setIsOpen] = React.useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const isMobile = Hooks.useIsMobile();
+  const [isOpen, setIsOpen] = useState(false);
 
   const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
 
+  const handleSelect = (code: string) => {
+    setLanguage(code);
+    setIsOpen(false);
+  };
+
+  const trigger = (
+    <Atoms.Button
+      overrideDefaults
+      className="flex h-8 w-full cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
+    >
+      <Atoms.Typography as="span" overrideDefaults className="text-base">
+        {selectedLang.flag}
+      </Atoms.Typography>
+      <Atoms.Typography as="span" overrideDefaults className="flex-1 text-left text-base leading-6 font-bold">
+        {selectedLang.name}
+      </Atoms.Typography>
+      <Libs.ChevronDown
+        size={24}
+        className={Libs.cn('shrink-0 transition-transform duration-300', isOpen && 'rotate-180')}
+      />
+    </Atoms.Button>
+  );
+
   return (
-    <div className="flex w-full flex-col items-start gap-4">
-      <p className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">Display language</p>
+    <Atoms.Container overrideDefaults className="flex w-full flex-col gap-4">
+      <Atoms.Typography
+        as="label"
+        overrideDefaults
+        className="text-xs leading-4 font-medium tracking-[1.2px] text-muted-foreground uppercase"
+      >
+        Display language
+      </Atoms.Typography>
 
-      <div ref={dropdownRef} className="relative w-full">
-        {/* Dropdown trigger */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={Libs.cn(
-            'flex h-8 w-full cursor-pointer items-center justify-between',
-            'transition-opacity hover:opacity-80',
-          )}
-        >
-          <span className="flex items-center gap-1">
-            <span className="w-4 text-[17px]">{selectedLang.flag}</span>
-            <span className="text-base leading-6 font-bold">{selectedLang.name}</span>
-          </span>
-          <Libs.ChevronDown
-            size={24}
-            className={Libs.cn('transition-transform duration-300', isOpen && 'rotate-180')}
-          />
-        </button>
-
-        {/* Dropdown menu */}
-        {isOpen && (
-          <div
-            className={Libs.cn(
-              'absolute top-full right-0 left-0 z-50 mt-2',
-              'rounded-lg border border-border bg-popover shadow-lg',
-              'animate-in py-2 duration-200 fade-in-0 zoom-in-95',
-            )}
+      {isMobile ? (
+        <Atoms.Sheet open={isOpen} onOpenChange={setIsOpen}>
+          <Atoms.SheetTrigger asChild>{trigger}</Atoms.SheetTrigger>
+          <Atoms.SheetContent side="bottom" className="rounded-t-2xl pb-8">
+            <Atoms.SheetHeader className="mb-4">
+              <Atoms.SheetTitle>Select Language</Atoms.SheetTitle>
+            </Atoms.SheetHeader>
+            <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
+          </Atoms.SheetContent>
+        </Atoms.Sheet>
+      ) : (
+        <Atoms.Popover open={isOpen} onOpenChange={setIsOpen}>
+          <Atoms.PopoverTrigger asChild>{trigger}</Atoms.PopoverTrigger>
+          <Atoms.PopoverContent
+            align="start"
+            sideOffset={8}
+            className="w-(--radix-popover-trigger-width) rounded-md border border-border bg-card p-0 py-2 shadow-lg"
           >
-            {LANGUAGES.map((lang) => (
-              <button
-                key={lang.code}
-                onClick={() => {
-                  if (!lang.disabled) {
-                    setLanguage(lang.code);
-                    setIsOpen(false);
-                  }
-                }}
-                disabled={lang.disabled}
-                className={Libs.cn(
-                  'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
-                  lang.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:bg-accent',
-                  language === lang.code && 'bg-accent/50',
-                )}
-              >
-                <span className="text-2xl">{lang.flag}</span>
-                <span className="font-light">{lang.name}</span>
-                {language === lang.code && <Libs.Check size={16} className="ml-auto" />}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+            <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
+          </Atoms.PopoverContent>
+        </Atoms.Popover>
+      )}
+    </Atoms.Container>
   );
 }
