@@ -37,7 +37,7 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
         data-testid="container"
       >
         <h1
-          class="text-2xl font-bold truncate leading-tight text-white lg:text-6xl"
+          class="text-2xl font-bold truncate leading-normal text-white lg:text-6xl lg:leading-normal"
           data-cy="profile-username-header"
           data-testid="typography"
         >
