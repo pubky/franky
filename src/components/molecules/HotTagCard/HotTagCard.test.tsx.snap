@@ -2,7 +2,7 @@
 
 exports[`HotTagCard - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  class="relative flex min-h-fit min-w-0 flex-1 cursor-pointer flex-wrap justify-between gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90 lg:flex-col"
   data-testid="hot-tag-card-1"
   style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(255, 153, 0);"
 >
@@ -49,7 +49,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
 <div
-  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  class="relative flex min-h-fit min-w-0 flex-1 cursor-pointer flex-wrap justify-between gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90 lg:flex-col"
   data-testid="hot-tag-card-3"
   style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(255, 0, 4);"
 >
@@ -199,7 +199,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with overflow taggers 1`] = `
 
 exports[`HotTagCard - Snapshots > matches snapshot with small postCount 1`] = `
 <div
-  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  class="relative flex min-h-fit min-w-0 flex-1 cursor-pointer flex-wrap justify-between gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90 lg:flex-col"
   data-testid="hot-tag-card-1"
   style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(0, 188, 255);"
 >
@@ -246,7 +246,7 @@ exports[`HotTagCard - Snapshots > matches snapshot with small postCount 1`] = `
 
 exports[`HotTagCard - Snapshots > matches snapshot with taggers 1`] = `
 <div
-  class="relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90"
+  class="relative flex min-h-fit min-w-0 flex-1 cursor-pointer flex-wrap justify-between gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90 lg:flex-col"
   data-testid="hot-tag-card-2"
   style="background: linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), rgb(255, 9, 0);"
 >
