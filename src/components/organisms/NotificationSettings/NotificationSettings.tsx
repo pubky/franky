@@ -14,10 +14,7 @@ export function NotificationSettings() {
     setNotificationPreference(type, !notifications[type]);
   };
 
-  // Only show notification types that have defined labels
-  const notificationTypes = (Object.keys(NOTIFICATION_LABELS) as NotificationType[]).filter(
-    (type) => type in notifications,
-  );
+  const notificationTypes = Object.keys(NOTIFICATION_LABELS) as NotificationType[];
 
   return (
     <Molecules.SettingsSwitchGroup>
