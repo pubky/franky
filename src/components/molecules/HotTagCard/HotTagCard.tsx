@@ -39,7 +39,7 @@ export function HotTagCard({
     <Atoms.Container
       overrideDefaults
       className={Libs.cn(
-        'relative flex min-w-0 flex-1 cursor-pointer flex-col gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90',
+        'relative flex min-h-fit min-w-0 flex-1 cursor-pointer flex-wrap justify-between gap-4 overflow-hidden rounded-md px-0 py-6 shadow-sm transition-opacity hover:opacity-90 lg:flex-col',
         className,
       )}
       style={{
