@@ -26,12 +26,12 @@ export function withPubkyPrefix(key: string): string {
   return `${PUBKY_PREFIX}${key}`;
 }
 
-const stripPubkyPrefix = (key: string): string => {
+export function stripPubkyPrefix(key: string): string {
   if (!key) return '';
   if (key.startsWith(PUBKY_PREFIX)) return key.slice(PUBKY_PREFIX.length);
   if (key.startsWith(LEGACY_PUBKY_PREFIX)) return key.slice(LEGACY_PUBKY_PREFIX.length);
   return key;
-};
+}
 
 export function formatPublicKey({ key, length = 12, includePrefix = false }: FormatPublicKeyProps) {
   if (!key) return '';

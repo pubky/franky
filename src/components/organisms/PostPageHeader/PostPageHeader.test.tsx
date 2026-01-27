@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostPageHeader } from './PostPageHeader';
 
@@ -118,82 +118,8 @@ describe('PostPageHeader', () => {
     expect(screen.getByText('Anna')).toBeInTheDocument();
   });
 
-  it('navigates to parent post when breadcrumb item is clicked', () => {
-    mockAncestors.mockReturnValue({
-      ancestors: [
-        { postId: 'user1:post1', userId: 'user1' },
-        { postId: 'user2:post2', userId: 'user2' },
-      ],
-      isLoading: false,
-      hasError: false,
-    });
-    mockUsers.mockReturnValue({
-      users: [
-        { id: 'user1', name: 'John', avatarUrl: undefined },
-        { id: 'user2', name: 'Satoshi', avatarUrl: undefined },
-      ],
-      isLoading: false,
-    });
-
-    render(<PostPageHeader postId="user2:post2" />);
-
-    // Click on parent (John)
-    const johnItem = screen.getByText('John').closest('button');
-    fireEvent.click(johnItem!);
-
-    expect(mockNavigateToPost).toHaveBeenCalledWith('user1:post1');
-  });
-
-  it('does not navigate when current item is clicked', () => {
-    mockAncestors.mockReturnValue({
-      ancestors: [
-        { postId: 'user1:post1', userId: 'user1' },
-        { postId: 'user2:post2', userId: 'user2' },
-      ],
-      isLoading: false,
-      hasError: false,
-    });
-    mockUsers.mockReturnValue({
-      users: [
-        { id: 'user1', name: 'John', avatarUrl: undefined },
-        { id: 'user2', name: 'Satoshi', avatarUrl: undefined },
-      ],
-      isLoading: false,
-    });
-
-    render(<PostPageHeader postId="user2:post2" />);
-
-    // Click on current (Satoshi)
-    const satoshiItem = screen.getByText('Satoshi').closest('button');
-    fireEvent.click(satoshiItem!);
-
-    // Should not navigate to current post
-    expect(mockNavigateToPost).not.toHaveBeenCalled();
-  });
-
-  it('shows "Unknown" for user with missing name', () => {
-    mockAncestors.mockReturnValue({
-      ancestors: [
-        { postId: 'user1:post1', userId: 'user1' },
-        { postId: 'user2:post2', userId: 'user2' },
-      ],
-      isLoading: false,
-      hasError: false,
-    });
-    mockUsers.mockReturnValue({
-      users: [
-        // user1 not in users array
-        { id: 'user2', name: 'Satoshi', avatarUrl: undefined },
-      ],
-      isLoading: false,
-    });
-
-    render(<PostPageHeader postId="user2:post2" />);
-
-    // First ancestor should show "Unknown"
-    expect(screen.getByText('Unknown')).toBeInTheDocument();
-    expect(screen.getByText('Satoshi')).toBeInTheDocument();
-  });
+  // Note: Breadcrumb click navigation and "Unknown" fallback tests
+  // are covered in PostPageBreadcrumb.test.tsx
 
   it('renders with correct test ids', () => {
     mockAncestors.mockReturnValue({
