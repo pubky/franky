@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as Core from '@/core';
+import * as Config from '@/config';
 import { postStreamQueue } from './muting/post-stream-queue';
 import { MuteFilter } from './muting/mute-filter';
 
@@ -121,6 +122,17 @@ describe('PostStreamApplication', () => {
         }),
       ),
     );
+  };
+
+  const createPostDetailWithTimestamp = async (postId: string, indexedAt: number) => {
+    await Core.PostDetailsModel.create({
+      id: postId,
+      content: `Content for ${postId}`,
+      kind: 'short',
+      indexed_at: indexedAt,
+      uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/${postId}`,
+      attachments: null,
+    });
   };
 
   const createStreamWithPosts = async (postIds: string[]) => {
@@ -1400,6 +1412,77 @@ describe('PostStreamApplication', () => {
 
       expect(getStreamHeadSpy).toHaveBeenCalledWith({ streamId: customStreamId });
       expect(result).toBe(expectedTimestamp);
+    });
+  });
+
+  describe('prepareStreamForInitialLoad', () => {
+    it('should clear both streams when main stream cache is stale', async () => {
+      const now = BASE_TIMESTAMP + Config.STREAM_CACHE_MAX_AGE_MS + 10;
+      const staleTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS - 1;
+      vi.spyOn(Date, 'now').mockReturnValue(now);
+
+      const mainPostId = `${DEFAULT_AUTHOR}:post-main`;
+      await createStreamWithPosts([mainPostId]);
+      await createPostDetailWithTimestamp(mainPostId, staleTimestamp);
+
+      const unreadPostId = `${DEFAULT_AUTHOR}:unread-1`;
+      await Core.UnreadPostStreamModel.create(streamId, [unreadPostId]);
+
+      await Core.PostStreamApplication.prepareStreamForInitialLoad({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      const unreadStream = await Core.UnreadPostStreamModel.findById(streamId);
+      expect(postStream).toBeNull();
+      expect(unreadStream).toBeNull();
+    });
+
+    it('should clear unread stream when unread cache is stale and main is fresh', async () => {
+      const now = BASE_TIMESTAMP + Config.STREAM_CACHE_MAX_AGE_MS + 10;
+      const freshTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS + 1;
+      const staleTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS - 1;
+      vi.spyOn(Date, 'now').mockReturnValue(now);
+
+      const mainPostId = `${DEFAULT_AUTHOR}:post-main`;
+      await createStreamWithPosts([mainPostId]);
+      await createPostDetailWithTimestamp(mainPostId, freshTimestamp);
+
+      const unreadPostId = `${DEFAULT_AUTHOR}:unread-1`;
+      await Core.UnreadPostStreamModel.create(streamId, [unreadPostId]);
+      await createPostDetailWithTimestamp(unreadPostId, staleTimestamp);
+
+      await Core.PostStreamApplication.prepareStreamForInitialLoad({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      const unreadStream = await Core.UnreadPostStreamModel.findById(streamId);
+      expect(postStream?.stream).toEqual([mainPostId]);
+      expect(unreadStream).toBeNull();
+    });
+
+    it('should merge unread into main and clear unread when both streams are fresh', async () => {
+      const now = BASE_TIMESTAMP + Config.STREAM_CACHE_MAX_AGE_MS + 10;
+      vi.spyOn(Date, 'now').mockReturnValue(now);
+
+      const mainPostIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
+      const unreadPostIds = [`${DEFAULT_AUTHOR}:unread-1`, `${DEFAULT_AUTHOR}:unread-2`];
+      await createStreamWithPosts(mainPostIds);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      const mainHeadTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS + 2;
+      const mainOlderTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS + 1;
+      const unreadNewestTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS + 4;
+      const unreadOlderTimestamp = now - Config.STREAM_CACHE_MAX_AGE_MS + 3;
+
+      await createPostDetailWithTimestamp(mainPostIds[0], mainHeadTimestamp);
+      await createPostDetailWithTimestamp(mainPostIds[1], mainOlderTimestamp);
+      await createPostDetailWithTimestamp(unreadPostIds[0], unreadNewestTimestamp);
+      await createPostDetailWithTimestamp(unreadPostIds[1], unreadOlderTimestamp);
+
+      await Core.PostStreamApplication.prepareStreamForInitialLoad({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      const unreadStream = await Core.UnreadPostStreamModel.findById(streamId);
+      expect(postStream?.stream).toEqual([unreadPostIds[0], unreadPostIds[1], mainPostIds[0], mainPostIds[1]]);
+      expect(unreadStream).toBeNull();
     });
   });
 

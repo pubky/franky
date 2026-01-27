@@ -173,7 +173,7 @@ function TimelineFeedContent({
       <Molecules.NewPostsButton
         count={actualNewCount}
         onClick={handleNewPostsClick}
-        visible={actualNewCount > 0}
+        visible={actualNewCount > 0 && !loading}
         isScrolled={isScrolled}
       />
       <Organisms.TimelinePosts
