@@ -115,6 +115,7 @@ process.env.NEXT_PUBLIC_MODERATION_ID = 'euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1do
 process.env.NEXT_PUBLIC_MODERATED_TAGS = '["nudity"]';
 process.env.NEXT_PUBLIC_EXCHANGE_RATE_API = 'https://api1.blocktank.to/api/fx/rates/btc';
 process.env.NEXT_PUBLIC_HOMEGATE_URL = 'https://localhost:5000/';
+process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY = 'http://localhost:15412/link/';
 
 // Chatwoot configuration (required for feedback feature)
 process.env.BASE_URL_SUPPORT = 'https://chatwoot.example.com';
