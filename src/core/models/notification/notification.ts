@@ -13,7 +13,6 @@ export class NotificationModel {
 
   // User-specific fields (optional based on notification type)
   followed_by?: string;
-  unfollowed_by?: string;
   tagged_by?: string;
   tag_label?: string;
   post_uri?: string;
