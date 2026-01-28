@@ -12,7 +12,7 @@ exports[`LanguageSelector - Snapshots > matches snapshot - closed 1`] = `
     Display language
   </label>
   <button
-    aria-controls="radix-_r_0_"
+    aria-controls="radix-normalized"
     aria-expanded="false"
     aria-haspopup="dialog"
     class="flex h-8 w-full cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
@@ -67,7 +67,7 @@ exports[`LanguageSelector - Snapshots > matches snapshot - open 1`] = `
     Display language
   </label>
   <button
-    aria-controls="radix-_r_1_"
+    aria-controls="radix-normalized"
     aria-expanded="true"
     aria-haspopup="dialog"
     class="flex h-8 w-full cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"

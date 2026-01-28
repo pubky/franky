@@ -88,7 +88,7 @@ exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
 
 exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick 1`] = `
 <div
-  class="sticky top-0 z-(--z-mobile-menu) bg-background shadow-xs-dark lg:hidden"
+  class="sticky top-0 z-(--z-mobile-menu) bg-linear-to-b from-(--background) from-65% to-transparent lg:hidden"
   data-testid="container"
 >
   <div
@@ -183,7 +183,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
 
 exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="sticky top-0 z-(--z-mobile-menu) bg-background shadow-xs-dark lg:hidden"
+  class="sticky top-0 z-(--z-mobile-menu) bg-linear-to-b from-(--background) from-65% to-transparent lg:hidden"
   data-testid="container"
 >
   <div
