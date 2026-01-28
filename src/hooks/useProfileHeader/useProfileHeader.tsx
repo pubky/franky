@@ -31,9 +31,10 @@ const DEFAULT_PROFILE: UserProfile = {
  *
  * Note: This hook guarantees a non-null profile object by providing default values
  * during loading state. Consumers should check `isLoading` to determine data readiness.
+ * Consumers should also check `userNotFound` to determine if the user does not exist.
  *
  * @param userId - The user ID to fetch profile data for
- * @returns Combined profile data (never null), stats, actions, and loading state
+ * @returns Combined profile data (never null), stats, actions, loading state, and userNotFound flag
  */
 export function useProfileHeader(userId: string) {
   // Fetch user profile data
@@ -42,7 +43,14 @@ export function useProfileHeader(userId: string) {
   // Fetch profile statistics
   const { stats, isLoading: isStatsLoading } = useProfileStats(userId);
 
-  // Provide default profile values when profile is null (loading state)
+  // Determine if loading is complete
+  const isLoading = isProfileLoading || isStatsLoading;
+
+  // Determine if user was not found (loading finished but no profile data)
+  // This is true when the query has completed but returned null
+  const userNotFound = !isLoading && profile === null;
+
+  // Provide default profile values when profile is null (loading state or not found)
   // This centralizes the fallback logic and ensures type consistency
   const profileData = profile ?? DEFAULT_PROFILE;
 
@@ -56,6 +64,7 @@ export function useProfileHeader(userId: string) {
     profile: profileData,
     stats,
     actions,
-    isLoading: isProfileLoading || isStatsLoading,
+    isLoading,
+    userNotFound,
   };
 }

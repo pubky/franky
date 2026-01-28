@@ -8,7 +8,7 @@ export function SearchUserSuggestion({ user, onClick }: SearchUserSuggestionProp
     onClick?.(user.id);
   };
 
-  const formattedPubky = Libs.formatPublicKey({ key: user.id, length: 8 });
+  const formattedPubky = Libs.formatPublicKey({ key: user.id });
 
   return (
     <Atoms.Container
