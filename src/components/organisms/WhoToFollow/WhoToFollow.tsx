@@ -35,8 +35,7 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
   };
 
   const handleSeeAll = () => {
-    // TODO: Navigate to all recommended users page
-    Libs.Logger.debug('[WhoToFollow] See all clicked');
+    router.push(APP_ROUTES.WHO_TO_FOLLOW);
   };
 
   return (

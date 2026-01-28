@@ -23,6 +23,7 @@ export enum APP_ROUTES {
   BOOKMARKS = '/bookmarks',
   SETTINGS = '/settings',
   PROFILE = '/profile',
+  WHO_TO_FOLLOW = '/who-to-follow',
 }
 
 export enum PROFILE_ROUTES {
@@ -76,6 +77,7 @@ export const ALLOWED_ROUTES = [
   APP_ROUTES.BOOKMARKS,
   APP_ROUTES.SETTINGS,
   APP_ROUTES.PROFILE,
+  APP_ROUTES.WHO_TO_FOLLOW,
   POST_ROUTES.POST,
   AUTH_ROUTES.LOGOUT,
 ];
