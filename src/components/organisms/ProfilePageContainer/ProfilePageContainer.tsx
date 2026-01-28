@@ -1,6 +1,7 @@
 'use client';
 
 import * as Hooks from '@/hooks';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Providers from '@/providers';
 
@@ -17,6 +18,7 @@ export interface ProfilePageContainerProps {
  * - Data fetching (profile, stats)
  * - Navigation state (active pages, routing)
  * - Action handlers (edit, copy, sign out, follow, etc.)
+ * - Handling user not found state
  *
  * It delegates presentation concerns to ProfilePageLayout, which is a dumb component
  * that only receives props and renders UI.
@@ -45,7 +47,7 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
 
   // Business logic: Fetch profile data and stats
   // Note: useProfileHeader guarantees a non-null profile with default values during loading
-  const { profile, stats, actions, isLoading } = Hooks.useProfileHeader(pubky ?? '');
+  const { profile, stats, actions, isLoading, userNotFound } = Hooks.useProfileHeader(pubky ?? '');
 
   // Business logic: Handle navigation state
   const { activePage, filterBarActivePage, navigateToPage } = Hooks.useProfileNavigation();
@@ -68,6 +70,19 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
     isFollowLoading,
     isFollowing,
   };
+
+  // If user was not found (loading complete but no profile), show UserNotFound
+  if (userNotFound && !isOwnProfile) {
+    return (
+      <>
+        <Molecules.MobileHeader showLeftButton={false} showRightButton={false} />
+        <Molecules.ProfilePageLayoutWrapper>
+          <Molecules.UserNotFound />
+        </Molecules.ProfilePageLayoutWrapper>
+        <Molecules.MobileFooter />
+      </>
+    );
+  }
 
   // Delegate presentation to layout organism
   return (

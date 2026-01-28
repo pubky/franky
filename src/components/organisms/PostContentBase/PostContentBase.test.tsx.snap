@@ -2,7 +2,7 @@
 
 exports[`PostContentBase - Snapshots > matches snapshot with empty content 1`] = `
 <div
-  class="gap-3"
+  class="min-w-0 gap-3"
   data-testid="container"
 >
   <div
@@ -21,7 +21,7 @@ exports[`PostContentBase - Snapshots > matches snapshot with loading state 1`] =
 
 exports[`PostContentBase - Snapshots > matches snapshot with multiline content (preserves newlines) 1`] = `
 <div
-  class="gap-3"
+  class="min-w-0 gap-3"
   data-testid="container"
 >
   <div
@@ -46,7 +46,7 @@ Line 2
 
 exports[`PostContentBase - Snapshots > matches snapshot with single-line content 1`] = `
 <div
-  class="gap-3"
+  class="min-w-0 gap-3"
   data-testid="container"
 >
   <div
@@ -65,7 +65,7 @@ exports[`PostContentBase - Snapshots > matches snapshot with single-line content
 
 exports[`PostContentBase - Snapshots > matches snapshot with special characters in content 1`] = `
 <div
-  class="gap-3"
+  class="min-w-0 gap-3"
   data-testid="container"
 >
   <div
@@ -86,7 +86,7 @@ exports[`PostContentBase - Snapshots > matches snapshot with special characters 
 
 exports[`PostContentBase - Snapshots > matches snapshot with very long content 1`] = `
 <div
-  class="gap-3"
+  class="min-w-0 gap-3"
   data-testid="container"
 >
   <div
