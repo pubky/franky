@@ -133,6 +133,7 @@ const defaultProps: ProfilePageLayoutProps = {
   filterBarActivePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
   navigateToPage: vi.fn(),
   isLoading: false,
+  userId: 'test123',
 };
 
 describe('ProfilePageLayout', () => {

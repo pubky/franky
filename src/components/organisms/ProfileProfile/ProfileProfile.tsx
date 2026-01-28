@@ -61,7 +61,9 @@ export function ProfileProfile() {
       overrideDefaults={true}
       className="mt-6 flex min-w-0 flex-col gap-6 overflow-hidden lg:mt-0 lg:hidden"
     >
-      {!isLoading && <ProfilePageHeader profile={profile} actions={mergedActions} isOwnProfile={isOwnProfile} />}
+      {!isLoading && (
+        <ProfilePageHeader profile={profile} actions={mergedActions} isOwnProfile={isOwnProfile} userId={pubky ?? ''} />
+      )}
 
       {/* Tagged as section */}
       <Molecules.ProfilePageTaggedAs
