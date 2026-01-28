@@ -79,7 +79,6 @@ export function usePostInput({
     isSubmitting,
   } = Hooks.usePost();
   const timelineFeed = useTimelineFeedContext();
-  const { toast } = Molecules.useToast();
 
   // Handle mention selection - inserts pubky{userId} into content
   const handleMentionSelect = useCallback(
@@ -263,8 +262,7 @@ export function usePostInput({
       const availableSlots = ATTACHMENT_MAX_FILES - currentCount;
 
       if (availableSlots <= 0) {
-        toast({
-          title: 'Error',
+        Molecules.toast.error('Error', {
           description: `Maximum of ${ATTACHMENT_MAX_FILES} files allowed`,
         });
         return;
@@ -301,8 +299,7 @@ export function usePostInput({
       }
 
       if (errors.length > 0) {
-        toast({
-          title: errors.length > 1 ? 'Errors' : 'Error',
+        Molecules.toast.error(errors.length > 1 ? 'Errors' : 'Error', {
           description: errors.join('\n'),
         });
       }
@@ -311,7 +308,7 @@ export function usePostInput({
         setAttachments((prev) => [...prev, ...validFiles]);
       }
     },
-    [isArticle, isSubmitting, attachments.length, setAttachments, toast],
+    [isArticle, isSubmitting, attachments.length, setAttachments],
   );
 
   // Drag and drop handlers

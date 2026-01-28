@@ -17,7 +17,6 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
   const [isRestoring, setIsRestoring] = useState(false);
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [touched, setTouched] = useState<boolean[]>(Array(12).fill(false));
-  const { toast } = Molecules.useToast();
 
   const handleRestore = async () => {
     // Guard against double-submit race condition
@@ -47,8 +46,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
     } catch {
       // TODO: handle error based on the error type
       // show error toast
-      toast({
-        title: 'Error logging in with mnemonic',
+      Molecules.toast.error('Error logging in with mnemonic', {
         description: 'Please try again.',
       });
       setIsRestoring(false);

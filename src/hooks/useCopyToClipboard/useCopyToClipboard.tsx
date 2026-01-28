@@ -1,8 +1,7 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
-import * as Atoms from '@/atoms';
 
 interface UseCopyToClipboardOptions {
   onSuccess?: (text: string) => void;
@@ -10,6 +9,14 @@ interface UseCopyToClipboardOptions {
   successTitle?: string;
   errorTitle?: string;
   errorDescription?: string;
+}
+
+/**
+ * Truncates a string to a maximum length with ellipsis
+ */
+function truncateText(text: string, maxLength: number = 40): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...`;
 }
 
 export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
@@ -26,25 +33,18 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
       try {
         await Libs.copyToClipboard({ text });
 
-        const toastInstance = Molecules.toast({
-          title: successTitle,
-          description: text,
-          action: (
-            <Atoms.Button
-              variant="outline"
-              className="h-10 rounded-full border-brand bg-transparent px-4 text-white hover:bg-brand/16"
-              onClick={() => toastInstance.dismiss()}
-            >
-              OK
-            </Atoms.Button>
-          ),
+        Molecules.toast.success(successTitle, {
+          description: truncateText(text),
+          action: {
+            label: 'OK',
+            onClick: () => {}, // Sonner auto-closes on action click
+          },
         });
 
         onSuccess?.(text);
         return true;
       } catch (error) {
-        Molecules.toast({
-          title: errorTitle,
+        Molecules.toast.error(errorTitle, {
           description: errorDescription,
         });
 

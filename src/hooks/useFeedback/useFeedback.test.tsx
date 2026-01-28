@@ -3,21 +3,28 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { useFeedback } from './useFeedback';
 import { FEEDBACK_MAX_CHARACTER_LENGTH } from '@/config';
 
+// Hoist mock data and functions
+const { mockToast } = vi.hoisted(() => {
+  const toast = Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  });
+  return { mockToast: toast };
+});
+
 // Mock fetch
 global.fetch = vi.fn();
 
 const TEST_USER_PUBKY = 'test-user-123';
 const TEST_USER_NAME = 'Test User';
 
-// Mock molecules
-const mockToast = vi.fn();
+// Mock molecules - now using Sonner toast
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    useToast: vi.fn(() => ({
-      toast: mockToast,
-    })),
+    toast: mockToast,
   };
 });
 

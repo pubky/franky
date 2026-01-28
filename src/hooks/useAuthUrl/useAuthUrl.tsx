@@ -38,8 +38,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           } catch (error) {
             Libs.Logger.error('Failed to persist session and check profile:', error);
             if (!isMountedRef.current) return;
-            Molecules.toast({
-              title: 'Sign in failed. Please try again.',
+            Molecules.toast.error('Sign in failed. Please try again.', {
               description: 'Unable to complete authorization with Pubky Ring. Please try again.',
             });
           }
@@ -57,8 +56,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
           Libs.Logger.error('Authorization promise rejected:', error);
           if (!isMountedRef.current) return;
 
-          Molecules.toast({
-            title: 'Authorization was not completed',
+          Molecules.toast.error('Authorization was not completed', {
             description: 'The signer did not complete authorization. Please try again.',
           });
         });
@@ -68,8 +66,7 @@ export function useAuthUrl(options: UseAuthUrlOptions = {}): UseAuthUrlReturn {
     } catch (error) {
       Libs.Logger.error('Failed to generate auth URL:', error);
       if (!isMountedRef.current) return;
-      Molecules.toast({
-        title: 'QR code generation failed',
+      Molecules.toast.error('QR code generation failed', {
         description: 'Unable to generate sign-in QR code. Please refresh and try again.',
       });
     } finally {

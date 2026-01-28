@@ -8,12 +8,10 @@ import * as Libs from '@/libs';
 import * as App from '@/app';
 import * as Core from '@/core';
 import { useState } from 'react';
-import { useToast } from '@/molecules';
 
 export const BackupNavigation = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
   const { secretKey, inviteCode } = Core.useOnboardingStore();
   const onHandleContinueButton = async () => {
     setLoading(true);
@@ -32,8 +30,7 @@ export const BackupNavigation = () => {
         }
       }
 
-      toast({
-        title: 'Error - Failed to sign up',
+      Molecules.toast.error('Error - Failed to sign up', {
         description,
       });
       console.error('Failed to sign up', error);

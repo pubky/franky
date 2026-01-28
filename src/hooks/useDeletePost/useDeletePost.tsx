@@ -30,7 +30,6 @@ import type { UseDeletePostResult } from './useDeletePost.types';
  */
 export function useDeletePost(postId: string): UseDeletePostResult {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { toast } = Molecules.useToast();
   const timelineFeed = Organisms.useTimelineFeedContext();
 
   const deletePost = useCallback(async () => {
@@ -41,11 +40,7 @@ export function useDeletePost(postId: string): UseDeletePostResult {
 
     if (!postId || !postId.trim()) {
       Libs.Logger.error('[useDeletePost] Invalid post ID provided', { postId });
-      toast({
-        title: 'Error',
-        description: 'Invalid post ID. Please try again.',
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-      });
+      Molecules.toast.error('Error', { description: 'Invalid post ID. Please try again.' });
       return;
     }
 
@@ -57,10 +52,7 @@ export function useDeletePost(postId: string): UseDeletePostResult {
     try {
       await Core.PostController.commitDelete({ compositePostId: postId });
       Libs.Logger.info('[useDeletePost] Post deleted successfully', { postId });
-      toast({
-        title: 'Post deleted',
-        description: 'Your post has been deleted',
-      });
+      Molecules.toast.success('Post deleted', { description: 'Your post has been deleted' });
     } catch (error) {
       Libs.Logger.error('[useDeletePost] Failed to delete post', {
         postId,
@@ -103,15 +95,11 @@ export function useDeletePost(postId: string): UseDeletePostResult {
         });
       }
 
-      toast({
-        title: 'Error',
-        description: 'Failed to delete post. Please try again.',
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-      });
+      Molecules.toast.error('Error', { description: 'Failed to delete post. Please try again.' });
     } finally {
       setIsDeleting(false);
     }
-  }, [postId, isDeleting, toast, timelineFeed]);
+  }, [postId, isDeleting, timelineFeed]);
 
   return {
     isDeleting,

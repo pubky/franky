@@ -10,7 +10,6 @@ import type { HumanPhoneCodeProps } from './HumanPhoneCode.types';
 export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCodeProps) => {
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
-  const { toast } = Molecules.useToast();
 
   const [resendTimer, setResendTimer] = useState<number>(60);
   React.useEffect(() => {
@@ -34,19 +33,14 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
       setIsVerifyingCode(true);
       const result = await Core.HomegateController.verifySmsCode({ phoneNumber, code: codeValue });
       if (result.valid && result.signupCode) {
-        toast({
-          title: 'Verification Code Valid',
-        });
+        Molecules.toast.success('Verification Code Valid');
         onSuccess(result.signupCode);
       } else {
-        toast({
-          title: 'Verification Code Invalid. Try again.',
-        });
+        Molecules.toast.error('Verification Code Invalid. Try again.');
         setIsVerifyingCode(false);
       }
     } catch {
-      toast({
-        title: 'Failed to verify sms code',
+      Molecules.toast.error('Failed to verify sms code', {
         description: 'Please try again later. If the problem persists, please contact support.',
       });
       setIsVerifyingCode(false);

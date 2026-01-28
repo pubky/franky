@@ -29,7 +29,6 @@ export * from './Sheet';
 export * from './SidebarButton';
 export * from './Spinner';
 export * from './Textarea';
-export * from './Toast';
 export * from './Toggle';
 export * from './Switch';
 export * from './Typography';

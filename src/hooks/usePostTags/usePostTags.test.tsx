@@ -26,9 +26,13 @@ vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(() => undefined),
 }));
 
-// Mock toast
-vi.mock('@/molecules/Toaster/use-toast', () => ({
-  toast: vi.fn(),
+// Mock sonner toast
+vi.mock('sonner', () => ({
+  toast: Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  }),
 }));
 
 // Mock tag transformation utilities

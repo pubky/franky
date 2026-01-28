@@ -3,28 +3,49 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useBookmark } from './useBookmark';
 import * as Core from '@/core';
 
-// Mock Core
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(),
-  BookmarkController: {
-    exists: vi.fn(),
-    commitCreate: vi.fn(),
-    commitDelete: vi.fn(),
-  },
-}));
+// Hoist mock data and functions
+const { mockToast } = vi.hoisted(() => {
+  const toast = Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  });
+  return { mockToast: toast };
+});
 
-// Mock molecules (useToast)
-const mockToast = vi.fn();
-vi.mock('@/molecules', () => ({
-  useToast: () => ({ toast: mockToast }),
-}));
+// Mock Core
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(),
+    BookmarkController: {
+      exists: vi.fn(),
+      commitCreate: vi.fn(),
+      commitDelete: vi.fn(),
+    },
+  };
+});
+
+// Mock molecules - now using Sonner toast
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    toast: mockToast,
+  };
+});
 
 // Mock libs
-vi.mock('@/libs', () => ({
-  Logger: {
-    error: vi.fn(),
-  },
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    Logger: {
+      error: vi.fn(),
+    },
+  };
+});
 
 describe('useBookmark', () => {
   const mockUserId = 'user-123' as Core.Pubky;
@@ -104,8 +125,7 @@ describe('useBookmark', () => {
       userId: mockUserId,
     });
     expect(result.current.isBookmarked).toBe(true);
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Bookmark added',
+    expect(mockToast.success).toHaveBeenCalledWith('Bookmark added', {
       description: 'Post saved to your bookmarks',
     });
   });
@@ -129,8 +149,7 @@ describe('useBookmark', () => {
       userId: mockUserId,
     });
     expect(result.current.isBookmarked).toBe(false);
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Bookmark removed',
+    expect(mockToast.success).toHaveBeenCalledWith('Bookmark removed', {
       description: 'Post removed from your bookmarks',
     });
   });
@@ -151,8 +170,7 @@ describe('useBookmark', () => {
       await result.current.toggle();
     });
 
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Error',
+    expect(mockToast.error).toHaveBeenCalledWith('Error', {
       description: 'You must be logged in to bookmark posts',
     });
     expect(Core.BookmarkController.commitCreate).not.toHaveBeenCalled();
@@ -172,8 +190,7 @@ describe('useBookmark', () => {
       await result.current.toggle();
     });
 
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Error',
+    expect(mockToast.error).toHaveBeenCalledWith('Error', {
       description: 'Failed to add bookmark',
     });
     // State should not change on error

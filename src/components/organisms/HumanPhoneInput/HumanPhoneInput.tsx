@@ -28,18 +28,15 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
 
       if (!result.success) {
         if (result.errorType === 'blocked') {
-          Molecules.toast({
-            title: 'Phone number blocked',
+          Molecules.toast.error('Phone number blocked', {
             description: 'This phone number cannot be used for verification.',
           });
         } else if (result.errorType === 'rate_limited') {
-          Molecules.toast({
-            title: 'Too many verification attempts',
+          Molecules.toast.error('Too many verification attempts', {
             description: 'You have reached the maximum number of verifications for this phone number.',
           });
         } else {
-          Molecules.toast({
-            title: 'Failed to send SMS code',
+          Molecules.toast.error('Failed to send SMS code', {
             description: 'Please try again later. If the problem persists, please contact support.',
           });
         }
@@ -48,8 +45,7 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
 
       onCodeSent(phoneNumber);
     } catch {
-      Molecules.toast({
-        title: 'Failed to send SMS code',
+      Molecules.toast.error('Failed to send SMS code', {
         description: 'Please try again later. If the problem persists, please contact support.',
       });
     } finally {

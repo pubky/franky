@@ -15,7 +15,11 @@ const {
   const userId = { current: 'test-user-id' as string | null };
   const postControllerCreate = vi.fn();
   const postControllerEdit = vi.fn();
-  const toast = vi.fn();
+  const toast = Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  });
   const loggerError = vi.fn();
   return {
     mockCurrentUserId: userId,
@@ -48,14 +52,12 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-// Mock Molecules
+// Mock Molecules - now using Sonner toast
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    useToast: vi.fn(() => ({
-      toast: mockToast,
-    })),
+    toast: mockToast,
   };
 });
 
@@ -265,8 +267,7 @@ describe('usePost', () => {
       expect(result.current.content).toBe('');
       expect(result.current.tags).toEqual([]);
       expect(result.current.attachments).toEqual([]);
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Reply posted',
+      expect(mockToast.success).toHaveBeenCalledWith('Reply posted', {
         description: 'Your reply has been posted successfully.',
       });
       expect(mockOnSuccess).toHaveBeenCalled();
@@ -417,11 +418,8 @@ describe('usePost', () => {
         });
       });
 
-      // Toast should be called directly in catch block
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
         description: 'Failed to post reply. Please try again.',
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
       expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to submit reply:', mockError);
@@ -516,8 +514,7 @@ describe('usePost', () => {
       expect(result.current.attachments).toEqual([]);
       expect(result.current.isArticle).toBe(false);
       expect(result.current.articleTitle).toBe('');
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Post created',
+      expect(mockToast.success).toHaveBeenCalledWith('Post created', {
         description: 'Your post has been created successfully.',
       });
       expect(mockOnSuccess).toHaveBeenCalled();
@@ -662,11 +659,8 @@ describe('usePost', () => {
         });
       });
 
-      // Toast should be called directly in catch block
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
         description: 'Failed to create post. Please try again.',
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
       expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to create post:', mockError);
@@ -1066,11 +1060,8 @@ describe('usePost', () => {
         });
       });
 
-      // Toast should be called directly in catch block
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
         description: 'Failed to repost. Please try again.',
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
 
       expect(mockLoggerError).toHaveBeenCalledWith('[usePost] Failed to repost:', mockError);

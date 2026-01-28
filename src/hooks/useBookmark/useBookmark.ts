@@ -32,7 +32,6 @@ export interface UseBookmarkResult {
  * ```
  */
 export function useBookmark(postId: string): UseBookmarkResult {
-  const { toast } = Molecules.useToast();
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
 
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -62,10 +61,7 @@ export function useBookmark(postId: string): UseBookmarkResult {
 
   const toggle = useCallback(async (): Promise<void> => {
     if (!currentUserPubky) {
-      toast({
-        title: 'Error',
-        description: 'You must be logged in to bookmark posts',
-      });
+      Molecules.toast.error('Error', { description: 'You must be logged in to bookmark posts' });
       return;
     }
 
@@ -76,28 +72,21 @@ export function useBookmark(postId: string): UseBookmarkResult {
       if (isBookmarked) {
         await Core.BookmarkController.commitDelete({ postId, userId: currentUserPubky });
         setIsBookmarked(false);
-        toast({
-          title: 'Bookmark removed',
-          description: 'Post removed from your bookmarks',
-        });
+        Molecules.toast.success('Bookmark removed', { description: 'Post removed from your bookmarks' });
       } else {
         await Core.BookmarkController.commitCreate({ postId, userId: currentUserPubky });
         setIsBookmarked(true);
-        toast({
-          title: 'Bookmark added',
-          description: 'Post saved to your bookmarks',
-        });
+        Molecules.toast.success('Bookmark added', { description: 'Post saved to your bookmarks' });
       }
     } catch (error) {
       Libs.Logger.error('[useBookmark] Failed to toggle bookmark', { error, postId, currentUserPubky });
-      toast({
-        title: 'Error',
+      Molecules.toast.error('Error', {
         description: isBookmarked ? 'Failed to remove bookmark' : 'Failed to add bookmark',
       });
     } finally {
       setIsToggling(false);
     }
-  }, [postId, currentUserPubky, isBookmarked, isToggling, toast]);
+  }, [postId, currentUserPubky, isBookmarked, isToggling]);
 
   return {
     isBookmarked,

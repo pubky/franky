@@ -155,8 +155,7 @@ function TimelineFeedContent({
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Failed to load new posts:', error);
-      Molecules.toast({
-        title: 'Failed to load new posts',
+      Molecules.toast.error('Failed to load new posts', {
         description: 'Unable to display new posts. Please try again.',
       });
     }
