@@ -82,20 +82,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
           {users.map((user) => (
             <Organisms.UserListItem
               key={user.id}
-              user={{
-                id: user.id,
-                name: user.name,
-                avatarUrl: user.avatarUrl ?? undefined,
-                image: user.image,
-                tags: user.tags ?? [],
-                stats: user.counts
-                  ? {
-                      tags: user.counts.tags,
-                      posts: user.counts.posts,
-                    }
-                  : { tags: 0, posts: 0 },
-                isFollowing: user.isFollowing,
-              }}
+              user={user}
               variant="full"
               isLoading={isUserLoading(user.id)}
               isStatusLoading={isLoading}

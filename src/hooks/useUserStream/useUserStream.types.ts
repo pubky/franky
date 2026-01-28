@@ -25,7 +25,7 @@ export interface UserStreamUser {
 export interface UseUserStreamParams {
   /** Stream ID to fetch (e.g., UserStreamTypes.TODAY_INFLUENCERS_ALL) */
   streamId: Core.UserStreamId;
-  /** Maximum number of users to fetch. Default: 3 */
+  /** Number of users to fetch (or per page when paginated). Default: 3 */
   limit?: number;
   /** Whether to also fetch user counts (posts, tags, etc). Default: false */
   includeCounts?: boolean;
@@ -33,6 +33,8 @@ export interface UseUserStreamParams {
   includeRelationships?: boolean;
   /** Whether to include user tags. Default: false */
   includeTags?: boolean;
+  /** Enable infinite scroll pagination. Default: false */
+  paginated?: boolean;
 }
 
 export interface UseUserStreamResult {
@@ -40,10 +42,16 @@ export interface UseUserStreamResult {
   users: UserStreamUser[];
   /** User IDs in the stream */
   userIds: Core.Pubky[];
-  /** Whether the hook is currently loading data */
+  /** Whether the initial load is in progress */
   isLoading: boolean;
+  /** Whether more data is being loaded (only when paginated) */
+  isLoadingMore: boolean;
+  /** Whether there are more users to load (only when paginated) */
+  hasMore: boolean;
   /** Error message if fetch failed */
   error: string | null;
+  /** Load next page of users (only works when paginated) */
+  loadMore: () => Promise<void>;
   /** Re-fetch the users */
   refetch: () => Promise<void>;
 }
