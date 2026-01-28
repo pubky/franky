@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatDistanceToNow } from 'date-fns';
+import validationLimits from 'pubky-app-specs/validationLimits.json';
 import type {
   ExtractInitialsProps,
   CopyToClipboardProps,
@@ -652,9 +653,25 @@ export function getCharacterCount(text: string): number {
 
 /**
  * Banned characters for tags per pubky-app-specs
- * Colons, commas, and spaces are not allowed in tags
+ * Colons, commas, spaces, tabs, and newlines are not allowed in tags
  */
-export const TAG_BANNED_CHARS = /[:, ]/g;
+const escapeTagCharForRegex = (char: string) => {
+  switch (char) {
+    case '\t':
+      return '\\t';
+    case '\n':
+      return '\\n';
+    case '\r':
+      return '\\r';
+    default:
+      return char.replace(/[\\\-\]\^]/g, '\\$&');
+  }
+};
+
+export const TAG_BANNED_CHARS = new RegExp(
+  `[${validationLimits.tagInvalidChars.map(escapeTagCharForRegex).join('')}]`,
+  'g',
+);
 
 /**
  * Remove banned characters from tag input
