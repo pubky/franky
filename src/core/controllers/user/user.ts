@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { HttpMethod, Logger } from '@/libs';
+import { HttpMethod, Logger, stripPubkyPrefix } from '@/libs';
 
 export class UserController {
   private constructor() {} // Prevent instantiation
@@ -120,7 +120,10 @@ export class UserController {
    * @param followee - The followee user ID
    */
   static async commitFollow(eventType: HttpMethod, { follower, followee }: Core.TFollowParams) {
-    const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
+    // Normalize pubky IDs to ensure consistent format for storage and comparison
+    // This strips any prefix (pubky or pk:) to get the raw 52-character key
+    const normalizedFollowee = stripPubkyPrefix(followee) as Core.Pubky;
+    const { meta, follow } = Core.FollowNormalizer.to({ follower, followee: normalizedFollowee });
 
     // Get active stream ID from store (controller layer responsibility)
     const activeStreamId = this.getActiveStreamId();
@@ -130,7 +133,7 @@ export class UserController {
       followUrl: meta.url,
       followJson: follow.toJson(),
       follower,
-      followee,
+      followee: normalizedFollowee,
       activeStreamId,
     });
   }
@@ -142,13 +145,16 @@ export class UserController {
    * @param mutee - The mutee user ID
    */
   static async commitMute(eventType: HttpMethod, { muter, mutee }: Core.TMuteParams) {
-    const { meta, mute } = Core.MuteNormalizer.to({ muter, mutee });
+    // Normalize pubky IDs to ensure consistent format for storage and comparison
+    // This strips any prefix (pubky or pk:) to get the raw 52-character key
+    const normalizedMutee = stripPubkyPrefix(mutee) as Core.Pubky;
+    const { meta, mute } = Core.MuteNormalizer.to({ muter, mutee: normalizedMutee });
     await Core.UserApplication.commitMute({
       eventType,
       muteUrl: meta.url,
       muteJson: mute.toJson(),
       muter,
-      mutee,
+      mutee: normalizedMutee,
     });
   }
 
