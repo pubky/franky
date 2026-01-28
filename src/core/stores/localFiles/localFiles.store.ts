@@ -1,0 +1,61 @@
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+import { LocalFilesStore, localFilesInitialState, LocalFilesActionTypes } from './localFiles.types';
+
+/**
+ * Safely revoke a blob URL to prevent memory leaks.
+ * Only revokes URLs that start with 'blob:'.
+ */
+const revokeBlobUrl = (url: string | null | undefined): void => {
+  if (url?.startsWith('blob:')) {
+    URL.revokeObjectURL(url);
+  }
+};
+
+export const useLocalFilesStore = create<LocalFilesStore>()(
+  devtools(
+    (set, get) => ({
+      ...localFilesInitialState,
+
+      setProfile: (blobUrl) => {
+        const prev = get().profile;
+        revokeBlobUrl(prev);
+        set({ profile: blobUrl }, false, LocalFilesActionTypes.SET_PROFILE);
+      },
+
+      setPostAttachments: (postId, blobUrls) => {
+        const prev = get().posts[postId];
+        prev?.forEach(revokeBlobUrl);
+
+        if (blobUrls.length === 0) {
+          // Remove key if empty array
+          set(
+            (state) => {
+              const { [postId]: _, ...rest } = state.posts;
+              return { posts: rest };
+            },
+            false,
+            LocalFilesActionTypes.SET_POST_ATTACHMENTS,
+          );
+        } else {
+          set(
+            (state) => ({ posts: { ...state.posts, [postId]: blobUrls } }),
+            false,
+            LocalFilesActionTypes.SET_POST_ATTACHMENTS,
+          );
+        }
+      },
+
+      reset: () => {
+        const state = get();
+        revokeBlobUrl(state.profile);
+        Object.values(state.posts).flat().forEach(revokeBlobUrl);
+        set(localFilesInitialState, false, LocalFilesActionTypes.RESET);
+      },
+    }),
+    {
+      name: 'local-files-store',
+      enabled: process.env.NODE_ENV === 'development',
+    },
+  ),
+);

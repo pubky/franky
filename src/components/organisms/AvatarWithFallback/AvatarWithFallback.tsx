@@ -28,7 +28,19 @@ export function AvatarWithFallback({
 }: AvatarWithFallbackProps) {
   const [imageError, setImageError] = useState(false);
 
+  // Extract userId from CDN URL for moderation and local avatar resolution
   const userId = useMemo(() => extractUserIdFromAvatarUrl(avatarUrl), [avatarUrl]);
+
+  // Check if this avatar belongs to the current user
+  const currentUserPubky = Core.useAuthStore((s) => s.currentUserPubky);
+  const isCurrentUser = userId === currentUserPubky;
+
+  // Only subscribe to localProfile changes if this is the current user
+  // Non-current-user avatars won't re-render when localProfile changes (selector returns stable null)
+  const localProfile = Core.useLocalFilesStore((s) => (isCurrentUser ? s.profile : null));
+
+  // Use local blob URL for current user if available, otherwise use CDN URL
+  const resolvedAvatarUrl = localProfile ?? avatarUrl;
 
   const moderationStatus = useLiveQuery(async () => {
     try {
@@ -48,17 +60,17 @@ export function AvatarWithFallback({
     Core.ModerationController.unBlur(userId);
   };
 
-  // Reset error state when avatarUrl changes
+  // Reset error state when avatar URL changes
   useEffect(() => {
     setImageError(false);
-  }, [avatarUrl]);
+  }, [resolvedAvatarUrl]);
 
   return (
     <Atoms.Avatar size={size} className={className} data-testid={dataTestId}>
-      {avatarUrl && !imageError ? (
+      {resolvedAvatarUrl && !imageError ? (
         <>
           <Atoms.AvatarImage
-            src={avatarUrl}
+            src={resolvedAvatarUrl}
             alt={alt || name}
             onError={() => setImageError(true)}
             className={Libs.cn(shouldBlur && 'blur-xs')}

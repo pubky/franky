@@ -23,6 +23,7 @@ const USER_ID_PATTERN = /^[a-z0-9]{52}$/;
  */
 export function extractUserIdFromAvatarUrl(avatarUrl: string | undefined | null): string | null {
   if (!avatarUrl) return null;
+  if (!avatarUrl) return null;
 
   const expectedPrefix = `${Config.CDN_URL}/avatar/`;
 
@@ -31,6 +32,8 @@ export function extractUserIdFromAvatarUrl(avatarUrl: string | undefined | null)
   // Extract the userId portion (everything after the prefix, excluding query params)
   const userIdWithParams = avatarUrl.slice(expectedPrefix.length);
   const userId = userIdWithParams.split('?')[0]; // Remove query params like ?v=12345
+
+  console.log('userId', userId);
 
   if (!USER_ID_PATTERN.test(userId)) return null;
 

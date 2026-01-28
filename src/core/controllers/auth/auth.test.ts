@@ -63,6 +63,7 @@ const storeMocks = vi.hoisted(() => {
   const resetAuthStore = vi.fn();
   const resetOnboardingStore = vi.fn();
   const resetSignInStore = vi.fn();
+  const resetLocalFilesStore = vi.fn();
   const notificationInit = vi.fn();
   const initAuthStore = vi.fn();
   const setAuthUrlResolved = vi.fn();
@@ -73,6 +74,7 @@ const storeMocks = vi.hoisted(() => {
     resetAuthStore,
     resetOnboardingStore,
     resetSignInStore,
+    resetLocalFilesStore,
     notificationInit,
     initAuthStore,
     setAuthUrlResolved,
@@ -107,6 +109,9 @@ const storeMocks = vi.hoisted(() => {
       homeserverSynced: false,
       error: null,
     })),
+    getLocalFilesState: vi.fn(() => ({
+      reset: resetLocalFilesStore,
+    })),
   };
 });
 
@@ -123,6 +128,9 @@ vi.mock('@/core/stores', () => ({
   },
   useSignInStore: {
     getState: storeMocks.getSignInState,
+  },
+  useLocalFilesStore: {
+    getState: storeMocks.getLocalFilesState,
   },
 }));
 
@@ -748,12 +756,15 @@ describe('AuthController', () => {
 
     const createSignInStore = () => storeMocks.getSignInState() as unknown as Core.SignInStore;
 
+    const createLocalFilesStore = () => storeMocks.getLocalFilesState() as unknown as Core.LocalFilesStore;
+
     beforeEach(() => {
       Object.defineProperty(document, 'cookie', { writable: true, value: '' });
       Object.defineProperty(window, 'location', { writable: true, value: { href: '' } });
       storeMocks.resetAuthStore.mockClear();
       storeMocks.resetOnboardingStore.mockClear();
       storeMocks.resetSignInStore.mockClear();
+      storeMocks.resetLocalFilesStore.mockClear();
     });
 
     it('should successfully logout user, clear stores, cookies and redirect', async () => {
@@ -763,9 +774,11 @@ describe('AuthController', () => {
       const resetSpy = vi.spyOn(Core.PubkySpecsSingleton, 'reset');
 
       const signInStore = createSignInStore();
+      const localFilesStore = createLocalFilesStore();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
       vi.spyOn(Core.useSignInStore, 'getState').mockReturnValue(signInStore);
+      vi.spyOn(Core.useLocalFilesStore, 'getState').mockReturnValue(localFilesStore);
 
       document.cookie = 'testCookie=value; path=/';
       document.cookie = 'anotherCookie=anotherValue; path=/';
@@ -777,6 +790,7 @@ describe('AuthController', () => {
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
       expect(signInStore.reset).toHaveBeenCalled();
+      expect(localFilesStore.reset).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
     });
@@ -787,8 +801,10 @@ describe('AuthController', () => {
       const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
       const warnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
 
+      const localFilesStore = createLocalFilesStore();
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+      vi.spyOn(Core.useLocalFilesStore, 'getState').mockReturnValue(localFilesStore);
 
       await AuthController.logout();
       expect(logoutSpy).toHaveBeenCalledWith({ session: expect.anything() });
@@ -798,6 +814,7 @@ describe('AuthController', () => {
       // Local state should still be cleared even if homeserver logout fails
       expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
       expect(storeMocks.resetAuthStore).toHaveBeenCalled();
+      expect(localFilesStore.reset).toHaveBeenCalled();
       expect(clearCookiesSpy).toHaveBeenCalled();
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
     });

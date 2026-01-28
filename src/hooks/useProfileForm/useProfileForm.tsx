@@ -81,8 +81,15 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       setLinks(formattedLinks.length > 0 ? formattedLinks : DEFAULT_LINKS);
 
       // Set avatar if exists
+      // Note: We intentionally don't use the local store's blob URL here because:
+      // 1. Blob URLs are ephemeral and can be revoked/invalidated
+      // 2. The cleanup effect may revoke avatarPreview when unmounting
+      // 3. The local store is for immediate display, not form state restoration
       if (userDetails.image && pubky) {
-        const avatarUrl = Core.FileController.getAvatarUrl(pubky, userDetails.indexed_at);
+        let avatarUrl = Core.FileController.getAvatarUrl(pubky, userDetails.indexed_at);
+        // TODO: Has to be fixed with the ServiceWorker
+        // Assign a random number (0-100000) as a query parameter to avatarUrl for cache busting
+        avatarUrl = `${avatarUrl}${Math.floor(Math.random() * 100000)}`;
         setOriginalAvatarUrl(avatarUrl);
         setAvatarPreview(avatarUrl);
       }
@@ -300,6 +307,12 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
       if (mode === 'create') {
         await Core.ProfileController.commitCreate({ profile: user, image, pubky });
+        // Store a NEW blob URL globally so all avatar components show the new avatar instantly
+        // We create a separate blob URL so the form's cleanup can safely revoke its own
+        if (avatarFile) {
+          const globalBlobUrl = URL.createObjectURL(avatarFile);
+          Core.useLocalFilesStore.getState().setProfile(globalBlobUrl);
+        }
         await Core.AuthController.bootstrapWithDelay();
         setShowWelcomeDialog?.(true);
         router.push(App.HOME_ROUTES.HOME);
@@ -311,6 +324,17 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
           image,
           pubky,
         });
+        // Update local avatar store: set NEW blob URL if new avatar, clear if deleted
+        // We create a separate blob URL so the form's cleanup can safely revoke its own
+        if (avatarChanged) {
+          if (avatarFile) {
+            const globalBlobUrl = URL.createObjectURL(avatarFile);
+            Core.useLocalFilesStore.getState().setProfile(globalBlobUrl);
+          } else {
+            // Avatar was deleted
+            Core.useLocalFilesStore.getState().setProfile(null);
+          }
+        }
         toast({
           title: 'Profile updated',
           description: 'Your profile has been updated successfully.',

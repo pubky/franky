@@ -42,6 +42,8 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (
+
+  return (
     <Atoms.Container
       ref={ttlRef}
       overrideDefaults={true}
