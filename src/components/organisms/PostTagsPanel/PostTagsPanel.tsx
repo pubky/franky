@@ -67,7 +67,7 @@ export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
       />
 
       {tags.length > 0 && (
-        <Atoms.Container overrideDefaults className="max-h-80 overflow-y-auto pr-1">
+        <Atoms.Container overrideDefaults className="max-h-80 overflow-x-hidden overflow-y-auto pr-1">
           <Molecules.TaggedList
             tags={tags}
             hasMore={hasMore}

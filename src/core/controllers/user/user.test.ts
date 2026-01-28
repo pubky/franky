@@ -4,6 +4,12 @@ import { UserController } from './user';
 import * as Core from '@/core';
 import { HttpMethod } from '@/libs';
 
+// Valid 52-character z-base32 encoded pubky IDs for testing
+const TEST_PUBKY = {
+  USER_1: '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y' as Core.Pubky,
+  USER_2: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
+};
+
 describe('UserController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -217,8 +223,8 @@ describe('UserController', () => {
 
   describe('follow', () => {
     it('should normalize follow request and delegate to UserApplication.commitFollow (PUT)', async () => {
-      const follower = 'pubky-follower' as unknown as Core.Pubky;
-      const followee = 'pubky-followee' as unknown as Core.Pubky;
+      const follower = TEST_PUBKY.USER_1;
+      const followee = TEST_PUBKY.USER_2;
 
       const mockFollowJson = { foo: 'bar' } as Record<string, unknown>;
       const mockToJson = vi.fn(() => mockFollowJson);
@@ -250,8 +256,8 @@ describe('UserController', () => {
     });
 
     it('should support DELETE action and delegate correctly', async () => {
-      const follower = 'pubky-follower' as unknown as Core.Pubky;
-      const followee = 'pubky-followee' as unknown as Core.Pubky;
+      const follower = TEST_PUBKY.USER_1;
+      const followee = TEST_PUBKY.USER_2;
 
       const mockFollowJson = { baz: 1 } as Record<string, unknown>;
       const mockToJson = vi.fn(() => mockFollowJson);
@@ -281,8 +287,8 @@ describe('UserController', () => {
     });
 
     it('should bubble when FollowNormalizer.to fails and not delegate', async () => {
-      const follower = 'pubky-follower' as unknown as Core.Pubky;
-      const followee = 'pubky-followee' as unknown as Core.Pubky;
+      const follower = TEST_PUBKY.USER_1;
+      const followee = TEST_PUBKY.USER_2;
 
       vi.spyOn(Core.FollowNormalizer, 'to').mockImplementation(() => {
         throw new Error('normalize-fail');
@@ -297,8 +303,8 @@ describe('UserController', () => {
     });
 
     it('should bubble when UserApplication.follow fails', async () => {
-      const follower = 'pubky-follower' as unknown as Core.Pubky;
-      const followee = 'pubky-followee' as unknown as Core.Pubky;
+      const follower = TEST_PUBKY.USER_1;
+      const followee = TEST_PUBKY.USER_2;
 
       vi.spyOn(Core.FollowNormalizer, 'to').mockReturnValue({
         meta: { url: 'https://example.com/follow' },
@@ -317,8 +323,8 @@ describe('UserController', () => {
     });
 
     it('should pass activeStreamId when on /home route', async () => {
-      const follower = 'pubky-follower' as unknown as Core.Pubky;
-      const followee = 'pubky-followee' as unknown as Core.Pubky;
+      const follower = TEST_PUBKY.USER_1;
+      const followee = TEST_PUBKY.USER_2;
       const mockStreamId = 'home:all:all' as Core.PostStreamTypes;
 
       const mockFollowJson = { foo: 'bar' } as Record<string, unknown>;

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LanguageSelector } from './LanguageSelector';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock settings store
 const mockSetLanguage = vi.fn();
@@ -65,6 +66,9 @@ describe('LanguageSelector', () => {
   });
 });
 
+// Note: Radix UI generates incremental IDs (radix-«r0», radix-«r1», etc.) for aria-controls attributes.
+// These IDs can vary between test runs depending on test execution order.
+// Use normaliseRadixIds to ensure the snapshots are consistent.
 describe('LanguageSelector - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -76,13 +80,15 @@ describe('LanguageSelector - Snapshots', () => {
 
   it('matches snapshot - closed', () => {
     const { container } = render(<LanguageSelector />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot - open', () => {
     const { container } = render(<LanguageSelector />);
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 });

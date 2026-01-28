@@ -158,6 +158,22 @@ describe('FollowNormalizer', () => {
         expect(typeof result.follow.toJson).toBe('function');
         expect(result.follow.toJson()).toBeDefined();
       });
+
+      it('should handle followee with "pubky" prefix by stripping it', () => {
+        const prefixedFollowee = `pubky${TEST_PUBKY.USER_2}`;
+        const result = Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: prefixedFollowee });
+
+        expect(result.follow).toBeDefined();
+        expect(result.meta.url).toContain(TEST_PUBKY.USER_2);
+      });
+
+      it('should handle followee with "pk:" prefix by stripping it', () => {
+        const prefixedFollowee = `pk:${TEST_PUBKY.USER_2}`;
+        const result = Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: prefixedFollowee });
+
+        expect(result.follow).toBeDefined();
+        expect(result.meta.url).toContain(TEST_PUBKY.USER_2);
+      });
     });
 
     describe('validation with real library', () => {
