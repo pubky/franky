@@ -190,7 +190,7 @@ const envSchema = z.object({
     .default('26')
     .transform((val) => parseInt(val, 10)),
 
-  NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.png'),
+  NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.webp'),
   NEXT_PUBLIC_SITE_NAME: z.string().optional().default('Pubky App'),
   NEXT_PUBLIC_LOCALE: z.string().optional().default('en_US'),
   NEXT_PUBLIC_AUTHOR: z.string().optional().default('Pubky Team'),
