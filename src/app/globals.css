@@ -117,6 +117,14 @@ body {
    * ================================================================== */
 
   /**
+   * Tag badge maximum width
+   * - Constrains tag width to prevent layout overflow with long tag names
+   * - Enables text truncation with ellipsis for long tag labels
+   * - Applied: TaggedItem component
+   */
+  --tag-max-width: 10rem;
+
+  /**
    * Desktop header height (profile page header)
    * - Used for sticky positioning of filter bars and sidebars
    * - Matches ProfilePageHeader height on desktop (lg+)
@@ -215,6 +223,30 @@ body {
    * - Enables scrolling when more results are available
    */
   --mention-popover-max-height: 200px;
+
+  /**
+   * Who tagged expanded list width
+   * - Width for the expanded list of users who tagged a post/content
+   * - Applied to: WhoTaggedExpandedList component
+   * 
+   * Rationale for 320px:
+   * - Provides adequate space for user avatar, name, and follow button
+   * - Consistent with other popover/list widths in the app
+   * - Balances readability with efficient use of space
+   */
+  --who-tagged-expanded-list-width: 320px;
+
+  /**
+   * Who tagged expanded list max height
+   * - Maximum height for the expanded list before scrolling
+   * - Applied to: WhoTaggedExpandedList component
+   * 
+   * Rationale for 300px:
+   * - Shows approximately 5-6 user items at once
+   * - Prevents list from obscuring too much content
+   * - Enables scrolling when more users are available
+   */
+  --who-tagged-expanded-list-max-height: 300px;
 
   /**
    * Avatar zoom modal size

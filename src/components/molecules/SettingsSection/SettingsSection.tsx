@@ -1,9 +1,7 @@
-import * as React from 'react';
 import * as Atoms from '@/atoms';
 import type { SettingsSectionProps } from './SettingsSection.types';
 
-export const SettingsSection = React.memo(function SettingsSection({
-  icon: _Icon,
+export function SettingsSection({
   title,
   description,
   buttonText,
@@ -12,16 +10,12 @@ export const SettingsSection = React.memo(function SettingsSection({
   buttonVariant = 'secondary',
   buttonDisabled = false,
   buttonOnClick,
-  titleClassName,
-  iconClassName: _iconClassName,
 }: SettingsSectionProps) {
   return (
     <Atoms.Container overrideDefaults className="flex flex-col items-start justify-start gap-3">
-      <Atoms.Container overrideDefaults className="inline-flex items-center justify-start">
-        <Atoms.Heading level={2} size="lg" className={titleClassName}>
-          {title}
-        </Atoms.Heading>
-      </Atoms.Container>
+      <Atoms.Heading level={4} size="md" className="text-xl leading-7">
+        {title}
+      </Atoms.Heading>
       <Atoms.Typography
         as="p"
         size="md"
@@ -42,4 +36,4 @@ export const SettingsSection = React.memo(function SettingsSection({
       </Atoms.Button>
     </Atoms.Container>
   );
-});
+}

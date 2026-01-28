@@ -49,11 +49,13 @@ vi.mock('@/core', async () => {
 });
 
 // Mock useProfileStats
+import { useProfileStats } from '@/hooks/useProfileStats';
+const mockUseProfileStats = vi.fn(() => ({
+  stats: { uniqueTags: 0, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+  isLoading: false,
+}));
 vi.mock('@/hooks/useProfileStats', () => ({
-  useProfileStats: vi.fn(() => ({
-    stats: { uniqueTags: 0, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
-    isLoading: false,
-  })),
+  useProfileStats: (...args: Parameters<typeof useProfileStats>) => mockUseProfileStats(...args),
 }));
 
 // Mock sonner toast
@@ -182,6 +184,128 @@ describe('useTagged', () => {
       label: 'ethereum',
       taggerId: 'mock-current-user',
       taggedKind: Core.TagKind.USER,
+    });
+  });
+
+  describe('hasMore calculation', () => {
+    it('sets hasMore to true when loaded tags is less than total unique_tags count', async () => {
+      // User has 30 unique tags, but only 20 are loaded initially
+      mockUseProfileStats.mockReturnValue({
+        stats: { uniqueTags: 30, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+        isLoading: false,
+      });
+
+      // Simulate 20 tags loaded from IndexedDB
+      mockLocalTags = Array.from({ length: 20 }, (_, i) => ({
+        label: `tag-${i}`,
+        taggers: ['tagger-1'],
+        taggers_count: 1,
+        relationship: false,
+      }));
+
+      const { result } = renderHook(() => useTagged(mockUserId));
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Should have more tags to load since 20 < 30
+      expect(result.current.hasMore).toBe(true);
+    });
+
+    it('sets hasMore to false when loaded tags equals total unique_tags count', async () => {
+      // User has 20 unique tags and all 20 are loaded
+      mockUseProfileStats.mockReturnValue({
+        stats: { uniqueTags: 20, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+        isLoading: false,
+      });
+
+      // Simulate 20 tags loaded from IndexedDB
+      mockLocalTags = Array.from({ length: 20 }, (_, i) => ({
+        label: `tag-${i}`,
+        taggers: ['tagger-1'],
+        taggers_count: 1,
+        relationship: false,
+      }));
+
+      const { result } = renderHook(() => useTagged(mockUserId));
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Should NOT have more tags since all 20 are loaded
+      expect(result.current.hasMore).toBe(false);
+    });
+
+    it('sets hasMore to false when loaded tags exceeds total unique_tags count', async () => {
+      // Edge case: local count higher than API count (stale data)
+      mockUseProfileStats.mockReturnValue({
+        stats: { uniqueTags: 15, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+        isLoading: false,
+      });
+
+      mockLocalTags = Array.from({ length: 20 }, (_, i) => ({
+        label: `tag-${i}`,
+        taggers: ['tagger-1'],
+        taggers_count: 1,
+        relationship: false,
+      }));
+
+      const { result } = renderHook(() => useTagged(mockUserId));
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      expect(result.current.hasMore).toBe(false);
+    });
+
+    it('sets hasMore to false when pagination is disabled', async () => {
+      mockUseProfileStats.mockReturnValue({
+        stats: { uniqueTags: 30, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+        isLoading: false,
+      });
+
+      mockLocalTags = Array.from({ length: 20 }, (_, i) => ({
+        label: `tag-${i}`,
+        taggers: ['tagger-1'],
+        taggers_count: 1,
+        relationship: false,
+      }));
+
+      const { result } = renderHook(() => useTagged(mockUserId, { enablePagination: false }));
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // Pagination is disabled, so hasMore should be false regardless of count
+      expect(result.current.hasMore).toBe(false);
+    });
+
+    it('sets hasMore to false when less than TAGS_PER_PAGE tags are loaded', async () => {
+      // User has 10 unique tags (less than TAGS_PER_PAGE of 20)
+      mockUseProfileStats.mockReturnValue({
+        stats: { uniqueTags: 10, posts: 0, replies: 0, followers: 0, following: 0, friends: 0, notifications: 0 },
+        isLoading: false,
+      });
+
+      mockLocalTags = Array.from({ length: 10 }, (_, i) => ({
+        label: `tag-${i}`,
+        taggers: ['tagger-1'],
+        taggers_count: 1,
+        relationship: false,
+      }));
+
+      const { result } = renderHook(() => useTagged(mockUserId));
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      // All tags are loaded, hasMore should be false
+      expect(result.current.hasMore).toBe(false);
     });
   });
 });

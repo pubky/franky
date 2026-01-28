@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Err, ErrorService, ValidationErrorCode } from '@/libs';
+import { Err, ErrorService, ValidationErrorCode } from '@/libs/error';
 
 const DEFAULT_PKARR_RELAYS = ['https://pkarr.pubky.app', 'https://pkarr.pubky.org'];
 
@@ -29,7 +29,15 @@ const envSchema = z.object({
     .transform((val) => val === 'true')
     .pipe(z.boolean()),
 
+  // =============================================================================
+  // NETWORK CONFIGURATION (defaults to staging for dev/CI convenience)
+  // =============================================================================
+  // These variables have staging defaults for development and CI/CD.
+  // For production, override these with your production URLs.
+
+  /** Main API endpoint */
   NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app'),
+  /** CDN URL for static assets */
   NEXT_PUBLIC_CDN_URL: z.string().url().default('https://nexus.staging.pubky.app/static'),
 
   NEXT_PUBLIC_SYNC_TTL: z
@@ -138,26 +146,33 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_PKARR_RELAYS: z
     .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== '' ? val : undefined))
     .default(JSON.stringify(DEFAULT_PKARR_RELAYS))
     .transform(parsePkarrRelays)
     .pipe(z.array(z.string().url()).min(1)),
 
-  NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
+  /** Homeserver public key */
+  NEXT_PUBLIC_HOMESERVER: z.string().min(1).default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
 
   // Server-side only admin credentials for signup token generation (dev/test only)
   // These are NOT exposed to the client bundle - only available on the server
   HOMESERVER_ADMIN_URL: z.string().url().default('http://localhost:6288/generate_signup_token'),
   HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
 
+  /** HTTP relay for pubky protocol */
   NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://httprelay.staging.pubky.app'),
   NEXT_PUBLIC_MODERATION_ID: z.string().default('euwmq57zefw5ynnkhh37b3gcmhs7g3cptdbw1doaxj1pbmzp3wro'),
   NEXT_PUBLIC_MODERATED_TAGS: z
     .string()
+    .optional()
+    .transform((val) => (val && val.trim() !== '' ? val : undefined))
     .default('["nudity"]')
     .transform((val) => JSON.parse(val))
     .pipe(z.array(z.string().min(1)).min(1)),
   NEXT_PUBLIC_EXCHANGE_RATE_API: z.url().default('https://api1.blocktank.to/api/fx/rates/btc'),
-  NEXT_PUBLIC_HOMEGATE_URL: z.url().default('http://localhost:5000/'),
+  /** Homegate authentication service URL */
+  NEXT_PUBLIC_HOMEGATE_URL: z.url().default('https://homegate.staging.pubky.app'),
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
@@ -200,91 +215,160 @@ const envSchema = z.object({
 });
 
 /**
- * Parse and validate environment variables
- * Throws an error if validation fails
+ * Format a Zod error into a human-readable message for DevOps
  */
-function parseEnv(): z.infer<typeof envSchema> {
-  try {
-    const parsed = envSchema.parse({
-      NODE_ENV: process.env.NODE_ENV,
-      NEXT_PUBLIC_DB_NAME: process.env.NEXT_PUBLIC_DB_NAME,
-      NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
-      NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
-      NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
-      NEXT_PUBLIC_CDN_URL: process.env.NEXT_PUBLIC_CDN_URL,
-      NEXT_PUBLIC_SYNC_TTL: process.env.NEXT_PUBLIC_SYNC_TTL,
-      NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS,
-      NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
-      NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
-      NEXT_MAX_STREAM_TAGS: process.env.NEXT_MAX_STREAM_TAGS,
-      NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
-      NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
-      NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
-      NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
-      NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: process.env.NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS,
-      NEXT_PUBLIC_TTL_POST_MS: process.env.NEXT_PUBLIC_TTL_POST_MS,
-      NEXT_PUBLIC_TTL_USER_MS: process.env.NEXT_PUBLIC_TTL_USER_MS,
-      NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: process.env.NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS,
-      NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE,
-      NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE,
-      NEXT_PUBLIC_TTL_RETRY_DELAY_MS: process.env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
-      NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
-      NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
-      NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
-      HOMESERVER_ADMIN_URL: process.env.HOMESERVER_ADMIN_URL,
-      HOMESERVER_ADMIN_PASSWORD: process.env.HOMESERVER_ADMIN_PASSWORD,
-      NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
-      NEXT_PUBLIC_MODERATION_ID: process.env.NEXT_PUBLIC_MODERATION_ID,
-      NEXT_PUBLIC_MODERATED_TAGS: process.env.NEXT_PUBLIC_MODERATED_TAGS,
-      NEXT_PUBLIC_EXCHANGE_RATE_API: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API,
-      NEXT_PUBLIC_HOMEGATE_URL: process.env.NEXT_PUBLIC_HOMEGATE_URL,
-      VITEST: process.env.VITEST,
-      BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
-      SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,
-      SUPPORT_ACCOUNT_ID: process.env.SUPPORT_ACCOUNT_ID,
-      SUPPORT_FEEDBACK_INBOX_ID: process.env.SUPPORT_FEEDBACK_INBOX_ID,
-      NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
-      NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
-      NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,
-      NEXT_PUBLIC_AUTHOR: process.env.NEXT_PUBLIC_AUTHOR,
-      NEXT_PUBLIC_KEYWORDS: process.env.NEXT_PUBLIC_KEYWORDS,
-      NEXT_PUBLIC_TYPE: process.env.NEXT_PUBLIC_TYPE,
-      NEXT_PUBLIC_CREATOR: process.env.NEXT_PUBLIC_CREATOR,
-      NEXT_PUBLIC_PUBKY_RING_URL: process.env.NEXT_PUBLIC_PUBKY_RING_URL,
-      NEXT_PUBLIC_PUBKY_CORE_URL: process.env.NEXT_PUBLIC_PUBKY_CORE_URL,
-      NEXT_PUBLIC_TWITTER_URL: process.env.NEXT_PUBLIC_TWITTER_URL,
-      NEXT_PUBLIC_TWITTER_GETPUBKY_URL: process.env.NEXT_PUBLIC_TWITTER_GETPUBKY_URL,
-      NEXT_PUBLIC_TELEGRAM_URL: process.env.NEXT_PUBLIC_TELEGRAM_URL,
-      NEXT_PUBLIC_GITHUB_URL: process.env.NEXT_PUBLIC_GITHUB_URL,
-      NEXT_PUBLIC_EMAIL: process.env.NEXT_PUBLIC_EMAIL,
-      NEXT_PUBLIC_APP_STORE_URL: process.env.NEXT_PUBLIC_APP_STORE_URL,
-      NEXT_PUBLIC_PLAY_STORE_URL: process.env.NEXT_PUBLIC_PLAY_STORE_URL,
-    });
+function formatEnvError(error: z.ZodError): string {
+  const separator = '='.repeat(70);
+  const lines: string[] = [
+    '',
+    separator,
+    'ENVIRONMENT CONFIGURATION ERROR',
+    separator,
+    '',
+    'The following environment variables are missing or invalid:',
+    '',
+  ];
 
-    return parsed;
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const details = error.issues.reduce(
-        (acc, err) => {
-          acc[err.path.join('.')] = err.message;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
+  // Group errors by type: missing vs invalid
+  const missingVars: string[] = [];
+  const invalidVars: { name: string; message: string; received?: unknown }[] = [];
 
-      throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Environment configuration validation failed', {
-        service: ErrorService.Local,
-        operation: 'parseEnv',
-        context: { details },
+  for (const issue of error.issues) {
+    const varName = issue.path.join('.');
+    const hasReceived = 'received' in issue;
+    const received = hasReceived ? (issue as { received?: unknown }).received : undefined;
+
+    // Detect missing variables:
+    // - received is explicitly 'undefined' (string) - Zod type error for undefined value
+    // - message contains "received undefined" - Zod validation message pattern
+    const isMissing =
+      received === 'undefined' || (typeof issue.message === 'string' && issue.message.includes('received undefined'));
+
+    if (isMissing) {
+      missingVars.push(varName);
+    } else {
+      invalidVars.push({
+        name: varName,
+        message: issue.message,
+        received: hasReceived ? received : undefined,
       });
     }
+  }
 
-    throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Unexpected error during environment configuration', {
+  // Format missing variables
+  if (missingVars.length > 0) {
+    lines.push('MISSING VARIABLES (required but not set):');
+    for (const varName of missingVars) {
+      lines.push(`  - ${varName}`);
+    }
+    lines.push('');
+  }
+
+  // Format invalid variables
+  if (invalidVars.length > 0) {
+    lines.push('INVALID VARIABLES (set but with wrong format/value):');
+    for (const { name, message, received } of invalidVars) {
+      const receivedInfo = received !== undefined ? ` (received: ${JSON.stringify(received)})` : '';
+      lines.push(`  - ${name}: ${message}${receivedInfo}`);
+    }
+    lines.push('');
+  }
+
+  // Add helpful hints
+  lines.push('HOW TO FIX:');
+  lines.push('  1. Check your .env file or Docker build args');
+  lines.push('  2. Refer to .env.example for required variables and formats');
+  lines.push('  3. Ensure all required URLs are valid (include https://)');
+  lines.push('');
+  lines.push(separator);
+  lines.push('');
+
+  return lines.join('\n');
+}
+
+/**
+ * Parse and validate environment variables
+ * Throws an error if validation fails with clear DevOps-friendly messages
+ */
+function parseEnv(): z.infer<typeof envSchema> {
+  const result = envSchema.safeParse({
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_DB_NAME: process.env.NEXT_PUBLIC_DB_NAME,
+    NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
+    NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
+    NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
+    NEXT_PUBLIC_CDN_URL: process.env.NEXT_PUBLIC_CDN_URL,
+    NEXT_PUBLIC_SYNC_TTL: process.env.NEXT_PUBLIC_SYNC_TTL,
+    NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS,
+    NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
+    NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
+    NEXT_MAX_STREAM_TAGS: process.env.NEXT_MAX_STREAM_TAGS,
+    NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
+    NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
+    NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
+    NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
+    NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS: process.env.NEXT_PUBLIC_STREAM_CACHE_MAX_AGE_MS,
+    NEXT_PUBLIC_TTL_POST_MS: process.env.NEXT_PUBLIC_TTL_POST_MS,
+    NEXT_PUBLIC_TTL_USER_MS: process.env.NEXT_PUBLIC_TTL_USER_MS,
+    NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS: process.env.NEXT_PUBLIC_TTL_BATCH_INTERVAL_MS,
+    NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_POST_MAX_BATCH_SIZE,
+    NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE: process.env.NEXT_PUBLIC_TTL_USER_MAX_BATCH_SIZE,
+    NEXT_PUBLIC_TTL_RETRY_DELAY_MS: process.env.NEXT_PUBLIC_TTL_RETRY_DELAY_MS,
+    NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
+    NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
+    NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
+    HOMESERVER_ADMIN_URL: process.env.HOMESERVER_ADMIN_URL,
+    HOMESERVER_ADMIN_PASSWORD: process.env.HOMESERVER_ADMIN_PASSWORD,
+    NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
+    NEXT_PUBLIC_MODERATION_ID: process.env.NEXT_PUBLIC_MODERATION_ID,
+    NEXT_PUBLIC_MODERATED_TAGS: process.env.NEXT_PUBLIC_MODERATED_TAGS,
+    NEXT_PUBLIC_EXCHANGE_RATE_API: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API,
+    NEXT_PUBLIC_HOMEGATE_URL: process.env.NEXT_PUBLIC_HOMEGATE_URL,
+    VITEST: process.env.VITEST,
+    BASE_URL_SUPPORT: process.env.BASE_URL_SUPPORT,
+    SUPPORT_API_ACCESS_TOKEN: process.env.SUPPORT_API_ACCESS_TOKEN,
+    SUPPORT_ACCOUNT_ID: process.env.SUPPORT_ACCOUNT_ID,
+    SUPPORT_FEEDBACK_INBOX_ID: process.env.SUPPORT_FEEDBACK_INBOX_ID,
+    NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
+    NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
+    NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,
+    NEXT_PUBLIC_AUTHOR: process.env.NEXT_PUBLIC_AUTHOR,
+    NEXT_PUBLIC_KEYWORDS: process.env.NEXT_PUBLIC_KEYWORDS,
+    NEXT_PUBLIC_TYPE: process.env.NEXT_PUBLIC_TYPE,
+    NEXT_PUBLIC_CREATOR: process.env.NEXT_PUBLIC_CREATOR,
+    NEXT_PUBLIC_PUBKY_RING_URL: process.env.NEXT_PUBLIC_PUBKY_RING_URL,
+    NEXT_PUBLIC_PUBKY_CORE_URL: process.env.NEXT_PUBLIC_PUBKY_CORE_URL,
+    NEXT_PUBLIC_TWITTER_URL: process.env.NEXT_PUBLIC_TWITTER_URL,
+    NEXT_PUBLIC_TWITTER_GETPUBKY_URL: process.env.NEXT_PUBLIC_TWITTER_GETPUBKY_URL,
+    NEXT_PUBLIC_TELEGRAM_URL: process.env.NEXT_PUBLIC_TELEGRAM_URL,
+    NEXT_PUBLIC_GITHUB_URL: process.env.NEXT_PUBLIC_GITHUB_URL,
+    NEXT_PUBLIC_EMAIL: process.env.NEXT_PUBLIC_EMAIL,
+    NEXT_PUBLIC_APP_STORE_URL: process.env.NEXT_PUBLIC_APP_STORE_URL,
+    NEXT_PUBLIC_PLAY_STORE_URL: process.env.NEXT_PUBLIC_PLAY_STORE_URL,
+    NEXT_PUBLIC_SITE_NAME: process.env.NEXT_PUBLIC_SITE_NAME,
+  });
+
+  if (!result.success) {
+    const formattedError = formatEnvError(result.error);
+
+    // Print the formatted error to console for clear visibility during build/startup
+    console.error(formattedError);
+
+    // Also throw an error with structured details for programmatic handling
+    throw Err.validation(ValidationErrorCode.INVALID_INPUT, 'Environment configuration validation failed', {
       service: ErrorService.Local,
       operation: 'parseEnv',
-      cause: error,
+      context: {
+        issues: result.error.issues.map((issue) => ({
+          variable: issue.path.join('.'),
+          message: issue.message,
+          code: issue.code,
+        })),
+      },
     });
   }
+
+  return result.data;
 }
 
 function parsePkarrRelays(val: string): string[] {

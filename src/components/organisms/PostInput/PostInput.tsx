@@ -183,7 +183,7 @@ export function PostInput({
               onChange={handleChange}
               onFocus={handleExpand}
               onKeyDown={handleKeyDown}
-              onPaste={handlePaste}
+              onPaste={isEdit ? undefined : handlePaste}
               maxLength={POST_MAX_CHARACTER_LENGTH}
               rows={1}
               disabled={isSubmitting}
@@ -240,7 +240,6 @@ export function PostInput({
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
-          onFileClick={handleFileClick}
           onImageClick={handleFileClick}
           onArticleClick={handleArticleClick}
           isPostDisabled={!isValid()}

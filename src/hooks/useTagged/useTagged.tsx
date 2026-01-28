@@ -246,8 +246,8 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
     [userId, viewerId, allTags, tagOrder],
   );
 
-  // Pagination
-  const hasMore = enablePagination && allTags.length >= TAGS_PER_PAGE;
+  // Use actual total count from stats to determine if there are more tags
+  const hasMore = enablePagination && allTags.length >= TAGS_PER_PAGE && allTags.length < stats.uniqueTags;
 
   const loadMore = useCallback(async () => {
     if (!enablePagination || !userId || !hasMore) return;

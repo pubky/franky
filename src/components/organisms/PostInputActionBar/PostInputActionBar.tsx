@@ -8,7 +8,6 @@ import type { PostInputActionBarProps, ActionButtonConfig } from './PostInputAct
 export function PostInputActionBar({
   onEmojiClick,
   onImageClick,
-  onFileClick,
   onArticleClick,
   onPostClick,
   isPostDisabled = false,
@@ -49,12 +48,6 @@ export function PostInputActionBar({
                     ariaLabel: 'Add image',
                     disabled: !onImageClick || isSubmitting,
                   },
-                  {
-                    icon: Libs.Paperclip,
-                    onClick: onFileClick,
-                    ariaLabel: 'Add file',
-                    disabled: !onFileClick || isSubmitting,
-                  },
                 ]),
           ]),
     ];
@@ -85,7 +78,6 @@ export function PostInputActionBar({
     isEdit,
     onEmojiClick,
     onImageClick,
-    onFileClick,
     onArticleClick,
     onPostClick,
     isPostDisabled,
