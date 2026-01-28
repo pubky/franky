@@ -240,9 +240,10 @@ describe('Mute filtering with stream pagination', () => {
         fetch: mockFetch,
       });
 
-      // MAX_FETCH_ITERATIONS is 5, each gives 1 valid post
-      expect(result.posts).toHaveLength(5);
-      expect(mockFetch).toHaveBeenCalledTimes(5);
+      // With MAX_FETCH_ITERATIONS=20 and limit=10, we get 10 valid posts (1 per batch)
+      // before hitting the iteration cap
+      expect(result.posts).toHaveLength(10);
+      expect(mockFetch).toHaveBeenCalledTimes(10);
       expect(result.reachedEnd).toBe(false);
     });
 

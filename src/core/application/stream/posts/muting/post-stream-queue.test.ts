@@ -433,8 +433,8 @@ describe('PostStreamQueue', () => {
         fetch: mockFetch,
       });
 
-      // Should stop at MAX_FETCH_ITERATIONS (5)
-      expect(mockFetch).toHaveBeenCalledTimes(5);
+      // Should stop at MAX_FETCH_ITERATIONS (20)
+      expect(mockFetch).toHaveBeenCalledTimes(20);
       expect(result.posts).toHaveLength(0);
     });
 
