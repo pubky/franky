@@ -6,6 +6,7 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
+import * as Config from '@/config';
 
 /**
  * DialogWelcome
@@ -36,7 +37,10 @@ export function DialogWelcome() {
     return null;
   }
 
-  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10, includePrefix: true });
+  const displayPublicKey = Libs.formatPublicKey({
+    key: currentUserPubky,
+    length: Config.POST_HEADER_PUBLIC_KEY_LENGTH,
+  });
   const avatarImage = userDetails.image
     ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)
     : undefined;
@@ -75,7 +79,7 @@ export function DialogWelcome() {
                 </Atoms.Typography>
                 <Atoms.Button
                   variant="secondary"
-                  className="mt-2 h-8 w-fit gap-2 rounded-full"
+                  className="mt-2 h-8 w-fit gap-2 rounded-full uppercase"
                   onClick={handleCopyToClipboard}
                 >
                   <Libs.Key className="h-4 w-4" />

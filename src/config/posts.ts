@@ -1,5 +1,7 @@
 import { getValidMimeTypes } from 'pubky-app-specs';
 
+export const DEFAULT_DISPLAY_PUBLIC_KEY_LENGTH = 8;
+
 /**
  * Post-related configuration constants
  */
@@ -23,7 +25,7 @@ export const TAG_MAX_LENGTH = 20;
 export const FEEDBACK_MAX_CHARACTER_LENGTH = 1000;
 
 /** Public key length displayed in post headers */
-export const POST_HEADER_PUBLIC_KEY_LENGTH = 8;
+export const POST_HEADER_PUBLIC_KEY_LENGTH = DEFAULT_DISPLAY_PUBLIC_KEY_LENGTH;
 
 /**
  * Supported MIME types for file attachments.

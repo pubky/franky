@@ -5,6 +5,7 @@ import { extractTextFromChildren } from '@/molecules/PostText/PostText.utils';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
+import * as Config from '@/config';
 
 export const PostMentions = (props: RemarkAnchorProps) => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
@@ -17,8 +18,7 @@ export const PostMentions = (props: RemarkAnchorProps) => {
 
   const fallbackMention = Libs.formatPublicKey({
     key: Libs.withPubkyPrefix(userId),
-    length: 20,
-    includePrefix: true,
+    length: Config.POST_HEADER_PUBLIC_KEY_LENGTH,
   });
   const finalMention = profile?.name ? `@${profile.name}` : fallbackMention;
 
@@ -27,7 +27,7 @@ export const PostMentions = (props: RemarkAnchorProps) => {
       {...rest}
       href={href || ''}
       onClick={(e) => e.stopPropagation()}
-      className={Libs.cn(className, 'text-base')}
+      className={Libs.cn(className, 'text-base', !profile?.name && 'uppercase')}
     >
       {finalMention}
     </Atoms.Link>

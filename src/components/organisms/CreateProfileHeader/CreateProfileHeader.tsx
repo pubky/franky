@@ -5,13 +5,14 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import * as Config from '@/config';
 
 export const CreateProfileHeader = () => {
   const authStore = Core.useAuthStore();
   const pubky = authStore.selectCurrentUserPubky();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
-  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10, includePrefix: true });
+  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
 
   const handleCopyToClipboard = () => {
     copyToClipboard(Libs.withPubkyPrefix(pubky));
@@ -25,7 +26,11 @@ export const CreateProfileHeader = () => {
       <Atoms.Container className="m-0 w-auto flex-col gap-4 md:flex-row md:items-center">
         <Atoms.PageSubtitle>Add your name, bio, links, and avatar.</Atoms.PageSubtitle>
         <Atoms.Container className="mx-0 w-auto flex-row items-center gap-2">
-          <Atoms.Button variant="secondary" className="h-8 w-fit gap-2 rounded-full" onClick={handleCopyToClipboard}>
+          <Atoms.Button
+            variant="secondary"
+            className="h-8 w-fit gap-2 rounded-full uppercase"
+            onClick={handleCopyToClipboard}
+          >
             <Libs.Key className="h-4 w-4" />
             {displayPublicKey || '...'}
           </Atoms.Button>

@@ -1,5 +1,6 @@
 'use client';
 
+import * as Config from '@/config';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
@@ -8,7 +9,7 @@ import type { FollowerItemProps } from './FollowerItem.types';
 
 export function FollowerItem({ follower, isFollowing = false, onFollow, isCurrentUser = false }: FollowerItemProps) {
   const avatarUrl = follower.avatarUrl || follower.image || undefined;
-  const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: 10 });
+  const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
   const tags = follower.tags || [];
   const stats = follower.stats || { tags: 0, posts: 0 };
   // Use formatted public key as fallback when name is loading

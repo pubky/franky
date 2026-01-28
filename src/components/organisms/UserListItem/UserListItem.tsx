@@ -12,7 +12,12 @@ import type {
   UserStatsProps,
   VariantProps,
 } from './UserListItem.types';
-import { USER_LIST_TAG_MAX_LENGTH, USER_LIST_TAGS_MAX_TOTAL_CHARS, USER_LIST_TAGS_MAX_COUNT } from '@/config';
+import {
+  USER_LIST_TAG_MAX_LENGTH,
+  USER_LIST_TAGS_MAX_TOTAL_CHARS,
+  USER_LIST_TAGS_MAX_COUNT,
+  POST_HEADER_PUBLIC_KEY_LENGTH,
+} from '@/config';
 
 // =============================================================================
 // Internal Components
@@ -235,7 +240,7 @@ function CompactVariant({
           {showStats ? (
             <StatsSubtitle tags={stats.tags} posts={stats.posts} />
           ) : (
-            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground">
+            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground uppercase">
               {formattedPublicKey}
             </Atoms.Typography>
           )}
@@ -383,7 +388,7 @@ export function UserListItem({
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
   const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
-  const formattedPublicKey = Libs.formatPublicKey({ key: user.id, length: variant === 'compact' ? 10 : 12 });
+  const formattedPublicKey = Libs.formatPublicKey({ key: user.id, length: POST_HEADER_PUBLIC_KEY_LENGTH });
   const tags = user.tags || [];
   const stats = user.stats || user.counts || { tags: 0, posts: 0 };
   const isFollowing = isFollowingProp ?? user.isFollowing ?? false;

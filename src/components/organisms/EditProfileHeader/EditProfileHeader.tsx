@@ -4,12 +4,16 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import * as Config from '@/config';
 
 export const EditProfileHeader = () => {
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
-  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky ?? '', length: 10 });
+  const displayPublicKey = Libs.formatPublicKey({
+    key: currentUserPubky ?? '',
+    length: Config.POST_HEADER_PUBLIC_KEY_LENGTH,
+  });
 
   const handleCopyToClipboard = () => {
     if (currentUserPubky) {
@@ -25,7 +29,11 @@ export const EditProfileHeader = () => {
       <Atoms.Container className="m-0 w-auto flex-col gap-4 md:flex-row md:items-center">
         <Atoms.PageSubtitle>Update your name, bio, links, and avatar.</Atoms.PageSubtitle>
         <Atoms.Container className="mx-0 w-auto flex-row items-center gap-2">
-          <Atoms.Button variant="secondary" className="h-8 w-fit gap-2 rounded-full" onClick={handleCopyToClipboard}>
+          <Atoms.Button
+            variant="secondary"
+            className="h-8 w-fit gap-2 rounded-full uppercase"
+            onClick={handleCopyToClipboard}
+          >
             <Libs.Key className="h-4 w-4" />
             {displayPublicKey || '...'}
           </Atoms.Button>

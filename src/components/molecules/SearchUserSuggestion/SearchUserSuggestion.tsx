@@ -1,6 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 import type { SearchUserSuggestionProps } from './SearchUserSuggestion.types';
 
 export function SearchUserSuggestion({ user, onClick }: SearchUserSuggestionProps) {
@@ -8,7 +9,7 @@ export function SearchUserSuggestion({ user, onClick }: SearchUserSuggestionProp
     onClick?.(user.id);
   };
 
-  const formattedPubky = Libs.formatPublicKey({ key: user.id, length: 8 });
+  const formattedPubky = Libs.formatPublicKey({ key: user.id, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
 
   return (
     <Atoms.Container
