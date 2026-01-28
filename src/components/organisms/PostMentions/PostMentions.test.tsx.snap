@@ -14,11 +14,11 @@ exports[`PostMentions - Snapshots > matches snapshot for mention with username 1
 
 exports[`PostMentions - Snapshots > matches snapshot for mention without username (truncated key) 1`] = `
 <a
-  class="text-base"
+  class="text-base uppercase"
   data-testid="link"
   href="/profile/o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy"
 >
-  pubkyo1gg96ewuo...or5a91j7dy
+  o1gg...j7dy
 </a>
 `;
 
