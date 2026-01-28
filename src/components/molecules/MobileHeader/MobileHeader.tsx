@@ -28,7 +28,7 @@ export function MobileHeader({
   return (
     <Atoms.Container
       overrideDefaults
-      className="sticky top-0 z-(--z-mobile-menu) bg-background shadow-xs-dark lg:hidden"
+      className="sticky top-0 z-(--z-mobile-menu) bg-linear-to-b from-(--background) from-65% to-transparent lg:hidden"
     >
       <Atoms.Container overrideDefaults className="px-6 pt-6 pb-0">
         <Atoms.Container overrideDefaults className="flex items-center justify-between py-3">
