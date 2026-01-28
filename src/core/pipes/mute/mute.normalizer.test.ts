@@ -155,6 +155,22 @@ describe('MuteNormalizer', () => {
         expect(typeof result.mute.toJson).toBe('function');
         expect(result.mute.toJson()).toBeDefined();
       });
+
+      it('should handle mutee with "pubky" prefix by stripping it', () => {
+        const prefixedMutee = `pubky${TEST_PUBKY.USER_2}`;
+        const result = Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: prefixedMutee });
+
+        expect(result.mute).toBeDefined();
+        expect(result.meta.url).toContain(TEST_PUBKY.USER_2);
+      });
+
+      it('should handle mutee with "pk:" prefix by stripping it', () => {
+        const prefixedMutee = `pk:${TEST_PUBKY.USER_2}`;
+        const result = Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: prefixedMutee });
+
+        expect(result.mute).toBeDefined();
+        expect(result.meta.url).toContain(TEST_PUBKY.USER_2);
+      });
     });
 
     describe('validation with real library', () => {
