@@ -44,13 +44,14 @@ describe('MobileHeader', () => {
   it('renders with outer container classes', () => {
     const { container } = render(<MobileHeader />);
     const outerContainer = container.firstChild as HTMLElement;
-
     expect(outerContainer).toHaveClass(
       'sticky',
       'top-0',
       'z-(--z-mobile-menu)',
-      'bg-background',
-      'shadow-xs-dark',
+      'bg-linear-to-b',
+      'from-(--background)',
+      'from-65%',
+      'to-transparent',
       'lg:hidden',
     );
   });

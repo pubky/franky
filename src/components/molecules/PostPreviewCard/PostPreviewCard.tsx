@@ -50,14 +50,14 @@ export function PostPreviewCard({ postId, className }: PostPreviewCardProps) {
   return (
     <Atoms.Card
       ref={ttlRef}
-      className={Libs.cn('cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50', className)}
+      className={Libs.cn('min-w-0 cursor-pointer rounded-md py-0 transition-colors hover:bg-accent/50', className)}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       role="link"
       tabIndex={0}
       aria-label="View original post"
     >
-      <Atoms.CardContent className="flex flex-col gap-4 p-6">
+      <Atoms.CardContent className="flex min-w-0 flex-col gap-4 p-6">
         <Organisms.PostHeader postId={postId} showPopover={false} />
         <Organisms.PostContentBase postId={postId} />
       </Atoms.CardContent>

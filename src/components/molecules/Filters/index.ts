@@ -14,6 +14,7 @@ export * from './FilterContent';
 export * from './FilterLayout';
 export * from './FilterReach';
 export * from './FilterSort';
+export * from './FilterSortWhoToFollow';
 
 // Shared types
 export * from './Filters.types';

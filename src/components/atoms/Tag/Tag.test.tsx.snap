@@ -2,7 +2,7 @@
 
 exports[`Tag - Snapshots > matches snapshot for long tag name 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 85, 0, 0.3); border: 1px solid transparent;"
   title="very-long-tag-name-example"
@@ -24,7 +24,7 @@ exports[`Tag - Snapshots > matches snapshot for long tag name 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot when clicked 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 51, 0, 0.3); border: 1px solid rgba(255, 51, 0, 0.5);"
   title="been clicked"
@@ -40,7 +40,7 @@ exports[`Tag - Snapshots > matches snapshot when clicked 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot with all props combined 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 combined-tag"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 combined-tag"
   data-testid="combined-test"
   style="background-color: rgba(255, 0, 4, 0.3); border: 1px solid rgba(255, 0, 4, 0.5);"
   title="defi"
@@ -62,7 +62,7 @@ exports[`Tag - Snapshots > matches snapshot with all props combined 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot with count 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(171, 0, 255, 0.3); border: 1px solid transparent;"
   title="sixteen count"
@@ -84,7 +84,7 @@ exports[`Tag - Snapshots > matches snapshot with count 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 custom-tag"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200 custom-tag"
   data-testid="tag"
   style="background-color: rgba(28, 255, 0, 0.3); border: 1px solid transparent;"
   title="custom-class"
@@ -100,7 +100,7 @@ exports[`Tag - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 209, 0, 0.3); border: 1px solid transparent;"
   title="default props"
@@ -116,7 +116,7 @@ exports[`Tag - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot with large count 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(255, 0, 234, 0.3); border: 1px solid transparent;"
   title="large count"
@@ -138,7 +138,7 @@ exports[`Tag - Snapshots > matches snapshot with large count 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot with zero count 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(0, 255, 151, 0.3); border: 1px solid transparent;"
   title="zero count"
@@ -160,7 +160,7 @@ exports[`Tag - Snapshots > matches snapshot with zero count 1`] = `
 
 exports[`Tag - Snapshots > matches snapshot without clicked 1`] = `
 <div
-  class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+  class="flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
   data-testid="tag"
   style="background-color: rgba(0, 22, 255, 0.3); border: 1px solid transparent;"
   title="clicked false"

@@ -126,7 +126,7 @@ export function TagInput({
         ref={containerRef}
         overrideDefaults={true}
         className={Libs.cn(
-          'relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm',
+          'relative flex h-8 w-full items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm',
           onClick && 'cursor-pointer',
         )}
         onClick={onClick}

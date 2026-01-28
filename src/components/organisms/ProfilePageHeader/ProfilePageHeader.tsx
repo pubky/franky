@@ -38,7 +38,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     id: publicKey,
   });
 
-  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12, includePrefix: true });
+  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (
@@ -92,7 +92,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                 <Icons.Pencil className="size-4" />
                 Edit
               </Atoms.Button>
-              <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
+              <Atoms.Button className="uppercase" variant="secondary" size="sm" onClick={onCopyPublicKey}>
                 <Icons.KeyRound className="size-4" />
                 {formattedPublicKey}
               </Atoms.Button>
@@ -161,7 +161,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                   )}
                 </Atoms.Button>
               )}
-              <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
+              <Atoms.Button className="uppercase" variant="secondary" size="sm" onClick={onCopyPublicKey}>
                 <Icons.KeyRound className="size-4" />
                 {formattedPublicKey}
               </Atoms.Button>
