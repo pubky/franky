@@ -16,7 +16,7 @@ export default defineConfig({
     downloadsFolder: 'download',
     fixturesFolder: 'fixtures',
     defaultCommandTimeout: process.env['CI'] ? 60_000 : 15_000,
-    video: true,
+    video: true, // Firefox videos are not working, see https://github.com/cypress-io/cypress/issues/18415
     viewportWidth: 1920,
     viewportHeight: 1080,
     // Safari support
