@@ -305,6 +305,49 @@ describe('useProfileHeader', () => {
     });
   });
 
+  describe('User not found state', () => {
+    it('userNotFound is true when loading is complete but profile is null', () => {
+      mockProfileLoading = false;
+      mockStatsLoading = false;
+      mockProfile = null;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.userNotFound).toBe(true);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    it('userNotFound is false when loading is in progress', () => {
+      mockProfileLoading = true;
+      mockStatsLoading = false;
+      mockProfile = null;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.userNotFound).toBe(false);
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('userNotFound is false when profile exists', () => {
+      mockProfileLoading = false;
+      mockStatsLoading = false;
+      mockProfile = {
+        name: 'Test User',
+        bio: 'Test bio',
+        publicKey: 'pubkytest-user-id',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: undefined,
+        link: 'https://example.com/profile/test-user-id',
+      };
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.userNotFound).toBe(false);
+      expect(result.current.isLoading).toBe(false);
+    });
+  });
+
   describe('Edge cases', () => {
     it('handles null profile gracefully with default values', () => {
       mockProfile = null;

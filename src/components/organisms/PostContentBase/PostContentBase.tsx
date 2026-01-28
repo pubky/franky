@@ -37,7 +37,7 @@ export function PostContentBase({ postId, className }: PostContentBaseProps) {
     );
 
   return (
-    <Atoms.Container className={Libs.cn('gap-3', className)}>
+    <Atoms.Container className={Libs.cn('min-w-0 gap-3', className)}>
       {/* Post text */}
       {hasContent && <Molecules.PostText content={postDetails.content} />}
 
