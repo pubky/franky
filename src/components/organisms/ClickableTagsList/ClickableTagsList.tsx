@@ -43,18 +43,15 @@ export function ClickableTagsList({
   showInput = false,
   showAddButton = false,
   addMode = false,
-  showEmojiPicker = false,
   showTagClose = false,
   className,
   onTagClick,
   onTagClose,
   onTagAdd,
   onAddButtonClick,
-  onEmojiClick,
 }: ClickableTagsListProps) {
   // State for add mode input visibility
   const [isAdding, setIsAdding] = React.useState(addMode ? false : showInput);
-  const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Auth requirement for tag actions
   const { isAuthenticated, requireAuth } = Hooks.useRequireAuth();
@@ -68,54 +65,46 @@ export function ClickableTagsList({
     handleTagAdd,
   } = Hooks.useEntityTags(taggedId, taggedKind, { providedTags });
 
-  // Use tag input hook for input state management
-  // Only pass viewer's own tags as existingTags for duplicate checking
+  // Get viewer's own tags for duplicate checking
   // This allows adding a tag that others have used but the viewer hasn't
-  const tagInput = Hooks.useTagInput({
-    onTagAdd: async (label) => {
-      if (onTagAdd) {
-        onTagAdd(label);
-      } else {
-        await handleTagAdd(label);
-      }
-      if (!addMode) {
-        setIsAdding(false);
-      }
-    },
-    existingTags: fetchedTags.filter((t) => isViewerTagger(t)).map((t) => t.label),
-  });
+  const viewerTags = fetchedTags.filter((t) => isViewerTagger(t));
 
-  // Refocus input after clearing value in addMode
-  React.useEffect(() => {
-    if (addMode && isAdding && tagInput.inputValue === '' && inputRef.current) {
-      inputRef.current.focus();
+  // Handle tag add from input
+  const handleTagAddFromInput = (label: string) => {
+    if (onTagAdd) {
+      onTagAdd(label);
+    } else {
+      void handleTagAdd(label);
     }
-  }, [addMode, isAdding, tagInput.inputValue]);
+    if (!addMode) {
+      setIsAdding(false);
+    }
+  };
 
   // Handle tag click with auth requirement (toggle or custom handler)
-  const handleTagClick = React.useCallback(
-    (tag: (typeof fetchedTags)[number], index: number, e: React.MouseEvent) => {
-      requireAuth(() => {
-        if (onTagClick) {
-          onTagClick(tag, index, e);
-        } else {
-          void handleTagToggle(tag);
-        }
-      });
-    },
-    [onTagClick, handleTagToggle, requireAuth],
-  );
-
-  // Apply smart limiting based on character budget (memoized for performance)
-  const visibleTags = React.useMemo(() => {
-    const tagLabels = fetchedTags.map((tag) => tag.label);
-    const displayLabels = Libs.getDisplayTags(tagLabels, {
-      maxTagLength,
-      maxTotalChars,
-      maxCount: maxTags,
+  const handleTagClick = (tag: (typeof fetchedTags)[number], index: number, e: React.MouseEvent) => {
+    requireAuth(() => {
+      if (onTagClick) {
+        onTagClick(tag, index, e);
+      } else {
+        void handleTagToggle(tag);
+      }
     });
-    return fetchedTags.filter((tag) => displayLabels.includes(tag.label));
-  }, [fetchedTags, maxTagLength, maxTotalChars, maxTags]);
+  };
+
+  // Handle input blur - close input in addMode when empty
+  const handleInputBlur = () => {
+    if (addMode) setIsAdding(false);
+  };
+
+  // Apply smart limiting based on character budget
+  const tagLabels = fetchedTags.map((tag) => tag.label);
+  const displayLabels = Libs.getDisplayTags(tagLabels, {
+    maxTagLength,
+    maxTotalChars,
+    maxCount: maxTags,
+  });
+  const visibleTags = fetchedTags.filter((tag) => displayLabels.includes(tag.label));
 
   // Check if we should render anything
   const hasVisibleTags = visibleTags.length > 0;
@@ -158,20 +147,15 @@ export function ClickableTagsList({
 
       {/* Add tag input - visible to all, clicks open dialog for unauthenticated */}
       {hasInput && (
-        <Molecules.PostTagInput
-          ref={inputRef}
-          value={tagInput.inputValue}
-          onChange={isAuthenticated ? tagInput.setInputValue : undefined}
-          onSubmit={isAuthenticated ? tagInput.handleTagSubmit : undefined}
-          onBlur={() => {
-            if (addMode && !tagInput.inputValue) setIsAdding(false);
-          }}
-          showEmojiPicker={showEmojiPicker}
-          onEmojiClick={isAuthenticated ? onEmojiClick : () => setShowSignInDialog(true)}
+        <Molecules.TagInput
+          onTagAdd={handleTagAddFromInput}
+          existingTags={fetchedTags}
+          viewerTags={viewerTags}
           className="w-32 shrink-0"
           autoFocus={isAuthenticated && isAdding}
           disabled={!isAuthenticated}
           onClick={handleInputClick}
+          onBlur={handleInputBlur}
         />
       )}
 

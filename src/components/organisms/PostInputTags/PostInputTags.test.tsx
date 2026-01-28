@@ -63,7 +63,6 @@ vi.mock('@/molecules', () => ({
       existingTags?: Array<{ label: string }>;
       showCloseButton?: boolean;
       onClose?: () => void;
-      hideSuggestions?: boolean;
       disabled?: boolean;
       maxTags?: number;
       currentTagsCount?: number;

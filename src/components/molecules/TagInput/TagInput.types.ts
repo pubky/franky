@@ -3,14 +3,14 @@ export interface TagInputProps {
   onTagAdd: (tag: string) => void | Promise<{ success: boolean; error?: string }>;
   /** Placeholder text for the input */
   placeholder?: string;
-  /** Existing tags for autocomplete suggestions */
+  /** All tags for autocomplete suggestions */
   existingTags?: Array<{ label: string }>;
+  /** Viewer's own tags for duplicate checking (defaults to existingTags) */
+  viewerTags?: Array<{ label: string }>;
   /** Whether to show the close button (X) */
   showCloseButton?: boolean;
   /** Callback when close button is clicked */
   onClose?: () => void;
-  /** Hide autocomplete suggestions */
-  hideSuggestions?: boolean;
   /** Whether the input is disabled */
   disabled?: boolean;
   /** Maximum number of tags (for limit checking) */
@@ -23,4 +23,8 @@ export interface TagInputProps {
   onBlur?: () => void;
   /** Callback when the input container is clicked (useful for auth prompts) */
   onClick?: (e: React.MouseEvent) => void;
+  /** Whether to auto-focus the input on mount */
+  autoFocus?: boolean;
+  /** Additional className for the container (useful for width override) */
+  className?: string;
 }

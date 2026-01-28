@@ -26,7 +26,7 @@ export function EmojiPickerDialog({
   return (
     <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
       <Atoms.DialogContent
-        className="max-w-sm overflow-hidden p-0 sm:p-0"
+        className="max-w-sm overflow-hidden p-0 outline-none sm:p-0"
         showCloseButton={false}
         hiddenTitle="Emoji Picker"
       >
