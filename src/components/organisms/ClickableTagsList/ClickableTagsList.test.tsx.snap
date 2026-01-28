@@ -110,8 +110,7 @@ exports[`ClickableTagsList > Snapshots > matches snapshot with input visible 1`]
       web3
     </button>
     <input
-      data-testid="post-tag-input"
-      value=""
+      data-testid="tag-input"
     />
   </div>
 </div>

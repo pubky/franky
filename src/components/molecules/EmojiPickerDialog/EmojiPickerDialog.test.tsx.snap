@@ -13,7 +13,7 @@ exports[`EmojiPickerDialog - Snapshots > matches snapshot when open 1`] = `
   data-testid="dialog"
 >
   <div
-    class="max-w-sm overflow-hidden p-0 sm:p-0"
+    class="max-w-sm overflow-hidden p-0 outline-none sm:p-0"
     data-testid="dialog-content"
   >
     <p
@@ -60,7 +60,7 @@ exports[`EmojiPickerDialog - Snapshots > matches snapshot with currentInput 1`] 
   data-testid="dialog"
 >
   <div
-    class="max-w-sm overflow-hidden p-0 sm:p-0"
+    class="max-w-sm overflow-hidden p-0 outline-none sm:p-0"
     data-testid="dialog-content"
   >
     <p
@@ -107,7 +107,7 @@ exports[`EmojiPickerDialog - Snapshots > matches snapshot with maxLength 1`] = `
   data-testid="dialog"
 >
   <div
-    class="max-w-sm overflow-hidden p-0 sm:p-0"
+    class="max-w-sm overflow-hidden p-0 outline-none sm:p-0"
     data-testid="dialog-content"
   >
     <p

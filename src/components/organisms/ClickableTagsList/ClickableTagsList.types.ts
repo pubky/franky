@@ -23,8 +23,6 @@ export interface ClickableTagsListProps {
   showAddButton?: boolean;
   /** Start in add button mode and open input on click */
   addMode?: boolean;
-  /** Show emoji picker in input */
-  showEmojiPicker?: boolean;
   /** Show close button on tags */
   showTagClose?: boolean;
   /** Custom className */
@@ -37,6 +35,4 @@ export interface ClickableTagsListProps {
   onTagAdd?: (label: string) => void;
   /** Callback when add button is clicked */
   onAddButtonClick?: () => void;
-  /** Callback when emoji picker is clicked */
-  onEmojiClick?: () => void;
 }
