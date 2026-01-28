@@ -7,6 +7,16 @@ vi.mock('../useEmojiInsert', () => ({
   useEmojiInsert: vi.fn(() => vi.fn()),
 }));
 
+// Mock useListboxNavigation
+vi.mock('../useListboxNavigation', () => ({
+  useListboxNavigation: vi.fn(() => ({
+    selectedIndex: null,
+    setSelectedIndex: vi.fn(),
+    handleKeyDown: vi.fn(() => false),
+    resetSelection: vi.fn(),
+  })),
+}));
+
 describe('useTagInput', () => {
   const mockOnTagAdd = vi.fn();
 
@@ -23,12 +33,11 @@ describe('useTagInput', () => {
 
     expect(result.current.inputValue).toBe('');
     expect(result.current.showEmojiPicker).toBe(false);
-    expect(result.current.isAtLimit).toBe(false);
-    expect(result.current.limitReached).toBe(false);
-    expect(result.current.isDisabled).toBe(false);
+    expect(result.current.showSuggestions).toBe(false);
+    expect(result.current.suggestions).toEqual([]);
   });
 
-  it('updates input value on change', () => {
+  it('updates input value via handleInputChange', () => {
     const { result } = renderHook(() =>
       useTagInput({
         onTagAdd: mockOnTagAdd,
@@ -60,22 +69,6 @@ describe('useTagInput', () => {
     expect(result.current.inputValue).toBe('new-tag');
   });
 
-  it('converts mixed case input to lowercase', () => {
-    const { result } = renderHook(() =>
-      useTagInput({
-        onTagAdd: mockOnTagAdd,
-      }),
-    );
-
-    act(() => {
-      result.current.handleInputChange({
-        target: { value: 'New-Tag' },
-      } as React.ChangeEvent<HTMLInputElement>);
-    });
-
-    expect(result.current.inputValue).toBe('new-tag');
-  });
-
   it('calls onTagAdd and clears input on submit', () => {
     const { result } = renderHook(() =>
       useTagInput({
@@ -84,7 +77,9 @@ describe('useTagInput', () => {
     );
 
     act(() => {
-      result.current.setInputValue('new-tag');
+      result.current.handleInputChange({
+        target: { value: 'new-tag' },
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     act(() => {
@@ -104,7 +99,9 @@ describe('useTagInput', () => {
     );
 
     act(() => {
-      result.current.setInputValue('EXISTING-TAG');
+      result.current.handleInputChange({
+        target: { value: 'EXISTING-TAG' },
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
     act(() => {
@@ -123,91 +120,16 @@ describe('useTagInput', () => {
     );
 
     act(() => {
-      result.current.setInputValue('   ');
-    });
-
-    act(() => {
-      result.current.handleTagSubmit();
-    });
-
-    expect(mockOnTagAdd).not.toHaveBeenCalled();
-  });
-
-  it('respects maxTags limit', () => {
-    const { result } = renderHook(() =>
-      useTagInput({
-        onTagAdd: mockOnTagAdd,
-        existingTags: ['tag1', 'tag2', 'tag3'],
-        maxTags: 3,
-      }),
-    );
-
-    expect(result.current.isAtLimit).toBe(true);
-    expect(result.current.isDisabled).toBe(true);
-
-    act(() => {
-      result.current.setInputValue('new-tag');
-    });
-
-    act(() => {
-      result.current.handleTagSubmit();
-    });
-
-    expect(mockOnTagAdd).not.toHaveBeenCalled();
-    expect(result.current.limitReached).toBe(true);
-  });
-
-  it('sets limitReached when trying to add beyond limit', () => {
-    const { result } = renderHook(() =>
-      useTagInput({
-        onTagAdd: mockOnTagAdd,
-        existingTags: ['tag1', 'tag2'],
-        maxTags: 2,
-      }),
-    );
-
-    act(() => {
-      result.current.handleTagSubmit();
-    });
-
-    expect(result.current.limitReached).toBe(true);
-  });
-
-  it('clears limitReached when typing', () => {
-    const { result } = renderHook(() =>
-      useTagInput({
-        onTagAdd: mockOnTagAdd,
-        existingTags: ['tag1', 'tag2'],
-        maxTags: 2,
-      }),
-    );
-
-    // Trigger limit reached
-    act(() => {
-      result.current.handleTagSubmit();
-    });
-
-    expect(result.current.limitReached).toBe(true);
-
-    // Type something
-    act(() => {
       result.current.handleInputChange({
-        target: { value: 'x' },
+        target: { value: '   ' },
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
-    expect(result.current.limitReached).toBe(false);
-  });
+    act(() => {
+      result.current.handleTagSubmit();
+    });
 
-  it('respects disabled prop', () => {
-    const { result } = renderHook(() =>
-      useTagInput({
-        onTagAdd: mockOnTagAdd,
-        disabled: true,
-      }),
-    );
-
-    expect(result.current.isDisabled).toBe(true);
+    expect(mockOnTagAdd).not.toHaveBeenCalled();
   });
 
   it('toggles emoji picker visibility', () => {
@@ -232,42 +154,22 @@ describe('useTagInput', () => {
     expect(result.current.showEmojiPicker).toBe(false);
   });
 
-  it('clears input on clearInput call', () => {
+  it('filters suggestions based on input', () => {
     const { result } = renderHook(() =>
       useTagInput({
         onTagAdd: mockOnTagAdd,
+        allTags: [{ label: 'hello' }, { label: 'help' }, { label: 'world' }],
       }),
     );
 
     act(() => {
-      result.current.setInputValue('some-value');
+      result.current.handleInputChange({
+        target: { value: 'hel' },
+      } as React.ChangeEvent<HTMLInputElement>);
     });
 
-    expect(result.current.inputValue).toBe('some-value');
-
-    act(() => {
-      result.current.clearInput();
-    });
-
-    expect(result.current.inputValue).toBe('');
-  });
-
-  it('trims tag before adding', () => {
-    const { result } = renderHook(() =>
-      useTagInput({
-        onTagAdd: mockOnTagAdd,
-      }),
-    );
-
-    act(() => {
-      result.current.setInputValue('  spaced-tag  ');
-    });
-
-    act(() => {
-      result.current.handleTagSubmit();
-    });
-
-    expect(mockOnTagAdd).toHaveBeenCalledWith('spaced-tag');
+    expect(result.current.suggestions).toEqual([{ label: 'hello' }, { label: 'help' }]);
+    expect(result.current.showSuggestions).toBe(true);
   });
 
   it('provides inputRef for external use', () => {

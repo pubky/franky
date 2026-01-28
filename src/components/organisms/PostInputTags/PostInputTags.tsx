@@ -38,7 +38,6 @@ export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, dis
               existingTags={tags.map((tag) => ({ label: tag }))}
               showCloseButton={!disabled}
               onClose={handleCloseInput}
-              hideSuggestions
               disabled={disabled}
               maxTags={maxTags}
               currentTagsCount={tags.length}

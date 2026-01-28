@@ -55,12 +55,16 @@ export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
     );
   }
 
+  // Filter to get only viewer's tags for duplicate checking
+  const viewerTags = tags.filter((t) => t.relationship);
+
   return (
     <Atoms.Container data-cy="post-tags-panel" className={Libs.cn('gap-2', className)}>
       {/* TagInput visible for all users - clicking opens sign-in for unauthenticated */}
       <Molecules.TagInput
         onTagAdd={handleTagAddWithAuth}
         existingTags={tags}
+        viewerTags={viewerTags}
         placeholder="add tag"
         disabled={!isAuthenticated}
         onClick={handleInputClick}

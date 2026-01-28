@@ -1,81 +1,79 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { useEmojiInsert } from '../useEmojiInsert';
+import { useListboxNavigation } from '../useListboxNavigation';
+import { filterSuggestions } from './useTagInput.utils';
 import * as Libs from '@/libs';
 import { TAG_MAX_LENGTH } from '@/config';
 import type { UseTagInputOptions, UseTagInputReturn } from './useTagInput.types';
 
 /**
- * Hook for managing tag input state and logic.
- * Consolidates shared logic between TagInput and DialogReplyTags components.
+ * Hook for managing tag input state, suggestions, and keyboard navigation.
  *
- * @param options - Configuration options
- * @returns Tag input state and handlers
+ * Features:
+ * - Input value management with sanitization
+ * - Emoji picker integration
+ * - Suggestions filtering and keyboard navigation (↑/↓/Enter/Escape)
+ * - Duplicate tag prevention
+ * - Paste handling with character limit
  *
  * @example
  * ```tsx
  * const {
  *   inputValue,
  *   inputRef,
- *   handleInputChange,
- *   handleTagSubmit,
- *   handleEmojiSelect,
  *   showEmojiPicker,
  *   setShowEmojiPicker,
+ *   suggestions,
+ *   handleInputChange,
+ *   handleKeyDown,
+ *   handleTagSubmit,
+ *   handleEmojiSelect,
+ *   handlePaste,
  * } = useTagInput({
- *   onTagAdd: (tag) => setTags([...tags, tag]),
- *   existingTags: tags,
- *   maxTags: 5,
+ *   onTagAdd: (tag) => addTag(tag),
+ *   existingTags: ['tag1', 'tag2'],
+ *   allTags: [{ label: 'tag1' }, { label: 'tag2' }, { label: 'tag3' }],
  * });
  * ```
  */
-export function useTagInput({
-  onTagAdd,
-  existingTags = [],
-  maxTags,
-  disabled = false,
-}: UseTagInputOptions): UseTagInputReturn {
+export function useTagInput({ onTagAdd, existingTags = [], allTags = [] }: UseTagInputOptions): UseTagInputReturn {
   const [inputValue, setInputValue] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [limitReached, setLimitReached] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isAtLimit = maxTags !== undefined && existingTags.length >= maxTags;
-  const isDisabled = disabled || isAtLimit;
+  const filteredSuggestions = filterSuggestions(allTags, inputValue);
 
-  const clearInput = useCallback(() => {
-    setInputValue('');
-    setLimitReached(false);
-  }, []);
-
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      // Sanitize input: remove banned characters (colons, commas, spaces)
-      const sanitized = Libs.sanitizeTagInput(e.target.value);
-      const value = sanitized.toLowerCase();
-
-      // Check character count using grapheme-aware counting
-      const charCount = Libs.getCharacterCount(value);
-      if (charCount <= TAG_MAX_LENGTH) {
-        setInputValue(value);
-      }
-
-      // Clear limit reached message when user starts typing
-      if (limitReached) {
-        setLimitReached(false);
-      }
+  // Keyboard navigation for suggestions
+  const {
+    selectedIndex: selectedSuggestionIndex,
+    setSelectedIndex: setSelectedSuggestionIndex,
+    handleKeyDown: handleListboxKeyDown,
+    resetSelection,
+  } = useListboxNavigation({
+    items: filteredSuggestions,
+    isOpen: showSuggestions && filteredSuggestions.length > 0,
+    onSelect: (item) => {
+      setInputValue(item.label.toLowerCase());
+      setShowSuggestions(false);
+      resetSelection();
+      inputRef.current?.focus();
     },
-    [limitReached],
-  );
+    onClose: () => {
+      setShowSuggestions(false);
+      resetSelection();
+    },
+  });
 
-  const handleTagSubmit = useCallback(() => {
-    // Check limit first
-    if (isAtLimit) {
-      setLimitReached(true);
-      return;
-    }
+  const clearInput = () => {
+    setInputValue('');
+    setShowSuggestions(false);
+    resetSelection();
+  };
 
+  const handleTagSubmit = () => {
     const trimmedTag = inputValue.trim();
     if (!trimmedTag) return;
 
@@ -84,60 +82,69 @@ export function useTagInput({
     const isDuplicate = existingTags.some((tag) => tag.toLowerCase() === normalizedTag);
 
     if (isDuplicate) {
-      // Clear input on duplicate
       clearInput();
       return;
     }
 
-    // Add tag and clear input
-    onTagAdd(trimmedTag);
+    // Handle both sync and async onTagAdd
+    Promise.resolve(onTagAdd(trimmedTag)).catch((error: unknown) => {
+      Libs.Logger.error('Failed to add tag:', error);
+    });
     clearInput();
-  }, [inputValue, existingTags, isAtLimit, onTagAdd, clearInput]);
+  };
 
-  // Handle paste events: sanitize and validate pasted content
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitized = Libs.sanitizeTagInput(e.target.value);
+    const value = sanitized.toLowerCase();
+    setInputValue(value);
+    setShowSuggestions(value.trim().length > 0);
+    resetSelection();
+  };
+
+  const handleInputFocus = () => {
+    if (inputValue.trim()) {
+      setShowSuggestions(true);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // First, let listbox navigation handle it
+    const handled = handleListboxKeyDown(e);
+    if (handled) return;
+
+    // Default Enter behavior - submit tag
+    if (e.key === 'Enter' && inputValue.trim()) {
       e.preventDefault();
-      const pasted = e.clipboardData.getData('text');
-      const sanitized = Libs.sanitizeTagInput(pasted).toLowerCase();
+      handleTagSubmit();
+    }
+  };
 
-      // Combine with existing value and check total length
-      const newValue = inputValue + sanitized;
-      const charCount = Libs.getCharacterCount(newValue);
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text');
+    const sanitized = Libs.sanitizeTagInput(pasted).toLowerCase();
 
-      if (charCount <= TAG_MAX_LENGTH) {
-        setInputValue(newValue);
-      } else {
-        // Truncate to max length using grapheme-aware slicing
-        const chars = Array.from(newValue);
-        setInputValue(chars.slice(0, TAG_MAX_LENGTH).join(''));
-      }
+    const newValue = inputValue + sanitized;
+    const charCount = Libs.getCharacterCount(newValue);
 
-      if (limitReached) {
-        setLimitReached(false);
-      }
-    },
-    [inputValue, limitReached],
-  );
+    if (charCount <= TAG_MAX_LENGTH) {
+      setInputValue(newValue);
+    } else {
+      const chars = Array.from(newValue);
+      setInputValue(chars.slice(0, TAG_MAX_LENGTH).join(''));
+    }
+    setShowSuggestions(true);
+  };
 
-  // Wrapper to handle emoji insertion with limit check
-  const handleEmojiChange = useCallback(
-    (newValue: string) => {
-      // Sanitize and validate emoji insertion
-      const sanitized = Libs.sanitizeTagInput(newValue);
-      const value = sanitized.toLowerCase();
-      const charCount = Libs.getCharacterCount(value);
+  const handleEmojiChange = (newValue: string) => {
+    const sanitized = Libs.sanitizeTagInput(newValue);
+    const value = sanitized.toLowerCase();
+    const charCount = Libs.getCharacterCount(value);
 
-      if (charCount <= TAG_MAX_LENGTH) {
-        setInputValue(value);
-      }
-
-      if (limitReached) {
-        setLimitReached(false);
-      }
-    },
-    [limitReached],
-  );
+    if (charCount <= TAG_MAX_LENGTH) {
+      setInputValue(value);
+    }
+  };
 
   const handleEmojiSelect = useEmojiInsert({
     inputRef,
@@ -145,19 +152,31 @@ export function useTagInput({
     onChange: handleEmojiChange,
   });
 
+  // Set input value with sanitization (for programmatic updates like suggestion selection)
+  const setSanitizedInputValue = (value: string) => {
+    const sanitized = Libs.sanitizeTagInput(value).toLowerCase();
+    setInputValue(sanitized);
+    resetSelection();
+  };
+
   return {
     inputValue,
-    setInputValue,
+    setInputValue: setSanitizedInputValue,
+    inputRef,
     showEmojiPicker,
     setShowEmojiPicker,
-    isAtLimit,
-    limitReached,
-    inputRef,
+    // Suggestions
+    showSuggestions,
+    setShowSuggestions,
+    suggestions: filteredSuggestions,
+    selectedSuggestionIndex,
+    setSelectedSuggestionIndex,
+    // Handlers
     handleInputChange,
+    handleInputFocus,
+    handleKeyDown,
     handleTagSubmit,
     handleEmojiSelect,
     handlePaste,
-    clearInput,
-    isDisabled,
   };
 }
