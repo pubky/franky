@@ -116,13 +116,13 @@ vi.mock('../PostInputTags', () => ({
 }));
 
 vi.mock('../PostInputActionBar', () => ({
-  PostInputActionBar: vi.fn(({ onPostClick, onEmojiClick, onFileClick, isPostDisabled, isSubmitting }) => (
+  PostInputActionBar: vi.fn(({ onPostClick, onEmojiClick, onImageClick, isPostDisabled, isSubmitting }) => (
     <div data-testid="post-input-action-bar">
       <button data-testid="emoji-button" onClick={onEmojiClick} aria-label="Add emoji">
         Emoji
       </button>
-      <button data-testid="file-button" onClick={onFileClick} aria-label="Add file">
-        File
+      <button data-testid="image-button" onClick={onImageClick} aria-label="Add image">
+        Image
       </button>
       <button
         data-testid="post-button"

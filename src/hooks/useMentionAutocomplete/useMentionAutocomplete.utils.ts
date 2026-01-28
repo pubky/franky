@@ -3,27 +3,30 @@ import {
   MIN_USER_ID_SEARCH_LENGTH,
   COMPLETE_PUBKY_LENGTH,
   AT_PATTERN_END,
-  PK_PATTERN_END,
-  PK_PREFIX,
+  PUBKY_PATTERN_END,
+  LEGACY_PK_PREFIX,
+  PUBKY_PREFIX,
 } from './useMentionAutocomplete.constants';
 
 export interface ExtractedMentionQuery {
   /** The last valid @username query (without @ prefix), or null if none */
   atQuery: string | null;
-  /** The last valid pk:id query (without pk: prefix), or null if none */
+  /** The last valid pubky ID query (without prefix), or null if none */
   pkQuery: string | null;
 }
 
 /**
  * Extract the last mention query from content
  *
- * Finds @username or pk:id pattern at the end of content and returns
+ * Finds @username or pubky ID pattern at the end of content and returns
  * the query if it should trigger a search.
  *
  * Filtering rules (matching pubky-app):
  * - @username: requires at least MIN_USERNAME_SEARCH_LENGTH (2) chars after @
- * - pk:id: requires at least MIN_USER_ID_SEARCH_LENGTH (3) chars after pk:
- * - pk:id: skips complete pubkeys (52+ alphanumeric chars)
+ * - pubky/pk: ID: requires at least MIN_USER_ID_SEARCH_LENGTH (3) chars after prefix
+ * - pubky/pk: ID: skips complete pubkeys (52+ alphanumeric chars)
+ *
+ * Supports both new format (pubky) and legacy format (pk:) for backwards compatibility
  */
 export function extractMentionQuery(content: string): ExtractedMentionQuery {
   let atQuery: string | null = null;
@@ -38,10 +41,17 @@ export function extractMentionQuery(content: string): ExtractedMentionQuery {
     }
   }
 
-  // Check for pk:id at end of content
-  const pkMatch = content.match(PK_PATTERN_END);
-  if (pkMatch) {
-    const userId = pkMatch[0].slice(PK_PREFIX.length); // Remove pk: prefix
+  // Check for pubky ID at end of content (supports both pk: and pubky patterns)
+  const pubkyMatch = content.match(PUBKY_PATTERN_END);
+  if (pubkyMatch) {
+    const matchedText = pubkyMatch[0];
+    // Determine which prefix was matched and extract the ID
+    let userId: string;
+    if (matchedText.startsWith(LEGACY_PK_PREFIX)) {
+      userId = matchedText.slice(LEGACY_PK_PREFIX.length);
+    } else {
+      userId = matchedText.slice(PUBKY_PREFIX.length);
+    }
     const isCompletePubkey = userId.length >= COMPLETE_PUBKY_LENGTH && /^[a-z0-9]+$/.test(userId);
     if (!isCompletePubkey && userId.length >= MIN_USER_ID_SEARCH_LENGTH) {
       pkQuery = userId;
@@ -54,19 +64,19 @@ export function extractMentionQuery(content: string): ExtractedMentionQuery {
 /**
  * Replace mention pattern in content with user ID
  *
- * Finds the @username or pk:id pattern at the end of content
- * and replaces it with pk:{userId}.
+ * Finds the @username or pubky ID pattern at the end of content
+ * and replaces it with pubky{userId} (new format, no colon).
  */
 export function getContentWithMention(content: string, userId: string): string {
-  // Check if there's a pk: pattern at the end of the text
-  if (PK_PATTERN_END.test(content)) {
-    return content.replace(PK_PATTERN_END, `${PK_PREFIX}${userId} `);
+  // Check if there's a pubky ID pattern at the end of the text (pk: or pubky)
+  if (PUBKY_PATTERN_END.test(content)) {
+    return content.replace(PUBKY_PATTERN_END, `${PUBKY_PREFIX}${userId} `);
   }
   // Check if there's an @ pattern at the end of the text
   if (AT_PATTERN_END.test(content)) {
-    return content.replace(AT_PATTERN_END, `${PK_PREFIX}${userId} `);
+    return content.replace(AT_PATTERN_END, `${PUBKY_PREFIX}${userId} `);
   }
   // Fallback: just append (with space before if content is not empty)
   const space = content.length > 0 ? ' ' : '';
-  return content + `${space}${PK_PREFIX}${userId} `;
+  return content + `${space}${PUBKY_PREFIX}${userId} `;
 }
