@@ -115,7 +115,7 @@ export function CopyrightForm() {
                 placeholder="Describe your original content"
                 disabled={isSubmitting}
                 className="min-w-0"
-                textareaClassName="overflow-y-auto overflow-x-hidden break-words"
+                textareaClassName="overflow-y-auto overflow-x-hidden"
               />
             </Atoms.Container>
 
