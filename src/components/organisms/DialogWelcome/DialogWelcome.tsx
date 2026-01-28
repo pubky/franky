@@ -6,7 +6,6 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
-import * as Config from '@/config';
 
 /**
  * DialogWelcome
@@ -39,7 +38,6 @@ export function DialogWelcome() {
 
   const displayPublicKey = Libs.formatPublicKey({
     key: currentUserPubky,
-    length: Config.POST_HEADER_PUBLIC_KEY_LENGTH,
   });
   const avatarImage = userDetails.image
     ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)

@@ -1,6 +1,5 @@
 'use client';
 
-import * as Config from '@/config';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
@@ -39,7 +38,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
     id: publicKey,
   });
 
-  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
+  const formattedPublicKey = Libs.formatPublicKey({ key: publicKey });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (

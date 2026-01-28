@@ -1,6 +1,5 @@
 'use client';
 
-import * as Config from '@/config';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
@@ -50,7 +49,7 @@ export function SearchRecentUserItem({ user, onClick }: SearchRecentUserItemProp
           overrideDefaults
           data-testid="user-pubky"
         >
-          {Libs.formatPublicKey({ key: user.id, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH })}
+          {Libs.formatPublicKey({ key: user.id })}
         </Atoms.Typography>
       </Atoms.Container>
     </Atoms.Container>

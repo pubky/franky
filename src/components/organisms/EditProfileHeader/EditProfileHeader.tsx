@@ -4,7 +4,6 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
-import * as Config from '@/config';
 
 export const EditProfileHeader = () => {
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
@@ -12,7 +11,6 @@ export const EditProfileHeader = () => {
 
   const displayPublicKey = Libs.formatPublicKey({
     key: currentUserPubky ?? '',
-    length: Config.POST_HEADER_PUBLIC_KEY_LENGTH,
   });
 
   const handleCopyToClipboard = () => {

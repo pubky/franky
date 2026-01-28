@@ -12,12 +12,7 @@ import type {
   UserStatsProps,
   VariantProps,
 } from './UserListItem.types';
-import {
-  USER_LIST_TAG_MAX_LENGTH,
-  USER_LIST_TAGS_MAX_TOTAL_CHARS,
-  USER_LIST_TAGS_MAX_COUNT,
-  POST_HEADER_PUBLIC_KEY_LENGTH,
-} from '@/config';
+import { USER_LIST_TAG_MAX_LENGTH, USER_LIST_TAGS_MAX_TOTAL_CHARS, USER_LIST_TAGS_MAX_COUNT } from '@/config';
 
 // =============================================================================
 // Internal Components
@@ -387,8 +382,8 @@ export function UserListItem({
 
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
-  const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
-  const formattedPublicKey = Libs.formatPublicKey({ key: user.id, length: POST_HEADER_PUBLIC_KEY_LENGTH });
+  const displayName = user.name || Libs.formatPublicKey({ key: user.id });
+  const formattedPublicKey = Libs.formatPublicKey({ key: user.id });
   const tags = user.tags || [];
   const stats = user.stats || user.counts || { tags: 0, posts: 0 };
   const isFollowing = isFollowingProp ?? user.isFollowing ?? false;

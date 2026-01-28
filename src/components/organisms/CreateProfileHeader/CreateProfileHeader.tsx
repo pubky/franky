@@ -5,14 +5,13 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
-import * as Config from '@/config';
 
 export const CreateProfileHeader = () => {
   const authStore = Core.useAuthStore();
   const pubky = authStore.selectCurrentUserPubky();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
-  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
+  const displayPublicKey = Libs.formatPublicKey({ key: pubky });
 
   const handleCopyToClipboard = () => {
     copyToClipboard(Libs.withPubkyPrefix(pubky));

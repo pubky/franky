@@ -190,7 +190,7 @@ describe('PostMentions', () => {
       // formatPublicKey with length 8: first 4 + ... + last 4 (no pubky prefix)
       // For key starting with 'o1gg' and ending with 'j7dy', expect 'o1gg...j7dy'
       expect(text).toContain('...');
-      expect(text.length).toBeLessThanOrEqual(12); // 4 + 3 + 4 = 11 chars max
+      expect(text.length).toBeLessThanOrEqual(11); // 4 + 3 + 4 = 11 chars max
     });
   });
 });
