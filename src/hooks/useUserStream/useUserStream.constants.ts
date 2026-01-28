@@ -1,1 +1,2 @@
 export const DEFAULT_USER_STREAM_LIMIT = 3;
+export const DEFAULT_USER_STREAM_PAGE_SIZE = 30;
