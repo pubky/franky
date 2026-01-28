@@ -1,6 +1,5 @@
 'use client';
 
-import * as Config from '@/config';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -16,7 +15,7 @@ export function PostHeaderUserInfo({
   size = 'normal',
   timeAgo,
 }: PostHeaderUserInfoProps) {
-  const formattedPublicKey = Libs.formatPublicKey({ key: userId, length: Config.POST_HEADER_PUBLIC_KEY_LENGTH });
+  const formattedPublicKey = Libs.formatPublicKey({ key: userId });
 
   const profileUrl = `/profile/${userId}`;
 

@@ -187,10 +187,10 @@ describe('PostMentions', () => {
 
       const link = screen.getByTestId('link');
       const text = link.textContent || '';
-      // Should contain ellipsis since the full key string is longer than 20 chars
-      expect(text.startsWith('pubky')).toBe(true);
+      // formatPublicKey with length 8: first 4 + ... + last 4 (no pubky prefix)
+      // For key starting with 'o1gg' and ending with 'j7dy', expect 'o1gg...j7dy'
       expect(text).toContain('...');
-      expect(text.length).toBeLessThanOrEqual(28);
+      expect(text.length).toBeLessThanOrEqual(11); // 4 + 3 + 4 = 11 chars max
     });
   });
 });

@@ -187,10 +187,11 @@ vi.mock('@/molecules', async (importOriginal) => {
 // Mock libs
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
+  const { DEFAULT_DISPLAY_PUBLIC_KEY_LENGTH } = await import('@/config');
   return {
     ...actual,
     cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-    formatPublicKey: vi.fn(({ key, length }) => key?.substring(0, length) || ''),
+    formatPublicKey: vi.fn(({ key, length = DEFAULT_DISPLAY_PUBLIC_KEY_LENGTH }) => key?.substring(0, length) || ''),
   };
 });
 
@@ -280,7 +281,7 @@ describe('PostHeaderUserInfo', () => {
 
     render(<PostHeaderUserInfo userId="userpubkykey" userName="Test User" />);
 
-    expect(formatSpy).toHaveBeenCalledWith({ key: 'userpubkykey', length: 8 });
+    expect(formatSpy).toHaveBeenCalledWith({ key: 'userpubkykey' });
     expect(screen.getAllByText('@userpubk').length).toBeGreaterThan(0);
 
     formatSpy.mockRestore();

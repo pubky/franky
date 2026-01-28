@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 import { HumanSelection } from './HumanSelection';
@@ -23,6 +23,17 @@ vi.mock('@/organisms', async () => {
 });
 
 describe('HumanSelection', () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+
+  beforeEach(() => {
+    // Ensure consistent environment across all test runs
+    process.env.NODE_ENV = 'test';
+  });
+
+  afterEach(() => {
+    process.env.NODE_ENV = originalNodeEnv;
+  });
+
   it('renders both verification cards', () => {
     render(<HumanSelection onClick={() => {}} onInviteCodeClick={() => {}} onDevMode={() => {}} />);
 

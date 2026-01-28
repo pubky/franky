@@ -115,8 +115,8 @@ describe('FollowerItem', () => {
 
   it('renders formatted public key', () => {
     render(<FollowerItem follower={mockFollower} />);
-    // formatPublicKey with length 10 formats "test-user-1" (11 chars) as "test-...ser-1"
-    expect(screen.getByText(/test-\.\.\.ser-1/i)).toBeInTheDocument();
+    // formatPublicKey with length 8 formats "test-user-1" (11 chars) as "test...er-1"
+    expect(screen.getByText(/test\.\.\.er-1/i)).toBeInTheDocument();
   });
 
   it('renders avatar with fallback', () => {

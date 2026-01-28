@@ -132,15 +132,15 @@ describe('ProfilePageHeader', () => {
   it('renders formatted public key', () => {
     render(<ProfilePageHeader {...mockProps} />);
 
-    // formatPublicKey with length 12: first 6 + ... + last 6
-    expect(screen.getByText(/pubky1QX7GK\.\.\.567890/)).toBeInTheDocument();
+    // formatPublicKey with length 8: first 4 + ... + last 4 (no pubky prefix)
+    expect(screen.getByText(/1QX7\.\.\.7890/)).toBeInTheDocument();
   });
 
   it('renders all action buttons', () => {
     render(<ProfilePageHeader {...mockProps} />);
 
     expect(screen.getByText('Edit')).toBeInTheDocument();
-    expect(screen.getByText(/pubky1QX7GK\.\.\.567890/)).toBeInTheDocument();
+    expect(screen.getByText(/1QX7\.\.\.7890/)).toBeInTheDocument();
     expect(screen.getByText('Link')).toBeInTheDocument();
     expect(screen.getByText('Sign out')).toBeInTheDocument();
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
@@ -162,8 +162,8 @@ describe('ProfilePageHeader', () => {
     const props = { ...mockProps, actions: { ...mockProps.actions, onCopyPublicKey } };
     render(<ProfilePageHeader {...props} />);
 
-    // Find button containing the formatted public key
-    const publicKeyButton = screen.getByText(/pubky1QX7GK/).closest('button');
+    // Find button containing the formatted public key (length 8: first 4 + ... + last 4)
+    const publicKeyButton = screen.getByText(/1QX7\.\.\.7890/).closest('button');
     fireEvent.click(publicKeyButton!);
 
     expect(onCopyPublicKey).toHaveBeenCalledTimes(1);
@@ -268,9 +268,9 @@ describe('ProfilePageHeader - Other User Profile', () => {
   it('shows Copy Key and Link buttons when viewing other user', () => {
     render(<ProfilePageHeader {...mockOtherUserProps} />);
 
-    // formatPublicKey with length 12: first 6 + ... + last 6
-    // For 'other123456789012345', it should be 'other1...012345'
-    expect(screen.getByText(/other1\.\.\.012345/)).toBeInTheDocument();
+    // formatPublicKey with length 8: first 4 + ... + last 4 (no pubky prefix)
+    // For 'other123456789012345', it should be 'othe...2345'
+    expect(screen.getByText(/othe\.\.\.2345/)).toBeInTheDocument();
     expect(screen.getByText('Link')).toBeInTheDocument();
   });
 
