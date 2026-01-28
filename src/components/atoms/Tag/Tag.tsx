@@ -39,7 +39,7 @@ export const Tag = ({
   return (
     <div
       className={Libs.cn(
-        'flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200',
+        'flex h-8 w-fit max-w-full min-w-0 cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200',
         className,
       )}
       style={{
