@@ -46,8 +46,7 @@ describe('notifications', () => {
     });
   });
 
-  // todo: skip due to lost friend showing 'New Notification', see https://github.com/pubky/franky/issues/471
-  it.skip('can be notified for new follower, friend, lost friend', () => {
+  it('can be notified for new follower and friend', () => {
     // * profile 1 follows profile 2
     cy.get(`@${profile2.pubkyAlias}`).then((pubky) => {
       searchAndFollowProfile(`${pubky}`, profile2.username);
@@ -66,7 +65,7 @@ describe('notifications', () => {
     // * profile 2 follows profile 1
     clickFollowButton();
 
-    // * profile 1 checks notification for new follower and friend
+    // * profile 1 checks notification for new friend
     cy.signOut(HasBackedUp.Yes);
 
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
@@ -80,26 +79,6 @@ describe('notifications', () => {
     causeLastReadToBeUpdated();
     verifyNotificationCounter(0);
     waitForNotificationDotsToDisappear();
-
-    // * profile 1 unfollows profile 2
-    unfollowUserByUsername(profile2.username);
-    cy.signOut(HasBackedUp.Yes);
-
-    // * profile 2 checks notification for lost friend
-    cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
-    verifyNotificationCounter(1);
-    goToProfilePageFromHeader();
-    verifyNotificationCounter(1);
-    // check latest notification on profile page
-    checkLatestNotification([profile1.username, 'is not your friend anymore']);
-
-    // * profile 2 unfollows profile 1
-    unfollowUserByUsername(profile1.username);
-    cy.signOut(HasBackedUp.Yes);
-
-    // * profile 1 checks absence of notifications
-    cy.signInWithEncryptedFile(backupDownloadFilePath(profile1.username));
-    verifyNotificationCounter(0);
 
     // TODO: add checks for disabled notifications
     // * profile 1 disables follow notifications

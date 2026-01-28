@@ -17,8 +17,6 @@ export const PostMentions = (props: RemarkAnchorProps) => {
 
   const fallbackMention = Libs.formatPublicKey({
     key: Libs.withPubkyPrefix(userId),
-    length: 20,
-    includePrefix: true,
   });
   const finalMention = profile?.name ? `@${profile.name}` : fallbackMention;
 
@@ -27,7 +25,7 @@ export const PostMentions = (props: RemarkAnchorProps) => {
       {...rest}
       href={href || ''}
       onClick={(e) => e.stopPropagation()}
-      className={Libs.cn(className, 'text-base')}
+      className={Libs.cn(className, 'text-base', !profile?.name && 'uppercase')}
     >
       {finalMention}
     </Atoms.Link>

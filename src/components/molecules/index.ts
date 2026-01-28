@@ -119,6 +119,7 @@ export * from './TimelineStateWrapper';
 export * from './Toaster';
 export * from './WordSlot';
 export * from './User';
+export * from './UserNotFound';
 export * from './UsersList';
 export * from './SearchHeader';
 export * from './SearchEmptyState';

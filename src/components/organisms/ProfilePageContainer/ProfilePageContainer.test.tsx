@@ -57,6 +57,7 @@ vi.mock('@/hooks', () => ({
     stats: mockStats,
     actions: mockActions,
     isLoading: false,
+    userNotFound: false,
   })),
   useProfileNavigation: vi.fn(() => ({
     activePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
@@ -76,6 +77,18 @@ vi.mock('@/hooks', () => ({
     isFollowing: false,
     isLoading: false,
   })),
+}));
+
+// Mock Molecules for UserNotFound component
+vi.mock('@/molecules', () => ({
+  MobileHeader: ({ showLeftButton, showRightButton }: { showLeftButton: boolean; showRightButton: boolean }) => (
+    <div data-testid="mobile-header" data-left={showLeftButton} data-right={showRightButton} />
+  ),
+  MobileFooter: () => <div data-testid="mobile-footer" />,
+  ProfilePageLayoutWrapper: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="profile-page-layout-wrapper">{children}</div>
+  ),
+  UserNotFound: () => <div data-testid="user-not-found">User not found</div>,
 }));
 
 // Mock Organisms - ProfilePageLayout
@@ -235,5 +248,114 @@ describe('ProfilePageContainer - Props passed to layout', () => {
     expect(layout).toHaveAttribute('data-active-page');
     expect(layout).toHaveAttribute('data-filter-bar-page');
     expect(layout).toHaveAttribute('data-is-loading');
+  });
+});
+
+describe('ProfilePageContainer - User not found', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('shows UserNotFound when user is not found and not own profile', async () => {
+    // Mock useProfileContext to return isOwnProfile: false
+    const providers = await import('@/providers');
+    vi.mocked(providers.useProfileContext).mockReturnValue({
+      pubky: 'nonexistent-user',
+      isOwnProfile: false,
+      isLoading: false,
+    });
+
+    // Mock useProfileHeader to return userNotFound: true
+    const hooks = await import('@/hooks');
+    vi.mocked(hooks.useProfileHeader).mockReturnValue({
+      profile: {
+        name: '',
+        bio: '',
+        publicKey: '',
+        emoji: '🌴',
+        status: '',
+        avatarUrl: undefined,
+        link: '',
+      },
+      stats: mockStats as unknown as ReturnType<typeof hooks.useProfileHeader>['stats'],
+      actions: mockActions as unknown as ReturnType<typeof hooks.useProfileHeader>['actions'],
+      isLoading: false,
+      userNotFound: true,
+    });
+
+    render(
+      <ProfilePageContainer>
+        <div>Test Content</div>
+      </ProfilePageContainer>,
+    );
+
+    expect(screen.getByTestId('user-not-found')).toBeInTheDocument();
+    expect(screen.queryByTestId('profile-page-layout')).not.toBeInTheDocument();
+  });
+
+  it('shows ProfilePageLayout when user is found', async () => {
+    // Reset to default mocks
+    const providers = await import('@/providers');
+    vi.mocked(providers.useProfileContext).mockReturnValue({
+      pubky: mockCurrentUserPubky,
+      isOwnProfile: true,
+      isLoading: false,
+    });
+
+    const hooks = await import('@/hooks');
+    vi.mocked(hooks.useProfileHeader).mockReturnValue({
+      profile: mockProfile,
+      stats: mockStats as unknown as ReturnType<typeof hooks.useProfileHeader>['stats'],
+      actions: mockActions as unknown as ReturnType<typeof hooks.useProfileHeader>['actions'],
+      isLoading: false,
+      userNotFound: false,
+    });
+
+    render(
+      <ProfilePageContainer>
+        <div>Test Content</div>
+      </ProfilePageContainer>,
+    );
+
+    expect(screen.getByTestId('profile-page-layout')).toBeInTheDocument();
+    expect(screen.queryByTestId('user-not-found')).not.toBeInTheDocument();
+  });
+
+  it('does not show UserNotFound for own profile even if userNotFound is true', async () => {
+    // Mock useProfileContext to return isOwnProfile: true
+    const providers = await import('@/providers');
+    vi.mocked(providers.useProfileContext).mockReturnValue({
+      pubky: mockCurrentUserPubky,
+      isOwnProfile: true,
+      isLoading: false,
+    });
+
+    // Mock useProfileHeader to return userNotFound: true (edge case)
+    const hooks = await import('@/hooks');
+    vi.mocked(hooks.useProfileHeader).mockReturnValue({
+      profile: {
+        name: '',
+        bio: '',
+        publicKey: '',
+        emoji: '🌴',
+        status: '',
+        avatarUrl: undefined,
+        link: '',
+      },
+      stats: mockStats as unknown as ReturnType<typeof hooks.useProfileHeader>['stats'],
+      actions: mockActions as unknown as ReturnType<typeof hooks.useProfileHeader>['actions'],
+      isLoading: false,
+      userNotFound: true,
+    });
+
+    render(
+      <ProfilePageContainer>
+        <div>Test Content</div>
+      </ProfilePageContainer>,
+    );
+
+    // Should still show layout for own profile
+    expect(screen.getByTestId('profile-page-layout')).toBeInTheDocument();
+    expect(screen.queryByTestId('user-not-found')).not.toBeInTheDocument();
   });
 });
