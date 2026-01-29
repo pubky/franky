@@ -95,6 +95,7 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
       navigateToPage={navigateToPage}
       isLoading={isLoading}
       isOwnProfile={isOwnProfile}
+      userId={pubky ?? ''}
     >
       {children}
     </Organisms.ProfilePageLayout>
