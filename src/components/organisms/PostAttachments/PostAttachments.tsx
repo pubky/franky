@@ -11,8 +11,6 @@ export const PostAttachments = ({ attachments }: PostAttachmentsProps) => {
   const [audios, setAudios] = useState<AttachmentConstructed[]>([]);
   const [genericFiles, setGenericFiles] = useState<AttachmentConstructed[]>([]);
 
-  const { toast } = Molecules.useToast();
-
   useEffect(() => {
     const constructAttachments = async () => {
       if (!attachments?.length) return;
@@ -61,15 +59,14 @@ export const PostAttachments = ({ attachments }: PostAttachmentsProps) => {
         setAudios(audios);
         setGenericFiles(genericFiles);
       } catch {
-        toast({
-          title: 'Error',
+        Molecules.toast.error('Error', {
           description: 'Failed to load post attachments',
         });
       }
     };
 
     constructAttachments();
-  }, [attachments, toast]);
+  }, [attachments]);
 
   if (!imagesAndVideos.length && !audios.length && !genericFiles.length) return null;
 

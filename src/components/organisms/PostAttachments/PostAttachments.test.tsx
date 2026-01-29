@@ -3,10 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostAttachments } from './PostAttachments';
 import * as Core from '@/core';
 
-// Mock useToast
-const mockToast = vi.fn();
+// Mock toast
+const mockToastError = vi.fn();
 vi.mock('@/molecules', () => ({
-  useToast: () => ({ toast: mockToast }),
+  toast: {
+    error: (...args: unknown[]) => mockToastError(...args),
+    success: vi.fn(),
+    dismiss: vi.fn(),
+  },
   PostAttachmentsImagesAndVideos: vi.fn(({ imagesAndVideos }) => (
     <div data-testid="post-attachments-images-and-videos" data-count={imagesAndVideos.length}>
       ImagesAndVideos
@@ -317,8 +321,7 @@ describe('PostAttachments', () => {
       render(<PostAttachments attachments={attachments} />);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
+        expect(mockToastError).toHaveBeenCalledWith('Error', {
           description: 'Failed to load post attachments',
         });
       });
@@ -331,7 +334,7 @@ describe('PostAttachments', () => {
       const { container } = render(<PostAttachments attachments={attachments} />);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalled();
+        expect(mockToastError).toHaveBeenCalled();
       });
 
       // Should not render anything after error

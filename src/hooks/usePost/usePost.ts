@@ -57,28 +57,14 @@ export function usePost() {
   // selectCurrentUserPubky() throws an error when user is not authenticated;
   // access currentUserPubky directly to get null instead (post actions return early if null)
   const currentUserId = Core.useAuthStore((state) => state.currentUserPubky);
-  const { toast } = Molecules.useToast();
 
-  const showErrorToast = useCallback(
-    (description: string) => {
-      toast({
-        title: 'Error',
-        description,
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-      });
-    },
-    [toast],
-  );
+  const showErrorToast = useCallback((description: string) => {
+    Molecules.toast.error('Error', { description });
+  }, []);
 
-  const showSuccessToast = useCallback(
-    (title: string, description: string) => {
-      toast({
-        title,
-        description,
-      });
-    },
-    [toast],
-  );
+  const showSuccessToast = useCallback((title: string, description: string) => {
+    Molecules.toast.success(title, { description });
+  }, []);
 
   const reply = useCallback(
     async ({ postId, onSuccess }: UsePostReplyOptions) => {
@@ -205,8 +191,7 @@ export function usePost() {
   // Clear attachments when switching to article mode
   useEffect(() => {
     if (isArticle && attachments.length > 0) {
-      toast({
-        title: 'Attachments cleared',
+      Molecules.toast('Attachments cleared', {
         description: 'Articles support one cover image only.',
       });
       setAttachments([]);

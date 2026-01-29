@@ -1,13 +1,14 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock the dependencies before importing the hook
-const { mockCopyToClipboard } = vi.hoisted(() => ({
+// Hoist mock data and functions
+const { mockCopyToClipboard, mockToast } = vi.hoisted(() => ({
   mockCopyToClipboard: vi.fn(),
-}));
-
-const { mockToast } = vi.hoisted(() => ({
-  mockToast: vi.fn(),
+  mockToast: Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  }),
 }));
 
 vi.mock('@/libs', async () => {
@@ -18,9 +19,13 @@ vi.mock('@/libs', async () => {
   };
 });
 
-vi.mock('@/molecules/Toaster/use-toast', () => ({
-  toast: mockToast,
-}));
+vi.mock('@/molecules', async () => {
+  const actual = await vi.importActual('@/molecules');
+  return {
+    ...actual,
+    toast: mockToast,
+  };
+});
 
 vi.mock('@/atoms/Button', () => ({
   Button: ({
@@ -45,7 +50,6 @@ describe('useCopyToClipboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockCopyToClipboard.mockResolvedValue(undefined);
-    mockToast.mockReturnValue({ dismiss: vi.fn() });
   });
 
   it('should return a copyToClipboard function', () => {
@@ -158,8 +162,7 @@ describe('useCopyToClipboard', () => {
     const { result } = renderHook(() => useCopyToClipboard());
 
     await expect(result.current.copyToClipboard('test text')).resolves.toBe(false);
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Copy failed',
+    expect(mockToast.error).toHaveBeenCalledWith('Copy failed', {
       description: 'Unable to copy to clipboard',
     });
   });

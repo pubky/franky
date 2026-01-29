@@ -57,8 +57,7 @@ export const ScanContent = () => {
       }, 2000);
     } catch (error) {
       Libs.Logger.error('Failed to open Pubky Ring deeplink:', error);
-      Molecules.toast({
-        title: 'Unable to link to signer application Pubky Ring',
+      Molecules.toast.error('Unable to link to signer application Pubky Ring', {
         description: 'Please try again.',
       });
       window.location.href = fallbackUrl;

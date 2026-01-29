@@ -66,8 +66,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
         try {
           await toggleFollow(postAuthorId, isFollowing);
         } catch (error) {
-          Molecules.toast({
-            title: 'Error',
+          Molecules.toast.error('Error', {
             description: Libs.isAppError(error) ? error.message : 'Failed to update follow status',
           });
         }
@@ -85,8 +84,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
       try {
         await copyPubky(Libs.withPubkyPrefix(postAuthorId));
       } catch (error) {
-        Molecules.toast({
-          title: 'Error',
+        Molecules.toast.error('Error', {
           description: Libs.isAppError(error) ? error.message : 'Failed to copy pubky',
         });
       }
@@ -102,8 +100,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
       try {
         await copyLink(postUrl);
       } catch (error) {
-        Molecules.toast({
-          title: 'Error',
+        Molecules.toast.error('Error', {
           description: Libs.isAppError(error) ? error.message : 'Failed to copy link',
         });
       }
@@ -120,8 +117,7 @@ export function usePostMenuActions(postId: string, options: UsePostMenuActionsOp
         try {
           await copyText(postDetails?.content ?? '');
         } catch (error) {
-          Molecules.toast({
-            title: 'Error',
+          Molecules.toast.error('Error', {
             description: Libs.isAppError(error) ? error.message : 'Failed to copy text',
           });
         }

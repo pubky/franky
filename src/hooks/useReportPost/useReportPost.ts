@@ -22,7 +22,6 @@ import type { UseReportPostReturn } from './useReportPost.types';
  * @returns Report state and handlers
  */
 export function useReportPost(postId: string): UseReportPostReturn {
-  const { toast } = Molecules.useToast();
   const { currentUserPubky, userDetails } = Hooks.useCurrentUserProfile();
   const parsedId = Core.parseCompositeId(postId);
   const postUrl = `${window.location.origin}${POST_ROUTES.POST}/${parsedId.pubky}/${parsedId.id}`;
@@ -34,11 +33,7 @@ export function useReportPost(postId: string): UseReportPostReturn {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const showErrorToast = (description: string) => {
-    toast({
-      title: 'Error',
-      description,
-      className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-    });
+    Molecules.toast.error('Error', { description });
   };
 
   const selectIssueType = (issueType: ReportIssueType) => {

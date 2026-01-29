@@ -35,7 +35,6 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   const setShowWelcomeDialog = props.mode === 'create' ? props.setShowWelcomeDialog : undefined;
 
   const router = useRouter();
-  const { toast } = Molecules.useToast();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Generate a stable initial username for create mode (only generated once)
@@ -311,8 +310,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
           image,
           pubky,
         });
-        toast({
-          title: 'Profile updated',
+        Molecules.toast.success('Profile updated', {
           description: 'Your profile has been updated successfully.',
         });
         router.push(App.PROFILE_ROUTES.PROFILE);
@@ -323,8 +321,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         if (Libs.requiresLogin(error)) {
           Libs.Logger.error('Session expired while saving profile', error);
           setSubmitText('Try again!');
-          toast({
-            title: 'Session expired',
+          Molecules.toast.error('Session expired', {
             description: 'Please sign out and sign in again to continue.',
           });
           return;
@@ -334,8 +331,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         if (Libs.isAuthError(error)) {
           Libs.Logger.error('Failed to save profile in Homeserver', error);
           setSubmitText('Try again!');
-          toast({
-            title: 'Failed to save profile',
+          Molecules.toast.error('Failed to save profile', {
             description: 'Please try again.',
           });
           return;
@@ -343,8 +339,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       }
 
       setSubmitText('Try again!');
-      toast({
-        title: 'Please try again.',
+      Molecules.toast.error('Please try again.', {
         description:
           mode === 'create'
             ? 'Failed to fetch the new user data. Indexing might be in progress...'
@@ -363,7 +358,6 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     userDetails,
     setShowWelcomeDialog,
     router,
-    toast,
   ]);
 
   const handleCancel = useCallback(() => {

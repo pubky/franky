@@ -59,12 +59,15 @@ vi.mock('@/organisms/TimelineFeed/TimelineFeed', () => ({
   })),
 }));
 
-// Mock useToast
-const mockToast = vi.fn();
+// Mock toast
+const mockToastError = vi.fn();
+const mockToastSuccess = vi.fn();
 vi.mock('@/molecules', () => ({
-  useToast: vi.fn(() => ({
-    toast: mockToast,
-  })),
+  toast: {
+    error: (...args: unknown[]) => mockToastError(...args),
+    success: (...args: unknown[]) => mockToastSuccess(...args),
+    dismiss: vi.fn(),
+  },
 }));
 
 describe('usePostInput', () => {
@@ -1479,8 +1482,7 @@ describe('usePostInput', () => {
       });
 
       expect(mockSetAttachments).not.toHaveBeenCalled();
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToastError).toHaveBeenCalledWith('Error', {
         description: expect.stringContaining('has unsupported type'),
       });
     });
@@ -1501,8 +1503,7 @@ describe('usePostInput', () => {
       });
 
       expect(mockSetAttachments).not.toHaveBeenCalled();
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToastError).toHaveBeenCalledWith('Error', {
         description: expect.stringContaining('exceeds the maximum size of 5MB'),
       });
     });
@@ -1523,8 +1524,7 @@ describe('usePostInput', () => {
       });
 
       expect(mockSetAttachments).not.toHaveBeenCalled();
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToastError).toHaveBeenCalledWith('Error', {
         description: expect.stringContaining('exceeds the maximum size of 20MB'),
       });
     });
@@ -1549,8 +1549,7 @@ describe('usePostInput', () => {
       });
 
       expect(mockSetAttachments).not.toHaveBeenCalled();
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToastError).toHaveBeenCalledWith('Error', {
         description: `Maximum of ${POST_ATTACHMENT_MAX_FILES} files allowed`,
       });
     });
@@ -1578,8 +1577,7 @@ describe('usePostInput', () => {
 
       // Should add only 1 file and show error for the rest
       expect(mockSetAttachments).toHaveBeenCalled();
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Error',
+      expect(mockToastError).toHaveBeenCalledWith('Error', {
         description: expect.stringContaining(`Maximum of ${POST_ATTACHMENT_MAX_FILES} files allowed`),
       });
     });
@@ -1599,8 +1597,7 @@ describe('usePostInput', () => {
         result.current.handleFilesAdded([invalidFile, largeFile]);
       });
 
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Errors',
+      expect(mockToastError).toHaveBeenCalledWith('Errors', {
         description: expect.any(String),
       });
     });

@@ -1,0 +1,55 @@
+/**
+ * Custom toast styles for Sonner component.
+ *
+ * Uses unstyled mode from Sonner, so we build styles from scratch.
+ * CSS variables are defined in globals.css for consistency with design system.
+ */
+
+/* Ensure toast respects max-width and doesn't overflow */
+.toast-custom {
+  box-sizing: border-box;
+  overflow: hidden;
+  justify-content: space-between;
+}
+
+/* Toast content wrapper - contains title and description */
+.toast-custom [data-content] {
+  flex: 1 1 0%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* Ensure title and description truncate properly */
+.toast-custom [data-title],
+.toast-custom [data-description] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ensure button doesn't shrink, doesn't wrap, and stays at the right */
+.toast-custom button[data-button] {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Icon styling - use brand color from design system */
+.toast-custom [data-icon] svg {
+  color: var(--brand);
+}
+
+.toast-custom [data-icon] svg * {
+  fill: var(--brand);
+  stroke: var(--brand);
+  color: var(--brand);
+}
+
+/* Error toast icon - white color for contrast on error background */
+[data-sonner-toast][data-type='error'] [data-icon] svg,
+[data-sonner-toast][data-type='error'] [data-icon] svg *,
+.toast-custom[data-type='error'] [data-icon] svg,
+.toast-custom[data-type='error'] [data-icon] svg * {
+  fill: var(--popover-foreground);
+  stroke: var(--popover-foreground);
+  color: var(--popover-foreground);
+}

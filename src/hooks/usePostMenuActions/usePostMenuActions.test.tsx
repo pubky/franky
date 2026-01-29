@@ -30,7 +30,10 @@ const {
   mockUseMutedUsers: vi.fn(),
   mockUseDeletePost: vi.fn(),
   mockUseCopyToClipboard: vi.fn(),
-  mockToast: vi.fn(),
+  mockToast: {
+    error: vi.fn(),
+    success: vi.fn(),
+  },
 }));
 
 // Mock Core
@@ -53,7 +56,11 @@ vi.mock('@/hooks', () => ({
 
 // Mock Molecules
 vi.mock('@/molecules', () => ({
-  toast: (props: unknown) => mockToast(props),
+  toast: {
+    error: (...args: unknown[]) => mockToast.error(...args),
+    success: (...args: unknown[]) => mockToast.success(...args),
+    dismiss: vi.fn(),
+  },
 }));
 
 // Mock Libs
@@ -226,8 +233,7 @@ describe('usePostMenuActions', () => {
       });
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
+        expect(mockToast.error).toHaveBeenCalledWith('Error', {
           description: 'Follow failed',
         });
       });
@@ -247,8 +253,7 @@ describe('usePostMenuActions', () => {
       });
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Error',
+        expect(mockToast.error).toHaveBeenCalledWith('Error', {
           description: 'Failed to update follow status',
         });
       });

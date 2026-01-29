@@ -4,14 +4,18 @@ import type { Session } from '@synonymdev/pubky';
 import { useAuthUrl } from './useAuthUrl';
 
 // Mock dependencies
-const mockToast = vi.fn();
+const mockToastError = vi.fn();
 const mockLoggerError = vi.fn();
 const mockGetAuthUrl = vi.fn();
 const mockInitializeAuthenticatedSession = vi.fn();
 const mockCancelActiveAuthFlow = vi.fn();
 
 vi.mock('@/molecules', () => ({
-  toast: (...args: unknown[]) => mockToast(...args),
+  toast: {
+    error: (...args: unknown[]) => mockToastError(...args),
+    success: vi.fn(),
+    dismiss: vi.fn(),
+  },
 }));
 
 vi.mock('@/libs', () => ({
@@ -137,8 +141,7 @@ describe('useAuthUrl', () => {
     rejectApproval!(new Error('User cancelled'));
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Authorization was not completed',
+      expect(mockToastError).toHaveBeenCalledWith('Authorization was not completed', {
         description: 'The signer did not complete authorization. Please try again.',
       });
     });
@@ -167,7 +170,7 @@ describe('useAuthUrl', () => {
     rejectApproval!(canceledError);
 
     await new Promise((resolve) => setTimeout(resolve, 20));
-    expect(mockToast).not.toHaveBeenCalled();
+    expect(mockToastError).not.toHaveBeenCalled();
   });
 
   it('shows toast when session initialization fails', async () => {
@@ -195,8 +198,7 @@ describe('useAuthUrl', () => {
     resolveApproval!(mockSession);
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Sign in failed. Please try again.',
+      expect(mockToastError).toHaveBeenCalledWith('Sign in failed. Please try again.', {
         description: 'Unable to complete authorization with Pubky Ring. Please try again.',
       });
     });
@@ -208,8 +210,7 @@ describe('useAuthUrl', () => {
     renderHook(() => useAuthUrl());
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'QR code generation failed',
+      expect(mockToastError).toHaveBeenCalledWith('QR code generation failed', {
         description: 'Unable to generate sign-in QR code. Please refresh and try again.',
       });
     });

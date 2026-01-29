@@ -5,6 +5,16 @@ import { REPORT_POST_STEPS, REPORT_API_ENDPOINT } from './useReportPost.constant
 import { REPORT_ISSUE_TYPES, REPORT_REASON_MAX_LENGTH } from '@/core/pipes/report';
 import { HttpMethod, JSON_HEADERS } from '@/libs';
 
+// Hoist mock data and functions
+const { mockToast } = vi.hoisted(() => {
+  const toast = Object.assign(vi.fn(), {
+    success: vi.fn(),
+    error: vi.fn(),
+    dismiss: vi.fn(),
+  });
+  return { mockToast: toast };
+});
+
 // Mock fetch
 global.fetch = vi.fn();
 
@@ -43,13 +53,12 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-// Mock toast
-const mockToast = vi.fn();
+// Mock toast - now using Sonner
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    useToast: () => ({ toast: mockToast }),
+    toast: mockToast,
   };
 });
 
@@ -300,12 +309,9 @@ describe('useReportPost', () => {
         expect(result.current.isSuccess).toBe(false);
       });
 
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Error',
-          description: 'Server error',
-        }),
-      );
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
+        description: 'Server error',
+      });
     });
 
     it('should not submit when already submitting', async () => {
@@ -387,12 +393,9 @@ describe('useReportPost', () => {
 
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.isSuccess).toBe(false);
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Error',
-          description: 'User profile not loaded. Please try again.',
-        }),
-      );
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
+        description: 'User profile not loaded. Please try again.',
+      });
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
@@ -421,12 +424,9 @@ describe('useReportPost', () => {
 
       expect(result.current.isSubmitting).toBe(false);
       expect(result.current.isSuccess).toBe(false);
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Error',
-          description: 'User profile not loaded. Please try again.',
-        }),
-      );
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
+        description: 'User profile not loaded. Please try again.',
+      });
       expect(global.fetch).not.toHaveBeenCalled();
     });
 
@@ -455,12 +455,9 @@ describe('useReportPost', () => {
         expect(result.current.isSuccess).toBe(false);
       });
 
-      expect(mockToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'Error',
-          description: 'Failed to submit report. Please try again.',
-        }),
-      );
+      expect(mockToast.error).toHaveBeenCalledWith('Error', {
+        description: 'Failed to submit report. Please try again.',
+      });
     });
   });
 
