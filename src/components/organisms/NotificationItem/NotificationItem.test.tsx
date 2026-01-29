@@ -284,7 +284,7 @@ describe('NotificationItem', () => {
   it('extracts title from article (long post) content in notifications', async () => {
     const articleContent = JSON.stringify({
       title: 'My Article Title',
-      content: '## Introduction\n\nArticle body content here in **Markdown** format.',
+      body: '## Introduction\n\nArticle body content here in **Markdown** format.',
     });
 
     mockGetOrFetchDetails.mockResolvedValue({
