@@ -27,36 +27,33 @@ export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, dis
   };
 
   return (
-    <>
-      <Atoms.Container overrideDefaults className="flex flex-col gap-1">
-        <Atoms.Container overrideDefaults className="flex flex-wrap items-center gap-2">
-          {/* Add tag input - keep visible but disabled during loading */}
-          {isAddingTag && (
-            <Molecules.TagInput
-              onTagAdd={handleTagAdd}
-              placeholder="add tag"
-              existingTags={tags.map((tag) => ({ label: tag }))}
-              showCloseButton={!disabled}
-              onClose={handleCloseInput}
-              hideSuggestions
-              disabled={disabled}
-              maxTags={maxTags}
-              currentTagsCount={tags.length}
-              onBlur={disabled ? undefined : handleInputBlur}
-            />
-          )}
+    <Atoms.Container overrideDefaults className="flex flex-col gap-1">
+      <Atoms.Container overrideDefaults className="flex flex-wrap items-center gap-2">
+        {/* Add tag input - keep visible but disabled during loading */}
+        {isAddingTag && (
+          <Molecules.TagInput
+            onTagAdd={handleTagAdd}
+            placeholder="add tag"
+            existingTags={tags.map((tag) => ({ label: tag }))}
+            showCloseButton={!disabled}
+            onClose={handleCloseInput}
+            disabled={disabled}
+            maxTags={maxTags}
+            currentTagsCount={tags.length}
+            onBlur={disabled ? undefined : handleInputBlur}
+          />
+        )}
 
-          {/* Add button - disabled when at limit or disabled */}
-          {!isAddingTag && (
-            <Molecules.PostTagAddButton
-              onClick={() => {
-                setIsAddingTag(true);
-              }}
-              disabled={isDisabled}
-            />
-          )}
-        </Atoms.Container>
+        {/* Add button - disabled when at limit or disabled */}
+        {!isAddingTag && (
+          <Molecules.PostTagAddButton
+            onClick={() => {
+              setIsAddingTag(true);
+            }}
+            disabled={isDisabled}
+          />
+        )}
       </Atoms.Container>
-    </>
+    </Atoms.Container>
   );
 }

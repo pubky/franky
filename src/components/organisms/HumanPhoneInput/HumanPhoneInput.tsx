@@ -27,21 +27,42 @@ export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: Huma
       const result = await Core.HomegateController.sendSmsCode(phoneNumber);
 
       if (!result.success) {
-        if (result.errorType === 'blocked') {
-          Molecules.toast({
-            title: 'Phone number blocked',
-            description: 'This phone number cannot be used for verification.',
-          });
-        } else if (result.errorType === 'rate_limited') {
-          Molecules.toast({
-            title: 'Too many verification attempts',
-            description: 'You have reached the maximum number of verifications for this phone number.',
-          });
-        } else {
-          Molecules.toast({
-            title: 'Failed to send SMS code',
-            description: 'Please try again later. If the problem persists, please contact support.',
-          });
+        switch (result.errorType) {
+          case Core.SmsCodeErrorType.BLOCKED:
+            Molecules.toast({
+              title: 'Phone number blocked',
+              description: 'This phone number cannot be used for verification.',
+            });
+            break;
+          case Core.SmsCodeErrorType.RATE_LIMITED_TEMPORARY: {
+            const retryMessage = result.retryAfter
+              ? `Please wait ${result.retryAfter} seconds before trying again.`
+              : 'Please wait a moment before trying again.';
+            Molecules.toast({
+              title: 'Please slow down',
+              description: retryMessage,
+            });
+            break;
+          }
+          case Core.SmsCodeErrorType.RATE_LIMITED_WEEKLY:
+            Molecules.toast({
+              title: 'Weekly limit reached',
+              description:
+                'This phone number has reached the weekly verification limit. Please try again next week or use a different verification method.',
+            });
+            break;
+          case Core.SmsCodeErrorType.RATE_LIMITED_YEARLY:
+            Molecules.toast({
+              title: 'Yearly limit reached',
+              description:
+                'This phone number has reached the yearly verification limit. Please use a different phone number or verification method.',
+            });
+            break;
+          default:
+            Molecules.toast({
+              title: 'Failed to send SMS code',
+              description: 'Please try again later. If the problem persists, please contact support.',
+            });
         }
         return;
       }

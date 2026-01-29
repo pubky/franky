@@ -94,7 +94,7 @@ describe('DialogPrivacy', () => {
     // Check for some key privacy policy content
     expect(screen.getByText(/SCOPE This Privacy Policy/)).toBeInTheDocument();
     expect(screen.getByText(/POLICY SUMMARY This summary offers/)).toBeInTheDocument();
-    expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
+    expect(screen.getByText(/Effective Date: January 29, 2026/)).toBeInTheDocument();
     expect(screen.getAllByText(/Synonym Software Ltd/).length).toBeGreaterThan(0);
   });
 });
