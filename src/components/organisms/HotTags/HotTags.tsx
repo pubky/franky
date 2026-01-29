@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
@@ -19,6 +20,8 @@ import type { HotTagsProps } from './HotTags.types';
  * and handles routing.
  */
 export function HotTags({ className }: HotTagsProps) {
+  const t = useTranslations('sidebar');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const { tags } = Hooks.useHotTags();
 
@@ -34,16 +37,16 @@ export function HotTags({ className }: HotTagsProps) {
 
   return (
     <Molecules.SidebarSection
-      title="Hot tags"
+      title={t('hotTags')}
       footerIcon={Libs.Tag}
-      footerText="Explore all"
+      footerText={tCommon('exploreAll')}
       onFooterClick={handleSeeAll}
       footerTestId="see-all-button"
       className={className}
       data-testid="hot-tags"
     >
       {displayTags.length === 0 ? (
-        <Atoms.Typography className="font-light text-muted-foreground">No tags to show</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">{t('noTags')}</Atoms.Typography>
       ) : (
         <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
           {displayTags.map((tag, index) => (

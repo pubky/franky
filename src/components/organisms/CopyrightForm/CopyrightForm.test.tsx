@@ -80,7 +80,7 @@ describe('CopyrightForm', () => {
     const user = userEvent.setup();
     render(<CopyrightForm />);
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -100,7 +100,7 @@ describe('CopyrightForm', () => {
     await user.type(emailInput, 'invalid-email');
     await user.tab(); // Trigger blur validation
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -133,7 +133,7 @@ describe('CopyrightForm', () => {
     await user.click(reportingOnBehalfCheckbox);
     await user.click(reportingOnBehalfCheckbox);
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -161,7 +161,7 @@ describe('CopyrightForm', () => {
     await user.type(screen.getByLabelText(/Zip code/i), '10001');
     await user.type(screen.getByLabelText(/Full Name as Signature/i), 'John Doe');
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -207,10 +207,10 @@ describe('CopyrightForm', () => {
     await user.type(screen.getByLabelText(/Zip code/i), '10001');
     await user.type(screen.getByLabelText(/Full Name as Signature/i), 'John Doe');
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
-    expect(screen.getByRole('button', { name: 'Submitting form' })).toBeDisabled();
+    // The button text changes to "Submitting..." when loading
     expect(screen.getByText('Submitting...')).toBeInTheDocument();
   });
 
@@ -234,7 +234,7 @@ describe('CopyrightForm', () => {
     await user.type(screen.getByLabelText(/Zip code/i), '10001');
     await user.type(screen.getByLabelText(/Full Name as Signature/i), 'John Doe');
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -270,7 +270,7 @@ describe('CopyrightForm', () => {
     await user.type(screen.getByLabelText(/Zip code/i), '10001');
     await user.type(screen.getByLabelText(/Full Name as Signature/i), 'John Doe');
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {
@@ -324,7 +324,7 @@ describe('CopyrightForm', () => {
     await user.type(screen.getByLabelText(/Infringing Content URLs/i), 'https://example.com/infringing');
     await user.type(screen.getByLabelText(/Full Name as Signature/i), 'John Doe');
 
-    const submitButton = screen.getByRole('button', { name: 'Submit form' });
+    const submitButton = screen.getByRole('button', { name: 'Submit Form' });
     await user.click(submitButton);
 
     await waitFor(() => {

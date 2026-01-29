@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import { MENU_VARIANT } from '@/config/ui';
 import * as Hooks from '@/hooks';
@@ -9,6 +10,7 @@ import { PostMenuActionsContent } from './PostMenuActionsContent';
 import type { PostMenuActionsProps } from './PostMenuActions.types';
 
 export function PostMenuActions({ postId, trigger }: PostMenuActionsProps) {
+  const t = useTranslations('post.actions');
   const isMobile = Hooks.useIsMobile();
   const [open, setOpen] = useState(false);
   const [reportDialogOpen, setReportDialogOpen] = useState(false);
@@ -42,7 +44,7 @@ export function PostMenuActions({ postId, trigger }: PostMenuActionsProps) {
           <Atoms.SheetTrigger asChild>{trigger}</Atoms.SheetTrigger>
           <Atoms.SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()}>
             <Atoms.SheetHeader>
-              <Atoms.SheetTitle className="sr-only">Post Actions</Atoms.SheetTitle>
+              <Atoms.SheetTitle className="sr-only">{t('title')}</Atoms.SheetTitle>
             </Atoms.SheetHeader>
             <Atoms.Container overrideDefaults className="flex flex-col gap-2">
               <PostMenuActionsContent

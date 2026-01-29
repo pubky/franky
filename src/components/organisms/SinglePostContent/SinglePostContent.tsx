@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
@@ -27,6 +28,8 @@ import type { SinglePostContentProps } from './SinglePostContent.types';
  * following the atomic design pattern where only organisms can call hooks.
  */
 export function SinglePostContent({ postId }: SinglePostContentProps) {
+  const t = useTranslations('common');
+
   // Check authentication status - unauthenticated users see limited view
   const { isAuthenticated } = Hooks.useRequireAuth();
 
@@ -51,7 +54,7 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
   });
 
   // TODO - Add loading skeleton
-  if (!postDetails) return 'Loading post...';
+  if (!postDetails) return t('loadingPost');
 
   const isArticle = postDetails.kind === 'long';
 
@@ -98,7 +101,7 @@ export function SinglePostContent({ postId }: SinglePostContentProps) {
               <Atoms.Container className="flex items-center justify-center gap-3 py-8">
                 <Atoms.Spinner size="md" />
                 <Atoms.Typography as="p" className="text-muted-foreground">
-                  Loading replies...
+                  {t('loadingReplies')}
                 </Atoms.Typography>
               </Atoms.Container>
             )}

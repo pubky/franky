@@ -67,6 +67,8 @@ export const PUBLIC_ROUTES: string[] = [
   APP_ROUTES.PROFILE,
   // Copyright page should be accessible without authentication
   COPYRIGHT_ROUTES.COPYRIGHT,
+  // Language settings page is public to allow language changes without auth issues
+  SETTINGS_ROUTES.LANGUAGE,
 ];
 
 export const ALLOWED_ROUTES = [

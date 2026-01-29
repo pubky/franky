@@ -1,8 +1,26 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Language } from './Language';
 import { normaliseRadixIds } from '@/libs/utils/utils';
+
+// Mock Next.js router
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    refresh: vi.fn(),
+  }),
+}));
+
+// Mock @/core
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useSettingsStore: () => ({
+      setLanguage: vi.fn(),
+    }),
+  };
+});
 
 describe('Language', () => {
   it('renders language content', () => {
