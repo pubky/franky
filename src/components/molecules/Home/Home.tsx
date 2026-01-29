@@ -41,13 +41,15 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
         <Atoms.Link href="https://synonym.to" target="_blank" className="block">
           <Atoms.Image src="/images/synonym-grey-logo.svg" alt="Synonym" width={95} height={24} />
         </Atoms.Link>
-        <Atoms.Container className="flex-row items-center gap-1">
-          <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
-            {t.rich('aTetherCompany', {
-              tether: () => <Atoms.Image src="/images/tether-text.svg" alt="tether." width={40} height={9} />,
-            })}
-          </Atoms.Typography>
-        </Atoms.Container>
+        <Atoms.Typography
+          as="span"
+          size="sm"
+          className="inline-flex items-center gap-1 font-normal text-muted-foreground"
+        >
+          {t.rich('aTetherCompany', {
+            tether: () => <Atoms.Image src="/images/tether-text.svg" alt="tether." width={40} height={9} />,
+          })}
+        </Atoms.Typography>
       </Atoms.Container>
       <Atoms.Typography as="span" size="sm" className="font-normal text-muted-foreground">
         {t('copyright')}
