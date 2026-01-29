@@ -124,7 +124,7 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
       .should('have.length.at.least', 1)
       .first()
       .within(($firstNotif) => {
-        cy.wrap($firstNotif).get('a').should('contain.text', profileToNavigateTo).click();
+        cy.wrap($firstNotif).get('a').should('contain.text', profileToNavigateTo).contains(profileToNavigateTo).click();
       });
   }
 };
