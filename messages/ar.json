@@ -140,6 +140,19 @@
       "title": "اللغة",
       "description": "اختر لغتك المفضلة لواجهة Pubky.",
       "displayLanguage": "لغة العرض"
+    },
+    "backup": {
+      "title": "نسخ احتياطي",
+      "dialogTitle": "نسخ احتياطي لـ pubky الخاص بك",
+      "subtitle": "قم بعمل نسخة احتياطية وتخزين البذرة السرية لـ pubky الخاص بك بأمان. ما طريقة النسخ الاحتياطي التي تفضلها؟ يمكنك اختيار طرق نسخ احتياطي متعددة إذا كنت ترغب.",
+      "recoveryPhrase": "عبارة الاسترداد",
+      "note": "ملاحظة",
+      "encryptedFile": "تحميل ملف مشفر",
+      "folder": "مجلد",
+      "exportRing": "تصدير إلى Pubky Ring",
+      "keys": "المفاتيح",
+      "alertShort": "انسخ احتياطياً الآن",
+      "alertFull": "انسخ احتياطياً الآن لتجنب فقدان حسابك!"
     }
   },
   "language": {
@@ -1023,6 +1036,18 @@
       "title": "الاصدار",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "إلى <highlight>اللقاء!</highlight>",
+    "subtitle": "لقد قمت بتسجيل الخروج بأمان.",
+    "homepage": "الصفحة الرئيسية",
+    "signBackIn": "تسجيل الدخول مجدداً"
+  },
+  "tradeoffs": {
+    "title": "كن على علم بهذه المفاضلات:",
+    "lessSecure": "أقل أماناً من سلسلة مفاتيح الهاتف",
+    "browserBased": "توليد المفاتيح في المتصفح",
+    "suboptimalSignIn": "تجربة تسجيل دخول غير مثالية"
   },
   "help": {
     "faq": "الاسئلة الشائعة",

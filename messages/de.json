@@ -140,6 +140,19 @@
       "title": "Sprache",
       "description": "Wählen Sie Ihre bevorzugte Sprache für die Pubky-Oberfläche.",
       "displayLanguage": "Anzeigesprache"
+    },
+    "backup": {
+      "title": "Backup",
+      "dialogTitle": "Sichern Sie Ihren Pubky",
+      "subtitle": "Sichern Sie den geheimen Seed für Ihren Pubky sicher. Welche Backup-Methode bevorzugen Sie? Sie können bei Bedarf mehrere Backup-Methoden wählen.",
+      "recoveryPhrase": "Wiederherstellungsphrase",
+      "note": "Notiz",
+      "encryptedFile": "Verschlüsselte Datei herunterladen",
+      "folder": "Ordner",
+      "exportRing": "Zu Pubky Ring exportieren",
+      "keys": "Schlüssel",
+      "alertShort": "Jetzt sichern",
+      "alertFull": "Jetzt sichern, um Ihr Konto nicht zu verlieren!"
     }
   },
   "language": {
@@ -1029,6 +1042,18 @@
       "title": "Version",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "Bis <highlight>bald!</highlight>",
+    "subtitle": "Sie haben sich sicher abgemeldet.",
+    "homepage": "Startseite",
+    "signBackIn": "Erneut anmelden"
+  },
+  "tradeoffs": {
+    "title": "Beachten Sie diese Nachteile:",
+    "lessSecure": "Weniger sicher als mobiler Schlüsselbund",
+    "browserBased": "Browser-basierte Schlüsselgenerierung",
+    "suboptimalSignIn": "Suboptimale Anmeldeerfahrung"
   },
   "help": {
     "faq": "FAQ",

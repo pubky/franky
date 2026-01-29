@@ -40,12 +40,12 @@ exports[`AlertBackup - Snapshot > matches snapshot for default AlertBackup 1`] =
       <span
         class="md:hidden"
       >
-        alertShort
+        Back up now
       </span>
       <span
         class="hidden md:inline"
       >
-        alertFull
+        Back up now to avoid losing your account!
       </span>
     </p>
   </div>

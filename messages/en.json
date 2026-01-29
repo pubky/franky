@@ -140,6 +140,19 @@
       "title": "Language",
       "description": "Choose your preferred language for the Pubky interface.",
       "displayLanguage": "Display language"
+    },
+    "backup": {
+      "title": "Backup",
+      "dialogTitle": "Back up your pubky",
+      "subtitle": "Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.",
+      "recoveryPhrase": "Recovery phrase",
+      "note": "Note",
+      "encryptedFile": "Download encrypted file",
+      "folder": "Folder",
+      "exportRing": "Export to Pubky Ring",
+      "keys": "Keys",
+      "alertShort": "Back up now",
+      "alertFull": "Back up now to avoid losing your account!"
     }
   },
   "language": {
@@ -1029,6 +1042,18 @@
       "title": "Version",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "See you <highlight>soon!</highlight>",
+    "subtitle": "You have securely signed out.",
+    "homepage": "Homepage",
+    "signBackIn": "Sign back in"
+  },
+  "tradeoffs": {
+    "title": "Be aware of these tradeoffs:",
+    "lessSecure": "Less secure than mobile keychain",
+    "browserBased": "Browser-based key generation",
+    "suboptimalSignIn": "Suboptimal sign-in experience"
   },
   "help": {
     "faq": "FAQ",

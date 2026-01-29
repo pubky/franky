@@ -140,6 +140,19 @@
       "title": "语言",
       "description": "选择您偏好的 Pubky 界面语言。",
       "displayLanguage": "显示语言"
+    },
+    "backup": {
+      "title": "备份",
+      "dialogTitle": "备份您的 pubky",
+      "subtitle": "安全备份并存储您 pubky 的秘密种子。您更喜欢哪种备份方式？如果需要，您可以选择多种备份方式。",
+      "recoveryPhrase": "恢复短语",
+      "note": "备注",
+      "encryptedFile": "下载加密文件",
+      "folder": "文件夹",
+      "exportRing": "导出到 Pubky Ring",
+      "keys": "密钥",
+      "alertShort": "立即备份",
+      "alertFull": "立即备份以免丢失您的账户！"
     }
   },
   "language": {
@@ -1023,6 +1036,18 @@
       "title": "版本",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "<highlight>再见！</highlight>",
+    "subtitle": "您已安全退出。",
+    "homepage": "首页",
+    "signBackIn": "重新登录"
+  },
+  "tradeoffs": {
+    "title": "请注意以下权衡：",
+    "lessSecure": "安全性不如移动端密钥链",
+    "browserBased": "基于浏览器的密钥生成",
+    "suboptimalSignIn": "登录体验欠佳"
   },
   "help": {
     "faq": "常见问题",

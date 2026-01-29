@@ -140,6 +140,19 @@
       "title": "言語",
       "description": "Pubkyインターフェースの言語を選択してください。",
       "displayLanguage": "表示言語"
+    },
+    "backup": {
+      "title": "バックアップ",
+      "dialogTitle": "pubkyをバックアップ",
+      "subtitle": "pubkyのシークレットシードを安全にバックアップして保管してください。どのバックアップ方法をお好みですか？必要に応じて複数のバックアップ方法を選択できます。",
+      "recoveryPhrase": "リカバリーフレーズ",
+      "note": "メモ",
+      "encryptedFile": "暗号化ファイルをダウンロード",
+      "folder": "フォルダ",
+      "exportRing": "Pubky Ringにエクスポート",
+      "keys": "キー",
+      "alertShort": "今すぐバックアップ",
+      "alertFull": "アカウントを失わないように今すぐバックアップしてください！"
     }
   },
   "language": {
@@ -1029,6 +1042,18 @@
       "title": "バージョン",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "<highlight>また会いましょう！</highlight>",
+    "subtitle": "安全にログアウトしました。",
+    "homepage": "ホームページ",
+    "signBackIn": "再ログイン"
+  },
+  "tradeoffs": {
+    "title": "これらのトレードオフに注意してください：",
+    "lessSecure": "モバイルキーチェーンより安全性が低い",
+    "browserBased": "ブラウザベースの鍵生成",
+    "suboptimalSignIn": "最適でないサインイン体験"
   },
   "help": {
     "faq": "よくある質問",

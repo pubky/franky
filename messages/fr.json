@@ -140,6 +140,19 @@
       "title": "Langue",
       "description": "Choisissez votre langue préférée pour l'interface Pubky.",
       "displayLanguage": "Langue d'affichage"
+    },
+    "backup": {
+      "title": "Sauvegarde",
+      "dialogTitle": "Sauvegarder votre pubky",
+      "subtitle": "Sauvegardez et stockez en toute sécurité la graine secrète de votre pubky. Quelle méthode de sauvegarde préférez-vous? Vous pouvez choisir plusieurs méthodes de sauvegarde si vous le souhaitez.",
+      "recoveryPhrase": "Phrase de récupération",
+      "note": "Note",
+      "encryptedFile": "Télécharger le fichier crypté",
+      "folder": "Dossier",
+      "exportRing": "Exporter vers Pubky Ring",
+      "keys": "Clés",
+      "alertShort": "Sauvegardez maintenant",
+      "alertFull": "Sauvegardez maintenant pour éviter de perdre votre compte!"
     }
   },
   "language": {
@@ -1029,6 +1042,18 @@
       "title": "Version",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "À <highlight>bientôt!</highlight>",
+    "subtitle": "Vous vous êtes déconnecté en toute sécurité.",
+    "homepage": "Page d'accueil",
+    "signBackIn": "Se reconnecter"
+  },
+  "tradeoffs": {
+    "title": "Soyez conscient de ces inconvénients:",
+    "lessSecure": "Moins sécurisé que le trousseau mobile",
+    "browserBased": "Génération de clés dans le navigateur",
+    "suboptimalSignIn": "Expérience de connexion non optimale"
   },
   "help": {
     "faq": "FAQ",

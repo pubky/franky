@@ -1,5 +1,8 @@
 import type { LanguageOption } from './LanguageSelector.types';
 
+// Re-export RTL locales from shared i18n constants
+export { RTL_LOCALES, isRtlLocale } from '@/i18n';
+
 /** Available languages for the application */
 export const LANGUAGES: LanguageOption[] = [
   { code: 'en', name: 'US English', flag: '🇺🇸' },
@@ -12,6 +15,3 @@ export const LANGUAGES: LanguageOption[] = [
   { code: 'ja', name: '日本語', flag: '🇯🇵' },
   { code: 'ar', name: 'العربية', flag: '🇸🇦' },
 ];
-
-/** RTL (Right-to-Left) language codes */
-export const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ur'] as const;

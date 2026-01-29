@@ -2,14 +2,12 @@ import { Inter_Tight } from 'next/font/google';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import { isRtlLocale } from '@/i18n';
 
 const interTight = Inter_Tight({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 });
-
-/** RTL (Right-to-Left) language codes */
-const RTL_LOCALES = ['ar', 'he', 'fa', 'ur'];
 
 interface RootContainerProps {
   children: React.ReactNode;
@@ -17,7 +15,7 @@ interface RootContainerProps {
 }
 
 export function RootContainer({ children, locale = 'en' }: RootContainerProps) {
-  const dir = RTL_LOCALES.includes(locale) ? 'rtl' : 'ltr';
+  const dir = isRtlLocale(locale) ? 'rtl' : 'ltr';
 
   return (
     <Atoms.Container as="html" lang={locale} dir={dir}>

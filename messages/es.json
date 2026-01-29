@@ -140,6 +140,19 @@
       "title": "Idioma",
       "description": "Elige tu idioma preferido para la interfaz de Pubky.",
       "displayLanguage": "Idioma de visualización"
+    },
+    "backup": {
+      "title": "Respaldo",
+      "dialogTitle": "Respaldar tu pubky",
+      "subtitle": "Respalda y almacena de forma segura la semilla secreta de tu pubky. ¿Qué método de respaldo prefieres? Puedes elegir múltiples métodos de respaldo si lo deseas.",
+      "recoveryPhrase": "Frase de recuperación",
+      "note": "Nota",
+      "encryptedFile": "Descargar archivo encriptado",
+      "folder": "Carpeta",
+      "exportRing": "Exportar a Pubky Ring",
+      "keys": "Claves",
+      "alertShort": "Respalda ahora",
+      "alertFull": "¡Respalda ahora para evitar perder tu cuenta!"
     }
   },
   "language": {
@@ -957,7 +970,7 @@
       "popularity": "Popularidad"
     },
     "layout": {
-      "title": "Diseno",
+      "title": "Diseño",
       "columns": "Columnas",
       "wide": "Ancho"
     },
@@ -1029,6 +1042,18 @@
       "title": "Version",
       "text": "Pubky v0.12 © Synonym Software Ltd"
     }
+  },
+  "logout": {
+    "title": "¡Hasta <highlight>pronto!</highlight>",
+    "subtitle": "Has cerrado sesión de forma segura.",
+    "homepage": "Página principal",
+    "signBackIn": "Volver a iniciar sesión"
+  },
+  "tradeoffs": {
+    "title": "Ten en cuenta estas desventajas:",
+    "lessSecure": "Menos seguro que el llavero móvil",
+    "browserBased": "Generación de claves en el navegador",
+    "suboptimalSignIn": "Experiencia de inicio de sesión no óptima"
   },
   "help": {
     "faq": "Preguntas frecuentes",

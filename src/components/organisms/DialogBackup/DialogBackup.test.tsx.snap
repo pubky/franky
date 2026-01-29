@@ -12,7 +12,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
       data-testid="button"
       data-variant="outline"
     >
-      title
+      Backup
     </button>
   </div>
   <div
@@ -25,12 +25,12 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
       <h2
         data-testid="dialog-title"
       >
-        dialogTitle
+        Back up your pubky
       </h2>
       <div
         data-testid="dialog-description"
       >
-        subtitle
+        Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
       </div>
     </div>
     <div
@@ -49,7 +49,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
             data-size="md"
             data-testid="typography"
           >
-            recoveryPhrase
+            Recovery phrase
           </p>
         </div>
         <div
@@ -60,14 +60,14 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
           >
             <div
               class="h-full w-full object-cover"
-              data-alt="note"
+              data-alt="Note"
               data-height="192"
               data-src="/images/note.png"
               data-testid="image"
               data-width="192"
             >
               Next.js Image: 
-              note
+              Note
             </div>
           </div>
         </div>
@@ -93,7 +93,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
             data-size="md"
             data-testid="typography"
           >
-            encryptedFile
+            Download encrypted file
           </p>
         </div>
         <div
@@ -104,14 +104,14 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
           >
             <div
               class="h-full w-full object-cover"
-              data-alt="folder"
+              data-alt="Folder"
               data-height="192"
               data-src="/images/folder.png"
               data-testid="image"
               data-width="192"
             >
               Next.js Image: 
-              folder
+              Folder
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
             data-size="md"
             data-testid="typography"
           >
-            exportRing
+            Export to Pubky Ring
           </p>
         </div>
         <div
@@ -148,14 +148,14 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
           >
             <div
               class="h-full w-full object-cover"
-              data-alt="keys"
+              data-alt="Keys"
               data-height="192"
               data-src="/images/keyring.png"
               data-testid="image"
               data-width="192"
             >
               Next.js Image: 
-              keys
+              Keys
             </div>
           </div>
         </div>

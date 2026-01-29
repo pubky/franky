@@ -12,10 +12,12 @@ import { LANGUAGES } from './LanguageSelector.constants';
 /**
  * Sets the locale cookie for server-side i18n.
  * Cookie is used by next-intl to determine the locale on the server.
+ * Adds Secure flag for HTTPS environments to prevent cookie leakage.
  */
 function setLocaleCookie(locale: string) {
   const encodedLocale = encodeURIComponent(locale);
-  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax`;
+  const secure = window.location.protocol === 'https:' ? ';Secure' : '';
+  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax${secure}`;
 }
 
 function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: string; onSelect: (code: string) => void }) {
