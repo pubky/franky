@@ -4,7 +4,6 @@ const EMAIL_URL = 'mailto:info@synonym.to';
 const EMAIL_REPORT_URL = 'mailto:report@synonym.to';
 const COPYRIGHT_URL = '/copyright';
 const PRIVACY_URL = '/settings/privacy-safety';
-const GUIDELINES_URL = 'https://pubky.app/guidelines'; // Assuming there is a guidelines page, or we can use external link if provided
 
 interface DialogTermsProps {
   trigger?: React.ReactNode;
@@ -33,7 +32,7 @@ export function DialogTerms({ trigger }: DialogTermsProps) {
             <Atoms.Typography className={baseCSS}>
               TERMS AND CONDITIONS
               <br />
-              Effective Date: January 29 2026
+              Effective Date: January 29, 2026
             </Atoms.Typography>
             <Atoms.Typography className={baseCSS}>
               Thank you for using the Pubky platform and the products, services and features we make available to you as
@@ -764,8 +763,7 @@ export function DialogTerms({ trigger }: DialogTermsProps) {
                 officers, directors, agents, co-branders and other partners, contractors, and employees;
               </li>
               <li>
-                “<strong>Community Guidelines</strong>” means the Pubky{' '}
-                <Atoms.Link href={GUIDELINES_URL}>Community Guidelines</Atoms.Link>;
+                “<strong>Community Guidelines</strong>” means the Pubky Community Guidelines;
               </li>
               <li>
                 “<strong>Content</strong>” means user-generated text, images, videos and other content provided on the

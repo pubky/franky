@@ -25,7 +25,7 @@ export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
         <Atoms.Container className="h-[320px] overflow-y-auto pr-4">
           <Atoms.Container className="flex-col gap-4">
             {/** Section 1 */}
-            <Atoms.Typography className={baseCSS}>Effective Date: January 29 2026</Atoms.Typography>
+            <Atoms.Typography className={baseCSS}>Effective Date: January 29, 2026</Atoms.Typography>
             <Atoms.Typography className={baseCSS}>
               SCOPE
               <br /> This Privacy Policy (“Policy“) describes how Synonym Software Ltd. treats personal information on
@@ -405,8 +405,8 @@ export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
               <li>
                 <strong>Limit the Use or Disclosure of Sensitive Personal Information.</strong> The CCPA provides a
                 right for consumers to request that business limit the use or disclosure of their “sensitive” personal
-                information. In our normal business operations, we do not process sensitive personal information” as
-                that term is defined under CCPA. Please do not submit this information to us.
+                information. In our normal business operations, we do not process sensitive personal information as that
+                term is defined under CCPA. Please do not submit this information to us.
               </li>
               <li>
                 <strong>Opt-Out of the Sale or Sharing of Personal Information.</strong> You may have the right to opt

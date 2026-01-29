@@ -41,7 +41,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Effective Date: January 29 2026
+          Effective Date: January 29, 2026
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -610,7 +610,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
             <strong>
               Limit the Use or Disclosure of Sensitive Personal Information.
             </strong>
-             The CCPA provides a right for consumers to request that business limit the use or disclosure of their “sensitive” personal information. In our normal business operations, we do not process sensitive personal information” as that term is defined under CCPA. Please do not submit this information to us.
+             The CCPA provides a right for consumers to request that business limit the use or disclosure of their “sensitive” personal information. In our normal business operations, we do not process sensitive personal information as that term is defined under CCPA. Please do not submit this information to us.
           </li>
           <li>
             <strong>

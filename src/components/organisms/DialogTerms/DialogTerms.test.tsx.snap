@@ -43,7 +43,7 @@ exports[`DialogTerms - Snapshots > matches snapshot for default DialogTerms 1`] 
         >
           TERMS AND CONDITIONS
           <br />
-          Effective Date: January 29 2026
+          Effective Date: January 29, 2026
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -933,15 +933,7 @@ exports[`DialogTerms - Snapshots > matches snapshot for default DialogTerms 1`] 
             <strong>
               Community Guidelines
             </strong>
-            ” means the Pubky
-             
-            <a
-              data-testid="link"
-              href="https://pubky.app/guidelines"
-            >
-              Community Guidelines
-            </a>
-            ;
+            ” means the Pubky Community Guidelines;
           </li>
           <li>
             “
