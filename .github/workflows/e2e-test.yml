@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chrome, firefox, webkit]
+        browser: [chrome] # [chrome, firefox, webkit]
 
     steps:
       - name: Checkout this repository

@@ -426,7 +426,9 @@ const findPostInFeed = (
         cy.log(`findPostInFeed: Post found at index ${postIdx} (${filteredPosts.length} matching posts found)`);
         return cy.wrap(filteredPosts.eq(postIdx));
       }
-      cy.log(`findPostInFeed: Post not found at index ${postIdx} (${filteredPosts.length} matching posts found, ${$posts.length} total posts)`);
+      cy.log(
+        `findPostInFeed: Post not found at index ${postIdx} (${filteredPosts.length} matching posts found, ${$posts.length} total posts)`,
+      );
 
       // Post not found - if checkForNewPosts is enabled, try clicking "See new posts" button
       if (checkForNewPosts) {

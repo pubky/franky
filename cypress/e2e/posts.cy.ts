@@ -279,23 +279,35 @@ describe('posts', () => {
         cy.get('[data-cy="add-tag-input"]').filter(':visible').type(`${tag}{enter}`);
       });
 
-      cy.get('[data-cy="post-tags-panel"]').filter(':visible').within(() => {
-        [tag1, tag2, tag3].forEach((tag) => {
-          cy.contains('p', tag).should('be.visible').parent().find('[data-testid="tag-count"]').should('have.text', '1');
-        });
+      cy.get('[data-cy="post-tags-panel"]')
+        .filter(':visible')
+        .within(() => {
+          [tag1, tag2, tag3].forEach((tag) => {
+            cy.contains('p', tag)
+              .should('be.visible')
+              .parent()
+              .find('[data-testid="tag-count"]')
+              .should('have.text', '1');
+          });
 
-        cy.contains('p', tag2).parent().click();
-        cy.wait(100); // short wait to ensure state has updated
-        cy.contains('p', tag2).should('be.visible').parent().find('[data-testid="tag-count"]').should('have.text', '0');
-      });
+          cy.contains('p', tag2).parent().click();
+          cy.wait(100); // short wait to ensure state has updated
+          cy.contains('p', tag2)
+            .should('be.visible')
+            .parent()
+            .find('[data-testid="tag-count"]')
+            .should('have.text', '0');
+        });
     });
 
     cy.reload();
 
     cy.get('[data-cy="single-post-card"]').within(() => {
-      cy.get('[data-cy="post-tags-panel"]').filter(':visible').within(() => {
-        cy.contains('p', tag2).should('not.exist');
-      });
+      cy.get('[data-cy="post-tags-panel"]')
+        .filter(':visible')
+        .within(() => {
+          cy.contains('p', tag2).should('not.exist');
+        });
     });
   });
 
