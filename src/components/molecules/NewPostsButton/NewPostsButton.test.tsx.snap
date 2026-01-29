@@ -33,10 +33,7 @@ exports[`NewPostsButton - Snapshots > matches snapshot when scrolled (fixed posi
     />
   </svg>
   <span>
-    See 
-    5
-     new 
-    posts
+    See 5 new posts
   </span>
 </button>
 `;
@@ -70,10 +67,7 @@ exports[`NewPostsButton - Snapshots > matches snapshot with 1 new post 1`] = `
     />
   </svg>
   <span>
-    See 
-    1
-     new 
-    post
+    See 1 new post
   </span>
 </button>
 `;
@@ -107,10 +101,7 @@ exports[`NewPostsButton - Snapshots > matches snapshot with multiple new posts 1
     />
   </svg>
   <span>
-    See 
-    5
-     new 
-    posts
+    See 5 new posts
   </span>
 </button>
 `;

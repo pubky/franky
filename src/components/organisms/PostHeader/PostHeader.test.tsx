@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostHeader } from './PostHeader';
 import * as Hooks from '@/hooks';
-import * as Libs from '@/libs';
 import * as Core from '@/core';
 
 vi.mock('@/hooks', async (importOriginal) => {
@@ -12,6 +11,9 @@ vi.mock('@/hooks', async (importOriginal) => {
     usePostDetails: vi.fn(),
     useUserDetails: vi.fn(),
     useAvatarUrl: vi.fn(),
+    useRelativeTime: vi.fn(() => ({
+      formatRelativeTime: vi.fn(() => '2h'),
+    })),
   };
 });
 
@@ -99,7 +101,6 @@ vi.mock('@/libs', async () => {
   const actual = await vi.importActual('@/libs');
   return {
     ...actual,
-    timeAgo: vi.fn(() => '2h'),
     extractInitials: vi.fn(({ name }) => name?.substring(0, 2).toUpperCase() || ''),
     formatPublicKey: vi.fn(({ key, length }) => key?.substring(0, length) || ''),
     Clock: vi.fn(({ className }: { className?: string }) => <svg data-testid="clock-icon" className={className} />),
@@ -125,7 +126,6 @@ describe('PostHeader', () => {
   });
 
   it('renders user name, handle and time', () => {
-    const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
       postDetails: {
         id: 'userpubkykey:post456',
@@ -148,7 +148,6 @@ describe('PostHeader', () => {
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
     expect(screen.getByText('Test User')).toBeInTheDocument();
     expect(screen.getByText('2h')).toBeInTheDocument();
-    timeSpy.mockRestore();
   });
 
   it('hides time when isReplyInput is true', () => {
@@ -179,7 +178,6 @@ describe('PostHeader', () => {
   });
 
   it('passes size prop to PostHeaderUserInfo', () => {
-    const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
       postDetails: {
         id: 'userpubkykey:post456',
@@ -200,11 +198,9 @@ describe('PostHeader', () => {
     render(<PostHeader postId="userpubkykey:post456" size="large" />);
 
     expect(screen.getByTestId('post-header-user-info')).toHaveAttribute('data-size', 'large');
-    timeSpy.mockRestore();
   });
 
   it('renders time in top-right by default', () => {
-    const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
       postDetails: {
         id: 'userpubkykey:post456',
@@ -226,11 +222,9 @@ describe('PostHeader', () => {
 
     expect(screen.getByTestId('post-header-timestamp')).toBeInTheDocument();
     expect(screen.queryByTestId('bottom-left-time')).not.toBeInTheDocument();
-    timeSpy.mockRestore();
   });
 
   it('renders time in bottom-left when timeAgoPlacement is bottom-left', () => {
-    const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
       postDetails: {
         id: 'userpubkykey:post456',
@@ -252,7 +246,6 @@ describe('PostHeader', () => {
 
     expect(screen.queryByTestId('post-header-timestamp')).not.toBeInTheDocument();
     expect(screen.getByTestId('bottom-left-time')).toHaveTextContent('2h');
-    timeSpy.mockRestore();
   });
 });
 
@@ -262,7 +255,6 @@ describe('PostHeader - Snapshots', () => {
   });
 
   it('matches snapshot in loaded state', () => {
-    const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({
       postDetails: {
         id: 'userpubkykey:post456',
@@ -286,17 +278,14 @@ describe('PostHeader - Snapshots', () => {
 
     const { container } = render(<PostHeader postId="snapshotUserKey:post789" />);
     expect(container.firstChild).toMatchSnapshot();
-    timeSpy.mockRestore();
   });
 
   it('matches snapshot in loading state', () => {
-    const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUsePostDetails.mockReturnValue({ postDetails: null, isLoading: false });
     mockUseUserDetails.mockReturnValue({ userDetails: null, isLoading: false });
     mockUseAvatarUrl.mockReturnValue(undefined);
 
     const { container } = render(<PostHeader postId="user123:post456" />);
     expect(container.firstChild).toMatchSnapshot();
-    timeSpy.mockRestore();
   });
 });

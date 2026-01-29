@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
@@ -7,6 +8,7 @@ import * as Organisms from '@/organisms';
 import type { PostActionsBarProps, ActionButtonConfig } from './PostActionsBar.types';
 
 export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick, className }: PostActionsBarProps) {
+  const t = useTranslations('common');
   const { postCounts, isLoading: isCountsLoading } = Hooks.usePostCounts(postId);
   const {
     isBookmarked,
@@ -21,7 +23,7 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
   if (isCountsLoading || !postCounts) {
     return (
       <Atoms.Container overrideDefaults className="text-muted-foreground">
-        Loading actions...
+        {t('loadingActions')}
       </Atoms.Container>
     );
   }
@@ -58,7 +60,7 @@ export function PostActionsBar({ postId, onTagClick, onReplyClick, onRepostClick
       id: 'bookmark',
       icon: isBookmarkBusy ? Libs.Loader2 : Libs.Bookmark,
       onClick: () => requireAuth(() => toggleBookmark()),
-      ariaLabel: isBookmarkBusy ? 'Loading...' : isBookmarked ? 'Remove bookmark' : 'Add bookmark',
+      ariaLabel: isBookmarkBusy ? t('loadingBookmark') : isBookmarked ? t('removeBookmark') : t('addBookmark'),
       className: 'w-10',
       iconProps: {
         fill: isBookmarked && !isBookmarkBusy ? 'currentColor' : 'none',

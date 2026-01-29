@@ -33,7 +33,6 @@ export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, dis
         {isAddingTag && (
           <Molecules.TagInput
             onTagAdd={handleTagAdd}
-            placeholder="add tag"
             existingTags={tags.map((tag) => ({ label: tag }))}
             showCloseButton={!disabled}
             onClose={handleCloseInput}

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -75,10 +76,10 @@ export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElem
   );
 }
 
-type NavigationItem = {
+type NavigationItemConfig = {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  labelKey: string;
 };
 
 type HeaderNavigationButtonsProps = {
@@ -87,20 +88,27 @@ type HeaderNavigationButtonsProps = {
   avatarName?: string;
 };
 
-const NAVIGATION_ITEMS: NavigationItem[] = [
-  { href: App.APP_ROUTES.HOME, icon: Libs.Home, label: 'Home' },
-  { href: App.APP_ROUTES.HOT, icon: Libs.Flame, label: 'Hot' },
-  { href: App.APP_ROUTES.BOOKMARKS, icon: Libs.Bookmark, label: 'Bookmarks' },
-  { href: App.SETTINGS_ROUTES.ACCOUNT, icon: Libs.Settings, label: 'Settings' },
+const NAVIGATION_ITEMS: NavigationItemConfig[] = [
+  { href: App.APP_ROUTES.HOME, icon: Libs.Home, labelKey: 'home' },
+  { href: App.APP_ROUTES.HOT, icon: Libs.Flame, labelKey: 'hot' },
+  { href: App.APP_ROUTES.BOOKMARKS, icon: Libs.Bookmark, labelKey: 'bookmarks' },
+  { href: App.SETTINGS_ROUTES.ACCOUNT, icon: Libs.Settings, labelKey: 'settings' },
 ];
 
-const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isActive: boolean }) => (
+type NavigationButtonProps = {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  isActive: boolean;
+};
+
+const NavigationButton = ({ href, icon: Icon, label, isActive }: NavigationButtonProps) => (
   <Atoms.Link href={href}>
     <Atoms.Button
       className={Libs.cn('h-12 w-12 backdrop-blur-md', isActive ? '' : 'border bg-white/5')}
       variant="secondary"
       size="icon"
-      aria-label={href}
+      aria-label={label}
     >
       <Icon className="size-6" />
     </Atoms.Button>
@@ -109,12 +117,20 @@ const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isA
 
 export function HeaderNavigationButtons({ counter = 0, avatarImage, avatarName = 'U' }: HeaderNavigationButtonsProps) {
   const pathname = usePathname();
+  const t = useTranslations('header');
+  const tCommon = useTranslations('common');
   const counterString = counter > 21 ? '21+' : counter.toString();
 
   return (
     <Atoms.Container className="hidden w-auto flex-row items-center justify-start gap-3 lg:flex">
       {NAVIGATION_ITEMS.map((item) => (
-        <NavigationButton key={item.href} {...item} isActive={pathname === item.href} />
+        <NavigationButton
+          key={item.href}
+          href={item.href}
+          icon={item.icon}
+          label={t(item.labelKey)}
+          isActive={pathname === item.href}
+        />
       ))}
 
       <Atoms.Link data-cy="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
@@ -123,7 +139,7 @@ export function HeaderNavigationButtons({ counter = 0, avatarImage, avatarName =
           name={avatarName}
           size="lg"
           className="cursor-pointer"
-          alt="Profile"
+          alt={tCommon('profile')}
         />
         {counter > 0 && (
           <Atoms.Badge

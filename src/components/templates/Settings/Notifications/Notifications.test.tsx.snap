@@ -254,7 +254,7 @@ exports[`Notifications - Snapshots > matches snapshot 1`] = `
             data-testid="typography"
             for="notification-switch-repost"
           >
-            New repost of your post
+            New repost to your post
           </label>
         </div>
         <button

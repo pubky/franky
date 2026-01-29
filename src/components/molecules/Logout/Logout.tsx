@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
@@ -21,18 +22,23 @@ export const LogoutContent = () => {
 };
 
 export const LogoutHeader = () => {
+  const t = useTranslations('logout');
+
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        See you <span className="text-brand">soon!</span>
+        {t.rich('title', {
+          highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+        })}
       </Molecules.PageTitle>
-      <Atoms.PageSubtitle>You have securely signed out.</Atoms.PageSubtitle>
+      <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
     </Atoms.PageHeader>
   );
 };
 
 export const LogoutNavigation = () => {
   const router = useRouter();
+  const t = useTranslations('logout');
 
   const onHandleBackButton = () => {
     router.push(App.ROOT_ROUTES);
@@ -45,8 +51,8 @@ export const LogoutNavigation = () => {
   return (
     <Molecules.ButtonsNavigation
       id="logout-navigation"
-      backText="Homepage"
-      continueText="Sign back in"
+      backText={t('homepage')}
+      continueText={t('signBackIn')}
       onHandleContinueButton={onHandleContinueButton}
       onHandleBackButton={onHandleBackButton}
     />

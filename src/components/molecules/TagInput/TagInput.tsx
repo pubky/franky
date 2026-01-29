@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
@@ -12,7 +13,7 @@ import type { TagInputProps } from './TagInput.types';
 
 export function TagInput({
   onTagAdd,
-  placeholder = 'add tag',
+  placeholder,
   existingTags = [],
   viewerTags,
   showCloseButton = false,
@@ -20,12 +21,15 @@ export function TagInput({
   disabled = false,
   maxTags,
   currentTagsCount = 0,
-  limitReachedPlaceholder = 'limit reached',
+  limitReachedPlaceholder,
   onBlur,
   onClick,
   autoFocus = false,
   className,
 }: TagInputProps) {
+  const t = useTranslations('post');
+  const defaultPlaceholder = placeholder ?? t('addTag');
+  const defaultLimitReachedPlaceholder = limitReachedPlaceholder ?? t('limitReached');
   const containerRef = useRef<HTMLDivElement>(null);
   const emojiPickerOpenRef = useRef(false);
 
@@ -95,6 +99,8 @@ export function TagInput({
     inputRef.current?.focus();
   };
 
+  const displayPlaceholder = isAtLimit ? defaultLimitReachedPlaceholder : defaultPlaceholder;
+
   return (
     <>
       <Atoms.Container
@@ -112,7 +118,7 @@ export function TagInput({
           ref={inputRef}
           type="text"
           value={inputValue}
-          placeholder={isAtLimit ? limitReachedPlaceholder : placeholder}
+          placeholder={displayPlaceholder}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onFocus={handleInputFocus}

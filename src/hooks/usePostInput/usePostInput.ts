@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { type MDXEditorProps, type MDXEditorMethods } from '@mdxeditor/editor';
 import { useDebounceCallback } from 'usehooks-ts';
+import { useTranslations } from 'next-intl';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import {
@@ -18,7 +19,7 @@ import {
   ARTICLE_TITLE_MAX_CHARACTER_LENGTH,
 } from '@/config';
 import { useTimelineFeedContext } from '@/organisms/TimelineFeed/TimelineFeed';
-import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
+import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import { useMentionAutocomplete, getContentWithMention } from '@/hooks/useMentionAutocomplete';
 import type { UsePostInputOptions, UsePostInputReturn } from './usePostInput.types';
 
@@ -60,6 +61,7 @@ export function usePostInput({
   const dragCounterRef = useRef(0);
 
   // Hooks
+  const t = useTranslations('post.placeholder');
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const {
     content,
@@ -408,7 +410,7 @@ export function usePostInput({
 
   // Derived values
   const hasContent = content.trim().length > 0;
-  const displayPlaceholder = placeholder ?? POST_INPUT_PLACEHOLDER[variant];
+  const displayPlaceholder = placeholder ?? t(variant);
 
   return {
     // Refs

@@ -30,6 +30,12 @@ export type ContainerProps = {
   'aria-modal'?: React.AriaAttributes['aria-modal'];
   'aria-label'?: React.AriaAttributes['aria-label'];
   tabIndex?: React.HTMLAttributes<HTMLElement>['tabIndex'];
+  /** HTML lang attribute for the element */
+  lang?: string;
+  /** HTML dir attribute for text direction (ltr, rtl, auto) */
+  dir?: React.HTMLAttributes<HTMLElement>['dir'];
+  /** HTML translate attribute to disable browser translation */
+  translate?: 'yes' | 'no';
 };
 
 export interface ContainerElementProps extends React.HTMLAttributes<HTMLElement> {

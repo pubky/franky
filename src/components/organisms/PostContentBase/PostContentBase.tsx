@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -13,12 +14,14 @@ import type { PostContentBaseProps } from './PostContentBase.types';
  * It only renders the content elements: text, link embeds, and attachments.
  */
 export function PostContentBase({ postId, className }: PostContentBaseProps) {
+  const t = useTranslations('common');
+
   // Fetch post details for content
   const { postDetails } = Hooks.usePostDetails(postId);
 
   if (!postDetails) {
     // TODO: Add skeleton loading component for PostContent
-    return <div className="text-muted-foreground">Loading content...</div>;
+    return <div className="text-muted-foreground">{t('loadingContent')}</div>;
   }
 
   const isDeleted = Libs.isPostDeleted(postDetails.content);
