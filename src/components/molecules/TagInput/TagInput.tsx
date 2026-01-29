@@ -46,6 +46,7 @@ export function TagInput({
     suggestions,
     selectedSuggestionIndex,
     setSelectedSuggestionIndex,
+    resetSelection,
     handleInputChange,
     handleInputFocus,
     handleKeyDown,
@@ -56,6 +57,8 @@ export function TagInput({
     existingTags: tagsForDuplicateCheck.map((t) => t.label),
     allTags: existingTags,
   });
+
+  const isListboxOpen = showSuggestions && suggestions.length > 0;
 
   const handleInputBlur = () => {
     setTimeout(() => {
@@ -86,8 +89,9 @@ export function TagInput({
   };
 
   const selectSuggestion = (label: string) => {
-    setInputValue(label);
+    setInputValue(label.toLowerCase());
     setShowSuggestions(false);
+    resetSelection();
     inputRef.current?.focus();
   };
 
@@ -153,14 +157,14 @@ export function TagInput({
           </Atoms.Button>
         )}
 
-        {showSuggestions && suggestions.length > 0 && (
+        {isListboxOpen && (
           <Atoms.Container
             overrideDefaults={true}
             className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border border-border bg-popover"
           >
             {suggestions.map((tag, index) => (
               <Atoms.Container
-                key={`${tag.label}-${index}`}
+                key={tag.label}
                 overrideDefaults={true}
                 className={Libs.cn(
                   'cursor-pointer px-3 py-2 hover:rounded-md hover:bg-accent',

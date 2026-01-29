@@ -1,12 +1,14 @@
+import type { TagLabel } from '@/hooks/useTagInput/useTagInput.types';
+
 export interface TagInputProps {
   /** Callback when a tag is added. Can return a Promise for async handling. */
-  onTagAdd: (tag: string) => void | Promise<{ success: boolean; error?: string }>;
+  onTagAdd: (tag: string) => void | Promise<unknown>;
   /** Placeholder text for the input */
   placeholder?: string;
   /** All tags for autocomplete suggestions */
-  existingTags?: Array<{ label: string }>;
+  existingTags?: TagLabel[];
   /** Viewer's own tags for duplicate checking (defaults to existingTags) */
-  viewerTags?: Array<{ label: string }>;
+  viewerTags?: TagLabel[];
   /** Whether to show the close button (X) */
   showCloseButton?: boolean;
   /** Callback when close button is clicked */

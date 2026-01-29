@@ -73,7 +73,7 @@ export function useTagInput({ onTagAdd, existingTags = [], allTags = [] }: UseTa
     resetSelection();
   };
 
-  const handleTagSubmit = () => {
+  const handleTagSubmit = async () => {
     const trimmedTag = inputValue.trim();
     if (!trimmedTag) return;
 
@@ -86,11 +86,14 @@ export function useTagInput({ onTagAdd, existingTags = [], allTags = [] }: UseTa
       return;
     }
 
-    // Handle both sync and async onTagAdd
-    Promise.resolve(onTagAdd(trimmedTag)).catch((error: unknown) => {
+    // Wait for completion before clearing - handles both sync and async onTagAdd
+    try {
+      await onTagAdd(trimmedTag);
+      clearInput();
+    } catch (error: unknown) {
       Libs.Logger.error('Failed to add tag:', error);
-    });
-    clearInput();
+      // Don't clear input on failure so user can retry
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,6 +174,7 @@ export function useTagInput({ onTagAdd, existingTags = [], allTags = [] }: UseTa
     suggestions: filteredSuggestions,
     selectedSuggestionIndex,
     setSelectedSuggestionIndex,
+    resetSelection,
     // Handlers
     handleInputChange,
     handleInputFocus,

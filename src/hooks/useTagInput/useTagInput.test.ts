@@ -69,7 +69,7 @@ describe('useTagInput', () => {
     expect(result.current.inputValue).toBe('new-tag');
   });
 
-  it('calls onTagAdd and clears input on submit', () => {
+  it('calls onTagAdd and clears input on submit', async () => {
     const { result } = renderHook(() =>
       useTagInput({
         onTagAdd: mockOnTagAdd,
@@ -82,8 +82,8 @@ describe('useTagInput', () => {
       } as React.ChangeEvent<HTMLInputElement>);
     });
 
-    act(() => {
-      result.current.handleTagSubmit();
+    await act(async () => {
+      await result.current.handleTagSubmit();
     });
 
     expect(mockOnTagAdd).toHaveBeenCalledWith('new-tag');
