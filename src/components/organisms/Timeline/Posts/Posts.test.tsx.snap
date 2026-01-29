@@ -34,6 +34,7 @@ exports[`TimelinePosts - Snapshots > should match snapshot for loading state 1`]
 exports[`TimelinePosts - Snapshots > should match snapshot with posts 1`] = `
 <div>
   <div
+    data-cy="timeline-container"
     data-testid="container"
   >
     <div
