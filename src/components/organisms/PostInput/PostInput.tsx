@@ -178,12 +178,12 @@ export function PostInput({
             <Atoms.Textarea
               ref={textareaRef}
               placeholder={displayPlaceholder}
-              className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="min-h-6 resize-none border-none p-0 font-medium text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
               value={content}
               onChange={handleChange}
               onFocus={handleExpand}
               onKeyDown={handleKeyDown}
-              onPaste={handlePaste}
+              onPaste={isEdit ? undefined : handlePaste}
               maxLength={POST_MAX_CHARACTER_LENGTH}
               rows={1}
               disabled={isSubmitting}
@@ -240,7 +240,6 @@ export function PostInput({
           showEmojiPicker={showEmojiPicker}
           setShowEmojiPicker={setShowEmojiPicker}
           onEmojiSelect={handleEmojiSelect}
-          onFileClick={handleFileClick}
           onImageClick={handleFileClick}
           onArticleClick={handleArticleClick}
           isPostDisabled={!isValid()}

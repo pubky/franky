@@ -36,7 +36,9 @@ export function DialogWelcome() {
     return null;
   }
 
-  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10, includePrefix: true });
+  const displayPublicKey = Libs.formatPublicKey({
+    key: currentUserPubky,
+  });
   const avatarImage = userDetails.image
     ? Core.FileController.getAvatarUrl(currentUserPubky, userDetails.indexed_at)
     : undefined;
@@ -75,7 +77,7 @@ export function DialogWelcome() {
                 </Atoms.Typography>
                 <Atoms.Button
                   variant="secondary"
-                  className="mt-2 h-8 w-fit gap-2 rounded-full"
+                  className="mt-2 h-8 w-fit gap-2 rounded-full uppercase"
                   onClick={handleCopyToClipboard}
                 >
                   <Libs.Key className="h-4 w-4" />

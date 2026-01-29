@@ -13,34 +13,18 @@ import type { HotActiveUsersProps } from './HotActiveUsers.types';
 const DEFAULT_USERS_LIMIT = 10;
 
 /**
- * Get the user stream ID based on reach filter.
- * - ALL: most_followed (global)
- * - FOLLOWING: currentUser:following (people I follow)
- * - FRIENDS: currentUser:friends (my friends)
+ * Get the user stream ID based on reach and timeframe filters.
+ * Uses influencers source with dynamic reach/timeframe from hot store.
+ * Pattern: influencers:timeframe:reach
  */
-function useActiveUsersStreamId(currentUserPubky: Core.Pubky | null): Core.UserStreamId {
+function useActiveUsersStreamId(): Core.UserStreamId {
   const reach = Core.useHotStore((state) => state.reach);
+  const timeframe = Core.useHotStore((state) => state.timeframe);
 
   const streamId = useMemo(() => {
-    if (reach === Core.REACH.ALL) {
-      return Core.UserStreamTypes.MOST_FOLLOWED;
-    }
-
-    // For FOLLOWING and FRIENDS, we need the current user's pubky
-    if (!currentUserPubky) {
-      return Core.UserStreamTypes.MOST_FOLLOWED;
-    }
-
-    if (reach === Core.REACH.FOLLOWING) {
-      return `${currentUserPubky}:following` as Core.UserStreamId;
-    }
-
-    if (reach === Core.REACH.FRIENDS) {
-      return `${currentUserPubky}:friends` as Core.UserStreamId;
-    }
-
-    return Core.UserStreamTypes.MOST_FOLLOWED;
-  }, [reach, currentUserPubky]);
+    // Build influencers stream ID: influencers:timeframe:reach
+    return `influencers:${timeframe}:${reach}` as Core.UserStreamId;
+  }, [reach, timeframe]);
 
   return streamId;
 }
@@ -49,15 +33,15 @@ function useActiveUsersStreamId(currentUserPubky: Core.Pubky | null): Core.UserS
  * HotActiveUsers
  *
  * Organism that displays active/influential users in a full list format.
- * Uses reach filter to show:
- * - ALL: Most followed users globally
- * - FOLLOWING: People the current user follows
- * - FRIENDS: Friends of the current user
+ * Uses influencers stream with reach and timeframe filters from hot store.
+ * - ALL: Influencers across all users
+ * - FOLLOWING: Influencers among people the current user follows
+ * - FRIENDS: Influencers among the current user's friends
  */
 export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotActiveUsersProps) {
   const router = useRouter();
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
-  const streamId = useActiveUsersStreamId(currentUserPubky);
+  const streamId = useActiveUsersStreamId();
 
   const { users, isLoading, error } = Hooks.useUserStream({
     streamId,
@@ -98,20 +82,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
           {users.map((user) => (
             <Organisms.UserListItem
               key={user.id}
-              user={{
-                id: user.id,
-                name: user.name,
-                avatarUrl: user.avatarUrl ?? undefined,
-                image: user.image,
-                tags: user.tags ?? [],
-                stats: user.counts
-                  ? {
-                      tags: user.counts.tags,
-                      posts: user.counts.posts,
-                    }
-                  : { tags: 0, posts: 0 },
-                isFollowing: user.isFollowing,
-              }}
+              user={user}
               variant="full"
               isLoading={isUserLoading(user.id)}
               isStatusLoading={isLoading}

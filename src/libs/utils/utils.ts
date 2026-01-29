@@ -9,6 +9,7 @@ import type {
   GetDisplayTagsOptions,
 } from './utils.types';
 import type { PostInputVariant } from '@/organisms';
+import * as Config from '@/config';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -33,7 +34,11 @@ export function stripPubkyPrefix(key: string): string {
   return key;
 }
 
-export function formatPublicKey({ key, length = 12, includePrefix = false }: FormatPublicKeyProps) {
+export function formatPublicKey({
+  key,
+  length = Config.DEFAULT_DISPLAY_PUBLIC_KEY_LENGTH,
+  includePrefix = false,
+}: FormatPublicKeyProps) {
   if (!key) return '';
   const rawKey = stripPubkyPrefix(key);
   const prefixLabel = includePrefix ? PUBKY_PREFIX : '';

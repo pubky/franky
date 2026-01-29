@@ -235,7 +235,7 @@ function CompactVariant({
           {showStats ? (
             <StatsSubtitle tags={stats.tags} posts={stats.posts} />
           ) : (
-            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground">
+            <Atoms.Typography as="span" overrideDefaults className="truncate text-sm text-muted-foreground uppercase">
               {formattedPublicKey}
             </Atoms.Typography>
           )}
@@ -382,8 +382,8 @@ export function UserListItem({
 
   // Normalize user data
   const avatarUrl = user.avatarUrl || user.image || undefined;
-  const displayName = user.name || Libs.formatPublicKey({ key: user.id, length: 10 });
-  const formattedPublicKey = Libs.formatPublicKey({ key: user.id, length: variant === 'compact' ? 10 : 12 });
+  const displayName = user.name || Libs.formatPublicKey({ key: user.id });
+  const formattedPublicKey = Libs.formatPublicKey({ key: user.id });
   const tags = user.tags || [];
   const stats = user.stats || user.counts || { tags: 0, posts: 0 };
   const isFollowing = isFollowingProp ?? user.isFollowing ?? false;

@@ -8,7 +8,7 @@ import type { FollowerItemProps } from './FollowerItem.types';
 
 export function FollowerItem({ follower, isFollowing = false, onFollow, isCurrentUser = false }: FollowerItemProps) {
   const avatarUrl = follower.avatarUrl || follower.image || undefined;
-  const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: 10 });
+  const formattedPublicKey = Libs.formatPublicKey({ key: follower.id });
   const tags = follower.tags || [];
   const stats = follower.stats || { tags: 0, posts: 0 };
   // Use formatted public key as fallback when name is loading
