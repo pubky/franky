@@ -43,11 +43,22 @@ export function useUserProfile(userId: string): UseUserProfileResult {
   useEffect(() => {
     if (!userId) return;
 
+    // Track if the effect has been cleaned up to prevent stale API calls
+    // This prevents errors when navigating away (e.g., during logout)
+    let cancelled = false;
+
     // Fetch details if not cached (local-first pattern)
     // Freshness is managed by TTL Coordinator in ProfilePageHeader
     Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
-      Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
+      // Only log errors if the effect hasn't been cleaned up
+      if (!cancelled) {
+        Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
+      }
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   // Separate concern: Read current data from local database
