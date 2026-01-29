@@ -35,7 +35,8 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
     set(
       (state) => ({
         ...authInitialState,
-        hasHydrated: state.hasHydrated, // Preserve or reset hydration
+        hasHydrated: state.hasHydrated, // Preserve hydration state
+        isLoggingOut: state.isLoggingOut, // Preserve logout state to prevent UI flash
       }),
       false,
       AuthActionTypes.RESET,
@@ -64,5 +65,9 @@ export const createAuthActions = (set: ZustandSet<AuthStore>): AuthActions => ({
 
   setShowSignInDialog: (showSignInDialog: boolean) => {
     set({ showSignInDialog }, false, AuthActionTypes.SET_SHOW_SIGN_IN_DIALOG);
+  },
+
+  setIsLoggingOut: (isLoggingOut: boolean) => {
+    set({ isLoggingOut }, false, AuthActionTypes.SET_IS_LOGGING_OUT);
   },
 });

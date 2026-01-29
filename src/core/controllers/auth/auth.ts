@@ -199,6 +199,9 @@ export class AuthController {
     const onboardingStore = Core.useOnboardingStore.getState();
     const signInStore = Core.useSignInStore.getState();
 
+    // Set logging out flag immediately to prevent flash of weird states in UI
+    authStore.setIsLoggingOut(true);
+
     if (authStore.session) {
       try {
         await Core.AuthApplication.logout({ session: authStore.session });
