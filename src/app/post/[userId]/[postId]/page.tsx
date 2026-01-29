@@ -1,9 +1,9 @@
 import type { Metadata as NextMetadata } from 'next';
-import { NEXUS_URL } from '@/config/nexus';
 import type { ArticleJSON } from '@/hooks/usePostArticle/usePostArticle.types';
 import * as Templates from '@/templates';
 import * as Core from '@/core';
 import { Metadata } from '@/molecules/Metadata/Metadata';
+import { httpResponseToError, ErrorService } from '@/libs';
 
 interface PostPageProps {
   params: Promise<{
@@ -12,15 +12,37 @@ interface PostPageProps {
   }>;
 }
 
+/**
+ * Server-side fetch with Next.js caching and proper error handling.
+ * Used for SSR/ISR metadata generation where client-side services are not available.
+ */
+async function fetchWithValidation<T>(url: string, operation: string): Promise<T> {
+  const res = await fetch(url, { next: { revalidate: 3600 } });
+  if (!res.ok) {
+    throw httpResponseToError(res, ErrorService.Nexus, operation, url);
+  }
+  return res.json();
+}
+
+function parseArticleTitle(content: string): string | null {
+  try {
+    const parsed = JSON.parse(content) as ArticleJSON;
+    return parsed.title || null;
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }: PostPageProps): Promise<NextMetadata> {
   try {
     const { userId, postId } = await params;
 
-    // fetch user and post information concurrently
-    const [user, post]: [Core.NexusUserDetails, Core.NexusPostDetails] = await Promise.all([
-      fetch(`${NEXUS_URL}/v0/user/${userId}/details`, { next: { revalidate: 3600 } }).then((res) => res.json()),
-      fetch(`${NEXUS_URL}/v0/post/${userId}/${postId}/details`, { next: { revalidate: 3600 } }).then((res) =>
-        res.json(),
+    // fetch user and post information concurrently using Core URL builders
+    const [user, post] = await Promise.all([
+      fetchWithValidation<Core.NexusUserDetails>(Core.userApi.details({ user_id: userId }), 'fetchUserDetails'),
+      fetchWithValidation<Core.NexusPostDetails>(
+        Core.postApi.details({ author_id: userId, post_id: postId }),
+        'fetchPostDetails',
       ),
     ]);
 
@@ -28,7 +50,7 @@ export async function generateMetadata({ params }: PostPageProps): Promise<NextM
     const { content, kind } = post;
 
     const isArticle = kind === 'long';
-    const postPreview = isArticle ? (JSON.parse(content) as ArticleJSON).title : content;
+    const postPreview = isArticle ? (parseArticleTitle(content) ?? content) : content;
     const postPreviewTruncated = postPreview.length > 100 ? `${postPreview.slice(0, 100)}...` : postPreview;
 
     const title = `${username} on Pubky`;
