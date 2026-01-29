@@ -77,8 +77,21 @@ export function useStreamPagination({
 
         // Handle empty results
         if (result.nextPageIds.length === 0) {
-          Libs.Logger.debug('[useStreamPagination] Empty result, no more posts');
-          setHasMore(false);
+          // Update cursor even on empty results so subsequent loads can progress
+          if (result.timestamp !== undefined) {
+            setStreamTail(result.timestamp);
+          }
+
+          // Respect reachedEnd flag - only set hasMore to false if we actually
+          // reached the end of stream, not just because filters removed all posts
+          if (result.reachedEnd) {
+            Libs.Logger.debug('[useStreamPagination] Empty result, reached end of stream');
+            setHasMore(false);
+          } else {
+            Libs.Logger.debug('[useStreamPagination] Empty result after filtering, more posts may exist');
+            setHasMore(true);
+          }
+
           setLoadingState(isInitialLoad, false);
           return;
         }
