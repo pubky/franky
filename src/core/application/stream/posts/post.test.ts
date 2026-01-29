@@ -2051,9 +2051,9 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      // Should stop after MAX_FETCH_ITERATIONS (5) and return partial/empty results
+      // Should stop after MAX_FETCH_ITERATIONS (20) and return partial/empty results
       // rather than looping infinitely
-      expect(nexusFetchSpy).toHaveBeenCalledTimes(5);
+      expect(nexusFetchSpy).toHaveBeenCalledTimes(20);
       // All posts were muted, so we get nothing
       expect(result.nextPageIds).toHaveLength(0);
     });
@@ -2082,9 +2082,9 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      // With 5 iterations, we get 5 valid posts (1 per batch), not 10
-      // Should return partial results rather than looping forever
-      expect(result.nextPageIds).toHaveLength(5);
+      // With 10 iterations, we get 10 valid posts (1 per batch), satisfying the limit
+      // With MAX_FETCH_ITERATIONS=20, we can now reach the limit before hitting the cap
+      expect(result.nextPageIds).toHaveLength(10);
       expect(result.nextPageIds.every((id) => id.startsWith('author-valid:'))).toBe(true);
     });
 
