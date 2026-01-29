@@ -12,7 +12,7 @@ export function TimelineLoading() {
   const t = useTranslations('common');
 
   return (
-    <Atoms.Container className="flex items-center justify-center py-8">
+    <Atoms.Container data-cy="timeline-container" className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">
         {t('loadingPosts')}
       </Atoms.Typography>

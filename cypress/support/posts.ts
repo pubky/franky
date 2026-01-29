@@ -401,21 +401,30 @@ export const checkPostIsAtIndexInFeed = (postContent: string, index: number) => 
     });
 };
 
-// wait for feed timeline to not show placeholder text, optionally wait for specific post content to be displayed
-export const waitForFeedToLoad = (postContent?: string) => {
+// wait for feed timeline to not show placeholder text
+// Scopes checks to the main feed container only so sidebar/drawer content (e.g. "Loading posts...", "No posts found") does not affect readiness.
+export const waitForFeedToLoad = () => {
   const checkTimelineRecursively = (attempts: number, firstCheck: boolean = true) => {
     if (attempts <= 0)
-      assert(
-        false,
-        "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'",
-      );
+      assert(false, "Timeline still shows either no posts, 'No posts found' or 'Loading...' after 10 seconds");
 
     cy.get('body').then(($body) => {
-      const bodyText = $body.text();
-      const normalisedBodyText = bodyText.replace(/\s+/g, ' ').trim();
-      const hasTimelinePosts = $body.find('[data-cy="timeline-posts"]').length > 0;
-      const hasEmptyState = normalisedBodyText.includes('No posts found');
-      const isLoading = normalisedBodyText.includes('Loading posts...');
+      const $feed = $body.find('[data-cy="timeline-container"]');
+      if ($feed.length === 0) {
+        firstCheck ? cy.wait(200) : cy.wait(1000);
+        checkTimelineRecursively(attempts - 1, false);
+        return;
+      }
+
+      const feedText = $feed.text();
+      const normalisedFeedText = feedText.replace(/\s+/g, ' ').trim();
+      const hasTimelinePosts = $feed.find('[data-cy="timeline-posts"]').length > 0;
+      const hasEmptyState = normalisedFeedText.includes('No posts found');
+      const isLoading = normalisedFeedText.includes('Loading posts...');
+
+      cy.log('hasTimelinePosts: ', String(hasTimelinePosts));
+      cy.log('hasEmptyState: ', String(hasEmptyState));
+      cy.log('isLoading: ', String(isLoading));
 
       // Feed has loaded if:
       // 1. Not loading anymore AND
@@ -431,25 +440,7 @@ export const waitForFeedToLoad = (postContent?: string) => {
     });
   };
 
-  const checkExistingPostContentRecursively = (postContent: string, attempts: number, firstCheck: boolean = true) => {
-    if (attempts <= 0) assert(false, "Timeline doesn't contain expected post with text: " + postContent);
-
-    cy.get('[data-cy="timeline-posts"]')
-      .invoke('text')
-      .then((text) => {
-        // trim whitespace and normalise spaces to compare
-        const normalisedText = text.replace(/\s+/g, ' ').trim();
-
-        if (!normalisedText.includes(postContent)) {
-          firstCheck ? cy.wait(200) : cy.wait(1000);
-          checkExistingPostContentRecursively(postContent, attempts - 1, false);
-        }
-      });
-  };
-
   checkTimelineRecursively(10);
-  // optionally check for specific post content (useful for waiting on new post after sign in)
-  if (postContent) checkExistingPostContentRecursively(postContent, 10);
 };
 
 // wait for bookmarks to not show "Save posts for later" or "Loading"

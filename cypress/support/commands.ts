@@ -435,9 +435,9 @@ const findPostInFeed = (
         cy.log(`Clicking 'See new posts' button to check for new posts`);
         // Check if "See new posts" button exists and click it
         cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
-        waitForFeedToLoad(filterText);
+        waitForFeedToLoad();
         // Recursively call findPostInFeed without checking for new posts
-        return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
+        return findPostInFeed(postIdx, filterText, CheckForNewPosts.No, WaitForNewPosts.Yes);
       }
 
       // Post not found - if waitForNewPosts is enabled, wait for new posts and try again
