@@ -9,6 +9,7 @@ import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import type { ArticleJSON } from '@/hooks';
 import { NotificationType } from '@/core';
 import { buildSearchUrl } from '@/hooks/useTagSearch/useTagSearch.utils';
 import {
@@ -24,6 +25,7 @@ import type { NotificationItemProps } from './NotificationItem.types';
 
 export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
   const router = useRouter();
+  const { toast } = Molecules.useToast();
 
   // Extract the user ID from the notification (the actor who triggered it)
   const actorUserId = getUserIdFromNotification(notification);
@@ -56,7 +58,20 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
     Core.PostController.getOrFetchDetails({ compositeId: postCompositeId, viewerId })
       .then((post) => {
         if (!isCancelled && post?.content) {
-          setPostContent(post.content);
+          if (post.kind === 'long') {
+            try {
+              const parsed = JSON.parse(post.content) as ArticleJSON;
+              setPostContent(parsed.title || '');
+            } catch {
+              setPostContent(post.content);
+              toast({
+                title: 'Error',
+                description: 'Failed to parse article content',
+              });
+            }
+          } else {
+            setPostContent(post.content);
+          }
         }
       })
       .catch((error) => {
@@ -68,6 +83,7 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
     return () => {
       isCancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
   }, [postCompositeId]);
 
   // Get user name and avatar from profile hook
