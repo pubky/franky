@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
@@ -19,6 +20,8 @@ import type { ActiveUsersProps } from './ActiveUsers.types';
  * Note: This is an Organism because it interacts with Core via hooks (useUserStream, useFollowUser).
  */
 export function ActiveUsers({ className }: ActiveUsersProps) {
+  const t = useTranslations('sidebar');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const { users, isLoading: isStreamLoading } = Hooks.useUserStream({
     streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
@@ -42,15 +45,15 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
 
   return (
     <Molecules.SidebarSection
-      title="Active users"
+      title={t('activeUsers')}
       footerIcon={Libs.Users}
-      footerText="See all"
+      footerText={tCommon('seeAll')}
       onFooterClick={handleSeeAll}
       className={className}
       data-testid="active-users"
     >
       {users.length === 0 ? (
-        <Atoms.Typography className="font-light text-muted-foreground">No users to show</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">{t('noUsers')}</Atoms.Typography>
       ) : (
         users.map((user) => (
           <Organisms.UserListItem

@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 
 /**
@@ -6,10 +9,12 @@ import * as Atoms from '@/atoms';
  * Loading indicator for initial timeline load.
  */
 export function TimelineLoading() {
+  const t = useTranslations('common');
+
   return (
     <Atoms.Container className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">
-        Loading posts...
+        {t('loadingPosts')}
       </Atoms.Typography>
     </Atoms.Container>
   );

@@ -15,4 +15,6 @@ export interface ParsedStatus {
   text: string;
   /** Whether this is a custom user-defined status or a predefined one */
   isCustom: boolean;
+  /** The status key for translation (null if custom status) */
+  key: StatusKey | null;
 }

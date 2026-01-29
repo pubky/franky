@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -19,6 +20,7 @@ export function SearchInputBar({
   onKeyDown,
   onFocus,
 }: SearchInputBarProps) {
+  const t = useTranslations('search');
   const hasActiveTags = activeTags.length > 0;
 
   return (
@@ -36,7 +38,7 @@ export function SearchInputBar({
           overrideDefaults
           className="flex shrink-0 items-center gap-2.5 py-2"
           role="list"
-          aria-label="Active search tags"
+          aria-label={t('activeTags')}
         >
           {activeTags.map((tag) => (
             <Molecules.PostTag key={tag} label={tag} showClose onClose={() => onTagRemove(tag)} />
@@ -47,14 +49,14 @@ export function SearchInputBar({
       <Atoms.Input
         ref={inputRef}
         type="text"
-        placeholder={hasActiveTags ? '' : 'Search'}
+        placeholder={hasActiveTags ? '' : t('placeholder')}
         value={inputValue}
         onChange={onInputChange}
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         readOnly={isReadOnly}
         data-cy="header-search-input"
-        aria-label="Search input"
+        aria-label={t('inputLabel')}
         aria-autocomplete="list"
         aria-controls={suggestionsId || undefined}
         aria-expanded={isExpanded}

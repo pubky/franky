@@ -6,7 +6,7 @@ import { Privacy } from './Privacy';
 describe('Privacy', () => {
   it('renders privacy content', () => {
     render(<Privacy />);
-    expect(screen.getByText('Privacy & Safety')).toBeInTheDocument();
+    expect(screen.getByText('Privacy and Safety')).toBeInTheDocument();
   });
 
   it('renders privacy switches', () => {

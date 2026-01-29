@@ -6,11 +6,14 @@ import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useBtcRate } from '@/hooks/useSatUsdRate';
+import { useTranslations } from 'next-intl';
 import { VerificationHandler } from './HumanLightningPayment.utils';
 import { QRCodeSkeleton, PriceSkeleton } from './HumanLightningPayment.skeleton';
 import type { HumanLightningPaymentProps } from './HumanLightningPayment.types';
 
 export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPaymentProps) => {
+  const t = useTranslations('onboarding.lightning');
+  const tCommon = useTranslations('common');
   const [verification, setVerification] = useState<VerificationHandler | null>(null);
   const rate = useBtcRate();
   const [isLoading, setIsLoading] = useState(true);
@@ -28,14 +31,14 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
       }
       const onPaymentConfirmed = async (signupCode: string, homeserverPubky: string) => {
         toast({
-          title: 'Payment successful',
+          title: t('paymentSuccess'),
         });
         onSuccess(signupCode, homeserverPubky);
       };
       const onPaymentExpired = () => {
         setIsPaymentExpired(true);
         toast({
-          title: 'Payment expired',
+          title: t('paymentExpired'),
         });
       };
       const client = await VerificationHandler.create(onPaymentConfirmed, onPaymentExpired);
@@ -43,8 +46,8 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
       setIsPaymentExpired(false);
     } catch {
       toast({
-        title: 'Failed to request lightning invoice',
-        description: 'Please try again later. If the problem persists, please contact support.',
+        title: t('requestFailed'),
+        description: t('requestFailedDescription'),
       });
     } finally {
       setIsLoading(false);
@@ -70,11 +73,11 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     try {
       await Libs.copyToClipboard({ text });
       toast({
-        title: 'Invoice copied to clipboard',
+        title: t('invoiceCopied'),
       });
     } catch {
       toast({
-        title: 'Failed to copy invoice',
+        title: t('copyFailed'),
       });
     }
   }
@@ -85,19 +88,21 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
   const getPaymentDescription = () => {
     if (!verification) return '';
     const amountFormatted = verification.data.amountSat.toLocaleString('en-US');
-    const usdAmount = rate?.satUsd
-      ? ` (approximately $${Math.round(rate.satUsd * verification.data.amountSat * 100) / 100})`
-      : '';
-    return `Pay ₿ ${amountFormatted}${usdAmount} to continue.`;
+    const usdAmount = rate?.satUsd ? Math.round(rate.satUsd * verification.data.amountSat * 100) / 100 : null;
+    return usdAmount
+      ? t('payAmountUsd', { amount: amountFormatted, usdAmount: usdAmount.toString() })
+      : t('payAmount', { amount: amountFormatted });
   };
 
   return (
     <React.Fragment>
       <Atoms.PageHeader>
         <Molecules.PageTitle size="large">
-          Scan to <span className="text-brand">Pay.</span>
+          {t.rich('title', {
+            highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+          })}
         </Molecules.PageTitle>
-        <Atoms.PageSubtitle>Scan the QR code with your favorite wallet.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
       </Atoms.PageHeader>
 
       <Atoms.Card
@@ -133,7 +138,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
                     as="p"
                     className="mb-4 text-base leading-6 font-medium text-secondary-foreground/80"
                   >
-                    Payment expired
+                    {t('expired')}
                   </Atoms.Typography>
                   <Atoms.Button
                     size="sm"
@@ -142,7 +147,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
                     onClick={requestLightningInvoice}
                   >
                     <Libs.RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-                    New invoice
+                    {t('newInvoice')}
                   </Atoms.Button>
                 </Atoms.Container>
               )}
@@ -153,7 +158,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
         {/* Description */}
         <Atoms.Container className="w-full flex-col gap-3">
           <Atoms.Typography as="h3" className="text-2xl leading-[32px] font-semibold text-foreground">
-            Bitcoin Lightning Payment
+            {t('qrLabel')}
           </Atoms.Typography>
           {isDataAvailable ? (
             <React.Fragment>
@@ -180,7 +185,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
           onClick={onBack}
         >
           <Libs.ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {tCommon('back')}
         </Atoms.Button>
         <Atoms.Button
           id="human-phone-send-code-btn"
@@ -191,7 +196,7 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
           onClick={() => verification && copyToClipboard(verification.data.bolt11Invoice)}
         >
           <Libs.Copy className="mr-2 h-4 w-4" />
-          Copy Invoice
+          {t('copyInvoice')}
         </Atoms.Button>
       </Atoms.Container>
     </React.Fragment>

@@ -63,9 +63,13 @@ exports[`FollowingEmpty - Snapshots > matches snapshot with default props 1`] = 
       class="text-center text-base leading-6 font-medium text-secondary-foreground"
       data-testid="typography"
     >
-      Following account is a simple way to curate your timeline.
-      <br />
-      Stay updated on the topics and people that interest you.
+      <span>
+        Following account is a simple way to curate your timeline.
+        <br />
+      </span>
+      <span>
+        Stay updated on the topics and people that interest you.
+      </span>
     </p>
   </div>
   <div
