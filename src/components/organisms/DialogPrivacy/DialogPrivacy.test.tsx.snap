@@ -41,7 +41,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Effective Date: June 19, 2025
+          Effective Date: January 29 2026
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -49,7 +49,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
         >
           SCOPE
           <br />
-           This Privacy Policy (“Policy“) describes how Synonym Software Ltd. treats personal information on the Pubky platform and the products, services and features made available as part of the platform (collectively, the “Platform“).
+           This Privacy Policy (“Policy“) describes how Synonym Software Ltd. treats personal information on the Pubky progressive web application and the products, services and features made available as part of the application (collectively, the “Platform“).
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -59,161 +59,19 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           <br />
            This summary offers a concise overview of how Synonym Software Ltd. (“Synonym“) collects, uses, shares, and protects your personal information on the Pubky platform. For full details, please read the complete Privacy Policy.
         </p>
-        <ul
-          data-testid="list"
-        >
-          <li>
-            What we collect
-            <ul
-              data-testid="list"
-            >
-              <li>
-                Identifiers (e.g. name, email, public keys)
-              </li>
-              <li>
-                Contact & account data (e.g. mailing address, bio, profile picture)
-              </li>
-              <li>
-                Commercial & payment information (e.g. wallet addresses, transaction history)
-              </li>
-              <li>
-                Device & usage data (e.g. IP address, browser type, usage patterns)
-              </li>
-              <li>
-                Visual & inference data (e.g. uploaded photos; inferences about preferences)
-              </li>
-            </ul>
-          </li>
-          <li>
-            Why We Collect It:
-            <ul
-              data-testid="list"
-            >
-              <li>
-                To deliver, maintain, and improve the Platform and services
-              </li>
-              <li>
-                To communicate with you (e.g. account notices, policy updates)
-              </li>
-              <li>
-                To secure our Platform and investigate issues (e.g. fraud prevention)
-              </li>
-              <li>
-                As required by law or with your consent
-              </li>
-            </ul>
-          </li>
-          <li>
-            How We Share It:
-            <ul
-              data-testid="list"
-            >
-              <li>
-                With our subsidiaries and affiliates for internal business purposes
-              </li>
-              <li>
-                With vendors and service providers (e.g. email processors, analytics)
-              </li>
-              <li>
-                Publicly on the Platform when you choose to post content
-              </li>
-              <li>
-                With successors in the event of a merger or sale
-              </li>
-              <li>
-                When required by law (e.g. court orders, law-enforcement requests)
-              </li>
-            </ul>
-          </li>
-          <li>
-            Your Rights & Choices:
-            <ul
-              data-testid="list"
-            >
-              <li>
-                Access, correct, or delete your personal data
-              </li>
-              <li>
-                Object to or limit certain processing activities
-              </li>
-              <li>
-                Withdraw consent where we rely on it
-              </li>
-              <li>
-                Opt-out of “sale” or sharing for cross-context marketing (we do not currently sell or share)
-              </li>
-              <li>
-                Control cookies and similar technologies via your browser settings
-              </li>
-            </ul>
-          </li>
-          <li>
-            Data Retention & Transfers:
-            <ul
-              data-testid="list"
-            >
-              <li>
-                We retain your information as long as necessary to provide services, comply with legal obligations, and resolve disputes.
-              </li>
-              <li>
-                Your data may be stored or processed in the United States or other jurisdictions.
-              </li>
-            </ul>
-          </li>
-          <li>
-            Children & COPPA:
-            <ul
-              data-testid="list"
-            >
-              <li>
-                The Platform is intended for users aged 18 and older. We do not knowingly collect data from children under 18.
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <p
-          class="text-muted-foreground text-base font-normal"
-          data-testid="typography"
-        >
-          Updates & Contact:
-        </p>
-        <ul
-          data-testid="list"
-        >
-          <li>
-            We may update this Policy; material changes will be communicated as required by law.
-          </li>
-          <li>
-            For questions or to exercise your rights, email
-             
-            <a
-              data-testid="link"
-              href="mailto:privacy@synonym.to"
-            >
-              privacy@synonym.to
-            </a>
-            .
-          </li>
-        </ul>
         <p
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
           NOTICE AT COLLECTION
           <br />
-          We collect, and in the past 12 months have collected, the following categories of information from and about you: identifiers; commercial information; internet or similar network activity; visual information; and inferences drawn from other personal information. We collect these categories of information from you in order to provide our services to you, to run our business, to communicate with you, and as required by law. We may have disclosed each of these categories of personal information for a business purpose as described below. We have not “sold” or “shared” personal information in the past 12 months, as those terms are defined by the CCPA.
+          We collect, and in the past 12 months have collected, the following categories of information from and about you: identifiers (such as your public key, IP address, account identifiers and cryptographic keys), internet or similar network activity (such as device information, log data, and usage information) and communications (where you contact us directly). We collect these categories of information from you in order to provide our services to you, to run our business, to communicate with you, and as required by law. We may have disclosed each of these categories of personal information for a business purpose as described below. We have not “sold” or “shared” personal information in the past 12 months, as those terms are defined by the California Consumer Privacy Act (“CCPA”) or General Data Protection Regulation (“GDPR”). For a description of your rights under the CCPA or GDPR, and instructions on how to exercise your rights, please see the Your Privacy Rights section below.
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          For a description of your rights under the CCPA, and instructions on how to exercise your rights, please see the Your Privacy Rights section below.
-        </p>
-        <p
-          class="text-muted-foreground text-base font-normal"
-          data-testid="typography"
-        >
-          We will retain each of these categories of personal information based on several factors, including is reasonably necessary to: (i) provide our products and services or administer our relationship with a consumer; (ii) protect our business, employees, organization, and others; (iii) fulfill our legal and regulatory obligations; and (iv) investigate and address issues which may include safety concerns, potential security incidents or policy violations.
+          We will retain each of these categories of personal information for as long as it is necessary for the purposes for which it was collected. Retention periods are determined based on: (i) duration of the user relationship; (ii) legal and regulatory requirements; (iii) security and fraud-prevention needs; and (iv) dispute resolution obligations. When data is no longer required, it is securely deleted or anonymized.
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -231,22 +89,104 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           data-testid="list"
         >
           <li>
-            Contact Information. For example, we may collect your telephone number and email address. We may also collect your mobile phone number.
+            <strong>
+              Identifiers.
+            </strong>
+             This includes your Pubky address and cryptographic keys.
           </li>
           <li>
-            Information You Submit. We may collect information when you send us a message through the “Contact Us” page or similar features on our Platform. It also includes collecting information that you publicly post via the Platform.
+            <strong>
+              Phone Number.
+            </strong>
+             We will collect your phone number you provide for SMS verification purposes.
           </li>
           <li>
-            Payment Information. We, through our vendors, may collect and store your payment information. This may include wallet addresses or keys.
+            <strong>
+              Information You Submit.
+            </strong>
+             We may collect any information that you submit or provide to us if you contact us.
           </li>
           <li>
-            Account Information. Certain portions of the Platform allow you to create a user account. In connection with that account, we collect your public key. We will also collect any information you use to complete your profile. This may include your name, a short bio, and a picture that you upload.
+            <strong>
+              Device Information.
+            </strong>
+             For example, we may collect information about the type of device you use to access our Platform. We may also collect your device identifier, IP address or mobile operating system. Based on your IP address, we may also collect information relating to your general location.
           </li>
           <li>
-            Device Information. For example, we may collect information about the type of device you use to access our Platform. We may also collect your device identifier, IP address or mobile operating system. We may also infer your general location based on your IP address.
+            <strong>
+              Payment Information.
+            </strong>
+             If you choose the Lightning payment verification, we collect payment hashes and transaction timestamps associated with the Lightning payment.
           </li>
           <li>
-            Other Information. If you use our website, we may collect information about the browser you are using. We might look at what site you came from, or what site you visit when you leave us.
+            <strong>
+              Profile Information.
+            </strong>
+             We may collect information you provide when creating your profile, such as your display name, bio, profile picture, and links you choose to share.
+          </li>
+          <li>
+            <strong>
+              Content You Post.
+            </strong>
+             This includes posts, replies, images, videos, and other content you submit to the Platform.
+          </li>
+          <li>
+            <strong>
+              Social Connections.
+            </strong>
+             This includes information about users you follow, users who follow you, and users you have muted.
+          </li>
+          <li>
+            <strong>
+              Bookmarks.
+            </strong>
+             This includes posts you have bookmarked for later viewing.
+          </li>
+        </ul>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          LEGAL BASIS
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          We must have a lawful basis (a valid legal reason) for using your information, and more specifically personal data. Our legal basis will be one of the following:
+        </p>
+        <ul
+          data-testid="list"
+        >
+          <li>
+            <strong>
+              Consent:
+            </strong>
+             You have agreed to us collecting your personal data, or sensitive personal data, for example when you tick a box to indicate consent.
+          </li>
+          <li>
+            <strong>
+              Keeping to our contracts and agreements with you:
+            </strong>
+             We need certain personal data to provide our services and cannot provide them without this personal data.
+          </li>
+          <li>
+            <strong>
+              Legal obligations:
+            </strong>
+             At times, we have a legal responsibility to collect and store your personal data (for example, under anti-money laundering laws we must hold certain information about our users).
+          </li>
+          <li>
+            <strong>
+              Legitimate interests:
+            </strong>
+             We sometimes collect and use your personal data because we have a legitimate reason to use it and this is reasonable when balanced against your human rights and freedoms. Where we rely on legitimate interests, such interests include operating, securing, and improving the Platform and preventing fraud.
+          </li>
+          <li>
+            <strong>
+              Substantial public interest:
+            </strong>
+             Where we process your personal data, or your sensitive personal data (sometimes known as special category personal data under GDPR), to adhere to government regulations or guidance, such as our obligation to prevent fraud or support you if you are, or become, a vulnerable user.
           </li>
         </ul>
         <p
@@ -265,16 +205,28 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           data-testid="list"
         >
           <li>
-            Directly From You. For example, when you create a profile, post on the Platform, or submit an inquiry to us.
+            <strong>
+              Directly From You.
+            </strong>
+             For example, when you create a profile, post on the Platform, or submit an inquiry to us.
           </li>
           <li>
-            Passively. For example, when you visit and navigate our Platform on any device. We may also collect information about users over time and across different websites and devices when you use the Platform.
+            <strong>
+              Passively.
+            </strong>
+             For example, when you visit and navigate our Platform on any device or scan a provided QR code. We may also collect information about users over time and across different websites and devices when you use the Platform.
           </li>
           <li>
-            From Third Parties. We may receive information about you from other sources. For example, this may include receiving information from our business partners, including analytics vendors.
+            <strong>
+              From Third Parties.
+            </strong>
+             We may receive information about you from other sources. For example, this may include information we receive from our SMS verification service provider during the account registration process.
           </li>
           <li>
-            By Combining Information. We may combine information that we collect offline with information we collect through our Platform. We may also combine information we collect about you from the different devices you use to access our Platform.
+            <strong>
+              By Combining Information.
+            </strong>
+             We may combine information that we collect offline with information we collect through our Platform. We may also combine information we collect about you from the different devices you use to access our Platform.
           </li>
         </ul>
         <p
@@ -293,22 +245,206 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           data-testid="list"
         >
           <li>
-            To Run and Improve Our Platform and Business. We may use your information to operate and improve the Platform. We may also use your information to provide you with information about our business.
+            <strong>
+              To Run and Improve Our Platform and Business.
+            </strong>
+             We may use your information to operate and improve the Platform. We may also use your information to provide you with information about our business.
           </li>
           <li>
-            To Respond to Your Requests or Questions. This may include responding to your feedback.
+            <strong>
+              To Respond to Your Requests or Questions.
+            </strong>
+             This may include responding to your feedback.
           </li>
           <li>
-            To Communicate With You. We may communicate with you about your account or our relationship. We may also contact you about this Policy or our Platform terms and conditions.
+            <strong>
+              For Security and Fraud Prevention Purposes.
+            </strong>
+             This could include protecting our company and consumers who use our products and services. It may also include protecting our Platform.
           </li>
           <li>
-            For Security Purposes. This could include protecting our company and consumers who use our products and services. It may also include protecting our Platform.
+            <strong>
+              As Otherwise Permitted By Law or As We May Notify You.
+            </strong>
+             This includes using your data as required to comply with applicable regulations or fraud detection.
           </li>
           <li>
-            As Otherwise Permitted By Law or As We May Notify You.
+            <strong>
+              As Requested or Directed By You.
+            </strong>
+          </li>
+        </ul>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          HUMAN VERIFICATION
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          To prevent spam and verify you are not a robot, we offer the following verification options:
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          <strong>
+            SMS Verification.
+          </strong>
+           We use a third-party SMS verification service to send one-time codes to your phone number. During this process, we collect:
+        </p>
+        <ul
+          data-testid="list"
+        >
+          <li>
+            Your phone number (stored in hashed form)
           </li>
           <li>
-            As Requested or Directed By You.
+            Your IP address
+          </li>
+          <li>
+            Your device user-agent
+          </li>
+          <li>
+            Verification attempts at timestamps
+          </li>
+        </ul>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          Phone number verifications are rate-limited to prevent abuse. SMS verification may not be available in all regions.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          <strong>
+            Lightning Payment Verification.
+          </strong>
+           As an alternative, you may verify that you are not a robot by making a small Lightning Network payment. During this process, we collect:
+        </p>
+        <ul
+          data-testid="list"
+        >
+          <li>
+            Payment hash (invoice identifier)
+          </li>
+          <li>
+            Payment amount
+          </li>
+          <li>
+            Payment timestamp
+          </li>
+        </ul>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          Lightning payments are processed through our own infrastructure. Lightning verification may not be available in all regions due to applicable laws and regulatory requirements.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          <strong>
+            Invite Code Verification.
+          </strong>
+           You may also verify your account using an invite code provided by another user or by Synonym.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          <strong>
+            Local Storage.
+          </strong>
+           The Pubky App stores data locally on your device using browser storage technologies (IndexedDB) to provide a fast, offline-capable experience. Locally stored data includes:
+        </p>
+        <ul
+          data-testid="list"
+        >
+          <li>
+            Your profile information and posts
+          </li>
+          <li>
+            Your social connections (following, followers, friends)
+          </li>
+          <li>
+            Cached content from users you interact with
+          </li>
+          <li>
+            Notification history
+          </li>
+          <li>
+            Bookmarked posts
+          </li>
+          <li>
+            Media file metadata
+          </li>
+        </ul>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          This data remains on your device and syncs with our servers when you're online. You can clear this data through your browser settings.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          HOW WE SHARE YOUR INFORMATION
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          We may share your information in the following ways:
+        </p>
+        <ul
+          data-testid="list"
+        >
+          <li>
+            <strong>
+              Internally.
+            </strong>
+             We may share your information with our parent, subsidiary, and affiliate entities.
+          </li>
+          <li>
+            <strong>
+              With Our Service Providers.
+            </strong>
+             We may share your information with third parties who perform services on our behalf. For example, this may include companies that send emails on our behalf, help us run our Platform, or provide security and identity verification services.
+          </li>
+          <li>
+            <strong>
+              On the Platform.
+            </strong>
+             If you choose to make posts on the Platform, anything that you post will be posted publicly on the Platform and visible to other users. In addition, due to the decentralized nature of the Platform, any information that you upload to the Platform may be hosted on servers hosted by other users of the Platform.
+          </li>
+          <li>
+            <strong>
+              With Any Successors to All or Part of Our Business.
+            </strong>
+             For example, if we merge with, are acquired by, or sell part of our business to another entity. This may include an asset sale, corporate reorganization or other change of control.
+          </li>
+          <li>
+            <strong>
+              To Comply With the Law or To Protect Ourselves.
+            </strong>
+             For example, this could include responding to a court order or subpoena. It could also include sharing information if a government agency or investigatory body requests. We might share information when we are investigating a potential fraud.
+          </li>
+          <li>
+            <strong>
+              For Other Reasons We May Describe to You.
+            </strong>
+          </li>
+          <li>
+            <strong>
+              As Requested or Directed By You.
+            </strong>
           </li>
         </ul>
         <p
@@ -355,13 +491,28 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
+          SMS Messages:
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          We may send you SMS messages in order to verify your identity as part of the account creation process. Note that message and data rates may apply. The frequency of messages may vary. You may reply “HELP” if you need assistance or “STOP” to stop receiving SMS messages. If you opt out, we may send you a confirmation SMS message to acknowledge your request. We do not sell or share phone numbers to third parties for their own marketing purposes.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
           Cookies & Other Tracking Technologies:
         </p>
         <ul
           data-testid="list"
         >
           <li>
-            Cookies: You can adjust your browser to control cookies to require your affirmative acceptance for new cookies, automatically reject cookies and/or delete or disable existing cookies. How you do so depends on the type of cookie and the browser that you are using. For more information on how to control browser cookies,
+            <strong>
+              Cookies:
+            </strong>
+             Non-essential cookies are used only where permitted by applicable law and, where required, with your consent. You may withdraw consent at any time. For more information on how to control browser cookies,
              
             <a
               data-testid="link"
@@ -369,13 +520,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
             >
               click here
             </a>
-            . If information about your browser is not available through this page, please search your browser for instructions about how to opt-out of cookie collection.
-          </li>
-          <li>
-            Email Tools: You can also change your email settings to block the automatic download of images in email messages, as such images may contain technologies that help us understand how you interact with the message.
-          </li>
-          <li>
-            Note that deleting or blocking cookies may impact your experience on our website, as some features may not be available. Certain options you select are browser and device specific.
+            . Note that deleting or blocking cookies may impact your experience on our website, as some features may not be available. Certain options you select are browser and device specific.
           </li>
         </ul>
         <p
@@ -388,7 +533,11 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           data-testid="list"
         >
           <li>
-            Some browsers have “do not track” features that allow you to tell a website not to track you. These features are not all uniform. We do not currently respond to those signals. If you block cookies, certain features on our sites may not work. If you block or reject cookies, not all of the tracking described here will stop.
+            <strong>
+              Some browsers have “do not track” features that allow you to tell a website not to track you. These features are not all uniform. We do not currently respond to those signals.
+            </strong>
+             
+            If you block cookies, certain features on our sites may not work. If you block or reject cookies, not all of the tracking described here will stop.
           </li>
           <li>
             Options you select are browser and device specific.
@@ -410,28 +559,74 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           data-testid="list"
         >
           <li>
-            Notice.This means that you can request that we disclose what personal information we have collected about you, including the categories of personal information, the categories of sources from which the personal information is collected, the business or commercial purpose for collecting, selling, or sharing personal information, the categories of third parties to whom we have disclosed personal information, and the specific pieces of personal information we have collected about you.
+            <strong>
+              Notice.
+            </strong>
+             This means that you can request that we disclose what personal information we have collected about you, including the categories of personal information, the categories of sources from which the personal information is collected, the business or commercial purpose for collecting, selling, or sharing personal information, the categories of third parties to whom we have disclosed personal information, and the specific pieces of personal information we have collected about you.
           </li>
           <li>
-            Access. This enables you to receive a copy of the personal data we hold about you and to check that we are lawfully processing it.
+            <strong>
+              Access.
+            </strong>
+             This means that you have the right to access your personal data. This enables you to receive a copy of the personal data we hold about you and to check that we are lawfully processing it.
           </li>
           <li>
-            Deletion. This means that you can request that we delete personal information about you which we have collected from you. Note, however, that we may not always be able to comply with your request of erasure for specific legal reasons which will be notified to you, if applicable, at the time of your request.
+            <strong>
+              Deletion.
+            </strong>
+             This means that you can request that we delete personal information about you which we have collected from you. Note, however, that we may not always be able to comply with your request of erasure for specific legal reasons which will be notified to you, if applicable, at the time of your request.
           </li>
           <li>
-            Correction. This means that you can request that we correct inaccurate personal information that we maintain about you.
+            <strong>
+              Correction.
+            </strong>
+             This means that you can rectify inaccurate personal information that we maintain about you.
           </li>
           <li>
-            Object to Specific Processing. This means that you may object to processing of your personal information where we are relying on a legitimate interest (or those of a third party) and there is something about your particular situation which makes you want to object to processing on this ground as you feel it impacts on your fundamental rights and freedoms. In some cases, we may demonstrate that we have compelling legitimate grounds to process your information which override your rights and freedoms.
+            <strong>
+              Erasure.
+            </strong>
+             This means that you have the right to be forgotten.
           </li>
           <li>
-            Withdraw Consent. Where we are relying on consent to process your personal information, you may withdraw that consent at any time. However, this will not affect the lawfulness of any processing carried out before you withdraw your consent. If you withdraw your consent, we may not be able to provide certain products or services to you. We will advise you if this is the case at the time you withdraw your consent.
+            <strong>
+              Object to Specific Processing.
+            </strong>
+             This means that you may object to processing of your personal information where we are relying on a legitimate interest (or those of a third party) and there is something about your particular situation which makes you want to object to processing on this ground as you feel it impacts on your fundamental rights and freedoms. In some cases, we may demonstrate that we have compelling legitimate grounds to process your information which override your rights and freedoms.
           </li>
           <li>
-            Limit the Use or Disclosure of Sensitive Personal Information. The California Consumer Privacy Act (“CCPA”) provides a right for consumers to request that business limit the use or disclosure of their “sensitive” personal information. In our normal business operations, we do not process “sensitive personal information” as that term is defined under CCPA. Please do not submit this information to us.
+            <strong>
+              Restrict Processing.
+            </strong>
+             This means that you may restrict processing of your personal information.
           </li>
           <li>
-            Opt-Out of the Sale or Sharing of Personal Information. You may have the right to opt out of the “sale” or sharing of personal information with third parties for cross-contextual marketing purposes. We do not knowingly “sell” or “share” any personal information, including any personal information relating to consumers under the age of 16, as we understand those terms to be defined under applicable law.
+            <strong>
+              Withdraw Consent.
+            </strong>
+             Where we are relying on consent to process your personal information, you may withdraw that consent at any time. However, this will not affect the lawfulness of any processing carried out before you withdraw your consent. If you withdraw your consent, we may not be able to provide certain products or services to you. We will advise you if this is the case at the time you withdraw your consent.
+          </li>
+          <li>
+            <strong>
+              Limit the Use or Disclosure of Sensitive Personal Information.
+            </strong>
+             The CCPA provides a right for consumers to request that business limit the use or disclosure of their “sensitive” personal information. In our normal business operations, we do not process sensitive personal information” as that term is defined under CCPA. Please do not submit this information to us.
+          </li>
+          <li>
+            <strong>
+              Opt-Out of the Sale or Sharing of Personal Information.
+            </strong>
+             You may have the right to opt out of the “sale” or sharing of personal information with third parties for cross-contextual marketing purposes.
+             
+            <strong>
+              We do not knowingly “sell” or “share” any personal information, including any personal information relating to consumers under the age of 16, as we understand those terms to be defined under applicable law.
+            </strong>
+          </li>
+          <li>
+            <strong>
+              Complaint.
+            </strong>
+             You have a right to lodge a complaint with a relevant supervisory authority.
           </li>
         </ul>
         <p
@@ -444,7 +639,13 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Individuals who wish to exercise their rights under this section can contact us at
+          Synonym or third-party providers may use machine learning models or automated decision-making technology (“ADMT”) to perform fraud detection and geoblocking, which might restrict data subjects’ access to the products, services, and features available through the Pubky platform. Data subjects have the right to obtain human intervention to express their point of view and contest such ADMT.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          Individuals who wish to exercise their rights as provided in this section, including submitting a request to opt-out or to access information about our use of ADMT, can contact us at
            
           <a
             data-testid="link"
@@ -452,21 +653,33 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           >
             privacy@synonym.to
           </a>
-          . Please include your name, public key, and email address, and indicate you are making a “Privacy Rights” request. If we deny your rights request and you would like to appeal, you may contact us at
+          . Please include your name, public key, and email address, and indicate you are making a “Privacy Rights” request. If we deny your rights request and you would like to appeal, you may contact us again at
            
           <a
             data-testid="link"
-            href="mailto:info@synonym.to"
+            href="mailto:privacy@synonym.to"
           >
-            info@synonym.to
+            privacy@synonym.to
           </a>
-          .
+          . In addition, you may delete your account or data associated with your account at any time by visiting the ‘Settings’ dashboard within the Pubky application.
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Agents that you have authorized to act on your behalf may also submit requests as instructed below. The agent Should you wish to report a complaint or if you feel that we have not addressed your concern in a satisfactory manner, you may contact the supervisory authority of your state or country.
+          Should you wish to report a complaint or if you feel that we have not addressed your concern in a satisfactory manner, you may contact the supervisory authority of your state or country.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          SECURITY
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          The Internet is not 100% secure. We cannot promise that your use of our Platform will be completely safe. We encourage you to use caution when using the Internet. While we use reasonable means to safeguard personal information under our control, due to the decentralized nature of the Platform, any information that you upload to the Platform may be shared in different locations and different servers. This may include servers not controlled or maintained by Synonym.
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -478,7 +691,13 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Information we maintain may be stored in or outside of the United States. If you live outside of the United States, you understand and agree that we may transfer your personal information to the United States. This Platform is subject to the laws of the United States, which may not provide the same level of protections as those in your own country. Personal information processed and stored in another country, including the United States, may be subject to disclosure or access requests by the governments, courts or law enforcement or regulatory agencies in that country according to its laws. By using our Platform or by providing us with personal information, you consent to any such transfer of information outside of your country.
+          Due to the decentralized nature of the Platform, information we maintain may be stored or hosted in any jurisdiction, including the United States. If you live outside of the United States, you understand and agree that we may transfer your personal information to the United States. This Platform is subject to the laws of the United States, which may not provide the same level of protections as those in your own country. Personal information processed and stored in another country, including the United States, may be subject to disclosure or access requests by the governments, courts or law enforcement or regulatory agencies in that country according to its laws.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          Where personal data is transferred outside the European Economic Area, such transfers are carried out on the basis of appropriate safeguards under Article 44-49 GDPR, including Standard Contractual Clauses via third-party service providers.
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -490,7 +709,13 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Our Platform may contain links to other third-party sites that are not governed by this Policy. If you click on a link to a third-party site, you will be taken to a site we do not control. We are not responsible for the privacy practices used by third-party sites. We suggest that you read the privacy policies of those sites carefully. We are not responsible for these third-party sites.
+          Our Platform may contain links to other third-party sites or platform that are not governed by this Policy. If you click on a link to a third-party site, you will be taken to a site we do not control. We are not responsible for the privacy practices used by third-party sites. We suggest that you read the privacy policies of those sites carefully.
+        </p>
+        <p
+          class="text-muted-foreground text-base font-normal"
+          data-testid="typography"
+        >
+          When you view posts containing links to video or social media platforms, your browser may load embedded content directly from those services (e.g., YouTube, Twitter/X, Vimeo). Those services may collect information according to their own privacy policies.
         </p>
         <p
           class="text-muted-foreground text-base font-normal"

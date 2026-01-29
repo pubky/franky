@@ -10,7 +10,7 @@ exports[`FilterSortWhoToFollow - Snapshots > matches snapshot 1`] = `
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_5_"
+    id="radix-normalized"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterSortWhoToFollow - Snapshots > matches snapshot 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="_r_5_"
+    aria-labelledby="radix-normalized"
     class=""
     data-testid="filter-sort-who-to-follow-radiogroup"
     role="radiogroup"
