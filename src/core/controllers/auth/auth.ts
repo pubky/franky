@@ -199,6 +199,9 @@ export class AuthController {
     const onboardingStore = Core.useOnboardingStore.getState();
     const signInStore = Core.useSignInStore.getState();
 
+    // Set logging out flag immediately to prevent flash of weird states in UI
+    authStore.setIsLoggingOut(true);
+
     if (authStore.session) {
       try {
         await Core.AuthApplication.logout({ session: authStore.session });
@@ -210,6 +213,12 @@ export class AuthController {
     // This allows users to sign out even when their profile pubky cannot be resolved (issue #538).
     Core.PubkySpecsSingleton.reset();
     this.cancelActiveAuthFlow();
+
+    // Cancel all pending Nexus API queries to prevent retries after logout
+    // This stops the React Query client from retrying 404s for user data that no longer exists
+    Core.nexusQueryClient.cancelQueries();
+    Core.nexusQueryClient.clear();
+
     onboardingStore.reset();
     authStore.reset();
     signInStore.reset();
