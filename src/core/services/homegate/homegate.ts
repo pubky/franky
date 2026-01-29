@@ -11,7 +11,7 @@ import {
   TAssertValidVerificationIdParams,
 } from './homegate.types';
 import { homegateApi } from './homegate.api';
-import { HOMEGATE_QUERY_KEYS } from './homegate.constants';
+import { HOMEGATE_QUERY_KEYS, SmsCodeErrorType } from './homegate.constants';
 import { homegateQueryClient } from './homegate.query-client';
 import {
   ErrorService,
@@ -115,20 +115,51 @@ export class HomegateService {
     if (!response.ok) {
       // Phone number is blocked
       if (response.status === HttpStatusCode.FORBIDDEN) {
-        return { success: false, errorType: 'blocked' };
+        return { success: false, errorType: SmsCodeErrorType.BLOCKED };
       }
 
-      // Rate limited (weekly/annual limit exceeded)
+      // Rate limited - differentiate between temporary and permanent limits
       if (response.status === HttpStatusCode.TOO_MANY_REQUESTS) {
         const retryAfter = response.headers.get('retry-after');
+
+        // Parse the response body to determine the specific rate limit type
+        let responseBody: { error?: string } | undefined;
+        try {
+          const clonedResponse = response.clone();
+          responseBody = await clonedResponse.json();
+        } catch {
+          // Failed to parse body, will use default error type
+        }
+
+        const errorMessage = responseBody?.error?.toLowerCase() ?? '';
+
+        // Check for permanent weekly/yearly limits
+        // TODO: String matching on error messages is fragile. If the API changes the message format,
+        // this will incorrectly default to temporary rate limit. This should be replaced with
+        // standardized error codes from the Homegate API (e.g., { errorCode: 'RATE_LIMITED_WEEKLY' }).
+        if (errorMessage.includes('weekly')) {
+          return {
+            success: false,
+            errorType: SmsCodeErrorType.RATE_LIMITED_WEEKLY,
+          };
+        }
+
+        if (errorMessage.includes('yearly') || errorMessage.includes('annual')) {
+          return {
+            success: false,
+            errorType: SmsCodeErrorType.RATE_LIMITED_YEARLY,
+          };
+        }
+
+        // Default to temporary rate limit (external service rate limit)
         return {
           success: false,
-          errorType: 'rate_limited',
+          errorType: SmsCodeErrorType.RATE_LIMITED_TEMPORARY,
           retryAfter: retryAfter ? parseInt(retryAfter) : undefined,
         };
       }
 
-      return { success: false, errorType: 'unknown', statusCode: response.status };
+      return { success: false, errorType: SmsCodeErrorType.UNKNOWN, statusCode: response.status };
     }
 
     return { success: true };

@@ -127,16 +127,25 @@ export type TAwaitLnVerificationResult =
   | { success: false; timeout: true }
   | { success: false; notFound: true };
 
+import { SmsCodeErrorType } from './homegate.constants';
+
+/**
+ * Error types for SMS code sending failures.
+ * Derived from SmsCodeErrorType constants for single source of truth.
+ * @see SmsCodeErrorType for documentation of each error type.
+ */
+export type TSendSmsCodeErrorType = (typeof SmsCodeErrorType)[keyof typeof SmsCodeErrorType];
+
 /**
  * Result of sending a SMS code.
  * @property success - True if the request was successful, false otherwise.
- * @property retryAfter - The number of seconds to wait before retrying the request. Only set if the request was not successful.
+ * @property retryAfter - The number of seconds to wait before retrying the request. Only set if rate_limited_temporary.
  * @property errorType - The type of error that occurred. Only set if the request was not successful.
  * @property statusCode - The HTTP status code. Only set for 'unknown' errors to aid debugging.
  */
 export type TSendSmsCodeResult = {
   success: boolean;
   retryAfter?: number;
-  errorType?: 'blocked' | 'rate_limited' | 'unknown';
+  errorType?: TSendSmsCodeErrorType;
   statusCode?: number;
 };
