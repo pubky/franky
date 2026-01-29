@@ -131,18 +131,23 @@ export function ClickableTagsList({
       data-cy="clickable-tags-list"
       className={Libs.cn('flex flex-wrap items-center gap-2', className)}
     >
-      {/* Render existing tags */}
+      {/* Render existing tags with hover popover for tagger avatars */}
       {visibleTags.map((tag, index) => (
-        <Molecules.PostTag
+        <Molecules.PostTagPopoverWrapper
           key={`${taggedId}-${tag.label}`}
-          label={tag.label}
-          count={showCount ? tag.taggers_count : undefined}
-          color={Libs.generateRandomColor(tag.label)}
-          selected={isViewerTagger(tag)}
-          showClose={showTagClose}
-          onClick={(e) => handleTagClick(tag, index, e)}
-          onClose={(e) => onTagClose?.(tag, index, e)}
-        />
+          taggers={tag.taggers}
+          taggersCount={tag.taggers_count}
+        >
+          <Molecules.PostTag
+            label={tag.label}
+            count={showCount ? tag.taggers_count : undefined}
+            color={Libs.generateRandomColor(tag.label)}
+            selected={isViewerTagger(tag)}
+            showClose={showTagClose}
+            onClick={(e) => handleTagClick(tag, index, e)}
+            onClose={(e) => onTagClose?.(tag, index, e)}
+          />
+        </Molecules.PostTagPopoverWrapper>
       ))}
 
       {/* Add tag input - visible to all, clicks open dialog for unauthenticated */}
