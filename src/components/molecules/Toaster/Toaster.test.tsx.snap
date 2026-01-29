@@ -27,7 +27,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
         class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="text-sm font-bold leading-normal text-popover-foreground"
+          class="text-sm leading-normal font-bold text-popover-foreground"
         >
           First Toast
         </div>
@@ -50,7 +50,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
         class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="text-sm font-bold leading-normal text-popover-foreground"
+          class="text-sm leading-normal font-bold text-popover-foreground"
         >
           Second Toast
         </div>
@@ -96,7 +96,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with single toast 1`
         class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="text-sm font-bold leading-normal text-popover-foreground"
+          class="text-sm leading-normal font-bold text-popover-foreground"
         >
           Test Toast
         </div>
@@ -142,7 +142,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with title-only toas
         class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="text-sm font-bold leading-normal text-popover-foreground"
+          class="text-sm leading-normal font-bold text-popover-foreground"
         >
           Simple Toast
         </div>
@@ -183,7 +183,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast action 1`
         class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="text-sm font-bold leading-normal text-popover-foreground"
+          class="text-sm leading-normal font-bold text-popover-foreground"
         >
           Toast with Action
         </div>
@@ -236,7 +236,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast with acti
         class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="text-sm font-bold leading-normal text-popover-foreground"
+          class="text-sm leading-normal font-bold text-popover-foreground"
         >
           Toast with Action
         </div>
