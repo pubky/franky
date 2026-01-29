@@ -12,16 +12,14 @@ export function Toaster() {
         return (
           <Toast
             key={id}
-            className="bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+            className="flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
             {...props}
           >
-            <div className="flex w-full items-center justify-between gap-4">
-              <div className="flex w-full flex-col gap-1">
-                {title && <ToastTitle>{title}</ToastTitle>}
-                {description && <ToastDescription>{description}</ToastDescription>}
-              </div>
-              <div className="flex items-center justify-between gap-4">{action}</div>
+            <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+              {title && <ToastTitle>{title}</ToastTitle>}
+              {description && <ToastDescription className="truncate">{description}</ToastDescription>}
             </div>
+            {action && <div className="shrink-0">{action}</div>}
           </Toast>
         );
       })}
