@@ -16,7 +16,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
     tabindex="-1"
   >
     <li
-      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -24,29 +24,22 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
       tabindex="0"
     >
       <div
-        class="flex w-full items-center justify-between gap-4"
+        class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="flex w-full flex-col gap-1"
+          class="text-sm font-bold leading-normal text-popover-foreground"
         >
-          <div
-            class="text-base leading-6 font-bold text-popover-foreground"
-          >
-            First Toast
-          </div>
-          <div
-            class="text-sm opacity-90"
-          >
-            First description
-          </div>
+          First Toast
         </div>
         <div
-          class="flex items-center justify-between gap-4"
-        />
+          class="text-sm text-muted-foreground truncate"
+        >
+          First description
+        </div>
       </div>
     </li>
     <li
-      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -54,25 +47,18 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
       tabindex="0"
     >
       <div
-        class="flex w-full items-center justify-between gap-4"
+        class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="flex w-full flex-col gap-1"
+          class="text-sm font-bold leading-normal text-popover-foreground"
         >
-          <div
-            class="text-base leading-6 font-bold text-popover-foreground"
-          >
-            Second Toast
-          </div>
-          <div
-            class="text-sm opacity-90"
-          >
-            Second description
-          </div>
+          Second Toast
         </div>
         <div
-          class="flex items-center justify-between gap-4"
-        />
+          class="text-sm text-muted-foreground truncate"
+        >
+          Second description
+        </div>
       </div>
     </li>
   </ol>
@@ -99,7 +85,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with single toast 1`
     tabindex="-1"
   >
     <li
-      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -107,25 +93,18 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with single toast 1`
       tabindex="0"
     >
       <div
-        class="flex w-full items-center justify-between gap-4"
+        class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="flex w-full flex-col gap-1"
+          class="text-sm font-bold leading-normal text-popover-foreground"
         >
-          <div
-            class="text-base leading-6 font-bold text-popover-foreground"
-          >
-            Test Toast
-          </div>
-          <div
-            class="text-sm opacity-90"
-          >
-            This is a test toast message
-          </div>
+          Test Toast
         </div>
         <div
-          class="flex items-center justify-between gap-4"
-        />
+          class="text-sm text-muted-foreground truncate"
+        >
+          This is a test toast message
+        </div>
       </div>
     </li>
   </ol>
@@ -152,7 +131,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with title-only toas
     tabindex="-1"
   >
     <li
-      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -160,20 +139,13 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with title-only toas
       tabindex="0"
     >
       <div
-        class="flex w-full items-center justify-between gap-4"
+        class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="flex w-full flex-col gap-1"
+          class="text-sm font-bold leading-normal text-popover-foreground"
         >
-          <div
-            class="text-base leading-6 font-bold text-popover-foreground"
-          >
-            Simple Toast
-          </div>
+          Simple Toast
         </div>
-        <div
-          class="flex items-center justify-between gap-4"
-        />
       </div>
     </li>
   </ol>
@@ -200,7 +172,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast action 1`
     tabindex="-1"
   >
     <li
-      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -208,29 +180,25 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast action 1`
       tabindex="0"
     >
       <div
-        class="flex w-full items-center justify-between gap-4"
+        class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="flex w-full flex-col gap-1"
+          class="text-sm font-bold leading-normal text-popover-foreground"
         >
-          <div
-            class="text-base leading-6 font-bold text-popover-foreground"
-          >
-            Toast with Action
-          </div>
-          <div
-            class="text-sm opacity-90"
-          >
-            This toast has an action button
-          </div>
+          Toast with Action
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="text-sm text-muted-foreground truncate"
         >
-          <button>
-            Undo
-          </button>
+          This toast has an action button
         </div>
+      </div>
+      <div
+        class="shrink-0"
+      >
+        <button>
+          Undo
+        </button>
       </div>
     </li>
   </ol>
@@ -257,7 +225,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast with acti
     tabindex="-1"
   >
     <li
-      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full bg-black-900 flex items-center justify-between gap-4 rounded-lg border border-brand/16 p-6 text-white"
+      class="group pointer-events-auto relative w-full space-x-4 overflow-hidden transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-2 rounded-lg border border-brand/32 bg-brand/8 p-6 shadow-lg backdrop-blur-[10px]"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -265,31 +233,27 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast with acti
       tabindex="0"
     >
       <div
-        class="flex w-full items-center justify-between gap-4"
+        class="flex min-w-0 flex-1 flex-col gap-0.5"
       >
         <div
-          class="flex w-full flex-col gap-1"
+          class="text-sm font-bold leading-normal text-popover-foreground"
         >
-          <div
-            class="text-base leading-6 font-bold text-popover-foreground"
-          >
-            Toast with Action
-          </div>
-          <div
-            class="text-sm opacity-90"
-          >
-            This toast has an action button
-          </div>
+          Toast with Action
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="text-sm text-muted-foreground truncate"
         >
-          <button
-            data-testid="custom-action"
-          >
-            Undo
-          </button>
+          This toast has an action button
         </div>
+      </div>
+      <div
+        class="shrink-0"
+      >
+        <button
+          data-testid="custom-action"
+        >
+          Undo
+        </button>
       </div>
     </li>
   </ol>
