@@ -19,7 +19,7 @@ export function TaggedEmpty({ onTagAdd }: TaggedEmptyProps) {
         </>
       }
     >
-      {onTagAdd && <Molecules.TagInput onTagAdd={onTagAdd} />}
+      {onTagAdd && <Molecules.TagInput onTagAdd={onTagAdd} enableApiSuggestions />}
     </Molecules.ProfilePageEmptyState>
   );
 }

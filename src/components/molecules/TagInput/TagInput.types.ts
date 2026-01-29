@@ -3,7 +3,7 @@ export interface TagInputProps {
   onTagAdd: (tag: string) => void | Promise<{ success: boolean; error?: string }>;
   /** Placeholder text for the input */
   placeholder?: string;
-  /** Existing tags for autocomplete suggestions */
+  /** Existing tags for autocomplete suggestions (local filtering only) */
   existingTags?: Array<{ label: string }>;
   /** Whether to show the close button (X) */
   showCloseButton?: boolean;
@@ -23,4 +23,8 @@ export interface TagInputProps {
   onBlur?: () => void;
   /** Callback when the input container is clicked (useful for auth prompts) */
   onClick?: (e: React.MouseEvent) => void;
+  /** Enable API-based tag suggestions (fetches from Nexus) */
+  enableApiSuggestions?: boolean;
+  /** Tags to exclude from API suggestions (e.g., already added tags on the entity) */
+  excludeFromApiSuggestions?: string[];
 }

@@ -68,6 +68,9 @@ export function ClickableTagsList({
     handleTagAdd,
   } = Hooks.useEntityTags(taggedId, taggedKind, { providedTags });
 
+  // Determine if input should be shown (needed early for hook)
+  const hasInput = showInput || isAdding;
+
   // Use tag input hook for input state management
   // Only pass viewer's own tags as existingTags for duplicate checking
   // This allows adding a tag that others have used but the viewer hasn't
@@ -84,6 +87,34 @@ export function ClickableTagsList({
     },
     existingTags: fetchedTags.filter((t) => isViewerTagger(t)).map((t) => t.label),
   });
+
+  // API-based tag suggestions
+  const { suggestions: apiSuggestions } = Hooks.useTagSuggestions({
+    query: tagInput.inputValue,
+    excludeTags: fetchedTags.map((t) => t.label),
+    enabled: hasInput && isAuthenticated,
+  });
+
+  // State for showing suggestions dropdown
+  const [showSuggestions, setShowSuggestions] = React.useState(false);
+
+  // Handle suggestion click - directly add the tag
+  const handleSuggestionClick = React.useCallback(
+    async (label: string) => {
+      const normalizedLabel = label.toLowerCase();
+      if (onTagAdd) {
+        onTagAdd(normalizedLabel);
+      } else {
+        await handleTagAdd(normalizedLabel);
+      }
+      tagInput.setInputValue('');
+      setShowSuggestions(false);
+      if (!addMode) {
+        setIsAdding(false);
+      }
+    },
+    [onTagAdd, handleTagAdd, tagInput, addMode],
+  );
 
   // Refocus input after clearing value in addMode
   React.useEffect(() => {
@@ -119,8 +150,6 @@ export function ClickableTagsList({
 
   // Check if we should render anything
   const hasVisibleTags = visibleTags.length > 0;
-  // Show input for all users (unauthenticated users see dialog on click)
-  const hasInput = showInput || isAdding;
   const hasAddButton = showAddButton && !showInput && !isAdding;
 
   if (!hasVisibleTags && !hasInput && !hasAddButton) return null;
@@ -158,21 +187,54 @@ export function ClickableTagsList({
 
       {/* Add tag input - visible to all, clicks open dialog for unauthenticated */}
       {hasInput && (
-        <Molecules.PostTagInput
-          ref={inputRef}
-          value={tagInput.inputValue}
-          onChange={isAuthenticated ? tagInput.setInputValue : undefined}
-          onSubmit={isAuthenticated ? tagInput.handleTagSubmit : undefined}
-          onBlur={() => {
-            if (addMode && !tagInput.inputValue) setIsAdding(false);
-          }}
-          showEmojiPicker={showEmojiPicker}
-          onEmojiClick={isAuthenticated ? onEmojiClick : () => setShowSignInDialog(true)}
-          className="w-32 shrink-0"
-          autoFocus={isAuthenticated && isAdding}
-          disabled={!isAuthenticated}
-          onClick={handleInputClick}
-        />
+        <div className="relative w-32 shrink-0">
+          <Molecules.PostTagInput
+            ref={inputRef}
+            value={tagInput.inputValue}
+            onChange={
+              isAuthenticated
+                ? (value) => {
+                    tagInput.setInputValue(value);
+                    setShowSuggestions(value.trim().length > 0);
+                  }
+                : undefined
+            }
+            onSubmit={isAuthenticated ? tagInput.handleTagSubmit : undefined}
+            onBlur={() => {
+              // Delay to allow clicking suggestion before closing
+              setTimeout(() => {
+                setShowSuggestions(false);
+                if (addMode && !tagInput.inputValue) setIsAdding(false);
+              }, 200);
+            }}
+            showEmojiPicker={showEmojiPicker}
+            onEmojiClick={isAuthenticated ? onEmojiClick : () => setShowSignInDialog(true)}
+            autoFocus={isAuthenticated && isAdding}
+            disabled={!isAuthenticated}
+            onClick={handleInputClick}
+          />
+
+          {/* API Suggestions Dropdown */}
+          {showSuggestions && apiSuggestions.length > 0 && (
+            <Atoms.Container
+              overrideDefaults
+              className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border border-border bg-popover"
+            >
+              {apiSuggestions.slice(0, 5).map((label, index) => (
+                <Atoms.Container
+                  key={`${label}-${index}`}
+                  overrideDefaults
+                  className="cursor-pointer px-3 py-2 hover:rounded-md hover:bg-accent"
+                  onClick={() => handleSuggestionClick(label)}
+                >
+                  <Atoms.Typography as="span" className="text-sm font-medium text-popover-foreground">
+                    {label}
+                  </Atoms.Typography>
+                </Atoms.Container>
+              ))}
+            </Atoms.Container>
+          )}
+        </div>
       )}
 
       {/* Add button (alternative to input) - shows sign-in dialog for unauthenticated */}

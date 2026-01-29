@@ -64,6 +64,8 @@ export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
         placeholder="add tag"
         disabled={!isAuthenticated}
         onClick={handleInputClick}
+        enableApiSuggestions
+        excludeFromApiSuggestions={tags.map((t) => t.label)}
       />
 
       {tags.length > 0 && (

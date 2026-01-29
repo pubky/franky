@@ -22,12 +22,20 @@ export function TagInput({
   limitReachedPlaceholder = 'limit reached',
   onBlur,
   onClick,
+  enableApiSuggestions = false,
+  excludeFromApiSuggestions = [],
 }: TagInputProps) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Convert existingTags to string array for the hook
   const existingTagLabels = useMemo(() => existingTags.map((tag) => tag.label), [existingTags]);
+
+  // Combine exclusions for API suggestions: excludeFromApiSuggestions + existingTagLabels
+  const apiExcludeTags = useMemo(() => {
+    const combined = new Set([...excludeFromApiSuggestions, ...existingTagLabels]);
+    return Array.from(combined);
+  }, [excludeFromApiSuggestions, existingTagLabels]);
 
   // Calculate if at limit
   const isAtLimit = maxTags !== undefined && currentTagsCount >= maxTags;
@@ -64,8 +72,15 @@ export function TagInput({
     disabled,
   });
 
-  // Filter existing tags based on input (match full text+emoji combination)
-  const filteredSuggestions = useMemo(() => {
+  // Fetch API suggestions when enabled
+  const { suggestions: apiSuggestions } = Hooks.useTagSuggestions({
+    query: inputValue,
+    excludeTags: apiExcludeTags,
+    enabled: enableApiSuggestions && !hideSuggestions,
+  });
+
+  // Filter existing tags based on input (local suggestions)
+  const localFilteredSuggestions = useMemo(() => {
     if (hideSuggestions || !inputValue.trim()) return [];
     const inputText = inputValue.toLowerCase();
     return existingTags
@@ -76,13 +91,33 @@ export function TagInput({
       .slice(0, 5);
   }, [inputValue, existingTags, hideSuggestions]);
 
+  // Merge local and API suggestions (local first, then API, deduplicated)
+  const filteredSuggestions = useMemo(() => {
+    if (hideSuggestions) return [];
+
+    // Start with local suggestions
+    const localLabels = localFilteredSuggestions.map((t) => t.label);
+    const localSet = new Set(localLabels.map((l) => l.toLowerCase()));
+
+    // Add API suggestions that aren't already in local
+    const apiTagsToAdd = apiSuggestions
+      .filter((label) => !localSet.has(label.toLowerCase()))
+      .map((label) => ({ label }));
+
+    // Combine and limit to 5 total
+    const combined = [...localFilteredSuggestions, ...apiTagsToAdd];
+    return combined.slice(0, 5);
+  }, [hideSuggestions, localFilteredSuggestions, apiSuggestions]);
+
   const handleSuggestionClick = useCallback(
     (tagLabel: string) => {
-      setInputValue(tagLabel.toLowerCase());
+      // Directly add the tag instead of just filling the input
+      handleTagAddWrapper(tagLabel.toLowerCase());
+      setInputValue('');
       setShowSuggestions(false);
       inputRef.current?.focus();
     },
-    [setInputValue, inputRef],
+    [handleTagAddWrapper, setInputValue, inputRef],
   );
 
   const handleKeyDown = Hooks.useEnterSubmit(() => Boolean(inputValue.trim()), handleTagSubmit);

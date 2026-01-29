@@ -23,6 +23,10 @@ vi.mock('@/hooks', () => ({
     setInputValue: vi.fn(),
     handleTagSubmit: vi.fn(() => onTagAdd?.('new-tag')),
   })),
+  useTagSuggestions: vi.fn(() => ({
+    suggestions: [],
+    isLoading: false,
+  })),
   useRequireAuth: () => ({
     isAuthenticated: true,
     requireAuth: <T,>(action: () => T) => action(),
@@ -35,6 +39,9 @@ vi.mock('@/atoms', () => ({
     <div data-testid="container" className={className}>
       {children}
     </div>
+  ),
+  Typography: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <span className={className}>{children}</span>
   ),
 }));
 
