@@ -61,10 +61,10 @@ describe('LanguageSelector', () => {
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // Dropdown is open - should show language options
-    expect(screen.getByText('Spanish')).toBeInTheDocument();
-    expect(screen.getByText('German')).toBeInTheDocument();
-    expect(screen.getByText('French')).toBeInTheDocument();
+    // Dropdown is open - should show language options (native names)
+    expect(screen.getByText('Español')).toBeInTheDocument();
+    expect(screen.getByText('Deutsch')).toBeInTheDocument();
+    expect(screen.getByText('Français')).toBeInTheDocument();
   });
 
   it('does not navigate when selecting the current language', () => {

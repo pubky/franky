@@ -16,7 +16,7 @@ export function NotificationSettings() {
     setNotificationPreference(type, !notifications[type]);
   };
 
-  const notificationTypes = Object.keys(NOTIFICATION_LABELS) as NotificationType[];
+  const notificationTypes = Object.keys(NOTIFICATION_LABEL_KEYS) as NotificationType[];
 
   return (
     <Molecules.SettingsSwitchGroup>

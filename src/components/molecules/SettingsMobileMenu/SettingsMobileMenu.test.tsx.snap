@@ -107,7 +107,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
       data-testid="container"
     >
       <button
-        aria-label="Muted users"
+        aria-label="Muted Users"
         class="px-2.5 py-2"
         data-slot="button"
       >
@@ -325,7 +325,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
       data-testid="container"
     >
       <button
-        aria-label="Muted users"
+        aria-label="Muted Users"
         class="px-2.5 py-2"
         data-slot="button"
       >
