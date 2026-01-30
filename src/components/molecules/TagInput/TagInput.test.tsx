@@ -222,7 +222,7 @@ describe('TagInput - API Suggestions', () => {
       isLoading: false,
     });
 
-    render(<TagInput onTagAdd={mockOnTagAdd} enableApiSuggestions={true} />);
+    render(<TagInput onTagAdd={mockOnTagAdd} enableApiSuggestions={true} addOnSuggestionClick={true} />);
 
     const input = screen.getByPlaceholderText('add tag') as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'bit' } });
