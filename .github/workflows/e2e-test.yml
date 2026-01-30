@@ -71,6 +71,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-
 
+      - name: Increase watcher sleep in Nexus config
+        working-directory: pubky-stack/docker
+        run: |
+          sed -i 's/watcher_sleep = 100/watcher_sleep = 500/' pubky-nexus-config-testnet.toml
+
       # reduce neo4j memory to prevent
       # ERROR Invalid memory configuration - exceeds physical memory. Check the configured values for server.memory.pagecache.size and server.memory.heap.max_size
       - name: Modify neo4j.env
