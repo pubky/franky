@@ -12,7 +12,7 @@ export function TimelineEmpty() {
   const t = useTranslations('empty');
 
   return (
-    <Atoms.Container className="flex items-center justify-center py-8">
+    <Atoms.Container data-cy="timeline-container" className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">
         {t('noPosts')}
       </Atoms.Typography>

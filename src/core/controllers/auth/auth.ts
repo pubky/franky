@@ -222,6 +222,7 @@ export class AuthController {
     onboardingStore.reset();
     authStore.reset();
     signInStore.reset();
+    Core.useLocalFilesStore.getState().reset();
     Libs.clearCookies();
     await Core.clearDatabase();
   }

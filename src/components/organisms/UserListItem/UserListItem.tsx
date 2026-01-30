@@ -52,7 +52,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
   // Text variant with hover states
   return (
     <Atoms.Button
-      data-cy="user-list-item-follow-toggle-btn"
+      data-cy="profile-follower-item-follow-toggle-btn"
       variant="secondary"
       size="sm"
       className="group w-[110px] justify-center"
@@ -113,6 +113,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
 
   return (
     <Atoms.Button
+      data-cy="profile-follower-item-me-btn"
       variant="secondary"
       size="sm"
       className={Libs.cn('w-[110px] cursor-not-allowed justify-center text-muted-foreground opacity-50', className)}
@@ -160,7 +161,7 @@ function UserStats({ tags, posts }: UserStatsProps) {
         <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
           {t('tags')}
         </Atoms.Typography>
-        <Atoms.Typography size="sm" className="font-bold">
+        <Atoms.Typography data-cy="profile-follower-item-tags-count" size="sm" className="font-bold">
           {tags}
         </Atoms.Typography>
       </Atoms.Container>
@@ -168,7 +169,7 @@ function UserStats({ tags, posts }: UserStatsProps) {
         <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
           {t('posts')}
         </Atoms.Typography>
-        <Atoms.Typography size="sm" className="font-bold">
+        <Atoms.Typography data-cy="profile-follower-item-posts-count" size="sm" className="font-bold">
           {posts}
         </Atoms.Typography>
       </Atoms.Container>
@@ -297,7 +298,7 @@ function FullVariant({
         <Atoms.Link href={`/profile/${user.id}`} className="flex min-w-0 flex-1 items-center gap-2">
           <Organisms.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" />
           <Atoms.Container overrideDefaults>
-            <Atoms.Typography data-cy="user-list-item-name" size="sm" className="truncate font-bold">
+            <Atoms.Typography data-cy="profile-follower-item-name" size="sm" className="truncate font-bold">
               {displayName}
             </Atoms.Typography>
             <Atoms.Typography className="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">

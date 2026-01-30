@@ -18,6 +18,11 @@ export enum CheckForNewPosts {
   Yes = 1,
 }
 
+export enum WaitForNewPosts {
+  No = 0,
+  Yes = 1,
+}
+
 // can use only one of RecoveryPhraseWithConfirmation or RecoveryPhraseWithoutConfirmation
 export enum BackupType {
   EncryptedFile = 'encryptedFile',
