@@ -89,6 +89,12 @@ jobs:
         working-directory: pubky-stack/docker
         run: |
           cp .env-sample .env
+          # Verify .env file exists and contains NETWORK
+          echo "Contents of .env file:"
+          cat .env
+          echo ""
+          echo "NETWORK value from .env:"
+          grep "^NETWORK=" .env || echo "WARNING: NETWORK not found in .env"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -106,8 +112,7 @@ jobs:
         with:
           context: pubky-stack/pubky-nexus
           load: true
-          tags: |
-            nexusd:latest
+          tags: nexusd:latest
           cache-from: type=local,src=/tmp/.buildx-cache-nexus
           cache-to: type=local,dest=/tmp/.buildx-cache-nexus-new,mode=max
 
@@ -130,6 +135,8 @@ jobs:
 
       - name: Run pubky-stack
         working-directory: pubky-stack/docker
+        env:
+          NETWORK: testnet
         run: docker compose up -d nexusd nexus-redis nexus-neo4j homeserver
 
       - name: Build Franky frontend
