@@ -46,7 +46,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
       </div>
     </div>
     <button
-      class="w-full cursor-pointer break-words text-left text-base leading-normal font-medium text-muted-foreground"
+      class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
       data-testid="button"
     >
       What do you think about Pubky?
@@ -102,7 +102,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with authenticated user wit
       </div>
     </div>
     <button
-      class="w-full cursor-pointer break-words text-left text-base leading-normal font-medium text-muted-foreground"
+      class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
       data-testid="button"
     >
       What do you think about Pubky?
@@ -158,7 +158,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with long name (CSS truncat
       </div>
     </div>
     <button
-      class="w-full cursor-pointer break-words text-left text-base leading-normal font-medium text-muted-foreground"
+      class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
       data-testid="button"
     >
       What do you think about Pubky?
@@ -214,7 +214,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with unauthenticated user 1
       </div>
     </div>
     <button
-      class="w-full cursor-pointer break-words text-left text-base leading-normal font-medium text-muted-foreground"
+      class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
       data-testid="button"
     >
       What do you think about Pubky?

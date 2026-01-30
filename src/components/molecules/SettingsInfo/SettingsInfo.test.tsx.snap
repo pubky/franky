@@ -7,7 +7,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
     data-testid="container"
   >
     <div
-      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+      class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -125,7 +125,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+      class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -370,7 +370,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex w-full min-w-0 flex-col gap-2"
+      class="flex w-full max-w-(--filter-bar-width) flex-col gap-2"
       data-testid="feedback-card"
     >
       <h2
@@ -409,7 +409,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           </div>
         </div>
         <button
-          class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground"
+          class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
           data-slot="button"
         >
           What do you think about Pubky?
