@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
@@ -16,6 +17,7 @@ import * as Organisms from '@/organisms';
 export const AlertBackup = () => {
   const { secretKey } = Core.useOnboardingStore();
   const [showAlert, setShowAlert] = useState(false);
+  const t = useTranslations('settings.backup');
 
   useEffect(() => {
     if (secretKey) {
@@ -37,7 +39,8 @@ export const AlertBackup = () => {
       <Atoms.Container className="flex-1 flex-row items-center gap-3">
         <Libs.TriangleAlert className="h-4 w-4 font-bold text-primary-foreground" />
         <Atoms.Typography size="sm" className="font-bold whitespace-nowrap text-primary-foreground">
-          Back up now<span className="hidden md:inline"> to avoid losing your account!</span>
+          <span className="md:hidden">{t('alertShort')}</span>
+          <span className="hidden md:inline">{t('alertFull')}</span>
         </Atoms.Typography>
       </Atoms.Container>
       <Organisms.DialogBackup />

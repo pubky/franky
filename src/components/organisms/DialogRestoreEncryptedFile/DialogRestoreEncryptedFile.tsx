@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -8,6 +9,8 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }) {
+  const t = useTranslations('onboarding.signIn');
+  const tRestore = useTranslations('onboarding.signIn.restoreEncryptedFile');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [password, setPassword] = useState('');
   const [isRestoring, setIsRestoring] = useState(false);
@@ -23,7 +26,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     if (file) {
       // Validate file extension
       if (!file.name.toLowerCase().endsWith('.pkarr')) {
-        setError('Please select a .pkarr file');
+        setError(tRestore('invalidFileType'));
         return;
       }
       setSelectedFile(file);
@@ -36,7 +39,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     if (isRestoring) return;
 
     if (!selectedFile || !password) {
-      setError('Please select a file and enter your password');
+      setError(tRestore('missingFields'));
       return;
     }
 
@@ -57,16 +60,16 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           errorMessage.includes('authentication') ||
           errorMessage.includes('cipher')
         ) {
-          setError('Invalid password or corrupted file. Please check your password and try again.');
+          setError(tRestore('invalidPassword'));
         } else if (error instanceof Libs.AppError && error.service === Libs.ErrorService.Nexus) {
-          setError('Something went wrong with nexus. Please try again.');
+          setError(tRestore('nexusError'));
         } else {
-          setError('Failed to restore from file. Please check your file and try again.');
+          setError(tRestore('restoreError'));
         }
       } else if (typeof error === 'string' && error.toLowerCase().includes('aead')) {
-        setError('Invalid password or corrupted file. Please check your password and try again.');
+        setError(tRestore('invalidPassword'));
       } else {
-        setError('An unexpected error occurred');
+        setError(tRestore('unexpectedError'));
       }
       setIsRestoring(false);
     }
@@ -95,24 +98,22 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
       <Atoms.DialogTrigger asChild>
         <Atoms.Button id="restore-encrypted-file-btn" variant="outline" className="w-auto rounded-full md:flex-none">
           <Libs.FileUp className="mr-2 h-4 w-4" />
-          <span>Use encrypted file</span>
+          <span>{t('useEncryptedFile')}</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="max-w-full gap-6 overflow-hidden p-8" hiddenTitle="Restore with encrypted file">
+      <Atoms.DialogContent className="max-w-full gap-6 overflow-hidden p-8" hiddenTitle={tRestore('title')}>
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
           <Atoms.DialogTitle className="text-2xl leading-8 font-bold sm:text-xl sm:leading-7">
-            Restore with encrypted file
+            {tRestore('title')}
           </Atoms.DialogTitle>
-          <Atoms.DialogDescription className="text-sm leading-5">
-            Use your encrypted backup file to restore your account and sign in.
-          </Atoms.DialogDescription>
+          <Atoms.DialogDescription className="text-sm leading-5">{tRestore('description')}</Atoms.DialogDescription>
         </Atoms.DialogHeader>
 
         <Atoms.Container className="gap-6">
           {/* File Upload Section */}
           <Atoms.Container className="space-y-2">
             <Atoms.Label className="text-xs font-medium tracking-widest text-muted-foreground">
-              UPLOAD ENCRYPTED FILE
+              {tRestore('uploadLabel')}
             </Atoms.Label>
 
             <Atoms.Container
@@ -139,7 +140,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
                 }}
               >
                 <Libs.FileText className="h-4 w-4" />
-                Select file
+                {tRestore('selectFile')}
               </Atoms.Button>
             </Atoms.Container>
 
@@ -150,7 +151,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               accept=".pkarr"
               onChange={handleFileChange}
               className="hidden"
-              aria-label="Select encrypted backup file"
+              aria-label={tRestore('selectFile')}
             />
           </Atoms.Container>
 
@@ -160,7 +161,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               htmlFor="restore-password"
               className="text-xs font-medium tracking-widest text-muted-foreground"
             >
-              ENTER PASSWORD
+              {tRestore('passwordLabel')}
             </Atoms.Label>
             <Atoms.Input
               id="restore-password"
@@ -169,7 +170,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
               className="bg-opacity-90 h-14 rounded-md border border-dashed p-4 shadow-sm"
-              placeholder="Enter your password"
+              placeholder={tRestore('passwordPlaceholder')}
               autoComplete="current-password"
               disabled={isRestoring}
             />
@@ -194,7 +195,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               onClick={handleReset}
               disabled={isRestoring}
             >
-              Cancel
+              {tRestore('cancel')}
             </Atoms.Button>
           </Atoms.DialogClose>
           <Atoms.Button
@@ -206,12 +207,12 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             {isRestoring ? (
               <>
                 <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Restoring...
+                {tRestore('restoring')}
               </>
             ) : (
               <>
                 <Libs.RotateCcw className="mr-2 h-4 w-4" />
-                Restore
+                {tRestore('restore')}
               </>
             )}
           </Atoms.Button>

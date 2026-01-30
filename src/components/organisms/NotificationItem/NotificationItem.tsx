@@ -3,18 +3,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
+import type { ArticleJSON } from '@/hooks';
 import { NotificationType } from '@/core';
 import { buildSearchUrl } from '@/hooks/useTagSearch/useTagSearch.utils';
 import {
   getNotificationLink,
   getUserIdFromNotification,
-  getNotificationActionText,
+  getNotificationActionKey,
   getPostUriFromNotification,
   pubkyUriToCompositeId,
   formatPreviewText,
@@ -23,7 +25,11 @@ import {
 import type { NotificationItemProps } from './NotificationItem.types';
 
 export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
+  const t = useTranslations('notifications.actions');
+  const tCommon = useTranslations('common');
+  const tProfile = useTranslations('profile');
   const router = useRouter();
+  const { toast } = Molecules.useToast();
 
   // Extract the user ID from the notification (the actor who triggered it)
   const actorUserId = getUserIdFromNotification(notification);
@@ -56,7 +62,20 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
     Core.PostController.getOrFetchDetails({ compositeId: postCompositeId, viewerId })
       .then((post) => {
         if (!isCancelled && post?.content) {
-          setPostContent(post.content);
+          if (post.kind === 'long') {
+            try {
+              const parsed = JSON.parse(post.content) as ArticleJSON;
+              setPostContent(parsed.title || '');
+            } catch {
+              setPostContent(post.content);
+              toast({
+                title: 'Error',
+                description: 'Failed to parse article content',
+              });
+            }
+          } else {
+            setPostContent(post.content);
+          }
         }
       })
       .catch((error) => {
@@ -68,14 +87,16 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
     return () => {
       isCancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- toast is an external side-effect, not a dependency
   }, [postCompositeId]);
 
   // Get user name and avatar from profile hook
-  const userName = profile?.name || 'User';
+  const userName = profile?.name || tCommon('user');
   const avatarUrl = profile?.avatarUrl;
 
   // Get notification action text (without username, for separate rendering)
-  const actionText = getNotificationActionText(notification);
+  const actionKey = getNotificationActionKey(notification);
+  const actionText = t(actionKey);
 
   // Get post preview text
   const previewText = hasPostPreview(notification.type) ? formatPreviewText(postContent) : null;
@@ -167,7 +188,7 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
           {/* Friend notification extra text */}
           {notification.type === NotificationType.NewFriend && (
             <Atoms.Typography as="p" className="hidden shrink-0 text-base font-medium text-muted-foreground xl:inline">
-              (you follow each other)
+              {tProfile('friendsWithYou')}
             </Atoms.Typography>
           )}
         </Atoms.Container>

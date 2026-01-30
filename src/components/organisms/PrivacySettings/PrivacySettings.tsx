@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 
 export function PrivacySettings() {
+  const t = useTranslations('privacy');
   const {
     privacy,
     setShowConfirm,
@@ -52,54 +54,54 @@ export function PrivacySettings() {
     <Molecules.SettingsSwitchGroup>
       <Molecules.SettingsSwitchItem
         id="show-confirmation-switch"
-        label="Show confirmation before redirecting"
+        label={t('showConfirmation')}
         checked={privacy.showConfirm}
         onChange={handleConfirmationToggle}
       />
       <Molecules.SettingsSwitchItem
         id="blur-censored-switch"
-        label="Blur censored posts or profile pictures"
+        label={t('blurCensored')}
         checked={privacy.blurCensored}
         onChange={handleBlurToggle}
       />
       <Molecules.SettingsSwitchItem
         id="sign-out-inactive-switch"
-        label="Sign me out when inactive for 5 minutes"
+        label={t('signOutInactive')}
         checked={privacy.signOutInactive}
         onChange={handleSignOutInactiveToggle}
         disabled
       />
       <Molecules.SettingsSwitchItem
         id="require-pin-switch"
-        label="Require PIN when inactive for 5 minutes"
+        label={t('requirePin')}
         checked={privacy.requirePin}
         onChange={handleRequirePinToggle}
         disabled
       />
       <Molecules.SettingsSwitchItem
         id="hide-who-to-follow-switch"
-        label="Hide your profile in 'Who to Follow'"
+        label={t('hideWhoToFollow')}
         checked={privacy.hideWhoToFollow}
         onChange={handleHideWhoToFollowToggle}
         disabled
       />
       <Molecules.SettingsSwitchItem
         id="hide-active-friends-switch"
-        label="Hide your profile in 'Active Friends'"
+        label={t('hideActiveFriends')}
         checked={privacy.hideActiveFriends}
         onChange={handleHideActiveFriendsToggle}
         disabled
       />
       <Molecules.SettingsSwitchItem
         id="hide-search-switch"
-        label="Hide your profile in search results"
+        label={t('hideSearch')}
         checked={privacy.hideSearch}
         onChange={handleHideSearchToggle}
         disabled
       />
       <Molecules.SettingsSwitchItem
         id="never-show-posts-switch"
-        label="Never show posts from people you don't follow"
+        label={t('neverShowPosts')}
         checked={privacy.neverShowPosts}
         onChange={handleNeverShowPostsToggle}
         disabled

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import type { PostHeaderUserInfoPopoverStatsProps } from './PostHeaderUserInfoPopoverStats.types';
@@ -11,6 +12,8 @@ export function PostHeaderUserInfoPopoverStats({
   followingAvatars,
   maxAvatars,
 }: PostHeaderUserInfoPopoverStatsProps) {
+  const t = useTranslations('userList');
+
   return (
     <Atoms.Container className="flex items-start gap-2.5" overrideDefaults>
       <Atoms.Container className="flex-1 items-start gap-2">
@@ -21,7 +24,7 @@ export function PostHeaderUserInfoPopoverStats({
           <Atoms.Typography as="span" className="text-foreground" overrideDefaults>
             {followersCount}
           </Atoms.Typography>{' '}
-          FOLLOWERS
+          {t('followers')}
         </Atoms.Typography>
         {followersAvatars.length > 0 ? (
           <Molecules.AvatarGroup items={followersAvatars} totalCount={followersCount} maxAvatars={maxAvatars} />
@@ -36,7 +39,7 @@ export function PostHeaderUserInfoPopoverStats({
           <Atoms.Typography as="span" className="text-foreground" overrideDefaults>
             {followingCount}
           </Atoms.Typography>{' '}
-          FOLLOWING
+          {t('followingLabel')}
         </Atoms.Typography>
         {followingAvatars.length > 0 ? (
           <Molecules.AvatarGroup items={followingAvatars} totalCount={followingCount} maxAvatars={maxAvatars} />

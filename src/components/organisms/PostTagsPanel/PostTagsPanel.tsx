@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
@@ -23,6 +24,7 @@ import type { PostTagsPanelProps } from './PostTagsPanel.types';
  * Uses the same TaggedSection pattern as ProfileTagged but adapted for posts.
  */
 export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
+  const t = useTranslations('common');
   const { tags, isLoading, handleTagAdd, handleTagToggle, hasMore, isLoadingMore, loadMore } =
     Hooks.usePostTags(postId);
 
@@ -49,11 +51,14 @@ export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
       <Atoms.Container className={Libs.cn('flex items-center justify-center gap-3', className)}>
         <Atoms.Spinner size="md" />
         <Atoms.Typography as="p" className="text-muted-foreground">
-          Loading tags...
+          {t('loadingTags')}
         </Atoms.Typography>
       </Atoms.Container>
     );
   }
+
+  // Filter to get only viewer's tags for duplicate checking
+  const viewerTags = tags.filter((t) => t.relationship);
 
   return (
     <Atoms.Container data-cy="post-tags-panel" className={Libs.cn('gap-2', className)}>
@@ -61,7 +66,7 @@ export function PostTagsPanel({ postId, className }: PostTagsPanelProps) {
       <Molecules.TagInput
         onTagAdd={handleTagAddWithAuth}
         existingTags={tags}
-        placeholder="add tag"
+        viewerTags={viewerTags}
         disabled={!isAuthenticated}
         onClick={handleInputClick}
       />

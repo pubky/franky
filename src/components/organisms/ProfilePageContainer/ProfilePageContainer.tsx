@@ -1,5 +1,6 @@
 'use client';
 
+import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -45,6 +46,9 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
   // Business logic: Get profile context (pubky and isOwnProfile)
   const { pubky, isOwnProfile } = Providers.useProfileContext();
 
+  // Check if logout is in progress (global state to prevent flash of weird states)
+  const isLoggingOut = Core.useAuthStore((state) => state.isLoggingOut);
+
   // Business logic: Fetch profile data and stats
   // Note: useProfileHeader guarantees a non-null profile with default values during loading
   const { profile, stats, actions, isLoading, userNotFound } = Hooks.useProfileHeader(pubky ?? '');
@@ -72,7 +76,8 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
   };
 
   // If user was not found (loading complete but no profile), show UserNotFound
-  if (userNotFound && !isOwnProfile) {
+  // Skip showing UserNotFound during logout to prevent flash of error state
+  if (userNotFound && !isOwnProfile && !isLoggingOut) {
     return (
       <>
         <Molecules.MobileHeader showLeftButton={false} showRightButton={false} />
@@ -95,6 +100,7 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
       navigateToPage={navigateToPage}
       isLoading={isLoading}
       isOwnProfile={isOwnProfile}
+      userId={pubky ?? ''}
     >
       {children}
     </Organisms.ProfilePageLayout>

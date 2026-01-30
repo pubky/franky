@@ -17,14 +17,18 @@ export interface ClickableTagsListProps {
   maxTotalChars?: number;
   /** Whether to show the tag count badge */
   showCount?: boolean;
-  /** Show the add tag input */
+  /**
+   * Show the add tag input directly.
+   * Note: showInput and showAddButton are mutually exclusive - use one or the other.
+   */
   showInput?: boolean;
-  /** Show add button instead of input (mutually exclusive with showInput) */
+  /**
+   * Show add button instead of input.
+   * Note: showInput and showAddButton are mutually exclusive - use one or the other.
+   */
   showAddButton?: boolean;
-  /** Start in add button mode and open input on click */
+  /** Start in add button mode and open input on click (used with showAddButton) */
   addMode?: boolean;
-  /** Show emoji picker in input */
-  showEmojiPicker?: boolean;
   /** Show close button on tags */
   showTagClose?: boolean;
   /** Custom className */
@@ -33,10 +37,8 @@ export interface ClickableTagsListProps {
   onTagClick?: (tag: TagWithAvatars, index: number, event: MouseEvent) => void;
   /** Callback when a tag close button is clicked */
   onTagClose?: (tag: TagWithAvatars, index: number, event: MouseEvent) => void;
-  /** Callback when a new tag is added */
+  /** Callback when a new tag is added. If not provided, uses internal handleTagAdd. */
   onTagAdd?: (label: string) => void;
   /** Callback when add button is clicked */
   onAddButtonClick?: () => void;
-  /** Callback when emoji picker is clicked */
-  onEmojiClick?: () => void;
 }

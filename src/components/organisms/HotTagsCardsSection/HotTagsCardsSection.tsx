@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
@@ -19,6 +20,8 @@ import { MAX_AVATARS_MOBILE, MAX_AVATARS_DEFAULT, MAX_AVATARS_XL } from './HotTa
  * Fetches hot tags based on reach and timeframe filters from the hot store.
  */
 export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
+  const t = useTranslations('hot');
+  const tCommon = useTranslations('common');
   const router = useRouter();
   const { reach, timeframe } = Core.useHotStore();
 
@@ -60,9 +63,9 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
     return (
       <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-2', className)}>
         <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-          Hot tags
+          {t('hotTags')}
         </Atoms.Heading>
-        <Atoms.Typography className="font-light text-muted-foreground">Loading...</Atoms.Typography>
+        <Atoms.Typography className="font-light text-muted-foreground">{tCommon('loading')}</Atoms.Typography>
       </Atoms.Container>
     );
   }
@@ -78,7 +81,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
       data-testid="hot-tags-cards-section"
     >
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-        Hot tags
+        {t('hotTags')}
       </Atoms.Heading>
       <Atoms.Container overrideDefaults className="flex flex-col gap-3 sm:flex-row">
         {featuredTags.map((tag, index) => (

@@ -44,6 +44,7 @@ export function ProfilePageLayout({
   navigateToPage,
   isLoading,
   isOwnProfile = true,
+  userId,
 }: ProfilePageLayoutProps) {
   const [isAvatarZoomOpen, setIsAvatarZoomOpen] = useState(false);
 
@@ -77,7 +78,12 @@ export function ProfilePageLayout({
           className="hidden overflow-hidden bg-background pb-12 shadow-sm lg:block"
         >
           {!isLoading && (
-            <Organisms.ProfilePageHeader profile={profile} actions={headerActions} isOwnProfile={isOwnProfile} />
+            <Organisms.ProfilePageHeader
+              profile={profile}
+              actions={headerActions}
+              isOwnProfile={isOwnProfile}
+              userId={userId}
+            />
           )}
         </Atoms.Container>
 

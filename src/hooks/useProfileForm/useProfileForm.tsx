@@ -10,7 +10,7 @@ import * as Core from '@/core';
 import * as App from '@/app';
 import { USER_NAME_MIN_LENGTH, USER_NAME_MAX_LENGTH, USER_BIO_MAX_LENGTH } from '@/config';
 
-import type { ProfileLink, UseProfileFormProps, UseProfileFormReturn } from './useProfileForm.types';
+import type { ProfileLink, UseProfileFormProps, UseProfileFormReturn, SubmitTextKey } from './useProfileForm.types';
 
 const DEFAULT_LINKS: ProfileLink[] = [
   { label: 'WEBSITE', url: '' },
@@ -49,7 +49,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(mode === 'edit');
-  const [submitText, setSubmitText] = useState(mode === 'create' ? 'Finish' : 'Save Profile');
+  const [submitTextKey, setSubmitTextKey] = useState<SubmitTextKey>(mode === 'create' ? 'finish' : 'saveProfile');
 
   // Edit mode specific state
   const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string | null>(null);
@@ -263,12 +263,12 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     if (!pubky) return;
 
     setIsSaving(true);
-    setSubmitText('Saving...');
+    setSubmitTextKey('saving');
 
     try {
       const user = validateUser();
       if (!user) {
-        setSubmitText(mode === 'create' ? 'Finish' : 'Save Profile');
+        setSubmitTextKey(mode === 'create' ? 'finish' : 'saveProfile');
         return;
       }
 
@@ -277,10 +277,10 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
       if (mode === 'create') {
         if (avatarFile) {
-          setSubmitText('Uploading avatar...');
+          setSubmitTextKey('uploadingAvatar');
           image = await Core.FileController.commitCreate({ file: avatarFile, pubky });
           if (!image) {
-            setSubmitText('Try again!');
+            setSubmitTextKey('tryAgain');
             return;
           }
         }
@@ -290,10 +290,10 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
         if (avatarChanged) {
           if (avatarFile) {
-            setSubmitText('Uploading avatar...');
+            setSubmitTextKey('uploadingAvatar');
             const uploadedImage = await Core.FileController.commitCreate({ file: avatarFile, pubky });
             if (!uploadedImage) {
-              setSubmitText('Try again!');
+              setSubmitTextKey('tryAgain');
               return;
             }
             image = uploadedImage;
@@ -303,7 +303,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         }
       }
 
-      setSubmitText('Saving profile...');
+      setSubmitTextKey('savingProfile');
 
       if (mode === 'create') {
         await Core.ProfileController.commitCreate({ profile: user, image, pubky });
@@ -346,7 +346,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         // Handle session expiration - user needs to re-authenticate
         if (Libs.requiresLogin(error)) {
           Libs.Logger.error('Session expired while saving profile', error);
-          setSubmitText('Try again!');
+          setSubmitTextKey('tryAgain');
           toast({
             title: 'Session expired',
             description: 'Please sign out and sign in again to continue.',
@@ -357,7 +357,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         // Handle auth errors from homeserver
         if (Libs.isAuthError(error)) {
           Libs.Logger.error('Failed to save profile in Homeserver', error);
-          setSubmitText('Try again!');
+          setSubmitTextKey('tryAgain');
           toast({
             title: 'Failed to save profile',
             description: 'Please try again.',
@@ -366,7 +366,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         }
       }
 
-      setSubmitText('Try again!');
+      setSubmitTextKey('tryAgain');
       toast({
         title: 'Please try again.',
         description:
@@ -419,7 +419,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       avatarPreview,
       isSaving,
       isLoading,
-      submitText,
+      submitTextKey,
     },
     errors: {
       nameError,

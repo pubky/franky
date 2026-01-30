@@ -743,9 +743,11 @@ describe('AuthController', () => {
         hasHydrated: false,
         sessionExport: null,
         isRestoringSession: false,
+        isLoggingOut: false,
         selectCurrentUserPubky: vi.fn(() => 'test-pubky' as Core.Pubky),
         setHasHydrated: vi.fn(),
         setIsRestoringSession: vi.fn(),
+        setIsLoggingOut: vi.fn(),
       }) as unknown as Core.AuthStore;
 
     const createOnboardingStore = () =>

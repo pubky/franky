@@ -14,6 +14,8 @@ export interface AuthState extends AuthInitParams {
   isRestoringSession: boolean;
   /** Whether the sign-in dialog is open (for unauthenticated users) */
   showSignInDialog: boolean;
+  /** Whether a logout is in progress (prevents flash of weird states during logout) */
+  isLoggingOut: boolean;
 }
 
 export interface AuthActions {
@@ -26,6 +28,8 @@ export interface AuthActions {
   setHasHydrated: (hasHydrated: boolean) => void;
   /** Open or close the sign-in dialog */
   setShowSignInDialog: (show: boolean) => void;
+  /** Set whether a logout is in progress */
+  setIsLoggingOut: (isLoggingOut: boolean) => void;
 }
 
 export interface AuthSelectors {
@@ -44,6 +48,7 @@ export const authInitialState: AuthState = {
   hasHydrated: false,
   isRestoringSession: false,
   showSignInDialog: false,
+  isLoggingOut: false,
 };
 
 export enum AuthActionTypes {
@@ -56,4 +61,5 @@ export enum AuthActionTypes {
   SET_HAS_PROFILE = 'SET_HAS_PROFILE',
   SET_HAS_HYDRATED = 'SET_HAS_HYDRATED',
   SET_SHOW_SIGN_IN_DIALOG = 'SET_SHOW_SIGN_IN_DIALOG',
+  SET_IS_LOGGING_OUT = 'SET_IS_LOGGING_OUT',
 }

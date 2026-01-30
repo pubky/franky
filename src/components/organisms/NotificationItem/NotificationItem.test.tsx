@@ -61,7 +61,9 @@ vi.mock('@/core', async (importOriginal) => {
       readPostDetails: vi.fn(() => Promise.resolve(null)),
     },
     PostController: {
-      getOrFetchDetails: vi.fn(() => Promise.resolve(null)),
+      get getOrFetchDetails() {
+        return mockGetOrFetchDetails;
+      },
     },
     FileController: {
       getAvatarUrl: vi.fn((id: string) => `https://cdn.example.com/avatar/${id}`),
@@ -88,6 +90,8 @@ vi.mock('@/organisms', () => ({
 }));
 
 // Mock molecules
+const mockToast = vi.fn();
+const mockGetOrFetchDetails = vi.fn(() => Promise.resolve(null));
 vi.mock('@/molecules', () => ({
   PostTag: ({ label, onClick }: { label: string; onClick?: (e: React.MouseEvent) => void }) => (
     <span data-testid="post-tag" onClick={onClick}>
@@ -99,6 +103,7 @@ vi.mock('@/molecules', () => ({
       Icon
     </div>
   ),
+  useToast: () => ({ toast: mockToast }),
 }));
 
 // Mock atoms
@@ -126,6 +131,9 @@ vi.mock('@/atoms', () => ({
 describe('NotificationItem', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockToast.mockClear();
+    mockGetOrFetchDetails.mockClear();
+    mockGetOrFetchDetails.mockResolvedValue(null);
   });
 
   const baseNotification = {
@@ -271,6 +279,84 @@ describe('NotificationItem', () => {
     fireEvent.click(tag);
 
     expect(mockPush).toHaveBeenCalledWith('/search?tags=c%2B%2B');
+  });
+
+  it('extracts title from article (long post) content in notifications', async () => {
+    const articleContent = JSON.stringify({
+      title: 'My Article Title',
+      body: '## Introduction\n\nArticle body content here in **Markdown** format.',
+    });
+
+    mockGetOrFetchDetails.mockResolvedValue({
+      kind: 'long',
+      content: articleContent,
+    });
+
+    const mentionNotification = {
+      id: 'mention:123:user1',
+      type: NotificationType.Mention,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      mentioned_by: 'user1',
+      post_uri: 'pubky://user1/pub/pubky.app/posts/post123',
+    } as Core.FlatNotification;
+
+    render(<NotificationItem notification={mentionNotification} isUnread={false} />);
+
+    // Wait for the async post fetch to complete
+    // formatPreviewText wraps content in single quotes and truncates to 20 chars
+    await vi.waitFor(() => {
+      expect(screen.getByText("'My Article Title'")).toBeInTheDocument();
+    });
+  });
+
+  it('falls back to raw content and shows toast when article JSON parsing fails', async () => {
+    const invalidJson = 'not valid json content';
+
+    mockGetOrFetchDetails.mockResolvedValue({
+      kind: 'long',
+      content: invalidJson,
+    });
+
+    const mentionNotification = {
+      id: 'mention:123:user1',
+      type: NotificationType.Mention,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      mentioned_by: 'user1',
+      post_uri: 'pubky://user1/pub/pubky.app/posts/post123',
+    } as Core.FlatNotification;
+
+    render(<NotificationItem notification={mentionNotification} isUnread={false} />);
+
+    // Wait for the async post fetch to complete and toast to be called
+    await vi.waitFor(() => {
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Error',
+        description: 'Failed to parse article content',
+      });
+    });
+  });
+
+  it('uses content directly for short posts', async () => {
+    mockGetOrFetchDetails.mockResolvedValue({
+      kind: 'short',
+      content: 'This is a short post content',
+    });
+
+    const mentionNotification = {
+      id: 'mention:123:user1',
+      type: NotificationType.Mention,
+      timestamp: Date.now() - 1000 * 60 * 30,
+      mentioned_by: 'user1',
+      post_uri: 'pubky://user1/pub/pubky.app/posts/post123',
+    } as Core.FlatNotification;
+
+    render(<NotificationItem notification={mentionNotification} isUnread={false} />);
+
+    // Wait for the async post fetch to complete
+    // formatPreviewText wraps content in single quotes and truncates to 20 chars
+    await vi.waitFor(() => {
+      expect(screen.getByText("'This is a short post...'")).toBeInTheDocument();
+    });
   });
 
   it('links to parent post (not the reply) for Reply notifications', () => {

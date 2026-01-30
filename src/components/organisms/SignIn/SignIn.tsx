@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -11,12 +12,12 @@ import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Hooks from '@/hooks';
 
-// Step configuration for the progress display
+// Step configuration for the progress display (labels are translation keys)
 const SIGN_IN_STEPS = [
-  { key: 'profileChecked', label: 'Verifying account' },
-  { key: 'bootstrapFetched', label: 'Loading your data' },
-  { key: 'dataPersisted', label: 'Building your feed' },
-  { key: 'homeserverSynced', label: 'Syncing settings' },
+  { key: 'profileChecked', labelKey: 'verifyingAccount' },
+  { key: 'bootstrapFetched', labelKey: 'loadingData' },
+  { key: 'dataPersisted', labelKey: 'buildingFeed' },
+  { key: 'homeserverSynced', labelKey: 'syncingSettings' },
 ] as const;
 
 type StepKey = (typeof SIGN_IN_STEPS)[number]['key'];
@@ -45,6 +46,7 @@ const StepIcon = ({ status }: { status: StepStatus }) => {
 
 const SignInProgress = () => {
   const state = Core.useSignInStore();
+  const t = useTranslations('onboarding.signIn');
 
   return (
     <Atoms.Container className="items-center justify-center">
@@ -63,7 +65,7 @@ const SignInProgress = () => {
                   status === 'pending' && 'text-muted-foreground',
                 )}
               >
-                {step.label}
+                {t(step.labelKey)}
               </Atoms.Typography>
             </div>
           );
@@ -74,6 +76,7 @@ const SignInProgress = () => {
 };
 
 export const SignInContent = () => {
+  const t = useTranslations('onboarding.signIn');
   const { url, isLoading, fetchUrl } = Hooks.useAuthUrl();
   const authUrlResolved = Core.useSignInStore((state) => state.authUrlResolved);
 
@@ -101,8 +104,8 @@ export const SignInContent = () => {
     try {
       await Libs.copyToClipboard({ text: url });
       Molecules.toast({
-        title: 'Link copied',
-        description: 'Authentication link copied to clipboard.',
+        title: t('linkCopied'),
+        description: t('linkCopiedDescription'),
       });
     } catch (error) {
       Libs.Logger.error('Failed to copy auth URL to clipboard:', error);
@@ -138,8 +141,8 @@ export const SignInContent = () => {
     } catch (error) {
       Libs.Logger.error('Failed to open Pubky Ring deeplink:', error);
       Molecules.toast({
-        title: 'Unable to link to signer application Pubky Ring',
-        description: 'Please try again.',
+        title: t('linkFailed'),
+        description: t('tryAgain'),
       });
       window.location.href = fallbackUrl;
     }
@@ -175,7 +178,7 @@ export const SignInContent = () => {
                 <Atoms.Container className="items-center gap-2">
                   <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
                   <Atoms.Typography as="small" size="sm" className="text-background">
-                    Generating QR Code...
+                    {t('generating')}
                   </Atoms.Typography>
                 </Atoms.Container>
               ) : (
@@ -211,12 +214,12 @@ export const SignInContent = () => {
               {isLoading ? (
                 <>
                   <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span aria-live="polite">Generating...</span>
+                  <span aria-live="polite">{t('generatingShort')}</span>
                 </>
               ) : (
                 <>
                   <Libs.Key className="mr-2 h-4 w-4" />
-                  Authorize with Pubky Ring
+                  {t('authorize')}
                 </>
               )}
             </Atoms.Button>
@@ -228,24 +231,30 @@ export const SignInContent = () => {
 };
 
 export const SignInFooter = () => {
+  const t = useTranslations('onboarding.signIn');
   return (
     <Atoms.FooterLinks className="py-6">
-      Not able to sign in with{' '}
-      <Atoms.Link href="https://pubkyring.app/" target="_blank" rel="noopener noreferrer">
-        Pubky Ring
-      </Atoms.Link>
-      ? Use the recovery phrase or encrypted file to restore your account.
+      {t.rich('recoveryHint', {
+        pubkyRing: (chunks) => (
+          <Atoms.Link href="https://pubkyring.app/" target="_blank" rel="noopener noreferrer">
+            {chunks}
+          </Atoms.Link>
+        ),
+      })}
     </Atoms.FooterLinks>
   );
 };
 
 export const SignInHeader = () => {
+  const t = useTranslations('onboarding.signIn');
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        Sign in to <span className="text-brand">Pubky.</span>
+        {t.rich('title', {
+          highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+        })}
       </Molecules.PageTitle>
-      <Atoms.PageSubtitle>Authorize with Pubky Ring to sign in.</Atoms.PageSubtitle>
+      <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
     </Atoms.PageHeader>
   );
 };

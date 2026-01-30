@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
@@ -9,7 +10,7 @@ import * as Config from '@/config';
 
 export interface ProfilePageFilterBarItem {
   icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  labelKey: string;
   count: number | undefined;
   pageType: Types.FilterBarPageType;
   /** Whether this item should only be shown for own profile */
@@ -26,9 +27,10 @@ export interface ProfilePageFilterBarProps {
 }
 
 // Item configuration - single source of truth for filter items
+// Uses labelKey for i18n translation lookup in 'profile.tabs' namespace
 const FILTER_ITEMS_CONFIG: Array<{
   icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  labelKey: string;
   pageType: Types.FilterBarPageType;
   statKey: keyof Hooks.ProfileStats;
   /** Whether this item should only be shown for own profile */
@@ -36,44 +38,44 @@ const FILTER_ITEMS_CONFIG: Array<{
 }> = [
   {
     icon: Libs.Bell,
-    label: 'Notifications',
+    labelKey: 'notifications',
     pageType: Types.PROFILE_PAGE_TYPES.NOTIFICATIONS,
     statKey: 'notifications',
     ownProfileOnly: true, // Notifications only make sense for logged-in user
   },
   {
     icon: Libs.StickyNote,
-    label: 'Posts',
+    labelKey: 'posts',
     pageType: Types.PROFILE_PAGE_TYPES.POSTS,
     statKey: 'posts',
   },
   {
     icon: Libs.MessageCircle,
-    label: 'Replies',
+    labelKey: 'replies',
     pageType: Types.PROFILE_PAGE_TYPES.REPLIES,
     statKey: 'replies',
   },
   {
     icon: Libs.UsersRound,
-    label: 'Followers',
+    labelKey: 'followers',
     pageType: Types.PROFILE_PAGE_TYPES.FOLLOWERS,
     statKey: 'followers',
   },
   {
     icon: Libs.UsersRound2,
-    label: 'Following',
+    labelKey: 'following',
     pageType: Types.PROFILE_PAGE_TYPES.FOLLOWING,
     statKey: 'following',
   },
   {
     icon: Libs.HeartHandshake,
-    label: 'Friends',
+    labelKey: 'friends',
     pageType: Types.PROFILE_PAGE_TYPES.FRIENDS,
     statKey: 'friends',
   },
   {
     icon: Libs.Tag,
-    label: 'Tagged',
+    labelKey: 'tagged',
     pageType: Types.PROFILE_PAGE_TYPES.UNIQUE_TAGS,
     statKey: 'uniqueTags',
   },
@@ -91,7 +93,7 @@ export const getDefaultItems = (
     return true;
   }).map((config) => ({
     icon: config.icon,
-    label: config.label,
+    labelKey: config.labelKey,
     pageType: config.pageType,
     // If stats not provided, count is undefined (loading state)
     // If stats provided, use the value or fallback to 0
@@ -107,6 +109,7 @@ export function ProfilePageFilterBar({
   onPageChangeAction,
   isOwnProfile = true,
 }: ProfilePageFilterBarProps) {
+  const t = useTranslations('profile.tabs');
   const { requireAuth } = Hooks.useRequireAuth();
 
   // Use provided items or generate default items with stats
@@ -149,6 +152,7 @@ export function ProfilePageFilterBar({
           const Icon = item.icon;
           const isActive = item.pageType === activePage;
           const isLoading = item.count === undefined;
+          const label = t(item.labelKey);
 
           return (
             <Atoms.FilterItem
@@ -158,18 +162,18 @@ export function ProfilePageFilterBar({
               className="w-full items-start justify-between px-0 py-1"
             >
               <Atoms.Container
-                data-cy={`profile-filter-item-${item.label.toLowerCase()}`}
+                data-cy={`profile-filter-item-${item.labelKey}`}
                 overrideDefaults={true}
                 className="flex items-center gap-2"
               >
                 <Atoms.FilterItemIcon icon={Icon} />
-                <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
+                <Atoms.FilterItemLabel>{label}</Atoms.FilterItemLabel>
               </Atoms.Container>
               {isLoading ? (
                 <Atoms.Spinner size="sm" className="size-4" />
               ) : (
                 <Atoms.Typography
-                  data-cy={`profile-filter-item-${item.label.toLowerCase()}-count`}
+                  data-cy={`profile-filter-item-${item.labelKey}-count`}
                   as="span"
                   className={`text-base font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}
                 >

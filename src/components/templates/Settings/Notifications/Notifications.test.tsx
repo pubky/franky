@@ -14,7 +14,7 @@ describe('Notifications', () => {
     expect(screen.getByText('New follower')).toBeInTheDocument();
     expect(screen.getByText('New reply to your post')).toBeInTheDocument();
     expect(screen.getByText('Someone mentioned your profile')).toBeInTheDocument();
-    expect(screen.getByText('New repost of your post')).toBeInTheDocument();
+    expect(screen.getByText('New repost to your post')).toBeInTheDocument();
     expect(screen.getByText('New friend')).toBeInTheDocument();
   });
 });
