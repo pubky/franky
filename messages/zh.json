@@ -446,6 +446,8 @@
       "followingButton": "已关注",
       "follow": "关注",
       "unfollow": "取消关注",
+      "followUser": "关注 {username}",
+      "unfollowUser": "取消关注 {username}",
       "copyPubky": "复制用户 pubky",
       "copyLink": "复制个人资料链接",
       "mute": "静音 {username}",

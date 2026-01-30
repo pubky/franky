@@ -446,6 +446,8 @@
       "followingButton": "متابَع",
       "follow": "متابعة",
       "unfollow": "الغاء المتابعة",
+      "followUser": "متابعة {username}",
+      "unfollowUser": "الغاء متابعة {username}",
       "copyPubky": "نسخ بوبكي المستخدم",
       "copyLink": "نسخ رابط الملف الشخصي",
       "mute": "كتم {username}",

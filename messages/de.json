@@ -446,6 +446,8 @@
       "followingButton": "Folge ich",
       "follow": "Folgen",
       "unfollow": "Entfolgen",
+      "followUser": "{username} folgen",
+      "unfollowUser": "{username} entfolgen",
       "copyPubky": "Benutzer-Pubky kopieren",
       "copyLink": "Profillink kopieren",
       "mute": "{username} stummschalten",

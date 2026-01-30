@@ -446,6 +446,8 @@
       "followingButton": "Abonne",
       "follow": "S'abonner",
       "unfollow": "Se désabonner",
+      "followUser": "S'abonner à {username}",
+      "unfollowUser": "Se désabonner de {username}",
       "copyPubky": "Copier le pubky de l'utilisateur",
       "copyLink": "Copier le lien du profil",
       "mute": "Masquer {username}",
