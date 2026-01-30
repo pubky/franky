@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # https://github.com/pubky/pubky-stack
-      PUBKY_STACK_REF: fc32a86b072715c2261a553e50509acf68b19091
+      PUBKY_STACK_REF: 8e2d4fb30a710a41d41549822f8d7bbbec5c7785
     strategy:
       fail-fast: false
       matrix:
