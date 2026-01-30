@@ -27,7 +27,7 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       overrideDefaults
       className={Libs.cn(
         'hidden flex-col items-start justify-start gap-6 self-start lg:flex',
-        'w-[180px] max-w-[180px] min-w-[180px] shrink-0',
+        'w-(--filter-bar-width) max-w-(--filter-bar-width) min-w-(--filter-bar-width) shrink-0',
         'sticky',
       )}
       style={{ top: `${stickyTop}px` }}
