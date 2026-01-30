@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -14,6 +15,7 @@ import type { SearchRecentSectionProps } from './SearchRecentSection.types';
  * Note: Data is already limited by parent component.
  */
 export function SearchRecentSection({ users, tags, onUserClick, onTagClick, onClearAll }: SearchRecentSectionProps) {
+  const t = useTranslations('search.recent');
   const hasItems = users.length > 0 || tags.length > 0;
 
   if (!hasItems) {
@@ -24,7 +26,7 @@ export function SearchRecentSection({ users, tags, onUserClick, onTagClick, onCl
     <Atoms.Container overrideDefaults className="flex flex-col gap-3">
       <Atoms.Container overrideDefaults className="flex items-center gap-2">
         <Atoms.Typography size="xs" className="tracking-widest text-muted-foreground uppercase">
-          Recent searches
+          {t('title')}
         </Atoms.Typography>
         {onClearAll && (
           <Atoms.Button
@@ -32,7 +34,7 @@ export function SearchRecentSection({ users, tags, onUserClick, onTagClick, onCl
             className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             onClick={onClearAll}
             data-testid="clear-all-button"
-            aria-label="Clear all recent searches"
+            aria-label={t('clearAll')}
           >
             <Libs.X className="size-4" strokeWidth={2} aria-hidden="true" />
           </Atoms.Button>

@@ -1,11 +1,3 @@
-export const QUICK_REPLY_PROMPTS = [
-  'What are your thoughts on this?',
-  'What do you think?',
-  'Do you agree?',
-  'Any additional insights?',
-  'How would you respond?',
-] as const;
-
 /**
  * Height of PostThreadSpacer component in pixels.
  * Matches the h-4 Tailwind class (16px = 1rem).
@@ -24,3 +16,9 @@ const SINGLE_POST_REPLIES_GAP = 50;
  * This ensures the connector properly connects from the main post to QuickReply
  */
 export const QUICK_REPLY_CONNECTOR_SPACER_HEIGHT = POST_THREAD_SPACER_HEIGHT + SINGLE_POST_REPLIES_GAP;
+
+/**
+ * Number of prompts available for the quick reply placeholder.
+ * This should match the number of prompts in the translations file (messages/en.json -> quickReply.prompts).
+ */
+export const QUICK_REPLY_PROMPTS_COUNT = 5;

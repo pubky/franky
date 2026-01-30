@@ -1,16 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 
 export function FeedbackCard() {
+  const t = useTranslations('feedback');
   const { userDetails } = Hooks.useCurrentUserProfile();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const name = userDetails?.name || 'Your Name';
+  const name = userDetails?.name || t('defaultName');
   const avatarUrl = Hooks.useAvatarUrl(userDetails);
 
   return (
@@ -18,10 +20,10 @@ export function FeedbackCard() {
       <Atoms.Container
         overrideDefaults={true}
         data-testid="feedback-card"
-        className="flex w-full min-w-0 flex-col gap-2"
+        className="flex w-full max-w-(--filter-bar-width) flex-col gap-2"
       >
         <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
-          Feedback
+          {t('cardTitle')}
         </Atoms.Heading>
 
         <Atoms.Container
@@ -51,9 +53,9 @@ export function FeedbackCard() {
 
           <Atoms.Button
             overrideDefaults
-            className="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground"
+            className="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
           >
-            What do you think about Pubky?
+            {t('cardButton')}
           </Atoms.Button>
         </Atoms.Container>
       </Atoms.Container>

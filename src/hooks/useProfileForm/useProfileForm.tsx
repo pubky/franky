@@ -10,7 +10,7 @@ import * as Core from '@/core';
 import * as App from '@/app';
 import { USER_NAME_MIN_LENGTH, USER_NAME_MAX_LENGTH, USER_BIO_MAX_LENGTH } from '@/config';
 
-import type { ProfileLink, UseProfileFormProps, UseProfileFormReturn } from './useProfileForm.types';
+import type { ProfileLink, UseProfileFormProps, UseProfileFormReturn, SubmitTextKey } from './useProfileForm.types';
 
 const DEFAULT_LINKS: ProfileLink[] = [
   { label: 'WEBSITE', url: '' },
@@ -49,7 +49,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(mode === 'edit');
-  const [submitText, setSubmitText] = useState(mode === 'create' ? 'Finish' : 'Save Profile');
+  const [submitTextKey, setSubmitTextKey] = useState<SubmitTextKey>(mode === 'create' ? 'finish' : 'saveProfile');
 
   // Edit mode specific state
   const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string | null>(null);
@@ -81,8 +81,15 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       setLinks(formattedLinks.length > 0 ? formattedLinks : DEFAULT_LINKS);
 
       // Set avatar if exists
+      // Note: We intentionally don't use the local store's blob URL here because:
+      // 1. Blob URLs are ephemeral and can be revoked/invalidated
+      // 2. The cleanup effect may revoke avatarPreview when unmounting
+      // 3. The local store is for immediate display, not form state restoration
       if (userDetails.image && pubky) {
-        const avatarUrl = Core.FileController.getAvatarUrl(pubky, userDetails.indexed_at);
+        let avatarUrl = Core.FileController.getAvatarUrl(pubky, userDetails.indexed_at);
+        // TODO: Has to be fixed with the ServiceWorker
+        // Assign a random number (0-100000) as a query parameter to avatarUrl for cache busting
+        avatarUrl = `${avatarUrl}${Math.floor(Math.random() * 100000)}`;
         setOriginalAvatarUrl(avatarUrl);
         setAvatarPreview(avatarUrl);
       }
@@ -256,12 +263,12 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     if (!pubky) return;
 
     setIsSaving(true);
-    setSubmitText('Saving...');
+    setSubmitTextKey('saving');
 
     try {
       const user = validateUser();
       if (!user) {
-        setSubmitText(mode === 'create' ? 'Finish' : 'Save Profile');
+        setSubmitTextKey(mode === 'create' ? 'finish' : 'saveProfile');
         return;
       }
 
@@ -270,10 +277,10 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
       if (mode === 'create') {
         if (avatarFile) {
-          setSubmitText('Uploading avatar...');
+          setSubmitTextKey('uploadingAvatar');
           image = await Core.FileController.commitCreate({ file: avatarFile, pubky });
           if (!image) {
-            setSubmitText('Try again!');
+            setSubmitTextKey('tryAgain');
             return;
           }
         }
@@ -283,10 +290,10 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
 
         if (avatarChanged) {
           if (avatarFile) {
-            setSubmitText('Uploading avatar...');
+            setSubmitTextKey('uploadingAvatar');
             const uploadedImage = await Core.FileController.commitCreate({ file: avatarFile, pubky });
             if (!uploadedImage) {
-              setSubmitText('Try again!');
+              setSubmitTextKey('tryAgain');
               return;
             }
             image = uploadedImage;
@@ -296,10 +303,16 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         }
       }
 
-      setSubmitText('Saving profile...');
+      setSubmitTextKey('savingProfile');
 
       if (mode === 'create') {
         await Core.ProfileController.commitCreate({ profile: user, image, pubky });
+        // Store a NEW blob URL globally so all avatar components show the new avatar instantly
+        // We create a separate blob URL so the form's cleanup can safely revoke its own
+        if (avatarFile) {
+          const globalBlobUrl = URL.createObjectURL(avatarFile);
+          Core.useLocalFilesStore.getState().setProfile(globalBlobUrl);
+        }
         await Core.AuthController.bootstrapWithDelay();
         setShowWelcomeDialog?.(true);
         router.push(App.HOME_ROUTES.HOME);
@@ -311,6 +324,17 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
           image,
           pubky,
         });
+        // Update local avatar store: set NEW blob URL if new avatar, clear if deleted
+        // We create a separate blob URL so the form's cleanup can safely revoke its own
+        if (avatarChanged) {
+          if (avatarFile) {
+            const globalBlobUrl = URL.createObjectURL(avatarFile);
+            Core.useLocalFilesStore.getState().setProfile(globalBlobUrl);
+          } else {
+            // Avatar was deleted
+            Core.useLocalFilesStore.getState().setProfile(null);
+          }
+        }
         toast({
           title: 'Profile updated',
           description: 'Your profile has been updated successfully.',
@@ -322,7 +346,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         // Handle session expiration - user needs to re-authenticate
         if (Libs.requiresLogin(error)) {
           Libs.Logger.error('Session expired while saving profile', error);
-          setSubmitText('Try again!');
+          setSubmitTextKey('tryAgain');
           toast({
             title: 'Session expired',
             description: 'Please sign out and sign in again to continue.',
@@ -333,7 +357,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         // Handle auth errors from homeserver
         if (Libs.isAuthError(error)) {
           Libs.Logger.error('Failed to save profile in Homeserver', error);
-          setSubmitText('Try again!');
+          setSubmitTextKey('tryAgain');
           toast({
             title: 'Failed to save profile',
             description: 'Please try again.',
@@ -342,7 +366,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
         }
       }
 
-      setSubmitText('Try again!');
+      setSubmitTextKey('tryAgain');
       toast({
         title: 'Please try again.',
         description:
@@ -395,7 +419,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
       avatarPreview,
       isSaving,
       isLoading,
-      submitText,
+      submitTextKey,
     },
     errors: {
       nameError,

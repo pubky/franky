@@ -130,6 +130,7 @@ describe('useStreamPagination', () => {
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
         nextPageIds: [],
         timestamp: Date.now(),
+        reachedEnd: true, // Actual end of stream
       });
 
       const { result } = renderHook(() =>
@@ -144,6 +145,27 @@ describe('useStreamPagination', () => {
 
       expect(result.current.postIds).toEqual([]);
       expect(result.current.hasMore).toBe(false);
+    });
+
+    it('should keep hasMore true when empty results but not reached end', async () => {
+      vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
+        nextPageIds: [],
+        timestamp: Date.now(),
+        reachedEnd: false, // Filters removed all posts, but more exist
+      });
+
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.postIds).toEqual([]);
+      expect(result.current.hasMore).toBe(true);
     });
 
     it('should set hasMore based on response length vs limit', async () => {
@@ -438,10 +460,11 @@ describe('useStreamPagination', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty results', async () => {
+    it('should handle empty results with reachedEnd true', async () => {
       vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
         nextPageIds: [],
         timestamp: Date.now(),
+        reachedEnd: true,
       });
 
       const { result } = renderHook(() =>
@@ -456,6 +479,27 @@ describe('useStreamPagination', () => {
 
       expect(result.current.postIds).toEqual([]);
       expect(result.current.hasMore).toBe(false);
+    });
+
+    it('should handle empty results with reachedEnd false', async () => {
+      vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValue({
+        nextPageIds: [],
+        timestamp: Date.now(),
+        reachedEnd: false,
+      });
+
+      const { result } = renderHook(() =>
+        useStreamPagination({
+          streamId: mockStreamId,
+        }),
+      );
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.postIds).toEqual([]);
+      expect(result.current.hasMore).toBe(true);
     });
 
     it('should expose refresh function', async () => {

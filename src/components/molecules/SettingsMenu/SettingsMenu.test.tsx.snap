@@ -3,7 +3,7 @@
 exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
 <div>
   <div
-    class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+    class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
     data-slot="filter-root"
     data-testid="filter-root"
   >
@@ -180,7 +180,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           <span
             class=""
           >
-            Muted users
+            Muted Users
           </span>
         </button>
       </a>

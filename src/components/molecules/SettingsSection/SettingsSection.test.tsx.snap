@@ -2,7 +2,7 @@
 
 exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1`] = `
 <div
-  class="flex flex-col items-start justify-start gap-3"
+  class="flex w-full flex-col items-start justify-start gap-3"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -44,7 +44,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1
 
 exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="flex flex-col items-start justify-start gap-3"
+  class="flex w-full flex-col items-start justify-start gap-3"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -86,7 +86,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] =
 
 exports[`SettingsSection - Snapshots > matches snapshot with destructive variant 1`] = `
 <div
-  class="flex flex-col items-start justify-start gap-3"
+  class="flex w-full flex-col items-start justify-start gap-3"
   data-override-defaults="true"
   data-testid="container"
 >
@@ -128,7 +128,7 @@ exports[`SettingsSection - Snapshots > matches snapshot with destructive variant
 
 exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`] = `
 <div
-  class="flex flex-col items-start justify-start gap-3"
+  class="flex w-full flex-col items-start justify-start gap-3"
   data-override-defaults="true"
   data-testid="container"
 >

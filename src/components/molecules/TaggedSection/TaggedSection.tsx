@@ -24,6 +24,7 @@ export function TaggedSection({
         existingTags={tags}
         enableApiSuggestions
         excludeFromApiSuggestions={tags.map((t) => t.label)}
+        addOnSuggestionClick
       />
 
       <Molecules.TaggedList

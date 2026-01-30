@@ -1,11 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { LANGUAGES } from './LanguageSelector.constants';
+
+/**
+ * Sets the locale cookie for server-side i18n.
+ * Cookie is used by next-intl to determine the locale on the server.
+ * Adds Secure flag for HTTPS environments to prevent cookie leakage.
+ */
+function setLocaleCookie(locale: string) {
+  const encodedLocale = encodeURIComponent(locale);
+  const secure = window.location.protocol === 'https:' ? ';Secure' : '';
+  document.cookie = `locale=${encodedLocale};path=/;max-age=31536000;SameSite=Lax${secure}`;
+}
 
 function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: string; onSelect: (code: string) => void }) {
   return (
@@ -39,16 +52,36 @@ function LanguageOptions({ currentLanguage, onSelect }: { currentLanguage: strin
 }
 
 export function LanguageSelector() {
-  const { language, setLanguage } = Core.useSettingsStore();
+  const t = useTranslations('language');
+  const router = useRouter();
+  // Use server locale as source of truth
+  const serverLocale = useLocale();
+  const { setLanguage } = Core.useSettingsStore();
   const isMobile = Hooks.useIsMobile();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
 
-  const selectedLang = LANGUAGES.find((lang) => lang.code === language) || LANGUAGES[0];
+  // Sync store with server locale on mount (one-way sync: server -> client)
+  React.useEffect(() => {
+    setLanguage(serverLocale);
+  }, [serverLocale, setLanguage]);
 
   const handleSelect = (code: string) => {
+    // Prevent same language click
+    if (code === serverLocale) {
+      setIsOpen(false);
+      return;
+    }
+
+    // Set cookie and close dropdown
+    setLocaleCookie(code);
     setLanguage(code);
     setIsOpen(false);
+
+    // Refresh server components to pick up new locale
+    router.refresh();
   };
+
+  const selectedLang = LANGUAGES.find((lang) => lang.code === serverLocale) || LANGUAGES[0];
 
   const trigger = (
     <Atoms.Button
@@ -75,7 +108,7 @@ export function LanguageSelector() {
         overrideDefaults
         className="text-xs leading-4 font-medium tracking-[1.2px] text-muted-foreground uppercase"
       >
-        Display language
+        {t('displayLanguage')}
       </Atoms.Typography>
 
       {isMobile ? (
@@ -83,9 +116,9 @@ export function LanguageSelector() {
           <Atoms.SheetTrigger asChild>{trigger}</Atoms.SheetTrigger>
           <Atoms.SheetContent side="bottom" className="rounded-t-2xl pb-8">
             <Atoms.SheetHeader className="mb-4">
-              <Atoms.SheetTitle>Select Language</Atoms.SheetTitle>
+              <Atoms.SheetTitle>{t('selectLanguage')}</Atoms.SheetTitle>
             </Atoms.SheetHeader>
-            <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
+            <LanguageOptions currentLanguage={serverLocale} onSelect={handleSelect} />
           </Atoms.SheetContent>
         </Atoms.Sheet>
       ) : (
@@ -96,7 +129,7 @@ export function LanguageSelector() {
             sideOffset={8}
             className="w-(--radix-popover-trigger-width) rounded-md border border-border bg-card p-0 py-2 shadow-lg"
           >
-            <LanguageOptions currentLanguage={language} onSelect={handleSelect} />
+            <LanguageOptions currentLanguage={serverLocale} onSelect={handleSelect} />
           </Atoms.PopoverContent>
         </Atoms.Popover>
       )}

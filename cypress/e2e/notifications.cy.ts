@@ -1,17 +1,16 @@
 import { backupDownloadFilePath } from '../support/auth';
-import { createQuickPost, fastTagPost, replyToPost, repostPost, deletePost, waitForFeedToLoad } from '../support/posts';
+import { createQuickPost, replyToPost, repostPost, deletePost } from '../support/posts';
 import { slowCypressDown } from 'cypress-slow-down';
 import 'cypress-slow-down/commands';
 import { searchAndFollowProfile, searchForProfileByPubky } from '../support/contacts';
 import {
   clickFollowButton,
-  unfollowUserByUsername,
   checkLatestNotification,
   addProfileTags,
   waitForNotificationDotsToDisappear,
   causeLastReadToBeUpdated,
 } from '../support/profile';
-import { BackupType, HasBackedUp } from '../support/types/enums';
+import { BackupType, CheckForNewPosts, HasBackedUp, WaitForNewPosts } from '../support/types/enums';
 import { verifyNotificationCounter } from '../support/common';
 import { goToProfilePageFromHeader } from '../support/header';
 
@@ -195,12 +194,15 @@ describe('notifications', () => {
 
   it('can be notified for your post being reposted', () => {
     // * profile 1 creates a post (1)
-    createQuickPost(`I will be notified when this post is reposted! ${Date.now()}`);
+    const postContent = `I will be notified when this post is reposted! ${Date.now()}`;
+    createQuickPost(postContent);
 
     // * profile 2 reposts profile 1's post (1)
     cy.signOut(HasBackedUp.Yes);
     cy.signInWithEncryptedFile(backupDownloadFilePath(profile2.username));
-    repostPost({ repostContent: 'I reposted your post!' });
+    // wait for new posts to be indexed and click 'See new posts' button
+    cy.findFirstPostInFeedFiltered(postContent, CheckForNewPosts.Yes);
+    repostPost({ filterText: postContent, repostContent: 'I reposted your post!' });
 
     // * profile 1 checks for notification for being reposted
     cy.signOut(HasBackedUp.Yes);

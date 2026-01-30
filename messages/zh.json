@@ -1,0 +1,1107 @@
+{
+  "time": {
+    "now": "刚刚",
+    "minutesShort": "{count}分钟",
+    "hoursShort": "{count}小时"
+  },
+  "landing": {
+    "title": "<highlight>解锁</highlight>网络。",
+    "subtitle": "你的密钥，你的内容，你的规则。",
+    "signIn": "登录",
+    "createAccount": "创建账户",
+    "aTetherCompany": "<tether>tether.</tether> 旗下公司",
+    "copyright": "Synonym Software, S.A. DE C.V. ©2026。保留所有权利。"
+  },
+  "status": {
+    "available": "有空",
+    "away": "离开",
+    "vacationing": "度假中",
+    "working": "工作中",
+    "traveling": "旅行中",
+    "celebrating": "庆祝中",
+    "sick": "生病",
+    "noStatus": "无状态",
+    "loading": "加载中",
+    "customStatus": "自定义状态",
+    "addStatus": "添加状态",
+    "selectStatus": "选择状态",
+    "selectStatusDescription": "选择要在个人资料上显示的状态"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "confirm": "确认",
+    "delete": "删除",
+    "send": "发送",
+    "submit": "提交",
+    "loading": "加载中...",
+    "loadingActions": "加载操作...",
+    "loadingHeader": "加载头部...",
+    "loadingPost": "加载帖子...",
+    "loadingContent": "加载内容...",
+    "loadingReplies": "加载回复...",
+    "loadingParticipants": "加载参与者...",
+    "loadingTags": "加载标签...",
+    "loadingMoreTags": "加载更多标签...",
+    "loadingPosts": "加载帖子...",
+    "loadingMorePosts": "加载更多帖子...",
+    "loadingPreview": "加载预览...",
+    "loadingBookmark": "加载中...",
+    "addBookmark": "添加书签",
+    "removeBookmark": "移除书签",
+    "redirecting": "重定向中...",
+    "participants": "参与者",
+    "error": "错误",
+    "profile": "个人资料",
+    "back": "返回",
+    "continue": "继续",
+    "finish": "完成",
+    "next": "下一步",
+    "close": "关闭",
+    "seeAll": "查看全部",
+    "exploreAll": "探索全部",
+    "edit": "编辑",
+    "done": "完成",
+    "download": "下载",
+    "copy": "复制",
+    "share": "分享",
+    "me": "我",
+    "or": "或",
+    "and": "和",
+    "user": "用户",
+    "unknownUser": "未知用户",
+    "yourWelcome": "不客气！",
+    "links": "链接",
+    "tags": "标签",
+    "posts": "帖子",
+    "avatar": "头像"
+  },
+  "header": {
+    "home": "首页",
+    "hot": "热门",
+    "bookmarks": "书签",
+    "settings": "设置",
+    "signIn": "登录"
+  },
+  "settings": {
+    "title": "设置",
+    "menu": {
+      "account": "账户",
+      "notifications": "通知",
+      "privacySafety": "隐私与安全",
+      "mutedUsers": "已静音用户",
+      "language": "语言",
+      "help": "帮助"
+    },
+    "account": {
+      "title": "账户",
+      "signOut": {
+        "title": "退出 Pubky",
+        "description": "退出以保护您的账户免受未授权访问。",
+        "button": "退出",
+        "buttonLoading": "退出中..."
+      },
+      "editProfile": {
+        "title": "编辑您的个人资料",
+        "description": "更新您的简介或头像，让朋友更容易找到您。",
+        "button": "编辑资料"
+      },
+      "backup": {
+        "title": "备份您的账户",
+        "descriptionNeeded": "没有备份，关闭浏览器后您将失去账户！",
+        "descriptionDone": "您已完成备份，或在备份前关闭了浏览器。您的恢复文件和助记词已被删除。",
+        "button": "备份"
+      },
+      "download": {
+        "title": "下载您的数据",
+        "description": "您在 Pubky 上的数据属于您。导出账户数据以便在其他地方使用。",
+        "button": "下载数据",
+        "buttonLoading": "下载中... {progress}%"
+      },
+      "deleteAccount": {
+        "title": "删除您的账户",
+        "description": "删除账户将移除您的所有帖子、标签、个人资料信息、联系人、自定义流和设置或偏好。",
+        "button": "删除账户"
+      }
+    },
+    "notifications": {
+      "title": "平台通知",
+      "description": "请选择您希望在 Pubky 上接收的通知。"
+    },
+    "privacy": {
+      "title": "隐私与安全",
+      "description": "隐私不是犯罪。在 Pubky 上管理您的可见性和安全性。"
+    },
+    "mutedUsers": {
+      "title": "已静音用户",
+      "description": "这是您静音的所有用户的概览。您可以选择取消静音。"
+    },
+    "language": {
+      "title": "语言",
+      "description": "选择您偏好的 Pubky 界面语言。",
+      "displayLanguage": "显示语言"
+    },
+    "backup": {
+      "title": "备份",
+      "dialogTitle": "备份您的 pubky",
+      "subtitle": "安全备份并存储您 pubky 的秘密种子。您更喜欢哪种备份方式？如果需要，您可以选择多种备份方式。",
+      "recoveryPhrase": "恢复短语",
+      "note": "备注",
+      "encryptedFile": "下载加密文件",
+      "folder": "文件夹",
+      "exportRing": "导出到 Pubky Ring",
+      "keys": "密钥",
+      "alertShort": "立即备份",
+      "alertFull": "立即备份以免丢失您的账户！"
+    }
+  },
+  "language": {
+    "displayLanguage": "显示语言"
+  },
+  "onboarding": {
+    "steps": {
+      "createAccount": "创建账户",
+      "identityKeys": "身份密钥",
+      "usePubkyRing": "使用 Pubky Ring",
+      "yourPubky": "您的 pubky",
+      "backup": "备份",
+      "profile": "个人资料",
+      "signedOut": "已退出"
+    },
+    "human": {
+      "title": "证明<highlight>您不是机器人。</highlight>",
+      "subtitle": "无需邮箱。通过短信或小额支付快速验证。或使用",
+      "inviteCode": "邀请码。",
+      "devMode": "开发者模式",
+      "skip": "跳过",
+      "enterInviteCode": "输入邀请码"
+    },
+    "phone": {
+      "title": "手机<highlight>验证。</highlight>",
+      "subtitle": "我们将通过短信向您的手机号发送验证码。",
+      "sendCode": "发送验证码",
+      "phoneNumber": "手机号码",
+      "phoneHint": "输入您的手机号码，包括国家代码（如中国 +86）。",
+      "placeholder": "+86XXXXXXXXXXX",
+      "blocked": "手机号已被封锁",
+      "blockedDescription": "此手机号无法用于验证。",
+      "tooManyAttempts": "验证尝试次数过多",
+      "tooManyAttemptsDescription": "您已达到此手机号的最大验证次数。",
+      "sendFailed": "发送短信验证码失败",
+      "sendFailedDescription": "请稍后重试。如问题持续，请联系支持。"
+    },
+    "phoneCode": {
+      "title": "输入<highlight>验证码。</highlight>",
+      "subtitle": "我们已向 {phoneNumber} 发送了6位验证码。",
+      "label": "验证码",
+      "hint": "输入您在 {phoneNumber} 收到的验证码。",
+      "resend": "重新发送验证码",
+      "resendTimer": "重新发送验证码 ({seconds}秒)",
+      "verify": "验证",
+      "valid": "验证码有效",
+      "invalid": "验证码无效。请重试。",
+      "verifyFailed": "短信验证码验证失败",
+      "verifyFailedDescription": "请稍后重试。如问题持续，请联系支持。"
+    },
+    "lightning": {
+      "title": "扫码<highlight>支付。</highlight>",
+      "subtitle": "使用您喜欢的钱包扫描二维码。",
+      "qrLabel": "比特币闪电网络支付",
+      "payAmount": "支付 ₿ {amount} 以继续。",
+      "payAmountUsd": "支付 ₿ {amount}（${usdAmount}）以继续。",
+      "expired": "支付已过期",
+      "newInvoice": "新发票",
+      "copyInvoice": "复制发票",
+      "paymentSuccess": "支付成功",
+      "paymentExpired": "支付已过期",
+      "requestFailed": "请求闪电发票失败",
+      "requestFailedDescription": "请稍后重试。如问题持续，请联系支持。",
+      "invoiceCopied": "发票已复制到剪贴板",
+      "copyFailed": "复制发票失败"
+    },
+    "inviteCode": {
+      "title": "证明您<highlight>不是机器人。</highlight>",
+      "subtitle": "短信或支付验证不可用。请向我们索取邀请码。",
+      "label": "Homeserver 邀请码",
+      "hint": "您将获得 1GB 存储空间，用于您的帖子、照片、视频和个人资料。",
+      "placeholder": "XXXX-XXXX-XXXX",
+      "customHomeserver": "自定义 Homeserver",
+      "customHomeserverHint": "使用其他 Homeserver 的功能即将推出。"
+    },
+    "bitcoin": {
+      "title": "比特币支付",
+      "morePrivate": "（更私密）",
+      "storage": "1GB 存储空间",
+      "speedLimit": "1MB/s 速度限制",
+      "payOnce": "一次性支付",
+      "notAvailable": "您所在的国家/地区暂不可用",
+      "unavailable": "服务暂时不可用"
+    },
+    "sms": {
+      "title": "短信验证",
+      "free": "免费",
+      "lessPrivate": "隐私性较低，但简单",
+      "storage": "1GB 存储空间",
+      "speedLimit": "1MB/s 速度限制",
+      "receiveSms": "接收短信",
+      "notAvailable": "您所在的国家/地区暂不可用",
+      "unavailable": "服务暂时不可用"
+    },
+    "footer": {
+      "agreement": "创建 <pubky>Pubky</pubky> 账户即表示您同意",
+      "andConfirmAge": "，并确认您",
+      "copyright": "Pubky 由 <pubkyCore>Pubky Core</pubkyCore> 驱动，由 Synonym Software, S.A. DE C.V. 用爱和奉献精神打造。©2025。保留所有权利。"
+    },
+    "scan": {
+      "titleMobile": "点击<highlight>授权。</highlight>",
+      "titleDesktop": "扫描<highlight>二维码。</highlight>",
+      "subtitle": "打开 Pubky Ring，创建一个 pubky，然后扫描二维码。",
+      "generating": "正在生成二维码...",
+      "generatingShort": "生成中...",
+      "authorize": "使用 Pubky Ring 授权",
+      "authorizeSub": "使用 <pubkyRing>Pubky Ring</pubkyRing> 或任何其他由 <pubkyCore>Pubky Core</pubkyCore> 驱动的密钥链。",
+      "linkFailed": "无法连接到 Pubky Ring 签名应用",
+      "tryAgain": "请重试。"
+    },
+    "signIn": {
+      "title": "登录 <highlight>Pubky。</highlight>",
+      "subtitle": "使用 Pubky Ring 授权登录。",
+      "generating": "正在生成二维码...",
+      "generatingShort": "生成中...",
+      "authorize": "使用 Pubky Ring 授权",
+      "linkCopied": "链接已复制",
+      "linkCopiedDescription": "认证链接已复制到剪贴板。",
+      "linkFailed": "无法连接到 Pubky Ring 签名应用",
+      "tryAgain": "请重试。",
+      "recoveryHint": "无法使用 <pubkyRing>Pubky Ring</pubkyRing> 登录？使用恢复短语或加密文件恢复您的账户。",
+      "verifyingAccount": "验证账户",
+      "loadingData": "加载您的数据",
+      "buildingFeed": "构建您的信息流",
+      "syncingSettings": "同步设置",
+      "useRecoveryPhrase": "使用恢复短语",
+      "useEncryptedFile": "使用加密文件",
+      "restoreRecoveryPhrase": {
+        "title": "使用恢复短语恢复",
+        "description": "使用您的12个单词（恢复短语）恢复您的账户并登录。",
+        "invalidWords": "检测到无效单词",
+        "invalidWordsHint": "请检查所有单词是否有效且仅包含小写字母。",
+        "cancel": "取消",
+        "restore": "恢复",
+        "restoring": "恢复中...",
+        "errorTitle": "助记词登录错误",
+        "errorDescription": "请重试。"
+      },
+      "restoreEncryptedFile": {
+        "title": "使用加密文件恢复",
+        "description": "使用您的加密备份文件恢复您的账户并登录。",
+        "uploadLabel": "上传加密文件",
+        "passwordLabel": "输入密码",
+        "passwordPlaceholder": "输入您的密码",
+        "selectFile": "选择文件",
+        "invalidFileType": "请选择 .pkarr 文件",
+        "missingFields": "请选择文件并输入密码",
+        "invalidPassword": "密码无效或文件损坏。请检查密码后重试。",
+        "nexusError": "nexus 出现问题。请重试。",
+        "restoreError": "从文件恢复失败。请检查您的文件后重试。",
+        "unexpectedError": "发生意外错误",
+        "cancel": "取消",
+        "restore": "恢复",
+        "restoring": "恢复中..."
+      }
+    },
+    "pubky": {
+      "title": "您的 pubky",
+      "uniqueTitle": "您的唯一 <highlight>pubky。</highlight>",
+      "uniqueSubtitle": "与朋友分享您的 pubky，让他们可以关注您。",
+      "copy": "复制到剪贴板",
+      "share": "分享",
+      "generating": "正在生成 pubky...",
+      "myPubky": "我的 Pubky",
+      "shareText": "这是我的 Pubky：\n{displayPubky}",
+      "shareUnavailable": "分享不可用",
+      "shareUnavailableDescription": "我们已复制您的 pubky，您可以将其粘贴到您喜欢的应用中。",
+      "shareFailed": "分享失败",
+      "shareFailedDescription": "当前无法分享。请重试。"
+    },
+    "backupMethod": {
+      "title": "选择备份方式",
+      "subtitle": "安全地备份和存储您 pubky 的秘密种子。您更喜欢哪种备份方式？您也可以选择稍后进行。",
+      "recoveryPhrase": "恢复短语",
+      "encryptedFile": "加密文件"
+    },
+    "backup": {
+      "title": "备份您的 <highlight>pubky。</highlight>",
+      "subtitle": "您需要备份才能在以后恢复账户访问权限。",
+      "signUpFailed": "错误 - 注册失败",
+      "signUpError": "出现问题。请重试。",
+      "invalidInvite": "邀请码无效或已过期。请获取或申请新的邀请码。"
+    },
+    "backupPhrase": {
+      "title": "备份恢复短语",
+      "subtitle": "使用下面的恢复短语在以后恢复您的账户。按正确顺序写下这12个单词并保存在安全的地方。",
+      "writeDown": "按正确顺序写下这12个单词并保存在安全的地方。",
+      "neverShare": "永远不要与任何人分享此恢复短语。",
+      "reveal": "显示恢复短语",
+      "hide": "隐藏恢复短语",
+      "confirmTitle": "确认恢复短语",
+      "confirmSubtitle": "按正确顺序点击或输入这12个单词。",
+      "validate": "验证",
+      "completeTitle": "备份完成",
+      "completeSubtitle": "您可以使用已备份的恢复短语在以后恢复您的账户。"
+    },
+    "backupEncrypted": {
+      "title": "作为加密文件备份",
+      "subtitle": "使用安全密码加密下面的恢复文件，下载并保存到您的电脑或云端。",
+      "neverShareDesktop": "永远不要与任何人分享此文件。",
+      "neverShareMobile": "永远不要与任何人分享此文件和密码。",
+      "password": "密码",
+      "passwordPlaceholder": "输入强密码",
+      "passwordHint": "建议使用8个或更多字符，包含大小写字母、数字和符号。",
+      "repeatPassword": "重复密码",
+      "repeatPasswordPlaceholder": "重复您的密码",
+      "passwordsDoNotMatch": "密码不匹配",
+      "downloadFile": "下载文件",
+      "completeTitle": "备份完成",
+      "completeSubtitle": "您可以使用已备份的加密文件在以后恢复您的账户。"
+    },
+    "install": {
+      "title": "安装 <highlight>Pubky Ring。</highlight>",
+      "subtitle": "Pubky Ring 是 Pubky 生态系统中您身份密钥的密钥链。",
+      "instructions": "下载并安装移动应用。然后继续下一步。",
+      "alternative": "使用 <pubkyRing>Pubky Ring</pubkyRing> 或任何其他由 <pubkyCore>Pubky Core</pubkyCore> 驱动的密钥链，或在浏览器中创建密钥（安全性较低）。",
+      "createInBrowser": "在浏览器中创建密钥",
+      "continueWithRing": "继续使用 Pubky Ring"
+    },
+    "createProfile": {
+      "title": "创建您的<highlight>个人资料。</highlight>",
+      "subtitle": "添加您的姓名、简介、链接和头像。"
+    }
+  },
+  "post": {
+    "placeholder": {
+      "reply": "写一条回复...",
+      "post": "您在想什么？",
+      "repost": "可选评论",
+      "edit": "编辑帖子"
+    },
+    "button": {
+      "reply": "回复",
+      "post": "发布",
+      "repost": "转发",
+      "edit": "编辑"
+    },
+    "actions": {
+      "title": "帖子操作",
+      "copyPubky": "复制 pubky",
+      "copyLink": "复制帖子链接",
+      "copyText": "复制帖子文本",
+      "editPost": "编辑帖子",
+      "deletePost": "删除帖子",
+      "reportPost": "举报帖子",
+      "followUser": "关注 {username}",
+      "unfollowUser": "取消关注 {username}",
+      "muteUser": "静音 {username}",
+      "unmuteUser": "取消静音 {username}"
+    },
+    "deleted": "此帖子已被作者删除。",
+    "dropFiles": "将文件拖放到此处",
+    "articleTitle": "文章标题",
+    "addTag": "添加标签",
+    "limitReached": "已达上限",
+    "addEmoji": "添加表情",
+    "addImage": "添加图片",
+    "addFile": "添加文件",
+    "addArticle": "添加文章",
+    "posting": "发布中...",
+    "viewOriginal": "查看原帖",
+    "newPostsSingular": "查看 {count} 条新帖子",
+    "newPostsPlural": "查看 {count} 条新帖子"
+  },
+  "profile": {
+    "title": "个人资料",
+    "tabs": {
+      "notifications": "通知",
+      "posts": "帖子",
+      "replies": "回复",
+      "followers": "粉丝",
+      "following": "关注",
+      "friends": "好友",
+      "tagged": "已标记"
+    },
+    "stats": {
+      "followers": "粉丝",
+      "following": "关注",
+      "friends": "好友",
+      "posts": "帖子",
+      "tags": "标签"
+    },
+    "actions": {
+      "title": "个人资料操作",
+      "edit": "编辑",
+      "link": "链接",
+      "loggingOut": "退出中...",
+      "signOut": "退出",
+      "unfollowing": "取消关注中...",
+      "followingProgress": "关注中...",
+      "followingButton": "已关注",
+      "follow": "关注",
+      "unfollow": "取消关注",
+      "followUser": "关注 {username}",
+      "unfollowUser": "取消关注 {username}",
+      "copyPubky": "复制用户 pubky",
+      "copyLink": "复制个人资料链接",
+      "mute": "静音 {username}",
+      "unmute": "取消静音 {username}",
+      "viewProfile": "查看 {name} 的个人资料",
+      "thisIsYou": "这是您"
+    },
+    "friendsWithYou": "（互相关注）",
+    "empty": {
+      "friends": {
+        "title": "还没有好友",
+        "subtitle": "关注某人，如果他们回关您，你们就成为好友了！\n开始关注 Pubky 用户，谁知道谁会回关您呢！",
+        "alt": "好友 - 空状态"
+      },
+      "following": {
+        "title": "您就是算法",
+        "subtitle": "关注账户是策划您时间线的简单方式。\n随时了解您感兴趣的话题和人物。",
+        "alt": "关注 - 空状态"
+      },
+      "followers": {
+        "title": "在寻找粉丝？",
+        "subtitle": "当有人关注此账户时，他们的个人资料将出现在这里。\n开始发帖并与他人互动来增加您的粉丝！",
+        "alt": "粉丝 - 空状态",
+        "createPost": "创建帖子"
+      },
+      "tagged": {
+        "title": "发现谁标记了你",
+        "subtitle": "还没有人标记你。\n提示：你也可以给自己的个人资料添加标签。",
+        "alt": "标记 - 空状态"
+      }
+    },
+    "sidebar": {
+      "taggedAs": "被标记为",
+      "loadingTags": "加载标签中...",
+      "noTags": "暂无标签。",
+      "addTag": "添加标签",
+      "links": "链接",
+      "noLinks": "暂无链接。",
+      "addLink": "添加链接"
+    },
+    "links": {
+      "title": "链接",
+      "noLinks": "暂无链接。",
+      "addLink": "添加链接"
+    },
+    "taggedAs": {
+      "title": "被标记为",
+      "loading": "加载标签中...",
+      "noTags": "暂无标签。",
+      "addTag": "添加标签"
+    },
+    "navigation": {
+      "whoToFollow": "推荐关注",
+      "popularUsers": "热门用户"
+    }
+  },
+  "dialogs": {
+    "editPost": {
+      "editArticle": "编辑文章",
+      "editPost": "编辑帖子",
+      "description": "{title} 对话框"
+    },
+    "newPost": {
+      "newArticle": "新文章",
+      "newPost": "新帖子",
+      "description": "{title} 对话框"
+    },
+    "reply": {
+      "title": "回复",
+      "hiddenTitle": "回复帖子",
+      "button": "回复",
+      "description": "回复对话框"
+    },
+    "repost": {
+      "title": "转发",
+      "button": "转发",
+      "description": "转发对话框"
+    },
+    "signIn": {
+      "title": "加入 Pubky",
+      "description": "登录或创建账户以与帖子和个人资料互动。",
+      "newHere": "新用户？",
+      "newHereDescription": "创建您的账户并开始探索 Pubky。",
+      "joinButton": "加入 Pubky",
+      "alreadyHaveAccount": "已有账户？",
+      "alreadyHaveAccountDescription": "登录以与帖子和个人资料互动。",
+      "signInButton": "登录"
+    },
+    "backupExport": {
+      "importPhrase": "导入恢复短语",
+      "pubkyRingExport": "Pubky Ring 导出",
+      "steps": {
+        "step1": "1. 打开 Pubky Ring，点击'添加 pubky'",
+        "step2": "2. 选择'导入 pubky'选项",
+        "step3": "3. 点击'扫描二维码导入'",
+        "step4": "4. 扫描此二维码以导入您的恢复短语",
+        "step2Alt": "2. 选择'导入 pubky'选项",
+        "step3Alt": "3. 扫描此二维码导入"
+      },
+      "tapDescription": "点击下面的按钮导出您的 pubky 并导入到 Pubky Ring 以获得更安全、更便捷的登录体验。",
+      "tapDescriptionPhrase": "点击下面的按钮将您的恢复短语导入到 Pubky Ring 以获得更安全、更便捷的登录体验。",
+      "importButton": "导入到 Pubky Ring"
+    },
+    "backup": {
+      "title": "备份",
+      "dialogTitle": "备份您的 pubky",
+      "subtitle": "安全地备份和存储您 pubky 的秘密种子。您更喜欢哪种备份方式？如果需要，您可以选择多种备份方式。",
+      "recoveryPhrase": "恢复短语",
+      "note": "注意",
+      "encryptedFile": "下载加密文件",
+      "folder": "文件夹",
+      "exportRing": "导出到 Pubky Ring",
+      "keys": "密钥",
+      "alertShort": "立即备份",
+      "alertFull": "立即备份以避免丢失您的账户！"
+    },
+    "confirmBackup": {
+      "title": "全部备份了吗？",
+      "subtitle": "请确认您已完成首选的备份方式。为了您的安全，秘密种子将从浏览器中删除。您可以使用恢复短语或加密文件恢复账户访问权限。",
+      "warning": "确认后，您的种子将从浏览器中删除（！）",
+      "backupMethods": "备份方式",
+      "confirmButton": "确认（删除种子）"
+    },
+    "deleteAccount": {
+      "title": "删除账户",
+      "description": "您确定吗？您的账户信息将无法恢复。"
+    },
+    "confirmDiscard": {
+      "title": "要关闭吗？",
+      "description": "如果关闭，您将丢失内容。",
+      "discard": "放弃"
+    },
+    "checkLink": {
+      "title": "检查此链接",
+      "description": "该链接将带您到另一个网站：",
+      "confirmQuestion": "您确定要继续吗？",
+      "dontShowAgain": "不再显示"
+    },
+    "addLink": {
+      "title": "添加链接",
+      "labelField": "标签",
+      "labelPlaceholder": "Twitter",
+      "urlField": "网址",
+      "urlPlaceholder": "https://twitter.com/satoshi",
+      "saveButton": "保存链接"
+    }
+  },
+  "sidebar": {
+    "whoToFollow": "推荐关注",
+    "hotTags": "热门标签",
+    "activeUsers": "活跃用户",
+    "noTags": "暂无标签显示",
+    "noUsers": "暂无用户显示",
+    "action": "操作"
+  },
+  "search": {
+    "placeholder": "搜索",
+    "activeTags": "活跃搜索标签",
+    "inputLabel": "搜索输入",
+    "suggestions": "搜索建议",
+    "sections": {
+      "tags": "标签",
+      "users": "用户",
+      "hotTags": "热门标签"
+    },
+    "recent": {
+      "title": "最近搜索",
+      "clearAll": "清除所有最近搜索"
+    },
+    "results": "搜索结果：{tags}",
+    "searchAsTag": "搜索 \"{query}\" 作为标签",
+    "searchAsTagLink": "作为标签搜索",
+    "empty": {
+      "alt": "搜索 - 空状态",
+      "title": "按标签搜索帖子",
+      "subtitle1": "使用搜索栏或点击标签来发现帖子。",
+      "subtitle2": "您可以搜索多个用逗号分隔的标签。"
+    },
+    "userSuggestion": "用户 {name}（{pubky}）",
+    "viewProfile": "查看 {name} 的个人资料"
+  },
+  "feedback": {
+    "title": "提供反馈",
+    "description": "反馈对话框",
+    "placeholder": "您对 Pubky 有什么看法？有什么建议？",
+    "cardTitle": "反馈",
+    "cardButton": "您对 Pubky 有什么看法？",
+    "defaultName": "您的姓名",
+    "success": {
+      "title": "反馈已收到",
+      "description": "感谢您帮助我们改进 Pubky。"
+    }
+  },
+  "report": {
+    "title": "举报帖子",
+    "description": "举报帖子对话框",
+    "issueStep": {
+      "title": "举报帖子",
+      "question": "您要举报什么类型的问题？",
+      "label": "问题类型"
+    },
+    "reasonStep": {
+      "title": "举报帖子",
+      "question": "请描述您举报此帖子的原因。",
+      "label": "举报原因",
+      "placeholder": "为什么要举报？"
+    },
+    "success": {
+      "title": "举报已发送",
+      "description": "您的举报将很快被审核。谢谢。"
+    },
+    "issues": {
+      "personalInfoLeak": "个人信息泄露",
+      "hateSpeech": "仇恨或威胁言论",
+      "harassment": "骚扰或针对性攻击",
+      "childAbuse": "儿童性虐待或剥削",
+      "terrorism": "宣传恐怖主义",
+      "violence": "图形或犯罪暴力",
+      "illegalSales": "非法销售或犯罪活动",
+      "sexualContent": "非自愿或犯罪性质的性内容",
+      "copyright": "侵犯版权"
+    }
+  },
+  "notifications": {
+    "title": "通知",
+    "actions": {
+      "followedYou": "关注了您",
+      "newFriend": "现在是您的好友",
+      "taggedPost": "标记了您的帖子",
+      "taggedProfile": "标记了您的个人资料",
+      "repliedToPost": "回复了您的帖子",
+      "repostedPost": "转发了您的帖子",
+      "mentionedYou": "在帖子中提到了您",
+      "deletedPost": "删除了一条帖子",
+      "editedPost": "编辑了一条帖子",
+      "fallback": "新通知"
+    },
+    "settings": {
+      "newFollower": "新粉丝",
+      "newFriend": "新好友",
+      "taggedPost": "有人标记了您的帖子",
+      "taggedProfile": "有人标记了您的个人资料",
+      "mentionedProfile": "有人提到了您的个人资料",
+      "newReply": "您的帖子有新回复",
+      "newRepost": "您的帖子被转发",
+      "deletedPost": "有人删除了您互动过的帖子",
+      "editedPost": "有人编辑了您互动过的帖子"
+    },
+    "empty": {
+      "alt": "通知 - 空状态",
+      "title": "这里还没有内容",
+      "subtitle": "标签、关注、转发和账户信息将显示在这里。"
+    }
+  },
+  "forms": {
+    "profile": {
+      "title": "编辑您的",
+      "titleHighlight": "个人资料。",
+      "subtitle": "更新您的姓名、简介、链接和头像。",
+      "name": "姓名*",
+      "namePlaceholder": "输入您的姓名",
+      "bio": "简介",
+      "bioPlaceholder": "介绍一下您自己。",
+      "linksTitle": "链接",
+      "avatarTitle": "头像",
+      "chooseAvatar": "选择头像图片",
+      "avatarPreview": "已选头像预览：{filename}",
+      "avatarPreviewDefault": "已选头像预览",
+      "currentAvatar": "当前头像",
+      "chooseFile": "选择文件",
+      "saveProfile": "保存个人资料",
+      "finish": "完成",
+      "saving": "保存中...",
+      "uploadingAvatar": "上传头像中...",
+      "savingProfile": "保存个人资料中...",
+      "tryAgain": "重试！",
+      "loading": "加载个人资料中...",
+      "defaultLinks": {
+        "website": "网站",
+        "twitter": "X（推特）"
+      }
+    },
+    "copyright": {
+      "title": "版权移除请求",
+      "date": "日期：{date}",
+      "companyInfo": "Synonym Software, S.A. de C.V.（\"Synonym\"）",
+      "greeting": "尊敬的 Synonym：",
+      "onBehalfOf": "我们代表以下方写信：",
+      "rightsOwner": "权利所有者信息",
+      "iAmOwner": "我是权利所有者",
+      "iAmReporting": "我代表我的组织或客户举报",
+      "ownerName": "权利所有者姓名",
+      "ownerNameHint": "（可以是您的全名或组织名称）",
+      "noticeIntro": "特此通知版权侵权...",
+      "originalUrls": "原始内容网址",
+      "originalUrlsPlaceholder": "输入您原始内容的网址",
+      "description": "您原始内容的简要描述",
+      "descriptionPlaceholder": "描述您的原始内容",
+      "attentionIntro": "版权所有者注意到...",
+      "infringingTitle": "侵权作品详情",
+      "infringingUrls": "侵权内容网址",
+      "infringingUrlsPlaceholder": "输入侵权内容的网址",
+      "goodFaith": "我们真诚地相信...",
+      "contact": "联系信息",
+      "firstName": "名",
+      "firstNamePlaceholder": "中本",
+      "lastName": "姓",
+      "lastNamePlaceholder": "聪",
+      "email": "电子邮件",
+      "emailPlaceholder": "email@example.com",
+      "phone": "电话号码",
+      "phonePlaceholder": "000-000-0000",
+      "address": "地址",
+      "street": "街道地址",
+      "streetPlaceholder": "街道号和名称",
+      "country": "国家",
+      "countryPlaceholder": "中国",
+      "city": "城市",
+      "cityPlaceholder": "城市名称",
+      "state": "省/自治区",
+      "statePlaceholder": "省份名称",
+      "zip": "邮政编码",
+      "zipPlaceholder": "000000",
+      "signature": "签名",
+      "signatureName": "全名作为签名",
+      "signaturePlaceholder": "全名",
+      "submitting": "提交中...",
+      "submitForm": "提交表单"
+    },
+    "validation": {
+      "required": "此字段为必填项",
+      "invalidEmail": "请输入有效的电子邮件地址",
+      "invalidPhone": "请输入有效的电话号码",
+      "invalidUrl": "无效的网址",
+      "ownerRequired": "权利所有者姓名为必填项",
+      "originalUrlsRequired": "原始内容网址为必填项",
+      "descriptionRequired": "简要描述为必填项",
+      "infringingUrlRequired": "侵权内容网址为必填项",
+      "firstNameRequired": "名为必填项",
+      "lastNameRequired": "姓为必填项",
+      "emailRequired": "电子邮件为必填项",
+      "phoneRequired": "电话号码为必填项",
+      "streetRequired": "街道地址为必填项",
+      "countryRequired": "国家为必填项",
+      "cityRequired": "城市为必填项",
+      "stateRequired": "省/自治区为必填项",
+      "zipRequired": "邮政编码为必填项",
+      "signatureRequired": "签名为必填项",
+      "selectRightsOwner": "请选择您是权利所有者还是代表他人举报",
+      "nameMin": "姓名至少需要 {min} 个字符",
+      "nameMax": "姓名不能超过 {max} 个字符",
+      "bioMax": "简介不能超过 {max} 个字符",
+      "invalidName": "无效的姓名",
+      "invalidBio": "无效的简介",
+      "avatarImageOnly": "头像必须是图片文件",
+      "labelRequired": "标签为必填项",
+      "labelMax": "最多 {max} 个字符",
+      "alphanumericOnly": "仅限字母和数字",
+      "urlMax": "最多 {max} 个字符",
+      "invalidLabel": "无效的标签"
+    }
+  },
+  "toast": {
+    "success": "成功",
+    "error": "错误",
+    "errors": "错误",
+    "post": {
+      "replyPosted": "回复已发布",
+      "replyPostedDesc": "您的回复已成功发布。",
+      "replyFailed": "回复发布失败。请重试。",
+      "postCreated": "帖子已创建",
+      "postCreatedDesc": "您的帖子已成功创建。",
+      "postFailed": "帖子创建失败。请重试。",
+      "repostSuccess": "转发成功",
+      "repostSuccessDesc": "您的转发已成功创建。",
+      "repostFailed": "转发失败。请重试。",
+      "postEdited": "帖子已编辑",
+      "postEditedDesc": "您的帖子已成功编辑。",
+      "editFailed": "帖子编辑失败。请重试。",
+      "postDeleted": "帖子已删除",
+      "postDeletedDesc": "您的帖子已被删除",
+      "deleteFailed": "帖子删除失败。请重试。",
+      "invalidPostId": "无效的帖子 ID。请重试。",
+      "attachmentsCleared": "附件已清除",
+      "attachmentsClearedDesc": "文章仅支持一张封面图片。",
+      "failedToLoadPosts": "加载新帖子失败",
+      "failedToLoadPostsDesc": "无法显示新帖子。请重试。",
+      "parseError": "解析文章内容失败",
+      "coverImageError": "加载文章封面图片失败"
+    },
+    "bookmark": {
+      "added": "书签已添加",
+      "addedDesc": "帖子已保存到您的书签",
+      "removed": "书签已移除",
+      "removedDesc": "帖子已从您的书签中移除",
+      "addFailed": "添加书签失败",
+      "removeFailed": "移除书签失败",
+      "loginRequired": "您必须登录才能收藏帖子"
+    },
+    "copy": {
+      "pubkyCopied": "Pubky 已复制到剪贴板",
+      "linkCopied": "链接已复制到剪贴板",
+      "textCopied": "文本已复制到剪贴板",
+      "profileLinkCopied": "个人资料链接已复制到剪贴板",
+      "copyFailed": "复制失败",
+      "copyFailedDesc": "无法复制到剪贴板",
+      "ok": "确定"
+    },
+    "follow": {
+      "failed": "更新关注状态失败"
+    },
+    "mute": {
+      "muted": "用户已静音",
+      "unmuted": "用户已取消静音",
+      "mutedDesc": "{username} 已被静音。",
+      "unmutedDesc": "{username} 已取消静音。",
+      "failed": "更新静音状态失败"
+    },
+    "profile": {
+      "updated": "个人资料已更新",
+      "updatedDesc": "您的个人资料已成功更新。",
+      "sessionExpired": "会话已过期",
+      "sessionExpiredDesc": "请退出并重新登录以继续。",
+      "saveFailed": "保存个人资料失败",
+      "saveFailedDesc": "请重试。",
+      "fetchFailed": "请重试。",
+      "fetchFailedDesc": "获取新用户数据失败。索引可能正在进行中...",
+      "updateFailed": "更新个人资料失败。"
+    },
+    "report": {
+      "userNotLoaded": "用户资料未加载。请重试。",
+      "submitFailed": "提交举报失败",
+      "submitFailedDesc": "提交举报失败。请重试。"
+    },
+    "feedback": {
+      "userNotLoaded": "用户资料未加载。请重试。",
+      "submitFailed": "提交反馈失败",
+      "submitFailedDesc": "提交反馈失败。请重试。"
+    },
+    "copyright": {
+      "success": "请求已成功发送",
+      "error": "发送请求时出错",
+      "submitFailed": "提交请求失败"
+    },
+    "tags": {
+      "loadFailed": "加载更多标签失败",
+      "loadFailedDesc": "无法加载更多标签。请重试。",
+      "labelEmpty": "标签名称不能为空",
+      "postIdRequired": "帖子 ID 为必填项",
+      "userIdRequired": "用户 ID 为必填项",
+      "loginRequired": "您必须登录才能添加标签",
+      "alreadyAdded": "您已添加此标签",
+      "addFailed": "添加标签失败",
+      "addFailedDesc": "无法添加 \"{label}\"。请重试。",
+      "removeFailed": "移除标签失败",
+      "removeFailedDesc": "无法移除 \"{label}\"。请重试。"
+    },
+    "auth": {
+      "signInFailed": "登录失败。请重试。",
+      "signInFailedDesc": "无法完成与 Pubky Ring 的授权。请重试。",
+      "authNotCompleted": "授权未完成",
+      "authNotCompletedDesc": "签名者未完成授权。请重试。",
+      "qrFailed": "二维码生成失败",
+      "qrFailedDesc": "无法生成登录二维码。请刷新并重试。"
+    },
+    "file": {
+      "maxFiles": "最多允许 {max} 个文件",
+      "maxFilesPartial": "最多允许 {max} 个文件。部分文件未被添加。",
+      "unsupportedType": "\"{name}\" 的类型 \"{type}\" 不受支持。支持的格式：{formats}。",
+      "fileTooLarge": "\"{name}\" 超过最大大小 {maxSize}。"
+    }
+  },
+  "empty": {
+    "noPosts": "未找到帖子",
+    "endOfFeed": "您已到达底部！🎉",
+    "timeline": "暂无帖子",
+    "noFollowers": "暂无粉丝",
+    "noNotifications": "暂无通知"
+  },
+  "errors": {
+    "signOutFailed": "退出失败。请重试。",
+    "generic": "出现问题",
+    "network": "网络错误。请重试。",
+    "notFound": "页面未找到",
+    "couldNotFind": "无法找到请求的资源"
+  },
+  "password": {
+    "weak": "密码较弱",
+    "fair": "密码一般",
+    "good": "密码良好",
+    "strong": "密码很强！"
+  },
+  "quickReply": {
+    "prompts": ["您对此有什么看法？", "您怎么看？", "您同意吗？", "有其他见解吗？", "您会怎么回应？"]
+  },
+  "userList": {
+    "follow": "关注",
+    "unfollow": "取消关注",
+    "following": "已关注",
+    "me": "我",
+    "tags": "标签",
+    "posts": "帖子",
+    "followers": "粉丝",
+    "followingLabel": "关注"
+  },
+  "filters": {
+    "reach": {
+      "title": "范围",
+      "all": "全部",
+      "following": "关注",
+      "friends": "好友"
+    },
+    "sort": {
+      "title": "排序",
+      "recent": "最新",
+      "popularity": "热度"
+    },
+    "layout": {
+      "title": "布局",
+      "columns": "多列",
+      "wide": "宽屏"
+    },
+    "content": {
+      "title": "内容",
+      "all": "全部",
+      "posts": "帖子",
+      "articles": "文章",
+      "images": "图片",
+      "videos": "视频",
+      "links": "链接",
+      "files": "文件"
+    },
+    "timeframe": {
+      "title": "时间范围",
+      "today": "今天",
+      "thisMonth": "本月",
+      "allTime": "全部时间"
+    }
+  },
+  "hot": {
+    "hotTags": "热门标签",
+    "activeUsers": "活跃用户",
+    "trendingPosts": "热门帖子",
+    "postsCount": "{count} 条帖子",
+    "failedToLoadUsers": "加载用户失败",
+    "noUsersToShow": "暂无用户显示"
+  },
+  "privacy": {
+    "showConfirmation": "重定向前显示确认",
+    "blurCensored": "模糊已审核的帖子或头像",
+    "signOutInactive": "5 分钟不活动后自动退出",
+    "requirePin": "5 分钟不活动后需要 PIN",
+    "hideWhoToFollow": "在'推荐关注'中隐藏您的个人资料",
+    "hideActiveFriends": "在'活跃好友'中隐藏您的个人资料",
+    "hideSearch": "在搜索结果中隐藏您的个人资料",
+    "neverShowPosts": "不显示您未关注的人的帖子"
+  },
+  "mutedUsers": {
+    "unmute": "取消静音",
+    "unmuteAll": "取消所有用户的静音",
+    "noMutedUsers": "暂无已静音用户",
+    "userUnmuted": "用户已取消静音",
+    "userUnmutedDesc": "{username} 已取消静音。",
+    "allUsersUnmuted": "所有用户已取消静音",
+    "allUsersUnmutedDesc": "所有已静音用户均已取消静音。",
+    "partialSuccess": "部分成功",
+    "partialSuccessDesc": "{success} 个用户已取消静音，{failed} 个失败。"
+  },
+  "settingsInfo": {
+    "termsPrivacy": {
+      "title": "服务条款和隐私",
+      "subtitle": "请仔细阅读我们的条款。",
+      "termsOfService": "服务条款",
+      "privacyPolicy": "隐私政策"
+    },
+    "faq": {
+      "title": "常见问题",
+      "moreFaq": "更多常见问题",
+      "questions": {
+        "updateProfile": "如何更新我的个人资料信息？",
+        "deletePost": "如何删除我的帖子？",
+        "muteSomeone": "如何静音某人？",
+        "restoreAccount": "如何恢复我的账户？",
+        "pubkyDifferent": "Pubky 与其他社交平台有何不同？"
+      }
+    },
+    "version": {
+      "title": "版本",
+      "text": "Pubky v0.12 © Synonym Software Ltd"
+    }
+  },
+  "logout": {
+    "title": "<highlight>再见！</highlight>",
+    "subtitle": "您已安全退出。",
+    "homepage": "首页",
+    "signBackIn": "重新登录"
+  },
+  "tradeoffs": {
+    "title": "请注意以下权衡：",
+    "lessSecure": "安全性不如移动端密钥链",
+    "browserBased": "基于浏览器的密钥生成",
+    "suboptimalSignIn": "登录体验欠佳"
+  },
+  "help": {
+    "faq": "常见问题",
+    "faqDescription": "Pubky 用户常见问题",
+    "userGuide": "用户指南",
+    "userGuideDescription": "Pubky 用户指南将帮助您浏览应用程序，使用其主要功能，并充分利用您的 Pubky 体验。",
+    "userGuideButton": "用户指南",
+    "support": "支持",
+    "supportDescription": "找不到您要找的答案？Pubky 支持将很快帮助您。",
+    "supportButton": "支持（Telegram）",
+    "feedback": "反馈",
+    "feedbackDescription": "我们很想听听您对Pubky的看法。与我们分享您的反馈！",
+    "sendFeedback": "发送反馈",
+    "termsPrivacy": "服务条款和隐私",
+    "termsPrivacyDescription": "请仔细阅读我们的条款。",
+    "termsOfService": "服务条款",
+    "privacyPolicy": "隐私政策",
+    "sections": {
+      "onboarding": "1. 入门和引导",
+      "backup": "2. 备份和账户恢复",
+      "profile": "3. 个人资料和社交功能",
+      "pubky": "4. Pubky 应用如何运作"
+    },
+    "questions": {
+      "q1": "为什么 Pubky 需要邀请码？",
+      "a1": "Pubky 使用邀请码作为防止垃圾邮件和服务器过载的临时措施。用户需要邀请码才能在我们的 Homeserver 上创建用户。我们不是为 Pubky 应用创建用户，而是在我们的 Homeserver 上。随着基础设施的改进和更多 Homeserver 上线，邀请码可能不再需要。",
+      "q2": "如何在网页应用中使用 Pubky Ring？",
+      "a2": "首先，在 Pubky Ring 应用中创建您的密钥对。然后访问 Pubky 网页应用并使用相同的密钥对登录。这些应用通过您的加密身份连接。",
+      "q3": "为什么在 Android 上使用 PWA 时登录有时会失败？",
+      "a3": "一些专注于安全和隐私的浏览器，如 Vanadium 或 Tor，默认禁用 JavaScript 的即时编译（JIT），这会阻止 Pubky 应用正常运行。\n\n要启用它，请前往：设置 > 网站设置 > JavaScript JIT > 允许。",
+      "q4": "如何恢复我的账户？",
+      "a4": "注册时，系统会提示您使用以下选项之一备份您的身份：\n\n- 恢复文件（.pkarr）\n- 恢复短语（助记词）\n- 二维码\n\n使用 .pkarr 文件恢复：\n\n1. 选择您保存的文件。\n2. 输入您的密码。\n3. 点击'登录'。",
+      "q5": "我可以在另一台设备上恢复我的 Pubky 账户吗？",
+      "a5": "是的，如果您有 .pkarr 文件或助记词。（助记词支持将在 Pubky Ring 的未来版本中添加。）",
+      "q6": "我以后可以将助记词转换为 .pkarr 文件吗？",
+      "a6": "目前还不行。此功能计划在未来更新中推出。",
+      "q7": "我备份了账户但无法访问文件。发生了什么？",
+      "a7": "某些操作系统可能会重命名 .pkarr 文件或错误标记它。尝试将文件扩展名重命名为 .pkarr 并重新导入。",
+      "q8": "我下载了 .txt 文件而不是 .pkarr 备份。怎么办？",
+      "a8": "如果您选择了助记词（种子短语）备份选项，就会发生这种情况。Pubky Ring 尚不支持种子导入。等待未来更新或使用 .pkarr 备份重新创建您的账户。",
+      "q9": "我错过了下载恢复文件。我可以再次备份吗？",
+      "a9": "目前，备份只能通过网页应用创建一次。这可能会在未来更新中改变。",
+      "q10": "如何更新我的个人资料信息？",
+      "a10": "点击您的头像（右上角），然后点击'编辑'来更新您的个人资料信息。",
+      "q11": "如何删除我的帖子？",
+      "a11": "将鼠标悬停在您想删除的帖子的三个点上，然后选择'删除帖子'。",
+      "q12": "如何静音某人？",
+      "a12": "转到他们的个人资料，点击三个点，然后选择'静音用户'。",
+      "q13": "Pubky 与其他社交媒体平台有何不同？",
+      "a13": "Pubky 是为自主、去中心化的社交互动而构建的。主要区别：\n\n- 您就是算法：使用语义标签和策展自定义您看到的内容。\n- 无需电子邮件或电话：您的身份就是您的公钥。\n- 通过标签和信任模型完全控制您的社交图谱。\n- 基于浏览器的 PWA，尊重隐私。",
+      "q14": "Pubky 与 Nostr 有何不同？",
+      "a14": "Pubky 使用 Ed25519 密钥以实现兼容性，并避免中心化中继。相反，它使用分布式哈希表（DHT）进行去中心化查找和身份解析。"
+    }
+  }
+}

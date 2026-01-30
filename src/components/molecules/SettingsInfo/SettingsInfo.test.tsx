@@ -18,7 +18,7 @@ describe('SettingsInfo', () => {
 
   it('renders subtitle for Terms section', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Read our terms carefully.')).toBeInTheDocument();
+    expect(screen.getByText('Please read our terms carefully.')).toBeInTheDocument();
   });
 
   it('renders copyright text', () => {

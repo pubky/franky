@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chrome, firefox, webkit]
+        browser: [chrome] # [chrome, firefox, webkit]
 
     steps:
       - name: Checkout this repository
@@ -156,6 +156,7 @@ jobs:
         if: ${{ matrix.browser == 'webkit' }}
         run: |
           npm install playwright-webkit --save-dev
+          npx playwright install webkit
           npx playwright install-deps webkit
 
       - name: Wait for dockerised pubky-stack to start

@@ -124,7 +124,7 @@ export const checkLatestNotification = (expectedContent: string[], profileToNavi
       .should('have.length.at.least', 1)
       .first()
       .within(($firstNotif) => {
-        cy.wrap($firstNotif).get('a').should('contain.text', profileToNavigateTo).click();
+        cy.wrap($firstNotif).get('a').should('contain.text', profileToNavigateTo).contains(profileToNavigateTo).click();
       });
   }
 };
@@ -146,20 +146,19 @@ export const unfollowUserByUsername = (username: string) => {
   // Wait for the following filter to become active
   cy.get('[data-cy="profile-filter-item-following"]').closest('[data-selected="true"]').should('exist');
   // Find the user by name and click their follow toggle button
-  cy.contains('[data-cy="user-list-item-name"]', username)
+  cy.contains('[data-cy="profile-follower-item-name"]', username)
     .closest('[data-testid^="user-list-item-"]')
-    .find('[data-cy="user-list-item-follow-toggle-btn"]')
+    .find('[data-cy="profile-follower-item-follow-toggle-btn"]')
     .filter(':visible') // Filter to only the visible button (desktop or mobile)
     .should('be.visible')
     .and('contain.text', 'Following') // todo: fails here due to bug, button shows 'Follow' text bug, see https://github.com/pubky/franky/issues/695
     .click();
   // Verify the button now shows "Follow" (unfollowed state)
-  // todo: reenable the following once bug is fixed, see https://github.com/pubky/franky/issues/758
-  // cy.contains('[data-cy="user-list-item-name"]', username)
-  //   .closest('[data-testid^="user-list-item-"]')
-  //   .find('[data-cy="user-list-item-follow-toggle-btn"]')
-  //   .filter(':visible') // Filter to only the visible button (desktop or mobile)
-  //   .should('contain.text', 'Follow');
+  cy.contains('[data-cy="profile-follower-item-name"]', username)
+    .closest('[data-testid^="user-list-item-"]')
+    .find('[data-cy="profile-follower-item-follow-toggle-btn"]')
+    .filter(':visible') // Filter to only the visible button (desktop or mobile)
+    .should('contain.text', 'Follow');
 };
 
 export const waitForPutLastRead = () => {

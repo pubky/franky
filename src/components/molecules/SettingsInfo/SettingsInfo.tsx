@@ -1,37 +1,33 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 import * as App from '@/app';
 import type { SettingsInfoProps } from './SettingsInfo.types';
 
-const FAQ_QUESTIONS = [
-  { id: 'delete-post', question: 'How can I delete my post?', href: App.SETTINGS_ROUTES.HELP },
-  { id: 'mute-someone', question: 'How do I mute someone?', href: App.SETTINGS_ROUTES.HELP },
-  { id: 'restore-account', question: 'How do I restore my account?', href: App.SETTINGS_ROUTES.HELP },
-  {
-    id: 'pubky-difference',
-    question: 'How is Pubky different from other social platforms',
-    href: App.SETTINGS_ROUTES.HELP,
-  },
-];
+const FAQ_QUESTION_KEYS = ['updateProfile', 'deletePost', 'muteSomeone', 'restoreAccount', 'pubkyDifferent'] as const;
 
 const COPYRIGHT_TEXT = '© 2026 Synonym Software, S.A. DE C.V.';
 
 export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) {
+  const t = useTranslations('settingsInfo');
+
   return (
-    <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-6', className)}>
+    <Atoms.Container overrideDefaults className={Libs.cn('flex w-full min-w-0 flex-col gap-6', className)}>
       {/* Terms of Service & Privacy Section */}
       <Atoms.FilterRoot>
-        <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Read our terms carefully." />
+        <Atoms.FilterHeader title={t('termsPrivacy.title')} subtitle={t('termsPrivacy.subtitle')} />
         <Atoms.FilterList className="gap-2">
           <Organisms.DialogTerms
-            trigger={<Atoms.SidebarButton icon={Libs.FileText}>Terms of service</Atoms.SidebarButton>}
+            trigger={<Atoms.SidebarButton icon={Libs.FileText}>{t('termsPrivacy.termsOfService')}</Atoms.SidebarButton>}
           />
           <Organisms.DialogPrivacy
-            trigger={<Atoms.SidebarButton icon={Libs.LockKeyhole}>Privacy policy</Atoms.SidebarButton>}
+            trigger={
+              <Atoms.SidebarButton icon={Libs.LockKeyhole}>{t('termsPrivacy.privacyPolicy')}</Atoms.SidebarButton>
+            }
           />
         </Atoms.FilterList>
       </Atoms.FilterRoot>
@@ -39,13 +35,13 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
       {/* FAQ Section - Hidden when on FAQ page */}
       {!hideFAQ && (
         <Atoms.FilterRoot>
-          <Atoms.FilterHeader title="FAQ" />
+          <Atoms.FilterHeader title={t('faq.title')} />
           <Atoms.FilterList className="gap-2">
-            {FAQ_QUESTIONS.map((faq) => (
-              <Link key={faq.id} href={faq.href}>
+            {FAQ_QUESTION_KEYS.map((key) => (
+              <Link key={key} href={App.SETTINGS_ROUTES.HELP}>
                 <Atoms.Container
                   overrideDefaults
-                  className="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+                  className="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
                 >
                   <Atoms.Typography
                     as="span"
@@ -53,7 +49,7 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
                     overrideDefaults
                     className="block pr-6 leading-normal font-bold text-popover-foreground"
                   >
-                    {faq.question}
+                    {t(`faq.questions.${key}`)}
                   </Atoms.Typography>
                   <Atoms.Container overrideDefaults className="absolute top-1/2 right-3 -translate-y-1/2">
                     <Libs.ChevronRight size={16} />
@@ -62,7 +58,7 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
               </Link>
             ))}
             <Link href={App.SETTINGS_ROUTES.HELP} className="w-full">
-              <Atoms.SidebarButton icon={Libs.MessageCircleQuestion}>More FAQ</Atoms.SidebarButton>
+              <Atoms.SidebarButton icon={Libs.MessageCircleQuestion}>{t('faq.moreFaq')}</Atoms.SidebarButton>
             </Link>
           </Atoms.FilterList>
         </Atoms.FilterRoot>

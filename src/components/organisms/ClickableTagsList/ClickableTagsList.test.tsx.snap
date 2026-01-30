@@ -109,14 +109,9 @@ exports[`ClickableTagsList > Snapshots > matches snapshot with input visible 1`]
     >
       web3
     </button>
-    <div
-      class="relative w-32 shrink-0"
-    >
-      <input
-        data-testid="post-tag-input"
-        value=""
-      />
-    </div>
+    <input
+      data-testid="tag-input"
+    />
   </div>
 </div>
 `;

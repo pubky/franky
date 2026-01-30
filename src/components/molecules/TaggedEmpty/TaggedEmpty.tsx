@@ -1,25 +1,22 @@
 'use client';
 
 import { Tag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import * as Molecules from '@/molecules';
 import type { TaggedEmptyProps } from './TaggedEmpty.types';
 
 export function TaggedEmpty({ onTagAdd }: TaggedEmptyProps) {
+  const t = useTranslations('profile.empty.tagged');
+
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/tagged-empty-state.png"
-      imageAlt="Tagged - Empty state"
+      imageAlt={t('alt')}
       icon={Tag}
-      title="Discover who tagged you"
-      subtitle={
-        <>
-          No one has tagged you yet.
-          <br />
-          Tip: You can add tags to your own profile too.
-        </>
-      }
+      title={t('title')}
+      subtitle={t('subtitle')}
     >
-      {onTagAdd && <Molecules.TagInput onTagAdd={onTagAdd} enableApiSuggestions />}
+      {onTagAdd && <Molecules.TagInput onTagAdd={onTagAdd} enableApiSuggestions addOnSuggestionClick />}
     </Molecules.ProfilePageEmptyState>
   );
 }

@@ -2,7 +2,8 @@
 
 import { backupDownloadFilePath, extendedTimeout } from './common';
 import { goToProfilePageFromHeader } from './header';
-import { BackupType, CheckForNewPosts } from './types/enums';
+import { waitForFeedToLoad } from './posts';
+import { BackupType, CheckForNewPosts, WaitForNewPosts } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -201,6 +202,7 @@ Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcod
   cy.get('#encrypted-file-restore-btn').click();
 
   cy.location('pathname').should('eq', '/home');
+  waitForFeedToLoad();
 });
 
 Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
@@ -217,6 +219,7 @@ Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
   cy.get('#recovery-phrase-restore-btn').click();
 
   cy.location('pathname').should('eq', '/home');
+  waitForFeedToLoad();
 });
 
 // Input recovery phrase words into the form
@@ -402,7 +405,12 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
   return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
 });
 
-const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = CheckForNewPosts.No) => {
+const findPostInFeed = (
+  postIdx = 0,
+  filterText?: string,
+  checkForNewPosts = CheckForNewPosts.No,
+  waitForNewPosts = WaitForNewPosts.No,
+) => {
   var filteredPosts: JQuery<HTMLElement>;
   // find the post in the timeline
   return cy
@@ -415,18 +423,28 @@ const findPostInFeed = (postIdx = 0, filterText?: string, checkForNewPosts = Che
 
       // Check if the requested post index exists
       if (filteredPosts.length > postIdx) {
-        cy.log(`findPostInFeed: Post found at index ${postIdx}`);
+        cy.log(`findPostInFeed: Post found at index ${postIdx} (${filteredPosts.length} matching posts found)`);
         return cy.wrap(filteredPosts.eq(postIdx));
       }
-      cy.log(`findPostInFeed: Post not found at index ${postIdx}`);
+      cy.log(
+        `findPostInFeed: Post not found at index ${postIdx} (${filteredPosts.length} matching posts found, ${$posts.length} total posts)`,
+      );
 
       // Post not found - if checkForNewPosts is enabled, try clicking "See new posts" button
       if (checkForNewPosts) {
         cy.log(`Clicking 'See new posts' button to check for new posts`);
         // Check if "See new posts" button exists and click it
         cy.get('[data-cy="new-posts-button"]', { timeout: 30_000 }).should('be.visible').click();
+        waitForFeedToLoad();
         // Recursively call findPostInFeed without checking for new posts
-        return findPostInFeed(postIdx, filterText, CheckForNewPosts.No);
+        return findPostInFeed(postIdx, filterText, CheckForNewPosts.No, WaitForNewPosts.Yes);
+      }
+
+      // Post not found - if waitForNewPosts is enabled, wait for new posts and try again
+      if (waitForNewPosts) {
+        cy.log(`Waiting for new posts to appear`);
+        cy.wait(Cypress.env('ci') ? 2_000 : 500);
+        return findPostInFeed(postIdx, filterText, checkForNewPosts, WaitForNewPosts.No);
       }
 
       // fail the test if the post cannot be found
@@ -442,9 +460,12 @@ Cypress.Commands.add('findFirstPostInFeed', (checkForNewPosts = CheckForNewPosts
 });
 
 // useful for finding a specific post by text
-Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkForNewPosts = CheckForNewPosts.No) => {
-  return findPostInFeed(0, filterText, checkForNewPosts);
-});
+Cypress.Commands.add(
+  'findFirstPostInFeedFiltered',
+  (filterText, checkForNewPosts = CheckForNewPosts.No, waitForNewPosts = WaitForNewPosts.No) => {
+    return findPostInFeed(0, filterText, checkForNewPosts, waitForNewPosts);
+  },
+);
 
 // useful for finding a specific post by index with optional filter text
 Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkForNewPosts = CheckForNewPosts.No) => {

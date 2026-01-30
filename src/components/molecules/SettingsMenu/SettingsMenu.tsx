@@ -1,25 +1,26 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import { SETTINGS_ROUTES } from '@/app';
 
-export const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
-  { icon: Libs.UserRound, label: 'Account', path: SETTINGS_ROUTES.ACCOUNT },
-  { icon: Libs.Bell, label: 'Notifications', path: SETTINGS_ROUTES.NOTIFICATIONS },
-  { icon: Libs.Shield, label: 'Privacy & Safety', path: SETTINGS_ROUTES.PRIVACY_SAFETY },
-  { icon: Libs.MegaphoneOff, label: 'Muted users', path: SETTINGS_ROUTES.MUTED_USERS },
-  { icon: Libs.Globe, label: 'Language', path: SETTINGS_ROUTES.LANGUAGE },
-  { icon: Libs.CircleHelp, label: 'Help', path: SETTINGS_ROUTES.HELP },
-];
-
 export interface SettingsMenuItem {
   icon: React.ComponentType<{ size?: number; className?: string }>;
-  label: string;
+  labelKey: string;
   path: string;
 }
+
+const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
+  { icon: Libs.UserRound, labelKey: 'account', path: SETTINGS_ROUTES.ACCOUNT },
+  { icon: Libs.Bell, labelKey: 'notifications', path: SETTINGS_ROUTES.NOTIFICATIONS },
+  { icon: Libs.Shield, labelKey: 'privacySafety', path: SETTINGS_ROUTES.PRIVACY_SAFETY },
+  { icon: Libs.MegaphoneOff, labelKey: 'mutedUsers', path: SETTINGS_ROUTES.MUTED_USERS },
+  { icon: Libs.Globe, labelKey: 'language', path: SETTINGS_ROUTES.LANGUAGE },
+  { icon: Libs.CircleHelp, labelKey: 'help', path: SETTINGS_ROUTES.HELP },
+];
 
 export interface SettingsMenuProps {
   className?: string;
@@ -27,20 +28,21 @@ export interface SettingsMenuProps {
 
 export function SettingsMenu({ className }: SettingsMenuProps) {
   const pathname = usePathname();
+  const t = useTranslations('settings');
 
   return (
     <Atoms.FilterRoot className={className}>
-      <Atoms.FilterHeader title="Settings" />
+      <Atoms.FilterHeader title={t('title')} />
 
       <Atoms.FilterList>
         {SETTINGS_MENU_ITEMS.map((item) => {
           const Icon = item.icon;
           const isSelected = pathname === item.path;
           return (
-            <Link key={item.label} href={item.path}>
+            <Link key={item.labelKey} href={item.path}>
               <Atoms.FilterItem isSelected={isSelected} onClick={() => {}}>
                 <Atoms.FilterItemIcon icon={Icon} />
-                <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
+                <Atoms.FilterItemLabel>{t(`menu.${item.labelKey}`)}</Atoms.FilterItemLabel>
               </Atoms.FilterItem>
             </Link>
           );

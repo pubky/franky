@@ -93,6 +93,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.noStatus,
           text: STATUS_LABELS.noStatus,
           isCustom: false,
+          key: 'noStatus',
         });
       });
 
@@ -102,6 +103,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.noStatus,
           text: STATUS_LABELS.noStatus,
           isCustom: false,
+          key: 'noStatus',
         });
       });
     });
@@ -113,6 +115,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.available,
           text: STATUS_LABELS.available,
           isCustom: false,
+          key: 'available',
         });
       });
 
@@ -122,6 +125,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.away,
           text: STATUS_LABELS.away,
           isCustom: false,
+          key: 'away',
         });
       });
 
@@ -131,6 +135,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.vacationing,
           text: STATUS_LABELS.vacationing,
           isCustom: false,
+          key: 'vacationing',
         });
       });
 
@@ -140,6 +145,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.working,
           text: STATUS_LABELS.working,
           isCustom: false,
+          key: 'working',
         });
       });
 
@@ -149,6 +155,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.traveling,
           text: STATUS_LABELS.traveling,
           isCustom: false,
+          key: 'traveling',
         });
       });
 
@@ -158,6 +165,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.celebrating,
           text: STATUS_LABELS.celebrating,
           isCustom: false,
+          key: 'celebrating',
         });
       });
 
@@ -167,6 +175,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.sick,
           text: STATUS_LABELS.sick,
           isCustom: false,
+          key: 'sick',
         });
       });
 
@@ -176,6 +185,7 @@ describe('status', () => {
           emoji: STATUS_EMOJIS.noStatus,
           text: STATUS_LABELS.noStatus,
           isCustom: false,
+          key: 'noStatus',
         });
       });
 
@@ -185,6 +195,7 @@ describe('status', () => {
           emoji: '',
           text: 'unknownStatus',
           isCustom: true,
+          key: null,
         });
       });
 
@@ -194,6 +205,7 @@ describe('status', () => {
           emoji: '',
           text: 'Working hard',
           isCustom: true,
+          key: null,
         });
       });
 
@@ -212,6 +224,7 @@ describe('status', () => {
           emoji: '😊',
           text: 'Working hard',
           isCustom: true,
+          key: null,
         });
       });
 
@@ -221,6 +234,7 @@ describe('status', () => {
           emoji: '🎉',
           text: STATUS_LABELS.noStatus,
           isCustom: true,
+          key: null,
         });
       });
 
@@ -230,6 +244,7 @@ describe('status', () => {
           emoji: '🚀',
           text: 'Traveling to space',
           isCustom: true,
+          key: null,
         });
       });
 
@@ -327,6 +342,7 @@ describe('status', () => {
         expect(result).toHaveProperty('emoji');
         expect(result).toHaveProperty('text');
         expect(result).toHaveProperty('isCustom');
+        expect(result).toHaveProperty('key');
         expect(typeof result.emoji).toBe('string');
         expect(typeof result.text).toBe('string');
         expect(typeof result.isCustom).toBe('boolean');

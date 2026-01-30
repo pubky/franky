@@ -3,11 +3,11 @@
 exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
 <div>
   <div
-    class="flex flex-col gap-6"
+    class="flex w-full min-w-0 flex-col gap-6"
     data-testid="container"
   >
     <div
-      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+      class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -26,7 +26,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           class="text-base leading-normal font-medium text-secondary-foreground"
           data-testid="typography"
         >
-          Read our terms carefully.
+          Please read our terms carefully.
         </p>
       </div>
       <div
@@ -125,7 +125,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+      class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -150,7 +150,44 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           href="/settings/help"
         >
           <div
-            class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            class="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            data-testid="container"
+          >
+            <span
+              class="block pr-6 leading-normal font-bold text-popover-foreground"
+              data-testid="typography"
+            >
+              How can I update my profile information?
+            </span>
+            <div
+              class="absolute top-1/2 right-3 -translate-y-1/2"
+              data-testid="container"
+            >
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-chevron-right"
+                fill="none"
+                height="16"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m9 18 6-6-6-6"
+                />
+              </svg>
+            </div>
+          </div>
+        </a>
+        <a
+          href="/settings/help"
+        >
+          <div
+            class="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
             data-testid="container"
           >
             <span
@@ -187,7 +224,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           href="/settings/help"
         >
           <div
-            class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            class="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
             data-testid="container"
           >
             <span
@@ -224,14 +261,14 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           href="/settings/help"
         >
           <div
-            class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            class="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
             data-testid="container"
           >
             <span
               class="block pr-6 leading-normal font-bold text-popover-foreground"
               data-testid="typography"
             >
-              How do I restore my account?
+              How can I restore my account?
             </span>
             <div
               class="absolute top-1/2 right-3 -translate-y-1/2"
@@ -261,14 +298,14 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           href="/settings/help"
         >
           <div
-            class="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+            class="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
             data-testid="container"
           >
             <span
               class="block pr-6 leading-normal font-bold text-popover-foreground"
               data-testid="typography"
             >
-              How is Pubky different from other social platforms
+              How is Pubky different from other social platforms?
             </span>
             <div
               class="absolute top-1/2 right-3 -translate-y-1/2"
@@ -333,7 +370,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="flex w-full min-w-0 flex-col gap-2"
+      class="flex w-full max-w-(--filter-bar-width) flex-col gap-2"
       data-testid="feedback-card"
     >
       <h2
@@ -372,7 +409,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           </div>
         </div>
         <button
-          class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground"
+          class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
           data-slot="button"
         >
           What do you think about Pubky?

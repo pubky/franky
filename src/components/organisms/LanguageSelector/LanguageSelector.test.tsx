@@ -1,26 +1,52 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LanguageSelector } from './LanguageSelector';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
-// Mock settings store
-const mockSetLanguage = vi.fn();
-const mockUseSettingsStore = vi.fn();
+// Mock Next.js router
+const mockRefresh = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    refresh: mockRefresh,
+  }),
+}));
 
+// Mock @/core
+const mockSetLanguage = vi.fn();
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    useSettingsStore: () => mockUseSettingsStore(),
+    useSettingsStore: () => ({
+      setLanguage: mockSetLanguage,
+    }),
   };
 });
+
+// Store original location
+const originalLocation = window.location;
 
 describe('LanguageSelector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseSettingsStore.mockReturnValue({
-      language: 'en',
-      setLanguage: mockSetLanguage,
+    // Clear cookies
+    document.cookie = 'locale=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    // Mock window.location
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...originalLocation,
+        href: 'http://localhost:3000/settings/language',
+        protocol: 'https:',
+      },
+      writable: true,
+    });
+  });
+
+  afterEach(() => {
+    // Restore original location
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
     });
   });
 
@@ -35,34 +61,45 @@ describe('LanguageSelector', () => {
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // Dropdown is open - should show language options
-    expect(screen.getByText('Spanish')).toBeInTheDocument();
-    expect(screen.getByText('German')).toBeInTheDocument();
-    expect(screen.getByText('French')).toBeInTheDocument();
+    // Dropdown is open - should show language options (native names)
+    expect(screen.getByText('Español')).toBeInTheDocument();
+    expect(screen.getByText('Deutsch')).toBeInTheDocument();
+    expect(screen.getByText('Français')).toBeInTheDocument();
   });
 
-  it('calls setLanguage when selecting an enabled language', () => {
+  it('does not navigate when selecting the current language', () => {
     render(<LanguageSelector />);
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // US English is the only enabled language, click it
+    // US English is the current language (from useLocale mock which returns 'en')
     const englishOptions = screen.getAllByText('US English');
     fireEvent.click(englishOptions[1]); // Click the one in dropdown
 
-    expect(mockSetLanguage).toHaveBeenCalledWith('en');
+    // Should not call refresh since we're selecting the same language
+    expect(mockRefresh).not.toHaveBeenCalled();
   });
 
-  it('does not call setLanguage when clicking disabled language', () => {
+  it('sets cookie and refreshes when selecting a different language', () => {
     render(<LanguageSelector />);
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    // Spanish is disabled
-    const spanishOption = screen.getByText('Spanish');
+    // Español (Spanish) is a different language
+    const spanishOption = screen.getByText('Español');
     fireEvent.click(spanishOption);
 
-    expect(mockSetLanguage).not.toHaveBeenCalled();
+    // Should set cookie and call refresh
+    expect(document.cookie).toContain('locale=es');
+    expect(mockSetLanguage).toHaveBeenCalledWith('es');
+    expect(mockRefresh).toHaveBeenCalled();
+  });
+
+  it('syncs language store with server locale on mount', () => {
+    render(<LanguageSelector />);
+
+    // The useEffect should sync the language store with server locale
+    expect(mockSetLanguage).toHaveBeenCalledWith('en');
   });
 });
 
@@ -72,10 +109,6 @@ describe('LanguageSelector', () => {
 describe('LanguageSelector - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseSettingsStore.mockReturnValue({
-      language: 'en',
-      setLanguage: mockSetLanguage,
-    });
   });
 
   it('matches snapshot - closed', () => {

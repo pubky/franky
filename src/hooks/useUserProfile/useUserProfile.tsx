@@ -28,31 +28,41 @@ export interface UseUserProfileResult {
  * Pure data fetching - no side effects or actions.
  *
  * Separates concerns:
- * 1. useEffect: Ensures data exists (fetch from Nexus if missing)
+ * 1. useEffect: Ensures data exists in local DB (fetch if missing)
  * 2. useLiveQuery: Reads current data reactively from local DB
+ *
+ * Note: Data freshness is managed by TTL Coordinator via useTtlSubscription
+ * in the consuming component (e.g., ProfilePageHeader)
  *
  * @param userId - The user ID to fetch profile for
  * @returns Profile data and loading state
  */
 export function useUserProfile(userId: string): UseUserProfileResult {
-  // Separate concern: Ensure data exists (fetch-if-missing)
-  // This runs once per userId and triggers ProfileApplication.read
-  // which handles the cache-or-fetch logic internally
+  // Separate concern: Fetch data if not in local database
+  // Uses getOrFetch pattern per ADR-0001 (local-first)
   useEffect(() => {
     if (!userId) return;
 
-    // ProfileApplication.read handles the caching strategy:
-    // 1. Check local DB first
-    // 2. If missing, fetch from Nexus
-    // 3. Write to local DB
-    // 4. Return data
+    // Track if the effect has been cleaned up to prevent stale API calls
+    // This prevents errors when navigating away (e.g., during logout)
+    let cancelled = false;
+
+    // Fetch details if not cached (local-first pattern)
+    // Freshness is managed by TTL Coordinator in ProfilePageHeader
     Core.UserController.getOrFetchDetails({ userId }).catch((error) => {
-      Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
+      // Only log errors if the effect hasn't been cleaned up
+      if (!cancelled) {
+        Libs.Logger.error('[useUserProfile] Failed to fetch user profile', { userId, error });
+      }
     });
+
+    return () => {
+      cancelled = true;
+    };
   }, [userId]);
 
   // Separate concern: Read current data from local database
-  // This will reactively update when the database changes
+  // This will reactively update when the database changes (e.g., after TTL refresh)
   const userDetails = useLiveQuery(async () => {
     try {
       if (!userId) return null;

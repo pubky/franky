@@ -1,16 +1,18 @@
+import type { TagLabel } from '@/hooks/useTagInput/useTagInput.types';
+
 export interface TagInputProps {
   /** Callback when a tag is added. Can return a Promise for async handling. */
-  onTagAdd: (tag: string) => void | Promise<{ success: boolean; error?: string }>;
+  onTagAdd: (tag: string) => void | Promise<unknown>;
   /** Placeholder text for the input */
   placeholder?: string;
-  /** Existing tags for autocomplete suggestions (local filtering only) */
-  existingTags?: Array<{ label: string }>;
+  /** All tags for autocomplete suggestions */
+  existingTags?: TagLabel[];
+  /** Viewer's own tags for duplicate checking (defaults to existingTags) */
+  viewerTags?: TagLabel[];
   /** Whether to show the close button (X) */
   showCloseButton?: boolean;
   /** Callback when close button is clicked */
   onClose?: () => void;
-  /** Hide autocomplete suggestions */
-  hideSuggestions?: boolean;
   /** Whether the input is disabled */
   disabled?: boolean;
   /** Maximum number of tags (for limit checking) */
@@ -27,4 +29,10 @@ export interface TagInputProps {
   enableApiSuggestions?: boolean;
   /** Tags to exclude from API suggestions (e.g., already added tags on the entity) */
   excludeFromApiSuggestions?: string[];
+  /** When true, clicking a suggestion directly adds the tag instead of filling the input */
+  addOnSuggestionClick?: boolean;
+  /** Whether to auto-focus the input on mount */
+  autoFocus?: boolean;
+  /** Additional className for the container (useful for width override) */
+  className?: string;
 }

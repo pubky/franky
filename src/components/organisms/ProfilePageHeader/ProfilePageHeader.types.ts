@@ -41,6 +41,8 @@ export interface ProfilePageHeaderProps {
   actions: ProfileHeaderActions;
   /** Whether this is the logged-in user's own profile */
   isOwnProfile?: boolean;
+  /** Raw user ID (without pubky prefix) for TTL tracking */
+  userId: string;
 }
 
 /**

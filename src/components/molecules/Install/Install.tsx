@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -12,6 +13,7 @@ import * as Config from '@/config';
 import * as App from '@/app';
 
 export const InstallCard = () => {
+  const t = useTranslations('onboarding.install');
   return (
     <Molecules.ContentCard
       image={{
@@ -32,7 +34,7 @@ export const InstallCard = () => {
           />
         </Atoms.Container>
         <Atoms.Typography className="text-base font-medium text-secondary-foreground opacity-80">
-          Download and install the mobile app. Then continue to the next step.
+          {t('instructions')}
         </Atoms.Typography>
       </Atoms.Container>
       <StoreButtons />
@@ -41,33 +43,45 @@ export const InstallCard = () => {
 };
 
 export const InstallFooter = () => {
+  const t = useTranslations('onboarding.install');
   return (
     <Atoms.FooterLinks className="py-6">
-      Use{' '}
-      <Atoms.Link href={Config.PUBKY_RING_URL} target="_blank">
-        Pubky Ring
-      </Atoms.Link>{' '}
-      or any other{' '}
-      <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
-        Pubky Core
-      </Atoms.Link>
-      –powered keychain, or create your keys in the browser (less secure).
+      {t.rich('alternative', {
+        pubkyRing: (chunks) => (
+          <Atoms.Link href={Config.PUBKY_RING_URL} target="_blank">
+            {chunks}
+          </Atoms.Link>
+        ),
+        pubkyCore: (chunks) => (
+          <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
+            {chunks}
+          </Atoms.Link>
+        ),
+      })}
     </Atoms.FooterLinks>
   );
 };
 
 export const InstallHeader = () => {
+  const t = useTranslations('onboarding.install');
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        Install <br className="block sm:hidden" /> <span className="text-brand">Pubky Ring.</span>
+        {t.rich('title', {
+          highlight: (chunks) => (
+            <>
+              <br className="block sm:hidden" /> <span className="text-brand">{chunks}</span>
+            </>
+          ),
+        })}
       </Molecules.PageTitle>
-      <Atoms.PageSubtitle>Pubky Ring is a keychain for your identity keys in the Pubky ecosystem.</Atoms.PageSubtitle>
+      <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
     </Atoms.PageHeader>
   );
 };
 
 export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+  const t = useTranslations('onboarding.install');
   const router = useRouter();
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [loadingContinue, setLoadingContinue] = useState(false);
@@ -98,7 +112,7 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
           ) : (
             <Libs.AppWindow className="mr-2 h-4 w-4" />
           )}
-          Create keys in browser
+          {t('createInBrowser')}
         </Atoms.Button>
         <Molecules.PopoverTradeoffs />
       </Atoms.Container>
@@ -114,7 +128,7 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
         ) : (
           <Libs.ArrowRight className="mr-2 h-4 w-4" />
         )}
-        Continue with Pubky Ring
+        {t('continueWithRing')}
       </Atoms.Button>
     </Atoms.Container>
   );

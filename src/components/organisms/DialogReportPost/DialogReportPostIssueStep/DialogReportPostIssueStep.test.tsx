@@ -70,8 +70,8 @@ describe('DialogReportPostIssueStep', () => {
     const firstIssueButton = screen.getByLabelText(REPORT_ISSUE_LABELS[REPORT_ISSUE_TYPES.PERSONAL_INFO]);
     await user.click(firstIssueButton);
 
-    // Then click Next button
-    const nextButton = screen.getByRole('button', { name: 'Continue to reason step' });
+    // Then click Next button (translated to "Next" from common.next)
+    const nextButton = screen.getByRole('button', { name: 'Next' });
     await user.click(nextButton);
 
     expect(mockOnSelectIssueType).toHaveBeenCalledWith(REPORT_ISSUE_TYPES.PERSONAL_INFO);
@@ -81,7 +81,8 @@ describe('DialogReportPostIssueStep', () => {
     const user = userEvent.setup();
     renderWithDialog(<DialogReportPostIssueStep onSelectIssueType={mockOnSelectIssueType} onCancel={mockOnCancel} />);
 
-    const cancelButton = screen.getByRole('button', { name: 'Cancel report' });
+    // Cancel button (translated to "Cancel" from common.cancel)
+    const cancelButton = screen.getByRole('button', { name: 'Cancel' });
     await user.click(cancelButton);
 
     expect(mockOnCancel).toHaveBeenCalled();
@@ -101,8 +102,8 @@ describe('DialogReportPostIssueStep', () => {
     const copyrightButton = screen.getByLabelText(REPORT_ISSUE_LABELS[REPORT_ISSUE_TYPES.COPYRIGHT]);
     await user.click(copyrightButton);
 
-    // Click Next button
-    const nextButton = screen.getByRole('button', { name: 'Continue to reason step' });
+    // Click Next button (translated to "Next" from common.next)
+    const nextButton = screen.getByRole('button', { name: 'Next' });
     await user.click(nextButton);
 
     // Should close dialog and redirect to /copyright
@@ -126,8 +127,8 @@ describe('DialogReportPostIssueStep', () => {
     const personalInfoButton = screen.getByLabelText(REPORT_ISSUE_LABELS[REPORT_ISSUE_TYPES.PERSONAL_INFO]);
     await user.click(personalInfoButton);
 
-    // Click Next button
-    const nextButton = screen.getByRole('button', { name: 'Continue to reason step' });
+    // Click Next button (translated to "Next" from common.next)
+    const nextButton = screen.getByRole('button', { name: 'Next' });
     await user.click(nextButton);
 
     // Should call onSelectIssueType normally

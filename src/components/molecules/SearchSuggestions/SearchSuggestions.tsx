@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import { SEARCH_EXPANDED_STYLE } from '@/config/search';
@@ -19,6 +22,8 @@ export function SearchSuggestions({
   onSearchAsTagClick,
   onClearRecentSearches,
 }: SearchSuggestionsProps) {
+  const t = useTranslations('search.sections');
+
   // Limit recent items to display
   const displayRecentUsers = hasInput ? [] : (recentUsers || []).slice(0, MAX_RECENT_SEARCHES);
   const displayRecentTags = hasInput ? [] : (recentTags || []).slice(0, MAX_RECENT_SEARCHES);
@@ -41,10 +46,10 @@ export function SearchSuggestions({
           <Molecules.SearchAsTagLink query={inputValue} onClick={onSearchAsTagClick} />
         )}
         {hasAutocompleteTags && (
-          <Molecules.SearchTagSection title="Tags" tags={autocompleteTags} onTagClick={onTagClick} />
+          <Molecules.SearchTagSection title={t('tags')} tags={autocompleteTags} onTagClick={onTagClick} />
         )}
         {hasAutocompleteUsers && (
-          <Molecules.SearchUsersSection title="Users" users={autocompleteUsers} onUserClick={onUserClick} />
+          <Molecules.SearchUsersSection title={t('users')} users={autocompleteUsers} onUserClick={onUserClick} />
         )}
       </>
     );
@@ -64,7 +69,7 @@ export function SearchSuggestions({
             onClearAll={onClearRecentSearches}
           />
         )}
-        {hasHotTags && <Molecules.SearchTagSection title="Hot tags" tags={hotTags} onTagClick={onTagClick} />}
+        {hasHotTags && <Molecules.SearchTagSection title={t('hotTags')} tags={hotTags} onTagClick={onTagClick} />}
       </>
     );
   };
