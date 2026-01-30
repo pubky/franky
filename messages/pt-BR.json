@@ -1064,6 +1064,13 @@
     "support": "Suporte",
     "supportDescription": "Nao encontrou a resposta que procura? O suporte do Pubky ajudara você rapidamente.",
     "supportButton": "Suporte (Telegram)",
+    "feedback": "Feedback",
+    "feedbackDescription": "Adoraríamos ouvir sua opinião sobre o Pubky. Compartilhe seu feedback conosco!",
+    "sendFeedback": "Enviar feedback",
+    "termsPrivacy": "Termos de Serviço e Privacidade",
+    "termsPrivacyDescription": "Por favor, leia nossos termos com atenção.",
+    "termsOfService": "Termos de serviço",
+    "privacyPolicy": "Política de privacidade",
     "sections": {
       "onboarding": "1. Primeiros Passos e Integracao",
       "backup": "2. Backups e Recuperacao de Conta",

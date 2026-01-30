@@ -9,7 +9,7 @@ function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTML
     <Atoms.Container
       data-slot="filter-root"
       data-testid="filter-root"
-      className={Libs.cn('m-0 gap-2 bg-background p-0', className)}
+      className={Libs.cn('m-0 min-w-0 gap-2 bg-background p-0', className)}
       {...props}
     >
       {children}

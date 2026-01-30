@@ -1058,6 +1058,13 @@
     "support": "支持",
     "supportDescription": "找不到您要找的答案？Pubky 支持将很快帮助您。",
     "supportButton": "支持（Telegram）",
+    "feedback": "反馈",
+    "feedbackDescription": "我们很想听听您对Pubky的看法。与我们分享您的反馈！",
+    "sendFeedback": "发送反馈",
+    "termsPrivacy": "服务条款和隐私",
+    "termsPrivacyDescription": "请仔细阅读我们的条款。",
+    "termsOfService": "服务条款",
+    "privacyPolicy": "隐私政策",
     "sections": {
       "onboarding": "1. 入门和引导",
       "backup": "2. 备份和账户恢复",
