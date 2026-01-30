@@ -125,6 +125,11 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache-homeserver
           cache-to: type=local,dest=/tmp/.buildx-cache-homeserver-new,mode=max
 
+      - name: Tag images for docker-compose
+        run: |
+          docker tag nexusd:latest local/pubky-nexus:latest
+          docker tag homeserver:latest local/homeserver:latest
+
       # Overwrite old cache to prevent growing size, see https://github.com/docker/build-push-action/issues/252
       - name: Overwrite old cache
         run: |
@@ -137,6 +142,7 @@ jobs:
         working-directory: pubky-stack/docker
         env:
           NETWORK: testnet
+          REGISTRY: local
         run: docker compose up -d nexusd nexus-redis nexus-neo4j homeserver
 
       - name: Build Franky frontend
