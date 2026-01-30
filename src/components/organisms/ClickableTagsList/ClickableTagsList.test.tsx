@@ -76,6 +76,7 @@ vi.mock('@/molecules', () => ({
       Add
     </button>
   ),
+  PostTagPopoverWrapper: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock libs - use actual implementations

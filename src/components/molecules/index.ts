@@ -65,6 +65,7 @@ export * from './PostPreviewCard';
 export * from './RepostHeader';
 export * from './PostTag';
 export * from './PostTagAddButton';
+export * from './PostTagPopoverWrapper';
 export * from './PostText';
 export * from './ProgressSteps';
 export * from './PublicKey';
