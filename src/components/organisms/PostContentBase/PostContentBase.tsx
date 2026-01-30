@@ -24,9 +24,12 @@ export function PostContentBase({ postId, className }: PostContentBaseProps) {
     return <div className="text-muted-foreground">{t('loadingContent')}</div>;
   }
 
+  const isDeleted = Libs.isPostDeleted(postDetails.content);
   const hasContent = postDetails.content.trim().length > 0;
   const isBlurred = postDetails.is_blurred;
   const isArticle = postDetails.kind === 'long';
+
+  if (isDeleted) return <Molecules.PostDeleted />;
 
   if (isBlurred) return <Organisms.PostContentBlurred postId={postId} className={className} />;
 

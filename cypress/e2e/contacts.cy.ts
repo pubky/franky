@@ -13,8 +13,7 @@ describe('contacts', () => {
   // todo
   it.skip('can follow and unfollow');
 
-  // todo: FAILING due to no list items being displayed, see https://github.com/pubky/franky/issues/505
-  it.skip('follow, be followed, and make a friend', () => {
+  it('follow, be followed, and make a friend', () => {
     const profileName1 = '#1 Friend';
     const profileName2 = '#2 Friend';
     const pubkyAlias1 = 'friend';
@@ -41,9 +40,6 @@ describe('contacts', () => {
     });
 
     // * check profile 1 shows profile 2 as new follower
-
-    // wait for data to index
-    cy.wait(1000);
 
     // check followers tab and click it
     cy.get('[data-cy="profile-filter-item-followers"]').should('have.text', 'Followers');
@@ -137,17 +133,15 @@ describe('contacts', () => {
         cy.get('[data-cy="profile-follower-item-posts-count"]').should('have.text', 0);
         // click follow button to make profile 2 a friend
         cy.get('[data-cy="profile-follower-item-follow-toggle-btn"]')
+          .filter(':visible') // Filter to only the visible button (desktop or mobile)
           .should('be.visible')
           .and('contain.text', 'FollowFollow')
           .click();
       });
 
-    // wait for data to index
-    cy.wait(1000);
-
     // check number of listed following is 1
     cy.get('[data-cy="profile-filter-item-following-count"]').should('have.text', 1).click();
-    cy.get('[data-cy="profile-connections-list"]') // FAILING HERE due to no list items being displayed, see https://github.com/pubky/franky/issues/505
+    cy.get('[data-cy="profile-connections-list"]')
       .children()
       .should('have.length', 1)
       .first()
@@ -172,6 +166,7 @@ describe('contacts', () => {
         cy.get('[data-cy="profile-follower-item-posts-count"]').should('have.text', 0);
         // check option to unfollow profile 1
         cy.get('[data-cy="profile-follower-item-follow-toggle-btn"]')
+          .filter(':visible') // Filter to only the visible button (desktop or mobile)
           .should('be.visible')
           .and('contain.text', 'FollowingUnfollow')
           .click();

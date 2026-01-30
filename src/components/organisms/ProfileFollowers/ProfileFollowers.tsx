@@ -59,7 +59,10 @@ export function ProfileFollowers() {
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Followers {count > 0 && `(${count})`}
       </Atoms.Heading>
-      <Atoms.Container className="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6">
+      <Atoms.Container
+        data-cy="profile-connections-list"
+        className="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6"
+      >
         {connections.map((connection) => (
           <Organisms.UserListItem
             key={connection.id}
