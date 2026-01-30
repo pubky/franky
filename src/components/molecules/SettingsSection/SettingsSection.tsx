@@ -12,7 +12,7 @@ export function SettingsSection({
   buttonOnClick,
 }: SettingsSectionProps) {
   return (
-    <Atoms.Container overrideDefaults className="flex flex-col items-start justify-start gap-3">
+    <Atoms.Container overrideDefaults className="flex w-full flex-col items-start justify-start gap-3">
       <Atoms.Heading level={4} size="md" className="text-xl leading-7">
         {title}
       </Atoms.Heading>

@@ -2,7 +2,7 @@
 
 exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with defaultSelectedTab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -155,7 +155,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
 
 exports[`FilterReach - Snapshots > matches snapshot with All selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -308,7 +308,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All selected tab 1`] = 
 
 exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -461,7 +461,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
 
 exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -614,7 +614,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
 
 exports[`FilterReach - Snapshots > matches snapshot with default props (All selected) 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >

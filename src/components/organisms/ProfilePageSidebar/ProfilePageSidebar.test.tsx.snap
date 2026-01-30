@@ -122,7 +122,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
     </div>
   </div>
   <div
-    class="flex w-full min-w-0 flex-col gap-2"
+    class="flex w-full max-w-(--filter-bar-width) flex-col gap-2"
     data-testid="feedback-card"
   >
     <h2
@@ -161,7 +161,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
         </div>
       </div>
       <button
-        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground"
+        class="w-full cursor-pointer text-left text-base leading-normal font-medium break-words text-muted-foreground"
         data-slot="button"
       >
         What do you think about Pubky?

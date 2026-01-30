@@ -26,7 +26,7 @@ export function SidebarSection({
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn('flex w-full flex-col gap-2', className)}
+      className={Libs.cn('flex w-full min-w-0 flex-col gap-2', className)}
       data-testid={dataTestId}
     >
       {/* Header */}
@@ -47,7 +47,7 @@ export function SidebarSection({
       </Atoms.Container>
 
       {/* Content */}
-      <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
+      <Atoms.Container overrideDefaults className="flex w-full min-w-0 flex-col gap-2">
         {children}
       </Atoms.Container>
 

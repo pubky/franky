@@ -67,7 +67,7 @@ export function HotActiveUsers({ limit = DEFAULT_USERS_LIMIT, className }: HotAc
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn('flex flex-col gap-2', className)}
+      className={Libs.cn('flex w-full flex-col gap-2', className)}
       data-testid="hot-active-users"
     >
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">

@@ -2,7 +2,7 @@
 
 exports[`FilterContent - Snapshots > matches snapshot with All content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -331,7 +331,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
 
 exports[`FilterContent - Snapshots > matches snapshot with Articles content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -660,7 +660,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
 
 exports[`FilterContent - Snapshots > matches snapshot with Files content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -989,7 +989,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Images content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1318,7 +1318,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
 
 exports[`FilterContent - Snapshots > matches snapshot with Links content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1647,7 +1647,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Posts content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1976,7 +1976,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Videos content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -2305,7 +2305,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
 
 exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >

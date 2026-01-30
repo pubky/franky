@@ -61,7 +61,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
   // TODO: Replace with Skeleton component
   if (isLoading) {
     return (
-      <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-2', className)}>
+      <Atoms.Container overrideDefaults className={Libs.cn('flex w-full flex-col gap-2', className)}>
         <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
           {t('hotTags')}
         </Atoms.Heading>
@@ -77,7 +77,7 @@ export function HotTagsCardsSection({ className }: HotTagsCardsSectionProps) {
   return (
     <Atoms.Container
       overrideDefaults
-      className={Libs.cn('flex flex-col gap-2', className)}
+      className={Libs.cn('flex w-full flex-col gap-2', className)}
       data-testid="hot-tags-cards-section"
     >
       <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">

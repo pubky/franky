@@ -1060,6 +1060,13 @@
     "support": "الدعم",
     "supportDescription": "لا تجد الاجابة التي تبحث عنها؟ دعم Pubky سيساعدك في اقرب وقت.",
     "supportButton": "الدعم (تيليجرام)",
+    "feedback": "ملاحظات",
+    "feedbackDescription": "نود أن نسمع رأيك حول Pubky. شاركنا ملاحظاتك!",
+    "sendFeedback": "إرسال ملاحظات",
+    "termsPrivacy": "شروط الخدمة والخصوصية",
+    "termsPrivacyDescription": "يرجى قراءة شروطنا بعناية.",
+    "termsOfService": "شروط الخدمة",
+    "privacyPolicy": "سياسة الخصوصية",
     "sections": {
       "onboarding": "1. البدء والتهيئة",
       "backup": "2. النسخ الاحتياطي واستعادة الحساب",
