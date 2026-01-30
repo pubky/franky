@@ -446,6 +446,8 @@
       "followingButton": "フォロー中",
       "follow": "フォロー",
       "unfollow": "フォロー解除",
+      "followUser": "{username}をフォロー",
+      "unfollowUser": "{username}のフォローを解除",
       "copyPubky": "ユーザーpubkyをコピー",
       "copyLink": "プロフィールリンクをコピー",
       "mute": "{username}をミュート",
