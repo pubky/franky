@@ -112,7 +112,7 @@ jobs:
         with:
           context: pubky-stack/pubky-nexus
           load: true
-          tags: nexusd:latest
+          tags: local/pubky-nexus:latest
           cache-from: type=local,src=/tmp/.buildx-cache-nexus
           cache-to: type=local,dest=/tmp/.buildx-cache-nexus-new,mode=max
 
@@ -121,14 +121,9 @@ jobs:
         with:
           context: pubky-stack/pubky-core
           load: true
-          tags: homeserver:latest
+          tags: local/homeserver:latest
           cache-from: type=local,src=/tmp/.buildx-cache-homeserver
           cache-to: type=local,dest=/tmp/.buildx-cache-homeserver-new,mode=max
-
-      - name: Tag images for docker-compose
-        run: |
-          docker tag nexusd:latest local/pubky-nexus:latest
-          docker tag homeserver:latest local/homeserver:latest
 
       # Overwrite old cache to prevent growing size, see https://github.com/docker/build-push-action/issues/252
       - name: Overwrite old cache
@@ -141,7 +136,6 @@ jobs:
       - name: Run pubky-stack
         working-directory: pubky-stack/docker
         env:
-          NETWORK: testnet
           REGISTRY: local
         run: docker compose up -d nexusd nexus-redis nexus-neo4j homeserver
 
