@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
@@ -18,6 +19,10 @@ import type { UseProfileMenuActionsResult, ProfileMenuActionItem } from './usePr
  * @returns Menu items array and loading state
  */
 export function useProfileMenuActions(userId: string): UseProfileMenuActionsResult {
+  const t = useTranslations('profile.actions');
+  const tToast = useTranslations('toast');
+  const tErrors = useTranslations('errors');
+
   const { profile, isLoading: isProfileLoading } = Hooks.useUserProfile(userId);
   const { isFollowing, isLoading: isFollowingLoading } = Hooks.useIsFollowing(userId);
 
@@ -25,10 +30,10 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
   const { toggleMute, isLoading: isMuteLoading, isUserLoading: isMuteUserLoading } = Hooks.useMuteUser();
   const { isMuted } = Hooks.useMutedUsers();
   const { copyToClipboard: copyPubky } = Hooks.useCopyToClipboard({
-    successTitle: 'Pubky copied to clipboard',
+    successTitle: tToast('copy.pubkyCopied'),
   });
   const { copyToClipboard: copyLink } = Hooks.useCopyToClipboard({
-    successTitle: 'Profile link copied to clipboard',
+    successTitle: tToast('copy.profileLinkCopied'),
   });
 
   const isUserMuted = isMuted(userId);
@@ -42,15 +47,15 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
   // Follow/Unfollow
   menuItems.push({
     id: PROFILE_MENU_ACTION_IDS.FOLLOW,
-    label: isFollowing ? `Unfollow ${username}` : `Follow ${username}`,
+    label: isFollowing ? t('unfollowUser', { username }) : t('followUser', { username }),
     icon: isFollowing ? Libs.UserRoundMinus : Libs.UserRoundPlus,
     onClick: async () => {
       try {
         await toggleFollow(userId, isFollowing);
       } catch (error) {
         Molecules.toast({
-          title: 'Error',
-          description: Libs.isAppError(error) ? error.message : 'Failed to update follow status',
+          title: tErrors('title'),
+          description: Libs.isAppError(error) ? error.message : tToast('follow.failed'),
         });
       }
     },
@@ -60,15 +65,15 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
   // Copy pubky
   menuItems.push({
     id: PROFILE_MENU_ACTION_IDS.COPY_PUBKY,
-    label: 'Copy user pubky',
+    label: t('copyPubky'),
     icon: Libs.Key,
     onClick: async () => {
       try {
         await copyPubky(Libs.withPubkyPrefix(userId));
       } catch (error) {
         Molecules.toast({
-          title: 'Error',
-          description: Libs.isAppError(error) ? error.message : 'Failed to copy pubky',
+          title: tErrors('title'),
+          description: Libs.isAppError(error) ? error.message : tToast('copy.copyFailed'),
         });
       }
     },
@@ -77,15 +82,15 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
   // Copy profile link
   menuItems.push({
     id: PROFILE_MENU_ACTION_IDS.COPY_LINK,
-    label: 'Copy profile link',
+    label: t('copyLink'),
     icon: Libs.Link,
     onClick: async () => {
       try {
         await copyLink(profileUrl);
       } catch (error) {
         Molecules.toast({
-          title: 'Error',
-          description: Libs.isAppError(error) ? error.message : 'Failed to copy link',
+          title: tErrors('title'),
+          description: Libs.isAppError(error) ? error.message : tToast('copy.copyFailed'),
         });
       }
     },
@@ -94,19 +99,19 @@ export function useProfileMenuActions(userId: string): UseProfileMenuActionsResu
   // Mute/Unmute
   menuItems.push({
     id: PROFILE_MENU_ACTION_IDS.MUTE,
-    label: `${isUserMuted ? 'Unmute' : 'Mute'} ${username}`,
+    label: isUserMuted ? t('unmute', { username }) : t('mute', { username }),
     icon: isUserMuted ? Libs.Megaphone : Libs.MegaphoneOff,
     onClick: async () => {
       try {
         await toggleMute(userId, isUserMuted);
         Molecules.toast({
-          title: isUserMuted ? 'User unmuted' : 'User muted',
-          description: `${username} has been ${isUserMuted ? 'unmuted' : 'muted'}.`,
+          title: isUserMuted ? tToast('mute.unmuted') : tToast('mute.muted'),
+          description: isUserMuted ? tToast('mute.unmutedDesc', { username }) : tToast('mute.mutedDesc', { username }),
         });
       } catch (error) {
         Molecules.toast({
-          title: 'Error',
-          description: Libs.isAppError(error) ? error.message : 'Failed to update mute status',
+          title: tErrors('title'),
+          description: Libs.isAppError(error) ? error.message : tToast('mute.failed'),
         });
       }
     },

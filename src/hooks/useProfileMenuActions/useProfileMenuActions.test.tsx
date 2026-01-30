@@ -14,6 +14,7 @@ const {
   mockUseMutedUsers,
   mockUseCopyToClipboard,
   mockToast,
+  mockUseTranslations,
 } = vi.hoisted(() => ({
   mockIsAppError: vi.fn(),
   mockUseUserProfile: vi.fn(),
@@ -23,6 +24,12 @@ const {
   mockUseMutedUsers: vi.fn(),
   mockUseCopyToClipboard: vi.fn(),
   mockToast: vi.fn(),
+  mockUseTranslations: vi.fn(),
+}));
+
+// Mock next-intl
+vi.mock('next-intl', () => ({
+  useTranslations: (namespace: string) => mockUseTranslations(namespace),
 }));
 
 // Mock Hooks
@@ -83,6 +90,43 @@ describe('useProfileMenuActions', () => {
     vi.clearAllMocks();
     mockIsAppError.mockReturnValue(false);
     defaultMocks.isMuted.mockReturnValue(false);
+
+    // Mock translations
+    mockUseTranslations.mockImplementation((namespace: string) => {
+      const translations: Record<string, Record<string, string>> = {
+        'profile.actions': {
+          followUser: 'Follow {username}',
+          unfollowUser: 'Unfollow {username}',
+          copyPubky: 'Copy user pubky',
+          copyLink: 'Copy profile link',
+          mute: 'Mute {username}',
+          unmute: 'Unmute {username}',
+        },
+        toast: {
+          'copy.pubkyCopied': 'Pubky copied to clipboard',
+          'copy.profileLinkCopied': 'Profile link copied to clipboard',
+          'copy.copyFailed': 'Copy failed',
+          'follow.failed': 'Failed to update follow status',
+          'mute.muted': 'User muted',
+          'mute.unmuted': 'User unmuted',
+          'mute.mutedDesc': '{username} has been muted.',
+          'mute.unmutedDesc': '{username} has been unmuted.',
+          'mute.failed': 'Failed to update mute status',
+        },
+        errors: {
+          title: 'Error',
+        },
+      };
+      return (key: string, params?: Record<string, string>) => {
+        let value = translations[namespace]?.[key] || key;
+        if (params) {
+          Object.entries(params).forEach(([paramKey, paramValue]) => {
+            value = value.replace(`{${paramKey}}`, paramValue);
+          });
+        }
+        return value;
+      };
+    });
 
     mockUseUserProfile.mockReturnValue({
       profile: defaultMocks.profile,
@@ -334,7 +378,7 @@ describe('useProfileMenuActions', () => {
       await waitFor(() => {
         expect(mockToast).toHaveBeenCalledWith({
           title: 'Error',
-          description: 'Failed to copy pubky',
+          description: 'Copy failed',
         });
       });
     });
@@ -355,7 +399,7 @@ describe('useProfileMenuActions', () => {
       await waitFor(() => {
         expect(mockToast).toHaveBeenCalledWith({
           title: 'Error',
-          description: 'Failed to copy link',
+          description: 'Copy failed',
         });
       });
     });
