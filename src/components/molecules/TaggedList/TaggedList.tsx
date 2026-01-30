@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import type { TaggedListProps } from './TaggedList.types';
 
 export function TaggedList({ tags, hasMore = false, isLoadingMore = false, onLoadMore, onTagToggle }: TaggedListProps) {
+  const t = useTranslations('common');
   // Track which tag is currently expanded (only one at a time - accordion behavior)
   const [expandedTagLabel, setExpandedTagLabel] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function TaggedList({ tags, hasMore = false, isLoadingMore = false, onLoa
         <Atoms.Container overrideDefaults ref={sentinelRef} className="h-4 w-full">
           {isLoadingMore && (
             <Atoms.Typography as="p" className="text-center text-sm text-muted-foreground">
-              Loading more tags...
+              {t('loadingMoreTags')}
             </Atoms.Typography>
           )}
         </Atoms.Container>

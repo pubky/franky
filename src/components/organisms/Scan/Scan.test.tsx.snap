@@ -66,18 +66,7 @@ exports[`Scan Components - Snapshots > ScanFooter - Snapshots > matches snapshot
 <div
   data-testid="footer-links"
 >
-  Use
-   
-  <a
-    data-testid="link"
-    href="https://pubkyring.app/"
-    target="_blank"
-  >
-    Pubky Ring
-  </a>
-   
-  or any other
-   
+  Use ,[object Object], or any other 
   <a
     data-testid="link"
     href="https://pubky.org"

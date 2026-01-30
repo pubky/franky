@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -7,6 +9,7 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export const CreateProfileHeader = () => {
+  const t = useTranslations('onboarding.createProfile');
   const authStore = Core.useAuthStore();
   const pubky = authStore.selectCurrentUserPubky();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
@@ -20,10 +23,12 @@ export const CreateProfileHeader = () => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        Create your <span className="text-brand">profile.</span>
+        {t.rich('title', {
+          highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+        })}
       </Molecules.PageTitle>
       <Atoms.Container className="m-0 w-auto flex-col gap-4 md:flex-row md:items-center">
-        <Atoms.PageSubtitle>Add your name, bio, links, and avatar.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
         <Atoms.Container className="mx-0 w-auto flex-row items-center gap-2">
           <Atoms.Button
             variant="secondary"

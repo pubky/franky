@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
@@ -23,6 +24,7 @@ import { USER_LIST_TAG_MAX_LENGTH, USER_LIST_TAGS_MAX_TOTAL_CHARS, USER_LIST_TAG
  * Renders follow/unfollow button in icon or text variant
  */
 function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, variant, onClick }: FollowButtonProps) {
+  const t = useTranslations('userList');
   // Show loading if action is in progress OR if status is still being loaded
   const showLoading = isLoading || isStatusLoading;
 
@@ -34,7 +36,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
         onClick={onClick}
         disabled={showLoading}
         className="size-8 shrink-0 rounded-full"
-        aria-label={isFollowing ? `Unfollow ${displayName}` : `Follow ${displayName}`}
+        aria-label={isFollowing ? `${t('unfollow')} ${displayName}` : `${t('follow')} ${displayName}`}
       >
         {showLoading ? (
           <Libs.Loader2 className="size-5 animate-spin" />
@@ -56,7 +58,7 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
       className="group w-[110px] justify-center"
       onClick={onClick}
       disabled={showLoading}
-      aria-label={isFollowing ? 'Unfollow' : 'Follow'}
+      aria-label={isFollowing ? t('unfollow') : t('follow')}
     >
       {showLoading ? (
         <Libs.Loader2 className="size-4 animate-spin" />
@@ -64,22 +66,22 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
         <>
           <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
             <Libs.Check className="size-4" />
-            <span>Following</span>
+            <span>{t('following')}</span>
           </Atoms.Container>
           <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
             <Libs.UserMinus className="size-4" />
-            <span>Unfollow</span>
+            <span>{t('unfollow')}</span>
           </Atoms.Container>
         </>
       ) : (
         <>
           <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
             <Libs.UserRoundPlus className="size-4" />
-            <span>Follow</span>
+            <span>{t('follow')}</span>
           </Atoms.Container>
           <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
             <Libs.Check className="size-4" />
-            <span>Follow</span>
+            <span>{t('follow')}</span>
           </Atoms.Container>
         </>
       )}
@@ -92,6 +94,9 @@ function FollowButton({ isFollowing, isLoading, isStatusLoading, displayName, va
  * Disabled button shown when viewing own profile
  */
 function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; className?: string }) {
+  const t = useTranslations('userList');
+  const tProfile = useTranslations('profile.actions');
+
   if (variant === 'icon') {
     return (
       <Atoms.Button
@@ -99,7 +104,7 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
         size="icon"
         className={Libs.cn('size-8 shrink-0 cursor-not-allowed rounded-full opacity-50', className)}
         disabled
-        aria-label="This is you"
+        aria-label={tProfile('thisIsYou')}
       >
         <Libs.CircleUserRound className="size-5 text-muted-foreground" />
       </Atoms.Button>
@@ -112,9 +117,9 @@ function MeButton({ variant = 'text', className }: { variant?: 'text' | 'icon'; 
       size="sm"
       className={Libs.cn('w-[110px] cursor-not-allowed justify-center text-muted-foreground opacity-50', className)}
       disabled
-      aria-label="This is you"
+      aria-label={tProfile('thisIsYou')}
     >
-      <span>Me</span>
+      <span>{t('me')}</span>
     </Atoms.Button>
   );
 }
@@ -147,11 +152,13 @@ function StatsSubtitle({ tags, posts }: StatsSubtitleProps) {
  * Full stats display with labels (for profile pages)
  */
 function UserStats({ tags, posts }: UserStatsProps) {
+  const t = useTranslations('userList');
+
   return (
     <Atoms.Container overrideDefaults className="flex shrink-0 items-center gap-3">
       <Atoms.Container className="items-start">
         <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
-          Tags
+          {t('tags')}
         </Atoms.Typography>
         <Atoms.Typography size="sm" className="font-bold">
           {tags}
@@ -159,7 +166,7 @@ function UserStats({ tags, posts }: UserStatsProps) {
       </Atoms.Container>
       <Atoms.Container className="items-start">
         <Atoms.Typography className="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
-          Posts
+          {t('posts')}
         </Atoms.Typography>
         <Atoms.Typography size="sm" className="font-bold">
           {posts}

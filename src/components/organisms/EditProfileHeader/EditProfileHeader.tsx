@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export const EditProfileHeader = () => {
+  const t = useTranslations('forms.profile');
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
@@ -22,10 +24,10 @@ export const EditProfileHeader = () => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        Edit your <span className="text-brand">profile.</span>
+        {t('title')} <span className="text-brand">{t('titleHighlight')}</span>
       </Molecules.PageTitle>
       <Atoms.Container className="m-0 w-auto flex-col gap-4 md:flex-row md:items-center">
-        <Atoms.PageSubtitle>Update your name, bio, links, and avatar.</Atoms.PageSubtitle>
+        <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
         <Atoms.Container className="mx-0 w-auto flex-row items-center gap-2">
           <Atoms.Button
             variant="secondary"

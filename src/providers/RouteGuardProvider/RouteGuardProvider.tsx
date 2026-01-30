@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
@@ -30,6 +31,7 @@ interface RouteGuardProviderProps {
  * - NEEDS_PROFILE_CREATION users → profile creation route
  */
 export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
+  const t = useTranslations('common');
   const router = useRouter();
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
@@ -106,7 +108,7 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <Atoms.Spinner className="mx-auto" />
-          <p className="mt-2 text-muted-foreground">{isLoading ? 'Loading...' : 'Redirecting...'}</p>
+          <p className="mt-2 text-muted-foreground">{isLoading ? t('loading') : t('redirecting')}</p>
         </div>
       </div>
     );

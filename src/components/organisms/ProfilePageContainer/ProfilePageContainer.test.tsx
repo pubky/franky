@@ -5,10 +5,17 @@ import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
 
 // Mock Core
 const mockCurrentUserPubky = 'user123';
+const mockAuthStoreState = {
+  currentUserPubky: mockCurrentUserPubky,
+  isLoggingOut: false,
+};
 vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(() => ({
-    currentUserPubky: mockCurrentUserPubky,
-  })),
+  useAuthStore: vi.fn((selector?: (state: typeof mockAuthStoreState) => unknown) => {
+    if (selector) {
+      return selector(mockAuthStoreState);
+    }
+    return mockAuthStoreState;
+  }),
 }));
 
 // Mock Providers
@@ -357,5 +364,54 @@ describe('ProfilePageContainer - User not found', () => {
     // Should still show layout for own profile
     expect(screen.getByTestId('profile-page-layout')).toBeInTheDocument();
     expect(screen.queryByTestId('user-not-found')).not.toBeInTheDocument();
+  });
+
+  it('does not show UserNotFound during logout even if userNotFound is true', async () => {
+    // Mock useProfileContext to return isOwnProfile: false (simulating state after logout clears auth)
+    const providers = await import('@/providers');
+    vi.mocked(providers.useProfileContext).mockReturnValue({
+      pubky: '',
+      isOwnProfile: false,
+      isLoading: false,
+    });
+
+    // Mock useAuthStore to return isLoggingOut: true (global logout state)
+    const core = await import('@/core');
+    vi.mocked(core.useAuthStore).mockImplementation((selector?: (state: typeof mockAuthStoreState) => unknown) => {
+      const stateWithLogout = { ...mockAuthStoreState, isLoggingOut: true };
+      if (selector) {
+        return selector(stateWithLogout);
+      }
+      return stateWithLogout;
+    });
+
+    // Mock useProfileHeader to return userNotFound: true
+    const hooks = await import('@/hooks');
+    vi.mocked(hooks.useProfileHeader).mockReturnValue({
+      profile: {
+        name: '',
+        bio: '',
+        publicKey: '',
+        emoji: '🌴',
+        status: '',
+        avatarUrl: undefined,
+        link: '',
+      },
+      stats: mockStats as unknown as ReturnType<typeof hooks.useProfileHeader>['stats'],
+      actions: mockActions as unknown as ReturnType<typeof hooks.useProfileHeader>['actions'],
+      isLoading: false,
+      userNotFound: true,
+    });
+
+    render(
+      <ProfilePageContainer>
+        <div>Test Content</div>
+      </ProfilePageContainer>,
+    );
+
+    // Should NOT show UserNotFound during logout to prevent flash of error state
+    expect(screen.queryByTestId('user-not-found')).not.toBeInTheDocument();
+    // Should show the profile layout instead
+    expect(screen.getByTestId('profile-page-layout')).toBeInTheDocument();
   });
 });

@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -13,6 +14,7 @@ import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 
 export const ScanContent = () => {
+  const t = useTranslations('onboarding.scan');
   const inviteCode = Core.useOnboardingStore((state) => state.inviteCode);
   const { url, isLoading, fetchUrl } = Hooks.useAuthUrl({ type: 'signup', inviteCode });
 
@@ -58,8 +60,8 @@ export const ScanContent = () => {
     } catch (error) {
       Libs.Logger.error('Failed to open Pubky Ring deeplink:', error);
       Molecules.toast({
-        title: 'Unable to link to signer application Pubky Ring',
-        description: 'Please try again.',
+        title: t('linkFailed'),
+        description: t('tryAgain'),
       });
       window.location.href = fallbackUrl;
     }
@@ -77,7 +79,7 @@ export const ScanContent = () => {
                 <Atoms.Container className="items-center gap-2">
                   <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
                   <Atoms.Typography as="small" size="sm" className="text-background">
-                    Generating QR Code...
+                    {t('generating')}
                   </Atoms.Typography>
                 </Atoms.Container>
               ) : (
@@ -117,12 +119,12 @@ export const ScanContent = () => {
               {isLoading ? (
                 <>
                   <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
+                  {t('generatingShort')}
                 </>
               ) : (
                 <>
                   <Libs.Key className="mr-2 h-4 w-4" />
-                  Authorize with Pubky Ring
+                  {t('authorize')}
                 </>
               )}
             </Atoms.Button>
@@ -134,36 +136,39 @@ export const ScanContent = () => {
 };
 
 export const ScanFooter = () => {
+  const t = useTranslations('onboarding.scan');
   return (
     <Atoms.FooterLinks className="py-6">
-      Use{' '}
-      <Atoms.Link href={Config.PUBKY_RING_URL} target="_blank">
-        Pubky Ring
-      </Atoms.Link>{' '}
-      or any other{' '}
-      <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
-        Pubky Core
-      </Atoms.Link>
-      –powered keychain.
+      {t.rich('authorizeSub', {
+        pubkyRing: (chunks) => (
+          <Atoms.Link href={Config.PUBKY_RING_URL} target="_blank">
+            {chunks}
+          </Atoms.Link>
+        ),
+        pubkyCore: (chunks) => (
+          <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
+            {chunks}
+          </Atoms.Link>
+        ),
+      })}
     </Atoms.FooterLinks>
   );
 };
 
 export const ScanHeader = ({ isMobile }: { isMobile: boolean }) => {
+  const t = useTranslations('onboarding.scan');
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="large">
-        {isMobile ? (
-          <>
-            Tap to <span className="text-brand">Authorize.</span>
-          </>
-        ) : (
-          <>
-            Scan <span className="text-brand">QR Code.</span>
-          </>
-        )}
+        {isMobile
+          ? t.rich('titleMobile', {
+              highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+            })
+          : t.rich('titleDesktop', {
+              highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+            })}
       </Molecules.PageTitle>
-      <Atoms.PageSubtitle>Open Pubky Ring, create a pubky, and scan the QR.</Atoms.PageSubtitle>
+      <Atoms.PageSubtitle>{t('subtitle')}</Atoms.PageSubtitle>
     </Atoms.PageHeader>
   );
 };

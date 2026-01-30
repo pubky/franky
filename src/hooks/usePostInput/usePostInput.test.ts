@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { usePostInput } from './usePostInput';
-import { POST_INPUT_VARIANT, POST_INPUT_PLACEHOLDER } from '@/organisms/PostInput/PostInput.constants';
+import { POST_INPUT_VARIANT } from '@/organisms/PostInput/PostInput.constants';
 import {
   POST_MAX_CHARACTER_LENGTH,
   ARTICLE_TITLE_MAX_CHARACTER_LENGTH,
@@ -9,6 +9,15 @@ import {
   ARTICLE_ATTACHMENT_MAX_FILES,
   ATTACHMENT_MAX_OTHER_SIZE,
 } from '@/config';
+
+// next-intl is mocked globally in src/config/test.ts
+// Real placeholders from messages/en.json for test assertions
+const REAL_PLACEHOLDERS = {
+  reply: 'Write a reply...',
+  post: "What's on your mind?",
+  repost: 'Optional comment',
+  edit: 'Edit post',
+};
 
 // Mock usePost hook
 const mockSetContent = vi.fn();
@@ -133,7 +142,7 @@ describe('usePostInput', () => {
         }),
       );
 
-      expect(result.current.displayPlaceholder).toBe(POST_INPUT_PLACEHOLDER[POST_INPUT_VARIANT.POST]);
+      expect(result.current.displayPlaceholder).toBe(REAL_PLACEHOLDERS[POST_INPUT_VARIANT.POST]);
     });
 
     it('uses default placeholder for reply variant', () => {
@@ -144,7 +153,7 @@ describe('usePostInput', () => {
         }),
       );
 
-      expect(result.current.displayPlaceholder).toBe(POST_INPUT_PLACEHOLDER[POST_INPUT_VARIANT.REPLY]);
+      expect(result.current.displayPlaceholder).toBe(REAL_PLACEHOLDERS[POST_INPUT_VARIANT.REPLY]);
     });
 
     it('uses default placeholder for repost variant', () => {
@@ -155,7 +164,7 @@ describe('usePostInput', () => {
         }),
       );
 
-      expect(result.current.displayPlaceholder).toBe(POST_INPUT_PLACEHOLDER[POST_INPUT_VARIANT.REPOST]);
+      expect(result.current.displayPlaceholder).toBe(REAL_PLACEHOLDERS[POST_INPUT_VARIANT.REPOST]);
     });
 
     it('uses custom placeholder when provided', () => {

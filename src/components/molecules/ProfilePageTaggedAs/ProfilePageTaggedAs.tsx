@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
@@ -9,12 +10,9 @@ import { PROFILE_ROUTES, getProfileRoute } from '@/app/routes';
 import type { ProfilePageTaggedAsProps } from './ProfilePageTaggedAs.types';
 
 export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky }: ProfilePageTaggedAsProps) {
+  const t = useTranslations('profile.sidebar');
   const router = useRouter();
   const { requireAuth } = Hooks.useRequireAuth();
-
-  const getButtonLabel = () => {
-    return 'Add Tag';
-  };
 
   // Handle button click - require auth for unauthenticated users
   const handleButtonClick = () => {
@@ -24,7 +22,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
   return (
     <Atoms.Container overrideDefaults={true} className="flex flex-col gap-2">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
-        Tagged as
+        {t('taggedAs')}
       </Atoms.Heading>
 
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-2">
@@ -32,7 +30,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
           <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
             <Atoms.Spinner size="sm" />
             <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">
-              Loading tags...
+              {t('loadingTags')}
             </Atoms.Typography>
           </Atoms.Container>
         ) : (
@@ -42,7 +40,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
             ))}
             {tags.length === 0 && (
               <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">
-                No tags added yet.
+                {t('noTags')}
               </Atoms.Typography>
             )}
           </>
@@ -58,7 +56,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
       >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">
-          {getButtonLabel()}
+          {t('addTag')}
         </Atoms.Typography>
       </Atoms.Button>
     </Atoms.Container>

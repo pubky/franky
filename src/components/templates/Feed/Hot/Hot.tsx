@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
@@ -18,6 +19,8 @@ import { TIMELINE_FEED_VARIANT } from '@/organisms/TimelineFeed/TimelineFeed.typ
  * 4. Trending Posts - Timeline of popular posts
  */
 export function Hot() {
+  const t = useTranslations('hot');
+
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
 
@@ -41,7 +44,7 @@ export function Hot() {
       {/* Trending Posts - Timeline of popular posts */}
       <Atoms.Container overrideDefaults className="flex flex-col gap-2">
         <Atoms.Heading level={5} size="lg" className="font-light text-muted-foreground">
-          Trending posts
+          {t('trendingPosts')}
         </Atoms.Heading>
         <Organisms.TimelineFeed variant={TIMELINE_FEED_VARIANT.HOT} />
       </Atoms.Container>

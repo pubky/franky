@@ -2,7 +2,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 
 import { QuickReply } from './QuickReply';
-import { QUICK_REPLY_PROMPTS } from './QuickReply.constants';
+import { QUICK_REPLY_PROMPTS_COUNT } from './QuickReply.constants';
+
+// next-intl is mocked globally in src/config/test.ts
+// The global mock uses real translations from messages/en.json
+
+// Real prompts from messages/en.json for test assertions
+const REAL_PROMPTS = [
+  'What are your thoughts on this?',
+  'What do you think?',
+  'Do you agree?',
+  'Any additional insights?',
+  'How would you respond?',
+];
 
 const mockUsePostInput = vi.fn();
 const mockUseEnterSubmit = vi.fn();
@@ -98,23 +110,23 @@ describe('QuickReply', () => {
 
     expect(mockUsePostInput).toHaveBeenCalledWith(
       expect.objectContaining({
-        placeholder: QUICK_REPLY_PROMPTS[0],
+        placeholder: REAL_PROMPTS[0],
       }),
     );
 
-    expect(screen.getByTestId('quick-reply-textarea')).toHaveAttribute('placeholder', QUICK_REPLY_PROMPTS[0]);
+    expect(screen.getByTestId('quick-reply-textarea')).toHaveAttribute('placeholder', REAL_PROMPTS[0]);
   });
 
   it('changes the placeholder across mounts (random per mount)', () => {
     vi.spyOn(Math, 'random').mockReturnValue(0); // first prompt
     render(<QuickReply parentPostId="author:post1" />);
-    expect(mockUsePostInput).toHaveBeenCalledWith(expect.objectContaining({ placeholder: QUICK_REPLY_PROMPTS[0] }));
+    expect(mockUsePostInput).toHaveBeenCalledWith(expect.objectContaining({ placeholder: REAL_PROMPTS[0] }));
 
     cleanup();
     vi.spyOn(Math, 'random').mockReturnValue(0.99); // last prompt
     render(<QuickReply parentPostId="author:post1" />);
     expect(mockUsePostInput).toHaveBeenCalledWith(
-      expect.objectContaining({ placeholder: QUICK_REPLY_PROMPTS[QUICK_REPLY_PROMPTS.length - 1] }),
+      expect.objectContaining({ placeholder: REAL_PROMPTS[QUICK_REPLY_PROMPTS_COUNT - 1] }),
     );
   });
 });
