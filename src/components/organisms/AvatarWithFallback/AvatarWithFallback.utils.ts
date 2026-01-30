@@ -33,8 +33,6 @@ export function extractUserIdFromAvatarUrl(avatarUrl: string | undefined | null)
   const userIdWithParams = avatarUrl.slice(expectedPrefix.length);
   const userId = userIdWithParams.split('?')[0]; // Remove query params like ?v=12345
 
-  console.log('userId', userId);
-
   if (!USER_ID_PATTERN.test(userId)) return null;
 
   return userId;
