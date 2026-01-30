@@ -2,7 +2,7 @@
 
 exports[`FilterSort - Snapshots > matches snapshot with Popularity content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -120,7 +120,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
 
 exports[`FilterSort - Snapshots > matches snapshot with Recent content selected tab 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -238,7 +238,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
 
 exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  class="w-full flex-col flex m-0 min-w-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >

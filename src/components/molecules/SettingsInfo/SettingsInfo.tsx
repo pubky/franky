@@ -16,7 +16,7 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
   const t = useTranslations('settingsInfo');
 
   return (
-    <Atoms.Container overrideDefaults className={Libs.cn('flex flex-col gap-6', className)}>
+    <Atoms.Container overrideDefaults className={Libs.cn('flex w-full min-w-0 flex-col gap-6', className)}>
       {/* Terms of Service & Privacy Section */}
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title={t('termsPrivacy.title')} subtitle={t('termsPrivacy.subtitle')} />
@@ -41,7 +41,7 @@ export function SettingsInfo({ className, hideFAQ = false }: SettingsInfoProps) 
               <Link key={key} href={App.SETTINGS_ROUTES.HELP}>
                 <Atoms.Container
                   overrideDefaults
-                  className="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
+                  className="relative w-full min-w-0 cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white"
                 >
                   <Atoms.Typography
                     as="span"
