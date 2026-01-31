@@ -1,7 +1,8 @@
+import type { Pubky } from '@/core';
 import type { NexusTag } from '@/core/services/nexus/nexus.types';
 
 export interface TaggerWithAvatar {
-  id: string;
+  id: Pubky;
   avatarUrl: string;
   /** Optional display name for the user */
   name?: string;
@@ -24,4 +25,8 @@ export interface TaggedItemProps {
   isExpanded?: boolean;
   /** Callback when avatar group is clicked to toggle expand state */
   onExpandToggle?: (tagLabel: string) => void;
+  /** Full tagger IDs for expanded list (optional) */
+  expandedTaggerIds?: Pubky[];
+  /** Whether taggers are currently loading */
+  isLoadingTaggers?: boolean;
 }

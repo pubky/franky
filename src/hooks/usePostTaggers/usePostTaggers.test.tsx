@@ -1,0 +1,43 @@
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { usePostTaggers } from './usePostTaggers';
+
+vi.mock('@/core', () => ({
+  PostController: {
+    fetchTaggers: vi.fn(),
+  },
+}));
+
+describe('usePostTaggers', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns empty maps when postId is missing', () => {
+    const { result } = renderHook(() => usePostTaggers(null));
+
+    expect(result.current.taggersByLabel.size).toBe(0);
+    expect(result.current.taggerStates.size).toBe(0);
+  });
+
+  it('fetches all taggers across pages', async () => {
+    const Core = await import('@/core');
+    const fetchTaggers = vi.mocked(Core.PostController.fetchTaggers);
+
+    fetchTaggers
+      .mockResolvedValueOnce([{ users: ['a', 'b'] }])
+      .mockResolvedValueOnce([{ users: ['c', 'd'] }])
+      .mockResolvedValueOnce([{ users: [] }]);
+
+    const { result } = renderHook(() => usePostTaggers('author:post123'));
+
+    await act(async () => {
+      await result.current.fetchAllTaggers('test', [], 4);
+    });
+
+    await waitFor(() => {
+      const taggers = result.current.taggersByLabel.get('test');
+      expect(taggers).toEqual(['a', 'b', 'c', 'd']);
+    });
+  });
+});
