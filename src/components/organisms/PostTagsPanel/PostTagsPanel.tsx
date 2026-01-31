@@ -73,6 +73,9 @@ export function PostTagsPanel({ postId, widthMode = 'fit', className }: PostTags
           viewerTags={viewerTags}
           disabled={!isAuthenticated}
           onClick={handleInputClick}
+          enableApiSuggestions
+          excludeFromApiSuggestions={tags.map((t) => t.label)}
+          addOnSuggestionClick
         />
 
         {tags.length > 0 && (
