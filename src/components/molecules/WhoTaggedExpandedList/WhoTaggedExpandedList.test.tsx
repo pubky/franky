@@ -129,9 +129,6 @@ describe('WhoTaggedExpandedList - Snapshots', () => {
   });
 
   it('matches snapshot with single user', () => {
-    const singleTagger: TaggerWithAvatar[] = [
-      { id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1', name: 'Alice' },
-    ];
     const { container } = render(<WhoTaggedExpandedList taggerIds={['user1']} />);
     expect(container.firstChild).toMatchSnapshot();
   });

@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as Core from '@/core';
@@ -6,16 +6,16 @@ import * as Libs from '@/libs';
 import { TAGGERS_PAGE_SIZE } from './usePostTaggers.constants';
 import type { TaggersStateMap, UsePostTaggersResult } from './usePostTaggers.types';
 
- /**
-  * Fetch full tagger lists for post tags on demand.
-  * Keeps results in-memory per hook instance.
-  */
- export function usePostTaggers(postId?: string | null): UsePostTaggersResult {
+/**
+ * Fetch full tagger lists for post tags on demand.
+ * Keeps results in-memory per hook instance.
+ */
+export function usePostTaggers(postId?: string | null): UsePostTaggersResult {
   const [taggerStates, setTaggerStates] = useState<TaggersStateMap>(new Map());
 
   const statesRef = useRef(taggerStates);
 
-   useEffect(() => {
+  useEffect(() => {
     statesRef.current = taggerStates;
   }, [taggerStates]);
 
@@ -45,7 +45,7 @@ import type { TaggersStateMap, UsePostTaggersResult } from './usePostTaggers.typ
         return next;
       });
 
-       try {
+      try {
         let skip = initialIds.length;
         let collectedIds = [...initialIds];
         let hasMore = true;
@@ -88,8 +88,8 @@ import type { TaggersStateMap, UsePostTaggersResult } from './usePostTaggers.typ
           });
           return next;
         });
-       } catch (error) {
-         Libs.Logger.error('[usePostTaggers] Failed to fetch taggers', { postId, label, error });
+      } catch (error) {
+        Libs.Logger.error('[usePostTaggers] Failed to fetch taggers', { postId, label, error });
         setTaggerStates((prev) => {
           const next = new Map(prev);
           const existing = next.get(labelKey);
@@ -97,10 +97,10 @@ import type { TaggersStateMap, UsePostTaggersResult } from './usePostTaggers.typ
           next.set(labelKey, { ...existing, isLoading: false, hasMore: false });
           return next;
         });
-       }
-     },
+      }
+    },
     [postId],
-   );
+  );
 
   const taggersByLabel = useMemo(() => {
     const map = new Map<string, Core.Pubky[]>();
@@ -110,9 +110,9 @@ import type { TaggersStateMap, UsePostTaggersResult } from './usePostTaggers.typ
     return map;
   }, [taggerStates]);
 
-   return {
-     taggersByLabel,
+  return {
+    taggersByLabel,
     taggerStates,
     fetchAllTaggers,
-   };
- }
+  };
+}

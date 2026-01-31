@@ -22,9 +22,7 @@ export function TaggedList({
   const [expandedTagLabel, setExpandedTagLabel] = useState<string | null>(null);
 
   const shouldFetchTaggers = taggedKind === Core.TagKind.POST && !!taggedId;
-  const { taggersByLabel, taggerStates, fetchAllTaggers } = Hooks.usePostTaggers(
-    shouldFetchTaggers ? taggedId : null,
-  );
+  const { taggersByLabel, taggerStates, fetchAllTaggers } = Hooks.usePostTaggers(shouldFetchTaggers ? taggedId : null);
 
   const { sentinelRef } = Hooks.useInfiniteScroll({
     onLoadMore: onLoadMore || (() => {}),
